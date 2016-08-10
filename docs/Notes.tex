@@ -1,0 +1,147 @@
+  % JFM
+%\NeedsTeXFormat{LaTeX2e}
+%\documentclass {jfm}
+
+% PHYSICS OF FLUIDS
+%\documentclass[aip, pof, reprint]{revtex4-1} 
+% the files aip4-1.rtx seems to be necessary
+\documentclass[11pt]{article}
+
+% PACKAGES, minimal set?
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsfonts}
+%\usepackage[justification=RaggedRight]{caption}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LATEX DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Partial differentiation, standard fraction notation
+\newcommand{\pd}[2]    { \frac{\partial #1} {\partial #2} }
+\newcommand{\ppd}[2]  { \frac{\partial^2 #1}{{\partial #2}^2} }
+\newcommand{\pdpd}[3]  { \frac{\partial^2 #1}{\partial #2 \partial #3 } }
+\newcommand{\pppd}[2]  { \frac{\partial^3 #1}{{\partial #2}^3} }
+% Differentiation
+\newcommand{\pdi}[2] { {\partial_#2} #1 }
+\newcommand{\td}[2] { \frac{d #1} { d #2 } }
+\newcommand{\grad}{\nabla}
+\newcommand {\Lap} {\grad^2}
+% Vectors and operators
+\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\avg}[1] { \left\langle {#1} \right\rangle}
+\newcommand{\dash} {\text{-}}
+\newcommand{\conj}[1] {\overline{#1}}
+
+% Stuff
+\newcommand {\bu} {\bvec{u}}
+\newcommand{\nhat}{\hat{\bvec{n}}}
+\newcommand{\shat}{\hat{\bvec{s}}}
+\newcommand{\Vn}{V_n}
+
+
+\newcommand{\Rey}{ \text{Re} }
+% Domains
+\newcommand {\bdry} {\partial B}
+\newcommand {\onBdry} {\text{on } \bdry }
+\newcommand {\xfar} {\text{as } \abs{\bvec{x}} \to \infty }
+\newcommand {\nfar} {\text{as } \, \ny / \dchar \to \infty }
+
+
+
+\newcommand{\nn}{\mathbf{n}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\ssigma}{\boldsymbol{\sigma}}
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\title{Brief notes on erosion}
+\author{}
+\maketitle
+
+%\begin{abstract}
+%\end{abstract}
+
+\section{Governing equations}
+The deformation, or rate-of-strain, tensor is given by
+\begin{equation}
+\bvec{E} = \frac{1}{2} \left( \grad \bu + \grad \bu^T \right)
+\end{equation}
+where $\bu = (u,v)$ is the velocity field. The stress tensor is given by
+\begin{equation}
+\bvec{\sigma} = -p \bvec{I} + 2 \mu \bvec{E} = -p \bvec{I} + \mu \left( \grad \bu + \grad \bu^T \right)
+\end{equation}
+The surface traction is given by
+\begin{equation}
+\bvec{f} = \bvec{\sigma} \cdot \nhat 	\qquad \onBdry
+\end{equation}
+where $\nhat$ is the (outward) unit normal and $\bdry$ is the solid
+boundary. The shear stress $\tau$ is defined as the tangential
+component of the traction, i.e.~
+\begin{equation}
+\tau = \bvec{f} \cdot \shat 
+= \mu \left( \grad \bu + \grad \bu^T \right) \cdot \nhat \cdot \shat	\qquad \onBdry
+\end{equation}
+where $\shat$ is the unit tangent vector. It turns out that the shear
+stress is simply given by the surface vorticity
+\begin{equation}
+\tau = \mu \left( u_y - v_x \right) \qquad \onBdry
+\end{equation}
+which can be shown by a direct calculation, using the no-slip boundary
+conditions (which implies that $\pdi{u}{s} = \pdi{v}{s} = 0$ on
+$\bdry$).  The interface velocity of the eroding body is linearly
+proportional to the absolute shear stress
+\begin{equation}
+\Vn = -C \abs{\tau}
+\end{equation}
+where $C$ is a constant.
+
+
+\section{Layer potentials}
+The kernel of the Stokes double-layer potential is
+\begin{equation}
+  \frac{1}{\pi} \frac{\rr \otimes \nn}{\rho^{2}} 
+  \frac{\rr \otimes \ssigma}{\rho^{2}} \rr.
+\end{equation}
+
+The deformation tensor is
+\begin{align*}
+  \bvec{E} &= \frac{1}{2} \left( \grad \bu + \grad \bu^T \right) \\
+  &= \frac{1}{\pi} \frac{(\rr \cdot \nn)(\rr \cdot \ssigma)}{\rho^{4}}I 
+   + \frac{1}{2\pi} \frac{(\rr \cdot \ssigma)}{\rho^{4}}
+    (\rr \otimes \nn + \nn \otimes \rr) \\
+  &+ \frac{1}{2\pi} \frac{(\rr \cdot \nn)}{\rho^{4}} 
+    (\rr \otimes \ssigma + \ssigma \otimes \rr) 
+   - \frac{4}{\pi}\frac{(\rr \cdot \nn)(\rr \cdot \ssigma)}{\rho^{6}}
+    (\rr \otimes \rr).
+\end{align*}
+
+The shear stress $\tau$ is
+\begin{align*}
+  \tau &= \frac{1}{\pi}\frac{(\rr \cdot \ssigma)}{\rho^{4}}
+      (\rr + (\nn \cdot \rr)\nn) \cdot \shat
+   + \frac{1}{\pi}\frac{(\rr \cdot \nn)}{\rho^{4}}
+      ((\ssigma \cdot \nn)\rr + (\rr \cdot \nn)\ssigma) \cdot \shat \\
+  &- \frac{8}{\pi}\frac{(\rr \cdot \nn)(\rr \cdot \ssigma)}{\rho^{6}}
+      (\rr \cdot \nn)(\rr \cdot \shat) \\
+  &= \frac{1}{\pi}\frac{(\rr \cdot \ssigma)(\rr \cdot \shat)}{\rho^{4}}
+   + \frac{1}{\pi}\frac{(\rr \cdot \nn)(\ssigma \cdot \nn)(\rr \cdot \shat)}{\rho^{4}} \\
+  &+ \frac{1}{\pi}\frac{(\rr \cdot \nn)^{2}(\ssigma \cdot \shat)}{\rho^{4}}
+   - \frac{8}{\pi}\frac{(\rr \cdot \nn)^{2}(\rr \cdot \ssigma)(\rr \cdot \shat)}{\rho^{6}}
+\end{align*}
+
+
+\end{document}
