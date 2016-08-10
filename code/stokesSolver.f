@@ -59,22 +59,22 @@ c     variable name for x,y,ninner
       call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
 c     load geometry of initial shape
 
-      open(unit=1,file='output/xinner.dat')
-      open(unit=2,file='output/yinner.dat')
-      open(unit=3,file='output/xouter.dat')
-      open(unit=4,file='output/youter.dat')
-      do k = 1,ninner
-        write(1,1000) xx(k)
-        write(2,1000) yy(k)
-      enddo
-      do k = 1,nouter
-        write(3,1000) xouter(k)
-        write(4,1000) youter(k)
-      enddo
-      close(unit=1)
-      close(unit=2)
-      close(unit=3)
-      close(unit=4)
+c      open(unit=1,file='output/xinner.dat')
+c      open(unit=2,file='output/yinner.dat')
+c      open(unit=3,file='output/xouter.dat')
+c      open(unit=4,file='output/youter.dat')
+c      do k = 1,ninner
+c        write(1,1000) xx(k)
+c        write(2,1000) yy(k)
+c      enddo
+c      do k = 1,nouter
+c        write(3,1000) xouter(k)
+c        write(4,1000) youter(k)
+c      enddo
+c      close(unit=1)
+c      close(unit=2)
+c      close(unit=3)
+c      close(unit=4)
 
       call bd_condition(ninner,x,y,nouter,xouter,youter,rhs)
 c     load boundary condition
@@ -97,7 +97,7 @@ c     Use the deformation tensor to compute the shear stress
      $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
      $    nx,ny,xtar,ytar,utar,vtar)
 
- 1000 format(E25.16)
+c 1000 format(E25.16)
 
 
       end
@@ -808,11 +808,11 @@ c       rotlet contribution
       enddo
 c     Add in contribution from rotlets and stokeslets
 
-      open(unit=1,file='output/den.dat')
-      write(1,1000) den
-      close(1)
-
- 1000 format(E25.16)
+c      open(unit=1,file='output/den.dat')
+c      write(1,1000) den
+c      close(1)
+c
+c 1000 format(E25.16)
 
       end
 
@@ -834,11 +834,11 @@ c     Point normal outward as Nick uses
       shear_stress = tractionx*py - tractiony*px 
 c     Finally compute shear stress
 
-      open(unit=1,file='output/shear_stress.dat')
-      write(1,1000) shear_stress
-      close(1)
-
- 1000 format(E25.16)
+c      open(unit=1,file='output/shear_stress.dat')
+c      write(1,1000) shear_stress
+c      close(1)
+c
+c 1000 format(E25.16)
 
 
       end
@@ -1078,22 +1078,22 @@ c         rotlet contribution
       enddo
 c     Add in contribution from rotlets and stokeslets
 
-      open(unit=1,file='output/xx.dat')
-      open(unit=2,file='output/yy.dat')
-      open(unit=3,file='output/uu.dat')
-      open(unit=4,file='output/vv.dat')
-      do j = 1,nx
-        write(1,1000) (xtar(j,k), k=1,ny)
-        write(2,1000) (ytar(j,k), k=1,ny)
-        write(3,1000) (utar(j,k), k=1,ny)
-        write(4,1000) (vtar(j,k), k=1,ny)
-      enddo
-      close(unit=1)
-      close(unit=2)
-      close(unit=3)
-      close(unit=4)
-
- 1000 format(100(E25.16))
+c      open(unit=1,file='output/xx.dat')
+c      open(unit=2,file='output/yy.dat')
+c      open(unit=3,file='output/uu.dat')
+c      open(unit=4,file='output/vv.dat')
+c      do j = 1,nx
+c        write(1,1000) (xtar(j,k), k=1,ny)
+c        write(2,1000) (ytar(j,k), k=1,ny)
+c        write(3,1000) (utar(j,k), k=1,ny)
+c        write(4,1000) (vtar(j,k), k=1,ny)
+c      enddo
+c      close(unit=1)
+c      close(unit=2)
+c      close(unit=3)
+c      close(unit=4)
+c
+c 1000 format(100(E25.16))
 
 
 
