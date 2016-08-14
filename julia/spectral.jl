@@ -68,6 +68,14 @@ function gaussfilter(fx::Vector, sigma::Float64)
 	return real(fs)
 end
 
+# 
+function stokes(nn::Integer, xx::Vector{Float64}, yy::Vector{Float64})
+	tau = zeros(Float64,nn)
+	ccall((:stokessolver_, "libstokes.so"),
+		Void, (Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), &nn, xx, yy, tau)
+	return tau
+end
+
 #function krasnyfilter!(uu, thold)
 #	uu[abs(uu)<thold] = zero(eltype(uu))
 #end
