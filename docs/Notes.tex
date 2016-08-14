@@ -1,28 +1,22 @@
-  % JFM
-%\NeedsTeXFormat{LaTeX2e}
-%\documentclass {jfm}
-
-% PHYSICS OF FLUIDS
-%\documentclass[aip, pof, reprint]{revtex4-1} 
-% the files aip4-1.rtx seems to be necessary
 \documentclass[11pt]{article}
 
-% PACKAGES, minimal set?
-\usepackage{graphicx}
-\usepackage{amsmath, amssymb, amsfonts}
+% PACKAGES
+\usepackage{graphicx, amsmath, amssymb, amsfonts, mathtools, mathrsfs, color}
+\usepackage{comment, enumerate, tabularx}
+\usepackage{natbib, hyperref, url}
 %\usepackage[justification=RaggedRight]{caption}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% LATEX DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Partial differentiation, standard fraction notation
+% Basic editing
+\newcommand{\tocite}{{\color{blue}(to cite)}}
+\newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
+\newcommand{\np}{\newpage \noindent}
+% Derivatives
 \newcommand{\pd}[2]    { \frac{\partial #1} {\partial #2} }
 \newcommand{\ppd}[2]  { \frac{\partial^2 #1}{{\partial #2}^2} }
-\newcommand{\pdpd}[3]  { \frac{\partial^2 #1}{\partial #2 \partial #3 } }
-\newcommand{\pppd}[2]  { \frac{\partial^3 #1}{{\partial #2}^3} }
-% Differentiation
 \newcommand{\pdi}[2] { {\partial_#2} #1 }
 \newcommand{\td}[2] { \frac{d #1} { d #2 } }
 \newcommand{\grad}{\nabla}
@@ -31,37 +25,21 @@
 \newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
 \newcommand{\abs}[1]{\left| #1 \right|}
 \newcommand{\norm}[1]{\left\| #1 \right\|}
-\newcommand{\avg}[1] { \left\langle {#1} \right\rangle}
-\newcommand{\dash} {\text{-}}
-\newcommand{\conj}[1] {\overline{#1}}
-
-% Stuff
+\newcommand{\mean}[1]{\left< #1 \right>}
+% Specific variables
 \newcommand {\bu} {\bvec{u}}
 \newcommand{\nhat}{\hat{\bvec{n}}}
 \newcommand{\shat}{\hat{\bvec{s}}}
-\newcommand{\Vn}{V_n}
-
-
-\newcommand{\Rey}{ \text{Re} }
+\newcommand{\eps}{\varepsilon}
+\newcommand{\atau}{\abs{\tau}}
+\newcommand{\thh}{\hat{\theta}}
+\newcommand{\GG}{\mathcal{G}}
+\newcommand{\Dt}{\Delta t}
+\newcommand{\X}{\bvec{X}}
 % Domains
 \newcommand {\bdry} {\partial B}
 \newcommand {\onBdry} {\text{on } \bdry }
 \newcommand {\xfar} {\text{as } \abs{\bvec{x}} \to \infty }
-\newcommand {\nfar} {\text{as } \, \ny / \dchar \to \infty }
-
-
-
-\newcommand{\nn}{\mathbf{n}}
-\newcommand{\rr}{\mathbf{r}}
-\newcommand{\ssigma}{\boldsymbol{\sigma}}
-
-
-
-
-
-
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +53,7 @@
 %\begin{abstract}
 %\end{abstract}
 
-\section{Governing equations}
+\section{Shear stress and erosion law}
 The deformation, or rate-of-strain, tensor is given by
 \begin{equation}
 \bvec{E} = \frac{1}{2} \left( \grad \bu + \grad \bu^T \right)
@@ -88,60 +66,143 @@ The surface traction is given by
 \begin{equation}
 \bvec{f} = \bvec{\sigma} \cdot \nhat 	\qquad \onBdry
 \end{equation}
-where $\nhat$ is the (outward) unit normal and $\bdry$ is the solid
-boundary. The shear stress $\tau$ is defined as the tangential
-component of the traction, i.e.~
+where $\nhat$ is the (outward) unit normal and $\bdry$ is the solid boundary. The shear stress $\tau$ is defined as the tangential component of the traction, i.e.~
 \begin{equation}
 \tau = \bvec{f} \cdot \shat 
 = \mu \left( \grad \bu + \grad \bu^T \right) \cdot \nhat \cdot \shat	\qquad \onBdry
 \end{equation}
-where $\shat$ is the unit tangent vector. It turns out that the shear
-stress is simply given by the surface vorticity
+where $\shat$ is the unit tangent vector. It turns out that the shear stress is simply given by the surface vorticity
 \begin{equation}
 \tau = \mu \left( u_y - v_x \right) \qquad \onBdry
 \end{equation}
-which can be shown by a direct calculation, using the no-slip boundary
-conditions (which implies that $\pdi{u}{s} = \pdi{v}{s} = 0$ on
-$\bdry$).  The interface velocity of the eroding body is linearly
-proportional to the absolute shear stress
+which can be shown by a direct calculation, using the no-slip boundary conditions (which implies that $\pdi{u}{s} = \pdi{v}{s} = 0$ on $\bdry$).
+The interface velocity of the eroding body is linearly proportional to the absolute shear stress
 \begin{equation}
-\Vn = -C \abs{\tau}
+V_n = -C \atau
 \end{equation}
 where $C$ is a constant.
 
-
-\section{Layer potentials}
-The kernel of the Stokes double-layer potential is
+\section{Scaling law and interface smoothing}
+For Stokes flow, the shear stress scales like
 \begin{equation}
-  \frac{1}{\pi} \frac{\rr \otimes \nn}{\rho^{2}} 
-  \frac{\rr \otimes \ssigma}{\rho^{2}} \rr.
+\tau \sim \mu V/L
+\end{equation}
+where $V$ and $L$ are a characteristic velocity and length scale respectively. To evolve the interface in our numerical method, we will probably need to introduce some smoothing to mitigate high frequencies. A common approach is to introduce a small curvature term into the interface velocity, sometimes called the method of vanishing viscosity. The most basic implementation would be
+\begin{equation}
+V_n = - C \atau - \eps \kappa
+\end{equation}
+where $\eps$ is a small parameter and $\kappa$ is the surface curvature. However, we have two additional preferences
+\begin{enumerate}
+\item As the body changes size, we would like the influence of the curvature term relative to the shear stress to remain the same.
+\item We prefer the curvature term not to change the size of the body.
+\end{enumerate}
+Fortunately, the first requirement is already satisfied since both $\tau$ and $\kappa$ scale like $1/L$. To satisfy the second requirement, we replace $\kappa$ with this same quantity minus its mean. To allow for some generality, we allow the curvature term by to be scaled by a power of $L$, giving
+\begin{equation}
+V_n = - C \atau - \eps L^{\beta} \left(\kappa - \frac{2 \pi}{L} \right)
+\end{equation}
+Thus, for the present case of Stokes flow $\beta=0$, but for the previous case of high-Reynolds-number flow $\beta=1/2$.
+
+\section{Numerical interface evolution}
+
+To evolve the interface numerically, we use the $\theta$-$L$ method. Rather than re-derive the formulas, I will use the convention from Shelley 1994, with the curve parameterized in the CCW direction and the normal vector pointing {\em inward}. With this convention, the normal interface velocity is the negative of what it was previously, giving
+\begin{equation}
+V_n = C \atau + \eps L^{\beta} \left(\kappa - \frac{2 \pi}{L} \right)
+\end{equation}
+Recall that for Stokes flow, $\beta = 0$.
+
+Now, the interface $\X = (x,y)$ evolves according to
+\begin{equation}
+\pd{\bvec{X}}{t} = V_n \nhat + V_s \shat
+\end{equation}
+where $\nhat = (-y_s, x_s)$ is the inward pointing normal vector and $\shat = (x_s, y_s)$ is the tangential vector (running in the CCW direction). Here, we have introduced a tangential velocity $V_s$ that will be chosen to keep the curve in the equal-arclength parameterization. We will frequently use a normalized arclength $\alpha = s/L$, where $L$ is the total length of the curve.
+
+We introduce the tangent angle $\theta$, defined as
+\begin{equation}
+\tan \theta = y_s/x_s = y_\alpha / x_\alpha
+\end{equation}
+Remember the identity that $x_s^2 + y_s^2 = 1$ as this is very useful.
+The curvature is given by
+\begin{equation}
+\kappa = x_s y_{ss} - x_{ss} y_s = \pd{\theta}{s} = L^{-1} \pd{\theta}{\alpha}
+\end{equation}
+We are using the standard convention, where a convex shape, like a circle, has positive curvature. The normal velocity now can be written as
+\begin{equation}
+V_n = C \atau + \eps L^{\beta-1} \left(\pd{\theta}{\alpha} - 2 \pi \right)
 \end{equation}
 
-The deformation tensor is
-\begin{align*}
-  \bvec{E} &= \frac{1}{2} \left( \grad \bu + \grad \bu^T \right) \\
-  &= \frac{1}{\pi} \frac{(\rr \cdot \nn)(\rr \cdot \ssigma)}{\rho^{4}}I 
-   + \frac{1}{2\pi} \frac{(\rr \cdot \ssigma)}{\rho^{4}}
-    (\rr \otimes \nn + \nn \otimes \rr) \\
-  &+ \frac{1}{2\pi} \frac{(\rr \cdot \nn)}{\rho^{4}} 
-    (\rr \otimes \ssigma + \ssigma \otimes \rr) 
-   - \frac{4}{\pi}\frac{(\rr \cdot \nn)(\rr \cdot \ssigma)}{\rho^{6}}
-    (\rr \otimes \rr).
-\end{align*}
+We now discuss how to choose $V_s$ to remain in the equal-arclength frame of reference. We will use the term
+\begin{equation}
+\gamma = \pd{\theta}{\alpha} V_n
+\end{equation}
+Then the necessary tangential velocity is determined by
+\begin{equation}
+\td{V_s}{\alpha} = \gamma - \mean{\gamma}
+\end{equation}
+where $\mean{}$ indicates the mean value.
 
-The shear stress $\tau$ is
-\begin{align*}
-  \tau &= \frac{1}{\pi}\frac{(\rr \cdot \ssigma)}{\rho^{4}}
-      (\rr + (\nn \cdot \rr)\nn) \cdot \shat
-   + \frac{1}{\pi}\frac{(\rr \cdot \nn)}{\rho^{4}}
-      ((\ssigma \cdot \nn)\rr + (\rr \cdot \nn)\ssigma) \cdot \shat \\
-  &- \frac{8}{\pi}\frac{(\rr \cdot \nn)(\rr \cdot \ssigma)}{\rho^{6}}
-      (\rr \cdot \nn)(\rr \cdot \shat) \\
-  &= \frac{1}{\pi}\frac{(\rr \cdot \ssigma)(\rr \cdot \shat)}{\rho^{4}}
-   + \frac{1}{\pi}\frac{(\rr \cdot \nn)(\ssigma \cdot \nn)(\rr \cdot \shat)}{\rho^{4}} \\
-  &+ \frac{1}{\pi}\frac{(\rr \cdot \nn)^{2}(\ssigma \cdot \shat)}{\rho^{4}}
-   - \frac{8}{\pi}\frac{(\rr \cdot \nn)^{2}(\rr \cdot \ssigma)(\rr \cdot \shat)}{\rho^{6}}
-\end{align*}
+We now discuss how to evolve $\theta$ and $L$ forward in time according to the interface velocity given above. The resulting evolution equations are
+\begin{align}
+& \td{L}{t} = - \mean{\gamma} \\
+& \pd{\theta}{t} = L^{-1} \left( \pd{V_n}{\alpha} + \pd{\theta}{\alpha} V_s \right)
+\end{align}
+Then, using the above $V_n$, the equation for $\theta$ simplifies to
+\begin{equation}
+\pd{\theta}{t} = \eps L^{\beta-2} \ppd{\theta}{\alpha} + L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
+\end{equation}
+
+We now discuss the numerical methods used to solve the above evolution equations. For $L$, we use an explicit method
+\begin{equation}
+L^{(n+1)} = L^{(n)} + \frac{\Dt}{2} \left( 3 M^{(n)} - M^{(n-1)} \right)
+\end{equation}
+where
+\begin{equation}
+M = \td{L}{t} = -\mean{\gamma}
+\end{equation}
+For $\theta$, we use a spectral method, giving
+\begin{equation}
+\td{\thh_k}{t} + 4 \pi^2 k^2 \eps L^{\beta-2} \thh_k = \hat{N}_k
+\end{equation}
+where the nonlinear terms are grouped together as
+\begin{equation}
+N = L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
+\end{equation}
+We evolve with the integrating-factor method. When recast in terms of Gaussian filters, this gives
+\begin{equation}
+\thh^{(n+1)} = \GG(\theta^{(n)}, \sigma_1) 
++ \frac{\Dt}{2} \left( 3 \GG(N^{(n)}, \sigma_1) - \GG(N^{(n-1)}), \sigma_2 \right)
+\end{equation}
+where
+\begin{align}
+& \sigma_1 = 2 \pi \sqrt{\eps \Dt} \sqrt{(L^{n})^{\beta-2} + (L^{n+1})^{\beta-2} } 	\\
+& \sigma_2 = 2 \pi \sqrt{\eps \Dt} \sqrt{(L^{n-1})^{\beta-2} + 2 (L^{n})^{\beta-2} + (L^{n+1})^{\beta-2} }
+\end{align}
+
+
+\subsection{Center of mass motion}
+Consider the body's center of mass
+\begin{equation}
+(x_{cm}, y_{cm}) = \frac{1}{A} \iint (x, y) \, dA
+\end{equation}
+I did a calculation to determine the motion of the center of mass, given the interface velocity. The result that I get is
+\begin{equation}
+\td{}{t} (x_{cm}, y_{cm})  = -\frac{1}{A} \int (x(s), y(s)) V_n(s) \, ds
+\end{equation}
+I believe the sign is correct for $\nhat$ the inward pointing normal, so that $V_n$ is positive if the body is shrinking.
+
+To calculate the center of mass, I can use the divergence theorem
+\begin{equation}
+\iint \grad \cdot \bvec{F} \, dA = \int \bvec{F} \cdot \nhat \, ds
+\end{equation}
+Take $\bvec{F} = \frac{1}{2} (x^2, y^2)$, so that $\grad \cdot \bvec{F} = (x,y)$. Then
+\begin{equation}
+(x_{cm}, y_{cm} ) = \frac{1}{2 A} \int x^2 n_x + y^2 n_y \, ds
+\end{equation}
+To calculate the total area, $A$, I can use the divergence theorem again, to get
+\begin{equation}
+A = \int x n_x ds = \int y n_y ds
+\end{equation}
+
+
 
 
 \end{document}
