@@ -1,5 +1,4 @@
-FORTRAN = gfortran-mp-5
-# gfortran for Bryan gfortran-mp-5 for Nick
+FORTRAN = gfortran
 FFLAGS = -c -O3
 
 OBJS=\
