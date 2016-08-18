@@ -1,8 +1,8 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 512)
-      parameter (nbodies = 20)
+      parameter (ninner = 128)
+      parameter (nbodies = 2)
 
       integer :: i, n, clock
       integer, dimension(:), allocatable :: seed
@@ -72,11 +72,20 @@ c      print*,rand(),rand(),rand(),rand()
         centery(k) = centery(k) + 2.d-2*(rand()-5.d-1)
       enddo
 
+      centerx(1) = -0.0d0
+      centery(1) = 0.5d0
+      centerx(2) = 0.0d0
+      centery(2) = -0.5d0
+      radius(1) = 2.d-1
+      radius(2) = 2.d-1
+      phi(1) = 0.d0
+      phi(2) = 0.d0
+
       do j = 1,nbodies
         do k = 1,ninner
           theta = dble(k-1)*dtheta
-          var_rad = radius(j)*(1.d0 + 2.d-1*dcos(5*theta))
-c          var_rad = radius(j)
+c          var_rad = radius(j)*(1.d0 + 2.d-1*dcos(5*theta))
+          var_rad = radius(j)
           x((j-1)*ninner+k) = centerx(j) + var_rad*
      $        (dcos(phi(j))*dcos(theta) + dsin(phi(j))*dsin(theta))
           y((j-1)*ninner+k) = centery(j) + var_rad*

@@ -77,9 +77,9 @@ c        write(1,1000) x(k)
 c        write(2,1000) y(k)
 c        write(5,1000) cur(k)
 c      enddo
-c      do k = 1,nouter
-c        write(3,1000) xouter(k)
-c        write(4,1000) youter(k)
+c      do k = 1,ninner*nbodies
+c        write(3,1000) px(k)
+c        write(4,1000) py(k)
 c      enddo
 c      close(unit=1)
 c      close(unit=2)
@@ -114,12 +114,12 @@ c     compute the deformation tensor on the boundary of the interface
       call compute_shear_stress(ninner,nbodies,px,py,
      $    E11,E12,E22,shear_stress)
 c     Use the deformation tensor to compute the shear stress
-c
+
 c      call eval_velocity(ninner,nbodies,x,y,centerx,centery,
 c     $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
 c     $    nx,ny,xtar,ytar,utar,vtar)
-
- 1000 format(E25.16)
+c
+c 1000 format(E25.16)
 
 
       end
@@ -659,7 +659,7 @@ c     STOKESLETS
           denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
           deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
         enddo
-c       density function due to obstacle
+c       density function due to obstacle ibod
 
         do k = 1,ninner
           vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
@@ -776,7 +776,7 @@ c     obstacle
 c     initialize components to be zero
 
 
-c     START OF SOURCE POINTS ==  SOLID WALL
+c     START OF SOURCE POINTS ==  SOLID WALL, TARGET POINTS == OBSTACLES
       do j=1,nouter
         denx(j) = den(j)
         deny(j) = den(j+nouter)
@@ -786,7 +786,6 @@ c     Density function defined on the outer geometry
       do itar=1,nbodies
 c       loop over targets
         do k=1,ninner
-
 c         loop over sources
           do j=1,nouter
             rx = x((itar-1)*ninner+k) - xouter(j)
@@ -819,9 +818,10 @@ c         loop over sources
           enddo
         enddo
       enddo
-c     END OF SOURCE POINTS == SOLID WALL
+c     END OF SOURCE POINTS ==  SOLID WALL, TARGET POINTS == OBSTACLES
 
-c     START OF SOURCE POINTS == OBSTACLES
+c     START OF SOURCE POINTS == OBSTACLES, TARGET POINTS == OBSTACLE
+c     isou
       do isou = 1,nbodies
         do k = 1,ninner
           denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
@@ -923,8 +923,65 @@ c           converges to the PV integral
         enddo
 c       need to multiply by 2 since the grid spacing is twice as large
 c       compute deformation tensor on odd indexed terms
+c       END OF SOURCE POINTS == OBSTACLES, TARGET POINTS == OBSTACLE
+c       isou
+
+
+c       START OF SOURCE POINTS == OBSTACLES, TARGET POINTS ~= OBSTACLE
+c       isou
+        do itar = 1,nbodies
+          if (itar .eq. isou) then
+            cycle
+          endif
+c         skip the diagonal term since this was taking care above with
+c         the trapezoid rule with odd even integration
+
+c         loop over target points
+          do k = 1,ninner
+c           loop over source points
+            do j = 1,ninner
+              rx = x((itar-1)*ninner+k) - x((isou-1)*ninner+j)
+              ry = y((itar-1)*ninner+k) - y((isou-1)*ninner+j)
+              rho2 = rx**2.d0 + ry**2.d0
+              rdotn = rx*px((isou-1)*ninner+j) +
+     $                ry*py((isou-1)*ninner+j)
+              routn = rx*py((isou-1)*ninner+j) +
+     $                ry*px((isou-1)*ninner+j)
+              sx = denx(j)
+              sy = deny(j)
+              rdots = rx*sx + ry*sy
+              routs = rx*sy + ry*sx
+
+              E11((itar-1)*ninner+k) = E11((itar-1)*ninner+k) + 
+     $            5.d-1*
+     $            (2.d0*rdotn*rdots/rho2/rho2 + 
+     $            2.d0*rdots/rho2/rho2*rx*px((isou-1)*ninner+j) +
+     $            2.d0*rdotn/rho2/rho2*rx*sx -
+     $            8.d0*rdotn*rdots/rho2**3.d0*rx*rx)*
+     $            speed((isou-1)*ninner+j)*twopi/dble(ninner)/pi
+
+              E12((itar-1)*ninner+k) = E12((itar-1)*ninner+k) + 
+     $            5.d-1*
+     $            (rdots*routn/rho2/rho2 +
+     $            rdotn*routs/rho2/rho2 -
+     $            8.d0*rdotn*rdots*rx*ry/rho2**3.d0)*
+     $            speed((isou-1)*ninner+j)*twopi/dble(ninner)/pi
+
+              E22((itar-1)*ninner+k) = E22((itar-1)*ninner+k) + 
+     $            5.d-1*
+     $            (2.d0*rdotn*rdots/rho2/rho2 + 
+     $            2.d0*rdots/rho2/rho2*ry*py((isou-1)*ninner+j) +
+     $            2.d0*rdotn/rho2/rho2*ry*sy -
+     $            8.d0*rdotn*rdots/rho2**3.d0*ry*ry)*
+     $            speed((isou-1)*ninner+j)*twopi/dble(ninner)/pi
+            enddo
+          enddo
+        enddo
+c       END OF SOURCE POINTS == OBSTACLES, TARGET POINTS ~= OBSTACLE
+c       isou
       enddo
 
+c     START OF JUMP ALONG DIAGONAL TERM
       call DCFFTI(ninner,wsave)
       do ibod = 1,nbodies
         do k=1,ninner 
@@ -951,36 +1008,44 @@ c       the second component of the density function
         enddo
 c       Add in jump conditions
       enddo
-c     END OF SOURCE POINTS == OBSTACLES
+c     END OF JUMP ALONG DIAGONAL TERM
 
 
-c     START OF SOURCE POINTS == ROTLETS AND STOKESLETS
+c     START OF SOURCE POINTS == ROTLETS AND STOKESLETS, TARGET POINTS ==
+c     OBSTACLE
       do ibod = 1,nbodies
         sto1 = den(2*nouter + 2*ninner*nbodies + (ibod-1)*3+1)
         sto2 = den(2*nouter + 2*ninner*nbodies + (ibod-1)*3+2)
         rot  = den(2*nouter + 2*ninner*nbodies + (ibod-1)*3+3)
 c       loop over targets
-        do k = 1,ninner
-          rx = x((ibod-1)*ninner+k) - centerx(ibod)
-          ry = y((ibod-1)*ninner+k) - centerx(ibod)
-          rho2 = rx**2.d0 + ry**2.d0
-          rdots = rx*sto1 + ry*sto2
-          E11(k) = E11(k) + 5.d-1/twopi*
-     $        (rdots/rho2 - 2*rx*rx*rdots/rho2/rho2)
-          E12(k) = E12(k) - 1.d0/twopi*
-     $        (rdots/rho2/rho2*rx*ry)
-          E22(k) = E22(k) + 5.d-1/twopi*
-     $        (rdots/rho2 - 2*ry*ry*rdots/rho2/rho2)
+        do itar = 1,nbodies
+c        do itar = ibod,ibod
+          do k = 1,ninner
+            rx = x((itar-1)*ninner+k) - centerx(ibod)
+            ry = y((itar-1)*ninner+k) - centery(ibod)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdots = rx*sto1 + ry*sto2
+            E11((itar-1)*ninner+k) = E11((itar-1)*ninner+k) + 
+     $          5.d-1/twopi*(rdots/rho2 - 2*rx*rx*rdots/rho2/rho2)
+            E12((itar-1)*ninner+k) = E12((itar-1)*ninner+k) - 
+     $          1.d0/twopi*(rdots/rho2/rho2*rx*ry)
+            E22((itar-1)*ninner+k) = E22((itar-1)*ninner+k) + 
+     $          5.d-1/twopi*(rdots/rho2 - 2*ry*ry*rdots/rho2/rho2)
 c         stokeslet contribution
 
-          E11(k) = E11(k) - 2.d0*rot*rx*ry/rho2/rho2
-          E12(k) = E12(k) + rot*(rx**2.d0 - ry**2.d0)/rho2/rho2
-          E22(k) = E22(k) + 2.d0*rot*rx*ry/rho2/rho2
+            E11((itar-1)*ninner+k) = E11((itar-1)*ninner+k) - 
+     $          2.d0*rot*rx*ry/rho2/rho2
+            E12((itar-1)*ninner+k) = E12((itar-1)*ninner+k) + 
+     $          rot*(rx**2.d0 - ry**2.d0)/rho2/rho2
+            E22((itar-1)*ninner+k) = E22((itar-1)*ninner+k) - 
+     $          2.d0*rot*rx*ry/rho2/rho2
 c         rotlet contribution
+          enddo
         enddo
 c       Add in contribution from rotlets and stokeslets
       enddo
-c     END OF SOURCE POINTS == ROTLETS AND STOKESLETS
+c     END OF SOURCE POINTS == ROTLETS AND STOKESLETS, TARGETS ==
+c     OBSTACLES
 
       end
 
@@ -1020,7 +1085,7 @@ c***********************************************************************
 c      open(unit=1,file='output/shear_stress.dat')
 c      write(1,1000) shear_stress
 c      close(1)
-c
+
 c 1000 format(E25.16)
 
 
@@ -1299,22 +1364,22 @@ c         value of 0
 
 
 
-      open(unit=1,file='output/xx.dat')
-      open(unit=2,file='output/yy.dat')
-      open(unit=3,file='output/uu.dat')
-      open(unit=4,file='output/vv.dat')
-      do j = 1,nx
-        write(1,1000) (xtar(j,k), k=1,ny)
-        write(2,1000) (ytar(j,k), k=1,ny)
-        write(3,1000) (utar(j,k), k=1,ny)
-        write(4,1000) (vtar(j,k), k=1,ny)
-      enddo
-      close(unit=1)
-      close(unit=2)
-      close(unit=3)
-      close(unit=4)
-
- 1000 format(1000(E25.16))
+c      open(unit=1,file='output/xx.dat')
+c      open(unit=2,file='output/yy.dat')
+c      open(unit=3,file='output/uu.dat')
+c      open(unit=4,file='output/vv.dat')
+c      do j = 1,nx
+c        write(1,1000) (xtar(j,k), k=1,ny)
+c        write(2,1000) (ytar(j,k), k=1,ny)
+c        write(3,1000) (utar(j,k), k=1,ny)
+c        write(4,1000) (vtar(j,k), k=1,ny)
+c      enddo
+c      close(unit=1)
+c      close(unit=2)
+c      close(unit=3)
+c      close(unit=4)
+c
+c 1000 format(1000(E25.16))
 
       end
 
