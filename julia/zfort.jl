@@ -5,18 +5,19 @@ include("thetalen.jl")
 include("geometries.jl")
 using Winston
 
-nn = 32
-dth = 2*pi/nn
-theta = range(0, dth, nn)
+npts = 32
+nbods = 1
+dth = 2*pi/npts
+theta = range(0, dth, npts)
 
-nrads = 15
+nrads = 10
 rav = zeros(Float64,nrads)
 mtv = zeros(Float64,nrads)
 rad = 0.2
 for ii=1:nrads
 	xx = rad*cos(theta)
 	yy = rad*sin(theta)
-	tau = stokes(nn,xx,yy)
+	tau = stokes(npts,nbods,xx,yy)
 	maxtau = maximum(abs(tau))
 	# Save vectors
 	rav[ii] = rad
@@ -28,7 +29,7 @@ end
 # Compare against the law 1/(r log r).
 rpl = 2./( -rav.*log(rav)  )
 loglog(rav,mtv,".-",rav,rpl,".-r")
-xlabel("raduis"); ylabel("max tau")
+xlabel("radius"); ylabel("max tau")
 
 #= Compare the stress against a guess of the exact solution.
 tauex = -0.33/rad * sin(theta)

@@ -69,10 +69,12 @@ function gaussfilter(fx::Vector, sigma::Float64)
 end
 
 # 
-function stokes(nn::Integer, xx::Vector{Float64}, yy::Vector{Float64})
-	tau = zeros(Float64,nn)
+function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64})
+	ntot = npts*nbods
+	tau = zeros(Float64, ntot)
 	ccall((:stokessolver_, "libstokes.so"),
-		Void, (Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), &nn, xx, yy, tau)
+		Void, (Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
+		&npts, &nbods, xx, yy, tau)
 	return tau
 end
 

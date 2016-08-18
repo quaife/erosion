@@ -1,8 +1,7 @@
-FORTRAN = gfortran
+FORTRAN = gfortran-mp-5
 FFLAGS = -c -O3
 
 OBJS=\
-stokesDriver.o\
 stokesSolver.o\
 gmres_routines.o\
 dcfft.o
@@ -14,5 +13,5 @@ libstokes: $(OBJS)
 	$(FORTRAN) $(FFLAGS) -c -o $@ $<	
 
 clean: 
-	rm stokesDriver
 	rm *.o
+	rm *.so
