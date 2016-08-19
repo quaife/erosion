@@ -1,5 +1,4 @@
 # Test curvature-driven flow for an initial triangle.
-# workspace()
 include("spectral.jl")
 include("thetalen.jl")
 include("geometries.jl")

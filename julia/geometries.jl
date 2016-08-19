@@ -5,8 +5,16 @@ function heaviside(tt)
    0.5 * (sign(tt) + 1)
 end
 
+# circgeo
+function circgeo(npts::Integer, rad::Float64)
+	# alpha = s/L is the parameterization variable.
+	dalpha = 1.0/npts
+	alpha = collect(range(0.5*dalpha, dalpha, npts))
+	# theta is the tangent angle.
+	theta = 0.5*pi - 2*pi*alpha
+end
 #= trigeo: Construct a triangle geometry within the theta-L framework.
-nn: The number of points on the triangle.
+npts: The number of points on the triangle.
 angle: The triangle's front opening angle in degrees.
 sigma: The amount of smoothing. 
 The triangle has the following properties:
@@ -15,13 +23,12 @@ The triangle has the following properties:
 - It has a vetical extent of 2 units.
 - It is parameterized by t, i.e. (x(t), y(t)), for t in [0,1]
 - It is parameterized in the CCW direction. =#
-
-function trigeo(nn, angle, sigma)
+function trigeo(npts::Integer, angle, sigma)
 	#= Initially, the triangle is parameterized in CW direction, 
 	but that will be reversed at the end. =#
 	# Parameterize the triangle by t in [0,1] and use and offset t-grid.
-	dt = 1.0/nn
-	tt = collect(range(0.5*dt, dt, nn))
+	dt = 1.0/npts
+	tt = collect(range(0.5*dt, dt, npts))
 	# alpha is the half opening angle of the triangle in radians.
 	alpha = 0.5 * angle*pi/180
 	# The length of the traingle's sloped face.
@@ -45,4 +52,3 @@ function trigeo(nn, angle, sigma)
 	xback = 1/tan(alpha)
 	return theta,stot,xback,tt
 end
-

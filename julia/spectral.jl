@@ -68,7 +68,7 @@ function gaussfilter(fx::Vector, sigma::Float64)
 	return real(fs)
 end
 
-# 
+# stokes: Julia wrapper
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64})
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)

@@ -1,5 +1,4 @@
 # Test calling a Fortran code.
-# workspace()
 include("spectral.jl")
 include("thetalen.jl")
 include("geometries.jl")
