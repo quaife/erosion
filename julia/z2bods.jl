@@ -1,8 +1,5 @@
 # Test multiple bodies.
-include("spectral.jl")
-include("thetalen.jl")
-include("geometries.jl")
-using Winston
+include("includes.jl")
 
 npts = 64
 nbods = 2

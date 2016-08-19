@@ -1,8 +1,5 @@
 # Test curvature-driven flow for an initial triangle.
-include("spectral.jl")
-include("thetalen.jl")
-include("geometries.jl")
-using Winston
+include("includes.jl")
 
 # plotcurve
 function plotcurve(theta::Vector{Float64}, len::Float64, 
@@ -30,19 +27,23 @@ beta = 0
 # Get the initial triangular geometry.
 theta,len,xback,alpha = trigeo(nn, angle, sigma)
 x0,y0 = getcurve(theta,len,xback)
-# For pure curvature driven flow, make the stress term vanish.
-ast = 0.0*theta[:]
+# For pure curvature driven flow, set the stress term to zero.
+atau = 0.0*theta[:]
+
+# Initialize with RK2
+theta1,len1 = RKstarter(theta,len,ataufun,epsilon,beta)
+
 
 # Initialize with RK2
 len0 = len
 # Get the time derivatives at t=0
-M0,N0 = getMN(ast,theta,len,epsilon,beta)
+M0,N0 = getMN(atau,theta,len,epsilon,beta)
 th0dot = thetadot(theta,len,N0,epsilon,beta)
 # Take the first half step of RK2
 len05 = len0 + 0.5*dt*M0
 th05 = theta + 0.5*dt*th0dot
 # Get the time derivatives at t=0.5*dt
-M05,N05 = getMN(ast,th05,len05,epsilon,beta)
+M05,N05 = getMN(atau,th05,len05,epsilon,beta)
 th05dot = thetadot(th05,len05,N05,epsilon,beta)
 # Take the second half step of RK2
 len1 = len05 + 0.5*dt*M05
@@ -56,7 +57,7 @@ tfin += 0.1*dt
 tm = dt
 while(tm < tfin)
 	# Advance theta and len in time
-	theta1,len0,len1,M0,N0 = advance_thetalen(ast,theta1,
+	theta1,len0,len1,M0,N0 = advance_thetalen(atau,theta1,
 								len0,len1,M0,N0,dt,epsilon,beta)
 	# Advance time and counter.
 	tm += dt

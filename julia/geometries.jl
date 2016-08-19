@@ -1,18 +1,16 @@
 # geometries.jl: Construct various geometries.
 
-# heaviside: The Heaviside function
-function heaviside(tt)
-   0.5 * (sign(tt) + 1)
-end
-
-# circgeo
+# circgeo: Creates a circle.
 function circgeo(npts::Integer, rad::Float64)
 	# alpha = s/L is the parameterization variable.
 	dalpha = 1.0/npts
 	alpha = collect(range(0.5*dalpha, dalpha, npts))
 	# theta is the tangent angle.
-	theta = 0.5*pi - 2*pi*alpha
+	theta = 0.5*pi + 2*pi*alpha
+	len = 2*pi*rad
+	return theta, len, alpha
 end
+
 #= trigeo: Construct a triangle geometry within the theta-L framework.
 npts: The number of points on the triangle.
 angle: The triangle's front opening angle in degrees.
@@ -51,4 +49,9 @@ function trigeo(npts::Integer, angle, sigma)
 	# The point (0,xback) fixes the nose at the origin. 
 	xback = 1/tan(alpha)
 	return theta,stot,xback,tt
+end
+
+# heaviside: The Heaviside function
+function heaviside(tt)
+   0.5 * (sign(tt) + 1)
 end

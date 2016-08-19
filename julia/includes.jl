@@ -1,0 +1,6 @@
+# includes
+include("spectral.jl")
+include("thetalen.jl")
+include("stokes.jl")
+include("geometries.jl")
+using Winston

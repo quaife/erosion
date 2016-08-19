@@ -26,6 +26,7 @@ function kvec(nn::Integer, hmode=0)
 	end
 end
 
+# imagtest: Test that the imaginary part is negligible.
 function imagtest(fx::Vector, thold::Float64=1e-10)
 	maxim = maxabs(imag(fx))
 	if maxim > thold
@@ -66,16 +67,6 @@ function gaussfilter(fx::Vector, sigma::Float64)
 	fh .*= exp(-0.5*sigma^2 * abs(kv).^2)
 	fs = ifftnice(fh)
 	return real(fs)
-end
-
-# stokes: Julia wrapper
-function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64})
-	ntot = npts*nbods
-	tau = zeros(Float64, ntot)
-	ccall((:stokessolver_, "libstokes.so"),
-		Void, (Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
-		&npts, &nbods, xx, yy, tau)
-	return tau
 end
 
 #function krasnyfilter!(uu, thold)
