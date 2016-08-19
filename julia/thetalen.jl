@@ -1,5 +1,6 @@
-# thetalen.jl: Collection of codes for theta-L boundary evolution.
-#=
+#= thetalen.jl: Collection of codes for theta-L boundary evolution.
+All routines work for only a single body unless stated otherwise.
+
 Variables
 atau (vector): The absolute value of the shear stress, computed by fluid solver.
 theta (vector): The tangent angle as it varies along the boundary.
@@ -14,20 +15,21 @@ beta: The power of L hitting the curvature-term in the V_n; should be zero for S
 Convention for tangential and normal vectors
 I use the same convention as Shelley 1994. That is, I assume the curve 
 is parameterized in the counter-clockwise (CCW) direction, and I use the 
-inward pointing normal.
-=#
+inward pointing normal. =#
 
+
+########## Multi-step routines ##########
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2, 
-using some values from n=0. =#
-function advance_thetalen(atau::Vector{Float64}, theta1::Vector{Float64}, 
+using some values from n=0. This is a multistep method. =#
+function advance_thetalen(atau1::Vector{Float64}, theta1::Vector{Float64}, 
 		len0::Float64, len1::Float64, M0::Float64, N0::Vector{Float64}, 
 		dt::Float64, epsilon::Float64, beta::Real)
 	# Get the terms M and N at time n=1.
-	M1,N1 = getMN(atau,theta1,len1,epsilon,beta)
-	# Update len with explicit method.
+	M1,N1 = getMN(atau1,theta1,len1,epsilon,beta)
+	# Update len with an explicit, multistep method.
 	len2 = len1 + 0.5*dt*(3*M1-M0)
 	if len2<0; error("The curve length is negative"); return; end
-	# Update theta with integrating-factor method.
+	# Update theta with a multistep, integrating-factor method.
 	theta2 = advance_theta(theta1,len0,len1,len2,N0,N1,dt,epsilon,beta)
 	return theta2, len1, len2, M1, N1
 end
@@ -82,40 +84,23 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	return vtang, dldt
 end
 
-# getalpha: Calculate the normalized arclength, alpha = s/L.
-#= Used in advance_theta, getMN, and thetadot.
-Note: Depening on the grid I use, this alpha may be off by a constant,
-but that does not matter because I use it inside gaussfilter and specdiff. =#
-function getalpha(nn::Integer)
-	return range(0.0, 1.0/nn, nn)
-end
 
-
-
-
-
-# RKstarter: Explicit, second-order Runge-Kutta method to start the ODE solver.
-function RKstarter(theta0::Vector{Float64}, len0::Float64, 
-		ataufun::Function, epsilon::Float64, beta::Real)
-	# Get the time derivatives at t=0
-	atau0 = ataufun(theta0,len0)
+########## Starter routines ##########
+# feuler: Advance theta and len with forward Euler from step n=0 to n=1;
+# Only used in the starter.
+function feuler(atau0::Vector{Float64}, theta0::Vector{Float64}, len0::Float64, 
+		dt::Float64, epsilon::Float64, beta::Real)
+	# Get the time derivatives.
 	M0,N0 = getMN(atau0,theta0,len0,epsilon,beta)
-	th0dot = thetadot(theta0,len0,N0,epsilon,beta)
-	# Take the first half step of RK2
-	len05 = len0 + 0.5*dt*M0
-	th05 = theta0 + 0.5*dt*th0dot
-	# Get the time derivatives at t=0.5*dt
-	atau05 = ataufun(th05,len05)
-	M05,N05 = getMN(atau05,th05,len05,epsilon,beta)
-	th05dot = thetadot(th05,len05,N05,epsilon,beta)
-	# Take the second half step of RK2
-	len1 = len05 + 0.5*dt*M05
-	theta1 = th05 + 0.5*dt*th05dot
-	return theta1,len1
+	thdot = thetadot(theta0,len0,N0,epsilon,beta)
+	# Advance theta and len.
+	theta1 = theta0 + dt*thdot
+	len1 = len0 + dt*M0
+	return theta1, len1
 end
 
-# thetadot: Calculate the time derivative of theta.
-# Only used for the explicit RK starter.
+# thetadot: Calculate the time derivative of theta; 
+# Only used in the starter.
 function thetadot(theta::Vector{Float64}, len::Float64, nterm::Vector{Float64}, 
 		epsilon::Float64, beta::Real)
 	# Calculate the time derivative of theta.
@@ -125,20 +110,21 @@ function thetadot(theta::Vector{Float64}, len::Float64, nterm::Vector{Float64},
 	thdot = epsilon*len^(beta-2)*d2th + nterm
 end
 
-#= getcurve: Reconstruct the x,y coordinates of a curve, given the theta values.
+
+########## Get x and y coordinates ##########
+#= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
+xc and yc are the coordinates of the center of mass.
 While we're at it, also calculate the normal direcations. =#
-function getcurve(theta::Vector{Float64}, len::Float64, xback::Float64)
+function getxy(theta::Vector{Float64}, len::Float64, 
+		xc::Float64=0.0, yc::Float64=0.0)
 	# The increments of dx and dy
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
 	# Integrate to get the x,y coordinates.
 	xx = specint(dx)
 	yy = specint(dy)
-	# Close the curves.
-	xx = [xx; xx[1]]
-	yy = [yy; yy[1]]
 
-	# Fix a point?
+	## TO DO: Move the center of mass or average values.
 
 	# The normal vector, direction???
 	nx = -sin(theta)

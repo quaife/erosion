@@ -5,7 +5,7 @@ include("includes.jl")
 function plotcurve(theta::Vector{Float64}, len::Float64, 
 		xback::Float64, x0::Vector{Float64}, y0::Vector{Float64}, cnt::Integer)
 	# Reconstruct the x,y coordinates of the curve.
-	xx,yy = getcurve(theta,len,xback)
+	xx,yy = getxy(theta,len)
 	p1 = plot(x0,y0,".-", xx,yy,".-")
 	xlim(-1.0,1.0); ylim(-1.0,1.0)
 	figname = string("../Figs/fig",string(cnt),".pdf")
@@ -25,17 +25,17 @@ beta = 0
 ######################
 
 # Get the initial triangular geometry.
-theta,len,xback,alpha = trigeo(nn, angle, sigma)
-x0,y0 = getcurve(theta,len,xback)
+theta0,len0 = trigeo(nn,angle,sigma)
+x0,y0 = getxy(theta,len)
 # For pure curvature driven flow, set the stress term to zero.
 atau = 0.0*theta[:]
 
-# Initialize with RK2
-theta1,len1 = RKstarter(theta,len,ataufun,epsilon,beta)
+# Initialize with RK2 (NOT RK2, MISTAKE)
 
 
-# Initialize with RK2
-len0 = len
+
+th05,len05 = feuler(atau,theta0,len0,0.5*dt,epsilon,beta)
+
 # Get the time derivatives at t=0
 M0,N0 = getMN(atau,theta,len,epsilon,beta)
 th0dot = thetadot(theta,len,N0,epsilon,beta)

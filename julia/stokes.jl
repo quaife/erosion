@@ -1,4 +1,5 @@
-# spectral.jl
+#= stokes.jl: Functions involving the Stokes solver.
+All routines work for multiple bodies. =#
 
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64})
@@ -10,8 +11,8 @@ function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{F
 	return tau
 end
 
-#
-function ataufun(npts::Integer, nbods::Integer, 
+# stokes_thl: Call the Stokes solver given the theta-len values.
+function stokes_thl(npts::Integer, nbods::Integer, 
 		thetas::Vector{Float64}, lens::Vector{Float64})
 	ntot = npts*nbods
 	xv = zeros(Float64,ntot)
@@ -19,9 +20,7 @@ function ataufun(npts::Integer, nbods::Integer,
 	for nn=1:nbods
 		n1 = npts*(nn-1)+1
 		n2 = npts*nn
-		theta = thetas[n1:n2]
-		len = lens[ii]
-		xv[n1:n2],yv[n1:n2] = getcurve(theta,len,0.0)
+		xv[n1:n2],yv[n1:n2] = getxy(thetas[n1:n2],lens[nn])
 	end
 	tau = stokes(npts,nbods,xv,yv)
 	return abs(tau)

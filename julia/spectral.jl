@@ -1,6 +1,5 @@
-# spectral.jl
-#= Collection of spectral routines 
-=#
+# spectral.jl: Collection of spectral routines 
+
 
 # fftnice: shifted fft.
 function fftnice(fx::Vector)

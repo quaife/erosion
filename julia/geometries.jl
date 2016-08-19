@@ -1,14 +1,26 @@
 # geometries.jl: Construct various geometries.
 
+#= getalpha: Calculate the normalized arclength parameter, alpha = s/L.
+Used in certain thetalen routines (advance_theta, getMN, thetadot);
+Used to construct the geometries;
+Note: This function uses an offset grid, but the offset is irrelevant
+if alpha is used inside gaussfilter or specdiff, as it is inside all of the
+thetalen routines. The offset does make a difference for the geometry routines. =#
+function getalpha(npts::Integer)
+	dalpha = 1.0/npts
+	alpha = collect(range(0.5*dalpha, dalpha, npts))
+	return alpha
+end
+
 # circgeo: Creates a circle.
 function circgeo(npts::Integer, rad::Float64)
 	# alpha = s/L is the parameterization variable.
-	dalpha = 1.0/npts
-	alpha = collect(range(0.5*dalpha, dalpha, npts))
+	alpha = getalpha(npts)
 	# theta is the tangent angle.
 	theta = 0.5*pi + 2*pi*alpha
+	# len is the total arclength.
 	len = 2*pi*rad
-	return theta, len, alpha
+	return theta, len
 end
 
 #= trigeo: Construct a triangle geometry within the theta-L framework.
@@ -24,13 +36,12 @@ The triangle has the following properties:
 function trigeo(npts::Integer, angle, sigma)
 	#= Initially, the triangle is parameterized in CW direction, 
 	but that will be reversed at the end. =#
-	# Parameterize the triangle by t in [0,1] and use and offset t-grid.
-	dt = 1.0/npts
-	tt = collect(range(0.5*dt, dt, npts))
-	# alpha is the half opening angle of the triangle in radians.
-	alpha = 0.5 * angle*pi/180
+	# Parameterize the triangle by tt in [0,1] and use and offset tt-grid.
+	tt = getalpha(npts)
+	# hang is the half opening angle of the triangle in radians.
+	hang = 0.5*angle*pi/180
 	# The length of the traingle's sloped face.
-	len1 = 1/sin(alpha)
+	len1 = 1/sin(hang)
 	# Total arclength is the sum of the 2 sloped faces and back vertical face.
 	stot = 2+2*len1
 	# The values of t where we change from one face to another.
@@ -38,17 +49,17 @@ function trigeo(npts::Integer, angle, sigma)
 	t2 = (2+len1) / stot
 	# The tangent angle theta as a function of t.
 	theta = 0.0*dt
-	theta = alpha 
-	theta += (-0.5*pi-alpha)*heaviside(tt-t1) 
-	theta += (-0.5*pi-alpha)*heaviside(tt-t2)
+	theta = hang 
+	theta += (-0.5*pi-hang)*heaviside(tt-t1) 
+	theta += (-0.5*pi-hang)*heaviside(tt-t2)
 
 	# Smooth the triangle.
 	theta = gaussfilter(theta + 2*pi*tt, sigma) - 2*pi*tt
 	# To parameterize in the CCW direction, reverse the vector and add pi.
 	theta = reverse(theta) + pi
 	# The point (0,xback) fixes the nose at the origin. 
-	xback = 1/tan(alpha)
-	return theta,stot,xback,tt
+	xback = 1/tan(hang)
+	return theta, stot, xback
 end
 
 # heaviside: The Heaviside function
