@@ -12,10 +12,10 @@ r1 = 0.2
 r2 = 0.2
 
 ntot = npts*nbods
-xc1 = 0.0
-yc1 = 0.5
-xc2 = 0.0
-yc2 = -0.5
+xc1 = -0.5
+yc1 = -0.0
+xc2 = 0.5
+yc2 = 0.0
 
 x1 = xc1 + r1*cos(theta)
 y1 = yc1 + r1*sin(theta)
