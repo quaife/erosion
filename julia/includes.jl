@@ -1,7 +1,7 @@
 # includes
+include("misc.jl")
 include("spectral.jl")
 include("thetalen.jl")
-include("stokes.jl")
 include("geometries.jl")
-include("misc.jl")
+include("stokes.jl")
 using Winston

@@ -1,18 +1,28 @@
 #= misc.jl: Miscellaneous functions =#
 
+# Create a ParamType to avoid passing all of the parameters to every function.
+type ParamType
+	dt::Float64; epsilon::Float64; beta::Real
+end
+# Function to extract the values from a ParamType variable.
+function getparams(params::ParamType)
+	dt = params.dt; epsilon = params.epsilon; beta = params.beta
+	return dt, epsilon, beta
+end
+
 ########## Starter routines ##########
 # RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
-function RKstarter(theta0::Vector{Float64}, len0::Float64,
-		dt::Float64, epsilon::Float64, beta::Real)
+function RKstarter(theta0::Vector{Float64}, len0::Float64, params::ParamType)
+	dt,epsilon,beta = getparams(params)
 	# Get the time derivatives at t=0.
 	atau = stokes_thl_sing(theta0,len0)
-	th0dot,M0,N0 = thetadot(atau,theta0,len0,epsilon,beta)
+	th0dot,M0,N0 = thetadot(atau,theta0,len0,params)
 	# Take the first half-step of RK2.
 	len05 = len0 + 0.5*dt*M0
 	theta05 = theta0 + 0.5*dt*th0dot
 	# Get the time derivatives at t=0.5*dt.
 	atau = stokes_thl_sing(theta05,len05)
-	th05dot,M05,N05 = thetadot(atau,theta05,len05,epsilon,beta)
+	th05dot,M05,N05 = thetadot(atau,theta05,len05,params)
 	# Take the second step of RK2.
 	len1 = len0 + dt*M05
 	theta1 = theta0 + dt*th05dot
@@ -20,8 +30,8 @@ function RKstarter(theta0::Vector{Float64}, len0::Float64,
 end
 #= thetadot: Calculate the time derivative of theta;
 Also return MM and NN while we're at it. Only used in the RKstarter. =#
-function thetadot(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, 
-		epsilon::Float64, beta::Real)
+function thetadot(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, params::ParamType)
+	dt,epsilon,beta = getparams(params)
 	# Get the M and N terms
 	MM,NN = getMN(atau,theta,len,epsilon,beta)
 	# Calculate the time derivative of theta.

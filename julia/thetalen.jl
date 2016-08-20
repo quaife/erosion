@@ -20,21 +20,22 @@ inward pointing normal. =#
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2, 
 using some values from n=0. This is a multistep method. =#
 function advance_thetalen(atau1::Vector{Float64}, theta1::Vector{Float64}, 
-		len0::Float64, len1::Float64, M0::Float64, N0::Vector{Float64}, 
-		dt::Float64, epsilon::Float64, beta::Real)
+		len0::Float64, len1::Float64, M0::Float64, N0::Vector{Float64}, params::ParamType)
+	dt,epsilon,beta = getparams(params)
 	# Get the terms M and N at time n=1.
-	M1,N1 = getMN(atau1,theta1,len1,epsilon,beta)
+	M1,N1 = getMN(atau1,theta1,len1,params)
 	# Update len with an explicit, multistep method.
 	len2 = len1 + 0.5*dt*(3*M1-M0)
 	if len2<0; error("The curve length is negative"); return; end
 	# Update theta with a multistep, integrating-factor method.
-	theta2 = advance_theta(theta1,len0,len1,len2,N0,N1,dt,epsilon,beta)
+	theta2 = advance_theta(theta1,len0,len1,len2,N0,N1,params)
 	return theta2, len1, len2, M1, N1
 end
 
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, len2::Float64, 
-		N0::Vector{Float64}, N1::Vector{Float64}, dt::Float64, epsilon::Float64, beta::Real)
+		N0::Vector{Float64}, N1::Vector{Float64}, params::ParamType)
+	dt,epsilon,beta = getparams(params)
 	# Calculate alpha.
 	alpha = getalpha(endof(theta1))
 	# The power of L that is used.
@@ -52,8 +53,8 @@ function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, le
 end
 
 # getMN: Calculates the terms M=dL/dt and N.
-function getMN(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, 
-		epsilon::Float64, beta::Real)
+function getMN(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, params::ParamType)
+	dt,epsilon,beta = getparams(params)
 	# The derivative of theta wrt alpha.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
