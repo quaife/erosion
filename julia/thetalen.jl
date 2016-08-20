@@ -38,7 +38,7 @@ end
 function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, len2::Float64, 
 		N0::Vector{Float64}, N1::Vector{Float64}, dt::Float64, epsilon::Float64, beta::Real)
 	# Calculate alpha.
-	alpha = getalpha(endof(theta))
+	alpha = getalpha(endof(theta1))
 	# The power of L that is used.
 	lpow = beta-2
 	# The first value used in the Gaussian filter.
@@ -86,28 +86,18 @@ end
 
 
 ########## Starter routines ##########
-# feuler: Advance theta and len with forward Euler from step n=0 to n=1;
-# Only used in the starter.
-function feuler(atau0::Vector{Float64}, theta0::Vector{Float64}, len0::Float64, 
-		dt::Float64, epsilon::Float64, beta::Real)
-	# Get the time derivatives.
-	M0,N0 = getMN(atau0,theta0,len0,epsilon,beta)
-	thdot = thetadot(theta0,len0,N0,epsilon,beta)
-	# Advance theta and len.
-	theta1 = theta0 + dt*thdot
-	len1 = len0 + dt*M0
-	return theta1, len1
-end
-
-# thetadot: Calculate the time derivative of theta; 
-# Only used in the starter.
-function thetadot(theta::Vector{Float64}, len::Float64, nterm::Vector{Float64}, 
+#= thetadot: Calculate the time derivative of theta;
+Also return MM and NN while we're at it. =#
+function thetadot(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, 
 		epsilon::Float64, beta::Real)
+	# Get the M and N terms
+	MM,NN = getMN(atau,theta,len,epsilon,beta)
 	# Calculate the time derivative of theta.
 	alpha = getalpha(endof(theta))
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
-	thdot = epsilon*len^(beta-2)*d2th + nterm
+	thdot = epsilon*len^(beta-2)*d2th + NN
+	return thdot, MM, NN
 end
 
 

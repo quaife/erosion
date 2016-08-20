@@ -19,35 +19,28 @@ angle = 90
 sigma = 0.05
 # Evolution parameters.
 tfin = 2.0
-dt = 0.02
+dt = 0.01
 epsilon = 0.1
 beta = 0
 ######################
 
 # Get the initial triangular geometry.
-theta0,len0 = trigeo(nn,angle,sigma)
-x0,y0 = getxy(theta,len)
+theta0,len0,xback = trigeo(nn,angle,sigma)
+x0,y0 = getxy(theta0,len0)
 # For pure curvature driven flow, set the stress term to zero.
-atau = 0.0*theta[:]
+atau = zeros(Float64,nn)
 
-# Initialize with RK2 (NOT RK2, MISTAKE)
-
-
-
-th05,len05 = feuler(atau,theta0,len0,0.5*dt,epsilon,beta)
-
-# Get the time derivatives at t=0
-M0,N0 = getMN(atau,theta,len,epsilon,beta)
-th0dot = thetadot(theta,len,N0,epsilon,beta)
-# Take the first half step of RK2
+# Initialize with RK2.
+# Get the time derivatives at t=0.
+th0dot,M0,N0 = thetadot(atau,theta0,len0,epsilon,beta)
+# Take the first half-step of RK2.
 len05 = len0 + 0.5*dt*M0
-th05 = theta + 0.5*dt*th0dot
-# Get the time derivatives at t=0.5*dt
-M05,N05 = getMN(atau,th05,len05,epsilon,beta)
-th05dot = thetadot(th05,len05,N05,epsilon,beta)
-# Take the second half step of RK2
-len1 = len05 + 0.5*dt*M05
-theta1 = th05 + 0.5*dt*th05dot
+theta05 = theta0 + 0.5*dt*th0dot
+# Get the time derivatives at t=0.5*dt.
+th05dot,M05,N05 = thetadot(atau,theta05,len05,epsilon,beta)
+# Take the second step of RK2.
+len1 = len0 + dt*M05
+theta1 = theta0 + dt*th05dot
 # Plot the result.
 cnt = 1
 plotcurve(theta1,len1,xback,x0,y0,cnt)
@@ -65,3 +58,5 @@ while(tm < tfin)
 	# Plot the result.
 	plotcurve(theta1,len1,xback,x0,y0,cnt)
 end
+
+# Plot area vs. time
