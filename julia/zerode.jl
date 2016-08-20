@@ -12,22 +12,7 @@ epsilon = 0.02
 beta = 0
 ######################
 
-function RKstarter(theta0::Vector{Float64}, len0::Float64,
-		dt::Float64, epsilon::Float64, beta::Real)
-	# Get the time derivatives at t=0.
-	atau = stokes_thl_sing(theta0,len0)
-	th0dot,M0,N0 = thetadot(atau,theta0,len0,epsilon,beta)
-	# Take the first half-step of RK2.
-	len05 = len0 + 0.5*dt*M0
-	theta05 = theta0 + 0.5*dt*th0dot
-	# Get the time derivatives at t=0.5*dt.
-	atau = stokes_thl_sing(theta05,len05)
-	th05dot,M05,N05 = thetadot(atau,theta05,len05,epsilon,beta)
-	# Take the second step of RK2.
-	len1 = len0 + dt*M05
-	theta1 = theta0 + dt*th05dot
-	return theta1,len1,M0,N0
-end
+
 
 # plotcurve
 function plotcurve(theta::Vector{Float64}, len::Float64, 

@@ -1,6 +1,5 @@
 # spectral.jl: Collection of spectral routines 
 
-
 # fftnice: shifted fft.
 function fftnice(fx::Vector)
 	fh = fft(fx)
@@ -34,8 +33,8 @@ function imagtest(fx::Vector, thold::Float64=1e-10)
 	return
 end
 
-# specdiff: Compute the derivative of fx spectrally.
-# Default: assumes that the length of the interval is 1.0
+#= specdiff: Compute the derivative of fx spectrally.
+Default: assumes that the length of the interval is 1.0 =#
 function specdiff(fx::Vector, intvlen::Float64=1.0)	
 	fh = fftnice(fx)
 	kv = kvec(length(fx), 0)
@@ -45,9 +44,9 @@ function specdiff(fx::Vector, intvlen::Float64=1.0)
 	return real(df)/intvlen
 end
 
-# specint: Compute the antiderivative of fx spectrally.
-# Assumes that the input fx has mean-zero.
-# Forces the output Fx to have mean-zero.
+#= specint: Compute the antiderivative of fx spectrally.
+Assumes that the input fx has mean-zero and 
+forces the output Fx to have mean-zero. =#
 function specint(fx::Vector, intvlen::Float64=1.0)
 	fh = fftnice(fx)
 	kv = kvec(length(fx), 0)

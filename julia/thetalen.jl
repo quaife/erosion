@@ -17,8 +17,6 @@ I use the same convention as Shelley 1994. That is, I assume the curve
 is parameterized in the counter-clockwise (CCW) direction, and I use the 
 inward pointing normal. =#
 
-
-########## Multi-step routines ##########
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2, 
 using some values from n=0. This is a multistep method. =#
 function advance_thetalen(atau1::Vector{Float64}, theta1::Vector{Float64}, 
@@ -82,42 +80,4 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 	vtang = specint(dvtang)
 	return vtang, dldt
-end
-
-
-########## Starter routines ##########
-#= thetadot: Calculate the time derivative of theta;
-Also return MM and NN while we're at it. =#
-function thetadot(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, 
-		epsilon::Float64, beta::Real)
-	# Get the M and N terms
-	MM,NN = getMN(atau,theta,len,epsilon,beta)
-	# Calculate the time derivative of theta.
-	alpha = getalpha(endof(theta))
-	dth = specdiff(theta - 2*pi*alpha) + 2*pi
-	d2th = specdiff(dth)
-	thdot = epsilon*len^(beta-2)*d2th + NN
-	return thdot, MM, NN
-end
-
-
-########## Get x and y coordinates ##########
-#= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
-xc and yc are the coordinates of the center of mass.
-While we're at it, also calculate the normal direcations. =#
-function getxy(theta::Vector{Float64}, len::Float64, 
-		xc::Float64=0.0, yc::Float64=0.0)
-	# The increments of dx and dy
-	dx = len * (cos(theta) - mean(cos(theta)))
-	dy = len * (sin(theta) - mean(sin(theta)))
-	# Integrate to get the x,y coordinates.
-	xx = specint(dx)
-	yy = specint(dy)
-
-	## TO DO: Move the center of mass or average values.
-
-	# The normal vector, direction???
-	nx = -sin(theta)
-	ny = cos(theta)
-	return xx,yy
 end
