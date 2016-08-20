@@ -32,10 +32,14 @@ end
 # plotcurve
 function plotcurve(theta::Vector{Float64}, len::Float64, 
 		x0::Vector{Float64}, y0::Vector{Float64}, cnt::Integer)
+	# Set the axis limits.
+	axlim = 0.5
 	# Reconstruct the x,y coordinates of the curve.
 	xx,yy = getxy(theta,len)
+	# Make the plot.
 	p1 = plot(x0,y0,"-", xx,yy,"-")
-	xlim(-1.0,1.0); ylim(-1.0,1.0)
+	xlim(-axlim,axlim); ylim(-axlim,axlim)
+	# Save the figures in a folder.
 	figname = string("../figs/fig",string(cnt),".pdf")
 	savefig(p1, figname, width=500, height=500)
 end
