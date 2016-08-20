@@ -10,6 +10,12 @@ function getparams(params::ParamType)
 	return dt, epsilon, beta
 end
 
+# Creat a ThetaLenType to keep all of the information of a curve.
+type ThetaLenType
+	npts::Integer; alpha::Vector{Float64}; theta::Vector{Float64}; len::Float64
+	xc::Float64; yc::Float64; atau::Vector{Float64}; MM::Float64; NN::Vector{Float64}
+end
+
 ########## Starter routines ##########
 # RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
 function RKstarter(theta0::Vector{Float64}, len0::Float64, params::ParamType)
@@ -33,7 +39,7 @@ Also return MM and NN while we're at it. Only used in the RKstarter. =#
 function thetadot(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, params::ParamType)
 	dt,epsilon,beta = getparams(params)
 	# Get the M and N terms
-	MM,NN = getMN(atau,theta,len,epsilon,beta)
+	MM,NN = getMN(atau,theta,len,params)
 	# Calculate the time derivative of theta.
 	alpha = getalpha(endof(theta))
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi

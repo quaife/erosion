@@ -12,10 +12,10 @@ epsilon = 0.02
 beta = 0
 ######################
 
-# Put the parameters in a single variable.
-params = ParamType(dt,epsilon,beta)
 # Make slight adjustment to ensure that tfin is obtained.
 tfin += 0.5*dt
+# Put the parameters in a single variable.
+params = ParamType(dt,epsilon,beta)
 # Create the initial circular geometry.
 theta0,len0 = circgeo(npts,rad)
 x0,y0 = getxy(theta0,len0)
