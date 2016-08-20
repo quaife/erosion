@@ -26,3 +26,11 @@ function stokes_thl(npts::Integer, nbods::Integer,
 	tau = stokes(npts,nbods,xv,yv)
 	return abs(tau)
 end
+
+#= stokes_thl_single: Call the Stokes solver for a single body 
+using theta-len values and with the center at the origin. =#
+function stokes_thl_sing(theta::Vector{Float64}, len::Float64)
+	npts = endof(theta)
+	atau = stokes_thl(npts, 1, theta, [len], [0.0], [0.0])
+	return atau
+end

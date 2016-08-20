@@ -3,12 +3,12 @@ include("includes.jl")
 
 # plotcurve
 function plotcurve(theta::Vector{Float64}, len::Float64, 
-		xback::Float64, x0::Vector{Float64}, y0::Vector{Float64}, cnt::Integer)
+		x0::Vector{Float64}, y0::Vector{Float64}, cnt::Integer)
 	# Reconstruct the x,y coordinates of the curve.
 	xx,yy = getxy(theta,len)
 	p1 = plot(x0,y0,".-", xx,yy,".-")
 	xlim(-1.0,1.0); ylim(-1.0,1.0)
-	figname = string("../Figs/fig",string(cnt),".pdf")
+	figname = string("../figs/fig",string(cnt),".pdf")
 	savefig(p1, figname, width=500, height=500)
 end
 
@@ -42,8 +42,7 @@ th05dot,M05,N05 = thetadot(atau,theta05,len05,epsilon,beta)
 len1 = len0 + dt*M05
 theta1 = theta0 + dt*th05dot
 # Plot the result.
-cnt = 1
-plotcurve(theta1,len1,xback,x0,y0,cnt)
+cnt = 1; plotcurve(theta1,len1,x0,y0,cnt)
 
 # Enter while loop.
 tfin += 0.1*dt
@@ -52,11 +51,8 @@ while(tm < tfin)
 	# Advance theta and len in time
 	theta1,len0,len1,M0,N0 = advance_thetalen(atau,theta1,
 								len0,len1,M0,N0,dt,epsilon,beta)
-	# Advance time and counter.
-	tm += dt
-	cnt += 1
-	# Plot the result.
-	plotcurve(theta1,len1,xback,x0,y0,cnt)
+	# Advance time and counter, and plot the result.
+	tm += dt; cnt += 1; plotcurve(theta1,len1,x0,y0,cnt)
 end
 
 # Plot area vs. time
