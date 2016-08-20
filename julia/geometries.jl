@@ -1,26 +1,20 @@
 # geometries.jl: Construct various geometries.
 
-#= getalpha: Calculate the normalized arclength parameter, alpha = s/L.
-Used in certain thetalen routines (advance_theta, getMN, thetadot);
-Used to construct the geometries;
-Note: This function uses an offset grid, but the offset is irrelevant
-if alpha is used inside gaussfilter or specdiff, as it is inside all of the
-thetalen routines. The offset does make a difference for the geometry routines. =#
-function getalpha(npts::Integer)
-	dalpha = 1.0/npts
-	alpha = collect(range(0.5*dalpha, dalpha, npts))
-	return alpha
-end
-
 # circgeo: Creates a circle.
-function circgeo(npts::Integer, rad::Float64)
+function circgeo(npts::Integer, rad::Float64, xc::Float64=0.0, yc::Float64=0.0)
 	# alpha = s/L is the parameterization variable.
-	alpha = getalpha(npts)
+	dalpha = 1.0/npts
+	# Use an offset grid.
+	alpha = collect(range(0.5*dalpha, dalpha, npts))
 	# theta is the tangent angle.
 	theta = 0.5*pi + 2*pi*alpha
 	# len is the total arclength.
 	len = 2*pi*rad
-	return theta, len
+	# Create a zero vector to pass to ThetaLenType for atau and NN
+	zvec = zeros(Float64,npts)
+	# Create a new ThetaLenType
+	thlen = ThetaLenType(npts,alpha,theta,len,xc,yc,zvec,0.0,zvec)
+	return thlen
 end
 
 #= trigeo: Construct a triangle geometry within the theta-L framework.

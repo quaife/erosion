@@ -17,12 +17,16 @@ tfin += 0.5*dt
 # Put the parameters in a single variable.
 params = ParamType(dt,epsilon,beta)
 # Create the initial circular geometry.
-theta0,len0 = circgeo(npts,rad)
-x0,y0 = getxy(theta0,len0)
+thlen0 = circgeo(npts,rad)
+# Get the initial x and y coordinates
+x0,y0 = getxy(thlen0)
 # Use RK2 as a starter.
-theta1,len1,M0,N0 = RKstarter(theta0,len0,params)
+thlen1 = RKstarter(thlen0,params)
+
 # Plot the result.
 tm = dt; cnt = 1; plotcurve(theta1,len1,x0,y0,cnt)
+
+#=
 
 # Enter while loop.
 while(tm < tfin)
@@ -34,3 +38,4 @@ while(tm < tfin)
 	# Advance time and counter, and plot the result.
 	tm += dt; cnt += 1; plotcurve(theta1,len1,x0,y0,cnt)
 end
+=#
