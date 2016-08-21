@@ -175,7 +175,7 @@ end
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
 	# Only compute xx and yy if they are not already loaded in thlen.
-	if xx==[] || yy==[]
+	if thlen.xx==[] || thlen.yy==[]
 		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xc, thlen.yc)
 	end
 	return
