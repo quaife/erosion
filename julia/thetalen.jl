@@ -62,6 +62,8 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 end
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
 function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
+	# Make sure that atau is not empty.
+	if atau==[]; error("atau has not been computed"); return; end
 	# Extract the needed variables.
 	epsilon, beta = params.epsilon, params.beta
 	alpha = getalpha(endof(theta))
