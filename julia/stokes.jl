@@ -31,6 +31,9 @@ end
 using theta-len values and with the center at the origin. =#
 function stokes_thl_sing(theta::Vector{Float64}, len::Float64)
 	npts = endof(theta)
-	atau = stokes_thl(npts, 1, theta, [len], [0.0], [0.0])
-	return atau
+	return stokes_thl(npts, 1, theta, [len], [0.0], [0.0])
+end
+# Same function for ThetaLenType input
+function stokes_thl_sing(thlen::ThetaLenType)
+	return stokes_thl_sing(thlen.theta, thlen.len)
 end

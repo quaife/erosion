@@ -13,69 +13,80 @@ end
 function new_thlen(thlen::ThetaLenType)
 	npts = thlen.npts
 	zvec = zeros(Float64,npts)
-	ThetaLenType(npts, thlen.alpha, zvec, 0.0, 0.0, 0.0, zvec, 0.0, zvec)
+	return ThetaLenType(npts, thlen.alpha, zvec, 0.0, 0.0, 0.0, zvec, 0.0, zvec)
 end
+# Copy the relevant contents from thlen1 to thlen2.
+function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
+	thlen2.npts = thlen1.npts
+	thlen2.alpha = thlen1.alpha
+	thlen2.theta = thlen1.theta
+	thlen2.len = thlen1.len
+	thlen2.xc = thlen1.xc
+	thlen2.yc = thlen1.yc
+	thlen2.atau = thlen1.atau
+	thlen2.mterm = thlen1.mterm
+	thlen2.nterm = thlen1.nterm
+end
+
+
+function foo!(thlen::ThetaLenType)
+	thlen.len = 55.0
+	return
+end
+
 
 ########## Starter routines ##########
 # RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
-function RKstarter(thlen0::ThetaLenType, params::ParamType)
-	dt,epsilon,beta = getparams(params)
-	theta0 = thlen0.theta
-	len0 = thlen0.len
-
-
+function RKstarter!(thlen0::ThetaLenType, params::ParamType)
+	# Extract the needed variables.
+	dt, epsilon, beta = params.dt, params.epsilon, params.beta
+	theta0, len0 = thlen0.theta, thlen0.len
 	# Get the time derivatives at t=0.
 	thlen0.atau = stokes_thl_sing(theta0,len0)
-	th0dot,M0,N0 = thetadot(thlen0,params)
-
+	th0dot = thetadot!(thlen0,params)
+	m0 = thlen0.mterm
 	# Take the first half-step of RK2.
-	len05 = len0 + 0.5*dt*M0
+	len05 = len0 + 0.5*dt*m0
 	theta05 = theta0 + 0.5*dt*th0dot
-
-
-	# Save the results in a new ....
-	thlen05 = deepcopy(thlen0)
-
+	# Save the results in a new ThetaLenType variable.
+	thlen05 = new_thlen(thlen0)
+	thlen05.theta = theta05
+	thlen05.len = len05
 	# Get the time derivatives at t=0.5*dt.
 	thlen05.atau = stokes_thl_sing(theta05,len05)
-	th05dot,M05,N05 = thetadot(thlen05,params)
+	th05dot = thetadot!(thlen05,params)
+	m05 = thlen05.mterm
 	# Take the second step of RK2.
-	len1 = len0 + dt*M05
+	len1 = len0 + dt*m05
 	theta1 = theta0 + dt*th05dot
-
-	# Remember the MM and NN values in thlen0
-	thlen0.MM = M0
-	thlen0.NN = N0
-
-	# Question: will this modify thlen0 without returning it??? I think yes.
-
 	# Copy the new values to a new ThetaLenType variable.
-	thlen1 = deepcopy(thlen0)
+	thlen1 = new_thlen(thlen0)
 	thlen1.theta = theta1
 	thlen1.len = len1
 	return thlen1
 end
 #= thetadot: Calculate the time derivative of theta;
-Also return MM and NN while we're at it. Only used in the RKstarter. =#
-function thetadot(thlen::ThetaLenType, params::ParamType)
-	theta = thlen.theta
-	len = thlen.len
-	atau = thlen.atau
-
-	dt,epsilon,beta = getparams(params)
-	# Get the M and N terms
-	MM,NN = getMN(atau,theta,len,params)
+It also calculates mterm and nterm in thlen. =#
+function thetadot!(thlen::ThetaLenType, params::ParamType)
+	# Extract the needed variables.
+	dt, epsilon, beta = params.dt, params.epsilon, params.beta
+	alpha, theta, len = thlen.alpha, thlen.theta, thlen.len
+	# Calculate mterm and nterm at time 0.
+	getmn!(thlen,params)
+	nterm = thlen.nterm
 	# Calculate the time derivative of theta.
-	alpha = getalpha(endof(theta))
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
-	thdot = epsilon*len^(beta-2)*d2th + NN
-	return thdot, MM, NN
+	thdot = epsilon*len^(beta-2)*d2th + nterm
+	# Return thdot
+	return thdot
 end
-
-function thetadot(thlen::ThetaLenType, params::ParamType)
-
 ########################################
+
+
+
+
+
 
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xc and yc are the coordinates of the center of mass (???).
@@ -105,12 +116,11 @@ function getxy(thlen::ThetaLenType)
 end
 
 # plotcurve: Plot a curve from the theta-len values.
-function plotcurve(theta::Vector{Float64}, len::Float64, 
-		x0::Vector{Float64}, y0::Vector{Float64}, cnt::Integer)
+function plotcurve(thlen::ThetaLenType, x0::Vector{Float64}, y0::Vector{Float64}, cnt::Integer)
 	# Set the axis limits.
 	axlim = 0.5
 	# Reconstruct the x,y coordinates of the curve.
-	xx,yy = getxy(theta,len)
+	xx,yy = getxy(thlen)
 	# Make the plot.
 	p1 = plot(x0,y0,"-", xx,yy,"-")
 	xlim(-axlim,axlim); ylim(-axlim,axlim)

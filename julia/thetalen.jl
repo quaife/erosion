@@ -37,8 +37,8 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	# Update theta with a multistep, integrating-factor method.
 	advance_theta!(thlen2,thlen1,thlen0,params)
 	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1
-	thlen0 = deepcopy(thlen1)
-	thlen1 = deepcopy(thlen2)
+	copy_thlen!(thlen1,thlen0)
+	copy_thlen!(thlen2,thlen1)
 	return
 end
 
