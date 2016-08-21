@@ -2,23 +2,20 @@
 
 # ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
-	dt::Float64; epsilon::Float64; beta::Real
+	dt::Float64; epsilon::Float64; beta::Real;
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
-	npts::Integer; alpha::Vector{Float64}; theta::Vector{Float64}; len::Float64
-	xc::Float64; yc::Float64; atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64}
+	theta::Vector{Float64}; len::Float64; xc::Float64; yc::Float64; 
+	atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64};
+	xx::Vector{Float64}; yy::Vector{Float64};
 end
-# Create a new ThetaLenType variables that only inherits npts and alpha.
-function new_thlen(thlen::ThetaLenType)
-	npts = thlen.npts
-	zvec = zeros(Float64,npts)
-	return ThetaLenType(npts, thlen.alpha, zvec, 0.0, 0.0, 0.0, zvec, 0.0, zvec)
+# Create a new ThetaLenType that has all zeros.
+function new_thlen()
+	return ThetaLenType([0.0], 0.0, 0.0, 0.0, [0.0], 0.0, [0.0], [0.0], [0.0])
 end
 # Copy the relevant contents from thlen1 to thlen2.
 function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
-	thlen2.npts = thlen1.npts
-	thlen2.alpha = thlen1.alpha
 	thlen2.theta = thlen1.theta
 	thlen2.len = thlen1.len
 	thlen2.xc = thlen1.xc
@@ -26,12 +23,8 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.atau = thlen1.atau
 	thlen2.mterm = thlen1.mterm
 	thlen2.nterm = thlen1.nterm
-end
-
-
-function foo!(thlen::ThetaLenType)
-	thlen.len = 55.0
-	return
+	thlen2.xx = thlen1.xx
+	thlen2.yy = thlen1.yy
 end
 
 
@@ -43,43 +36,40 @@ function RKstarter!(thlen0::ThetaLenType, params::ParamType)
 	theta0, len0 = thlen0.theta, thlen0.len
 	# Get the time derivatives at t=0.
 	thlen0.atau = stokes_thl_sing(theta0,len0)
-	th0dot = thetadot!(thlen0,params)
-	m0 = thlen0.mterm
+	th0dot, m0 = thetadot!(thlen0,params)
 	# Take the first half-step of RK2.
 	len05 = len0 + 0.5*dt*m0
 	theta05 = theta0 + 0.5*dt*th0dot
-	# Save the results in a new ThetaLenType variable.
-	thlen05 = new_thlen(thlen0)
-	thlen05.theta = theta05
-	thlen05.len = len05
-	# Get the time derivatives at t=0.5*dt.
-	thlen05.atau = stokes_thl_sing(theta05,len05)
-	th05dot = thetadot!(thlen05,params)
-	m05 = thlen05.mterm
-	# Take the second step of RK2.
-	len1 = len0 + dt*m05
-	theta1 = theta0 + dt*th05dot
-	# Copy the new values to a new ThetaLenType variable.
-	thlen1 = new_thlen(thlen0)
-	thlen1.theta = theta1
-	thlen1.len = len1
+	# Get the time derivatives at t=0.5*dt (do not need to use ThetaLenType).
+	atau05 = stokes_thl_sing(theta05,len05)
+	th05dot,m05,n05 = thetadot(theta05,len05,atau05,params)
+	# Create a new ThetaLenType variables and take the second step of RK2.
+	thlen1 = new_thlen()
+	thlen1.len = len0 + dt*m05
+	thlen1.theta = theta0 + dt*th05dot
 	return thlen1
 end
-#= thetadot: Calculate the time derivative of theta;
-It also calculates mterm and nterm in thlen. =#
-function thetadot!(thlen::ThetaLenType, params::ParamType)
+
+# thetadot: Calculate the time derivative of theta.
+function thetadot(theta::Vector{Float64}, len::Float64, atau::Vectlor{Float64}, params::ParamType)
 	# Extract the needed variables.
 	dt, epsilon, beta = params.dt, params.epsilon, params.beta
-	alpha, theta, len = thlen.alpha, thlen.theta, thlen.len
+	alpha = getalpha(endof(theta))
 	# Calculate mterm and nterm at time 0.
-	getmn!(thlen,params)
-	nterm = thlen.nterm
+	mterm, nterm = getmn(theta,len,atau,params)
 	# Calculate the time derivative of theta.
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
 	thdot = epsilon*len^(beta-2)*d2th + nterm
-	# Return thdot
-	return thdot
+	# Return thdot, mterm, nterm.
+	return thdot, mterm, nterm
+end
+#= thetadot: Dispatch for ThetaLenType.
+It also calculates mterm and nterm and saves them in thlen. =#
+function thetadot!(thlen::ThetaLenType, params::ParamType)
+	# Call thetadot and save mterm and nterm in thlen.
+	thdot, thlen.mterm, thlen.nterm = thetadot(thlen.theta, thlen.len, thlen.atau, params)
+	return thdot, mterm
 end
 ########################################
 
@@ -107,12 +97,8 @@ function getxy(theta::Vector{Float64}, len::Float64, xc::Float64, yc::Float64)
 	return xx,yy
 end
 # Create another dispatch of getxy for input of type ThetaLenType.
-function getxy(thlen::ThetaLenType)
-	theta = thlen.theta
-	len =  thlen.len
-	xc = thlen.xc
-	yc = thlen.yc
-	xx,yy = getxy(theta,len,xc,yc)
+function getxy!(thlen::ThetaLenType)
+	thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xc, thlen.yc)
 end
 
 # plotcurve: Plot a curve from the theta-len values.

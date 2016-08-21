@@ -18,8 +18,9 @@ tfin += 0.5*dt
 params = ParamType(dt,epsilon,beta)
 # Create the initial circular geometry.
 thlen0 = circgeo(npts,rad)
-# Get the initial x and y coordinates
-x0,y0 = getxy(thlen0)
+# Compute the initial x and y coordinates
+getxy!(thlen0)
+
 # Use RK2 as a starter.
 thlen1 = RKstarter!(thlen0,params)
 # Plot the result.

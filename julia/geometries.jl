@@ -1,19 +1,28 @@
 # geometries.jl: Construct various geometries.
 
+# getalpha: Calculate the parameterization variable, alpha = s/L.
+function getalpha(npts::Integer)
+    # alpha = s/L is the parameterization variable.
+    dalpha = 1.0/npts
+    # Use an offset grid.
+    alpha = collect(range(0.5*dalpha, dalpha, npts))
+    return alpha
+end
+
 # circgeo: Creates a circle.
 function circgeo(npts::Integer, rad::Float64, xc::Float64=0.0, yc::Float64=0.0)
-	# alpha = s/L is the parameterization variable.
-	dalpha = 1.0/npts
-	# Use an offset grid.
-	alpha = collect(range(0.5*dalpha, dalpha, npts))
+    # alpha = s/L is the parameterization variable.
+    alpha = getalpha(npts)
 	# theta is the tangent angle.
 	theta = 0.5*pi + 2*pi*alpha
 	# len is the total arclength.
 	len = 2*pi*rad
-	# Create a zero vector to pass to ThetaLenType for atau and NN
-	zvec = zeros(Float64,npts)
-	# Create a new ThetaLenType
-	thlen = ThetaLenType(npts,alpha,theta,len,xc,yc,zvec,0.0,zvec)
+	# Save the data in a ThetaLenType variable.
+    thlen = new_thlen()
+	thlen.theta = theta
+    thlen.len = len
+    thlen.xc = xc
+    thlen.yc = yc
 	return thlen
 end
 

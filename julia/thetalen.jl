@@ -32,7 +32,7 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	len2 = len1 + 0.5*dt*(3*m1-m0)
 	if len2<0; error("The curve length is negative"); return; end
 	# Create a new ThetaLenType variable and save the new len.
-	thlen2 = new_thlen(thlen1)
+	thlen2 = new_thlen()
 	thlen2.len = len2
 	# Update theta with a multistep, integrating-factor method.
 	advance_theta!(thlen2,thlen1,thlen0,params)
@@ -65,11 +65,10 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 end
 
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
-# Note: thlen must already be loaded with the correct atau.
-function getmn!(thlen::ThetaLenType, params::ParamType)
+function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Extract the needed variables.
 	epsilon, beta = params.epsilon, params.beta
-	alpha, theta, len, atau = thlen.alpha, thlen.theta, thlen.len, thlen.atau
+	alpha = getalpha(endof(theta))
 	# The derivative of theta wrt alpha.
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
 	# The normal velocity.
@@ -80,9 +79,13 @@ function getmn!(thlen::ThetaLenType, params::ParamType)
 	datau = specdiff(atau)
 	# The nonlinear term in the theta-evolution equation.
 	nterm = (datau + dtheta.*vtang)/len
-	# Save the results in the thlen variable.
-	thlen.mterm = mterm
-	thlen.nterm = nterm
+	# Return mterm and nterm.
+	return mterm, nterm
+end
+# getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
+# Note: thlen must already be loaded with the correct atau.
+function getmn!(thlen::ThetaLenType, params::ParamType)
+	thlen.mterm, thlen.nterm = getmn(thlen.theta, thlen.len, thlen.atau, params)
 	return
 end
 
