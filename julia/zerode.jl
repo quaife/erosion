@@ -26,16 +26,14 @@ thlen1 = RKstarter(thlen0,params)
 # Plot the result.
 tm = dt; cnt = 1; plotcurve(theta1,len1,x0,y0,cnt)
 
-#=
 
 # Enter while loop.
 while(tm < tfin)
-	# Compute the stress
+	# Compute the new stress and save it.
 	atau = stokes_thl_sing(theta1,len1)
-	# Advance theta and len in time
-	theta1,len0,len1,M0,N0 = advance_thetalen(atau,theta1,
-								len0,len1,M0,N0,params)
-	# Advance time and counter, and plot the result.
+	thlen1.atau = atau
+		# Advance thlen forward in time using the multi-step method.
+	advance_thetalen!(thlen1,thlen0,params)
+	# Advance time & counter and plot the result.
 	tm += dt; cnt += 1; plotcurve(theta1,len1,x0,y0,cnt)
 end
-=#

@@ -18,26 +18,38 @@ is parameterized in the counter-clockwise (CCW) direction, and I use the
 inward pointing normal. =#
 
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2, 
-using some values from n=0. This is a multistep method. =#
-function advance_thetalen(atau1::Vector{Float64}, theta1::Vector{Float64}, 
-		len0::Float64, len1::Float64, M0::Float64, N0::Vector{Float64}, params::ParamType)
+using some values from n=0. This is a multistep method.
+Note: thlen1 must already be loaded with the correct atua, which is used in getmn!() =#
+function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
+	# Extract the needed variables.
 	dt = params.dt
-	# Get the terms M and N at time n=1.
-	M1,N1 = getMN(atau1,theta1,len1,params)
-	# Update len with an explicit, multistep method.
-	len2 = len1 + 0.5*dt*(3*M1-M0)
+	m0 = thlen0.mterm
+	len1 = thlen1.len
+	# Calculate mterm and nterm at time n=1.
+	getmn!(thlen1,params)
+	m1 = thlen1.mterm
+	# Update len with an explicit, multistep method; error if len negative.
+	len2 = len1 + 0.5*dt*(3*m1-m0)
 	if len2<0; error("The curve length is negative"); return; end
+	# Create a new ThetaLenType variable and save the new len.
+	thlen2 = new_thlen(thlen1)
+	thlen2.len = len2
 	# Update theta with a multistep, integrating-factor method.
-	theta2 = advance_theta(theta1,len0,len1,len2,N0,N1,params)
-	return theta2, len1, len2, M1, N1
+	advance_theta!(thlen2,thlen1,thlen0,params)
+	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1
+	thlen0 = deepcopy(thlen1)
+	thlen1 = deepcopy(thlen2)
+	return
 end
 
 # advance_theta: Advance theta in time with the integrating-factor method.
-function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, len2::Float64, 
-		N0::Vector{Float64}, N1::Vector{Float64}, params::ParamType)
+function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
+	# Extract the needed variables.
 	dt, epsilon, beta = params.dt, params.epsilon, params.beta
-	# Calculate alpha.
-	alpha = getalpha(endof(theta1))
+	theta1, len1, n1 = thlen1.theta, thlen1.len, thlen1.nterm
+	len0, n0 = thlen0.len, thlen0.nterm
+	len2 = thlen2.len
+	alpha = thlen0.alpha
 	# The power of L that is used.
 	lpow = beta-2
 	# The first value used in the Gaussian filter.
@@ -47,13 +59,14 @@ function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, le
 	sig2 = sqrt( len0^lpow + 2*len1^lpow + len2^lpow )
 	sig2 *= 2*pi*sqrt(epsilon*dt)
 	# Apply the appropriate Gaussian filters to advance theta in time.
-	theta2 = gaussfilter( theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
-	theta2 += 0.5*dt*( 3*gaussfilter(N1,sig1) - gaussfilter(N0,sig2) )
-	return theta2
+	thlen2.theta = gaussfilter( theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
+	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
+	return
 end
 
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
-function getmn(thlen::ThetaLenType, params::ParamType)
+# Note: thlen must already be loaded with the correct atau.
+function getmn!(thlen::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
 	epsilon, beta = params.epsilon, params.beta
 	alpha, theta, len, atau = thlen.alpha, thlen.theta, thlen.len, thlen.atau
@@ -70,7 +83,7 @@ function getmn(thlen::ThetaLenType, params::ParamType)
 	# Save the results in the thlen variable.
 	thlen.mterm = mterm
 	thlen.nterm = nterm
-	return 0
+	return
 end
 
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.

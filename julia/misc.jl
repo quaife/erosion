@@ -1,13 +1,19 @@
 #= misc.jl: Miscellaneous functions =#
 
-# Create a ParamType to avoid passing all of the parameters to every function.
+# ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
 	dt::Float64; epsilon::Float64; beta::Real
 end
-# Creat a ThetaLenType to keep all of the information of a curve.
+# ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
 	npts::Integer; alpha::Vector{Float64}; theta::Vector{Float64}; len::Float64
 	xc::Float64; yc::Float64; atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64}
+end
+# Create a new ThetaLenType variables that only inherits npts and alpha.
+function new_thlen(thlen::ThetaLenType)
+	npts = thlen.npts
+	zvec = zeros(Float64,npts)
+	ThetaLenType(npts, thlen.alpha, zvec, 0.0, 0.0, 0.0, zvec, 0.0, zvec)
 end
 
 ########## Starter routines ##########
