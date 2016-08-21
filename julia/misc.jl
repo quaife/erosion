@@ -4,16 +4,10 @@
 type ParamType
 	dt::Float64; epsilon::Float64; beta::Real
 end
-# Function to extract the values from a ParamType variable.
-function getparams(params::ParamType)
-	dt = params.dt; epsilon = params.epsilon; beta = params.beta
-	return dt, epsilon, beta
-end
-
 # Creat a ThetaLenType to keep all of the information of a curve.
 type ThetaLenType
 	npts::Integer; alpha::Vector{Float64}; theta::Vector{Float64}; len::Float64
-	xc::Float64; yc::Float64; atau::Vector{Float64}; MM::Float64; NN::Vector{Float64}
+	xc::Float64; yc::Float64; atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64}
 end
 
 ########## Starter routines ##########

@@ -21,7 +21,7 @@ inward pointing normal. =#
 using some values from n=0. This is a multistep method. =#
 function advance_thetalen(atau1::Vector{Float64}, theta1::Vector{Float64}, 
 		len0::Float64, len1::Float64, M0::Float64, N0::Vector{Float64}, params::ParamType)
-	dt,epsilon,beta = getparams(params)
+	dt = params.dt
 	# Get the terms M and N at time n=1.
 	M1,N1 = getMN(atau1,theta1,len1,params)
 	# Update len with an explicit, multistep method.
@@ -35,7 +35,7 @@ end
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, len2::Float64, 
 		N0::Vector{Float64}, N1::Vector{Float64}, params::ParamType)
-	dt,epsilon,beta = getparams(params)
+	dt, epsilon, beta = params.dt, params.epsilon, params.beta
 	# Calculate alpha.
 	alpha = getalpha(endof(theta1))
 	# The power of L that is used.
@@ -52,33 +52,37 @@ function advance_theta(theta1::Vector{Float64}, len0::Float64, len1::Float64, le
 	return theta2
 end
 
-# getMN: Calculates the terms M=dL/dt and N.
-function getMN(atau::Vector{Float64}, theta::Vector{Float64}, len::Float64, params::ParamType)
-	dt,epsilon,beta = getparams(params)
+# getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
+function getmn(thlen::ThetaLenType, params::ParamType)
+	# Extract the needed variables.
+	epsilon, beta = params.epsilon, params.beta
+	alpha, theta, len, atau = thlen.alpha, thlen.theta, thlen.len, thlen.atau
 	# The derivative of theta wrt alpha.
-	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
-	# Calculate the normal velocity.
+	# The normal velocity.
 	vnorm = atau + epsilon*len^(beta-1) * (dtheta - 2*pi)
 	# Get the tangential velocity and dL/dt.
-	vtang, dldt = tangvel(dtheta, vnorm)
+	vtang, mterm = tangvel(dtheta, vnorm)
 	# The derivative of the absolute value of shear stress.
 	datau = specdiff(atau)
-	# Calculate the nonlinear term in the theta-evolution equation.
+	# The nonlinear term in the theta-evolution equation.
 	nterm = (datau + dtheta.*vtang)/len
-	return dldt, nterm
+	# Save the results in the thlen variable.
+	thlen.mterm = mterm
+	thlen.nterm = nterm
+	return 0
 end
 
-# tangvel: Compute the tangential velocity and dL/dt along the way.
+# tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
 function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	# The product of dtheta and vnorm, along with its mean.
 	prod = dtheta.*vnorm
 	mprod = mean(prod)
-	# Formula for dL/dt.
-	dldt = -mprod
+	# Formula for mterm = dL/dt.
+	mterm = -mprod
 	# The derivative of the tangnential velocity wrt alpha.
 	dvtang = prod - mprod
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 	vtang = specint(dvtang)
-	return vtang, dldt
+	return vtang, mterm
 end
