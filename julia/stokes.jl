@@ -10,30 +10,29 @@ function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{F
 		&npts, &nbods, xx, yy, tau)
 	return tau
 end
-
-# stokes_thl: Call the Stokes solver given the theta-len values.
-function stokes_thl(npts::Integer, nbods::Integer, 
-		thetas::Vector{Float64}, lens::Vector{Float64}, 
-		xcs::Vector{Float64}, ycs::Vector{Float64})
-	ntot = npts*nbods
-	xv = zeros(Float64,ntot)
-	yv = zeros(Float64,ntot)
-	for nn=1:nbods
+#= stokes!: Dispatch for vector of ThetaLenType. Updates atau in each thlen.
+Note: All of the entries in thlenv should already be loaded with xx and yy values. =#
+function stokes!(thlenv::Vector{ThetaLenType})
+	nbods = endof(thlenv)
+	npts = endof(thlenv[1].theta)
+	ntot = nbods*npts
+	xv = zeros(Float64,ntot); yv = zeros(Float64,ntot)
+	# Put all of the xy values in a single vector.
+	for nn = 1:nbods
+		# Compute the xy coordinates if they are not already loaded in thlen.
+		getxy!(thlenv[nn])
+		# Put the values into a single vector.
 		n1 = npts*(nn-1)+1
 		n2 = npts*nn
-		xv[n1:n2],yv[n1:n2] = getxy(thetas[n1:n2],lens[nn],xcs[nn],ycs[nn])
+		xv[n1:n2], yv[n1:n2] = thlenv[nn].xx, thlenv[nn].yy
 	end
+	# Call the stokessolver.
 	tau = stokes(npts,nbods,xv,yv)
-	return abs(tau)
-end
-
-#= stokes_thl_single: Call the Stokes solver for a single body 
-using theta-len values and with the center at the origin. =#
-function stokes_thl_sing(theta::Vector{Float64}, len::Float64)
-	npts = endof(theta)
-	return stokes_thl(npts, 1, theta, [len], [0.0], [0.0])
-end
-# Same function for ThetaLenType input
-function stokes_thl_sing(thlen::ThetaLenType)
-	return stokes_thl_sing(thlen.theta, thlen.len)
+	# Update the atau value in each of the thlen variables.
+	for nn = 1:nbods
+		n1 = npts*(nn-1)+1
+		n2 = npts*nn
+		thlenv[nn].atau = abs(tau[n1:n2])
+	end
+	return
 end
