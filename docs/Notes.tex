@@ -178,7 +178,9 @@ where
 \end{align}
 
 
-\subsection{Center of mass motion}
+\subsection{Motion of a reference point}
+
+\subsubsection{The center of mass}
 Consider the body's center of mass
 \begin{equation}
 (x_{cm}, y_{cm}) = \frac{1}{A} \iint (x, y) \, dA
@@ -202,6 +204,15 @@ To calculate the total area, $A$, I can use the divergence theorem again, to get
 A = \int x n_x ds = \int y n_y ds
 \end{equation}
 
+\subsubsection{The surface-average coordinates}
+I believe this will be even simpler. Consider the average of the surface coordinates
+\begin{equation}
+(x_a, y_a) = \int (x(\alpha), y(\alpha)) \, d\alpha
+\end{equation}
+I believe that this point moves according to
+\begin{equation}
+\td{}{t} (x_a, y_a) = \int V_n \, (n_x, n_y) \, d\alpha
+\end{equation}
 
 
 

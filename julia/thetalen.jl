@@ -105,7 +105,7 @@ end
 
 #################### Starter routines ####################
 #= RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
-It calculates mterm and nterm and saves them in thlen0. =#
+It also calculates mterm and nterm and saves them in thlen0. =#
 function RKstarter!(thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
 	dt, epsilon, beta = params.dt, params.epsilon, params.beta
