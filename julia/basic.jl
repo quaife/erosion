@@ -100,8 +100,29 @@ function circgeo(npts::Integer, rad::Float64, xc::Float64=0.0, yc::Float64=0.0)
 	thlen.xc = xc; thlen.yc = yc
 	return thlen
 end
-# heaviside: The Heaviside function
-function heaviside(tt)
-   0.5 * (sign(tt) + 1)
+#
+function polygongeo(npts::Integer, nsides::Integer, 
+		sigma::Float64 = 0.1, sdlen::Float64=0.5, xc::Float64=0.0, yc::Float64=0.0)
+	# Create a new ThetaLenType variable.
+	thlen = new_thlen()
+	# alpha = s/L is the parameterization variable.
+	alpha = getalpha(npts)
+	# theta is the tangent angle.
+	theta = zeros(npts)
+	for nn=1:nsides
+		a0 = (nn-1)/nsides
+		a1 = nn/nsides
+		intvl = ((a0 .<= alpha) & (alpha .<= a1))
+		theta[intvl] = 0.5*pi + 2*pi*(nn-1)/nsides
+	end
+	# Smooth theta
+	theta = gaussfilter(theta - 2*pi*alpha, sigma) + 2*pi*alpha
+	# Save theta in the ThetaLenType object.
+	thlen.theta = theta
+	# len is the total arclength.
+	thlen.len = nsides*sdlen
+	# Save xc and yc too.
+	thlen.xc = xc; thlen.yc = yc
+	return thlen
 end
 ##################################################
