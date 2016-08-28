@@ -34,10 +34,9 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	thlen2.len = len2
 	# Update theta with a multistep, integrating-factor method.
 	advance_theta!(thlen2,thlen1,thlen0,params)
-
-	# TEMPORARY: keep xa and ya fixed.
-	thlen2.xa = thlen1.xa; thlen2.ya = thlen1.ya;
-	
+	# Update surface-mean coordinates with an explicit, multistep method.
+	thlen2.xsm = thlen1.xsm + 0.5*dt*(3*thlen1.xsmdot - thlen0.xsmdot)
+	thlen2.ysm = thlen1.ysm + 0.5*dt*(3*thlen1.ysmdot - thlen0.ysmdot)
 	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1
 	copy_thlen!(thlen1,thlen0)
 	copy_thlen!(thlen2,thlen1)
@@ -81,14 +80,18 @@ function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, para
 	datau = specdiff(atau)
 	# The nonlinear term in the theta-evolution equation.
 	nterm = (datau + dtheta.*vtang)/len
-	# Return mterm and nterm.
-	return mterm, nterm
+	# Calculate the motion of the surface-mean points.
+	xsmdot = mean(-vnorm.*sin(theta) + vtang.*cos(theta))
+	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
+	# Return everything.
+	return mterm, nterm, xsmdot, ysmdot
 end
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
 Also returms mterm to be used locally.
 Note: thlen must already be loaded with the correct atau. =#
 function getmn!(thlen::ThetaLenType, params::ParamType)
-	thlen.mterm, thlen.nterm = getmn(thlen.theta, thlen.len, thlen.atau, params)
+	thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
+		getmn(thlen.theta, thlen.len, thlen.atau, params)
 	return thlen.mterm
 end
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
@@ -123,18 +126,22 @@ function RKstarter!(thlen0::ThetaLenType, params::ParamType)
 	# Take the first half-step of RK2.
 	thlen05.len = len0 + 0.5*dt*m0
 	thlen05.theta = theta0 + 0.5*dt*th0dot
+	# Update the surface-mean coordinates.
+	thlen05.xsm = thlen0.xsm + 0.5*dt*thlen0.xsmdot
+	thlen05.ysm = thlen0.ysm + 0.5*dt*thlen0.ysmdot
 	# Get the time derivatives at t=0.5*dt.
 	stokes!([thlen05])
 	th05dot, m05 = thetadot!(thlen0,params)
+
 	# Create a new ThetaLenType variables for time t=dt.
 	thlen1 = new_thlen()
 	# Take the second step of RK2.
 	thlen1.len = len0 + dt*m05
 	thlen1.theta = theta0 + dt*th05dot
-
-	# TEMPORARY: keep xa and ya fixed.
-	thlen1.xa = thlen0.xa; thlen1.ya = thlen0.ya;
-
+	# Update the surface-mean coordinates.
+	thlen1.xsm = thlen0.xsm + dt*thlen05.xsmdot
+	thlen1.ysm = thlen0.ysm + dt*thlen05.ysmdot
+	# Return
 	return thlen1
 end
 # thetadot: Calculate the time derivative of theta.
@@ -143,19 +150,20 @@ function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, p
 	dt, epsilon, beta = params.dt, params.epsilon, params.beta
 	alpha = getalpha(endof(theta))
 	# Calculate mterm and nterm at time 0.
-	mterm, nterm = getmn(theta,len,atau,params)
+	mterm, nterm, xsmdot, ysmdot = getmn(theta,len,atau,params)
 	# Calculate the time derivative of theta.
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
 	thdot = epsilon*len^(beta-2)*d2th + nterm
 	# Return thdot, mterm, nterm.
-	return thdot, mterm, nterm
+	return thdot, mterm, nterm, xsmdot, ysmdot
 end
 #= thetadot: Dispatch for ThetaLenType.
 It also calculates mterm and nterm and saves them in thlen. =#
 function thetadot!(thlen::ThetaLenType, params::ParamType)
 	# Call thetadot and save mterm and nterm in thlen.
-	thdot, thlen.mterm, thlen.nterm = thetadot(thlen.theta, thlen.len, thlen.atau, params)
+	thdot, thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
+		thetadot(thlen.theta, thlen.len, thlen.atau, params)
 	return thdot, thlen.mterm
 end
 ############################################################
@@ -163,9 +171,9 @@ end
 
 #################### Other routines ####################
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
-xa and ya are the boundary-averaged values.
+xsm and ysm are the boundary-averaged values.
 While we're at it, we can also calculate the normal direcations. =#
-function getxy(theta::Vector{Float64}, len::Float64, xa::Float64, ya::Float64)
+function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	# The increments of dx and dy
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
@@ -173,21 +181,26 @@ function getxy(theta::Vector{Float64}, len::Float64, xa::Float64, ya::Float64)
 	xx = specint(dx)
 	yy = specint(dy)
 	# Move to have the correct average values.
-	xx += xa
-	yy += ya
-	# The normal vector: direction??? needed???
-	nx = -sin(theta)
-	ny = cos(theta)
+	xx += xsm
+	yy += ysm
 	return xx,yy
 end
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
 	# Only compute xx and yy if they are not already loaded in thlen.
 	if thlen.xx==[] || thlen.yy==[]
-		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xa, thlen.ya)
+		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
 	end
 	return
 end
+
+# getnormals: Calculate the surface normals.
+function getnormals(theta::Vector{Float64})
+	nx = -sin(theta)
+	ny = cos(theta)
+	return nx, ny 
+end
+
 # plotcurve: Plot a curve from the theta-len values.
 function plotcurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integer; axlim::Real=0.5)
 	# Compute the xy coordinates if they are not already loaded in thlen.

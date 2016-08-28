@@ -205,15 +205,21 @@ A = \int x n_x ds = \int y n_y ds
 \end{equation}
 
 \subsubsection{The surface-average coordinates}
-I believe this will be even simpler. Consider the average of the surface coordinates
+I believe this will be even simpler. Consider the surface-mean coordinates
 \begin{equation}
-(x_a, y_a) = \int (x(\alpha), y(\alpha)) \, d\alpha
+(x_{sm}, y_{sm}) = \int_0^1 (x(\alpha), y(\alpha)) \, d\alpha
 \end{equation}
-I believe that this point moves according to
-\begin{equation}
-\td{}{t} (x_a, y_a) = \int V_n \, (n_x, n_y) \, d\alpha
-\end{equation}
-
+These coordinates move according to
+\begin{align}
+& \td{}{t} x_{sm} = \int_0^1 V_n \, n_x + V_s \, s_x \, d\alpha \\
+& \td{}{t} y_{sm} = \int_0^1 V_n \, n_y + V_s \, s_y \, d\alpha
+\end{align}
+Given $\nhat = (-\sin \theta, \cos \theta)$ and $\shat = (\cos \theta, \sin \theta)$, these simplify to
+\begin{align}
+& \td{}{t} x_{sm} = \int_0^1 -V_n \sin \theta + V_s \cos \theta \, d\alpha \\
+& \td{}{t} y_{sm} = \int_0^1 V_n \cos \theta + V_s \sin \theta \, d\alpha
+\end{align}
+Note: Initially, I was unsure whether $\int_0^1 V_s \hat{s} d\alpha$ makes a non-zero contribution or not, but based on some tests, it seems that it does make a difference. The order of magnitude is the same as the first term involving $V_n$.
 
 
 \end{document}
