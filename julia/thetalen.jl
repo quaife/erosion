@@ -34,6 +34,10 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	thlen2.len = len2
 	# Update theta with a multistep, integrating-factor method.
 	advance_theta!(thlen2,thlen1,thlen0,params)
+
+	# TEMPORARY: keep xa and ya fixed.
+	thlen2.xa = thlen1.xa; thlen2.ya = thlen1.ya;
+	
 	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1
 	copy_thlen!(thlen1,thlen0)
 	copy_thlen!(thlen2,thlen1)
@@ -119,16 +123,18 @@ function RKstarter!(thlen0::ThetaLenType, params::ParamType)
 	# Take the first half-step of RK2.
 	thlen05.len = len0 + 0.5*dt*m0
 	thlen05.theta = theta0 + 0.5*dt*th0dot
-	# ALSO need to update xc and yc somehow.
 	# Get the time derivatives at t=0.5*dt.
 	stokes!([thlen05])
 	th05dot, m05 = thetadot!(thlen0,params)
-	
 	# Create a new ThetaLenType variables for time t=dt.
 	thlen1 = new_thlen()
 	# Take the second step of RK2.
 	thlen1.len = len0 + dt*m05
 	thlen1.theta = theta0 + dt*th05dot
+
+	# TEMPORARY: keep xa and ya fixed.
+	thlen1.xa = thlen0.xa; thlen1.ya = thlen0.ya;
+
 	return thlen1
 end
 # thetadot: Calculate the time derivative of theta.
@@ -157,16 +163,18 @@ end
 
 #################### Other routines ####################
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
-xc and yc are the coordinates of the center of mass (???).
+xa and ya are the boundary-averaged values.
 While we're at it, we can also calculate the normal direcations. =#
-function getxy(theta::Vector{Float64}, len::Float64, xc::Float64, yc::Float64)
+function getxy(theta::Vector{Float64}, len::Float64, xa::Float64, ya::Float64)
 	# The increments of dx and dy
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
-	# Integrate to get the x,y coordinates.
+	# Integrate to get the x,y coordinates; result will have mean zero.
 	xx = specint(dx)
 	yy = specint(dy)
-	## TO DO: Move the center of mass or average values.
+	# Move to have the correct average values.
+	xx += xa
+	yy += ya
 	# The normal vector: direction??? needed???
 	nx = -sin(theta)
 	ny = cos(theta)
@@ -176,7 +184,7 @@ end
 function getxy!(thlen::ThetaLenType)
 	# Only compute xx and yy if they are not already loaded in thlen.
 	if thlen.xx==[] || thlen.yy==[]
-		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xc, thlen.yc)
+		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xa, thlen.ya)
 	end
 	return
 end

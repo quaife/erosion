@@ -7,7 +7,7 @@ type ParamType
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
-	theta::Vector{Float64}; len::Float64; xc::Float64; yc::Float64; 
+	theta::Vector{Float64}; len::Float64; xa::Float64; ya::Float64; 
 	atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64};
 	xx::Vector{Float64}; yy::Vector{Float64};
 end
@@ -28,8 +28,8 @@ end
 function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.theta = thlen1.theta
 	thlen2.len = thlen1.len
-	thlen2.xc = thlen1.xc
-	thlen2.yc = thlen1.yc
+	thlen2.xa = thlen1.xa
+	thlen2.ya = thlen1.ya
 	thlen2.atau = thlen1.atau
 	thlen2.mterm = thlen1.mterm
 	thlen2.nterm = thlen1.nterm
@@ -87,7 +87,7 @@ function getalpha(npts::Integer)
 	return alpha
 end
 # circgeo: Creates a circle.
-function circgeo(npts::Integer, rad::Float64, xc::Float64=0.0, yc::Float64=0.0)
+function circgeo(npts::Integer, rad::Float64, xa::Float64=0.0, ya::Float64=0.0)
 	# Create a new ThetaLenType variable.
 	thlen = new_thlen()
 	# alpha = s/L is the parameterization variable.
@@ -96,13 +96,13 @@ function circgeo(npts::Integer, rad::Float64, xc::Float64=0.0, yc::Float64=0.0)
 	thlen.theta = 0.5*pi + 2*pi*alpha
 	# len is the total arclength.
 	thlen.len = 2*pi*rad
-	# Save xc and yc too.
-	thlen.xc = xc; thlen.yc = yc
+	# Save xa and ya too.
+	thlen.xa = xa; thlen.ya = ya
 	return thlen
 end
-#
+# polygongeo: Creates a polygon with number of sides, nsides.
 function polygongeo(npts::Integer, nsides::Integer, 
-		sigma::Float64 = 0.1, sdlen::Float64=0.5, xc::Float64=0.0, yc::Float64=0.0)
+		sigma::Float64 = 0.1, sdlen::Float64=0.5, xa::Float64=0.0, ya::Float64=0.0)
 	# Create a new ThetaLenType variable.
 	thlen = new_thlen()
 	# alpha = s/L is the parameterization variable.
@@ -121,8 +121,8 @@ function polygongeo(npts::Integer, nsides::Integer,
 	thlen.theta = theta
 	# len is the total arclength.
 	thlen.len = nsides*sdlen
-	# Save xc and yc too.
-	thlen.xc = xc; thlen.yc = yc
+	# Save xa and ya too.
+	thlen.xa = xa; thlen.ya = ya
 	return thlen
 end
 ##################################################

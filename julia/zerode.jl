@@ -3,16 +3,14 @@ function main()
 	include("basic.jl")
 	##### PARAMETERS #####
 	# Geometry parameters.
-	npts = 512
-	rad = 0.2
-	# Parameters for polygon
-	nsides = 4
-	sigma = 0.1
-	sdlen = 0.2
+	npts = 256
+	xa = 0.2; ya = 0.1;
+	rad = 0.2								# For circle geometry.
+	nsides = 4; sigma = 0.1; sdlen = 0.2	# For polygon geometry.
 	# Evolution parameters.
 	tfin = 0.1
-	dt = 5e-5
-	epsilon = 0.02
+	dt = 1e-3
+	epsilon = 0.2
 	beta = 0
 	######################
 
@@ -21,8 +19,8 @@ function main()
 	# Put the parameters in a single variable.
 	params = ParamType(dt,epsilon,beta)
 	# Create the initial geometry.
-	#thlen00 = circgeo(npts,rad)
-	thlen00 = polygongeo(npts, nsides, sigma, sdlen)
+	thlen00 = circgeo(npts,rad,xa,ya)
+	#thlen00 = polygongeo(npts, nsides,sigma,sdlen,xa,ya)
 	# Copy to thlen0, which will be modified in the multi-step method.
 	thlen0 = new_thlen()
 	copy_thlen!(thlen00,thlen0)
