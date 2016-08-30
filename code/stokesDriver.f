@@ -1,7 +1,7 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 128)
+      parameter (ninner = 64
       parameter (nbodies = 2)
 
       integer :: i, n, clock
@@ -72,10 +72,10 @@ c      print*,rand(),rand(),rand(),rand()
         centery(k) = centery(k) + 2.d-2*(rand()-5.d-1)
       enddo
 
-      centerx(1) = -0.0d0
-      centery(1) = 0.5d0
-      centerx(2) = 0.0d0
-      centery(2) = -0.5d0
+      centerx(1) = -0.5d0
+      centery(1) = 0.0d0
+      centerx(2) = 0.5d0
+      centery(2) = -0.0d0
       radius(1) = 2.d-1
       radius(2) = 2.d-1
       phi(1) = 0.d0

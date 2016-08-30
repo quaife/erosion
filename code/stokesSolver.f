@@ -1082,11 +1082,11 @@ c***********************************************************************
         enddo
       enddo
 
-c      open(unit=1,file='output/shear_stress.dat')
-c      write(1,1000) shear_stress
-c      close(1)
+      open(unit=1,file='output/shear_stress.dat')
+      write(1,1000) shear_stress
+      close(1)
 
-c 1000 format(E25.16)
+ 1000 format(E25.16)
 
 
       end
@@ -1144,33 +1144,26 @@ c***********************************************************************
       dimension u(ninner),v(ninner)
 
       do k=1,ninner
-        u(k) = 1.d0
-        v(k) = 0.d0
-c       this flow has vanishing deformation tensor
+c        u(k) = 1.d0
+c        v(k) = 0.d0
+cc       constant flow
 
 c        u(k) = x(k)
 c        v(k) = -y(k)
-c       this flow does have a non-trivial deformation tensor
+cc       extesional flow
 
-c        u(k) = 2.d0*y(k) - y(k)**2.d0 - x(k)
-c        v(k) = y(k)
-c       this flow does have a non-trivial deformation tensor
-
-c        u(k) = x(k)/(x(k)**2.d0 + y(k)**2.d0)
-c        v(k) = y(k)/(x(k)**2.d0 + y(k)**2.d0)
-c       this flow does have a non-trivial deformation tensor
-
-c        u(k) = 4.0d0-y(k)**2.d0
-c        v(k) = 0.d0
-c       this flow does have a non-trivial deformation tensor
+        scal = 1.0d0
+        u(k) = scal*(1.0d0 + y(k))*(1.0d0 - y(k))
+        v(k) = 0.d0
+c       pipe flow
 
 c        u(k) = y(k)
 c        v(k) = 0.d0
-c       this flow does have a non-trivial deformation tensor
+cc       shear flow
     
 c        u(k) = y(k)/(x(k)**2.d0 + y(k)**2.d0)
 c        v(k) = -x(k)/(x(k)**2.d0 + y(k)**2.d0)
-c       single Rotlet
+cc       single Rotlet
       enddo
 
       end 

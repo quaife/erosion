@@ -1,4 +1,4 @@
-FORTRAN = gfortran-mp-5
+FORTRAN = gfortran
 FFLAGS = -c -O3
 
 OBJS=\
