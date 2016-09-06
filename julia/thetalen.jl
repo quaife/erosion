@@ -42,7 +42,7 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 end
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
 function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
-	for ii = 1:params.nbods
+	for ii = 1:endof(thlenvec0)
 		advance_thetalen!(thlenvec1[ii],thlenvec0[ii],params)
 	end
 end

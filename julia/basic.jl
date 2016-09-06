@@ -3,7 +3,7 @@
 #################### Object data types ####################
 # ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
-	npts::Float64; nbods::Float64; dt::Float64; epsilon::Float64; beta::Real;
+    dt::Float64; epsilon::Float64; beta::Real;
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType

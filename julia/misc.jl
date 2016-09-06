@@ -96,10 +96,10 @@ function plotsinglecurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integ
 	return
 end
 # plotcurve: Plot multiple curves from the theta-len values.
-function plotsinglecurve!(thlenvec::Vector{ThetaLenType}, params::ParamType, cnt::Integer; axlim::Real=0.5)
+function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer; axlim::Real=0.5)
 	p1 = plot()
 	xlim(-axlim,axlim); ylim(-axlim,axlim)
-	for ii = 1:params.nbods
+	for ii = 1:endof(thlenvec)
 		thlen = thlenvec[ii]
 		# Compute the xy coordinates if they are not already loaded in thlen.
 		getxy!(thlen)
@@ -162,10 +162,14 @@ end
 # RKstarter!: Dispatch for vector of ThetaLenType to handle multiple bodies.
 function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	dt = params.dt
+	nbods = endof(thlenvec0) 
+	# Initialize vectors of ThetaLenType.
+	thlenvec05 = Array(ThetaLenType, nbods)
+	thlenvec1 = Array(ThetaLenType, nbods)
 	# Compute the stress at t=0.
 	stokes!(thlenvec0)	
 	# For each body, take the first step of RK2.
-	for ii = 1:params.nbods
+	for ii = 1:nbods
 		# Need thlen0 for each body.
 		thlen0 = thlenvec0[ii]
 		# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
@@ -176,7 +180,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Compute the stress at t=0.5*dt.
 	stokes!(thlenvec05)	
 	# For each body, take the second step of RK2.
-	for ii = 1:params.nbods
+	for ii = 1:nbods
 		# Need both thlen0 and thlen05 for each body.
 		thlen0 = thlenvec0[ii]
 		thlen05 = thlenvec05[ii]

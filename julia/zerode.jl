@@ -17,21 +17,21 @@ function main()
 	axlim = 1.0
 	######################
 
+	# Put the parameters in a single variable.
+	params = ParamType(dt,epsilon,beta)
 	# Create the initial geometry.
 	thlen00 = circgeo(npts,rad,xsm,ysm)
 	### thlen00 = polygongeo(npts, nsides,sigma,sdlen,xsm,ysm)
 	# Copy to thlen0, which will be modified in the multi-step method.
 	thlen0 = new_thlen()
 	copy_thlen!(thlen00,thlen0)
-
-	# Make slight adjustment to ensure that tfin is obtained.
-	tfin += 0.5*dt
-	# Put the parameters in a single variable.
-	params = ParamType(npts,nbods,dt,epsilon,beta)
 	# Use RK2 as a starter.
 	thlen1 = RKstarter!(thlen0,params)
-	# Plot the result.
-	tm = dt; cnt = 1; plotsinglecurve!(thlen1,thlen00,cnt,axlim=axlim)
+
+	# Initialize values for the while loop (with slight adjustment to tfin).
+	tfin += 0.5*dt; tm = dt; cnt = 1; 
+	# Plot the result for t=dt.
+	plotsinglecurve!(thlen1,thlen00,cnt,axlim=axlim)
 	# Enter while loop.
 	while(tm < tfin)
 		# Compute the new stress and save it.
