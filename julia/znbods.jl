@@ -1,43 +1,5 @@
-# Erode a body.
+# Erode multiple bodies.
 include("basic.jl")
-
-#= RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
-It also calculates mterm and nterm and saves them in thlen0. =#
-function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
-	# Extract the needed variables.
-	dt, epsilon, beta = params.dt, params.epsilon, params.beta
-	# Get the time derivatives at t=0.
-	stokes!(thlenvec0)
-
-	th0dot, m0 = thetadot!(thlenvec0,params)
-
-
-
-	# Create a new ThetaLenType variables for t=0.5*dt.
-	thlen05 = new_thlen()
-	# Take the first half-step of RK2.
-	thlen05.len = len0 + 0.5*dt*m0
-	thlen05.theta = theta0 + 0.5*dt*th0dot
-	# Update the surface-mean coordinates.
-	thlen05.xsm = thlen0.xsm + 0.5*dt*thlen0.xsmdot
-	thlen05.ysm = thlen0.ysm + 0.5*dt*thlen0.ysmdot
-	# Get the time derivatives at t=0.5*dt.
-	stokes!([thlen05])
-	th05dot, m05 = thetadot!(thlen0,params)
-
-	# Create a new ThetaLenType variables for time t=dt.
-	thlen1 = new_thlen()
-	# Take the second step of RK2.
-	thlen1.len = len0 + dt*m05
-	thlen1.theta = theta0 + dt*th05dot
-	# Update the surface-mean coordinates.
-	thlen1.xsm = thlen0.xsm + dt*thlen05.xsmdot
-	thlen1.ysm = thlen0.ysm + dt*thlen05.ysmdot
-	# Return
-	return thlen1
-end
-
-# Main program.
 function main()
 	##### PARAMETERS #####
 	# Geometry parameters.
@@ -69,11 +31,12 @@ function main()
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0,params)
 
-
-
-
 	# Plot the result.
-	tm = dt; cnt = 1; plotcurve!(thlen1,thlen00,cnt,axlim=axlim)
+	tm = dt; cnt = 1; 
+	plotcurve!(thlen1,thlen00,cnt,axlim=axlim)
+
+
+	#=
 	# Enter while loop.
 	while(tm < tfin)
 		# Compute the new stress and save it.
@@ -83,6 +46,8 @@ function main()
 		# Advance time & counter and plot the result.
 		tm += dt; cnt += 1; plotcurve!(thlen1,thlen00,cnt,axlim=axlim)
 	end
+	=#
+
 end
 
 main()

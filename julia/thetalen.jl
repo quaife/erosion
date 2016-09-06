@@ -114,6 +114,7 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 end
 ############################################################
 
+
 #################### Starter routines ####################
 # thetadot: Calculate the time derivative of theta.
 function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
@@ -130,17 +131,11 @@ function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, p
 	return thdot, mterm, nterm, xsmdot, ysmdot
 end
 #= thetadot: Dispatch for ThetaLenType.
-It also calculates mterm and nterm and saves them in thlen. =#
+It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlen. =#
 function thetadot!(thlen::ThetaLenType, params::ParamType)
 	# Call thetadot and save mterm and nterm in thlen.
 	thdot, thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
 		thetadot(thlen.theta, thlen.len, thlen.atau, params)
-	return thdot, thlen.mterm
-end
-# thetadot!: Dispatch for vector of ThetaLenType to handle multiple bodies.
-function thetadot!(thlenvec::Vector{ThetaLenType}, params::ParamType)
-	for ii = 1:params.nbods
-		thetadot!(thlenvec[ii],params)
-	end
+	return thdot
 end
 ############################################################

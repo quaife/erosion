@@ -50,6 +50,7 @@ function polygongeo(npts::Integer, nsides::Integer,
 end
 ##################################################
 
+
 #################### Other routines ####################
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values.
@@ -80,8 +81,8 @@ function getnormals(theta::Vector{Float64})
 	ny = cos(theta)
 	return nx, ny 
 end
-# plotcurve: Plot a curve from the theta-len values.
-function plotcurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integer; axlim::Real=0.5)
+# plotcurve: Plot a curve from the theta-len values along with the initial shape.
+function plotsinglecurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integer; axlim::Real=0.5)
 	# Compute the xy coordinates if they are not already loaded in thlen.
 	getxy!(thlen0); getxy!(thlen1)
 	x0, y0 = thlen0.xx, thlen0.yy
@@ -93,5 +94,97 @@ function plotcurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integer; ax
 	figname = string("../figs/fig",string(cnt),".pdf")
 	savefig(p1, figname, width=500, height=500)
 	return
+end
+# plotcurve: Plot multiple curves from the theta-len values.
+function plotsinglecurve!(thlenvec::Vector{ThetaLenType}, params::ParamType, cnt::Integer; axlim::Real=0.5)
+	p1 = plot()
+	xlim(-axlim,axlim); ylim(-axlim,axlim)
+	for ii = 1:params.nbods
+		thlen = thlenvec[ii]
+		# Compute the xy coordinates if they are not already loaded in thlen.
+		getxy!(thlen)
+		xx, yy = thlen.xx, thlen.yy
+		# Plot the curves.
+		p1 = oplot(xx,yy,"-")
+	end
+	# Save the figures in a folder.
+	figname = string("../figs/fig",string(cnt),".pdf")
+	savefig(p1, figname, width=500, height=500)
+	return
+end
+############################################################
+
+
+#################### Starter routines ####################
+#= festep: Take a single forward Euler step of theta, len, xsm, and ysm.
+Note: Do not use the dt inside params because I might want to input 
+something else, like 0.5*dt for the Runge-Kutta starter. =#
+function festep(dt::Float64, thdot::Vector{Float64}, 
+		theta0::Vector{Float64}, len0::Float64, xsm0::Float64, ysm0::Float64,
+		ldot::Float64, xsmdot::Float64, ysmdot::Float64)
+	theta1 = theta0 + dt*thdot
+	len1 = len0 + dt*ldot
+	xsm1 = xsm0 + dt*xsmdot
+	ysm1 = ysm0 + dt*ysmdot
+	return theta1, len1, xsm1, ysm1
+end
+# festep: Dispatch for ThetaLenType.
+# Allow the starting point and the point where the derivatives are taken to be different.
+function festep(dt::Float64, thdot::Vector{Float64}, 
+		thlen0::ThetaLenType, thlendots::ThetaLenType)
+	thlen1 = new_thlen()
+	thlen1.theta, thlen1.len, thlen1.xsm, thlen1.ysm = festep(dt, thdot, 
+		thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm, 
+		thlendots.mterm, thlendots.xsmdot, thlendots.ysmdot)
+	return thlen1
+end
+
+#= RKstarter!: Explicit second-order Runge-Kutta to start the time stepping.
+It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlen0. =#
+function RKstarter!(thlen0::ThetaLenType, params::ParamType)
+	dt = params.dt
+	# Compute the stress at t=0.
+	stokes!([thlen0])
+	# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
+	th0dot = thetadot!(thlen0,params)
+	# Take the first half-step of RK2.
+	thlen05 = festep(0.5*dt, th0dot, thlen0, thlen0)
+	# Compute the stress at t=0.5*dt.
+	stokes!([thlen05])
+	# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
+	th05dot= thetadot!(thlen05,params)
+	# Take the second half-step of RK2 where the starting point is thlen0 but
+	# the derivatives are calculated at thlen05.
+	thlen1 = festep(dt, th0dot, thlen0, thlen05)
+	# Return.
+	return thlen1
+end
+# RKstarter!: Dispatch for vector of ThetaLenType to handle multiple bodies.
+function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
+	dt = params.dt
+	# Compute the stress at t=0.
+	stokes!(thlenvec0)	
+	# For each body, take the first step of RK2.
+	for ii = 1:params.nbods
+		# Need thlen0 for each body.
+		thlen0 = thlenvec0[ii]
+		# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
+		thdot = thetadot!(thlen0,params)
+		# Take the first step of RK2.
+		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)		
+	end
+	# Compute the stress at t=0.5*dt.
+	stokes!(thlenvec05)	
+	# For each body, take the second step of RK2.
+	for ii = 1:params.nbods
+		# Need both thlen0 and thlen05 for each body.
+		thlen0 = thlenvec0[ii]
+		thlen05 = thlenvec05[ii]
+		# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
+		thdot = thetadot!(thlen05,params)
+		# Take the second step of RK2.
+		thlenvec1[ii] = festep(dt, thdot, thlen0, thlen05)		
+	end
+	return thlenvec1
 end
 ############################################################
