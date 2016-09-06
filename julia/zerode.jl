@@ -1,4 +1,6 @@
 # Erode a body.
+# Now obselet since I can erode many bodies.
+
 include("basic.jl")
 function main()
 	##### PARAMETERS #####

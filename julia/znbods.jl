@@ -4,14 +4,16 @@ function main()
 	##### PARAMETERS #####
 	# Geometry parameters.
 	npts = 256
-	nbods = 2
-	xsm1, ysm1 =  0.4, 0.0
-	xsm2, ysm2 = -0.4, 0.0
+	nbods = 4
+	xsm1, ysm1 = +0.0, +0.5
+	xsm2, ysm2 = -0.0, -0.5
+	xsm3, ysm3 = +0.5, +0.0
+	xsm4, ysm4 = -0.5, -0.0	
 	# For circle geometry
-	rad1, rad2 = 0.2, 0.2
+	rad1, rad2, rad3, rad4 = 0.2, 0.2, 0.2, 0.2
 	# Evolution parameters.
 	tfin = 1e-2
-	dt = 5e-4
+	dt = 2e-4
 	epsilon = 0.2
 	beta = 0
 	# Misc parameters.
@@ -21,10 +23,12 @@ function main()
 	# Put the parameters in a single variable.
 	params = ParamType(dt,epsilon,beta)
 	# Create the initial geometries.
-	thlen001 = circgeo(npts,rad1,xsm1,ysm1)
-	thlen002 = circgeo(npts,rad2,xsm2,ysm2)
+	thlen01 = circgeo(npts,rad1,xsm1,ysm1)
+	thlen02 = circgeo(npts,rad2,xsm2,ysm2)
+	thlen03 = circgeo(npts,rad3,xsm3,ysm3)
+	thlen04 = circgeo(npts,rad4,xsm4,ysm4)
 	# Create the vector of ThetaLenType values.
-	thlenvec0 = [thlen001, thlen002]
+	thlenvec0 = [thlen01, thlen02, thlen03, thlen04]
 	# Plot the initial geometries.
 	plotcurves!(thlenvec0,0,axlim=axlim)	
 	# Use RK2 as a starter.
