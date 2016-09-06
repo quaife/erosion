@@ -29,6 +29,8 @@ function main()
 	thlen04 = circgeo(npts,rad4,xsm4,ysm4)
 	# Create the vector of ThetaLenType values.
 	thlenvec0 = [thlen01, thlen02, thlen03, thlen04]
+	#thlenvec0 = [thlen01]
+	
 	# Plot the initial geometries.
 	plotcurves!(thlenvec0,0,axlim=axlim)	
 	# Use RK2 as a starter.
