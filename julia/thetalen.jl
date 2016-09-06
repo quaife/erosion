@@ -1,5 +1,4 @@
 #= thetalen.jl: Collection of codes for theta-L boundary evolution.
-All routines work for only a single body unless stated otherwise.
 
 Variables
 theta (vector): The tangent angle as it varies along the boundary.
@@ -15,7 +14,6 @@ Convention for tangential and normal vectors
 I use the same convention as Shelley 1994. That is, I assume the curve 
 is parameterized in the counter-clockwise (CCW) direction, and I use the 
 inward pointing normal. =#
-
 
 #################### Multistep routines ####################
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
@@ -42,6 +40,13 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	copy_thlen!(thlen2,thlen1)
 	return
 end
+# advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
+function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
+	for ii = 1:params.nbods
+		advance_thetalen!(thlenvec1[ii],thlenvec0[ii],params)
+	end
+end
+
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
@@ -109,41 +114,7 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 end
 ############################################################
 
-
 #################### Starter routines ####################
-#= RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
-It also calculates mterm and nterm and saves them in thlen0. =#
-function RKstarter!(thlen0::ThetaLenType, params::ParamType)
-	# Extract the needed variables.
-	dt, epsilon, beta = params.dt, params.epsilon, params.beta
-	theta0, len0 = thlen0.theta, thlen0.len
-	# Get the time derivatives at t=0.
-	stokes!([thlen0])
-	th0dot, m0 = thetadot!(thlen0,params)
-
-	# Create a new ThetaLenType variables for t=0.5*dt.
-	thlen05 = new_thlen()
-	# Take the first half-step of RK2.
-	thlen05.len = len0 + 0.5*dt*m0
-	thlen05.theta = theta0 + 0.5*dt*th0dot
-	# Update the surface-mean coordinates.
-	thlen05.xsm = thlen0.xsm + 0.5*dt*thlen0.xsmdot
-	thlen05.ysm = thlen0.ysm + 0.5*dt*thlen0.ysmdot
-	# Get the time derivatives at t=0.5*dt.
-	stokes!([thlen05])
-	th05dot, m05 = thetadot!(thlen0,params)
-
-	# Create a new ThetaLenType variables for time t=dt.
-	thlen1 = new_thlen()
-	# Take the second step of RK2.
-	thlen1.len = len0 + dt*m05
-	thlen1.theta = theta0 + dt*th05dot
-	# Update the surface-mean coordinates.
-	thlen1.xsm = thlen0.xsm + dt*thlen05.xsmdot
-	thlen1.ysm = thlen0.ysm + dt*thlen05.ysmdot
-	# Return
-	return thlen1
-end
 # thetadot: Calculate the time derivative of theta.
 function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Extract the needed variables.
@@ -166,53 +137,10 @@ function thetadot!(thlen::ThetaLenType, params::ParamType)
 		thetadot(thlen.theta, thlen.len, thlen.atau, params)
 	return thdot, thlen.mterm
 end
-############################################################
-
-
-#################### Other routines ####################
-#= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
-xsm and ysm are the boundary-averaged values.
-While we're at it, we can also calculate the normal direcations. =#
-function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
-	# The increments of dx and dy
-	dx = len * (cos(theta) - mean(cos(theta)))
-	dy = len * (sin(theta) - mean(sin(theta)))
-	# Integrate to get the x,y coordinates; result will have mean zero.
-	xx = specint(dx)
-	yy = specint(dy)
-	# Move to have the correct average values.
-	xx += xsm
-	yy += ysm
-	return xx,yy
-end
-# getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
-function getxy!(thlen::ThetaLenType)
-	# Only compute xx and yy if they are not already loaded in thlen.
-	if thlen.xx==[] || thlen.yy==[]
-		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
+# thetadot!: Dispatch for vector of ThetaLenType to handle multiple bodies.
+function thetadot!(thlenvec::Vector{ThetaLenType}, params::ParamType)
+	for ii = 1:params.nbods
+		thetadot!(thlenvec[ii],params)
 	end
-	return
-end
-
-# getnormals: Calculate the surface normals.
-function getnormals(theta::Vector{Float64})
-	nx = -sin(theta)
-	ny = cos(theta)
-	return nx, ny 
-end
-
-# plotcurve: Plot a curve from the theta-len values.
-function plotcurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integer; axlim::Real=0.5)
-	# Compute the xy coordinates if they are not already loaded in thlen.
-	getxy!(thlen0); getxy!(thlen1)
-	x0, y0 = thlen0.xx, thlen0.yy
-	x1, y1 = thlen1.xx, thlen1.yy
-	# Plot the curves.
-	p1 = plot(x0,y0,"-", x1,y1,"-")
-	xlim(-axlim,axlim); ylim(-axlim,axlim)
-	# Save the figures in a folder.
-	figname = string("../figs/fig",string(cnt),".pdf")
-	savefig(p1, figname, width=500, height=500)
-	return
 end
 ############################################################

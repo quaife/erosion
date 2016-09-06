@@ -3,13 +3,15 @@ include("basic.jl")
 
 #= RKstarter: Explicit second-order Runge-Kutta to start the time stepping.
 It also calculates mterm and nterm and saves them in thlen0. =#
-function RKstarter!(thlen0::ThetaLenType, params::ParamType)
+function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Extract the needed variables.
 	dt, epsilon, beta = params.dt, params.epsilon, params.beta
-	theta0, len0 = thlen0.theta, thlen0.len
 	# Get the time derivatives at t=0.
-	stokes!([thlen0])
-	th0dot, m0 = thetadot!(thlen0,params)
+	stokes!(thlenvec0)
+
+	th0dot, m0 = thetadot!(thlenvec0,params)
+
+
 
 	# Create a new ThetaLenType variables for t=0.5*dt.
 	thlen05 = new_thlen()
@@ -40,10 +42,11 @@ function main()
 	##### PARAMETERS #####
 	# Geometry parameters.
 	npts = 256
-	nbods = 1
-	xsm, ysm = -0.4, 0.0
-	rad = 0.3								# For circle geometry.
-	nsides = 4; sigma = 0.1; sdlen = 0.2	# For polygon geometry.
+	nbods = 2
+	xsm1, ysm1 =  0.4, 0.0
+	xsm2, ysm2 = -0.4, 0.0
+	# For circle geometry
+	rad1, rad2 = 0.2, 0.2
 	# Evolution parameters.
 	tfin = 1e-2
 	dt = 5e-4
@@ -53,19 +56,22 @@ function main()
 	axlim = 1.0
 	######################
 
-	# Create the initial geometry.
-	thlen00 = circgeo(npts,rad,xsm,ysm)
-	### thlen00 = polygongeo(npts, nsides,sigma,sdlen,xsm,ysm)
-	# Copy to thlen0, which will be modified in the multi-step method.
-	thlen0 = new_thlen()
-	copy_thlen!(thlen00,thlen0)
+	# Create the initial geometries.
+	thlen001 = circgeo(npts,rad1,xsm1,ysm1)
+	thlen002 = circgeo(npts,rad2,xsm2,ysm2)
+	# Create the vector of ThetaLenType values.
+	thlenvec0 = [thlen001, thlen002]
 
 	# Make slight adjustment to ensure that tfin is obtained.
 	tfin += 0.5*dt
 	# Put the parameters in a single variable.
 	params = ParamType(npts,nbods,dt,epsilon,beta)
 	# Use RK2 as a starter.
-	thlen1 = RKstarter!(thlen0,params)
+	thlenvec1 = RKstarter!(thlenvec0,params)
+
+
+
+
 	# Plot the result.
 	tm = dt; cnt = 1; plotcurve!(thlen1,thlen00,cnt,axlim=axlim)
 	# Enter while loop.

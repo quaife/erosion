@@ -1,9 +1,9 @@
-# basic.jl: Basic stuff.
+# basic.jl: Basic routines such as datatypes and Stokes solvers.
 
 #################### Object data types ####################
 # ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
-	dt::Float64; epsilon::Float64; beta::Real;
+	npts::Float64; nbods::Float64; dt::Float64; epsilon::Float64; beta::Real;
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
@@ -18,9 +18,10 @@ end
 using Winston
 include("spectral.jl")
 include("thetalen.jl")
+include("misc.jl")
 ##################################################
 
-#################### Object functions ####################
+#################### Object routines ####################
 # Create a new ThetaLenType that has all zeros.
 function new_thlen()
 	return ThetaLenType([], 0., 0., 0., [], [], [], 0., [], 0., 0.)
@@ -42,7 +43,7 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 end
 ##################################################
 
-#################### Stokes functions ####################
+#################### Stokes solvers ####################
 # All routines work for multiple bodies.
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64})
@@ -77,55 +78,5 @@ function stokes!(thlenv::Vector{ThetaLenType})
 		thlenv[nn].atau = abs(tau[n1:n2])
 	end
 	return
-end
-##################################################
-
-#################### Geometry functions ####################
-# getalpha: Calculate the parameterization variable, alpha = s/L.
-function getalpha(npts::Integer)
-	# alpha = s/L is the parameterization variable.
-	dalpha = 1.0/npts
-	# Use an offset grid.
-	alpha = collect(range(0.5*dalpha, dalpha, npts))
-	return alpha
-end
-# circgeo: Creates a circle.
-function circgeo(npts::Integer, rad::Float64, xsm::Float64=0.0, ysm::Float64=0.0)
-	# Create a new ThetaLenType variable.
-	thlen = new_thlen()
-	# alpha = s/L is the parameterization variable.
-	alpha = getalpha(npts)
-	# theta is the tangent angle.
-	thlen.theta = 0.5*pi + 2*pi*alpha
-	# len is the total arclength.
-	thlen.len = 2*pi*rad
-	# Save xsm and ysm too.
-	thlen.xsm = xsm; thlen.ysm = ysm
-	return thlen
-end
-# polygongeo: Creates a polygon with number of sides, nsides.
-function polygongeo(npts::Integer, nsides::Integer, 
-		sigma::Float64 = 0.1, sdlen::Float64=0.5, xsm::Float64=0.0, ysm::Float64=0.0)
-	# Create a new ThetaLenType variable.
-	thlen = new_thlen()
-	# alpha = s/L is the parameterization variable.
-	alpha = getalpha(npts)
-	# theta is the tangent angle.
-	theta = zeros(npts)
-	for nn=1:nsides
-		a0 = (nn-1)/nsides
-		a1 = nn/nsides
-		intvl = ((a0 .<= alpha) & (alpha .<= a1))
-		theta[intvl] = 0.5*pi + 2*pi*(nn-1)/nsides
-	end
-	# Smooth theta
-	theta = gaussfilter(theta - 2*pi*alpha, sigma) + 2*pi*alpha
-	# Save theta in the ThetaLenType object.
-	thlen.theta = theta
-	# len is the total arclength.
-	thlen.len = nsides*sdlen
-	# Save xsm and ysm too.
-	thlen.xsm = xsm; thlen.ysm = ysm
-	return thlen
 end
 ##################################################
