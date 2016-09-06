@@ -140,26 +140,8 @@ function festep(dt::Float64, thdot::Vector{Float64},
 end
 
 #= RKstarter!: Explicit second-order Runge-Kutta to start the time stepping.
-It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlen0. =#
-function RKstarter!(thlen0::ThetaLenType, params::ParamType)
-	dt = params.dt
-	# Compute the stress at t=0.
-	stokes!([thlen0])
-	# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
-	th0dot = thetadot!(thlen0,params)
-	# Take the first half-step of RK2.
-	thlen05 = festep(0.5*dt, th0dot, thlen0, thlen0)
-	# Compute the stress at t=0.5*dt.
-	stokes!([thlen05])
-	# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
-	th05dot= thetadot!(thlen05,params)
-	# Take the second half-step of RK2 where the starting point is thlen0 but
-	# the derivatives are calculated at thlen05.
-	thlen1 = festep(dt, th0dot, thlen0, thlen05)
-	# Return.
-	return thlen1
-end
-# RKstarter!: Dispatch for vector of ThetaLenType to handle multiple bodies.
+Works for vectors of ThetaLenType.
+It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenvec0. =#
 function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	dt = params.dt
 	nbods = endof(thlenvec0) 
