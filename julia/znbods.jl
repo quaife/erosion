@@ -4,8 +4,8 @@ function main()
 	##### PARAMETERS #####
 	# Geometry parameters.
 	npts = 256
-	nbods = 4
-	xsm1, ysm1 = +0.0, +0.4
+	nbods = 1
+	xsm1, ysm1 = +0.0, +0.0
 	xsm2, ysm2 = -0.0, -0.4
 	xsm3, ysm3 = +0.4, +0.0
 	xsm4, ysm4 = -0.4, -0.0	
@@ -13,12 +13,12 @@ function main()
 	rad1, rad2, rad3, rad4 = 0.2, 0.2, 0.2, 0.2
 	# Evolution parameters.
 	dt = 5e-4
-	epsilon = 5e-2
+	epsilon = 0.02
 	sigma = epsilon
-	tfin = 10*dt
+	tfin = 100*dt
 	# Misc parameters.
 	beta = 0
-	axlim = 1.0
+	axlim = 0.2
 	######################
 
 	# Put the parameters in a single variable.
@@ -29,8 +29,8 @@ function main()
 	thlen03 = circgeo(npts,rad3,xsm3,ysm3)
 	thlen04 = circgeo(npts,rad4,xsm4,ysm4)
 	# Create the vector of ThetaLenType values.
-	thlenvec0 = [thlen01, thlen02, thlen03, thlen04]
-	#thlenvec0 = [thlen01]
+	#thlenvec0 = [thlen01, thlen02, thlen03, thlen04]
+	thlenvec0 = [thlen01]
 	
 	# Plot the initial geometries.
 	plotcurves!(thlenvec0, 0, axlim=axlim)	
