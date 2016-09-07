@@ -144,12 +144,13 @@ Works for vectors of ThetaLenType.
 It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenvec0. =#
 function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	dt = params.dt
+	sigma = params.sigma
 	nbods = endof(thlenvec0) 
 	# Initialize vectors of ThetaLenType.
 	thlenvec05 = Array(ThetaLenType, nbods)
 	thlenvec1 = Array(ThetaLenType, nbods)
 	# Compute the stress at t=0.
-	stokes!(thlenvec0)	
+	stokes!(thlenvec0, sigma)	
 	# For each body, take the first step of RK2.
 	for ii = 1:nbods
 		# Need thlen0 for each body.
@@ -160,7 +161,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)		
 	end
 	# Compute the stress at t=0.5*dt.
-	stokes!(thlenvec05)	
+	stokes!(thlenvec05, sigma)	
 	# For each body, take the second step of RK2.
 	for ii = 1:nbods
 		# Need both thlen0 and thlen05 for each body.
