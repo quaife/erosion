@@ -1,4 +1,5 @@
-      subroutine stokesSolver(nninner,nnbodies,xx,yy,shear_stress)
+      subroutine stokesSolver(nninner,nnbodies,nntargets,xx,yy,
+     $    xxtar,yytar,utar,vtar,press_tar,shear_stress)
 c     Input x and y coordinates and return the shear_stress on the
 c     boundary.  Outer wall is used to enclose the inner boundary so
 c     that Stokes paradox is avoided
@@ -6,25 +7,31 @@ c     that Stokes paradox is avoided
 
       dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
 c     x and y coordinates of obstacle
+      dimension xxtar(nntargets),yytar(nntargets)
+c     x and y coordinates of target locations where velocity and
+c     pressure need to be evaluted
 
       parameter (nmax = 2**15)
       parameter (maxbodies = 20)
 c     max points on the boundary of the obstacle      
+      parameter (ntarmax = 1000)
       parameter (maxl = 3000, liwork = 30)
       parameter (lrwork = 10 + nmax*(maxl+6) + 
      $     maxl*(maxl+3))
 c     maximum size of workspaces for GMRES
 
-      parameter(nx = 200,ny = 200)
-c     number of points in x and y direction where velocity will be
-c     computed
-
       dimension x(nmax),y(nmax)
       dimension centerx(maxbodies),centery(maxbodies)
-      dimension px(nmax), py(nmax)
+      dimension px(nmax),py(nmax)
 c     x and y coordinates of the normal of the obstacle
-      dimension cur(nmax), speed(nmax)
+      dimension cur(nmax),speed(nmax)
 c     Jacobian and curvature of the geometry
+
+      dimension xtar(ntarmax),ytar(ntarmax)
+c     Target locations
+      dimension utar(nntargets),vtar(nntargets)
+      dimension press_tar(nntargets)
+c    Velocity and pressure at target locations
 
       dimension xouter(nmax),youter(nmax)
 c     x and y coordinates of confining wall
@@ -47,10 +54,6 @@ c     components of the deformation gradient on the obstacle
       dimension shear_stress(nninner*nnbodies)
 c     shear stress on the obstacle
 
-      dimension xtar(nx,ny),ytar(nx,ny)
-      dimension utar(nx,ny),vtar(nx,ny)
-c     target points and corresponding velocities in the geometry
-
       common /geometry/x,y,centerx,centery,px,py,cur,speed,
      $    ninner,nbodies
       common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
@@ -63,7 +66,7 @@ c     can't declare input variables into a common field, so need new
 c     variable name for x,y,ninner,nbodies
       call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
      $    centerx,centery)
-
+c
       call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
 c     load geometry of initial shape
 
@@ -71,29 +74,21 @@ c      open(unit=1,file='output/xinner.dat')
 c      open(unit=2,file='output/yinner.dat')
 c      open(unit=3,file='output/xouter.dat')
 c      open(unit=4,file='output/youter.dat')
-c      open(unit=5,file='output/cur.dat')
 c      do k = 1,ninner*nbodies
 c        write(1,1000) x(k)
 c        write(2,1000) y(k)
-c        write(5,1000) cur(k)
 c      enddo
-c      do k = 1,ninner*nbodies
-c        write(3,1000) px(k)
-c        write(4,1000) py(k)
+c      do k = 1,nouter
+c        write(3,1000) xouter(k)
+c        write(4,1000) youter(k)
 c      enddo
 c      close(unit=1)
 c      close(unit=2)
 c      close(unit=3)
 c      close(unit=4)
-c
+
       call bd_condition(ninner,nbodies,x,y,nouter,xouter,youter,rhs)
 c     load boundary condition
-c      open(unit=1,file='output/rhs.dat')
-c      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
-c        write(1,1000) rhs(k)
-c      enddo
-c      close(unit=1)
-
 
       call solveBIE(ninner,nbodies,nouter,den,rhs,
      $      gmwork,lrwork,igwork,liwork,maxl)
@@ -115,10 +110,31 @@ c     compute the deformation tensor on the boundary of the interface
      $    E11,E12,E22,shear_stress)
 c     Use the deformation tensor to compute the shear stress
 
-c      call eval_velocity(ninner,nbodies,x,y,centerx,centery,
-c     $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
-c     $    nx,ny,xtar,ytar,utar,vtar)
-c
+      ntargets = nntargets
+      call eval_velocity(ninner,nbodies,x,y,centerx,centery,
+     $ px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
+     $ ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
+c     evaluate velocity and pressure at target points
+
+c      open(unit=1,file='output/xtar.dat')
+c      open(unit=2,file='output/ytar.dat')
+c      open(unit=3,file='output/utar.dat')
+c      open(unit=4,file='output/vtar.dat')
+c      open(unit=5,file='output/press_tar.dat')
+c      do k = 1,ntargets
+c        write(1,1000) xtar(k)
+c        write(2,1000) ytar(k)
+c        write(3,1000) utar(k)
+c        write(4,1000) vtar(k)
+c        write(5,1000) press_tar(k)
+c      enddo
+c      close(unit=1)
+c      close(unit=2)
+c      close(unit=3)
+c      close(unit=4)
+c      close(unit=5)
+
+
 c 1000 format(E25.16)
 
 
@@ -130,12 +146,11 @@ c***********************************************************************
      $    xx,yy,px,py,cur,speed,centerx,centery)
       implicit real*8 (a-h,o-z)
 
-      dimension xx(ninner),yy(ninner)
+      dimension xx(ninner*nbodies),yy(ninner*nbodies)
       dimension x(*),y(*)
       dimension px(*), py(*)
       dimension cur(*), speed(*)
       dimension centerx(*),centery(*)
-
 
       do k = 1,ninner*nbodies
         x(k) = xx(k)
@@ -181,7 +196,7 @@ c     Load the outer shape of the geometry
         smoothOrder = 8.d0
         r = (dcos(theta)**smoothOrder+ dsin(theta)**smoothOrder)**
      $       (-1.d0/smoothOrder)
-        x(k) = r*dcos(theta)
+        x(k) = 3.d0*r*dcos(theta)
         y(k) = r*dsin(theta)
       enddo
 c     outer geometry
@@ -1082,11 +1097,11 @@ c***********************************************************************
         enddo
       enddo
 
-      open(unit=1,file='output/shear_stress.dat')
-      write(1,1000) shear_stress
-      close(1)
+c      open(unit=1,file='output/shear_stress.dat')
+c      write(1,1000) shear_stress
+c      close(1)
 
- 1000 format(E25.16)
+c 1000 format(E25.16)
 
 
       end
@@ -1216,8 +1231,11 @@ c       the y component of the position
 c***********************************************************************
       subroutine eval_velocity(ninner,nbodies,x,y,centerx,centery,
      $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
-     $    nx,ny,xtar,ytar,utar,vtar)
-c     compute the velocity on a meshgrid
+     $    ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
+c     Compute the velocity and pressure at a set of target points xtar
+c     and ytar.  Target points must be sufficiently far away from the
+c     each boundary since no near-singular integration is used.  It is
+c     just the vanilla trapezoid rule
       implicit real*8 (a-h,o-z)
 
       dimension x(ninner*nbodies),y(ninner*nbodies)
@@ -1228,27 +1246,23 @@ c     compute the velocity on a meshgrid
       dimension px0(nouter),py0(nouter)
       dimension speed0(nouter)
       dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
-      dimension xtar(nx,ny),ytar(nx,ny),utar(nx,ny),vtar(nx,ny)
+      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
 
-      real *8 denx(max(ninner,nouter)),deny(max(ninner,nouter))
+      dimension xxtar(ntargets),yytar(ntargets)
+      dimension xtar(*),ytar(*)
+      dimension utar(*),vtar(*)
+      dimension press_tar(*)
+
+      do j = 1,ntargets
+        xtar(j) = xxtar(j)
+        ytar(j) = yytar(j)
+        utar(j) = 0.d0
+        vtar(j) = 0.d0
+        press_tar(j) = 0.d0
+      enddo
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
-
-      xstart = -9.d-1
-      xend = 9.d-1
-      ystart = -9.d-1
-      yend = 9.d-1
-      dx = (xend - xstart)/dble(nx-1)
-      dy = (yend - ystart)/dble(ny-1)
-      do i = 1,nx
-        do j = 1,ny
-          xtar(i,j) = xstart + dble(i-1)*dx
-          ytar(i,j) = ystart + dble(j-1)*dy
-          utar(i,j) = 0.d0
-          vtar(i,j) = 0.d0
-        enddo
-      enddo
 
 c     Contribution from the density function on the solid wall
       do k=1,nouter
@@ -1257,122 +1271,83 @@ c     Contribution from the density function on the solid wall
       enddo
 c     Density function defined on the outer geometry
 
-c     loop over target points
-      do i = 1,nx
-        do j = 1,ny
-c         loop over source points
-          do k = 1,nouter
-            rx = xtar(i,j) - xouter(k)
-            ry = ytar(i,j) - youter(k)
-            rho2 = rx**2.d0 + ry**2.d0
-            rdotn = rx*px0(k) + ry*py0(k)
-            rdotden = rx*denx(k) + ry*deny(k)
+      do j = 1,ntargets
+        do k = 1,nouter
+          rx = xtar(j) - xouter(k)
+          ry = ytar(j) - youter(k)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdotn = rx*px0(k) + ry*py0(k)
+          rdotden = rx*denx(k) + ry*deny(k)
+          dendotn = px0(k)*denx(k) + py0(k)*deny(k)
 
-            utar(i,j) = utar(i,j) + rdotn/rho2*rdotden/rho2*rx*
-     $          speed0(k)*twopi/dble(nouter)/pi
-            vtar(i,j) = vtar(i,j) + rdotn/rho2*rdotden/rho2*ry*
-     $          speed0(k)*twopi/dble(nouter)/pi
-          enddo
+          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $      speed0(k)*twopi/dble(nouter)/pi
+          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $      speed0(k)*twopi/dble(nouter)/pi
+          press_tar(j) = press_tar(j) + 
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed0(k)*twopi/dble(nouter)/pi
         enddo
       enddo
 
-c     Contribution from the density function on each inner obstancle 
+c     Contribution from the density function on each inner obstacle
       do isou = 1,nbodies
-        do k=1,ninner
+        do k = 1,ninner
           denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
           deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
         enddo
 c       Density function defined on the inner geometry
 
-        do i = 1,nx
-          do j = 1,ny
-            do k = 1,ninner
-              rx = xtar(i,j) - x((isou-1)*ninner + k)
-              ry = ytar(i,j) - y((isou-1)*ninner + k)
-              rho2 = rx**2.d0 + ry**2.d0
-              rdotn = rx*px((isou-1)*ninner+k) + 
-     $                ry*py((isou-1)*ninner+k)
-              rdotden = rx*denx(k) + ry*deny(k)
+        do j = 1,ntargets
+          do k = 1,ninner
+            rx = xtar(j) - x((isou-1)*ninner + k)
+            ry = ytar(j) - y((isou-1)*ninner + k)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdotn = rx*px((isou-1)*ninner + k) + 
+     $              ry*py((isou-1)*ninner + k)
+            rdotden = rx*denx(k) + ry*deny(k)
+            dendotn = px((isou-1)*ninner + k)*denx(k) + 
+     $                py((isou-1)*ninner + k)*deny(k)
 
-              utar(i,j) = utar(i,j) + rdotn/rho2*rdotden/rho2*rx*
+            utar(j) = utar(j) + rdotn/rho2*rdotdenn/rho2*rx*
+     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+            vtar(j) = vtar(j) + rdotn/rho2*rdotdenn/rho2*ry*
+     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+            press_tar(j) = press_tar(j) + 
+     $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
      $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-              vtar(i,j) = vtar(i,j) + rdotn/rho2*rdotden/rho2*ry*
-     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-            enddo
           enddo
         enddo
       enddo
 
-c     CONTRIBUTION FROM ROTLETS AND STOKESLETS
+c     Contribution from Rotlets and Stokeslets
       do ibod = 1,nbodies
         sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
         sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
         rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
-        do i = 1,nx
-          do j = 1,ny
-            rx = xtar(i,j) - centerx(ibod)
-            ry = ytar(i,j) - centery(ibod)
-            rho2 = rx**2.d0 + ry**2.d0
-            rdots = rx*sto1 + ry*sto2
-            utar(i,j) = utar(i,j) + 5.d-1/twopi*
+        do j = 1,ntargets
+          rx = xtar(j) - centerx(ibod)
+          ry = ytar(j) - centery(ibod)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdots = rx*sto1 + ry*sto2
+          utar(j) = utar(j) + 5.d-1/twopi*
      $        (-5.d-1*dlog(rho2)*sto1 + rdots/rho2*rx)
-            vtar(i,j) = vtar(i,j) + 5.d-1/twopi*
+          vtar(j) = vtar(j) + 5.d-1/twopi*
      $        (-5.d-1*dlog(rho2)*sto2 + rdots/rho2*ry)
-c           stokeslet contribution
+          press_tar(j) = press_tar(j) + 1.d0/twopi*
+     $        rdots/rho2
+c         stokeslet contribution
 
-            utar(i,j) = utar(i,j) + rot*ry/rho2
-            vtar(i,j) = vtar(i,j) - rot*rx/rho2
-c           rotlet contribution
-          enddo
+          utar(j) = utar(j) + rot*ry/rho2
+          vtar(j) = vtar(j) - rot*rx/rho2
+c         rotlet contribution
         enddo
       enddo
-c     Add in contribution from rotlets and stokeslets
+c     Add in contribution from Rotlets and Stokeslets
 
-      do i=1,nx
-        do j = 1,ny
-          dlp_laplace = 0.d0
-          rho2_min  = 1.d10
-          do k = 1,nbodies*ninner
-            rx = xtar(i,j) - x(k)
-            ry = ytar(i,j) - y(k)
-            rho2 = rx**2.d0 + ry**2.d0
-            rho2_min = min(rho2_min,rho2)
-            rdotn = rx*px(k) + ry*py(k)
-            dlp_laplace = dlp_laplace + rdotn/rho2*speed(k)
-          enddo
-          dlp_laplace = dlp_laplace*twopi/dble(ninner)/twopi
-c         compute laplace DLP with density function 1
-          if (abs(dlp_laplace) .ge. 1e-8) then
-            utar(i,j) = 0.d0
-            vtar(i,j) = 0.d0
-          endif
-          if (sqrt(rho2_min) .le. 1.d-2) then
-            utar(i,j) = 0.d0
-            vtar(i,j) = 0.d0
-          endif
-c         For values that are inside or close to an boundary assign a
-c         value of 0
-        enddo
-      enddo
-
-
-
-c      open(unit=1,file='output/xx.dat')
-c      open(unit=2,file='output/yy.dat')
-c      open(unit=3,file='output/uu.dat')
-c      open(unit=4,file='output/vv.dat')
-c      do j = 1,nx
-c        write(1,1000) (xtar(j,k), k=1,ny)
-c        write(2,1000) (ytar(j,k), k=1,ny)
-c        write(3,1000) (utar(j,k), k=1,ny)
-c        write(4,1000) (vtar(j,k), k=1,ny)
-c      enddo
-c      close(unit=1)
-c      close(unit=2)
-c      close(unit=3)
-c      close(unit=4)
-c
-c 1000 format(1000(E25.16))
 
       end
+
+
+
 

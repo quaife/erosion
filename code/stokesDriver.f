@@ -1,8 +1,9 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 64
-      parameter (nbodies = 2)
+      parameter (ninner = 128)
+      parameter (nbodies = 10)
+      parameter (ntargets = 100)
 
       integer :: i, n, clock
       integer, dimension(:), allocatable :: seed
@@ -11,6 +12,9 @@
       dimension radius(20),phi(20)
       dimension x(ninner*nbodies),y(ninner*nbodies)
       dimension shear_stress(ninner*nbodies)
+      dimension xtar(ntargets),ytar(ntargets)
+      dimension utar(ntargets),vtar(ntargets)
+      dimension press_tar(ntargets)
 
       call random_seed(size = n)
       allocate(seed(n))
@@ -48,7 +52,7 @@ c      print*,rand(),rand(),rand(),rand()
       centery(4) = -2.d-1
       centery(5) = 6.d-1
       centery(6) = -4.d-1
-      centery(7) = 2.d-1
+      centery(7) = 3.d-1
       centery(8) = -4.d-1
       centery(9) = 1.d-1
       centery(10) = -4.d-1
@@ -95,30 +99,27 @@ c          y((j-1)*ninner+k) = var_rad*dsin(theta) + centery(j)
         enddo
       enddo
       
+      nhalf = ntargets/2
+      ymax = 8.0d-1
+      dy = 2*ymax/(nhalf - 1)
+      do k = 1,nhalf
+        xtar(k) = -2.7d0
+        ytar(k) = -1.d0*ymax + dble(k-1)*dy
+      enddo
+      do k = nhalf+1,2*nhalf
+        xtar(k) = 2.7d0
+        ytar(k) = -1.d0*ymax + dble(k-nhalf-1)*dy
+      enddo
 
-c      twopi = 8.d0*datan(1.d0)
-c      dtheta = twopi/dble(ninner)
-c      do j = 1,nbodies
-c        if (j .eq. 1) then
-c          rad = 2.d-1
-c        elseif (j .eq. 2) then
-c          rad = 1.5d-1
-c        else
-c          rad = 1.d-1
-c        endif
-c        do k = 1,ninner
-c          theta = dble(k-1)*dtheta
-cc          var_rad = rad
-c          var_rad = rad*(1.d0 + 2.d-1*dcos(5*theta))
-c          x((j-1)*ninner+k) = var_rad*dcos(theta) + 6.d-1*(j-2)
-c          y((j-1)*ninner+k) = var_rad*dsin(theta) + 3.d-1*(j-2)
-c        enddo
+c      xmax = 2.5d0 
+c      dx = 2*xmax/ntargets
+c      do k = 1,ntargets
+c        xtar(k) = -1.d0*xmax + dble(k-1)*dx
+c        ytar(k) = 0.d0
 c      enddo
-cc     parameterize from left most point and proceed up the top of the
-cc     curve, throught the back point, and back to the leading
-cc     singularity point
 
-      call stokesSolver(ninner,nbodies,x,y,shear_stress)
+      call stokesSolver(ninner,nbodies,ntargets,x,y,
+     $      xtar,ytar,utar,vtar,press_tar,shear_stress)
 c     pass in number of points and x and y coordinates and return the
 c     shear stress on the boundary
 
