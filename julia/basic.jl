@@ -40,17 +40,24 @@ end
 # All routines work for multiple bodies.
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
-		ntargs::Integer=0, xtar::Vector{Float64}=[0.0], ytar::Vector{Float64}=[0.0])
+		ntargs::Integer=1, xtar::Vector{Float64}=[1.5], ytar::Vector{Float64}=[0.0])
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
-	utar = zeros(Flaot64, ntargs)
-	vtar = zeros(Flaot64, ntargs)
-	ptar = zeros(Flaot64, ntargs)
-	ccall((:stokessolver_, "libstokes.so"),
+	utar = zeros(Float64, ntargs)
+	vtar = zeros(Float64, ntargs)
+	ptar = zeros(Float64, ntargs)
+	#= NEW
+	ccall((:stokessolver_, "libstokes_new.so"),
 		Void, (Ptr{Int}, Ptr{Int}, Ptr{Int}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
-		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, ), 
+		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
 		&npts, &nbods, &ntargs, xx, yy, xtar, ytar, utar, vtar, ptar, tau)
+	return tau
+	=#
+	# OLD
+	ccall((:stokessolver_, "libstokes_old.so"),
+		Void, (Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
+		&npts, &nbods, xx, yy, tau)
 	return tau
 end
 #= stokes!: Dispatch for vector of ThetaLenType
