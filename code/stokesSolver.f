@@ -331,7 +331,7 @@ c     preconditioner flag
       iwork(5) = -1
 c     restart flag
 
-      if (1 .eq. 1) then
+      if (0 .eq. 1) then
         do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
           den(k) = rhs(k)
         enddo
@@ -344,7 +344,7 @@ c       initial guess
 c        FMM
       endif
 
-      if (0 .eq. 1) then
+      if (1 .eq. 1) then
         do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
           den(k) = rhs(k)
         enddo
