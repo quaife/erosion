@@ -2,7 +2,7 @@
       implicit real*8 (a-h,o-z)
 
       parameter (ninner = 128)
-      parameter (nbodies = 10)
+      parameter (nbodies = 20)
       parameter (ntargets = 100)
 
       integer :: i, n, clock
@@ -71,19 +71,23 @@ c      print*,rand(),rand(),rand(),rand()
       dtheta = twopi/dble(ninner)
       do k = 1,20
         radius(k) = 8.d-2 + 2.d-2*(rand()-5.d-1)
-        phi(k) = twopi*rand()
+        phi(k) = 0.d0*twopi*rand()
         centerx(k) = centerx(k) + 2.d-2*(rand()-5.d-1)
         centery(k) = centery(k) + 2.d-2*(rand()-5.d-1)
       enddo
 
-      centerx(1) = -0.5d0
-      centery(1) = 0.0d0
-      centerx(2) = 0.5d0
-      centery(2) = -0.0d0
-      radius(1) = 2.d-1
-      radius(2) = 2.d-1
-      phi(1) = 0.d0
-      phi(2) = 0.d0
+c      centerx(1) = -0.5d0
+c      centery(1) = 0.0d0
+c      centerx(2) = 0.5d0
+c      centery(2) = -0.0d0
+cc      centerx(3) = -0.0d0
+cc      centery(3) = -0.2d0
+c      radius(1) = 2.d-1
+c      radius(2) = 2.d-1
+cc      radius(3) = 1.d-1
+c      phi(1) = 0.d0
+c      phi(2) = 0.d0
+cc      phi(3) = 0.d0
 
       do j = 1,nbodies
         do k = 1,ninner
@@ -98,6 +102,26 @@ c          x((j-1)*ninner+k) = var_rad*dcos(theta) + centerx(j)
 c          y((j-1)*ninner+k) = var_rad*dsin(theta) + centery(j) 
         enddo
       enddo
+c
+c
+c      nx = 20 
+c      ny = 50
+c
+c      xmin = -2.7d0
+c      xmax = +2.7d0
+c      ymin = -8.0d-1
+c      ymax = +8.0d-1
+c      dx = (xmax - xmin)/(nx-1)
+c      dy = (ymax - ymin)/(ny-1)
+c      itar = 0
+c      do j = 1,nx
+c        do k = 1,ny
+c          itar = itar + 1
+c          xtar(itar) = xmin + dble(j-1)*dx
+c          ytar(itar) = ymin + dble(k-1)*dy
+c        enddo
+c      enddo
+
       
       nhalf = ntargets/2
       ymax = 8.0d-1
@@ -110,13 +134,6 @@ c          y((j-1)*ninner+k) = var_rad*dsin(theta) + centery(j)
         xtar(k) = 2.7d0
         ytar(k) = -1.d0*ymax + dble(k-nhalf-1)*dy
       enddo
-
-c      xmax = 2.5d0 
-c      dx = 2*xmax/ntargets
-c      do k = 1,ntargets
-c        xtar(k) = -1.d0*xmax + dble(k-1)*dx
-c        ytar(k) = 0.d0
-c      enddo
 
       call stokesSolver(ninner,nbodies,ntargets,x,y,
      $      xtar,ytar,utar,vtar,press_tar,shear_stress)

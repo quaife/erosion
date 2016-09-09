@@ -133,10 +133,9 @@ c      close(unit=2)
 c      close(unit=3)
 c      close(unit=4)
 c      close(unit=5)
-
-
+c
+c
 c 1000 format(E25.16)
-
 
       end
 
@@ -308,7 +307,7 @@ c***********************************************************************
 c     Solve the boundary integral equation with GMRES
       implicit real*8 (a-h,o-z)
 
-      external msolve_DLP,matvec_DLP
+      external msolve_DLP,matvec_DLP,matvec_DLP_fmm
 
       dimension den(2*nouter+2*ninner*nbodies+3*nbodies)
       dimension rhs(2*nouter+2*ninner*nbodies+3*nbodies)
@@ -332,17 +331,35 @@ c     preconditioner flag
       iwork(5) = -1
 c     restart flag
 
-      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
-        den(k) = rhs(k)
-      enddo
-c     initial guess
+      if (1 .eq. 1) then
+        do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
+          den(k) = rhs(k)
+        enddo
+c       initial guess
 
-      call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
-     $    nelt,ia,ja,a,isym,
-     $    matvec_DLP,msolve_DLP,itol,tol,itmax,iter,err,
-     $    ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
+        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+     $      nelt,ia,ja,a,isym,
+     $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
+     $      ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
+c        FMM
+      endif
+
+      if (0 .eq. 1) then
+        do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
+          den(k) = rhs(k)
+        enddo
+c       initial guess
+
+        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+     $      nelt,ia,ja,a,isym,
+     $      matvec_DLP,msolve_DLP,itol,tol,itmax,iter,err,
+     $      ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
+c        NO FMM
+      endif
 c     use GMRES to find the density function of the double layer
 c     potential
+
+
 
       end
 
@@ -372,8 +389,8 @@ c     potential
       dimension px0(nmax),py0(nmax)
       dimension cur0(nmax),speed0(nmax)
 
-      dimension denx(nmax),deny(nmax)
-      dimension ux(nmax),uy(nmax)
+      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
+      dimension ux(max(ninner,nouter)),uy(max(ninner,nouter))
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
@@ -732,6 +749,301 @@ c     defined on the outer boundary
       enddo
 c     outer product of normal at source with normal at target multiplied
 c     by density function.  This removes the rank one null space
+
+
+      return
+      end
+c***********************************************************************
+      subroutine matvec_DLP_fmm(ntotal,den,vel,nelt,ia,ja,a,isym)
+c     matrix vector multiplication routine for the double-layer
+c     potential
+      implicit real*8 (a-h,o-z)
+
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 20)
+
+      dimension den(ntotal)
+      dimension vel(ntotal)
+
+      common /geometry/x,y,centerx,centery,px,py,cur,speed,
+     $    ninner,nbodies
+      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
+
+      dimension x(nmax),y(nmax)
+      dimension px(nmax),py(nmax)
+      dimension cur(nmax),speed(nmax)
+      dimension centerx(maxbodies),centery(maxbodies)
+
+      dimension xouter(nmax),youter(nmax)
+      dimension px0(nmax),py0(nmax)
+      dimension cur0(nmax),speed0(nmax)
+
+      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
+      dimension ux(max(ninner,nouter)),uy(max(ninner,nouter))
+
+      real *8 xboth(nouter + ninner*nbodies)
+      real *8 yboth(nouter + ninner*nbodies)
+      complex *16 eye
+      complex *16 mu(nouter + ninner*nbodies)
+      complex *16 z(nouter + ninner*nbodies)
+      complex *16 dip1(nouter + ninner*nbodies)
+      complex *16 dip2(nouter + ninner*nbodies)
+      complex *16 vel_cmplx(nouter + ninner*nbodies)
+
+      czero = (0.0d0,0.0d0)
+      eye = (0.d0,1.d0)
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+      do k = 1,nouter + ninner*nbodies
+        vel_cmplx(k) = czero
+      enddo
+c     initialize complex-valued velocity to 0
+
+      do k = 1,2*nouter + 2*ninner*nbodies + 3*nbodies
+        vel(k) = 0.d0
+      enddo
+c     initialize velocity to 0
+
+
+      do k = 1,nouter
+        mu(k) = (den(k+nouter) - eye*den(k))*speed0(k)*
+     $      twopi/dble(nouter)
+        z(k) = px0(k) + eye*py0(k)
+        xboth(k) = xouter(k)
+        yboth(k) = youter(k)
+      enddo
+
+      do isou = 1,nbodies
+        do k=1,ninner
+          mu(nouter + (isou-1)*ninner + k) = 
+     $        (den(2*nouter+(isou-1)*2*ninner+k+ninner) - eye*
+     $         den(2*nouter+(isou-1)*2*ninner+k))*
+     $         speed((isou-1)*ninner+k)*twopi/dble(ninner)
+          z(nouter + (isou-1)*ninner + k) = 
+     $        px((isou-1)*ninner+k) + eye*py((isou-1)*ninner+k)
+          xboth(nouter + (isou-1)*ninner + k) = 
+     $        x((isou-1)*ninner + k)
+          yboth(nouter + (isou-1)*ninner + k) = 
+     $        y((isou-1)*ninner + k)
+        enddo
+      enddo
+
+      dip1 = 2.5d-1/pi*mu*z
+      dip2 = 2.5d-1/pi*(mu*conjg(z) - conjg(mu)*z)
+
+      call stokesDLPnew(nouter+nbodies*ninner,xboth,yboth,
+     $        dip1,dip2,vel_cmplx)
+c     Apply FMM to do the all-to-all particle interactions in linear
+c     time
+
+      do k = 1,nouter
+        vel(k) = -imag(vel_cmplx(k))
+        vel(k+nouter) = real(vel_cmplx(k))
+      enddo
+c     copy velocity on outer boundary in correct order
+
+      do isou = 1,nbodies
+        do k = 1,ninner
+          vel(2*nouter+(isou-1)*2*ninner+k) = 
+     $      -imag(vel_cmplx(nouter+(isou-1)*ninner+k))
+          vel(2*nouter+(isou-1)*2*ninner+k+ninner) = 
+     $      real(vel_cmplx(nouter+(isou-1)*ninner+k))
+        enddo
+      enddo
+c     copy velocity on inner boundaries in correct order
+
+
+c     START OF EXTRA TERMS DUE TO CHARGES ON OUTER WALLS
+      do k = 1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k + nouter)
+      enddo
+
+      do k=1,nouter
+        tdotden = py0(k)*denx(k) - px0(k)*deny(k)
+        vel(k) = vel(k) - 
+     $        cur0(k)*tdotden*py0(k)*
+     $        speed0(k)/dble(nouter)
+        vel(k+nouter) = vel(k + nouter) + 
+     $        cur0(k)*tdotden*px0(k)*
+     $        speed0(k)/dble(nouter)
+      enddo
+c     Add in correction at diagonal term that involves the curvature
+
+      do k = 1,nouter
+        vel(k) = vel(k) - 5.d-1*denx(k)
+        vel(k + nouter) = vel(k + nouter) - 5.d-1*deny(k)
+      enddo
+c     add in the jump condition
+c     END OF EXTRA TERMS DUE TO CHARGES ON OUTER WALLS
+
+c************************************************************
+
+c     START OF EXTRA TERMS DUE TO CHARGES ON OBSTACLE isou
+      do isou = 1,nbodies
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
+        enddo
+
+        do k=1,ninner
+          tdotden = py((isou-1)*ninner+k)*denx(k) - 
+     $              px((isou-1)*ninner+k)*deny(k)
+          vel(2*nouter + (isou-1)*2*ninner + k) = 
+     $        vel(2*nouter + (isou-1)*2*ninner + k) -
+     $        cur((isou-1)*ninner + k)*tdotden*
+     $        py((isou-1)*ninner + k)*speed((isou-1)*ninner + k)/
+     $        dble(ninner)
+          vel(2*nouter + (isou-1)*2*ninner + k + ninner) = 
+     $        vel(2*nouter + (isou-1)*2*ninner + k + ninner) +
+     $        cur((isou-1)*ninner + k)*tdotden*
+     $        px((isou-1)*ninner + k)*speed((isou-1)*ninner + k)/
+     $        dble(ninner)
+        enddo
+c       Add in correction at diagonal term that involves the curvature
+
+        do k = 1,ninner
+          vel(2*nouter + (isou-1)*2*ninner + k) = 
+     $    vel(2*nouter + (isou-1)*2*ninner + k) - 5.d-1*denx(k)
+          vel(2*nouter + (isou-1)*2*ninner + k + ninner) = 
+     $    vel(2*nouter + (isou-1)*2*ninner + k + ninner) - 5.d-1*deny(k)
+        enddo
+c       add in the jump condition
+      enddo
+c     END OF EXTRA TERMS DUE TO CHARGES ON OBSTACLE isou
+
+
+
+c************************************************************
+c     START OF SOURCE POINTS == ROTLETS AND STOKESLETS
+      do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
+
+c       START OF TARGET POINTS == OUTER WALL
+c       loop over target points
+        do k = 1,nouter
+          ux(k) = 0.d0
+          uy(k) = 0.d0
+          rx = xouter(k) - centerx(ibod)
+          ry = youter(k) - centery(ibod)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdots = rx*sto1 + ry*sto2
+          ux(k) = 5.d-1/twopi*
+     $        (-5.d-1*log(rho2)*sto1 + rdots/rho2*rx)
+          uy(k) = 5.d-1/twopi*
+     $        (-5.d-1*log(rho2)*sto2 + rdots/rho2*ry)
+          ux(k) = ux(k) + rot*ry/rho2
+          uy(k) = uy(k) - rot*rx/rho2
+        enddo
+c       stokeslets and rotlets contribute to the velocity
+
+        do k=1,nouter
+          vel(k) = vel(k) + ux(k)
+          vel(k+nouter) = vel(k+nouter) + uy(k)
+        enddo
+c       END OF TARGET POINTS == OUTER WALL
+
+c       START OF TARGET POINTS == OBSTACLE
+        do itar = 1,nbodies
+c         loop over target points
+          do k = 1,ninner
+            ux(k) = 0.d0
+            uy(k) = 0.d0
+            rx = x((itar-1)*ninner + k) - centerx(ibod)
+            ry = y((itar-1)*ninner + k) - centery(ibod)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdots = rx*sto1 + ry*sto2
+            ux(k) = 5.d-1/twopi*
+     $          (-5.d-1*dlog(rho2)*sto1 + rdots/rho2*rx)
+            uy(k) = 5.d-1/twopi*
+     $          (-5.d-1*dlog(rho2)*sto2 + rdots/rho2*ry)
+            ux(k) = ux(k) + rot*ry/rho2
+            uy(k) = uy(k) - rot*rx/rho2
+          enddo
+c         stokeslets and rotlets contribute to the velocity
+
+          do k=1,ninner
+            vel(2*nouter+(itar-1)*2*ninner+k) = 
+     $          vel(2*nouter+(itar-1)*2*ninner+k) + ux(k)
+            vel(2*nouter+(itar-1)*2*ninner+k+ninner) = 
+     $          vel(2*nouter+(itar-1)*2*ninner+k+ninner) + uy(k)
+          enddo
+        enddo
+c       END OF TARGET POINTS == OBSTACLE
+      enddo
+c     END OF SOURCE POINTS == ROTLETS AND STOKESLETS
+
+c************************************************************
+
+c     START OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
+c     STOKESLETS
+      do ibod = 1,nbodies
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
+        enddo
+c       density function due to obstacle ibod
+
+        do k = 1,ninner
+          vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) - 
+     $      denx(k)*speed((ibod-1)*ninner+k)
+          vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) - 
+     $      deny(k)*speed((ibod-1)*ninner+k)
+          vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) - 
+     $      (denx(k)*y((ibod-1)*ninner+k)-
+     $      deny(k)*x((ibod-1)*ninner+k))*
+     $      speed((ibod-1)*ninner+k)
+        enddo
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
+     $    vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1)/twopi * 
+     $    (twopi/dble(ninner))
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) = 
+     $    vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2)/twopi * 
+     $    (twopi/dble(ninner))
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) = 
+     $    vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3)/twopi * 
+     $    (twopi/dble(ninner))
+
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) + sto1
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) + sto2
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) + rot
+c       END OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
+c       STOKESLETS
+      enddo
+
+c************************************************************
+
+c     START OF RANK 1 CORRECTION TO HANDLE NULL SPACE FROM THE OUTERMOST
+c     BOUNDARY
+      do k = 1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k + nouter)
+      enddo
+
+      sigdotn = 0.d0
+      do k = 1,nouter
+        sigdotn = sigdotn + (px0(k)*denx(k) + py0(k)*deny(k))*speed0(k)
+      enddo
+      sigdotn = sigdotn*twopi/dble(nouter)
+c     integral of dot product of the normal vector and density function
+c     defined on the outer boundary
+
+      do k = 1,nouter
+        vel(k) = vel(k) + sigdotn * px0(k)
+        vel(k+nouter) = vel(k+nouter) + sigdotn * py0(k)
+      enddo
+c     outer product of normal at source with normal at target multiplied
+c     by density function.  This removes the rank one null space
+
 
       return
       end
