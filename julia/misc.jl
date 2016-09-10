@@ -81,24 +81,17 @@ function getnormals(theta::Vector{Float64})
 	ny = cos(theta)
 	return nx, ny 
 end
-# plotcurve: Plot a curve from the theta-len values along with the initial shape.
-function plotsinglecurve!(thlen1::ThetaLenType, thlen0::ThetaLenType, cnt::Integer; axlim::Real=0.5)
-	# Compute the xy coordinates if they are not already loaded in thlen.
-	getxy!(thlen0); getxy!(thlen1)
-	x0, y0 = thlen0.xx, thlen0.yy
-	x1, y1 = thlen1.xx, thlen1.yy
-	# Plot the curves.
-	p1 = plot(x0,y0,"-", x1,y1,"-")
-	xlim(-axlim,axlim); ylim(-axlim,axlim)
-	# Save the figures in a folder.
-	figname = string("../figs/fig",string(cnt),".pdf")
-	savefig(p1, figname, width=500, height=500)
-	return
-end
 # plotcurve: Plot multiple curves from the theta-len values.
-function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer; axlim::Real=0.5)
+function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer,
+		xtar::Vector{Float64}=evec(), ytar::Vector{Float64}=evec(), 
+		utar::Vector{Float64}=evec(), vtar::Vector{Float64}=evec(); 
+		xxlim::Real=3.0, yylim::Real=1.0)
+	# Make figure of given height and preserve the aspect ratio.
+	height = 400
+	width = xxlim/yylim*height
+	# Make plot with given axis limits.
 	p1 = plot()
-	xlim(-axlim,axlim); ylim(-axlim,axlim)
+	xlim(-xxlim,xxlim); ylim(-yylim,yylim)
 	for ii = 1:endof(thlenvec)
 		thlen = thlenvec[ii]
 		# Compute the xy coordinates if they are not already loaded in thlen.
@@ -108,10 +101,18 @@ function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer; axlim::Real=0
 		p1 = oplot(xx,yy,"-")
 	end
 	# Save the figures in a folder.
-	figname = string("../figs/fig",string(cnt),".pdf")
-	savefig(p1, figname, width=500, height=500)
+	figname = string("../figs/shape",string(cnt),".pdf")
+	savefig(p1, figname, width=width, height=height)
 	return
 end
+# plotpress: Plot the pressure distribution
+function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64}, cnt::Integer)
+	p1 = plot(ytar, ptar, ".-")
+	pt = oplot([0.],[0.],".")
+	figname = string("../figs/press",string(cnt),".pdf")	
+	savefig(p1, figname, width=400, height=400)
+end
+#tbl = Table(1,2); tbl[1,1] = p1; tbl[1,2] = p2
 ############################################################
 
 

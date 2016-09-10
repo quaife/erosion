@@ -12,15 +12,25 @@ function main()
 	# For circle geometry
 	rad1, rad2, rad3, rad4 = 0.2, 0.2, 0.2, 0.2
 	# Evolution parameters.
-	dt = 5e-4
-	epsilon = 0.02
+	dt = 2e-3
+	epsilon = 0.08
 	sigma = epsilon
-	tfin = 100*dt
+	tfin = 20*dt
 	# Misc parameters.
 	beta = 0
-	axlim = 0.2
+	xxlim = 0.2
+	yylim = 0.2
+	# Target points
+	ntargs = 11
+	yend = 0.9
+	ytar = collect(linspace(-yend, yend, ntargs))
+	xtar = -1.5 * ones(Float64, ntargs)
 	######################
 
+	# Initialize utar, vtar, ptar
+	utar = zeros(Float64,ntargs)
+	vtar = zeros(Float64,ntargs)
+	ptar = zeros(Float64,ntargs)
 	# Put the parameters in a single variable.
 	params = ParamType(dt,epsilon,sigma,beta)
 	# Create the initial geometries.
@@ -33,22 +43,24 @@ function main()
 	thlenvec0 = [thlen01]
 	
 	# Plot the initial geometries.
-	plotcurves!(thlenvec0, 0, axlim=axlim)	
+	plotcurves!(thlenvec0,0; xxlim=xxlim, yylim=yylim)	
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
 	
 	# Initialize values for the while loop (with slight adjustment to tfin).
 	tfin -= 0.5*dt; tm = dt; cnt = 1; 
 	# Plot the result for t=dt.
-	plotcurves!(thlenvec1, cnt, axlim=axlim)
+	plotcurves!(thlenvec1,cnt; xxlim=xxlim, yylim=yylim)
 	# Enter while loop.
 	while(tm < tfin)
 		# Compute the new stress and save it.
-		stokes!(thlenvec1, sigma)
+		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntargs,xtar,ytar)
 		# Advance thlen forward in time using the multi-step method.
 		advance_thetalen!(thlenvec1,thlenvec0,params)
 		# Advance time & counter and plot the result.
-		tm += dt; cnt += 1; plotcurves!(thlenvec1,cnt,axlim=axlim)
+		tm += dt; cnt += 1; 
+		plotcurves!(thlenvec1,cnt; xxlim=xxlim, yylim=yylim)
+		plotpress(ytar,ptar,cnt)
 	end
 end
 

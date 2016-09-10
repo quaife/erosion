@@ -34,36 +34,40 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.ysmdot = thlen1.ysmdot
 	return
 end
+# evec: Create an empty Vector{Float64}
+function evec()
+	return Array(Float64,0)
+end
 ##################################################
 
 #################### Stokes solvers ####################
 # All routines work for multiple bodies.
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
-		ntargs::Integer=1, xtar::Vector{Float64}=[1.5], ytar::Vector{Float64}=[0.0])
+		ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
 	utar = zeros(Float64, ntargs)
 	vtar = zeros(Float64, ntargs)
 	ptar = zeros(Float64, ntargs)
-	#= NEW
+	# NEW
 	ccall((:stokessolver_, "libstokes_new.so"),
 		Void, (Ptr{Int}, Ptr{Int}, Ptr{Int}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
 		&npts, &nbods, &ntargs, xx, yy, xtar, ytar, utar, vtar, ptar, tau)
-	return tau
-	=#
-	# OLD
+	return tau, utar, vtar, ptar
+	#= OLD
 	ccall((:stokessolver_, "libstokes_old.so"),
 		Void, (Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
 		&npts, &nbods, xx, yy, tau)
-	return tau
+	return tau =#
 end
 #= stokes!: Dispatch for vector of ThetaLenType
 Calculates atau = abs(tau) and smooths it with a Gaussian filter;
 then loads each atau in thlenv. =#
-function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64)
+function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64, 
+			ntargs::Integer=0, xtar::Vector{Float64}=evec(), ytar::Vector{Float64}=evec())
 	nbods = endof(thlenv)
 	npts = endof(thlenv[1].theta)
 	ntot = nbods*npts
@@ -78,8 +82,8 @@ function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64)
 		xv[n1:n2], yv[n1:n2] = thlenv[nn].xx, thlenv[nn].yy
 	end
 	# Call the stokessolver.
-	tau = stokes(npts,nbods,xv,yv)
-	# Update the atau value in each of the thlen variables.
+	tau,utar,vtar,ptar = stokes(npts,nbods,xv,yv,ntargs,xtar,ytar)
+	# Smooth atau and save it in each of the thlen variables.
 	for nn = 1:nbods
 		n1 = npts*(nn-1)+1
 		n2 = npts*nn
@@ -87,7 +91,7 @@ function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64)
         atau = gaussfilter(atau,sigma)
 		thlenv[nn].atau = atau
 	end
-	return
+	return utar,vtar,ptar
 end
 ##################################################
 
