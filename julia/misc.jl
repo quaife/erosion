@@ -85,13 +85,13 @@ end
 function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer,
 		xtar::Vector{Float64}=evec(), ytar::Vector{Float64}=evec(), 
 		utar::Vector{Float64}=evec(), vtar::Vector{Float64}=evec(); 
-		xxlim::Real=3.0, yylim::Real=1.0)
+		axlims::Vector{Float64}=[3.0,1.0] )
 	# Make figure of given height and preserve the aspect ratio.
 	height = 400
-	width = xxlim/yylim*height
+	width = axlims[1]/axlims[2]*height
 	# Make plot with given axis limits.
 	p1 = plot()
-	xlim(-xxlim,xxlim); ylim(-yylim,yylim)
+	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
 	for ii = 1:endof(thlenvec)
 		thlen = thlenvec[ii]
 		# Compute the xy coordinates if they are not already loaded in thlen.
@@ -106,9 +106,10 @@ function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer,
 	return
 end
 # plotpress: Plot the pressure distribution
-function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64}, cnt::Integer)
+function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64}, 
+		cnt::Integer, pmax::Float64=15.0)
 	p1 = plot(ytar, ptar, ".-")
-	pt = oplot([0.],[0.],".")
+	xlim(-1., 1.); ylim(0., pmax)
 	figname = string("../figs/press",string(cnt),".pdf")	
 	savefig(p1, figname, width=400, height=400)
 end

@@ -15,24 +15,22 @@ function main()
 	dt = 2e-3
 	epsilon = 0.08
 	sigma = epsilon
-	tfin = 20*dt
+	nsteps = 10
 	# Misc parameters.
 	beta = 0
-	xxlim = 0.2
-	yylim = 0.2
+	axlims = [0.2,0.2]
 	# Target points
 	ntargs = 11
-	yend = 0.9
+	yend = 0.8
 	ytar = collect(linspace(-yend, yend, ntargs))
-	xtar = -1.5 * ones(Float64, ntargs)
+	xtar = -2.8 * ones(Float64, ntargs)
 	######################
 
-	# Initialize utar, vtar, ptar
-	utar = zeros(Float64,ntargs)
-	vtar = zeros(Float64,ntargs)
-	ptar = zeros(Float64,ntargs)
 	# Put the parameters in a single variable.
 	params = ParamType(dt,epsilon,sigma,beta)
+	# Initialize variables.
+	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
+	pavg = zeros(Float64,nsteps)
 	# Create the initial geometries.
 	thlen01 = circgeo(npts,rad1,xsm1,ysm1)
 	thlen02 = circgeo(npts,rad2,xsm2,ysm2)
@@ -42,26 +40,27 @@ function main()
 	#thlenvec0 = [thlen01, thlen02, thlen03, thlen04]
 	thlenvec0 = [thlen01]
 	
-	# Plot the initial geometries.
-	plotcurves!(thlenvec0,0; xxlim=xxlim, yylim=yylim)	
+	# Plot the initial geometries, t=0.
+	plotcurves!(thlenvec0,0; axlims=axlims)	
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
-	
-	# Initialize values for the while loop (with slight adjustment to tfin).
-	tfin -= 0.5*dt; tm = dt; cnt = 1; 
 	# Plot the result for t=dt.
-	plotcurves!(thlenvec1,cnt; xxlim=xxlim, yylim=yylim)
-	# Enter while loop.
-	while(tm < tfin)
+	plotcurves!(thlenvec1,1; axlims=axlims)
+
+	# Enter the time loop.
+	for cnt = 2:nsteps
 		# Compute the new stress and save it.
 		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntargs,xtar,ytar)
 		# Advance thlen forward in time using the multi-step method.
 		advance_thetalen!(thlenvec1,thlenvec0,params)
-		# Advance time & counter and plot the result.
-		tm += dt; cnt += 1; 
-		plotcurves!(thlenvec1,cnt; xxlim=xxlim, yylim=yylim)
+		# Calculate the average pressure.
+		pavg[cnt] = mean(ptar)
+		# Plot the results.
+		plotcurves!(thlenvec1,cnt; axlims=axlims)
 		plotpress(ytar,ptar,cnt)
 	end
+	#p1 = plot(pavg,".-")
+	#display(p1)
 end
 
 main()
