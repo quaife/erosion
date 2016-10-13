@@ -52,11 +52,25 @@ end
 
 
 #################### Other routines ####################
+#= get_thlen: Given the x and y coordinates, calculate theta and len. =#
+function get_thlen(xx::Vector{Float64}, yy::Vector{Float64})
+	# The partial derivatives dx/dalpha and dy/dalpha.
+	dxda = specdiff(xx)
+	dyda = specdiff(yy)
+	# Calculate theta and len.
+	theta = atan2(dyda,dxda)
+	lvec = sqrt(dxda.^2+dyda.^2)
+	len = mean(lvec)
+	# Check that the input is nearly equally spaced in arclength.
+	relerr = maxabs(lvec-len)/len
+	if relerr>1.e-2; error("The coordinates are not equally spaced"); return; end 
+	return theta, len
+end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values.
 While we're at it, we can also calculate the normal direcations. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
-	# The increments of dx and dy
+	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
 	# Integrate to get the x,y coordinates; result will have mean zero.
