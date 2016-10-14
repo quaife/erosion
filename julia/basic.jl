@@ -51,17 +51,12 @@ function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{F
 	vtar = zeros(Float64, ntargs)
 	ptar = zeros(Float64, ntargs)
 	# NEW
-	ccall((:stokessolver_, "libstokes_new.so"),
+	ccall((:stokessolver_, "libstokes.so"),
 		Void, (Ptr{Int}, Ptr{Int}, Ptr{Int}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
 		&npts, &nbods, &ntargs, xx, yy, xtar, ytar, utar, vtar, ptar, tau)
 	return tau, utar, vtar, ptar
-	#= OLD
-	ccall((:stokessolver_, "libstokes_old.so"),
-		Void, (Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
-		&npts, &nbods, xx, yy, tau)
-	return tau =#
 end
 #= stokes!: Dispatch for vector of ThetaLenType
 Calculates atau = abs(tau) and smooths it with a Gaussian filter;
