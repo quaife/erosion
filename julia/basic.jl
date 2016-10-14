@@ -14,6 +14,13 @@ type ThetaLenType
 end
 ##################################################
 
+#################### Includes ####################
+using Winston
+include("spectral.jl")
+include("thetalen.jl")
+include("misc.jl")
+##################################################
+
 #################### Object routines ####################
 # Create a new ThetaLenType that has all zeros.
 function new_thlen()
@@ -88,11 +95,4 @@ function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64,
 	end
 	return utar,vtar,ptar
 end
-##################################################
-
-#################### Includes ####################
-using Winston
-include("spectral.jl")
-include("thetalen.jl")
-include("misc.jl")
 ##################################################

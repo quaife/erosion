@@ -112,11 +112,8 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
-############################################################
 
-
-#################### Starter routines ####################
-# thetadot: Calculate the time derivative of theta.
+# thetadot: Calculate the time derivative of theta; only used in the starter routine.
 function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Extract the needed variables.
 	dt, epsilon, beta = params.dt, params.epsilon, params.beta
@@ -138,4 +135,3 @@ function thetadot!(thlen::ThetaLenType, params::ParamType)
 		thetadot(thlen.theta, thlen.len, thlen.atau, params)
 	return thdot
 end
-############################################################
