@@ -24,13 +24,19 @@ function erosion(npts::Integer, nbods::Integer,
 		xx,yy = xv[n1:n2],yv[n1:n2]
 		thlen.theta, thlen.len = get_thlen(xx,yy)
 		thlen.xsm, thlen.ysm = mean(xx),mean(yy)
-		thlenvec0[nn] = thlen
+		thlenvec0[nn] = new_thlen()
+		copy_thlen!(thlen,thlenvec0[nn])
 	end
 	# Initialize variables for u, v, and pressure at target points.
 	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
 	pavg = zeros(Float64,nsteps)
 	# Plot the initial geometries, t=0.
-	plotcurves!(thlenvec0,0; axlims=axlims)	
+	plotcurves!(thlenvec0,0; axlims=axlims)
+
+
+	#HERE
+
+
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
 	# Plot the result for t=dt.

@@ -19,6 +19,7 @@ using Winston
 include("spectral.jl")
 include("thetalen.jl")
 include("misc.jl")
+include("main.jl")
 ##################################################
 
 #################### Object routines ####################

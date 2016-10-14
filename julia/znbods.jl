@@ -4,7 +4,6 @@ function main()
 	##### PARAMETERS #####
 	# Geometry parameters.
 	npts = 256
-	nbods = 1
 	xsm1, ysm1 = +0.0, +0.4
 	xsm2, ysm2 = -0.0, -0.4
 	xsm3, ysm3 = +0.4, +0.0
@@ -12,7 +11,7 @@ function main()
 	# For circle geometry
 	rad1, rad2, rad3, rad4 = 0.2, 0.2, 0.2, 0.2
 	# Evolution parameters.
-	dt = 0.5e-3
+	dt = 2e-3
 	epsilon = 5*dt^(2/3)
 	sigma = epsilon
 	nsteps = 50
