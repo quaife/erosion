@@ -8,6 +8,13 @@ function get_thlen(xx::Vector{Float64}, yy::Vector{Float64})
 	dyda = specdiff(yy)
 	# Calculate theta and len.
 	theta = atan2(dyda,dxda)
+
+
+	# HERE
+	theta[theta .< theta[1]] += 2*pi
+
+
+
 	lvec = sqrt(dxda.^2+dyda.^2)
 	len = mean(lvec)
 	# Check that the input is nearly equally spaced in arclength.

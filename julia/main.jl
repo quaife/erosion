@@ -16,16 +16,13 @@ function erosion(npts::Integer, nbods::Integer,
 	ytar = collect(linspace(-yend, yend, ntargs))
 	xtar = -2.8 * ones(Float64, ntargs)
 	# Given the x and y coordinates, calculate the theta-len values.
-	thlenvec0 = Array(ThetaLenType,nbods)
-	thlen = new_thlen()
+	thlenvec0 = [new_thlen() for ii=1:nbods]
 	for nn = 1:nbods
 		n1 = npts*(nn-1)+1
 		n2 = npts*nn
 		xx,yy = xv[n1:n2],yv[n1:n2]
-		thlen.theta, thlen.len = get_thlen(xx,yy)
-		thlen.xsm, thlen.ysm = mean(xx),mean(yy)
-		thlenvec0[nn] = new_thlen()
-		copy_thlen!(thlen,thlenvec0[nn])
+		thlenvec0[nn].theta, thlenvec0[nn].len = get_thlen(xx,yy)
+		thlenvec0[nn].xsm, thlenvec0[nn].ysm = mean(xx),mean(yy)
 	end
 	# Initialize variables for u, v, and pressure at target points.
 	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
@@ -35,7 +32,6 @@ function erosion(npts::Integer, nbods::Integer,
 
 
 	#HERE
-
 
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
@@ -88,10 +84,11 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	sigma = params.sigma
 	nbods = endof(thlenvec0) 
 	# Initialize vectors of ThetaLenType.
-	thlenvec05 = Array(ThetaLenType, nbods)
-	thlenvec1 = Array(ThetaLenType, nbods)
+	thlenvec05 = [new_thlen() for ii=1:nbods]
+	thlenvec1 = [new_thlen() for ii=1:nbods]
+
 	# Compute the stress at t=0.
-	stokes!(thlenvec0, sigma)	
+	stokes!(thlenvec0, sigma)
 	# For each body, take the first step of RK2.
 	for ii = 1:nbods
 		# Need thlen0 for each body.
@@ -99,7 +96,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 		# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
 		thdot = thetadot!(thlen0,params)
 		# Take the first step of RK2.
-		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)		
+		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)	
 	end
 	# Compute the stress at t=0.5*dt.
 	stokes!(thlenvec05, sigma)	
