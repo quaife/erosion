@@ -113,15 +113,8 @@ function polygongeo(npts::Integer, nsides::Integer,
 	thlen.xsm = xsm; thlen.ysm = ysm
 	return thlen
 end
-##################################################
-
-
-
-
-
-
-# makegeodata
-function makegeodata(filename::AbstractString, npts::Integer, nbods::Integer)
+# make4circs: Makes up to four circles and stores the data in a file.
+function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 	# Creat the data vector.
 	nparams = 2
 	vsize = npts + 3
@@ -151,7 +144,8 @@ function makegeodata(filename::AbstractString, npts::Integer, nbods::Integer)
 	return
 end
 
-# readgeodata:
+
+# readgeodata: Reads the geometry from a data file.
 function readgeodata(filename::AbstractString)
 	# Open the input data file.
 	infile = open(string(filename), "r")
@@ -176,5 +170,5 @@ function readgeodata(filename::AbstractString)
 		thlenvec[nn].xsm = invec[n2-1]
 		thlenvec[nn].ysm = invec[n2]
 	end
-	return thlenvec, npts, nbods
+	return thlenvec,npts
 end

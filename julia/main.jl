@@ -1,9 +1,19 @@
 # main.jl
 
 # erosion: The main routine to erode a group of bodies for input of Vector{ThetaLenType}.
-function erosion(npts::Integer, nbods::Integer, nsteps::Integer,
-	params::ParamType, thlenvec0::Vector{ThetaLenType}; 
+function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType}; 
 	axlims::Vector{Float64} = [1.,1.])
+
+	# Extract the basic parameters
+	npts = endof(thlenvec0[1].theta)
+	nbods = endof(thlenvec0)
+	nsteps = round(Int,tfin/dt)
+	# Calculate the smoothing parameters based on the spatial resolution.
+	epsilon = 10./npts
+	sigma = 15./npts
+	# Save the parameters in one variable.
+	params = ParamType(dt,epsilon,sigma,0)
+
 
 	# TEMPORARY: Set up the target points to measure u, v, and pressure.
 	ntargs = 11
