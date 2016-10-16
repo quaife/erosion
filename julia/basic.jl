@@ -58,7 +58,6 @@ function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{F
 	utar = zeros(Float64, ntargs)
 	vtar = zeros(Float64, ntargs)
 	ptar = zeros(Float64, ntargs)
-	# NEW
 	ccall((:stokessolver_, "libstokes.so"),
 		Void, (Ptr{Int}, Ptr{Int}, Ptr{Int}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
@@ -74,7 +73,7 @@ function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64,
 	nbods = endof(thlenv)
 	npts = endof(thlenv[1].theta)
 	ntot = nbods*npts
-	xv = zeros(Float64,ntot); yv = zeros(Float64,ntot)
+	xv,yv = [zeros(Float64,ntot) for ii=1:2]
 	# Put all of the xy values in a single vector.
 	for nn = 1:nbods
 		# Compute the xy coordinates if they are not already loaded in thlen.

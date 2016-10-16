@@ -1,27 +1,6 @@
 # misc.jl
 
 #################### Converting between x,y and theta,len ####################
-#= get_thlen: Given the x and y coordinates, calculate theta and len. =#
-function get_thlen(xx::Vector{Float64}, yy::Vector{Float64})
-	# The partial derivatives dx/dalpha and dy/dalpha.
-	dxda = specdiff(xx)
-	dyda = specdiff(yy)
-	# Calculate theta and len.
-	theta = atan2(dyda,dxda)
-
-
-	# HERE
-	theta[theta .< theta[1]] += 2*pi
-
-
-
-	lvec = sqrt(dxda.^2+dyda.^2)
-	len = mean(lvec)
-	# Check that the input is nearly equally spaced in arclength.
-	relerr = maxabs(lvec-len)/len
-	if relerr>1.e-2; error("The coordinates are not equally spaced"); return; end 
-	return theta, len
-end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values.
 While we're at it, we can also calculate the normal direcations. =#
@@ -51,6 +30,7 @@ function getnormals(theta::Vector{Float64})
 	ny = cos(theta)
 	return nx, ny 
 end
+
 #################### Plotting routines ####################
 # plotcurve: Plot multiple curves from the theta-len values.
 function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer,
@@ -84,6 +64,7 @@ function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64},
 	figname = string("../figs/press",string(cnt),".pdf")	
 	savefig(p1, figname, width=400, height=400)
 end
+
 #################### Geometry routines ####################
 # getalpha: Calculate the parameterization variable, alpha = s/L.
 function getalpha(npts::Integer)
@@ -133,3 +114,67 @@ function polygongeo(npts::Integer, nsides::Integer,
 	return thlen
 end
 ##################################################
+
+
+
+
+
+
+# makegeodata
+function makegeodata(filename::AbstractString, npts::Integer, nbods::Integer)
+	# Creat the data vector.
+	nparams = 2
+	vsize = npts + 3
+	outvec = zeros(Float64,vsize*nbods+nparams)
+	outvec[1] = npts
+	outvec[2] = nbods
+	# For now, make some circles.
+	rad = 0.2
+	xsm,ysm = [zeros(Float64,4) for ii=1:2]
+	xsm[1], ysm[1] = +0.0, +0.4
+	xsm[2], ysm[2] = -0.0, -0.4
+	xsm[3], ysm[3] = +0.4, +0.0
+	xsm[4], ysm[4] = -0.4, -0.0
+	# Save the theta, len, xsm, ysm values in a single vector.
+	for nn=1:nbods
+		n1 = vsize*(nn-1)+1 + nparams
+		n2 = vsize*nn + nparams
+		alpha = getalpha(npts)
+		outvec[n1:n2-3] = 0.5*pi + 2*pi*alpha[:]
+		outvec[n2-2] = 2*pi*rad
+		outvec[n2-1] = xsm[nn]
+		outvec[n2] = ysm[nn]
+	end
+	outfile = open(string(filename), "w")
+	writedlm(outfile, outvec)
+	close(outfile)
+	return
+end
+
+# readgeodata:
+function readgeodata(filename::AbstractString)
+	# Open the input data file.
+	infile = open(string(filename), "r")
+	invec = readdlm(infile)
+	close(infile)
+	# Extract the number of points and bodies.
+	npts = round(Int,invec[1])
+	nbods = round(Int,invec[2])
+	# Consistency test.
+	nparams = 2
+	vsize = npts + 3
+	if (endof(invec) != vsize*nbods+nparams)
+		error("Inconsistency in the data file."); return
+	end
+	# Extract the theta, len, xsm, ysm values.
+	thlenvec = [new_thlen() for nn=1:nbods]
+	for nn=1:nbods
+		n1 = vsize*(nn-1)+1 + nparams
+		n2 = vsize*nn + nparams
+		thlenvec[nn].theta = invec[n1:n2-3]
+		thlenvec[nn].len = invec[n2-2]
+		thlenvec[nn].xsm = invec[n2-1]
+		thlenvec[nn].ysm = invec[n2]
+	end
+	return thlenvec, npts, nbods
+end

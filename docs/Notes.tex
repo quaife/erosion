@@ -172,6 +172,7 @@ N = L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
 \end{equation}
 We evolve with the integrating-factor method. When recast in terms of Gaussian filters, this gives
 \begin{equation}
+\label{intfact}
 \thh^{(n+1)} = \GG(\theta^{(n)}, \sigma_1) 
 + \frac{\Dt}{2} \left( 3 \GG(N^{(n)}, \sigma_1) - \GG(N^{(n-1)}), \sigma_2 \right)
 \end{equation}
@@ -225,5 +226,8 @@ Given $\nhat = (-\sin \theta, \cos \theta)$ and $\shat = (\cos \theta, \sin \the
 \end{align}
 Note: Initially, I was unsure whether $\int_0^1 V_s \hat{s} d\alpha$ makes a non-zero contribution or not, but based on some tests, it seems that it does make a difference. The order of magnitude is the same as the first term involving $V_n$.
 
+\subsection{How to scale smoothing parameters?}
+We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale with the simulation resolution parameters? The most important resolution parameter is $N$, the total number of points on each body, but there is also $\Delta t$ and maybe some others. Figuring out $\sigma$ is the easier part: $\sigma$ is a lengthscale and should go like $1/N$. On the other hand, $\eps$ is a diffusivity in dimensions. I did a calculation and found that $\eps$ should scale like $2/(\pi^2 N^2)$.
 
+The calculation is based on looking at Eq.~(\ref{intfact}), where $\sigma_1 \sim 2 \pi \sqrt{\eps \Delta t}$. For the largest wavenumbers, $k_{max} \sim N/2$, we want the smoothing to beat the nonlinear term (so that overall, these modes decay). So we need $e^{-\pi^2 \eps \Delta t N^2 / 2} < 1 - C\Delta t$, which gives $\eps > 2C/(\pi^2 N^2)$, independent of $\Delta t$. If $C=1$, this gives roughly $\eps > 0.2/ N^2$.
 \end{document}

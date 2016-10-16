@@ -1,38 +1,21 @@
 # main.jl
 
-# erosion: The main routine to erode a group of bodies.
-function erosion(npts::Integer, nbods::Integer, 
-	dt::Float64, nsteps::Integer, 
-	xv::Vector{Float64}, yv::Vector{Float64}; 
+# erosion: The main routine to erode a group of bodies for input of Vector{ThetaLenType}.
+function erosion(npts::Integer, nbods::Integer, nsteps::Integer,
+	params::ParamType, thlenvec0::Vector{ThetaLenType}; 
 	axlims::Vector{Float64} = [1.,1.])
-	# Calculate the two smoothing parameters from dt.
-	epsilon = 5*dt^(2/3)
-	sigma = epsilon
- 	# Store the parameters in a single variable.
-	params = ParamType(dt,epsilon,sigma,0)
-	# Set up the target points to measure u, v, and pressure.
+
+	# TEMPORARY: Set up the target points to measure u, v, and pressure.
 	ntargs = 11
 	yend = 0.8
 	ytar = collect(linspace(-yend, yend, ntargs))
 	xtar = -2.8 * ones(Float64, ntargs)
-	# Given the x and y coordinates, calculate the theta-len values.
-	thlenvec0 = [new_thlen() for ii=1:nbods]
-	for nn = 1:nbods
-		n1 = npts*(nn-1)+1
-		n2 = npts*nn
-		xx,yy = xv[n1:n2],yv[n1:n2]
-		thlenvec0[nn].theta, thlenvec0[nn].len = get_thlen(xx,yy)
-		thlenvec0[nn].xsm, thlenvec0[nn].ysm = mean(xx),mean(yy)
-	end
 	# Initialize variables for u, v, and pressure at target points.
 	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
 	pavg = zeros(Float64,nsteps)
+
 	# Plot the initial geometries, t=0.
 	plotcurves!(thlenvec0,0; axlims=axlims)
-
-
-	#HERE
-
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
 	# Plot the result for t=dt.
@@ -40,7 +23,7 @@ function erosion(npts::Integer, nbods::Integer,
 	# Enter the time loop.
 	for cnt = 2:nsteps
 		# Compute the new stress and save it.
-		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntargs,xtar,ytar)
+		utar,vtar,ptar = stokes!(thlenvec1, params.sigma, ntargs, xtar, ytar)
 		# Advance thlen forward in time using the multi-step method.
 		advance_thetalen!(thlenvec1,thlenvec0,params)
 		# Calculate the average pressure.
@@ -86,7 +69,6 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Initialize vectors of ThetaLenType.
 	thlenvec05 = [new_thlen() for ii=1:nbods]
 	thlenvec1 = [new_thlen() for ii=1:nbods]
-
 	# Compute the stress at t=0.
 	stokes!(thlenvec0, sigma)
 	# For each body, take the first step of RK2.
