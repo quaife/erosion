@@ -10,5 +10,5 @@ function driver(tfin::Float64=1.)
 	erosion(tfin,dt,thlenvec; axlims=[1.,1.])
 end
 
-make4circs("thlen.dat",128,4)
+make4circs("thlen.dat",64,4)
 driver()

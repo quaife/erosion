@@ -13,6 +13,11 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	sigma = 15./npts
 	# Save the parameters in one variable.
 	params = ParamType(dt,epsilon,sigma,0)
+	# The output file to save the geometry.
+	outfile = "geoout.dat"
+	iostream = open(outfile,"w")
+	writedlm(iostream,[npts,nbods,nsteps+1])
+	close(iostream)
 
 
 	# TEMPORARY: Set up the target points to measure u, v, and pressure.
@@ -24,12 +29,14 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
 	pavg = zeros(Float64,nsteps)
 
-	# Plot the initial geometries, t=0.
+	# Plot the initial geometries, t=0, and save in a data file.
 	plotcurves!(thlenvec0,0; axlims=axlims)
+	savexydata(outfile, thlenvec0)
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
 	# Plot the result for t=dt.
 	plotcurves!(thlenvec1,1; axlims=axlims)
+	savexydata(outfile, thlenvec1)
 	# Enter the time loop.
 	for cnt = 2:nsteps
 		# Compute the new stress and save it.
@@ -41,6 +48,9 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 		# Plot the results.
 		plotcurves!(thlenvec1,cnt; axlims=axlims)
 		#plotpress(ytar,ptar,cnt)
+
+		# Save the current geometry in a data file.
+		savexydata(outfile, thlenvec1)
 	end
 	return
 end

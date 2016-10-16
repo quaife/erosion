@@ -138,19 +138,21 @@ function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 		outvec[n2-1] = xsm[nn]
 		outvec[n2] = ysm[nn]
 	end
-	outfile = open(string(filename), "w")
-	writedlm(outfile, outvec)
-	close(outfile)
+	iostream = open(string(filename), "w")
+	writedlm(iostream, outvec)
+	close(iostream)
 	return
 end
 
 
+#################### Data IO routines ####################
 # readgeodata: Reads the geometry from a data file.
+# The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
 function readgeodata(filename::AbstractString)
 	# Open the input data file.
-	infile = open(string(filename), "r")
-	invec = readdlm(infile)
-	close(infile)
+	iostream = open(string(filename), "r")
+	invec = readdlm(iostream)
+	close(iostream)
 	# Extract the number of points and bodies.
 	npts = round(Int,invec[1])
 	nbods = round(Int,invec[2])
@@ -171,4 +173,42 @@ function readgeodata(filename::AbstractString)
 		thlenvec[nn].ysm = invec[n2]
 	end
 	return thlenvec,npts
+end
+# savexydata: Save the xy values in a data file.
+function savexydata(filename::AbstractString, thlenvec::Vector{ThetaLenType})
+	nbods = endof(thlenvec)
+	iostream = open(string(filename), "a")
+	for nn=1:nbods
+		getxy!(thlenvec[nn])
+		xyvec = [thlenvec[nn].xx, thlenvec[nn].yy]
+		writedlm(iostream, xyvec)
+	end
+	close(iostream)
+end
+# plotgeo: Open the file of xy values and plot stuff.
+function plotgeo(filename::AbstractString="geoout.dat")
+	iostream = open(string(filename), "r")
+	geovec = readdlm(iostream)
+	close(iostream)
+	npts = round(Int,geovec[1])
+	nbods = round(Int,geovec[2])
+	nsteps = round(Int,geovec[3])
+	println("npts = ",npts)
+	println("nbods = ",nbods)
+	println("nsteps = ",nsteps)
+
+
+	# Extract the x-y values and plot.
+	p1 = plot()
+	cnt = 4
+	for nn=1:3
+		for mm=1:nbods
+			xx = geovec[cnt:cnt+npts-1]
+			cnt += npts
+			yy = geovec[cnt:cnt+npts-1]
+			cnt += npts
+			p1 = oplot(xx,yy)
+		end
+	end
+	display(p1)
 end
