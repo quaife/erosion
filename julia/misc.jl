@@ -141,19 +141,28 @@ function readgeodata(filename::AbstractString)
 	nparams = 2
 	vsize = npts + 3
 	if (endof(invec) != vsize*nbods+nparams)
-		error("Inconsistency in the data file."); return
+		throw("Inconsistency in the data file."); return
 	end
 	# Extract the theta, len, xsm, ysm values.
 	thlenvec = [new_thlen() for nn=1:nbods]
 	for nn=1:nbods
-		n1 = vsize*(nn-1)+1 + nparams
-		n2 = vsize*nn + nparams
+		n1,n2 = n1n2(vsize,nn)
+		n1 += nparams; n2 += nparams
 		thlenvec[nn].theta = invec[n1:n2-3]
+		testtheta(thlenvec[nn].theta)
 		thlenvec[nn].len = invec[n2-2]
 		thlenvec[nn].xsm = invec[n2-1]
 		thlenvec[nn].ysm = invec[n2]
 	end
 	return thlenvec,npts
+end
+# testtheta: Make sure theta[end]-theta[1] = 2*pi
+function testtheta(theta::Vector{Float64})
+	dth = 2*pi/endof(theta)
+	diff = abs(theta[end]-theta[1]-2*pi)
+	if diff>2*dth
+		throw("Unacceptable theta vector")
+	end
 end
 # savexydata: Save the xy values in a data file.
 function savexydata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
