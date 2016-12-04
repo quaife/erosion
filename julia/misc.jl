@@ -98,7 +98,7 @@ end
 
 #################### Plotting routines ####################
 # plotcurve: Plot multiple curves from the theta-len values.
-function plotcurves(thlenvec::Vector{ThetaLenType}, cnt::Integer;
+function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString;
 		axlims::Vector{Float64}=[3.0,1.0] )
 	# Make figure of given height and preserve the aspect ratio.
 	height = 400
@@ -114,17 +114,15 @@ function plotcurves(thlenvec::Vector{ThetaLenType}, cnt::Integer;
 		xx, yy = thlen.xx, thlen.yy
 		pp = oplot(xx,yy,"-")
 	end
-	# Save the figures in a folder.
-	figname = string("../figs/shape", string(cnt), ".pdf")
+	# Save the figure in a file.
 	savefig(pp, figname, width=width, height=height)
 	return
 end
 # plotpress: Plot the pressure distribution.
 function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64}, 
-		cnt::Integer, pmax::Float64=15.0)
+		figname::AbstractString, pmax::Float64=15.0)
 	pp = plot(ytar, ptar, ".-")
 	xlim(-1., 1.); ylim(0., pmax)
-	figname = string("../figs/press",string(cnt),".pdf")	
 	savefig(pp, figname, width=400, height=400)
 end
 
@@ -158,7 +156,7 @@ function readgeodata(filename::AbstractString)
 	return thlenvec,npts
 end
 # savexydata: Save the xy values in a data file.
-function savexydata(filename::AbstractString, thlenvec::Vector{ThetaLenType})
+function savexydata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
 	iostream = open(string(filename), "a")
@@ -169,50 +167,5 @@ function savexydata(filename::AbstractString, thlenvec::Vector{ThetaLenType})
 		writedlm(iostream, xyvec)
 	end
 	close(iostream)
-end
-# plotnsave: Calls plotcurves() and savexydata()
-function plotnsave(thlenvec::Vector{ThetaLenType}, cnt::Integer;
-		axlims::Vector{Float64}=[3.0,1.0] )
-	plotcurves(thlenvec,cnt,axlims=axlims)
-	outfile="../datafiles/geoout"*string(cnt)
-	savexydata(outfile,thlenvec)
-end
-
-
-
-
-
-
-
-
-
-
-
-# plotgeo: Open the file of xy values and plot stuff.
-function plotgeo(filename::AbstractString="geoout.dat")
-	iostream = open(string(filename), "r")
-	geovec = readdlm(iostream)
-	close(iostream)
-	npts = round(Int,geovec[1])
-	nbods = round(Int,geovec[2])
-	nsteps = round(Int,geovec[3])
-	println("npts = ",npts)
-	println("nbods = ",nbods)
-	println("nsteps = ",nsteps)
-
-
-	# Extract the xy values and plot.
-	pp = plot()
-	cnt = 4
-	for nn=1:3
-		for mm=1:nbods
-			xx = geovec[cnt:cnt+npts-1]
-			cnt += npts
-			yy = geovec[cnt:cnt+npts-1]
-			cnt += npts
-			pp = oplot(xx,yy)
-		end
-	end
-	display(pp)
 end
 
