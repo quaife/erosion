@@ -3,7 +3,6 @@
 # erosion: The main routine to erode a group of bodies for input of Vector{ThetaLenType}.
 function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType}; 
 	axlims::Vector{Float64} = [1.,1.])
-
 	# Extract the basic parameters
 	npts = endof(thlenvec0[1].theta)
 	nbods = endof(thlenvec0)
@@ -11,50 +10,33 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	# Calculate the smoothing parameters based on the spatial resolution.
 	epsilon = 10./npts
 	sigma = 15./npts
-	# Save the parameters in one variable.
 	params = ParamType(dt,epsilon,sigma,0)
-	# The output file to save the geometry.
-	outfile = "geoout.dat"
-	iostream = open(outfile,"w")
-	writedlm(iostream,[npts,nbods,nsteps+1])
-	close(iostream)
+	# Set up the target points to measure u,v,p.
+	ntar0 = 10; xmax = 2.8; ymax = 0.8
+	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
 
-
-	# TEMPORARY: Set up the target points to measure u, v, and pressure.
-	ntargs = 11
-	yend = 0.8
-	ytar = collect(linspace(-yend, yend, ntargs))
-	xtar = -2.8 * ones(Float64, ntargs)
-	# Initialize variables for u, v, and pressure at target points.
-	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
-	pavg = zeros(Float64,nsteps)
-
-
-	# Plot the initial geometries, t=0, and save in a data file.
-	plotcurves!(thlenvec0,0; axlims=axlims)
-	savexydata(outfile, thlenvec0)
-	# Use RK2 as a starter.
+	# Use the Runge-Kutta starter, while plotting and saving before and after.
+	plotnsave(thlenvec0,0,axlims=axlims)
 	thlenvec1 = RKstarter!(thlenvec0, params)
-
-	# Plot the result for t=dt.
-	plotcurves!(thlenvec1,1; axlims=axlims)
-	savexydata(outfile, thlenvec1)
+	plotnsave(thlenvec1,1,axlims=axlims)
 	# Enter the time loop.
 	for cnt = 2:nsteps
-		# Compute the new stress and save it.
-		utar,vtar,ptar = stokes!(thlenvec1, sigma, ntargs, xtar, ytar)
-		# Advance thlen forward in time using the multi-step method.
+		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntar,xtar,ytar)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
-		# Calculate the average pressure.
-		pavg[cnt] = mean(ptar)
-		# Plot the results.
-		plotcurves!(thlenvec1,cnt; axlims=axlims)
-		#plotpress(ytar,ptar,cnt)
-
-		# Save the current geometry in a data file.
-		savexydata(outfile, thlenvec1)
+		plotnsave(thlenvec1,cnt,axlims=axlims)
 	end
 	return
+end
+# targets: Set up the target points to measure velocity and pressure: u,v,p.
+function targets(nn::Integer, xmax::Float64, ymax::Float64)
+	# Make the grid.
+	ytar = collect(linspace(-ymax,ymax,nn))
+	ytar = [ytar; ytar]
+	xtar = ones(Float64,nn)
+	xtar = xmax*[-xtar; xtar]
+	# Initialize u,v,p at target points.
+	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
+	return 2*nn,xtar,ytar,utar,vtar,ptar
 end
 
 #################### Starter routines ####################
@@ -80,7 +62,6 @@ function festep(dt::Float64, thdot::Vector{Float64},
 		thlendots.mterm, thlendots.xsmdot, thlendots.ysmdot)
 	return thlen1
 end
-
 #= RKstarter!: Explicit second-order Runge-Kutta to start the time stepping.
 Works for vectors of ThetaLenType.
 It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenvec0. =#
@@ -88,7 +69,6 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	dt = params.dt
 	sigma = params.sigma
 	nbods = endof(thlenvec0) 
-	# Initialize vectors of ThetaLenType.
 	thlenvec05 = [new_thlen() for ii=1:nbods]
 	thlenvec1 = [new_thlen() for ii=1:nbods]
 	# Compute the stress at t=0 and take the first step of RK2
