@@ -180,7 +180,7 @@ function savexydata(filename::AbstractString, thlenvec::Vector{ThetaLenType})
 	iostream = open(string(filename), "a")
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
-		xyvec = [thlenvec[nn].xx, thlenvec[nn].yy]
+		xyvec = [thlenvec[nn].xx; thlenvec[nn].yy]
 		writedlm(iostream, xyvec)
 	end
 	close(iostream)
@@ -198,7 +198,7 @@ function plotgeo(filename::AbstractString="geoout.dat")
 	println("nsteps = ",nsteps)
 
 
-	# Extract the x-y values and plot.
+	# Extract the xy values and plot.
 	p1 = plot()
 	cnt = 4
 	for nn=1:3

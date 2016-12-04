@@ -29,6 +29,7 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	utar,vtar,ptar = [zeros(Float64,ntargs) for ii=1:3]
 	pavg = zeros(Float64,nsteps)
 
+
 	# Plot the initial geometries, t=0, and save in a data file.
 	plotcurves!(thlenvec0,0; axlims=axlims)
 	savexydata(outfile, thlenvec0)

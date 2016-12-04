@@ -6,6 +6,9 @@ function driver(tfin::Float64=1.)
 	thlenvec,npts = readgeodata("thlen.dat")
 	# Optional: set dt based on npts.
 	dt = 0.2/npts
+
+	tfin = 7*dt
+	
 	# Call the main erosion routine.
 	erosion(tfin,dt,thlenvec; axlims=[1.,1.])
 end

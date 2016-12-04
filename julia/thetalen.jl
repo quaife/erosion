@@ -16,6 +16,20 @@ is parameterized in the counter-clockwise (CCW) direction, and I use the
 inward pointing normal. =#
 
 #################### Multistep routines ####################
+# advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
+function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
+	vsz = endof(thlenvec0)
+	lenvec = zeros(Float64,vsz)
+	for ii = 1:vsz
+		advance_thetalen!(thlenvec1[ii],thlenvec0[ii],params)
+		lenvec[ii] = thlenvec1[ii].len
+	end
+	# Only keep the curves with positive length.
+	cond = lenvec.<=0
+	zind = collect(1:vsz)[cond]
+	deleteat!(thlenvec0,zind)
+	deleteat!(thlenvec1,zind)
+end
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
 This is a multi-step method and uses some values from n=0 too.
 Note: thlen1 must already be loaded with the correct atua, which is used in getmn!() =#
@@ -26,7 +40,11 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	m1 = getmn!(thlen1,params)
 	# Update len with an explicit, multistep method; error if len negative.
 	len2 = len1 + 0.5*dt*(3*m1-m0)
-	if len2<0; error("The curve length is negative"); return; end
+	
+
+	#if len2<0; error("The curve length is negative"); return; end
+	
+
 	# Create a new ThetaLenType variable and save the new len.
 	thlen2 = new_thlen()
 	thlen2.len = len2
@@ -39,12 +57,6 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	copy_thlen!(thlen1,thlen0)
 	copy_thlen!(thlen2,thlen1)
 	return
-end
-# advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
-function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
-	for ii = 1:endof(thlenvec0)
-		advance_thetalen!(thlenvec1[ii],thlenvec0[ii],params)
-	end
 end
 
 # advance_theta: Advance theta in time with the integrating-factor method.
