@@ -33,7 +33,7 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	dt = params.dt; m0 = thlen0.mterm; len1 = thlen1.len
 	# Calculate mterm and nterm at time n=1.
 	m1 = getmn!(thlen1,params)
-	# Update len with an explicit, multistep method; error if len negative.
+	# Update len with an explicit, multistep method.
 	len2 = len1 + 0.5*dt*(3*m1-m0)
 	# Create a new ThetaLenType variable and save the new len.
 	thlen2 = new_thlen()
@@ -57,7 +57,6 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	len0, n0 = thlen0.len, thlen0.nterm
 	len2 = thlen2.len
 	alpha = getalpha(endof(theta1))
-	# The power of L that is used.
 	lpow = beta-2
 	# The first value used in the Gaussian filter.
 	sig1 = sqrt( len1^lpow + len2^lpow )
@@ -125,13 +124,11 @@ function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, p
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
 	thdot = epsilon*len^(beta-2)*d2th + nterm
-	# Return thdot, mterm, nterm.
 	return thdot, mterm, nterm, xsmdot, ysmdot
 end
 #= thetadot: Dispatch for ThetaLenType.
 It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlen. =#
 function thetadot!(thlen::ThetaLenType, params::ParamType)
-	# Call thetadot and save mterm and nterm in thlen.
 	thdot, thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
 		thetadot(thlen.theta, thlen.len, thlen.atau, params)
 	return thdot

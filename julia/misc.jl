@@ -1,9 +1,16 @@
 # misc.jl
 
 #################### Converting between x,y and theta,len ####################
+# getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
+function getxy!(thlen::ThetaLenType)
+	# Only compute xx and yy if they are not already loaded in thlen.
+	if thlen.xx==[] || thlen.yy==[]
+		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
+	end
+	return
+end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
-xsm and ysm are the boundary-averaged values.
-While we're at it, we can also calculate the normal direcations. =#
+xsm and ysm are the boundary-averaged values. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len * (cos(theta) - mean(cos(theta)))
@@ -15,14 +22,6 @@ function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	xx += xsm
 	yy += ysm
 	return xx,yy
-end
-# getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
-function getxy!(thlen::ThetaLenType)
-	# Only compute xx and yy if they are not already loaded in thlen.
-	if thlen.xx==[] || thlen.yy==[]
-		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
-	end
-	return
 end
 # getnormals: Calculate the surface normals.
 function getnormals(theta::Vector{Float64})
@@ -44,12 +43,15 @@ function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer,
 	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
 	for ii = 1:endof(thlenvec)
 		thlen = thlenvec[ii]
+		if thlen.len<=0
+			throw("Cannot plot a curve with non-positive length.")
+		end
 		getxy!(thlen)
 		xx, yy = thlen.xx, thlen.yy
 		pp = oplot(xx,yy,"-")
 	end
 	# Save the figures in a folder.
-	figname = string("../figs/shape",string(cnt),".pdf")
+	figname = string("../figs/shape", string(cnt), ".pdf")
 	savefig(pp, figname, width=width, height=height)
 	return
 end

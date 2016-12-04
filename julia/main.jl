@@ -91,27 +91,19 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Initialize vectors of ThetaLenType.
 	thlenvec05 = [new_thlen() for ii=1:nbods]
 	thlenvec1 = [new_thlen() for ii=1:nbods]
-	# Compute the stress at t=0.
+	# Compute the stress at t=0 and take the first step of RK2
 	stokes!(thlenvec0, sigma)
-	# For each body, take the first step of RK2.
 	for ii = 1:nbods
-		# Need thlen0 for each body.
 		thlen0 = thlenvec0[ii]
-		# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
 		thdot = thetadot!(thlen0,params)
-		# Take the first step of RK2.
 		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)	
 	end
-	# Compute the stress at t=0.5*dt.
+	# Compute the stress at t=0.5*dt and take the second step of RK2
 	stokes!(thlenvec05, sigma)	
-	# For each body, take the second step of RK2.
 	for ii = 1:nbods
-		# Need both thlen0 and thlen05 for each body.
 		thlen0 = thlenvec0[ii]
 		thlen05 = thlenvec05[ii]
-		# Calculate the time derivatives: thdot, mterm, xsmdot, ysmdot.
 		thdot = thetadot!(thlen05,params)
-		# Take the second step of RK2.
 		thlenvec1[ii] = festep(dt, thdot, thlen0, thlen05)		
 	end
 	# Remove curves with non-positive length and return.
