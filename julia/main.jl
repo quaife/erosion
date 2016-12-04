@@ -35,13 +35,14 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	savexydata(outfile, thlenvec0)
 	# Use RK2 as a starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
+
 	# Plot the result for t=dt.
 	plotcurves!(thlenvec1,1; axlims=axlims)
 	savexydata(outfile, thlenvec1)
 	# Enter the time loop.
 	for cnt = 2:nsteps
 		# Compute the new stress and save it.
-		utar,vtar,ptar = stokes!(thlenvec1, params.sigma, ntargs, xtar, ytar)
+		utar,vtar,ptar = stokes!(thlenvec1, sigma, ntargs, xtar, ytar)
 		# Advance thlen forward in time using the multi-step method.
 		advance_thetalen!(thlenvec1,thlenvec0,params)
 		# Calculate the average pressure.
@@ -113,5 +114,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 		# Take the second step of RK2.
 		thlenvec1[ii] = festep(dt, thdot, thlen0, thlen05)		
 	end
+	# Remove curves with non-positive length and return.
+	trimthlenvec!(thlenvec1, thlenvec0)
 	return thlenvec1
 end

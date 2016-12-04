@@ -18,17 +18,12 @@ inward pointing normal. =#
 #################### Multistep routines ####################
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
 function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
-	vsz = endof(thlenvec0)
-	lenvec = zeros(Float64,vsz)
-	for ii = 1:vsz
+	# Call advance_thetalen for each element of the thlenvec.
+	for ii = 1:endof(thlenvec0)
 		advance_thetalen!(thlenvec1[ii],thlenvec0[ii],params)
-		lenvec[ii] = thlenvec1[ii].len
 	end
-	# Only keep the curves with positive length.
-	cond = lenvec.<=0
-	zind = collect(1:vsz)[cond]
-	deleteat!(thlenvec0,zind)
-	deleteat!(thlenvec1,zind)
+	# Remove curves with non-positive length.
+	trimthlenvec!(thlenvec1, thlenvec0)
 end
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
 This is a multi-step method and uses some values from n=0 too.
@@ -40,11 +35,6 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	m1 = getmn!(thlen1,params)
 	# Update len with an explicit, multistep method; error if len negative.
 	len2 = len1 + 0.5*dt*(3*m1-m0)
-	
-
-	#if len2<0; error("The curve length is negative"); return; end
-	
-
 	# Create a new ThetaLenType variable and save the new len.
 	thlen2 = new_thlen()
 	thlen2.len = len2
@@ -124,7 +114,6 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
-
 # thetadot: Calculate the time derivative of theta; only used in the starter routine.
 function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Extract the needed variables.
@@ -146,4 +135,15 @@ function thetadot!(thlen::ThetaLenType, params::ParamType)
 	thdot, thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
 		thetadot(thlen.theta, thlen.len, thlen.atau, params)
 	return thdot
+end
+# trimthlenvec: Remove the curves with non-positive length.
+function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType})
+	vsz = endof(thlenvec1)
+	lenvec = zeros(Float64,vsz)
+	for ii=1:vsz
+		lenvec[ii] = thlenvec1[ii].len
+	end
+	zind = find(lenvec.<=0)
+	deleteat!(thlenvec0,zind)
+	deleteat!(thlenvec1,zind)
 end

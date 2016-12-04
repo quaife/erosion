@@ -40,29 +40,26 @@ function plotcurves!(thlenvec::Vector{ThetaLenType}, cnt::Integer,
 	# Make figure of given height and preserve the aspect ratio.
 	height = 400
 	width = axlims[1]/axlims[2]*height
-	# Make plot with given axis limits.
-	p1 = plot()
+	pp = plot()
 	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
 	for ii = 1:endof(thlenvec)
 		thlen = thlenvec[ii]
-		# Compute the xy coordinates if they are not already loaded in thlen.
 		getxy!(thlen)
 		xx, yy = thlen.xx, thlen.yy
-		# Plot the curves.
-		p1 = oplot(xx,yy,"-")
+		pp = oplot(xx,yy,"-")
 	end
 	# Save the figures in a folder.
 	figname = string("../figs/shape",string(cnt),".pdf")
-	savefig(p1, figname, width=width, height=height)
+	savefig(pp, figname, width=width, height=height)
 	return
 end
 # plotpress: Plot the pressure distribution
 function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64}, 
 		cnt::Integer, pmax::Float64=15.0)
-	p1 = plot(ytar, ptar, ".-")
+	pp = plot(ytar, ptar, ".-")
 	xlim(-1., 1.); ylim(0., pmax)
 	figname = string("../figs/press",string(cnt),".pdf")	
-	savefig(p1, figname, width=400, height=400)
+	savefig(pp, figname, width=400, height=400)
 end
 
 #################### Geometry routines ####################
@@ -199,7 +196,7 @@ function plotgeo(filename::AbstractString="geoout.dat")
 
 
 	# Extract the xy values and plot.
-	p1 = plot()
+	pp = plot()
 	cnt = 4
 	for nn=1:3
 		for mm=1:nbods
@@ -207,8 +204,8 @@ function plotgeo(filename::AbstractString="geoout.dat")
 			cnt += npts
 			yy = geovec[cnt:cnt+npts-1]
 			cnt += npts
-			p1 = oplot(xx,yy)
+			pp = oplot(xx,yy)
 		end
 	end
-	display(p1)
+	display(pp)
 end
