@@ -168,7 +168,7 @@ end
 function savexydata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
-	iostream = open(string(filename), "a")
+	iostream = open(string(filename), "w")
 	writedlm(iostream, [npts; nbods])
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
