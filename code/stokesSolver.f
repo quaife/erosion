@@ -14,7 +14,7 @@ c     pressure need to be evaluted
       parameter (nmax = 2**15)
       parameter (maxbodies = 20)
 c     max points on the boundary of the obstacle      
-      parameter (ntarmax = 1000)
+      parameter (ntarmax = 20000)
       parameter (maxl = 3000, liwork = 30)
       parameter (lrwork = 10 + nmax*(maxl+6) + 
      $     maxl*(maxl+3))
@@ -31,7 +31,7 @@ c     Jacobian and curvature of the geometry
 c     Target locations
       dimension utar(nntargets),vtar(nntargets)
       dimension press_tar(nntargets)
-c    Velocity and pressure at target locations
+c     Velocity and pressure at target locations
 
       dimension xouter(nmax),youter(nmax)
 c     x and y coordinates of confining wall
@@ -70,22 +70,22 @@ c
       call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
 c     load geometry of initial shape
 
-c      open(unit=1,file='output/xinner.dat')
-c      open(unit=2,file='output/yinner.dat')
-c      open(unit=3,file='output/xouter.dat')
-c      open(unit=4,file='output/youter.dat')
-c      do k = 1,ninner*nbodies
-c        write(1,1000) x(k)
-c        write(2,1000) y(k)
-c      enddo
-c      do k = 1,nouter
-c        write(3,1000) xouter(k)
-c        write(4,1000) youter(k)
-c      enddo
-c      close(unit=1)
-c      close(unit=2)
-c      close(unit=3)
-c      close(unit=4)
+      open(unit=1,file='output/xinner.dat')
+      open(unit=2,file='output/yinner.dat')
+      open(unit=3,file='output/xouter.dat')
+      open(unit=4,file='output/youter.dat')
+      do k = 1,ninner*nbodies
+        write(1,1000) x(k)
+        write(2,1000) y(k)
+      enddo
+      do k = 1,nouter
+        write(3,1000) xouter(k)
+        write(4,1000) youter(k)
+      enddo
+      close(unit=1)
+      close(unit=2)
+      close(unit=3)
+      close(unit=4)
 
       call bd_condition(ninner,nbodies,x,y,nouter,xouter,youter,rhs)
 c     load boundary condition
@@ -116,26 +116,26 @@ c     Use the deformation tensor to compute the shear stress
      $ ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
 c     evaluate velocity and pressure at target points
 
-c      open(unit=1,file='output/xtar.dat')
-c      open(unit=2,file='output/ytar.dat')
-c      open(unit=3,file='output/utar.dat')
-c      open(unit=4,file='output/vtar.dat')
-c      open(unit=5,file='output/press_tar.dat')
-c      do k = 1,ntargets
-c        write(1,1000) xtar(k)
-c        write(2,1000) ytar(k)
-c        write(3,1000) utar(k)
-c        write(4,1000) vtar(k)
-c        write(5,1000) press_tar(k)
-c      enddo
-c      close(unit=1)
-c      close(unit=2)
-c      close(unit=3)
-c      close(unit=4)
-c      close(unit=5)
-c
-c
-c 1000 format(E25.16)
+      open(unit=1,file='output/xtar.dat')
+      open(unit=2,file='output/ytar.dat')
+      open(unit=3,file='output/utar.dat')
+      open(unit=4,file='output/vtar.dat')
+      open(unit=5,file='output/press_tar.dat')
+      do k = 1,ntargets
+        write(1,1000) xtar(k)
+        write(2,1000) ytar(k)
+        write(3,1000) utar(k)
+        write(4,1000) vtar(k)
+        write(5,1000) press_tar(k)
+      enddo
+      close(unit=1)
+      close(unit=2)
+      close(unit=3)
+      close(unit=4)
+      close(unit=5)
+
+
+ 1000 format(E25.16)
 
       end
 
@@ -195,7 +195,7 @@ c     Load the outer shape of the geometry
         smoothOrder = 8.d0
         r = (dcos(theta)**smoothOrder+ dsin(theta)**smoothOrder)**
      $       (-1.d0/smoothOrder)
-        x(k) = 3.d0*r*dcos(theta)
+        x(k) = 10.d0*r*dcos(theta)
         y(k) = r*dsin(theta)
       enddo
 c     outer geometry
@@ -331,18 +331,18 @@ c     preconditioner flag
       iwork(5) = -1
 c     restart flag
 
-c      if (0 .eq. 1) then
-c        do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
-c          den(k) = rhs(k)
-c        enddo
-cc       initial guess
-c
-c        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
-c     $      nelt,ia,ja,a,isym,
-c     $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
-c     $      ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
-cc        FMM
-c      endif
+      if (0 .eq. 1) then
+        do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
+          den(k) = rhs(k)
+        enddo
+c       initial guess
+
+        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+     $      nelt,ia,ja,a,isym,
+     $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
+     $      ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
+c        FMM
+      endif
 
       if (1 .eq. 1) then
         do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
@@ -1621,9 +1621,9 @@ c       Density function defined on the inner geometry
             dendotn = px((isou-1)*ninner + k)*denx(k) + 
      $                py((isou-1)*ninner + k)*deny(k)
 
-            utar(j) = utar(j) + rdotn/rho2*rdotdenn/rho2*rx*
+            utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
      $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-            vtar(j) = vtar(j) + rdotn/rho2*rdotdenn/rho2*ry*
+            vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
      $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
             press_tar(j) = press_tar(j) + 
      $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*

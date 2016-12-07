@@ -124,10 +124,10 @@ function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 	# For now, make some circles.
 	rad = 0.2
 	xsm,ysm = [zeros(Float64,4) for ii=1:2]
-	xsm[1], ysm[1] = +0.0, +0.4
+	xsm[1], ysm[1] = +0.1, +0.4
 	xsm[2], ysm[2] = -0.0, -0.4
-	xsm[3], ysm[3] = +0.4, +0.0
-	xsm[4], ysm[4] = -0.4, -0.0
+	xsm[3], ysm[3] = +0.4, +0.1
+	xsm[4], ysm[4] = -0.1, +0.0
 	# Save the theta, len, xsm, ysm values in a single vector.
 	for nn=1:nbods
 		n1 = vsize*(nn-1)+1 + nparams
