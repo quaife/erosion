@@ -3,7 +3,7 @@
 #################### Object data types ####################
 # ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
-    dt::Float64; epsilon::Float64; sigma::Float64; beta::Real;
+	dt::Float64; epsilon::Float64; sigma::Float64; beta::Real;
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
@@ -76,23 +76,25 @@ function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64,
 	xv,yv = [zeros(Float64,ntot) for ii=1:2]
 	# Put all of the xy values in a single vector.
 	for nn = 1:nbods
-		# Compute the xy coordinates if they are not already loaded in thlen.
 		getxy!(thlenv[nn])
-		# Put the values into a single vector.
-		n1 = npts*(nn-1)+1
-		n2 = npts*nn
+		n1,n2 = n1n2(npts,nn)
 		xv[n1:n2], yv[n1:n2] = thlenv[nn].xx, thlenv[nn].yy
 	end
 	# Call the stokessolver.
 	tau,utar,vtar,ptar = stokes(npts,nbods,xv,yv,ntargs,xtar,ytar)
 	# Smooth atau and save it in each of the thlen variables.
 	for nn = 1:nbods
-		n1 = npts*(nn-1)+1
-		n2 = npts*nn
-        atau = abs(tau[n1:n2])
-        atau = gaussfilter(atau,sigma)
+		n1,n2 = n1n2(npts,nn)
+		atau = abs(tau[n1:n2])
+		atau = gaussfilter(atau,sigma)
 		thlenv[nn].atau = atau
 	end
 	return utar,vtar,ptar
+end
+# Calculate n1 and n2.
+function n1n2(npts::Integer,nn::Integer)
+	n1 = npts*(nn-1)+1
+	n2 = npts*nn
+	return n1,n2
 end
 ##################################################
