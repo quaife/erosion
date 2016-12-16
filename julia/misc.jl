@@ -67,7 +67,7 @@ function polygongeo(npts::Integer, nsides::Integer,
 end
 # make4circs: Makes up to four circles and stores the data in a file.
 function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
-	# Creat the data vector.
+	# Create the data vector.
 	nparams = 2
 	vsize = npts + 3
 	outvec = zeros(Float64,vsize*nbods+nparams)
