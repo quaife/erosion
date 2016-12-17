@@ -9,12 +9,10 @@ function driver(geoinfile::AbstractString, tfin::Float64=0.5)
 	erosion(tfin,dt,thlenvec; axlims=[1.,1.])
 end
 
-make4circs("thlen.dat",256,4)
-
 function run()
 	include("basic.jl")
 	geoinfile = "../datafiles/thlen.dat"
-        make4circs(geoinfile,64,4)
+	make4circs(geoinfile,256,4)
 	tfin = 0.03
 	driver(geoinfile,tfin)
 end

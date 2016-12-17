@@ -177,20 +177,3 @@ function savexydata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 	end
 	close(iostream)
 end
-
-
-	# Extract the x-y values and plot.
-	p1 = plot()
-	cnt = 4
-	for nn=1:3
-		for mm=1:nbods
-			xx = geovec[cnt:cnt+npts-1]
-			cnt += npts
-			yy = geovec[cnt:cnt+npts-1]
-			cnt += npts
-			p1 = oplot(xx,yy)
-		end
-	end
-	display(p1)
-end
-=======
