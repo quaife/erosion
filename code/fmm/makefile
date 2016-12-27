@@ -18,8 +18,6 @@ libfmm: $(OBJS)
 	$(FORTRAN) -shared -fPIC $(OBJS) -o libfmm.so
 
 %.o:  %.f
-	$(FORTRAN) $(FFLAGS) -c -o $@ $<
-
 
 clean:
 	rm *.o

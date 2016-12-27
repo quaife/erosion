@@ -4,7 +4,7 @@ function [xc,yc,radii] = circle_packing(n_bodies)
 
 xc = []; yc = []; radii = [];
 
-mu = 10;
+mu = 0.1;
 % parameter for exponential distribution of radii
 
 while numel(xc) == 0
@@ -48,7 +48,7 @@ end
 
 
 
-N = 256;
+N = 4096;
 theta = (0:N-1)'*2*pi/N;
 clf; hold on
 for k = 1:numel(xc)
@@ -64,7 +64,7 @@ fprintf(fid,'%d\n',N);
 fprintf(fid,'%d\n',n_bodies);
 for k = 1:n_bodies
   fprintf(fid,'%20.16e\n',theta+pi/2+pi/N);
-  fprintf(fid,'%20.16e\n',[radii(k),xc(k),yc(k)]);
+  fprintf(fid,'%20.16e\n',[2*pi*radii(k),xc(k),yc(k)]);
 end
 fclose(fid);
 

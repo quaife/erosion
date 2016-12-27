@@ -1,8 +1,8 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 512)
-c      parameter (ninner = 8192)
+c      parameter (ninner = 512)
+      parameter (ninner = 2**13)
       parameter (nbodies = 1)
       parameter (maxtargets = 20000)
 
@@ -156,8 +156,8 @@ c            y((j-1)*ninner+k) = var_rad*dsin(theta) + centery(j)
         enddo
 
 
-
-        call stokesSolver(ninner,nbodies,ntargets,x,y,
+        ifmm = 1
+        call stokesSolver(ninner,nbodies,ntargets,ifmm,x,y,
      $        xtar,ytar,utar,vtar,press_tar,shear_stress)
 c       pass in number of points and x and y coordinates and return the
 c       shear stress on the boundary
