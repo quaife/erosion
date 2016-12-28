@@ -48,7 +48,7 @@ end
 
 
 
-N = 512;
+N = 128;
 theta = (0:N-1)'*2*pi/N;
 clf; hold on
 for k = 1:numel(xc)

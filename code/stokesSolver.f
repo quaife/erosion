@@ -328,8 +328,12 @@ c     workspace integer array that'll be passed to preconditioner msolve
       enddo
 c     paramters for DGMRES
 
-      igwork(4) = -1
-c     preconditioner flag
+      igwork(4) = 0
+c     no preconditioner
+c      igwork(4) = -1
+cc     left precondition
+c      igwork(4) = 1
+cc     right precondition
 
       igwork(5) = -1
 c     restart flag
