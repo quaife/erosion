@@ -1,0 +1,108 @@
+\documentclass[preprint, 10pt]{elsarticle}
+
+%% labeling 
+%%   equations \label{e:equation_name}
+%%   sections  \label{s:section_name}
+%%   tables    \label{t:table_name}
+%%   figures   \label{f:figure_name}
+%%   alagorithms \label{a:algorithm_name}
+%%   Apendix \label{A:appendix_name}
+
+%% for graphs and figures:
+%%    tikz (best) or  one of the following: matlab, xfig, ggplot,
+%%     see: http://www.texample.net/tikz/examples/
+
+
+\input{preambles.tex}
+\usepackage{lineno}
+
+\newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}}
+\newcommand{\secref}[1]{\ref{#1}}
+
+\begin{document}
+
+\title{Methods paper for erosion}
+
+\author[fsu1]{Bryan D.~Quaife} \ead{bquaife@fsu.edu}
+\author[fsu2]{Matthew N.~J.~Moore}\ead{moore@math.fsu.edu}
+\address[fsu1]{Department of Scientific Computing, Florida State
+University, Tallahassee, FL, 32306.}
+\address[fsu2]{Department of Mathematics, Florida State University,
+Tallahassee, FL, 32306.}
+
+\begin{abstract} 
+We consider two dimensional eroding bodies in Stokes flow
+\end{abstract}
+
+\begin{keyword}
+  Stokes flow \sep Erosion \sep Boundary integral method \sep
+  Fluid-structure interaction \sep Fast multipole methods 
+\end{keyword}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction\label{s:intro}}
+\cite{moo-ris-chi-zha-she2013}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formulation\label{s:formulation}} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boundary Integral Equation Formulation} 
+The incompressible Stokes equations are
+\begin{alignat*}{3}
+  \Delta \uu &= \grad p  \qquad && \xx \in \Omega \\
+  \grad \cdot \uu &= 0   && \xx \in \bd\Omega
+\end{alignat*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{$\theta-L$ Formulation} 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Method\label{s:method}} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Time Stepping} 
+We use a quasi-static formulation ....
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Preconditioner} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fast Summation} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Spectrally Accurate Shear Stress} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Artificial Diffusion} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Gaussian Filter} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results\label{s:results}} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions\label{s:conclusions}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{appendices}
+\section{Error estimates for near-singular integration \label{A:AppendixA}} 
+\end{appendices}
+
+
+\bibliographystyle{plainnat} 
+\bibliography{refs}
+\biboptions{sort&compress}
+\end{document}
+
+

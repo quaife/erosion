@@ -2,7 +2,7 @@
       implicit real*8 (a-h,o-z)
 
 c      parameter (ninner = 512)
-      parameter (ninner = 2**13)
+      parameter (ninner = 64)
       parameter (nbodies = 1)
       parameter (maxtargets = 20000)
 
@@ -135,7 +135,7 @@ c      enddo
       smoothOrder = 8.d0
       dr = 1.d-2
 c      radius(1) = 0.d0
-      radius(1) = 5.d-1 - dr
+      radius(1) = 2.5d-1 - dr
       do i=1,1
         radius(1) = radius(1) + dr
 
@@ -144,8 +144,8 @@ c      radius(1) = 0.d0
             theta = dble(k-1)*dtheta
 c            var_rad = radius(j)*(1.d0 + 2.d-1*dcos(5*theta))
             var_rad = radius(j)
-            var_rad = var_rad*(dcos(theta)**smoothOrder + 
-     $          dsin(theta)**smoothOrder)**(-1.d0/smoothOrder)
+c            var_rad = var_rad*(dcos(theta)**smoothOrder + 
+c     $          dsin(theta)**smoothOrder)**(-1.d0/smoothOrder)
             x((j-1)*ninner+k) = centerx(j) + var_rad*
      $          (dcos(phi(j))*dcos(theta) + dsin(phi(j))*dsin(theta))
             y((j-1)*ninner+k) = centery(j) + var_rad*
@@ -155,8 +155,7 @@ c            y((j-1)*ninner+k) = var_rad*dsin(theta) + centery(j)
           enddo
         enddo
 
-
-        ifmm = 1
+        ifmm = 0
         call stokesSolver(ninner,nbodies,ntargets,ifmm,x,y,
      $        xtar,ytar,utar,vtar,press_tar,shear_stress)
 c       pass in number of points and x and y coordinates and return the

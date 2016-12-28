@@ -11,8 +11,8 @@ c     x and y coordinates of obstacle
 c     x and y coordinates of target locations where velocity and
 c     pressure need to be evaluted
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 20)
+      parameter (nmax = 2**12)
+      parameter (maxbodies = 50)
 c     max points on the boundary of the obstacle      
       parameter (ntarmax = 20000)
       parameter (maxl = 3000, liwork = 30)
@@ -303,7 +303,7 @@ c     extra terms need for rotlet and stokeslet conditions
 
 c***********************************************************************
       subroutine solveBIE(ninner,nbodies,nouter,den,rhs,
-     $    rwork,lrwork,iwork,liwork,maxl,ifmm)
+     $    gmwork,lrwork,igwork,liwork,maxl,ifmm)
 c     Solve the boundary integral equation with GMRES
       implicit real*8 (a-h,o-z)
 
@@ -313,23 +313,30 @@ c     Solve the boundary integral equation with GMRES
       dimension rhs(2*nouter+2*ninner*nbodies+3*nbodies)
 c     leave room for stokeslets and rotlets at the end of den
 
-      dimension rwork(lrwork),iwork(liwork)
+      dimension gmwork(lrwork),igwork(liwork)
 c     gmres workspaces
+
+      dimension iwork(3)
+c     workspace integer array that'll be passed to preconditioner msolve
 
       itol = 0
       tol = 1.d-8
       isym = 0
-      iwork(1) = maxl
+      igwork(1) = maxl
       do i=2,liwork
-        iwork(i) = 0
+        igwork(i) = 0
       enddo
 c     paramters for DGMRES
 
-      iwork(4) = 0
+      igwork(4) = -1
 c     preconditioner flag
 
-      iwork(5) = -1
+      igwork(5) = -1
 c     restart flag
+
+      iwork(1) = ninner
+      iwork(2) = nbodies
+      iwork(3) = nouter
 
       do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
         den(k) = rhs(k)
@@ -341,14 +348,14 @@ c     initial guess
         call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
      $      nelt,ia,ja,a,isym,
      $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
-     $      ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
+     $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
 c        USE FMM
       else
         print*,'USING DIRECT'
         call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
      $      nelt,ia,ja,a,isym,
      $      matvec_DLP,msolve_DLP,itol,tol,itmax,iter,err,
-     $      ierr,6,sb,sx,rwork,lrwork,iwork,liwork,rw,iw)
+     $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
 c        DON'T USE FMM
       endif
 c     use GMRES to find the density function of the double layer
@@ -365,8 +372,8 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 20)
+      parameter (nmax = 2**12)
+      parameter (maxbodies = 50)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -487,6 +494,7 @@ c     START OF SOURCE POINTS == OBSTACLES
           deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
         enddo
 c       density function due to obstacle isou
+
 
 c       START OF TARGET POINTS == OBSTACLE isou
 c       loop over target points
@@ -754,8 +762,8 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 20)
+      parameter (nmax = 2**12)
+      parameter (maxbodies = 50)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -1048,12 +1056,51 @@ c***********************************************************************
 c     Can put preconditioner in this routine.  For now, use the identity
       implicit real*8 (a-h,o-z)
 
-      dimension r(nn),z(nn)
+      parameter (nmax = 2**12)
 
-      do i = 1,nn
-        r(i) = z(i)
+      dimension r(nn),z(nn)
+      dimension iwork(3)
+
+      complex *16 eye
+      real *8 wsave(4*nmax+15)
+      complex *16 zden(nmax)
+
+      eye = (0.0d0,1.0d0)
+
+      ninner = iwork(1)
+      nbodies = iwork(2)
+      nouter = iwork(3)
+
+      do i = 1,2*nouter
+        z(i) = r(i)
       enddo
-c     no preconditioner for now
+c     identity preconditioner for outer boundary
+
+      do i = 2*nouter+2*nbodies*ninner+1,nn
+        z(i) = r(i)
+      enddo
+c     identity preconditioner for rotlet and stokeslet terms
+
+      call DCFFTI(ninner,wsave)
+      do k = 1,nbodies
+        do j = 1,ninner
+          zden(j) = z(2*nouter + (k-1)*2*ninner + j) +
+     $          eye*z(2*nouter + (k-1)*2*ninner + j + ninner)
+          call DCFFTF(n,zden,wsave)
+c         NEED TO BE CAREFUL WITH WHAT ORDER I CALL THE DENSITY
+c         FUNCTIONS SINCE I'M WORKING WITH A SYSTEM
+        enddo
+      enddo
+
+      do k = 1,nbodies
+        do j = 1,ninner
+          z(2*nouter + (k-1)*2*ninner + j) = 
+     $        r(2*nouter + (k-1)*2*ninner + j)
+          z(2*nouter + (k-1)*2*ninner + j + ninner) = 
+     $        r(2*nouter + (k-1)*2*ninner + j + ninner)
+        enddo
+      enddo
+
 
       return
       end
