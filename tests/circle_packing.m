@@ -46,9 +46,12 @@ while (numel(xc) < n_bodies)
   end
 end
 
+radii = [0.1 0.2 0.1];
+xc = [-0.301 0 0.301];
+yc = [0 0 0];
 
 
-N = 128;
+N = 4096;
 theta = (0:N-1)'*2*pi/N;
 clf; hold on
 for k = 1:numel(xc)
@@ -75,10 +78,11 @@ end
 function iouter = check_outer(x,y,r)
 % check if the points is outside of the computational domain
 
-xmin = -1;
-xmax = 1;
-ymin = -1;
-ymax = 1;
+dist = 0.9;
+xmin = -1*dist;
+xmax = 1*dist;
+ymin = -1*dist;
+ymax = 1*dist;
 
 iouter=(x + r > xmax || x - r < xmin || y + r > ymax || y - r < ymin);
 % check if any of the four points north, south, east, or west leave the
