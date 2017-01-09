@@ -1,5 +1,5 @@
 FORTRAN = gfortran
-FFLAGS = -c -O3
+FFLAGS = -c -O3 -fPIC
 
 OBJS=\
 stokesSolver.o\
