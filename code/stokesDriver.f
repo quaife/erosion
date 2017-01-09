@@ -2,7 +2,7 @@
       implicit real*8 (a-h,o-z)
 
 c      parameter (ninner = 512)
-      parameter (ninner = 64)
+      parameter (ninner = 128)
       parameter (nbodies = 1)
       parameter (maxtargets = 20000)
 
@@ -142,7 +142,7 @@ c      radius(1) = 0.d0
         do j = 1,nbodies
           do k = 1,ninner
             theta = dble(k-1)*dtheta
-c            var_rad = radius(j)*(1.d0 + 2.d-1*dcos(5*theta))
+c            var_rad = radius(j)*(1.d0 + 9.d-1*dcos(5*theta))
             var_rad = radius(j)
 c            var_rad = var_rad*(dcos(theta)**smoothOrder + 
 c     $          dsin(theta)**smoothOrder)**(-1.d0/smoothOrder)
@@ -174,7 +174,7 @@ c       shear stress on the boundary
 
         write(11,1000) radius(1)
         write(12,1000) press_drop/(xtar(nhalf+1)-xtar(1))
-        print*,radius(1)
+c        print*,radius(1)
 
 
 c        ntime = 2

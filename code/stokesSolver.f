@@ -11,7 +11,7 @@ c     x and y coordinates of obstacle
 c     x and y coordinates of target locations where velocity and
 c     pressure need to be evaluted
 
-      parameter (nmax = 2**12)
+      parameter (nmax = 2**15)
       parameter (maxbodies = 50)
 c     max points on the boundary of the obstacle      
       parameter (ntarmax = 20000)
@@ -312,6 +312,8 @@ c     Solve the boundary integral equation with GMRES
       dimension den(2*nouter+2*ninner*nbodies+3*nbodies)
       dimension rhs(2*nouter+2*ninner*nbodies+3*nbodies)
 c     leave room for stokeslets and rotlets at the end of den
+c      dimension vel1(2*nouter+2*ninner*nbodies+3*nbodies)
+c      dimension vel2(2*nouter+2*ninner*nbodies+3*nbodies)
 
       dimension gmwork(lrwork),igwork(liwork)
 c     gmres workspaces
@@ -342,10 +344,30 @@ c     restart flag
       iwork(2) = nbodies
       iwork(3) = nouter
 
+c     DEBUG
+c      twopi = 8.d0*datan(1.d0)
+c      dtheta = twopi/dble(ninner)
+c      do k = 1,ninner
+c        theta = dble(k-1)*dtheta
+c        rhs(2*nouter + k) = dexp(dcos(theta))
+c        rhs(2*nouter + k + ninner) = dexp(dsin(theta))
+c      enddo
+
       do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
         den(k) = rhs(k)
       enddo
 c     initial guess
+
+c      DEBUG
+c      ntotal = 2*nouter + 2*ninner*nbodies + 3*nbodies 
+c      call matvec_DLP(ntotal,den,vel1,nelt,ia,ja,a,isym)
+c      call matvec_DLP_fmm(ntotal,den,vel2,nelt,ia,ja,a,isym)
+c      do k = 1,ntotal
+cc        if (abs(vel1(k) - vel2(k)) .ge. 1.d-10) then
+c          print*,k,vel1(k)-vel2(k)
+cc        endif
+c      enddo
+
 
       if (ifmm .eq. 1) then
         print*,'USING FMM'
@@ -376,7 +398,7 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**12)
+      parameter (nmax = 2**15)
       parameter (maxbodies = 50)
 
       dimension den(ntotal)
@@ -397,6 +419,7 @@ c     potential
 
       dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
       dimension ux(max(ninner,nouter)),uy(max(ninner,nouter))
+
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
@@ -479,6 +502,7 @@ c         loop over source points
           vel(2*nouter+(itar-1)*2*ninner+k+ninner) = 
      $      vel(2*nouter+(itar-1)*2*ninner+k+ninner) + uy(k)
         enddo
+c       THIS SEEMS TO HAVE THE LARGEST EFFECT ON THE GMRES ITERATIONS
       enddo
 c     END OF TARGET POINTS == OBSTACLE
 
@@ -498,7 +522,6 @@ c     START OF SOURCE POINTS == OBSTACLES
           deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
         enddo
 c       density function due to obstacle isou
-
 
 c       START OF TARGET POINTS == OBSTACLE isou
 c       loop over target points
@@ -663,8 +686,6 @@ c       START OF TARGET POINTS == OBSTACLE
         do itar = 1,nbodies
 c         loop over target points
           do k = 1,ninner
-            ux(k) = 0.d0
-            uy(k) = 0.d0
             rx = x((itar-1)*ninner + k) - centerx(ibod)
             ry = y((itar-1)*ninner + k) - centery(ibod)
             rho2 = rx**2.d0 + ry**2.d0
@@ -757,7 +778,6 @@ c     defined on the outer boundary
 c     outer product of normal at source with normal at target multiplied
 c     by density function.  This removes the rank one null space
 
-
       return
       end
 c***********************************************************************
@@ -766,7 +786,7 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**12)
+      parameter (nmax = 2**15)
       parameter (maxbodies = 50)
 
       dimension den(ntotal)
@@ -811,7 +831,6 @@ c     initialize complex-valued velocity to 0
         vel(k) = 0.d0
       enddo
 c     initialize velocity to 0
-
 
       do k = 1,nouter
         mu(k) = (den(k+nouter) - eye*den(k))*speed0(k)*
@@ -1060,14 +1079,18 @@ c***********************************************************************
 c     Can put preconditioner in this routine.  For now, use the identity
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**12)
+      parameter (nmax = 2**15)
 
       dimension r(nn),z(nn)
       dimension iwork(3)
 
       complex *16 eye
       real *8 wsave(4*nmax+15)
-      complex *16 zden(nmax)
+      complex *16 zden1(nmax),zden2(nmax)
+      complex *16 g_minus1,g_plus1
+      complex *16 h_minus1,h_plus1
+      complex *16 alpha_minus1,alpha_plus1
+      complex *16 beta_minus1,beta_plus1
 
       eye = (0.0d0,1.0d0)
 
@@ -1085,26 +1108,62 @@ c     identity preconditioner for outer boundary
       enddo
 c     identity preconditioner for rotlet and stokeslet terms
 
+c     START APPLYING PRECONDITIONER TO INNER BOUNDARY
       call DCFFTI(ninner,wsave)
       do k = 1,nbodies
         do j = 1,ninner
-          zden(j) = z(2*nouter + (k-1)*2*ninner + j) +
-     $          eye*z(2*nouter + (k-1)*2*ninner + j + ninner)
-          call DCFFTF(n,zden,wsave)
-c         NEED TO BE CAREFUL WITH WHAT ORDER I CALL THE DENSITY
-c         FUNCTIONS SINCE I'M WORKING WITH A SYSTEM
+          zden1(j) = r(2*nouter + (k-1)*2*ninner + j)
+          zden2(j) = r(2*nouter + (k-1)*2*ninner + j + ninner)
         enddo
-      enddo
+        call DCFFTF(ninner,zden1,wsave)
+        call DCFFTF(ninner,zden2,wsave)
+c       computer Fourier coefficients of the density function on
+c       the current body.  Need to divide by number of points since
+c       DCFFTF and DCFFTB are not inverses, but scale up by the number
+c       of points
+        zden1 = zden1/dble(ninner)
+        zden2 = zden2/dble(ninner)
+        g_minus1 = zden1(ninner)
+        h_minus1 = zden2(ninner)
+        g_plus1 = zden1(2)
+        h_plus1 = zden2(2)
 
-      do k = 1,nbodies
+        do j=2,ninner
+          zden1(j) = -2.d0*zden1(j)
+          zden2(j) = -2.d0*zden2(j)
+        enddo
+c       invert the Fourier modies with frequency greater than or equal
+c       to 2.  The DLP of these modes is 0, so only the -1/2*identity
+c       term plays a role
+
+        alpha_minus1 = -1.25d0*g_minus1 - 7.5d-1*eye*h_minus1  
+     $                 -2.5d-1*g_plus1 - 2.5d-1*eye*h_plus1
+        beta_minus1 = +7.5d-1*eye*g_minus1 - 1.25d0*h_minus1  
+     $                -2.5d-1*eye*g_plus1 + 2.5d-1*h_plus1
+        alpha_plus1 = -2.5d-1*g_minus1 + 2.5d-1*eye*h_minus1  
+     $                -1.25d0*g_plus1 + 7.5d-1*eye*h_plus1
+        beta_plus1 = +2.5d-1*eye*g_minus1 + 2.5d-1*h_minus1  
+     $               -7.5d-1*eye*g_plus1 - 1.25d0*h_plus1
+c       Use pseudo-inverse of the lienar system that relates the one and
+c       minus one nodes of the density function to the one and minus one
+c       nodes of the right hand side
+
+        zden1(2) = alpha_plus1
+        zden1(ninner) = alpha_minus1
+        zden2(2) = beta_plus1
+        zden2(ninner) = beta_minus1
+c       Assign computed Fourier nodes to appropriate locations of zden1
+c       and zden2
+
+        call DCFFTB(ninner,zden1,wsave)
+        call DCFFTB(ninner,zden2,wsave)
+c       move back to physical space
         do j = 1,ninner
-          z(2*nouter + (k-1)*2*ninner + j) = 
-     $        r(2*nouter + (k-1)*2*ninner + j)
-          z(2*nouter + (k-1)*2*ninner + j + ninner) = 
-     $        r(2*nouter + (k-1)*2*ninner + j + ninner)
+          z(2*nouter + (k-1)*2*ninner + j) = real(zden1(j))
+          z(2*nouter + (k-1)*2*ninner + j + ninner) = real(zden2(j))
         enddo
+c       assign real and imaginary parts to appropriate locations of r
       enddo
-
 
       return
       end
