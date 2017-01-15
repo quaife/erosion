@@ -53,8 +53,7 @@ end
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
 		ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
-	ifmm = 1
-	# 1 uses fmm, 0 uses direct
+	ifmm = 1	# 1 uses fmm, 0 uses direct
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
 	utar = zeros(Float64, ntargs)
