@@ -12,7 +12,7 @@ end
 function run()
 	include("basic.jl")
 	geoinfile = "../datafiles/thlen.dat"
-#	make4circs(geoinfile,256,4)
+	make4circs(geoinfile,256,4)
 	tfin = 0.03
 	driver(geoinfile,tfin)
 end

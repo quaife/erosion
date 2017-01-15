@@ -53,20 +53,20 @@ end
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
 		ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
-        ifmm = 1
-        # 1 uses fmm, 0 uses direct
+	ifmm = 1
+	# 1 uses fmm, 0 uses direct
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
 	utar = zeros(Float64, ntargs)
 	vtar = zeros(Float64, ntargs)
 	ptar = zeros(Float64, ntargs)
-        @time(
+		@time(
 	ccall((:stokessolver_, "libstokes.so"),
 		Void, (Ptr{Int}, Ptr{Int}, Ptr{Int}, Ptr{Int},
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
 		&npts, &nbods, &ntargs, &ifmm, xx, yy, xtar, ytar, utar, vtar, ptar, tau)
-        )
+		)
 	return tau, utar, vtar, ptar
 end
 #= stokes!: Dispatch for vector of ThetaLenType
