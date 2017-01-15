@@ -41,8 +41,10 @@ end
 # plotnsave: Calls plotcurves() and savexydata()
 function plotnsave(thlenvec::Vector{ThetaLenType}, cnt::Integer;
 		axlims::Vector{Float64}=[3.,1.] )
-	plotfile = string("../figs/shape", string(cnt), ".pdf")
+	plotshapefile = string("../figs/shape", string(cnt), ".pdf")
+	plotthetafile = string("../figs/theta", string(cnt), ".pdf")
 	savefile = string("../datafiles/geoout", string(cnt), ".dat")
-	plotcurves(thlenvec,plotfile,axlims=axlims)
+	plotcurves(thlenvec,plotshapefile,axlims=axlims)
+	plottheta(thlenvec,plotthetafile)
 	savexydata(thlenvec,savefile)
 end
