@@ -2,7 +2,7 @@
 
 # erosion: The main routine to erode a group of bodies for input of Vector{ThetaLenType}.
 function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType}; 
-	axlims::Vector{Float64} = [1.,1.])
+		lenevo::Int=1, axlims::Vector{Float64} = [1.,1.])
 	# Extract the basic parameters
 	npts = endof(thlenvec0[1].theta)
 	nbods = endof(thlenvec0)
@@ -10,7 +10,7 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	# Calculate the smoothing parameters based on the spatial resolution.
 	epsilon = 10./npts
 	sigma = 15./npts
-	params = ParamType(dt,epsilon,sigma,0)
+	params = ParamType(dt,epsilon,sigma,0,lenevo)
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
 	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
