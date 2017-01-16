@@ -155,7 +155,7 @@ function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64},
 end
 
 #################### Data IO routines ####################
-# readgeodata: Reads the geometry from a data file.
+# readthlenfile: Reads the geometry from a data file.
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
 function readthlenfile(filename::AbstractString)
 	# Open the input data file.
