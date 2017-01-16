@@ -192,16 +192,18 @@ function testtheta(theta::Vector{Float64})
 		throw("Unacceptable theta vector")
 	end
 end
-# savexydata: Save the xy values in a data file.
-function savexydata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
+# savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
+function savedata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
 	iostream = open(string(filename), "w")
 	writedlm(iostream, [npts; nbods])
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
-		xyvec = [thlenvec[nn].xx; thlenvec[nn].yy]
-		writedlm(iostream, xyvec)
+		datavec = [thlenvec[nn].theta; thlenvec[nn].len; 
+			thlenvec[nn].xsm; thlenvec[nn].ysm; 
+			thlenvec[nn].xx; thlenvec[nn].yy]
+		writedlm(iostream, datavec)
 	end
 	close(iostream)
 end

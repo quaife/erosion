@@ -38,13 +38,13 @@ function targets(nn::Integer, xmax::Float64, ymax::Float64)
 	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
 	return 2*nn,xtar,ytar,utar,vtar,ptar
 end
-# plotnsave: Calls plotcurves() and savexydata()
+# plotnsave: Calls plotcurves() and savedata()
 function plotnsave(thlenvec::Vector{ThetaLenType}, cnt::Integer;
 		axlims::Vector{Float64}=[3.,1.] )
 	plotshapefile = string("../figs/shape", string(cnt), ".pdf")
 	plotthetafile = string("../figs/theta", string(cnt), ".pdf")
-	savefile = string("../datafiles/geoout", string(cnt), ".dat")
+	savefile = string("../datafiles/output", string(cnt), ".dat")
 	plotcurves(thlenvec,plotshapefile,axlims=axlims)
 	plottheta(thlenvec,plotthetafile)
-	savexydata(thlenvec,savefile)
+	savedata(thlenvec,savefile)
 end
