@@ -1,8 +1,8 @@
 # Driver
-function driver(geoinfile::AbstractString, tfin::Float64=0.5)
+function driver(thlenfile::AbstractString, tfin::Float64=0.5)
 	include("basic.jl")
 	# Extract the geometry from a data file.
-	thlenvec,npts = readgeodata(geoinfile)
+	thlenvec,npts = readthlenfile(thlenfile)
 	# Optional: set dt based on npts.
 	dt = 0.1/npts
 	# Call the main erosion routine.
@@ -11,9 +11,9 @@ end
 
 function run()
 	include("basic.jl")
-	geoinfile = "../datafiles/thlen.dat"
-	make4circs(geoinfile,256,4)
+	thlenfile = "../datafiles/thlen.dat"
+	make4circs(thlenfile,256,4)
 	tfin = 0.03
-	driver(geoinfile,tfin)
+	driver(thlenfile,tfin)
 end
 run()
