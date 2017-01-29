@@ -12,7 +12,7 @@ end
 function run()
 	include("basic.jl")
 	thlenfile = "../datafiles/thlen.dat"
-	npts = 256
+	npts = 512
 	rad = 0.2
 	make1circ(thlenfile,npts,rad)
 	tfin = 0.1

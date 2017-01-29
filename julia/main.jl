@@ -43,7 +43,7 @@ function plotnsave(thlenvec::Vector{ThetaLenType}, cnt::Integer;
 		axlims::Vector{Float64}=[3.,1.] )
 	plotshapefile = string("../figs/shape", string(cnt), ".pdf")
 	plotthetafile = string("../figs/theta", string(cnt), ".pdf")
-	savefile = string("../datafiles/output", string(cnt), ".dat")
+	savefile = string("../datafiles/run/output", string(cnt), ".dat")
 	plotcurves(thlenvec,plotshapefile,axlims=axlims)
 	plottheta(thlenvec,plotthetafile)
 	savedata(thlenvec,savefile)
