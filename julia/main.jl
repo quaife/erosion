@@ -8,8 +8,8 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	nbods = endof(thlenvec0)
 	nsteps = round(Int,tfin/dt)
 	# Calculate the smoothing parameters based on the spatial resolution.
-	epsilon = 10./npts
-	sigma = 15./npts
+	epsilon = 20./npts
+	sigma = 20./npts
 	params = ParamType(dt,epsilon,sigma,0,lenevo)
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
