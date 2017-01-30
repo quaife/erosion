@@ -15,7 +15,7 @@ function run()
 	npts = 1024
 	rad = 0.2
 	make1circ(thlenfile,npts,rad)
-	tfin = 0.1
+	tfin = 0.5
 	driver(thlenfile,tfin)
 end
 run()
