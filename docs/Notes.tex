@@ -68,6 +68,7 @@ The surface traction is given by
 \end{equation}
 where $\nhat$ is the (outward) unit normal and $\bdry$ is the solid boundary. The shear stress $\tau$ is defined as the tangential component of the traction, i.e.~
 \begin{equation}
+\label{stressdef}
 \tau = \bvec{f} \cdot \shat 
 = \mu \left( \grad \bu + \grad \bu^T \right) \cdot \nhat \cdot \shat	\qquad \onBdry
 \end{equation}
@@ -82,9 +83,45 @@ V_n = -C \atau
 \end{equation}
 where $C$ is a constant.
 
-Meanwhile, the drag on a body is given by integrating the traction on the surface
+
+
+\subsection{The calculation to show stress is equal to vorticity}
+First, calculate use Eq.~(\ref{stressdef}) directly to get
 \begin{equation}
-\bvec{F}_D = \int_{\bdry} \bvec{f} \, dS = \int_{\bdry}
+\tau/\mu = (u_y+v_x) (n_2 s_1 + n_1 s_2 ) + 2 u_x n_1 s_1 + 2 v_y n_2 s_2
+\end{equation}
+Next, use $(n_1,n_2) = (-s_2,s_1)$ to get
+\begin{equation}
+\tau/\mu = (u_y+v_x) (s_1^2 - s_2^2) + 2s_1 s_2 (v_y - u_x)
+\end{equation}
+Then do a complete the square type step
+\begin{equation}
+\tau/\mu = (u_y - v_x) (s_1^2 + s_2^2) - 2 u_y s_2^2 + 2v_x s_1^2 + 2s_1 s_2 (v_y - u_x)
+\end{equation}
+Then regroup the last several terms as
+\begin{equation}
+-2 s_2 ( u_x s_1 + u_y s_2 )
+\end{equation}
+and
+\begin{equation}
+2 s_1 ( v_x s_1 + v_y s_2)
+\end{equation}
+Both of these terms are zero because $\pdi{u}{s} = 0$ and $\pdi{v}{s} = 0$, which shows that
+\begin{equation}
+\tau/\mu = u_y - v_x
+\end{equation}
+
+\vsp{1}
+Note: By a similar calculation, I think it is true that
+\begin{equation}
+\bvec{E} \cdot \nhat \cdot \nhat = 0
+\end{equation}
+so that $\bvec{f} \cdot \nhat = -p \nhat$. I confirmed this in the simple case of $x=s, y=n$.
+
+\subsection{Drag}
+The drag on a body is given by integrating the traction on the surface. If my above claim is true, this reduces to
+\begin{equation}
+\bvec{F}_D = \int_{\bdry} \bvec{f} \, dS = \int_{\bdry} -p \nhat + \tau \shat \, dS
 \end{equation}
 
 
