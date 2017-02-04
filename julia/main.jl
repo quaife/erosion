@@ -15,39 +15,43 @@ function erosion(thleninput::AbstractString)
 	# Read the parameters from the input data file.
 	invec = readparams()
 	tfin = invec[1]
-	dtfac = invec[2]
-	epsfac = invec[3]
-	sigfac = invec[4]
-	lenevo = invec[5]
+	dtout = invec[2]
+	dtfac = invec[3]
+	epsfac = invec[4]
+	sigfac = invec[5]
+	lenevo = invec[6]
 	# Calculate the needed parameters.
 	dt = dtfac/npts
+	cntout = round(Int,dtout/dt)
+	nsteps = round(Int,tfin/dt)
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
-	nsteps = round(Int,tfin/dt)
 	params = ParamType(dt,epsilon,sigma,0,lenevo)
 
-	# Set up the target points to measure u,v,p.
-	ntar0 = 10; xmax = 2.8; ymax = 0.8
-	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"
 	newfolder(datafolder)
 	plotfolder = "../figs/"
 	newfolder(plotfolder)
-	# Save the basic parameters in the data folder.
-	#iostream = open(string(datafolder,"params.dat"), "w")
-	#writedlm(iostream, [dt; lenevo])
-	#close(iostream)
+	# Copy the parameters file to the output folder.
+	cp("params.dat",string(datafolder,"params.dat"))
+	# Set up the target points to measure u,v,p.
+	ntar0 = 10; xmax = 2.8; ymax = 0.8
+	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
 
 	# Use the Runge-Kutta starter and save the data.
 	plotnsave(thlenvec0,datafolder,plotfolder,0)
 	thlenvec1 = RKstarter!(thlenvec0, params)
-	plotnsave(thlenvec1,datafolder,plotfolder,1)
+	if cntout==1
+		plotnsave(thlenvec1,datafolder,plotfolder,1)
+	end
 	# Enter the time loop to use the multi-step method and save the data.
 	for cnt = 2:nsteps
 		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntar,xtar,ytar)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
-		plotnsave(thlenvec1,datafolder,plotfolder,cnt)
+		if mod(cnt,cntout)==0
+			plotnsave(thlenvec1,datafolder,plotfolder,cnt)
+		end
 	end
 	return
 end
@@ -62,28 +66,4 @@ function targets(nn::Integer, xmax::Float64, ymax::Float64)
 	# Initialize u,v,p at target points.
 	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
 	return 2*nn,xtar,ytar,utar,vtar,ptar
-end
-# plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenvec::Vector{ThetaLenType}, 
-		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer)
-	# Save the data.
-	savefile = string(datafolder,"output",string(cnt),".dat")
-	savedata(thlenvec,savefile)
-	# Plot the shapes.
-	plotfile = string(plotfolder,"shape",string(cnt),".pdf")
-	plotcurves(thlenvec,plotfile)
-end
-# newfolder: If the folder exists, delete it and create a new one.
-function newfolder(foldername::AbstractString)
-	if isdir(foldername)
-		rm(foldername; recursive=true)
-	end
-	mkdir(foldername)
-end
-# readparams: Read the parameters file.
-function readparams()
-	iostream = open("params.dat", "r")
-	invec = readdlm(iostream)
-	close(iostream)
-	return invec
 end

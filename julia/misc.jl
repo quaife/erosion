@@ -66,8 +66,8 @@ function polygongeo(npts::Integer, nsides::Integer,
 	return thlen
 end
 # make1circ: Make a single circular geometry
-function make1circ(filename::AbstractString, 
-		npts::Integer, rad::Float64, xsm::Float64=0., ysm::Float64=0.)
+function make1circ(filename::AbstractString, npts::Integer, rad::Float64, 
+		xsm::Float64=0., ysm::Float64=0.)
 	# Create the data vector.
 	outvec = zeros(Float64,5+npts)
 	outvec[1] = npts
@@ -190,4 +190,28 @@ function savedata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 		writedlm(iostream, datavec)
 	end
 	close(iostream)
+end
+# plotnsave: Calls plotcurves() and savedata()
+function plotnsave(thlenvec::Vector{ThetaLenType}, 
+		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer)
+	# Save the data.
+	savefile = string(datafolder,"output",string(cnt),".dat")
+	savedata(thlenvec,savefile)
+	# Plot the shapes.
+	plotfile = string(plotfolder,"shape",string(cnt),".pdf")
+	plotcurves(thlenvec,plotfile)
+end
+# readparams: Read the parameters file.
+function readparams()
+	iostream = open("params.dat", "r")
+	invec = readdlm(iostream)
+	close(iostream)
+	return invec
+end
+# newfolder: If the folder exists, delete it and create a new one.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername)
+		rm(foldername; recursive=true)
+	end
+	mkdir(foldername)
 end

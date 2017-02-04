@@ -46,7 +46,7 @@ end
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
 		ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
 	# Read the parameters file to get ifmm; 1 uses fmm, 0 uses direct.
-	ifmm = readparams()[6]	
+	ifmm = readparams()[7]	
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
 	utar = zeros(Float64, ntargs)
