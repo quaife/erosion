@@ -1,9 +1,10 @@
 # main.jl: The main routines to call
 include("basic.jl")
 
-function driver(thlenfile::AbstractString)
+# erosion: The main routine to erode a group of bodies.
+function erosion(thleninput::AbstractString)
 	# Read the input geometry file in thetlen form and extract parameters.
-	thlenvec0 = readthlenfile(thlenfile)
+	thlenvec0 = readthlenfile(string("../datafiles/",thleninput))
 	npts = endof(thlenvec0[1].theta)
 	# Read the basic parameters from params.dat.
 	invec = readparams()
@@ -18,11 +19,6 @@ function driver(thlenfile::AbstractString)
 	sigma = sigfac/npts
 	nsteps = round(Int,tfin/dt)
 	params = ParamType(dt,epsilon,sigma,0,lenevo)
-	# Call erosion
-	erosion(thlenvec0,params)
-end
-# erosion: The main routine to erode a group of bodies.
-function erosion(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
@@ -33,9 +29,9 @@ function erosion(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	plotfolder = "../figs/"
 	newfolder(plotfolder)
 	# Save the basic parameters in the data folder.
-	iostream = open(string(datafolder,"params.dat"), "w")
-	writedlm(iostream, [dt; lenevo])
-	close(iostream)
+	#iostream = open(string(datafolder,"params.dat"), "w")
+	#writedlm(iostream, [dt; lenevo])
+	#close(iostream)
 
 	# Use the Runge-Kutta starter and save the data.
 	plotnsave(thlenvec0,datafolder,plotfolder,0)
