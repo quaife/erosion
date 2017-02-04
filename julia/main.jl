@@ -45,6 +45,6 @@ function plotnsave(thlenvec::Vector{ThetaLenType}, cnt::Integer;
 	plotthetafile = string("../figs/theta", string(cnt), ".pdf")
 	savefile = string("../datafiles/run/output", string(cnt), ".dat")
 	plotcurves(thlenvec,plotshapefile,axlims=axlims)
-	plottheta(thlenvec,plotthetafile)
+	#plottheta(thlenvec,plotthetafile)
 	savedata(thlenvec,savefile)
 end

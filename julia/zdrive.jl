@@ -1,19 +1,18 @@
 # Driver
-function driver(thlenfile::AbstractString, tfin::Float64=0.5)
+function run()
 	include("basic.jl")
+	# Parameters
+	thlenfile = "../datafiles/thlen.dat"
+	npts = 256
+	nbods = 4
+	dt = 0.1/npts
+	tfin = 0.03
+	# Make the geometry and write to a data file.
+	make4circs(thlenfile,npts,nbods)
 	# Extract the geometry from a data file.
 	thlenvec,npts = readthlenfile(thlenfile)
-	# Optional: set dt based on npts.
-	dt = 0.1/npts
 	# Call the main erosion routine.
 	erosion(tfin,dt,thlenvec; axlims=[1.,1.])
 end
 
-function run()
-	include("basic.jl")
-	thlenfile = "../datafiles/thlen.dat"
-	make4circs(thlenfile,256,4)
-	tfin = 0.03
-	driver(thlenfile,tfin)
-end
 run()
