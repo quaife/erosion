@@ -1,20 +1,32 @@
-# main.jl
+# main.jl: The main routines to call
+include("basic.jl")
 
-# erosion: The main routine to erode a group of bodies for input of Vector{ThetaLenType}.
-function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType}; 
-		lenevo::Int=1, axlims::Vector{Float64} = [1.,1.])
-	# Extract the basic parameters
+function driver(thlenfile::AbstractString)
+	# Read the input geometry file in thetlen form and extract parameters.
+	thlenvec0 = readthlenfile(thlenfile)
 	npts = endof(thlenvec0[1].theta)
-	nbods = endof(thlenvec0)
+	# Read the basic parameters from params.dat.
+	invec = readparams()
+	tfin = invec[1]
+	dtfac = invec[2]
+	epsfac = invec[3]
+	sigfac = invec[4]
+	lenevo = invec[5]
+	# Calculate the needed parameters.
+	dt = dtfac/npts
+	epsilon = epsfac/npts
+	sigma = sigfac/npts
 	nsteps = round(Int,tfin/dt)
-	# Calculate the smoothing parameters based on the spatial resolution.
-	epsilon = 20./npts
-	sigma = 20./npts
 	params = ParamType(dt,epsilon,sigma,0,lenevo)
+	# Call erosion
+	erosion(thlenvec0,params)
+end
+# erosion: The main routine to erode a group of bodies.
+function erosion(thlenvec0::Vector{ThetaLenType}, params::ParamType)
+
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
 	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
-
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"
 	newfolder(datafolder)
@@ -51,14 +63,13 @@ function targets(nn::Integer, xmax::Float64, ymax::Float64)
 end
 # plotnsave: Calls plotcurves() and savedata()
 function plotnsave(thlenvec::Vector{ThetaLenType}, 
-		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer; 
-		axlims::Vector{Float64}=[3.,1.] )
+		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer)
 	# Save the data.
 	savefile = string(datafolder,"output",string(cnt),".dat")
 	savedata(thlenvec,savefile)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",string(cnt),".pdf")
-	plotcurves(thlenvec,plotfile,axlims=axlims)
+	plotcurves(thlenvec,plotfile)
 end
 # newfolder: If the folder exists, delete it and create a new one.
 function newfolder(foldername::AbstractString)
@@ -66,4 +77,11 @@ function newfolder(foldername::AbstractString)
 		rm(foldername; recursive=true)
 	end
 	mkdir(foldername)
+end
+# readparams: Read the parameters file.
+function readparams()
+	iostream = open("params.dat", "r")
+	invec = readdlm(iostream)
+	close(iostream)
+	return invec
 end

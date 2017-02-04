@@ -84,7 +84,6 @@ function make1circ(filename::AbstractString,
 	close(iostream)
 	return
 end
-
 # make4circs: Makes up to four circles and stores the data in a file.
 function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 	# Create the data vector.
@@ -118,9 +117,9 @@ end
 
 #################### Plotting routines ####################
 # plotcurve: Plot multiple curves from the theta-len values.
-function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString;
-		axlims::Vector{Float64}=[3.0,1.0] )
+function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
 	# Make figure of given height and preserve the aspect ratio.
+	axlims = [3.0,1.0]
 	height = 400
 	width = axlims[1]/axlims[2]*height
 	pp = plot()
@@ -137,21 +136,6 @@ function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString;
 	# Save the figure in a file.
 	savefig(pp, figname, width=width, height=height)
 	return
-end
-# plottheta: Plot the function theta of the first body only.
-function plottheta(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
-	thlen = thlenvec[1]
-	npts = endof(thlen.theta)
-	alpha = getalpha(npts)
-	pp = plot(alpha, thlen.theta, "-")
-	savefig(pp, figname, width=400, height=600)
-end
-# plotpress: Plot the pressure distribution.
-function plotpress(ytar::Vector{Float64}, ptar::Vector{Float64}, 
-		figname::AbstractString, pmax::Float64=15.0)
-	pp = plot(ytar, ptar, ".-")
-	xlim(-1., 1.); ylim(0., pmax)
-	savefig(pp, figname, width=400, height=400)
 end
 
 #################### Data IO routines ####################
@@ -182,7 +166,7 @@ function readthlenfile(filename::AbstractString)
 		thlenvec[nn].xsm = invec[n2-1]
 		thlenvec[nn].ysm = invec[n2]
 	end
-	return thlenvec,npts
+	return thlenvec
 end
 # testtheta: Make sure theta[end]-theta[1] = 2*pi
 function testtheta(theta::Vector{Float64})
