@@ -119,7 +119,7 @@ end
 # plotcurve: Plot multiple curves from the theta-len values.
 function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
 	# Make figure of given height and preserve the aspect ratio.
-	axlims = [3.0,1.0]
+	axlims = [1.0,1.0]
 	height = 400
 	width = axlims[1]/axlims[2]*height
 	pp = plot()

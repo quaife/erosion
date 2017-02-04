@@ -14,13 +14,6 @@ type ThetaLenType
 end
 ##################################################
 
-#################### Includes ####################
-using Winston
-include("spectral.jl")
-include("thetalen.jl")
-include("misc.jl")
-##################################################
-
 #################### Object routines ####################
 # Create a new ThetaLenType that has all zeros.
 function new_thlen()

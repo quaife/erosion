@@ -1,12 +1,18 @@
 # main.jl: The main routines to call
+#################### Includes ####################
+using Winston
 include("basic.jl")
+include("spectral.jl")
+include("thetalen.jl")
+include("misc.jl")
+##################################################
 
 # erosion: The main routine to erode a group of bodies.
 function erosion(thleninput::AbstractString)
-	# Read the input geometry file in thetlen form and extract parameters.
+	# Read the input geometry file in thetlen form.
 	thlenvec0 = readthlenfile(string("../datafiles/",thleninput))
 	npts = endof(thlenvec0[1].theta)
-	# Read the basic parameters from params.dat.
+	# Read the parameters from the input data file.
 	invec = readparams()
 	tfin = invec[1]
 	dtfac = invec[2]
