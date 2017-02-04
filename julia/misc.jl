@@ -79,7 +79,7 @@ function make1circ(filename::AbstractString,
 	outvec[4+npts] = xsm
 	outvec[5+npts] = ysm
 	# Write the vector to a data file.
-	iostream = open(string(filename), "w")
+	iostream = open(filename, "w")
 	writedlm(iostream, outvec)
 	close(iostream)
 	return
@@ -110,7 +110,7 @@ function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 		outvec[n2-1] = xsm[nn]
 		outvec[n2] = ysm[nn]
 	end
-	iostream = open(string(filename), "w")
+	iostream = open(filename, "w")
 	writedlm(iostream, outvec)
 	close(iostream)
 	return
@@ -159,7 +159,7 @@ end
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
 function readthlenfile(filename::AbstractString)
 	# Open the input data file.
-	iostream = open(string(filename), "r")
+	iostream = open(filename, "r")
 	invec = readdlm(iostream)
 	close(iostream)
 	# Extract the number of points and bodies.
@@ -196,7 +196,7 @@ end
 function savedata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
-	iostream = open(string(filename), "w")
+	iostream = open(filename, "w")
 	writedlm(iostream, [npts; nbods])
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
