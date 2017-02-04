@@ -15,23 +15,25 @@ function erosion(tfin::Float64, dt::Float64, thlenvec0::Vector{ThetaLenType};
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
 	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
 
-	# Create the folder for saving the data.
-	savefolder = "../datafiles/run/"
-	mkdir(savefolder)
-	# Save the basic parameters.
-	iostream = open(string(savefolder,"params.dat"), "w")
+	# Create the folders for saving the data and plotting figures
+	datafolder = "../datafiles/run/"
+	newfolder(datafolder)
+	plotfolder = "../figs/"
+	newfolder(plotfolder)
+	# Save the basic parameters in the data folder.
+	iostream = open(string(datafolder,"params.dat"), "w")
 	writedlm(iostream, [dt; lenevo])
 	close(iostream)
 
 	# Use the Runge-Kutta starter and save the data.
-	plotnsave(thlenvec0,savefolder,0,axlims=axlims)
+	plotnsave(thlenvec0,datafolder,plotfolder,0)
 	thlenvec1 = RKstarter!(thlenvec0, params)
-	plotnsave(thlenvec1,savefolder,1,axlims=axlims)
+	plotnsave(thlenvec1,datafolder,plotfolder,1)
 	# Enter the time loop to use the multi-step method and save the data.
 	for cnt = 2:nsteps
 		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntar,xtar,ytar)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
-		plotnsave(thlenvec1,savefolder,cnt,axlims=axlims)
+		plotnsave(thlenvec1,datafolder,plotfolder,cnt)
 	end
 	return
 end
@@ -48,15 +50,20 @@ function targets(nn::Integer, xmax::Float64, ymax::Float64)
 	return 2*nn,xtar,ytar,utar,vtar,ptar
 end
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenvec::Vector{ThetaLenType}, savefolder::AbstractString, 
-		cnt::Integer; axlims::Vector{Float64}=[3.,1.] )
+function plotnsave(thlenvec::Vector{ThetaLenType}, 
+		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer; 
+		axlims::Vector{Float64}=[3.,1.] )
 	# Save the data.
-	savefile = string(savefolder,"output",string(cnt),".dat")
+	savefile = string(datafolder,"output",string(cnt),".dat")
 	savedata(thlenvec,savefile)
 	# Plot the shapes.
-	plotshapefile = string("../figs/shape", string(cnt), ".pdf")
-	plotcurves(thlenvec,plotshapefile,axlims=axlims)
-	# Maybe plot theta too.
-	#plotthetafile = string("../figs/theta", string(cnt), ".pdf")
-	#plottheta(thlenvec,plotthetafile)
+	plotfile = string(plotfolder,"shape",string(cnt),".pdf")
+	plotcurves(thlenvec,plotfile,axlims=axlims)
+end
+# newfolder: If the folder exists, delete it and create a new one.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername)
+		rm(foldername; recursive=true)
+	end
+	mkdir(foldername)
 end
