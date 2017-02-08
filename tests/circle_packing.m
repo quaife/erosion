@@ -46,12 +46,15 @@ while (numel(xc) < n_bodies)
   end
 end
 
-radii = [0.1 0.2 0.1];
-xc = [-0.301 0 0.301];
-yc = [0 0 0];
+%radii = [0.1 0.2 0.1];
+%xc = [-0.301 0 0.301];
+%yc = [0 0 0];
 
+radii = 0.1;
+xc = 0;
+yc = 0;
 
-N = 4096;
+N = 128;
 theta = (0:N-1)'*2*pi/N;
 clf; hold on
 for k = 1:numel(xc)

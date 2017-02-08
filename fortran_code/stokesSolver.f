@@ -11,10 +11,10 @@ c     x and y coordinates of obstacle
 c     x and y coordinates of target locations where velocity and
 c     pressure need to be evaluted
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 50)
+      parameter (nmax = 2**12)
+      parameter (maxbodies = 4)
 c     max points on the boundary of the obstacle      
-      parameter (ntarmax = 20000)
+      parameter (ntarmax = 200)
       parameter (maxl = 3000, liwork = 30)
       parameter (lrwork = 10 + nmax*(maxl+6) + 
      $     maxl*(maxl+3))
@@ -115,6 +115,12 @@ c     Use the deformation tensor to compute the shear stress
      $ px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
      $ ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
 c     evaluate velocity and pressure at target points
+
+c      do k = 1,ntargets
+c        press_tar(k) = 0.d0
+c        utar(k) = 0.d0
+c        vtar(k) = 0.d0
+c      enddo
 
 c      open(unit=1,file='output/xtar.dat')
 c      open(unit=2,file='output/ytar.dat')
@@ -398,8 +404,8 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 50)
+      parameter (nmax = 2**12)
+      parameter (maxbodies = 4)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -786,8 +792,8 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 50)
+      parameter (nmax = 2**12)
+      parameter (maxbodies = 4)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -1079,7 +1085,7 @@ c***********************************************************************
 c     Can put preconditioner in this routine.  For now, use the identity
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
+      parameter (nmax = 2**12)
 
       dimension r(nn),z(nn)
       dimension iwork(3)

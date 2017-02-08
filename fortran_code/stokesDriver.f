@@ -4,7 +4,7 @@
 c      parameter (ninner = 512)
       parameter (ninner = 128)
       parameter (nbodies = 1)
-      parameter (maxtargets = 20000)
+      parameter (maxtargets = 200)
 
       integer :: i, n, clock
       integer, dimension(:), allocatable :: seed
@@ -98,8 +98,8 @@ ccc      phi(3) = 0.d0
       phi(1) = 0.d0
 c      radius(1) = 8.d-1
 
-      nx = 100 
-      ny = 41
+      nx = 10 
+      ny = 11
       ntargets = nx*ny
       xmin = -9.0d0
       xmax = +9.0d0

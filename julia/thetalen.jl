@@ -179,6 +179,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	thlenvec1 = [new_thlen() for ii=1:nbods]
 	# Compute the stress at t=0 and take the first step of RK2.
 	stokes!(thlenvec0, sigma)
+        print("here0")
 	for ii = 1:nbods
 		thlen0 = thlenvec0[ii]
 		thdot = thetadot!(thlen0,params)
