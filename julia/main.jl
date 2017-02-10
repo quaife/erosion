@@ -33,25 +33,33 @@ function erosion(thleninput::AbstractString)
 	newfolder(datafolder)
 	plotfolder = "../figs/"
 	newfolder(plotfolder)
+	paramsout = string(datafolder,"params.dat")
 	# Copy the parameters file to the output folder.
-	cp("params.dat",string(datafolder,"params.dat"))
+	paramvec = readparams()
+	iostream = open(paramsout, "w")
+	writedlm(paramsout, [paramvec; 0.])
+	close(iostream)
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
 	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
 
-	# Use the Runge-Kutta starter and save the data.
+	# Begin the erosion computation, time it, and save data.
+	t0 = time()
 	plotnsave(thlenvec0,datafolder,plotfolder,0)
+	# Use the Runge-Kutta starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
-	if cntout==1
-		plotnsave(thlenvec1,datafolder,plotfolder,1)
-	end
+	if cntout==1; plotnsave(thlenvec1,datafolder,plotfolder,1); end
 	# Enter the time loop to use the multi-step method and save the data.
 	for cnt = 2:nsteps
 		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntar,xtar,ytar)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
+		# Save the data.
 		if mod(cnt,cntout)==0
 			plotnsave(thlenvec1,datafolder,plotfolder,cnt)
 		end
+		# Time the computation and write it to the params file.
+		t1 = time(); elapsedtime = t1-t0
+		updatecputime(paramsout, elapsedtime)
 	end
 	return
 end
