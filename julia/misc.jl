@@ -217,7 +217,7 @@ function newfolder(foldername::AbstractString)
 end
 # updatecputime: Update the cpu time written to the output data file.
 function updatecputime(filename::AbstractString, cputime::Float64)
-	label = "# Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm, cputime"
+	label = "# Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm, cntout, cputime"
 	iostream = open(filename, "r")
 	datavec = readdlm(iostream)
 	datavec[end] = cputime

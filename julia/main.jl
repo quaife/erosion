@@ -34,10 +34,10 @@ function erosion(thleninput::AbstractString)
 	plotfolder = "../figs/"
 	newfolder(plotfolder)
 	paramsout = string(datafolder,"params.dat")
-	# Copy the parameters file to the output folder.
+	# Copy the parameters file to the output folder along with some additional information.
 	paramvec = readparams()
 	iostream = open(paramsout, "w")
-	writedlm(paramsout, [paramvec; 0.])
+	writedlm(paramsout, [paramvec; cntout; 0.])
 	close(iostream)
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
@@ -58,8 +58,7 @@ function erosion(thleninput::AbstractString)
 			plotnsave(thlenvec1,datafolder,plotfolder,cnt)
 		end
 		# Time the computation and write it to the params file.
-		t1 = time(); elapsedtime = t1-t0
-		updatecputime(paramsout, elapsedtime)
+		t1 = time(); elapsedtime = t1-t0; updatecputime(paramsout, elapsedtime)
 	end
 	return
 end
