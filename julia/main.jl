@@ -27,6 +27,7 @@ function erosion(thleninput::AbstractString)
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	params = ParamType(dt,epsilon,sigma,0,lenevo)
+	dtoutexact = cntout*dt
 
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"
@@ -37,7 +38,7 @@ function erosion(thleninput::AbstractString)
 	# Copy the parameters file to the output folder along with some additional information.
 	paramvec = readparams()
 	iostream = open(paramsout, "w")
-	writedlm(paramsout, [paramvec; cntout; 0.])
+	writedlm(paramsout, [paramvec; dtoutexact; cntout; 0.])
 	close(iostream)
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
