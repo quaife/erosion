@@ -13,13 +13,13 @@ function erosion(thleninput::AbstractString)
 	thlenvec0 = readthlenfile(string("../datafiles/",thleninput))
 	npts = endof(thlenvec0[1].theta)
 	# Read the parameters from the input data file.
-	invec = readparams()
-	tfin = invec[1]
-	dtout = invec[2]
-	dtfac = invec[3]
-	epsfac = invec[4]
-	sigfac = invec[5]
-	lenevo = invec[6]
+	paramvecin = readparams()
+	tfin = paramvecin[1]
+	dtout = paramvecin[2]
+	dtfac = paramvecin[3]
+	epsfac = paramvecin[4]
+	sigfac = paramvecin[5]
+	lenevo = paramvecin[6]
 	# Calculate the needed parameters.
 	dt = dtfac/npts
 	cntout = round(Int,dtout/dt)
@@ -27,19 +27,16 @@ function erosion(thleninput::AbstractString)
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	params = ParamType(dt,epsilon,sigma,0,lenevo)
+	# Calculate a few more parameters to write in output file.
 	dtoutexact = cntout*dt
+	paramvecin = [paramvecin; dtoutexact; cntout]
 
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"
 	newfolder(datafolder)
 	plotfolder = "../figs/"
 	newfolder(plotfolder)
-	paramsout = string(datafolder,"params.dat")
-	# Copy the parameters file to the output folder along with some additional information.
-	paramvec = readparams()
-	iostream = open(paramsout, "w")
-	writedlm(paramsout, [paramvec; dtoutexact; cntout; 0.])
-	close(iostream)
+	paramsoutfile = string(datafolder,"params.dat")
 	# Set up the target points to measure u,v,p.
 	ntar0 = 10; xmax = 2.8; ymax = 0.8
 	ntar,xtar,ytar,utar,vtar,ptar = targets(ntar0,xmax,ymax)
@@ -59,7 +56,8 @@ function erosion(thleninput::AbstractString)
 			plotnsave(thlenvec1,datafolder,plotfolder,cnt)
 		end
 		# Time the computation and write it to the params file.
-		t1 = time(); elapsedtime = t1-t0; updatecputime(paramsout, elapsedtime)
+		t1 = time(); elapsedtime = t1-t0
+		paramsout(paramsoutfile, paramvecin, elapsedtime)
 	end
 	return
 end

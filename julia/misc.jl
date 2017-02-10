@@ -215,15 +215,11 @@ function newfolder(foldername::AbstractString)
 	end
 	mkdir(foldername)
 end
-# updatecputime: Update the cpu time written to the output data file.
-function updatecputime(filename::AbstractString, cputime::Float64)
+# paramsout: Save important parameters in an output file.
+function paramsout(filename::AbstractString, invec::Array{Float64}, cputime::Float64)
 	label1 = "# Input Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime"
-	iostream = open(filename, "r")
-	datavec = readdlm(iostream)
-	datavec[end] = cputime
-	writevec = [label1; datavec[1:end-3]; label2; datavec[end-2:end]]
-	close(iostream)
+	writevec = [label1; invec[1:end-2]; label2; invec[end-1:end]; cputime]
 	iostream = open(filename, "w")
 	writedlm(iostream, writevec)
 	close(iostream)
