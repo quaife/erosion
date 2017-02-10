@@ -12,24 +12,7 @@ function erosion(thleninput::AbstractString)
 	# Read the input geometry file in thetlen form.
 	thlenvec0 = readthlenfile(string("../datafiles/",thleninput))
 	npts = endof(thlenvec0[1].theta)
-	# Read the parameters from the input data file.
-	paramvecin = readparams()
-	tfin = paramvecin[1]
-	dtout = paramvecin[2]
-	dtfac = paramvecin[3]
-	epsfac = paramvecin[4]
-	sigfac = paramvecin[5]
-	lenevo = paramvecin[6]
-	# Calculate the needed parameters.
-	dt = dtfac/npts
-	cntout = round(Int,dtout/dt)
-	nsteps = round(Int,tfin/dt)
-	epsilon = epsfac/npts
-	sigma = sigfac/npts
-	params = ParamType(dt,epsilon,sigma,0,lenevo)
-	# Calculate a few more parameters to write in output file.
-	dtoutexact = cntout*dt
-	paramvecin = [paramvecin; dtoutexact; cntout]
+	params,paramvec,nsteps,cntout = getparams(npts)
 
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"
@@ -49,7 +32,7 @@ function erosion(thleninput::AbstractString)
 	if cntout==1; plotnsave(thlenvec1,datafolder,plotfolder,1); end
 	# Enter the time loop to use the multi-step method and save the data.
 	for cnt = 2:nsteps
-		utar,vtar,ptar = stokes!(thlenvec1,sigma,ntar,xtar,ytar)
+		utar,vtar,ptar = stokes!(thlenvec1,params.sigma,ntar,xtar,ytar)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
 		# Save the data.
 		if mod(cnt,cntout)==0
@@ -57,7 +40,7 @@ function erosion(thleninput::AbstractString)
 		end
 		# Time the computation and write it to the params file.
 		t1 = time(); elapsedtime = t1-t0
-		paramsout(paramsoutfile, paramvecin, elapsedtime)
+		paramsout(paramsoutfile, paramvec, elapsedtime)
 	end
 	return
 end
@@ -72,4 +55,26 @@ function targets(nn::Integer, xmax::Float64, ymax::Float64)
 	# Initialize u,v,p at target points.
 	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
 	return 2*nn,xtar,ytar,utar,vtar,ptar
+end
+
+function getparams(npts::Integer)
+	# Read the parameters from the input data file.
+	paramvecin = readparams()
+	tfin = paramvecin[1]
+	dtout = paramvecin[2]
+	dtfac = paramvecin[3]
+	epsfac = paramvecin[4]
+	sigfac = paramvecin[5]
+	lenevo = paramvecin[6]
+	# Calculate the needed parameters.
+	dt = dtfac/npts
+	cntout = round(Int,dtout/dt)
+	nsteps = round(Int,tfin/dt)
+	epsilon = epsfac/npts
+	sigma = sigfac/npts
+	dtoutexact = cntout*dt
+	# Save params and paramvec
+	params = ParamType(dt,epsilon,sigma,0,lenevo)
+	paramvec = [paramvecin; dtoutexact; cntout]
+	return params,paramvec,nsteps,cntout
 end

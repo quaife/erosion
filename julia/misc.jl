@@ -216,10 +216,10 @@ function newfolder(foldername::AbstractString)
 	mkdir(foldername)
 end
 # paramsout: Save important parameters in an output file.
-function paramsout(filename::AbstractString, invec::Array{Float64}, cputime::Float64)
+function paramsout(filename::AbstractString, paramvec::Array{Float64}, cputime::Float64)
 	label1 = "# Input Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime"
-	writevec = [label1; invec[1:end-2]; label2; invec[end-1:end]; cputime]
+	writevec = [label1; paramvec[1:end-2]; label2; paramvec[end-1:end]; cputime]
 	iostream = open(filename, "w")
 	writedlm(iostream, writevec)
 	close(iostream)
