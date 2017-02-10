@@ -178,7 +178,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	thlenvec05 = [new_thlen() for ii=1:nbods]
 	thlenvec1 = [new_thlen() for ii=1:nbods]
 	# Compute the stress at t=0 and take the first step of RK2.
-	stokes!(thlenvec0, sigma)
+	stokes!(thlenvec0, params)
         print("here0")
 	for ii = 1:nbods
 		thlen0 = thlenvec0[ii]
@@ -186,7 +186,7 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType}, params::ParamType)
 		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)	
 	end
 	# Compute the stress at t=0.5*dt and take the second step of RK2.
-	stokes!(thlenvec05, sigma)	
+	stokes!(thlenvec05, params)	
 	for ii = 1:nbods
 		thlen0 = thlenvec0[ii]
 		thlen05 = thlenvec05[ii]

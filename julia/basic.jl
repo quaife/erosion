@@ -3,7 +3,7 @@
 #################### Object data types ####################
 # ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; beta::Real; lenevo::Int
+	dt::Float64; epsilon::Float64; sigma::Float64; beta::Real; lenevo::Int; ifmm::Int
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
@@ -44,9 +44,7 @@ end
 # All routines work for multiple bodies.
 # stokes: Julia wrapper to call the Fortran stokessolver
 function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
-		ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
-	# Read the parameters file to get ifmm; 1 uses fmm, 0 uses direct.
-	ifmm = readparams()[7]	
+		ifmm::Int, ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
 	utar = zeros(Float64, ntargs)
@@ -64,11 +62,12 @@ end
 #= stokes!: Dispatch for vector of ThetaLenType
 Calculates atau = abs(tau) and smooths it with a Gaussian filter;
 then loads each atau in thlenv. =#
-function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64, 
+function stokes!(thlenv::Vector{ThetaLenType}, params::ParamType,
 			ntargs::Integer=0, xtar::Vector{Float64}=evec(), ytar::Vector{Float64}=evec())
 	nbods = endof(thlenv)
 	npts = endof(thlenv[1].theta)
 	ntot = nbods*npts
+	ifmm = params.ifmm
 	xv,yv = [zeros(Float64,ntot) for ii=1:2]
 	# Put all of the xy values in a single vector.
 	for nn = 1:nbods
@@ -77,12 +76,12 @@ function stokes!(thlenv::Vector{ThetaLenType}, sigma::Float64,
 		xv[n1:n2], yv[n1:n2] = thlenv[nn].xx, thlenv[nn].yy
 	end
 	# Call the stokessolver.
-	tau,utar,vtar,ptar = stokes(npts,nbods,xv,yv,ntargs,xtar,ytar)
+	tau,utar,vtar,ptar = stokes(npts,nbods,xv,yv,ifmm,ntargs,xtar,ytar)
 	# Smooth atau and save it in each of the thlen variables.
 	for nn = 1:nbods
 		n1,n2 = n1n2(npts,nn)
 		atau = abs(tau[n1:n2])
-		atau = gaussfilter(atau,sigma)
+		atau = gaussfilter(atau,params.sigma)
 		thlenv[nn].atau = atau
 	end
 	return utar,vtar,ptar

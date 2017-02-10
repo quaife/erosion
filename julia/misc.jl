@@ -201,13 +201,6 @@ function plotnsave(thlenvec::Vector{ThetaLenType},
 	plotfile = string(plotfolder,"shape",string(cnt),".pdf")
 	plotcurves(thlenvec,plotfile)
 end
-# readparams: Read the parameters file.
-function readparams()
-	iostream = open("params.dat", "r")
-	invec = readdlm(iostream)
-	close(iostream)
-	return invec
-end
 # newfolder: If the folder exists, delete it and create a new one.
 function newfolder(foldername::AbstractString)
 	if isdir(foldername)
@@ -216,7 +209,7 @@ function newfolder(foldername::AbstractString)
 	mkdir(foldername)
 end
 # paramsout: Save important parameters in an output file.
-function paramsout(filename::AbstractString, paramvec::Array{Float64}, cputime::Float64)
+function writeparams(filename::AbstractString, paramvec::Array{Float64}, cputime::Float64)
 	label1 = "# Input Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime"
 	writevec = [label1; paramvec[1:end-2]; label2; paramvec[end-1:end]; cputime]
