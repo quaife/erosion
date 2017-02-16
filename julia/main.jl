@@ -37,8 +37,8 @@ function erosion(thleninput::AbstractString)
 			plotnsave(thlenvec1,datafolder,plotfolder,cnt)
 		end
 		# Time the computation and write it to the params file.
-		t1 = time(); elapsedtime = t1-t0
-		writeparams(paramsoutfile, paramvec, elapsedtime)
+		paramvec[end] = time()-t0
+		writeparams(paramsoutfile,paramvec)
 	end
 	return
 end
@@ -76,6 +76,6 @@ function getparams(npts::Int)
 	dtoutexact = cntout*dt
 	# Save params and paramvec
 	params = ParamType(dt,epsilon,sigma,0,lenevo,ifmm)
-	paramvec = [paramvecin; dtoutexact; cntout]
+	paramvec = [paramvecin; dtoutexact; cntout; 0.]
 	return params,paramvec,nsteps,cntout
 end

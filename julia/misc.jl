@@ -195,10 +195,11 @@ end
 function plotnsave(thlenvec::Vector{ThetaLenType}, 
 		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer)
 	# Save the data.
-	savefile = string(datafolder,"output",string(cnt),".dat")
+	cntstr = lpad(cnt,4,0)
+	savefile = string(datafolder,"geom",cntstr,".dat")
 	savedata(thlenvec,savefile)
 	# Plot the shapes.
-	plotfile = string(plotfolder,"shape",string(cnt),".pdf")
+	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	plotcurves(thlenvec,plotfile)
 end
 # newfolder: If the folder exists, delete it and create a new one.
@@ -209,10 +210,10 @@ function newfolder(foldername::AbstractString)
 	mkdir(foldername)
 end
 # paramsout: Save important parameters in an output file.
-function writeparams(filename::AbstractString, paramvec::Array{Float64}, cputime::Float64)
+function writeparams(filename::AbstractString, paramvec::Array{Float64})
 	label1 = "# Input Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime"
-	writevec = [label1; paramvec[1:end-2]; label2; paramvec[end-1:end]; cputime]
+	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end]]
 	iostream = open(filename, "w")
 	writedlm(iostream, writevec)
 	close(iostream)
