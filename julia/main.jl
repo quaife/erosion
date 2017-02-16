@@ -12,7 +12,7 @@ function erosion(thleninput::AbstractString)
 	# Read the input geometry file in thetlen form.
 	thlenvec0 = readthlenfile(string("../datafiles/",thleninput))
 	npts = endof(thlenvec0[1].theta)
-	params,paramvec,nsteps,cntout = getparams(npts)
+	params,paramvec,nsteps,nout = getparams(npts)
 
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"; newfolder(datafolder)
@@ -24,20 +24,26 @@ function erosion(thleninput::AbstractString)
 
 	# Begin the erosion computation, time it, and save data.
 	t0 = time()
-	plotnsave(thlenvec0,datafolder,plotfolder,0)
+	plotnsave(thlenvec0,0.,datafolder,plotfolder,0)
 	# Use the Runge-Kutta starter.
 	thlenvec1 = RKstarter!(thlenvec0, params)
-	if cntout==1; plotnsave(thlenvec1,datafolder,plotfolder,1); end
+	if nout==1
+		tt = params.dt
+		plotnsave(thlenvec1,datafolder,plotfolder,1)
+	end
 	# Enter the time loop to use the multi-step method and save the data.
-	for cnt = 2:nsteps
+	nfile = 1
+	for nn = 2:nsteps
 		utar,vtar,ptar = stokes!(thlenvec1,params,ntar,xtar,ytar)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
+		tt = nn*params.dt
 		# Save the data.
-		if mod(cnt,cntout)==0
-			plotnsave(thlenvec1,datafolder,plotfolder,cnt)
+		if mod(nn,nout)==0
+			plotnsave(thlenvec1,tt,datafolder,plotfolder,nfile)
+			nfile += 1
 		end
 		# Time the computation and write it to the params file.
-		paramvec[end] = time()-t0
+		paramvec[end] = (time()-t0)/60.
 		writeparams(paramsoutfile,paramvec)
 	end
 	return

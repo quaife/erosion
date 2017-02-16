@@ -177,11 +177,11 @@ function testtheta(theta::Vector{Float64})
 	end
 end
 # savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
-function savedata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
+function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
 	iostream = open(filename, "w")
-	writedlm(iostream, [npts; nbods])
+	writedlm(iostream, [tt; npts; nbods])
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
 		datavec = [thlenvec[nn].theta; thlenvec[nn].len; 
@@ -192,12 +192,12 @@ function savedata(thlenvec::Vector{ThetaLenType}, filename::AbstractString)
 	close(iostream)
 end
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenvec::Vector{ThetaLenType}, 
+function plotnsave(thlenvec::Vector{ThetaLenType}, tt::Float64,
 		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer)
 	# Save the data.
 	cntstr = lpad(cnt,4,0)
 	savefile = string(datafolder,"geom",cntstr,".dat")
-	savedata(thlenvec,savefile)
+	savedata(thlenvec,tt,savefile)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	plotcurves(thlenvec,plotfile)
@@ -212,8 +212,8 @@ end
 # paramsout: Save important parameters in an output file.
 function writeparams(filename::AbstractString, paramvec::Array{Float64})
 	label1 = "# Input Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
-	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime"
-	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end]]
+	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
+	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]
 	iostream = open(filename, "w")
 	writedlm(iostream, writevec)
 	close(iostream)
