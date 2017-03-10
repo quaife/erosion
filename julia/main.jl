@@ -29,7 +29,7 @@ function erosion(thleninput::AbstractString)
 	thlenvec1 = RKstarter!(thlenvec0, params)
 	if nout==1
 		tt = params.dt
-		plotnsave(thlenvec1,datafolder,plotfolder,1)
+		plotnsave(thlenvec1,tt,datafolder,plotfolder,1)
 	end
 	# Enter the time loop to use the multi-step method and save the data.
 	nfile = 1
