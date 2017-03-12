@@ -210,8 +210,8 @@ function newfolder(foldername::AbstractString)
 	mkdir(foldername)
 end
 # paramsout: Save important parameters in an output file.
-function writeparams(filename::AbstractString, paramvec::Array{Float64})
-	label1 = "# Input Parameters: tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
+function writeparams(filename::AbstractString, paramvec::Array)
+	label1 = "# Input Parameters: geoinfile, tfin, dtout, dtfac, epsfac, sigfac, lenevo, iffm"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
 	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]
 	iostream = open(filename, "w")

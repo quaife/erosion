@@ -8,12 +8,9 @@ include("misc.jl")
 ##################################################
 
 # erosion: The main routine to erode a group of bodies.
-function erosion(thleninput::AbstractString)
-	# Read the input geometry file in thetlen form.
-	thlenvec0 = readthlenfile(string("../datafiles/",thleninput))
-	npts = endof(thlenvec0[1].theta)
-	params,paramvec,nsteps,nout = getparams(npts)
-
+function erosion()
+	# Get the input geometry and parameters.
+	thlenvec0,params,paramvec,nsteps,nout = getparams()
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"; newfolder(datafolder)
 	plotfolder = "../figs/"; newfolder(plotfolder)
@@ -61,18 +58,17 @@ function targets(nn::Integer, xmax::Float64, ymax::Float64)
 	return 2*nn,xtar,ytar,utar,vtar,ptar
 end
 
-function getparams(npts::Int)
-	# Read the parameters from the input data file.
+function getparams()
+	# Read the parameters file.
 	iostream = open("params.dat", "r")
 	paramvecin = readdlm(iostream)
 	close(iostream)
-	tfin = paramvecin[1]
-	dtout = paramvecin[2]
-	dtfac = paramvecin[3]
-	epsfac = paramvecin[4]
-	sigfac = paramvecin[5]
-	lenevo = paramvecin[6]
-	ifmm = paramvecin[7]
+	# Read the input geometry file.
+	geoinfile = string(paramvecin[1])
+	thlenvec0 = readthlenfile(string("../datafiles/",geoinfile))
+	npts = endof(thlenvec0[1].theta)
+	# Read the rest of the parameters.
+	tfin,dtout,dtfac,epsfac,sigfac,lenevo,ifmm = paramvecin[2:8]
 	# Calculate the needed parameters.
 	dt = dtfac/npts
 	cntout = round(Int,dtout/dt)
@@ -83,5 +79,5 @@ function getparams(npts::Int)
 	# Save params and paramvec
 	params = ParamType(dt,epsilon,sigma,0,lenevo,ifmm)
 	paramvec = [paramvecin; dtoutexact; cntout; 0.]
-	return params,paramvec,nsteps,cntout
+	return thlenvec0,params,paramvec,nsteps,cntout
 end
