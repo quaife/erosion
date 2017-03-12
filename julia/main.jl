@@ -81,3 +81,5 @@ function getparams()
 	paramvec = [paramvecin; dtoutexact; cntout; 0.]
 	return thlenvec0,params,paramvec,nsteps,cntout
 end
+
+erosion()
