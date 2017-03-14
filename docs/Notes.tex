@@ -194,6 +194,7 @@ We now discuss how to evolve $\theta$ and $L$ forward in time according to the i
 \end{align}
 Then, using the above $V_n$, the equation for $\theta$ simplifies to
 \begin{equation}
+\label{thetaEvolve}
 \pd{\theta}{t} = \eps L^{\beta-2} \ppd{\theta}{\alpha} + L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
 \end{equation}
 
@@ -231,34 +232,8 @@ We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale wit
 The calculation is based on looking at Eq.~(\ref{intfact}), where $\sigma_1 \sim 2 \pi \sqrt{\eps \Delta t}$. For the largest wavenumbers, $k_{max} \sim N/2$, we want the smoothing to beat the nonlinear term (so that overall, these modes decay). So we need $e^{-\pi^2 \eps \Delta t N^2 / 2} < 1 - C\Delta t$, which gives $\eps > 2C/(\pi^2 N^2)$, independent of $\Delta t$. If $C=1$, this gives roughly $\eps > 0.2/ N^2$. However, this analysis did not take into account how the spectrum of the nonlinear term decays (or maybe it even grows???)
 
 
-\subsection{Motion of a reference point}
-
-\subsubsection{The center of mass}
-Consider the body's center of mass
-\begin{equation}
-(x_{cm}, y_{cm}) = \frac{1}{A} \iint (x, y) \, dA
-\end{equation}
-I did a calculation to determine the motion of the center of mass, given the interface velocity. The result that I get is
-\begin{equation}
-\td{}{t} (x_{cm}, y_{cm})  = -\frac{1}{A} \int (x(s), y(s)) V_n(s) \, ds
-\end{equation}
-I believe the sign is correct for $\nhat$ the inward pointing normal, so that $V_n$ is positive if the body is shrinking.
-
-To calculate the center of mass, I can use the divergence theorem
-\begin{equation}
-\iint \grad \cdot \bvec{F} \, dA = \int \bvec{F} \cdot \nhat \, ds
-\end{equation}
-Take $\bvec{F} = \frac{1}{2} (x^2, y^2)$, so that $\grad \cdot \bvec{F} = (x,y)$. Then
-\begin{equation}
-(x_{cm}, y_{cm} ) = \frac{1}{2 A} \int x^2 n_x + y^2 n_y \, ds
-\end{equation}
-To calculate the total area, $A$, I can use the divergence theorem again, to get
-\begin{equation}
-A = \int x n_x ds = \int y n_y ds
-\end{equation}
-
-\subsubsection{The surface-average coordinates}
-I believe this will be even simpler. Consider the surface-mean coordinates
+\subsection{Tracking a reference point: the surface-averaged coordinates}
+To evolve the body, I need to track the motion of one reference point. The initial choice might be center of mass, but this turns out to be complicated. Instead, it is simpler to consider the surface-mean coordinates
 \begin{equation}
 (x_{sm}, y_{sm}) = \int_0^1 (x(\alpha), y(\alpha)) \, d\alpha
 \end{equation}
@@ -272,8 +247,40 @@ Given $\nhat = (-\sin \theta, \cos \theta)$ and $\shat = (\cos \theta, \sin \the
 & \td{}{t} x_{sm} = \int_0^1 -V_n \sin \theta + V_s \cos \theta \, d\alpha \\
 & \td{}{t} y_{sm} = \int_0^1 V_n \cos \theta + V_s \sin \theta \, d\alpha
 \end{align}
-Note: Initially, I was unsure whether $\int_0^1 V_s \hat{s} d\alpha$ makes a non-zero contribution or not, but based on some tests, it seems that it does make a difference. The order of magnitude is the same as the first term involving $V_n$.
+Note 1: Initially, I was unsure whether $\int_0^1 V_s \hat{s} d\alpha$ makes a non-zero contribution or not, but based on some tests, it seems that it does make a difference. The order of magnitude is the same as the first term involving $V_n$. \\
+Note 2: If I need to calculate the area, the divergence theorem gives
+\begin{equation}
+A = \int x n_x ds = \int y n_y ds
+\end{equation}
 
+%% CENTER OF MASS calculations... OBSELETE
+\begin{comment}
+\subsubsection{The center of mass}
+Consider the body's center of mass
+\begin{equation}
+(x_{cm}, y_{cm}) = \frac{1}{A} \iint (x, y) \, dA
+\end{equation}
+I did a calculation to determine the motion of the center of mass, given the interface velocity. The result that I get is
+\begin{equation}
+\td{}{t} (x_{cm}, y_{cm})  = -\frac{1}{A} \int (x(s), y(s)) V_n(s) \, ds
+\end{equation}
+I believe the sign is correct for $\nhat$ the inward pointing normal, so that $V_n$ is positive if the body is shrinking.
+To calculate the center of mass, I can use the divergence theorem
+\begin{equation}
+\iint \grad \cdot \bvec{F} \, dA = \int \bvec{F} \cdot \nhat \, ds
+\end{equation}
+Take $\bvec{F} = \frac{1}{2} (x^2, y^2)$, so that $\grad \cdot \bvec{F} = (x,y)$. Then
+\begin{equation}
+(x_{cm}, y_{cm} ) = \frac{1}{2 A} \int x^2 n_x + y^2 n_y \, ds
+\end{equation}
+To calculate the total area, $A$, I can use the divergence theorem again, to get
+\begin{equation}
+A = \int x n_x ds = \int y n_y ds
+\end{equation}
+\end{comment}
+% END CENTER OF MASS
 
+\subsection{Benchmark the interface evolution}
+It would be good to test the interface evolution, in particular verify that the curvature-driven-flow (CDF) is 2nd order accurate in time. Initially, I thought I would be able to get exact solutions for CDF, but it turns out that the PDE (\ref{thetaEvolve}) does not reduce to simply a diffusion equation, but instead still has nonlinear terms, thus making exact solutions impractical. I also tried to recast CDF in polar coordinates for star-shapes, but still the governing PDE is not simple enough to get exact solutions. Instead, I can do a completely numerical convergence test.
 
 \end{document}
