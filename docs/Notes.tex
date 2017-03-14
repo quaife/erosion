@@ -281,6 +281,6 @@ A = \int x n_x ds = \int y n_y ds
 % END CENTER OF MASS
 
 \subsection{Benchmark the interface evolution}
-It would be good to test the interface evolution, in particular verify that the curvature-driven-flow (CDF) is 2nd order accurate in time. Initially, I thought I would be able to get exact solutions for CDF, but it turns out that the PDE (\ref{thetaEvolve}) does not reduce to simply a diffusion equation, but instead still has nonlinear terms, thus making exact solutions impractical. I also tried to recast CDF in polar coordinates for star-shapes, but still the governing PDE is not simple enough to get exact solutions. Instead, I can do a completely numerical convergence test.
+It would be good to test the interface evolution, in particular verify that the curvature-driven-flow (CDF) is 2nd order accurate in time. Initially, I thought I would be able to get exact solutions for CDF, but it turns out that the PDE (\ref{thetaEvolve}) does not reduce to simply a diffusion equation, but instead still has nonlinear terms, thus making exact solutions impractical. I also tried to recast CDF in polar coordinates for star-shapes, but still the governing PDE is not simple enough to get exact solutions. Also, in the $\theta$-$L$ formulation I tried to determine the normal velocity to make the nonlinear terms vanish, but this does not appear possible either. Instead, I can do a completely numerical convergence test.
 
 \end{document}
