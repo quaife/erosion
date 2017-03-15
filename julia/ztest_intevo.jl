@@ -8,18 +8,18 @@ function test()
 	# Usually fixed parameters.
 	epsilon = 0.1
 	tfin = 0.2
-	lenevo = 0
+	lenevo = 1
 	len0 = 2*pi*0.2
-	a1 = 0.5
+	pertcoeff = 0.5
 	
 	# Initialization.
-	thlenvec = makeshape(npts,len0,a1)
+	thlenvec = makeshape(npts,len0,pertcoeff)
 	# Make plot of initial shape.
 	plotfolder = "../figs/"
 	newfolder(plotfolder)
 	plotshapetheta(thlenvec,plotfolder,0)
 	# Run the first simulation.
-	thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
+	thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,pertcoeff)
 	thnew = thlenvec[1].theta
 	# Enter the time loop to run many simulations and calculate errors.
 	L2v = zeros(Float64,ndts)
@@ -28,7 +28,7 @@ function test()
 		dt = 0.5*dt
 		thold = thnew
 		# Run the simulation.
-		thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
+		thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,pertcoeff)
 		thnew = thlenvec[1].theta
 		# Calculate errors.
 		Linfv[nn] = Linferr(thold,thnew)
@@ -45,9 +45,9 @@ end
 
 # Curvature-driven flow.
 function cdf(npts::Int, dt::Float64, epsilon::Float64,
-		tfin::Float64, lenevo::Int, len0::Float64, a1::Float64)
+		tfin::Float64, lenevo::Int, len0::Float64, pertcoeff::Float64)
 	# Calculate parameters and initial shape.
-	thlenvec0 = makeshape(npts,len0,a1)
+	thlenvec0 = makeshape(npts,len0,pertcoeff)
 	params = ParamType(dt,epsilon,0.,0.,lenevo,0)
 	nsteps = round(Int,tfin/dt)
 	# Start the simulation with RKstarter.
@@ -119,13 +119,13 @@ function L2norm{T<:Number}(fh::Vector{T})
 end
 
 # Make the initial shape.
-function makeshape(npts::Int, len::Float64, a1::Float64, 
+function makeshape(npts::Int, len::Float64, pertcoeff::Float64, 
 		xsm::Float64=0., ysm::Float64=0.)
 	alpha = getalpha(npts)
 	# theta for a circle.
 	theta = 0.5*pi + 2*pi*alpha[:]
 	# Add a perturbation.
-	theta += a1*sin(4*pi*alpha[:])
+	theta += pertcoeff*sin(4*pi*alpha[:])
 	# Put the shape in a thlenvec.
 	thlen = new_thlen()
 	thlen.theta = theta
