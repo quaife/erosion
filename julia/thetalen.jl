@@ -33,8 +33,8 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	dt = params.dt; m0 = thlen0.mterm; len1 = thlen1.len
 	# Calculate mterm and nterm at time n=1.
 	m1 = getmn!(thlen1,params)
-	# Update len with an explicit, multistep method (as long as levo ne 0).
-	len2 = len1 + 0.5*dt*(3*m1-m0)*params.lenevo
+	# Update len with an explicit, multistep method.
+	len2 = len1 + 0.5*dt*(3*m1-m0)
 	# Create a new ThetaLenType variable and save the new len.
 	thlen2 = new_thlen()
 	thlen2.len = len2
