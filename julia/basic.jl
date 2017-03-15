@@ -84,7 +84,7 @@ function stokes!(thlenv::Vector{ThetaLenType}, params::ParamType,
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau,params.sigma)
 		# If fixarea=1, then make atau mean zero to keep the length fixed.
-		if(fixarea==1)
+		if(params.fixarea==1)
 			atau = atau - mean(atau)
 		end
 		thlenv[nn].atau = atau

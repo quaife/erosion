@@ -174,14 +174,15 @@ function testtheta(theta::Vector{Float64})
 	# 1) Make sure theta[end]-theta[1] = 2*pi
 	dth = 2*pi/endof(theta)
 	diff = abs(theta[end]-theta[1]-2*pi)
-	if diff>2*dth
+	thresh = 5*dth
+	if diff > thresh
 		throw(string("Unacceptable theta vector, the endpoints are not right: ", diff))
 	end
 	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
 	m1 = mean(cos(theta))
 	m2 = mean(sin(theta))
 	maxmean = maximum(abs([m1,m2]))
-	thresh = 2*dth
+	thresh = 5*dth
 	if maxmean > thresh
 		throw(string("Unacceptable theta vector, the mean is not right: ", maxmean))
 	end
