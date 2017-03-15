@@ -3,28 +3,40 @@
 function test()
 	# Test convergence with respect to dt.
 	npts = 256
-	dt = 1e-2
+	dt = 5e-3
 	ndts = 3
 	# Usually fixed parameters.
-	epsilon = 0.5
-	tfin = 0.1
+	epsilon = 0.2
+	tfin = 0.5
 	lenevo = 0
 	len0 = 2*pi*0.2
-	a1 = 0.1
-	# Enter the time loop.
+	a1 = 0.5
+	
+	# Initialization.
+	thlenvec = makeshape(npts,len0,a1)
+	# Make plot of initial shape.
+	plotfolder = "../figs/"
+	newfolder(plotfolder)
+	plotshapetheta(thlenvec,plotfolder,0)
+	# Run the first simulation.
+	thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
+	thnew = thlenvec[1].theta
+	# Enter the time loop to run many simulations and calculate errors.
 	L2ev = zeros(Float64,ndts)
 	Linfev = zeros(Float64,ndts)
-	thnew = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
 	for nn=1:ndts
 		dt = 0.5*dt
-		println("dt = ", dt)
 		thold = thnew
-		thnew = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
-		#L2ev[nn] = L2err(thold,thnew)
+		# Run the simulation.
+		thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
+		thnew = thlenvec[1].theta
+		# Calculate errors.
 		Linfev[nn] = Linferr(thold,thnew)
+		L2ev[nn] = L2err_th(thold,thnew)
+		plotshapetheta(thlenvec,plotfolder,nn)
 	end
-	#println(L2ev)
 	println(Linfev)
+	println(L2ev)
 end
 
 # Curvature-driven flow.
@@ -41,8 +53,23 @@ function cdf(npts::Int, dt::Float64, epsilon::Float64,
 		noatau!(thlenvec1,params)
 		advance_thetalen!(thlenvec1,thlenvec0,params)
 	end
-	thfin = thlenvec1[1].theta
-	return thfin
+	return thlenvec1
+end
+
+function plotshapetheta(thlenvec::Vector{ThetaLenType}, plotfolder::AbstractString, nn::Int)
+	figshape = string(plotfolder,"shape",nn,".pdf")
+	figtheta = string(plotfolder,"theta",nn,".pdf")
+	plotcurves(thlenvec, figshape)
+	# Plot theta.
+	height = 400
+	width = 600
+	pp = plot()
+	xlim(0,1.); ylim(0,3*pi)
+	theta = thlenvec[1].theta
+	npts = length(theta)
+	alpha = getalpha(npts)
+	pp = oplot(alpha,theta,"-")
+	savefig(pp, figtheta, width=width, height=height)
 end
 
 # The Linf-difference between two functions
@@ -77,7 +104,7 @@ function L2err_per(f1::Vector{Float64},f2::Vector{Float64})
 	return err
 end
 # L2-norm of a periodic function using Parseval's identity.
-function L2norm(fh::Vector{Float64})
+function L2norm{T<:Number}(fh::Vector{T})
 	norm2 = sum(abs(fh).^2)
 	norm2 = sqrt(norm2)
 	return norm2
@@ -89,7 +116,7 @@ function makeshape(npts::Int, len::Float64, a1::Float64,
 	alpha = getalpha(npts)
 	# theta for a circle.
 	theta = 0.5*pi + 2*pi*alpha[:]
-	# Add a sin component.
+	# Add a perturbation.
 	theta += a1*sin(2*pi*alpha[:])
 	# Put the shape in a thlenvec.
 	thlen = new_thlen()
@@ -109,4 +136,6 @@ function noatau!(thlenv::Vector{ThetaLenType}, params::ParamType)
 	end
 	return
 end
+
+test()
 
