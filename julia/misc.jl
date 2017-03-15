@@ -179,9 +179,10 @@ function testtheta(theta::Vector{Float64})
 	th1extrap = 2*theta[end]-theta[end-1] - 2*pi
 	# Compare the extrapolation to the actual first theta.
 	th1diff = abs(theta[1]-th1extrap)
-	thresh = dalpha
+	thresh = 2*pi*dalpha
 	if th1diff > thresh
-		throw(string("Unacceptable theta vector, the endpoints do not match: ", th1diff))
+		throw(string("Unacceptable theta vector, ", 
+			"the endpoints do not match: ", signif(th1diff,3), " > ", signif(thresh,3) ))
 	end
 	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
 	m1 = mean(cos(theta))
@@ -189,7 +190,8 @@ function testtheta(theta::Vector{Float64})
 	maxmean = maximum(abs([m1,m2]))
 	thresh = dalpha
 	if maxmean > thresh
-		throw(string("Unacceptable theta vector, the means are not right: ", maxmean))
+		throw(string("Unacceptable theta vector, ",
+			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
 end
 # savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
