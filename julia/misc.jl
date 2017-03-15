@@ -172,19 +172,24 @@ end
 # testtheta: Test that the theta vector is reasonable.
 function testtheta(theta::Vector{Float64})
 	# 1) Make sure theta[end]-theta[1] = 2*pi
-	dth = 2*pi/endof(theta)
-	diff = abs(theta[end]-theta[1]-2*pi)
-	thresh = 5*dth
-	if diff > thresh
-		throw(string("Unacceptable theta vector, the endpoints are not right: ", diff))
+	NN = endof(theta)
+	dalpha = 1./NN
+	#= Linear extrapolation to estimate the first theta, 
+	assuming periodicity with the right jump. =#
+	th1extrap = 2*theta[end]-theta[end-1] - 2*pi
+	# Compare the extrapolation to the actual first theta.
+	th1diff = abs(theta[1]-th1extrap)
+	thresh = dalpha
+	if th1diff > thresh
+		throw(string("Unacceptable theta vector, the endpoints do not match: ", th1diff))
 	end
 	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
 	m1 = mean(cos(theta))
 	m2 = mean(sin(theta))
 	maxmean = maximum(abs([m1,m2]))
-	thresh = 5*dth
+	thresh = dalpha
 	if maxmean > thresh
-		throw(string("Unacceptable theta vector, the mean is not right: ", maxmean))
+		throw(string("Unacceptable theta vector, the means are not right: ", maxmean))
 	end
 end
 # savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
