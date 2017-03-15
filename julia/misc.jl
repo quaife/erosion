@@ -188,7 +188,6 @@ function testtheta(theta::Vector{Float64})
 	m1 = mean(cos(theta))
 	m2 = mean(sin(theta))
 	maxmean = maximum(abs([m1,m2]))
-	thresh = dalpha
 	if maxmean > thresh
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
