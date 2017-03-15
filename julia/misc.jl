@@ -12,6 +12,7 @@ end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
+	testtheta(theta)
 	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
@@ -168,12 +169,21 @@ function readthlenfile(filename::AbstractString)
 	end
 	return thlenvec
 end
-# testtheta: Make sure theta[end]-theta[1] = 2*pi
+# testtheta: Test that the theta vector is reasonable.
 function testtheta(theta::Vector{Float64})
+	# 1) Make sure theta[end]-theta[1] = 2*pi
 	dth = 2*pi/endof(theta)
 	diff = abs(theta[end]-theta[1]-2*pi)
 	if diff>2*dth
-		throw("Unacceptable theta vector")
+		throw(string("Unacceptable theta vector, the endpoints are not right: ", diff))
+	end
+	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
+	m1 = mean(cos(theta))
+	m2 = mean(sin(theta))
+	maxmean = maximum(abs([m1,m2]))
+	thresh = 2*dth
+	if maxmean > thresh
+		throw(string("Unacceptable theta vector, the mean is not right: ", maxmean))
 	end
 end
 # savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.

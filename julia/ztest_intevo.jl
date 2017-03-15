@@ -6,8 +6,8 @@ function test()
 	dt = 5e-3
 	ndts = 3
 	# Usually fixed parameters.
-	epsilon = 0.2
-	tfin = 0.5
+	epsilon = 0.1
+	tfin = 0.2
 	lenevo = 0
 	len0 = 2*pi*0.2
 	a1 = 0.5
@@ -22,8 +22,8 @@ function test()
 	thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
 	thnew = thlenvec[1].theta
 	# Enter the time loop to run many simulations and calculate errors.
-	L2ev = zeros(Float64,ndts)
-	Linfev = zeros(Float64,ndts)
+	L2v = zeros(Float64,ndts)
+	Linfv = zeros(Float64,ndts)
 	for nn=1:ndts
 		dt = 0.5*dt
 		thold = thnew
@@ -31,12 +31,16 @@ function test()
 		thlenvec = cdf(npts,dt,epsilon,tfin,lenevo,len0,a1)
 		thnew = thlenvec[1].theta
 		# Calculate errors.
-		Linfev[nn] = Linferr(thold,thnew)
-		L2ev[nn] = L2err_th(thold,thnew)
+		Linfv[nn] = Linferr(thold,thnew)
+		L2v[nn] = L2err_th(thold,thnew)
 		plotshapetheta(thlenvec,plotfolder,nn)
 	end
-	println(Linfev)
-	println(L2ev)
+	orderinf = order(2,Linfv)
+	order2 = order(2,L2v)
+	println(Linfv)
+	println(L2v)
+	println(orderinf)
+	println(order2)
 end
 
 # Curvature-driven flow.
@@ -72,6 +76,10 @@ function plotshapetheta(thlenvec::Vector{ThetaLenType}, plotfolder::AbstractStri
 	savefig(pp, figtheta, width=width, height=height)
 end
 
+#= Calculate the order of convergence given a vector of errors. =#
+function order(Nfac::Integer, errv::Vector{Float64})
+	return log(errv[1:end-1]./errv[2:end])./log(Nfac)
+end
 # The Linf-difference between two functions
 function Linferr(f1::Vector{Float64},f2::Vector{Float64})
 	if length(f1) != length(f2)
@@ -117,7 +125,7 @@ function makeshape(npts::Int, len::Float64, a1::Float64,
 	# theta for a circle.
 	theta = 0.5*pi + 2*pi*alpha[:]
 	# Add a perturbation.
-	theta += a1*sin(2*pi*alpha[:])
+	theta += a1*sin(4*pi*alpha[:])
 	# Put the shape in a thlenvec.
 	thlen = new_thlen()
 	thlen.theta = theta

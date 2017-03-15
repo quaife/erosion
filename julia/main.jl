@@ -82,4 +82,4 @@ function getparams()
 	return thlenvec0,params,paramvec,nsteps,cntout
 end
 
-erosion()
+#erosion()
