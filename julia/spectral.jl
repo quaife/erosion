@@ -52,7 +52,7 @@ function specint(fx::Vector, intvlen::Float64=1.0)
 	kv = kvec(length(fx), 0)
 	Fh = fh./(2*pi*im*kv)
 	# This kills the zeroth mode and, if nn is even, also the highest mode.
-	Fh[kv.==0] = 0.0
+	Fh[kv.==0] = 0.
 	Fx = ifftnice(Fh)
 	imagtest(Fx)
 	return real(Fx)*intvlen	

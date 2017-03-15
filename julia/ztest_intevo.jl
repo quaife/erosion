@@ -47,28 +47,20 @@ end
 
 # The Linf-difference between two functions
 function Linferr(f1::Vector{Float64},f2::Vector{Float64})
-	N1 = length(f1)
-	N2 = length(f2)
-	if N1 != N2
-		throw("The vectors have to be equal length",N1,N2)
+	if length(f1) != length(f2)
+		throw("The vectors should be equal length")
 	else
 		err = maximum(abs(f1-f2))/maximum(abs(f2))
 	end
 	return err
-
 end
-
-#= THESE ARE WRONG right now.
 # The L2-difference between two theta-type functions.
 function L2err_th(th1::Vector{Float64},th2::Vector{Float64})
-	N1 = length(th1)
-	N2 = length(th2)
-	if N1>N2 
-		throw("The second vector should be longer ",N1,N2)
-	else
-
-		err = L2norm([f1; zeros(N2-N1)] - f2)
-	end
+	# Make th1 and th2 periodic by removing the linear part.
+	thp1 = th1 - 2*pi*getalpha(length(th1))
+	thp2 = th2 - 2*pi*getalpha(length(th2))
+	# Calculate the error of the periodic components.
+	err = L2err_per(thp1,thp2)
 	return err
 end
 # The L2-difference between two periodic functions.
@@ -78,15 +70,14 @@ function L2err_per(f1::Vector{Float64},f2::Vector{Float64})
 	if N1>N2 
 		throw("The second vector should be longer ",N1,N2)
 	else
-		err = L2norm([f1; zeros(N2-N1)] - f2)
+		fh1 = fft(f1)/N1
+		fh2 = fft(f2)/N2
+		err = L2norm(fh1-fh2)
 	end
 	return err
 end
-=#
-
 # L2-norm of a periodic function using Parseval's identity.
-function L2norm(ff::Vector{Float64})
-	fh = fft(ff)/length(ff)
+function L2norm(fh::Vector{Float64})
 	norm2 = sum(abs(fh).^2)
 	norm2 = sqrt(norm2)
 	return norm2
@@ -109,7 +100,6 @@ function makeshape(npts::Int, len::Float64, a1::Float64,
 	thlenvec = [thlen]
 	return thlenvec
 end
-
 # Function to pass into RKstarter without computing abs tau.
 function noatau!(thlenv::Vector{ThetaLenType}, params::ParamType)
 	nbods = length(thlenv)
