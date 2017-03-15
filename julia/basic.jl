@@ -3,7 +3,8 @@
 #################### Object data types ####################
 # ParamType includes the parameters dt, epsilon, and beta.
 type ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; beta::Real; lenevo::Int; ifmm::Int
+	dt::Float64; epsilon::Float64; sigma::Float64; 
+	beta::Real; ifmm::Int; fixarea::Int;
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
@@ -82,6 +83,10 @@ function stokes!(thlenv::Vector{ThetaLenType}, params::ParamType,
 		n1,n2 = n1n2(npts,nn)
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau,params.sigma)
+		# If fixarea=1, then make atau mean zero to keep the length fixed.
+		if(fixarea==1)
+			atau = atau - mean(atau)
+		end
 		thlenv[nn].atau = atau
 	end
 	return utar,vtar,ptar
