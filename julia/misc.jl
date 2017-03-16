@@ -171,23 +171,23 @@ function readthlenfile(filename::AbstractString)
 end
 # testtheta: Test that the theta vector is reasonable.
 function testtheta(theta::Vector{Float64})
-	# 1) Make sure theta[end]-theta[1] = 2*pi
-	NN = endof(theta)
-	dalpha = 1./NN
+	npts = endof(theta)
+	# 1) Make sure that the jump between the endpoints is 2*pi.
 	# Linear extrapolation to estimate theta at alpha=0 from both sides.
 	th0left = 1.5*theta[end] - 0.5*theta[end-1] - 2*pi
 	th0right = 1.5*theta[1] - 0.5*theta[2]
 	# Compare the two extrpaolations.
 	th0diff = abs(th0left - th0right)
-	thresh = 2*pi*dalpha
-	if th1diff > thresh
+	thresh = 0.08
+	if th0diff > thresh
 		throw(string("Unacceptable theta vector, ", 
-			"the endpoints do not match: ", signif(th1diff,3), " > ", signif(thresh,3) ))
+			"the endpoints do not match: ", signif(th0diff,3), " > ", signif(thresh,3) ))
 	end
 	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
 	m1 = mean(cos(theta))
 	m2 = mean(sin(theta))
 	maxmean = maximum(abs([m1,m2]))
+	thresh = 10./npts
 	if maxmean > thresh
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
