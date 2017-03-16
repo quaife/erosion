@@ -174,11 +174,11 @@ function testtheta(theta::Vector{Float64})
 	# 1) Make sure theta[end]-theta[1] = 2*pi
 	NN = endof(theta)
 	dalpha = 1./NN
-	#= Linear extrapolation to estimate the first theta, 
-	assuming periodicity with the right jump. =#
-	th1extrap = 2*theta[end]-theta[end-1] - 2*pi
-	# Compare the extrapolation to the actual first theta.
-	th1diff = abs(theta[1]-th1extrap)
+	# Linear extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 1.5*theta[end] - 0.5*theta[end-1] - 2*pi
+	th0right = 1.5*theta[1] - 0.5*theta[2]
+	# Compare the two extrpaolations.
+	th0diff = abs(th0left - th0right)
 	thresh = 2*pi*dalpha
 	if th1diff > thresh
 		throw(string("Unacceptable theta vector, ", 
