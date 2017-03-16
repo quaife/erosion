@@ -178,7 +178,7 @@ function testtheta(theta::Vector{Float64})
 	th0right = 1.5*theta[1] - 0.5*theta[2]
 	# Compare the two extrpaolations.
 	th0diff = abs(th0left - th0right)
-	thresh = 0.08
+	thresh = 0.2
 	if th0diff > thresh
 		throw(string("Unacceptable theta vector, ", 
 			"the endpoints do not match: ", signif(th0diff,3), " > ", signif(thresh,3) ))
