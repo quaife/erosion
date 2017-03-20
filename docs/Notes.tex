@@ -149,6 +149,7 @@ Thus, for the present case of Stokes flow $\beta=0$, but for the previous case o
 
 To evolve the interface numerically, we use the $\theta$-$L$ method. Rather than re-derive the formulas, I will use the convention from Shelley 1994, with the curve parameterized in the CCW direction and the normal vector pointing {\em inward}. With this convention, the normal interface velocity is the negative of what it was previously, giving
 \begin{equation}
+\label{Vn1}
 V_n = C \atau + \eps L^{\beta} \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
 Recall that for Stokes flow, $\beta = 0$.
@@ -174,6 +175,7 @@ The curvature is given by
 \end{equation}
 We are using the standard convention, where a convex shape, like a circle, has positive curvature. The normal velocity now can be written as
 \begin{equation}
+\label{Vn2}
 V_n = C \atau + \eps L^{\beta-1} \left(\pd{\theta}{\alpha} - 2 \pi \right)
 \end{equation}
 
@@ -225,6 +227,28 @@ where
 & \sigma_1 = 2 \pi \sqrt{\eps \Dt} \sqrt{(L^{n})^{\beta-2} + (L^{n+1})^{\beta-2} } 	\\
 & \sigma_2 = 2 \pi \sqrt{\eps \Dt} \sqrt{(L^{n-1})^{\beta-2} + 2 (L^{n})^{\beta-2} + (L^{n+1})^{\beta-2} }
 \end{align}
+
+\subsubsection{Different scaling of the stress}
+Some numerical tests reveal that the stress scales like $\tau \sim 1/(L \log L)$, instead of the naive $1/L$. This might because we are in a 2D bounded domain (Stokes paradox type stuff). So we need to modify the curvature driven flow to have the same scaling. To this end, modify Eq.~(\ref{Vn1}) to read
+\begin{equation}
+V_n = \atau + \eps f(L) \left(\kappa - \frac{2 \pi}{L} \right)
+\end{equation}
+where for 2D Stokes flow, we will have $f(L) = -1/\log L$. Carrying through this change, Eq.~(\ref{Vn2}) becomes
+\begin{equation}
+V_n = \atau + \eps L^{-1} f(L) \left(\pd{\theta}{\alpha} - 2 \pi \right)
+\end{equation}
+and Eq.~(\ref{thetaEvolve}) becomes
+\begin{equation}
+\pd{\theta}{t} = \eps L^{-2} f(L) \ppd{\theta}{\alpha} + L^{-1} \left( \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
+\end{equation}
+Then to evolve $\theta$ spectrally, we use
+\begin{equation}
+\td{\thh_k}{t} + 4 \pi^2 k^2 \eps L^{-2} f(L)  \thh_k = \hat{N}_k
+\end{equation}
+
+
+
+
 
 \subsection{How to scale smoothing parameters?}
 We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale with the simulation resolution parameters? The most important resolution parameter is $N$, the total number of points on each body, but there is also $\Delta t$ and maybe some others. Figuring out $\sigma$ is the easier part: $\sigma$ is a lengthscale and should go like $1/N$. On the other hand, $\eps$ is a diffusivity in dimensions. I did a calculation and found that $\eps$ should scale like $2/(\pi^2 N^2)$.
