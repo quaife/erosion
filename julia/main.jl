@@ -72,6 +72,7 @@ function getparams()
 	# Calculate the needed parameters.
 	dt = dtfac/npts
 	cntout = round(Int,dtout/dt)
+	cntout = max(cntout,1)
 	nsteps = round(Int,tfin/dt)
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
