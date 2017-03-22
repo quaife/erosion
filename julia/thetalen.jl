@@ -69,6 +69,11 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
 	return
 end
+#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
+2D Stokes: -1/Log(L); 3D Stokes: 1; high Reynolds: sqrt(L) =#
+function cdfscale(len::Float64)
+	return -1./log(tanh(len))
+end
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
 function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Make sure that atau is not empty.
@@ -127,14 +132,7 @@ end
 
 
 
-#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
-For 2D Stokes flow, -1/log(L)
-For 3D Stokes flow, 1
-For high Reynolds, sqrt(L) =#
-function cdfscale(len::Float64)
-	#return -1./log(len)
-	return 1.
-end
+
 
 
 
