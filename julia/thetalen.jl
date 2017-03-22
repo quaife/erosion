@@ -8,7 +8,6 @@ atau (vector): The absolute value of the shear stress, computed by fluid solver.
 Parameters
 dt: The time-step.
 epsilon: The constant for the smoothing, curvature-driven-flow component.
-beta: The power of L hitting the curvature-term in the V_n; should be zero for Stokes flow. 
 
 Convention for tangential and normal vectors
 I use the same convention as Shelley 1994. That is, I assume the curve 
@@ -30,7 +29,7 @@ This is a multi-step method and uses some values from n=0 too.
 Note: thlen1 must already be loaded with the correct atua, which is used in getmn!() =#
 function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
-	dt = params.dt; m0 = thlen0.mterm; len1 = thlen1.len
+	dt, m0, len1 = params.dt, thlen0.mterm, thlen1.len
 	# Calculate mterm and nterm at time n=1.
 	m1 = getmn!(thlen1,params)
 	# Update len with an explicit, multistep method.
@@ -52,17 +51,18 @@ end
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
-	dt, epsilon, beta = params.dt, params.epsilon, params.beta
+	dt, epsilon = params.dt, params.epsilon
 	theta1, len1, n1 = thlen1.theta, thlen1.len, thlen1.nterm
 	len0, n0 = thlen0.len, thlen0.nterm
 	len2 = thlen2.len
 	alpha = getalpha(endof(theta1))
-	lpow = beta-2
+	# The function that enters the sigmas of the Guassian filter.
+	lenfun(len::Float64) = len^(-2)*cdfscale(len)
 	# The first value used in the Gaussian filter.
-	sig1 = sqrt( len1^lpow + len2^lpow )
+	sig1 = sqrt( lenfun(len1) + lenfun(len2) )
 	sig1 *= 2*pi*sqrt(epsilon*dt)
 	# The second value used in the Gaussian filter.
-	sig2 = sqrt( len0^lpow + 2*len1^lpow + len2^lpow )
+	sig2 = sqrt( lenfun(len0) + 2*lenfun(len1) + lenfun(len2) )
 	sig2 *= 2*pi*sqrt(epsilon*dt)
 	# Apply the appropriate Gaussian filters to advance theta in time.
 	thlen2.theta = gaussfilter( theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
@@ -74,12 +74,12 @@ function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, para
 	# Make sure that atau is not empty.
 	if atau==[]; throw("atau has not been computed"); return; end
 	# Extract the needed variables.
-	epsilon, beta = params.epsilon, params.beta
+	epsilon = params.epsilon
 	alpha = getalpha(endof(theta))
 	# The derivative of theta wrt alpha.
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
 	# The normal velocity.
-	vnorm = atau + epsilon*len^(beta-1) * (dtheta - 2*pi)
+	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
 	# Get the tangential velocity and dL/dt.
 	vtang, mterm = tangvel(dtheta, vnorm)
 	# The derivative of the absolute value of shear stress.
@@ -125,18 +125,31 @@ function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaL
 	deleteat!(thlenvec1,zind)
 end
 
+
+
+#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
+For 2D Stokes flow, -1/log(L)
+For 3D Stokes flow, 1
+For high Reynolds, sqrt(L) =#
+function cdfscale(len::Float64)
+	#return -1./log(len)
+	return 1.
+end
+
+
+
 #################### Starter routines ####################
 # thetadot: Calculate the time derivative of theta; only used in the starter routine.
 function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Extract the needed variables.
-	dt, epsilon, beta = params.dt, params.epsilon, params.beta
+	dt, epsilon = params.dt, params.epsilon
 	alpha = getalpha(endof(theta))
 	# Calculate mterm and nterm at time 0.
 	mterm, nterm, xsmdot, ysmdot = getmn(theta,len,atau,params)
 	# Calculate the time derivative of theta.
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
-	thdot = epsilon*len^(beta-2)*d2th + nterm
+	thdot = epsilon*cdfscale(len)*len^(-2)*d2th + nterm
 	return thdot, mterm, nterm, xsmdot, ysmdot
 end
 #= thetadot: Dispatch for ThetaLenType.

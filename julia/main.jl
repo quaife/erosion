@@ -77,7 +77,7 @@ function getparams()
 	sigma = sigfac/npts
 	dtoutexact = cntout*dt
 	# Save params and paramvec
-	params = ParamType(dt,epsilon,sigma,0,ifmm,fixarea)
+	params = ParamType(dt,epsilon,sigma,ifmm,fixarea)
 	paramvec = [paramvecin; dtoutexact; cntout; 0.]
 	return thlenvec0,params,paramvec,nsteps,cntout
 end

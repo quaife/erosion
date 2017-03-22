@@ -1,10 +1,9 @@
 # basic.jl: Basic routines such as datatypes and Stokes solvers.
 
 #################### Object data types ####################
-# ParamType includes the parameters dt, epsilon, and beta.
+# ParamType includes the parameters dt, epsilon, sigma, etc.
 type ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; 
-	beta::Real; ifmm::Int; fixarea::Int;
+	dt::Float64; epsilon::Float64; sigma::Float64; ifmm::Int; fixarea::Int;
 end
 # ThetaLenType includes all of the data that for a curve.
 type ThetaLenType
