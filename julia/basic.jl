@@ -40,25 +40,58 @@ function evec()
 end
 ##################################################
 
-#################### Stokes solvers ####################
-# All routines work for multiple bodies.
-# stokes: Julia wrapper to call the Fortran stokessolver
-function stokes(npts::Integer, nbods::Integer, xx::Vector{Float64}, yy::Vector{Float64},
-		ifmm::Int, ntargs::Integer, xtar::Vector{Float64}, ytar::Vector{Float64})
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
+
 	utar = zeros(Float64, ntargs)
 	vtar = zeros(Float64, ntargs)
 	ptar = zeros(Float64, ntargs)
-		@time(
-	ccall((:stokessolver_, "libstokes.so"),
-		Void, (Ptr{Int}, Ptr{Int}, Ptr{Int}, Ptr{Int},
-		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
-		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), 
-		&npts, &nbods, &ntargs, &ifmm, xx, yy, xtar, ytar, utar, vtar, ptar, tau)
-		)
-	return tau, utar, vtar, ptar
+
+
+#################### Call Fortran routines ####################
+# Wrapper for stokesSolver
+function getdensity(npts::Int, nbods::Int, 
+		xx::Vector{Float64}, yy::Vector{Float64}, ifmm::Int)
+	ntot = npts*nbods
+	density = zeros(Float64, ntot)
+	ccall((:stokessolver_, "libstokes.so"), Void, 
+		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
+		&npts, &nbods, &ifmm, xx, yy, density)
+	return density
 end
+# Wrapper for computeShearStress
+function getstress(npts::Int, nbods::Int, 
+		xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64})
+	ntot = npts*nbods
+	stress = zeros(Float64, ntot)
+	ccall((:computeShearStress_, "libstokes.so", Void,
+		(Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
+		&npts, &nbods, xx, yy, density, stress  ))
+	return stress
+end
+
+# Dispatch of getdensity for thlenvec. Return vector of density.
+function getdensity!(thlenv::Vector{ThetaLenType}, params::ParamType, density::Vector{Float64})
+	nbods = endof(thlenv)
+	npts = endof(thlenv[1].theta)
+	ntot = nbods*npts
+	ifmm = params.ifmm
+	xv,yv = [zeros(Float64,ntot) for ii=1:2]
+	# Put all of the xy values in a single vector.
+	for nn = 1:nbods
+		getxy!(thlenv[nn])
+		n1,n2 = n1n2(npts,nn)
+		xv[n1:n2], yv[n1:n2] = thlenv[nn].xx, thlenv[nn].yy
+	end
+	# Call getdensity.
+	density = getdensity(npts,nbods,xv,yv,ifmm)
+	return
+end
+# Dispatch of getstress for 
+function getstress!(thlenv::Vector{ThetaLenType}, params::ParamType, density::Vector{Float64})
+???
+
+
 #= stokes!: Dispatch for vector of ThetaLenType
 Calculates atau = abs(tau) and smooths it with a Gaussian filter;
 then loads each atau in thlenv. =#
