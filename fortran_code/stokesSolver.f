@@ -1,24 +1,24 @@
-      subroutine stokesSolver(nninner,nnbodies,nntargets,ifmm,xx,yy,
-     $    xxtar,yytar,utar,vtar,press_tar,shear_stress)
-c     Input x and y coordinates and return the shear_stress on the
+      subroutine stokesSolver(nninner,nnbodies,ifmm,xx,yy,den)
+c     Input x and y coordinates and return the density function on the
 c     boundary.  Outer wall is used to enclose the inner boundary so
 c     that Stokes paradox is avoided
       implicit real*8 (a-h,o-z)
 
       dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
 c     x and y coordinates of obstacle
-      dimension xxtar(nntargets),yytar(nntargets)
-c     x and y coordinates of target locations where velocity and
-c     pressure need to be evaluted
+c      dimension xxtar(nntargets),yytar(nntargets)
+cc     x and y coordinates of target locations where velocity and
+cc     pressure need to be evaluted
 
-      parameter (nmax = 2**12)
-      parameter (maxbodies = 4)
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
 c     max points on the boundary of the obstacle      
-      parameter (ntarmax = 200)
-      parameter (maxl = 3000, liwork = 30)
+c      parameter (ntarmax = 20)
+      parameter (maxl = 2000, liwork = 30)
       parameter (lrwork = 10 + nmax*(maxl+6) + 
      $     maxl*(maxl+3))
 c     maximum size of workspaces for GMRES
+c     maxl is the maximum number of GMRES steps
 
       dimension x(nmax),y(nmax)
       dimension centerx(maxbodies),centery(maxbodies)
@@ -27,11 +27,11 @@ c     x and y coordinates of the normal of the obstacle
       dimension cur(nmax),speed(nmax)
 c     Jacobian and curvature of the geometry
 
-      dimension xtar(ntarmax),ytar(ntarmax)
-c     Target locations
-      dimension utar(nntargets),vtar(nntargets)
-      dimension press_tar(nntargets)
-c     Velocity and pressure at target locations
+c      dimension xtar(ntarmax),ytar(ntarmax)
+cc     Target locations
+c      dimension utar(nntargets),vtar(nntargets)
+c      dimension press_tar(nntargets)
+cc     Velocity and pressure at target locations
 
       dimension xouter(nmax),youter(nmax)
 c     x and y coordinates of confining wall
@@ -46,13 +46,14 @@ c     workspaces for GMRES
       dimension rhs(nmax)
 c     right hand side
       dimension den(nmax)
-c     x and y coordinates of the density function
-      dimension E11(nninner*nnbodies)
-      dimension E12(nninner*nnbodies)
-      dimension E22(nninner*nnbodies)
-c     components of the deformation gradient on the obstacle
-      dimension shear_stress(nninner*nnbodies)
-c     shear stress on the obstacle
+
+cc     x and y coordinates of the density function
+c      dimension E11(nninner*nnbodies)
+c      dimension E12(nninner*nnbodies)
+c      dimension E22(nninner*nnbodies)
+cc     components of the deformation gradient on the obstacle
+c      dimension shear_stress(nninner*nnbodies)
+cc     shear stress on the obstacle
 
       common /geometry/x,y,centerx,centery,px,py,cur,speed,
      $    ninner,nbodies
@@ -94,54 +95,84 @@ c     load boundary condition
      $      gmwork,lrwork,igwork,liwork,maxl,ifmm)
 c     solve for the density function with GMRES
 
-c      open(unit=1,file='output/den.dat')
-c      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
-c        write(1,1000) den(k)
-c      enddo
-c      close(1)
+
+
+      end
+
+c***********************************************************************
+      subroutine computeShearStress(nninner,nnbodies,xx,yy,den,
+     $    shear_stress)
+c     Input x and y coordinates and the density function on the
+c     boundary and return the shear stress on the inner walls.  
+      implicit real*8 (a-h,o-z)
+
+      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
+c     x and y coordinates of obstacle
+
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
+c     max points on the boundary of the obstacle      
+
+      dimension x(nmax),y(nmax)
+      dimension centerx(maxbodies),centery(maxbodies)
+      dimension px(nmax),py(nmax)
+c     x and y coordinates of the normal of the obstacle
+      dimension cur(nmax),speed(nmax)
+c     Jacobian and curvature of the geometry
+
+      dimension xouter(nmax),youter(nmax)
+c     x and y coordinates of confining wall
+      dimension px0(nmax), py0(nmax)
+c     x and y coordinates of the normal of the confining wall
+      dimension cur0(nmax), speed0(nmax)
+c     Jacobian and curvature of the confining wall
+
+      dimension den(2*nninner*nnbodies + 3*nnbodies + 2*2**12)
+c     x and y coordinates of the density function
+
+      dimension E11(nninner*nnbodies)
+      dimension E12(nninner*nnbodies)
+      dimension E22(nninner*nnbodies)
+c     components of the deformation gradient on the obstacle
+      dimension shear_stress(nninner*nnbodies)
+c     shear stress on the obstacle
+
+      common /geometry/x,y,centerx,centery,px,py,cur,speed,
+     $    ninner,nbodies
+      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
+c     global variables for the geometry which are needed by the external
+c     matvec routine in gmres
+
+      ninner = nninner
+      nbodies = nnbodies
+c     can't declare input variables into a common field, so need new
+c     variable name for x,y,ninner,nbodies
+      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
+     $    centerx,centery)
+c
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     load geometry of initial shape
 
       call deformation_on_boundary(ninner,nbodies,x,y,
      $    centerx,centery,
      $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
      $    E11,E12,E22)
 c     compute the deformation tensor on the boundary of the interface
+c      open(unit=1,file='output/E11.dat')
+c      open(unit=2,file='output/E12.dat')
+c      open(unit=3,file='output/E22.dat')
+c      do k = 1,ninner*nbodies
+c        write(1,1000) E11(k)
+c        write(2,1000) E12(k)
+c        write(3,1000) E22(k)
+c      enddo
+c      close(unit=1)
+c1000  format(E25.16)
 
       call compute_shear_stress(ninner,nbodies,px,py,
      $    E11,E12,E22,shear_stress)
 c     Use the deformation tensor to compute the shear stress
 
-      ntargets = nntargets
-      call eval_velocity(ninner,nbodies,x,y,centerx,centery,
-     $ px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
-     $ ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
-c     evaluate velocity and pressure at target points
-
-c      do k = 1,ntargets
-c        press_tar(k) = 0.d0
-c        utar(k) = 0.d0
-c        vtar(k) = 0.d0
-c      enddo
-
-c      open(unit=1,file='output/xtar.dat')
-c      open(unit=2,file='output/ytar.dat')
-c      open(unit=3,file='output/utar.dat')
-c      open(unit=4,file='output/vtar.dat')
-c      open(unit=5,file='output/press_tar.dat')
-c      do k = 1,ntargets
-c        write(1,1000) xtar(k)
-c        write(2,1000) ytar(k)
-c        write(3,1000) utar(k)
-c        write(4,1000) vtar(k)
-c        write(5,1000) press_tar(k)
-c      enddo
-c      close(unit=1)
-c      close(unit=2)
-c      close(unit=3)
-c      close(unit=4)
-c      close(unit=5)
-c
-c
-c 1000 format(E25.16)
 
       end
 
@@ -190,7 +221,7 @@ c     Load the outer shape of the geometry
 
       complex *16 eye
 
-      nouter = 2**10
+      nouter = 2**12
       eye = (0.d0,1.d0)
       twopi = 8.d0*datan(1.d0)
 
@@ -350,7 +381,7 @@ c     restart flag
       iwork(2) = nbodies
       iwork(3) = nouter
 
-c     DEBUG
+cc     DEBUG
 c      twopi = 8.d0*datan(1.d0)
 c      dtheta = twopi/dble(ninner)
 c      do k = 1,ninner
@@ -364,7 +395,7 @@ c      enddo
       enddo
 c     initial guess
 
-c      DEBUG
+cc      DEBUG
 c      ntotal = 2*nouter + 2*ninner*nbodies + 3*nbodies 
 c      call matvec_DLP(ntotal,den,vel1,nelt,ia,ja,a,isym)
 c      call matvec_DLP_fmm(ntotal,den,vel2,nelt,ia,ja,a,isym)
@@ -404,8 +435,8 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**12)
-      parameter (maxbodies = 4)
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -425,7 +456,6 @@ c     potential
 
       dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
       dimension ux(max(ninner,nouter)),uy(max(ninner,nouter))
-
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
@@ -792,8 +822,8 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**12)
-      parameter (maxbodies = 4)
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -1013,6 +1043,9 @@ c************************************************************
 c     START OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
 c     STOKESLETS
       do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
         do k = 1,ninner
           denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
           deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
@@ -1085,7 +1118,7 @@ c***********************************************************************
 c     Can put preconditioner in this routine.  For now, use the identity
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**12)
+      parameter (nmax = 2**15)
 
       dimension r(nn),z(nn)
       dimension iwork(3)
@@ -1267,7 +1300,7 @@ c     isou
         enddo
 c       density function due to obstacle isou
 
-c       START OF TARGET POINTS == OBSTCLE isou
+c       START OF TARGET POINTS == OBSTACLE isou
 c       loop over target points
         do k = 1,ninner,2
 c         loop over source points
@@ -1520,13 +1553,6 @@ c***********************************************************************
         enddo
       enddo
 
-c      open(unit=1,file='output/shear_stress.dat')
-c      write(1,1000) shear_stress
-c      close(1)
-
-c 1000 format(E25.16)
-
-
       end
 
 
@@ -1652,8 +1678,9 @@ c       the y component of the position
 
 
 c***********************************************************************
-      subroutine eval_velocity(ninner,nbodies,x,y,centerx,centery,
-     $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
+      subroutine eval_velocity_targets(ninner,nbodies,
+     $    x,y,centerx,centery,px,py,speed,
+     $    nouter,xouter,youter,px0,py0,speed0,den,
      $    ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
 c     Compute the velocity and pressure at a set of target points xtar
 c     and ytar.  Target points must be sufficiently far away from the
@@ -1772,5 +1799,323 @@ c     Add in contribution from Rotlets and Stokeslets
       end
 
 
+c***********************************************************************
+      subroutine computePressure(nninner,nnbodies,xx,yy,den,
+     $    pressure)
+c     Compute the pressure on the boundary of each grain.  Need to 
+c     remove one order of the singularity by multiplying by the
+c     density function at the target point and then use odd-even 
+c     integration
+      implicit real*8 (a-h,o-z)
+
+      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
+c     x and y coordinates of obstacle
+
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
+c     max points on the boundary of the obstacle      
+
+      dimension x(nmax),y(nmax)
+      dimension centerx(maxbodies),centery(maxbodies)
+      dimension px(nmax),py(nmax)
+c     x and y coordinates of the normal of the obstacle
+      dimension cur(nmax),speed(nmax)
+c     Jacobian and curvature of the geometry
+
+      dimension xouter(nmax),youter(nmax)
+c     x and y coordinates of confining wall
+      dimension px0(nmax), py0(nmax)
+c     x and y coordinates of the normal of the confining wall
+      dimension cur0(nmax), speed0(nmax)
+c     Jacobian and curvature of the confining wall
+
+      dimension den(2*nninner*nnbodies + 3*nnbodies + 2*2**12)
+c     x and y coordinates of the density function
+
+      dimension pressure(nninner*nnbodies)
+c     shear stress on the obstacle
+
+      dimension denx(max(ninner,2**12))
+      dimension deny(max(ninner,2**12))
+      complex *16 zden(ninner)
+      dimension wsave(4*ninner + 15)
+      complex *16 eye
+
+      common /geometry/x,y,centerx,centery,px,py,cur,speed,
+     $    ninner,nbodies
+      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
+c     global variables for the geometry which are needed by the external
+c     matvec routine in gmres
+
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+      ninner = nninner
+      nbodies = nnbodies
+c     can't declare input variables into a common field, so need new
+c     variable name for x,y,ninner,nbodies
+      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
+     $    centerx,centery)
+c
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     load geometry of initial shape
+
+      do j = 1,ninner*nbodies
+        pressure(j) = 0.d0
+      enddo
+
+c     START OF SOURCE POINTS == SOLID WALL, TARGET POINTS == OBSTACLES
+      do k=1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k+nouter)
+      enddo
+c     Density function defined on the outer geometry
+
+      do itar = 1,nbodies
+c       loop over target bodies
+        do k = 1,ninner
+c         loop over target points
+          do j = 1,nouter
+c           loop over sources
+            rx = x((itar-1)*ninner + k) - xouter(j)
+            ry = y((itar-1)*ninner + k) - youter(j)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdotn = rx*px0(j) + ry*py0(j)
+            rdotden = rx*denx(j) + ry*deny(j)
+            dendotn = px0(j)*denx(j) + py0(j)*deny(j)
+
+            pressure((itar-1)*ninner + k) = 
+     $        pressure((itar-1)*ninner + k) +
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed0(j)*twopi/dble(nouter)/pi
+          enddo
+        enddo
+      enddo
+c     END OF SOURCE POINTS == SOLID WALL, TARGET POINTS == OBSTACLES
+
+c     START OF SOURCE POINTS == OBSTACLES, 
+c              TARGET POINTS == OBSTACLES
+      do isou = 1,nbodies
+        do j = 1,ninner
+          denx(j) = den(2*nouter + (isou-1)*2*ninner + j)
+          deny(j) = den(2*nouter + (isou-1)*2*ninner + j + ninner)
+        enddo
+c       density function due to obstacle isou
+
+c       START OF TARGET POINTS == OBSTACLE isou
+c       loop over odd-inexed target points
+        do k = 1,ninner,2
+c         loop over source points
+          do j = 2,ninner,2
+            sx = denx(j) - denx(k)
+            sy = deny(j) - deny(k)
+c           subtract off the density at the target point to reduce
+c           the strenght of the singularity to 1/r.  Then, odd-even
+c           integration can be applied and is guaranteed to converge
+
+            rx = x((isou-1)*ninner+k) - x((isou-1)*ninner+j)
+            ry = y((isou-1)*ninner+k) - y((isou-1)*ninner+j)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdotn = rx*px((isou-1)*ninner+j) +
+     $              ry*py((isou-1)*ninner+j)
+            rdotden = rx*sx + ry*sy
+            dendotn = px((isou-1)*ninner+j)*sx + 
+     $                py((isou-1)*ninner+j)*sy
+            
+            pressure((isou-1)*ninner+k) =
+     $        pressure((isou-1)*ninner+k) + 2.d0*
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed((isou-1)*ninner + j)*twopi/dble(ninner)/pi
+c           need to multiply by 2 since the grid spacing is twice as
+c           large because of the odd-even integration
+          enddo
+        enddo
+
+c       loop over even-indexed target points
+        do k = 2,ninner,2
+c         loop over source points
+          do j = 1,ninner,2
+            sx = denx(j) - denx(k)
+            sy = deny(j) - deny(k)
+c           subtract off the density at the target point to reduce
+c           the strenght of the singularity to 1/r.  Then, odd-even
+c           integration can be applied and is guaranteed to converge
+
+            rx = x((isou-1)*ninner+k) - x((isou-1)*ninner+j)
+            ry = y((isou-1)*ninner+k) - y((isou-1)*ninner+j)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdotn = rx*px((isou-1)*ninner+j) +
+     $              ry*py((isou-1)*ninner+j)
+            rdotden = rx*sx + ry*sy
+            dendotn = px((isou-1)*ninner+j)*sx + 
+     $                py((isou-1)*ninner+j)*sy
+            
+            pressure((isou-1)*ninner+k) =
+     $        pressure((isou-1)*ninner+k) + 2.d0*
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed((isou-1)*ninner + j)*twopi/dble(ninner)/pi
+c           need to multiply by 2 since the grid spacing is twice as
+c           large because of the odd-even integration
+          enddo
+        enddo
+c       END OF TARGET POINTS == OBSTACLE isou
+
+c       START OF TARGET POINTS ~= OBSTACLE isou
+        do itar = 1,nbodies
+          if (itar .eq. isou) then
+            cycle
+          endif
+c         skip the diagonal term since this was taking care of above
+c         with the trapezoid rule with the correcting limiting value at 
+c         the diagonal
+
+c         loop over target points
+          do k = 1,ninner
+
+c           loop over source points
+            do j = 1,ninner
+              rx = x((itar-1)*ninner+k) - x((isou-1)*ninner+j)
+              ry = y((itar-1)*ninner+k) - y((isou-1)*ninner+j)
+              rho2 = rx**2.d0 + ry**2.d0
+              rdotn = rx*px((isou-1)*ninner+j) +
+     $                ry*py((isou-1)*ninner+j)
+              rdotden = rx*denx(j) + ry*deny(j)
+              dendotn = px((isou-1)*ninner+j)*denx(j) + 
+     $                  py((isou-1)*ninner+j)*deny(j)
+
+              pressure((itar-1)*ninner+k) =
+     $          pressure((itar-1)*ninner+k) + 
+     $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)* 
+     $          speed((isou-1)*ninner + j)*twopi/dble(ninner)/pi
+            enddo
+          enddo
+        enddo
+c       END OF TARGET POINTS ~= OBSTACLE isou
+
+      enddo
+c     END OF SOURCE POINTS == OBSTACLES, 
+c            TARGET POINTS == OBSTACLES
 
 
+c     START OF JUMP ALONG DIAGONAL TERM
+      call DCFFTI(ninner,wsave)
+      do ibod = 1,nbodies
+        do k = 1,ninner
+          zden(k) = den(2*nouter+(ibod-1)*2*ninner+k) +
+     $          eye*den(2*nouter+(ibod-1)*2*ninner+k+ninner)
+        enddo
+        call fourierDiff(ninner,zden,wsave)
+c       real part of zden is parameter derivative of the first 
+c       component of the density function, and the imaginary part is
+c       the derivative of the second component of the density function
+
+        do k = 1,ninner
+          tx = -py((ibod-1)*ninner+k)
+          ty =  px((ibod-1)*ninner+k)
+c         tangent vector
+          dsdtx = dreal(zden(k))/speed((ibod-1)*ninner+k)
+c         derivative of the first component with respect to arclength
+          dsdty = dimag(zden(k))/speed((ibod-1)*ninner+k)
+c         derivative of the second component with respect to arclength
+          dsdt_dot_tau = dsdtx*tx + dsdty*ty
+c         dot product of the tangential derivative of the density
+c         function with the tangent vector
+          pressure((ibod-1)*ninner+k) = pressure((ibod-1)*ninner+k) -
+     $        1.d0*dsdt_dot_tau
+c         add in jump condition
+        enddo
+      enddo
+c     END OF JUMP ALONG DIAGONAL TERM
+
+
+c     START OF SOURCE POINTS == ROTLETS AND STOKESLETS, 
+c              TARGET POINTS == OBSTACLES
+      do ibod = 1,nbodies
+c       loop over target bodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
+c       Stokeslet flow is not pressure-free
+c       Rotlet flow is pressure-free
+        do itar = 1,nbodies
+c         loop over target points
+          do k = 1,ninner
+            rx = x((itar-1)*ninner+k) - centerx(ibod)
+            ry = y((itar-1)*ninner+k) - centery(ibod)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdots = rx*sto1 + ry*sto2
+            pressure((itar-1)*ninner + k) = 
+     $          pressure((itar-1)*ninner + k) + 1.d0/twopi*
+     $          rdots/rho2
+          enddo
+        enddo
+      enddo
+c     END OF SOURCE POINTS == ROTLETS AND STOKESLETS, 
+c            TARGET POINTS == OBSTACLES
+
+      end
+
+
+
+c***********************************************************************
+      subroutine computeDrag(nninner,nnbodies,xx,yy,
+     $    shear_stress,pressure,drag)
+c     Compute the drag of each grain
+      implicit real*8 (a-h,o-z)
+
+      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
+c     x and y coordinates of obstacle
+      dimension drag(2*nnbodies)
+
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
+c     max points on the boundary of the obstacle      
+
+      dimension x(nmax),y(nmax)
+      dimension centerx(maxbodies),centery(maxbodies)
+      dimension px(nmax),py(nmax)
+c     x and y coordinates of the normal of the obstacle
+      dimension cur(nmax),speed(nmax)
+c     Jacobian and curvature of the geometry
+
+      dimension shear_stress(nninner*nnbodies)
+      dimension pressure(nninner*nnbodies)
+c     shear stress and pressure on the obstacle
+
+      common /geometry/x,y,centerx,centery,px,py,cur,speed,
+     $    ninner,nbodies
+c     global variables for the geometry which are needed by the external
+c     matvec routine in gmres
+
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+      ninner = nninner
+      nbodies = nnbodies
+c     can't declare input variables into a common field, so need new
+c     variable name for x,y,ninner,nbodies
+      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
+     $    centerx,centery)
+
+      do k = 1,2*nbodies
+        drag(k) = 0.d0
+      enddo
+c     initialize drag to be zero
+
+      do k = 1,nbodies
+        do j = 1,ninner
+          drag((k-1)*2 + 1) = drag((k-1)*2 + 1) +
+     $      (pressure((k-1)*ninner + j)*px((k-1)*ninner + j) - 
+     $      shear_stress((k-1)*ninner + j)*py((k-1)*ninner + j))*
+     $      speed((k-1)*ninner + j)
+          drag((k-1)*2 + 2) = drag((k-1)*2 + 2) +
+     $      (pressure((k-1)*ninner + j)*py((k-1)*ninner + j) + 
+     $      shear_stress((k-1)*ninner + j)*px((k-1)*ninner + j))*
+     $      speed((k-1)*ninner + j)
+        enddo
+        drag((k-1)*2 + 1) = drag((k-1)*2 + 1)/twopi
+        drag((k-1)*2 + 2) = drag((k-1)*2 + 2)/twopi
+      enddo
+
+
+      end
