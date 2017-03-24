@@ -42,9 +42,9 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	# Update surface-mean coordinates with an explicit, multistep method.
 	thlen2.xsm = thlen1.xsm + 0.5*dt*(3*thlen1.xsmdot - thlen0.xsmdot)
 	thlen2.ysm = thlen1.ysm + 0.5*dt*(3*thlen1.ysmdot - thlen0.ysmdot)
-	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1
-	copy_thlen!(thlen1,thlen0)
-	copy_thlen!(thlen2,thlen1)
+	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1.
+	thlen0 = deepcopy(thlen1)
+	thlen1 = deepcopy(thlen2)
 	return
 end
 

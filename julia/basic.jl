@@ -12,6 +12,12 @@ type ThetaLenType
 	atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64}; 
 	xsmdot::Float64; ysmdot::Float64;
 end
+
+#DO IT LIKE THIS????
+#type ThLenVecDenType
+#	thlenvec::Vector{ThetaLenType}; density::Vector{Float64};
+#end
+
 ##################################################
 
 #################### Object routines ####################
@@ -19,34 +25,20 @@ end
 function new_thlen()
 	return ThetaLenType([], 0., 0., 0., [], [], [], 0., [], 0., 0.)
 end
-# Copy the relevant contents from thlen1 to thlen2.
-function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
-	thlen2.theta = thlen1.theta
-	thlen2.len = thlen1.len
-	thlen2.xsm = thlen1.xsm
-	thlen2.ysm = thlen1.ysm
-	thlen2.xx = thlen1.xx
-	thlen2.yy = thlen1.yy
-	thlen2.atau = thlen1.atau
-	thlen2.mterm = thlen1.mterm
-	thlen2.nterm = thlen1.nterm
-	thlen2.xsmdot = thlen1.xsmdot
-	thlen2.ysmdot = thlen1.ysmdot
-	return
-end
 # evec: Create an empty Vector{Float64}
 function evec()
 	return Array(Float64,0)
 end
 ##################################################
 
+#=
 	ntot = npts*nbods
 	tau = zeros(Float64, ntot)
 
 	utar = zeros(Float64, ntargs)
 	vtar = zeros(Float64, ntargs)
 	ptar = zeros(Float64, ntargs)
-
+=#
 
 #################### Call Fortran routines ####################
 # Wrapper for stokesSolver
@@ -87,10 +79,12 @@ function getdensity!(thlenv::Vector{ThetaLenType}, params::ParamType, density::V
 	density = getdensity(npts,nbods,xv,yv,ifmm)
 	return
 end
+
+#=
 # Dispatch of getstress for 
 function getstress!(thlenv::Vector{ThetaLenType}, params::ParamType, density::Vector{Float64})
 ???
-
+=#
 
 #= stokes!: Dispatch for vector of ThetaLenType
 Calculates atau = abs(tau) and smooths it with a Gaussian filter;
