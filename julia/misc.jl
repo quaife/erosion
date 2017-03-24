@@ -28,17 +28,6 @@ function getnormals(theta::Vector{Float64})
 	ny = cos(theta)
 	return nx, ny 
 end
-# targets: Set up the target points to measure velocity and pressure: u,v,p.
-function targets(nn::Integer, xmax::Float64, ymax::Float64)
-	# Make the grid.
-	ytar = collect(linspace(-ymax,ymax,nn))
-	ytar = [ytar; ytar]
-	xtar = ones(Float64,nn)
-	xtar = xmax*[-xtar; xtar]
-	# Initialize u,v,p at target points.
-	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
-	return 2*nn,xtar,ytar,utar,vtar,ptar
-end
 
 #################### Geometry routines ####################
 # getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
