@@ -4,11 +4,12 @@
 c      parameter (ninner = 512)
       parameter (ninner = 32)
       parameter (nbodies = 1)
+      parameter (nouter = 2**12)
 
       dimension centerx(20),centery(20)
       dimension radius(20),phi(20)
       dimension x(ninner*nbodies),y(ninner*nbodies)
-      dimension den(2*ninner*nbodies + 3*nbodies + 2*2**12)
+      dimension den(2*ninner*nbodies + 3*nbodies + 2*nouter)
       dimension shear_stress(ninner*nbodies)
       dimension pressure(ninner*nbodies)
       dimension drag(2*nbodies)
@@ -38,14 +39,15 @@ c      parameter (ninner = 512)
       enddo
 
       ifmm = 1
-      call stokesSolver(ninner,nbodies,ifmm,x,y,den)
+      call stokesSolver(ninner,nbodies,nouter,ifmm,x,y,den)
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
 
-      call computeShearStress(ninner,nbodies,x,y,den,shear_stress)
+      call computeShearStress(ninner,nbodies,nouter,x,y,den,
+     $    shear_stress)
 c     pass in the density function and return the shear_stress
 
-      call computePressure(ninner,nbodies,x,y,den,pressure)
+      call computePressure(ninner,nbodies,nouter,x,y,den,pressure)
 c     pass in the density function and return the pressure
 
       call computeDrag(ninner,nbodies,x,y,
@@ -57,7 +59,7 @@ c     pass in the shear_stress and pressure and return the drag
       open(unit=2,file='output/shear_stress.dat')
       open(unit=3,file='output/pressure.dat')
       open(unit=4,file='output/drag.dat')
-      do k = 1,2*ninner*nbodies + 2*2**12 + 3*nbodies
+      do k = 1,2*ninner*nbodies + 2*nouter + 3*nbodies
         write(1,1000) den(k)
       enddo
       do k = 1,ninner*nbodies

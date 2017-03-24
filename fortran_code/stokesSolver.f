@@ -1,4 +1,4 @@
-      subroutine stokesSolver(nninner,nnbodies,ifmm,xx,yy,den)
+      subroutine stokesSolver(nninner,nnbodies,nnouter,ifmm,xx,yy,den)
 c     Input x and y coordinates and return the density function on the
 c     boundary.  Outer wall is used to enclose the inner boundary so
 c     that Stokes paradox is avoided
@@ -63,6 +63,7 @@ c     matvec routine in gmres
 
       ninner = nninner
       nbodies = nnbodies
+      nouter = nnouter
 c     can't declare input variables into a common field, so need new
 c     variable name for x,y,ninner,nbodies
       call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
@@ -96,11 +97,10 @@ c     load boundary condition
 c     solve for the density function with GMRES
 
 
-
       end
 
 c***********************************************************************
-      subroutine computeShearStress(nninner,nnbodies,xx,yy,den,
+      subroutine computeShearStress(nninner,nnbodies,nnouter,xx,yy,den,
      $    shear_stress)
 c     Input x and y coordinates and the density function on the
 c     boundary and return the shear stress on the inner walls.  
@@ -145,6 +145,7 @@ c     matvec routine in gmres
 
       ninner = nninner
       nbodies = nnbodies
+      nouter =  nnouter
 c     can't declare input variables into a common field, so need new
 c     variable name for x,y,ninner,nbodies
       call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
@@ -221,7 +222,6 @@ c     Load the outer shape of the geometry
 
       complex *16 eye
 
-      nouter = 2**12
       eye = (0.d0,1.d0)
       twopi = 8.d0*datan(1.d0)
 
@@ -1800,7 +1800,7 @@ c     Add in contribution from Rotlets and Stokeslets
 
 
 c***********************************************************************
-      subroutine computePressure(nninner,nnbodies,xx,yy,den,
+      subroutine computePressure(nninner,nnbodies,nnouter,xx,yy,den,
      $    pressure)
 c     Compute the pressure on the boundary of each grain.  Need to 
 c     remove one order of the singularity by multiplying by the
@@ -1852,6 +1852,7 @@ c     matvec routine in gmres
 
       ninner = nninner
       nbodies = nnbodies
+      nouter = nnouter
 c     can't declare input variables into a common field, so need new
 c     variable name for x,y,ninner,nbodies
       call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
