@@ -76,6 +76,14 @@ but avoid problems at len=1, log(1) = 0. =#
 function cdfscale(len::Float64)
 	return -1./log(0.5*tanh(2*len))
 end
+#= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
+Also returms mterm to be used locally.
+Note: thlen must already be loaded with the correct atau. =#
+function getmn!(thlen::ThetaLenType, params::ParamType)
+	thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
+		getmn(thlen.theta, thlen.len, thlen.atau, params)
+	return thlen.mterm
+end
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
 function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
 	# Make sure that atau is not empty.
@@ -98,14 +106,6 @@ function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, para
 	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
 	# Return everything.
 	return mterm, nterm, xsmdot, ysmdot
-end
-#= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
-Also returms mterm to be used locally.
-Note: thlen must already be loaded with the correct atau. =#
-function getmn!(thlen::ThetaLenType, params::ParamType)
-	thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
-		getmn(thlen.theta, thlen.len, thlen.atau, params)
-	return thlen.mterm
 end
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
 function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
@@ -135,48 +135,26 @@ end
 
 
 #################### Starter routines ####################
-# thetadot: Calculate the time derivative of theta; only used in the starter routine.
-function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
-	# Extract the needed variables.
-	dt, epsilon = params.dt, params.epsilon
-	alpha = getalpha(endof(theta))
-	# Calculate mterm and nterm at time 0.
-	mterm, nterm, xsmdot, ysmdot = getmn(theta,len,atau,params)
-	# Calculate the time derivative of theta.
-	dth = specdiff(theta - 2*pi*alpha) + 2*pi
-	d2th = specdiff(dth)
-	thdot = epsilon*cdfscale(len)*len^(-2)*d2th + nterm
-	return thdot, mterm, nterm, xsmdot, ysmdot
+function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
+
+
+
+
+	# Compute the stress at t=0 and take the first step of RK2.
+	getstress!(thlenden0, params)
+
+	thlenvec05 = [new_thlen() for ii=1:nbods]
+	thlenvec1 = [new_thlen() for ii=1:nbods]
+
+	for nn = 1:nbods
+		thlen0 = thlenvec0[nn]
+		thdot = thetadot!(thlen0,params)
+		thlenvec05[nn] = festep(0.5*dt, thdot, thlen0, thlen0)	
+	end
+
 end
-#= thetadot: Dispatch for ThetaLenType.
-It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlen. =#
-function thetadot!(thlen::ThetaLenType, params::ParamType)
-	thdot, thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
-		thetadot(thlen.theta, thlen.len, thlen.atau, params)
-	return thdot
-end
-#= festep: Take a single forward Euler step of theta, len, xsm, and ysm.
-Note: Do not use the dt inside params because I might want to input 
-something else, like 0.5*dt for the Runge-Kutta starter. =#
-function festep(dt::Float64, thdot::Vector{Float64}, 
-		theta0::Vector{Float64}, len0::Float64, xsm0::Float64, ysm0::Float64,
-		ldot::Float64, xsmdot::Float64, ysmdot::Float64)
-	theta1 = theta0 + dt*thdot
-	len1 = len0 + dt*ldot
-	xsm1 = xsm0 + dt*xsmdot
-	ysm1 = ysm0 + dt*ysmdot
-	return theta1, len1, xsm1, ysm1
-end
-# festep: Dispatch for ThetaLenType.
-# Allow the starting point and the point where the derivatives are taken to be different.
-function festep(dt::Float64, thdot::Vector{Float64}, 
-		thlen0::ThetaLenType, thlendots::ThetaLenType)
-	thlen1 = new_thlen()
-	thlen1.theta, thlen1.len, thlen1.xsm, thlen1.ysm = festep(dt, thdot, 
-		thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm, 
-		thlendots.mterm, thlendots.xsmdot, thlendots.ysmdot)
-	return thlen1
-end
+
+
 #= RKstarter!: Explicit second-order Runge-Kutta to start the time stepping.
 Works for vectors of ThetaLenType.
 It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenvec0. =#
@@ -206,3 +184,51 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType},
 	trimthlenvec!(thlenvec1, thlenvec0)
 	return thlenvec1
 end
+
+
+
+
+
+#= thetadot: Dispatch for ThetaLenType.
+It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlen. =#
+function thetadot!(thlen::ThetaLenType, params::ParamType)
+	thdot, thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
+		thetadot(thlen.theta, thlen.len, thlen.atau, params)
+	return thdot
+end
+# thetadot: Calculate the time derivative of theta; only used in the starter routine.
+function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
+	# Extract the needed variables.
+	dt, epsilon = params.dt, params.epsilon
+	alpha = getalpha(endof(theta))
+	# Calculate mterm and nterm at time 0.
+	mterm, nterm, xsmdot, ysmdot = getmn(theta,len,atau,params)
+	# Calculate the time derivative of theta.
+	dth = specdiff(theta - 2*pi*alpha) + 2*pi
+	d2th = specdiff(dth)
+	thdot = epsilon*cdfscale(len)*len^(-2)*d2th + nterm
+	return thdot, mterm, nterm, xsmdot, ysmdot
+end
+# festep: Dispatch for ThetaLenType.
+# Allow the starting point and the point where the derivatives are taken to be different.
+function festep(dt::Float64, thdot::Vector{Float64}, thlen0::ThetaLenType, thlendots::ThetaLenType)
+	thlen1 = new_thlen()
+	thlen1.theta, thlen1.len, thlen1.xsm, thlen1.ysm = festep(dt, thdot, 
+		thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm, 
+		thlendots.mterm, thlendots.xsmdot, thlendots.ysmdot)
+	return thlen1
+end
+#= festep: Take a single forward Euler step of theta, len, xsm, and ysm.
+Note: Do not use the dt inside params because I might want to input 
+something else, like 0.5*dt for the Runge-Kutta starter. =#
+function festep(dt::Float64, thdot::Vector{Float64}, 
+		theta0::Vector{Float64}, len0::Float64, xsm0::Float64, ysm0::Float64,
+		ldot::Float64, xsmdot::Float64, ysmdot::Float64)
+	theta1 = theta0 + dt*thdot
+	len1 = len0 + dt*ldot
+	xsm1 = xsm0 + dt*xsmdot
+	ysm1 = ysm0 + dt*ysmdot
+	return theta1, len1, xsm1, ysm1
+end
+
+
