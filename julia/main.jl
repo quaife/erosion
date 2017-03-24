@@ -54,7 +54,7 @@ function getparams()
 	thlenvec0 = readthlenfile(string("../datafiles/",geoinfile))
 	thlenden0 = ThLenDenType(thlenvec0,evec())
 	# Read the other parameters and calculate needed quantities.
-	tfin,dtout,dtfac,epsfac,sigfac,ifmm,fixarea = paramvecin[2:8]
+	nouter,tfin,dtout,dtfac,epsfac,sigfac,ifmm,fixarea = paramvecin[2:9]
 	npts = endof(thlenvec0[1].theta)
 	dt = dtfac/npts
 	cntout = round(Int,dtout/dt)
@@ -64,7 +64,7 @@ function getparams()
 	sigma = sigfac/npts
 	dtoutexact = cntout*dt
 	# Save params and paramvec
-	params = ParamType(dt,epsilon,sigma,ifmm,fixarea)
+	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea)
 	paramvec = [paramvecin; dtoutexact; cntout; 0.]
 	return thlenden0,params,paramvec,nsteps,cntout
 end

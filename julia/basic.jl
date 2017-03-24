@@ -21,6 +21,11 @@ end
 function new_thlen()
 	return ThetaLenType([], 0., 0., 0., [], [], [], 0., [], 0., 0.)
 end
+
+function new_thlenden()
+STUFF
+end
+
 # evec: Create an empty Vector{Float64}
 function evec()
 	return Array(Float64,0)

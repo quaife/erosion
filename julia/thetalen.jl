@@ -137,22 +137,32 @@ end
 #################### Starter routines ####################
 function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
 
-
-
+	dt = params.dt
+	nbods
 
 	# Compute the stress at t=0 and take the first step of RK2.
 	getstress!(thlenden0, params)
-
-	thlenvec05 = [new_thlen() for ii=1:nbods]
-	thlenvec1 = [new_thlen() for ii=1:nbods]
-
+	thlenden05 = new_thlenden()
 	for nn = 1:nbods
-		thlen0 = thlenvec0[nn]
-		thdot = thetadot!(thlen0,params)
-		thlenvec05[nn] = festep(0.5*dt, thdot, thlen0, thlen0)	
+		thlen0 = thlenden0.thlenvec[nn]
+		thlenden05.thlenvec[nn] = festep(0.5*dt, thlen0, thlen0, params)	
+	end
+	# Compute the stress at t=0.5*dt and take the second step of RK2.
+	getstress!(thlenden05, params)
+	thlenden1 = new_thlenden()
+	for nn = 1:nbods
+		thlen0 = thlenden0.thlenvec[nn]
+		thlen05 = thlenden05.thlenvec[nn]
+		thlenden1.thlenvec[nn] = festep(dt, thlen0, thlen05, params)
 	end
 
+	# Remove curves with non-positive length and return.
+	#trimthlenvec!(thlenvec1, thlenvec0)
+
+
+
 end
+
 
 
 #= RKstarter!: Explicit second-order Runge-Kutta to start the time stepping.
@@ -161,7 +171,6 @@ It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenvec0. =#
 function RKstarter!(thlenvec0::Vector{ThetaLenType}, 
 		params::ParamType, ataufun::Function=stokes!)
 	dt = params.dt
-	sigma = params.sigma
 	nbods = endof(thlenvec0) 
 	thlenvec05 = [new_thlen() for ii=1:nbods]
 	thlenvec1 = [new_thlen() for ii=1:nbods]
@@ -169,22 +178,19 @@ function RKstarter!(thlenvec0::Vector{ThetaLenType},
 	ataufun(thlenvec0, params)
 	for ii = 1:nbods
 		thlen0 = thlenvec0[ii]
-		thdot = thetadot!(thlen0,params)
-		thlenvec05[ii] = festep(0.5*dt, thdot, thlen0, thlen0)	
+		thlenvec05[ii] = festep(0.5*dt, thlen0, thlen0, params)	
 	end
 	# Compute the stress at t=0.5*dt and take the second step of RK2.
 	ataufun(thlenvec05, params)	
 	for ii = 1:nbods
 		thlen0 = thlenvec0[ii]
 		thlen05 = thlenvec05[ii]
-		thdot = thetadot!(thlen05,params)
-		thlenvec1[ii] = festep(dt, thdot, thlen0, thlen05)		
+		thlenvec1[ii] = festep(dt, thlen0, thlen05, params)		
 	end
 	# Remove curves with non-positive length and return.
 	trimthlenvec!(thlenvec1, thlenvec0)
 	return thlenvec1
 end
-
 
 
 
@@ -198,20 +204,20 @@ function thetadot!(thlen::ThetaLenType, params::ParamType)
 end
 # thetadot: Calculate the time derivative of theta; only used in the starter routine.
 function thetadot(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
-	# Extract the needed variables.
-	dt, epsilon = params.dt, params.epsilon
-	alpha = getalpha(endof(theta))
 	# Calculate mterm and nterm at time 0.
 	mterm, nterm, xsmdot, ysmdot = getmn(theta,len,atau,params)
 	# Calculate the time derivative of theta.
+	alpha = getalpha(endof(theta))
 	dth = specdiff(theta - 2*pi*alpha) + 2*pi
 	d2th = specdiff(dth)
+	epsilon = params.epsilon
 	thdot = epsilon*cdfscale(len)*len^(-2)*d2th + nterm
 	return thdot, mterm, nterm, xsmdot, ysmdot
 end
 # festep: Dispatch for ThetaLenType.
 # Allow the starting point and the point where the derivatives are taken to be different.
-function festep(dt::Float64, thdot::Vector{Float64}, thlen0::ThetaLenType, thlendots::ThetaLenType)
+function festep(dt::Float64, thlen0::ThetaLenType, thlendots::ThetaLenType, params::ParamType)
+	thdot = thetadot!(thlendots, params)
 	thlen1 = new_thlen()
 	thlen1.theta, thlen1.len, thlen1.xsm, thlen1.ysm = festep(dt, thdot, 
 		thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm, 
@@ -230,5 +236,3 @@ function festep(dt::Float64, thdot::Vector{Float64},
 	ysm1 = ysm0 + dt*ysmdot
 	return theta1, len1, xsm1, ysm1
 end
-
-
