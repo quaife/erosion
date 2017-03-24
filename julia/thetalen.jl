@@ -75,7 +75,6 @@ Note: for 2D Stokes, I have to use log-of-tanh to get the same behvaior near L=0
 but avoid problems at len=1, log(1) = 0. =#
 function cdfscale(len::Float64)
 	return -1./log(0.5*tanh(2*len))
-	# return 1.
 end
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
 function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
