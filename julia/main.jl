@@ -4,6 +4,7 @@ using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
+include("RKstarter")
 include("misc.jl")
 ##################################################
 

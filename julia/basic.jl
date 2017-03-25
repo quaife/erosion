@@ -19,14 +19,11 @@ end
 #################### Object routines #####################
 # Create a new ThetaLenType that has all zeros.
 function new_thlen()
-	return ThetaLenType([], 0., 0., 0., [], [], [], 0., [], 0., 0.)
+	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
 end
-
 function new_thlenden()
-STUFF
+	return ThLenDenType(Array(ThetaLenType,0),evec())
 end
-
-# evec: Create an empty Vector{Float64}
 function evec()
 	return Array(Float64,0)
 end
@@ -79,7 +76,6 @@ function getdensity(xx::Vector{Float64}, yy::Vector{Float64}, nvals::Vector{Int}
 		&npts, &nbods, &params.nouter, &params.ifmm, xx, yy, density)
 	return density
 end
-
 # Small routines
 # getnxy: Get the nvals and x-y coordinates of thlenvec.
 function getnxy(thlenden::ThLenDenType)
@@ -111,4 +107,3 @@ function n1n2(npts::Integer,nn::Integer)
 	n2 = npts*nn
 	return n1,n2
 end
-##################################################
