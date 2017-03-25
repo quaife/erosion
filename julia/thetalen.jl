@@ -8,18 +8,30 @@ atau (vector): The absolute value of the shear stress, computed by fluid solver.
 Parameters
 dt: The time-step.
 epsilon: The constant for the smoothing, curvature-driven-flow component.
+sigma: The smooth of the abolute-value of shear stress.
 
-Convention for tangential and normal vectors
-I use the same convention as Shelley 1994. That is, I assume the curve 
-is parameterized in the counter-clockwise (CCW) direction, and I use the 
-inward pointing normal. =#
+I use the same convention for tangential and normal vectors as Shelley 1994. 
+That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
+and I use the inward pointing normal vector. =#
+
+#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
+2D Stokes: -1/log(L); 3D Stokes: 1; high Reynolds: sqrt(L) 
+Note: for 2D Stokes, I have to use log-of-tanh to get the same behvaior near L=0, 
+but avoid problems at len=1, log(1) = 0. =#
+function cdfscale(len::Float64)
+	return -1./log(0.5*tanh(2*len))
+end
 
 #################### Multistep routines ####################
+# advance_thetalen!: Dispatch for ThLenDenType.
+function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
+	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec)
+end
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
 function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Call advance_thetalen for each element of the thlenvec.
-	for ii = 1:endof(thlenvec0)
-		advance_thetalen!(thlenvec1[ii],thlenvec0[ii],params)
+	for nn = 1:endof(thlenvec0)
+		advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
 	end
 	# Remove curves with non-positive length.
 	trimthlenvec!(thlenvec1, thlenvec0)
@@ -69,13 +81,7 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
 	return
 end
-#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
-2D Stokes: -1/log(L); 3D Stokes: 1; high Reynolds: sqrt(L) 
-Note: for 2D Stokes, I have to use log-of-tanh to get the same behvaior near L=0, 
-but avoid problems at len=1, log(1) = 0. =#
-function cdfscale(len::Float64)
-	return -1./log(0.5*tanh(2*len))
-end
+
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
 Also returms mterm to be used locally.
 Note: thlen must already be loaded with the correct atau. =#
@@ -109,12 +115,16 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
+# trimthlenvec: Dispatch for ThLenDenType.
+function trimthlenvec!(thlenden1::ThLenDenType, thlenden0::ThLenDenType)
+	trimthlenvec!(thlenden1.thlenvec, thlenden0.thlenvec)
+end
 # trimthlenvec: Remove the curves with non-positive length.
 function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType})
-	vsz = endof(thlenvec1)
-	lenvec = zeros(Float64,vsz)
-	for ii=1:vsz
-		lenvec[ii] = thlenvec1[ii].len
+	nbods = endof(thlenvec1)
+	lenvec = zeros(Float64,nbods)
+	for nn=1:nbods
+		lenvec[nn] = thlenvec1[nn].len
 	end
 	zind = find(lenvec.<=0)
 	deleteat!(thlenvec0,zind)

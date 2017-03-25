@@ -12,7 +12,7 @@ function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
 	getstress!(thlenden05, params)
 	thlenden1 = festep(dt, thlenden0, thlenden05, epsilon)
 	# Remove curves with non-positive length and return.
-	#trimthlenvec!(thlenvec1, thlenvec0)
+	trimthlenvec!(thlenden1, thlenden0)
 	return thlenden1
 end
 
