@@ -21,9 +21,6 @@ function erosion()
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
 	plotnsave(thlenden0.thlenvec,datafolder,plotfolder,0.,0)
-
-	println("stop A, ", endof(thlenden0.thlenvec))
-
 	thlenden1 = RKstarter!(thlenden0, params)
 	if nout==1; plotnsave(thlenden1.thlenvec,datafolder,plotfolder,dt,1); end
 	# Enter the time loop to use the multi-step method.

@@ -6,12 +6,11 @@ function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
 	dt = params.dt
 	epsilon = params.epsilon
 
-	println("stop B, ", endof(thlenden0.thlenvec))
 
 	# Compute the stress at t=0 and take the first step of RK2.
 	getstress!(thlenden0, params)
 
-	println("stop C, ", endof(thlenden0.thlenvec))
+
 
 	thlenden05 = festep(0.5*dt, thlenden0, thlenden0, epsilon)
 	# Compute the stress at t=0.5*dt and take the second step of RK2.
@@ -25,13 +24,21 @@ end
 # festep: Dispatch for ThLenDenType.
 # Take an FE-step for each component of thlenvec.
 function festep(dt::Float64, thlenden0::ThLenDenType, thlendendots::ThLenDenType, epsilon::Float64)
-	nbods = endof(thlenden0.thlenvec)
-	thlenden1 = new_thlenden()
+	
+
+	thlenv0 = thlenden0.thlenvec
+	thlenvdots = thlendendots.thlenvec
+	nbods = endof(thlenv0)
+	thlenv1 = new_thlenvec(nbods)
 	for nn = 1:nbods
-		thlen0 = thlenden0.thlenvec[nn]
-		thlendots = thlendendots.thlenvec[nn]
-		thlenden1.thlenvec[nn] = festep(dt, thlen0, thlendots, epsilon)
+		thlen0 = thlenv0[nn]
+		thlendots = thlenvdots[nn]
+		thlen1 = festep(dt, thlen0, thlendots, epsilon)
+		thlenv1[nn] = thlen1
 	end
+	thlenden1 = ThLenDenType(thlenv1,evec())
+
+
 	return thlenden1
 end
 # festep: Dispatch for ThetaLenType.

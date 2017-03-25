@@ -21,6 +21,9 @@ end
 function new_thlen()
 	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
 end
+function new_thlenvec(nbods::Int)
+	return [new_thlen for nn=1:nbods]
+end
 function new_thlenden()
 	return ThLenDenType(Array(ThetaLenType,0),evec())
 end
@@ -81,9 +84,15 @@ end
 function getdensity(xx::Vector{Float64}, yy::Vector{Float64}, nvals::Vector{Int}, params::ParamType)
 	npts,nbods,ntot = nvals
 	density = zeros(Float64, ntot)
+
+	println("in getdensity, about to call stokessolver")
+
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
 		&npts, &nbods, &params.nouter, &params.ifmm, xx, yy, density)
+
+	println("in getdensity, just called stokessolver")
+
 	return density
 end
 # Small routines
