@@ -31,7 +31,7 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	# Extract the needed variables.
 	dt, m0, len1 = params.dt, thlen0.mterm, thlen1.len
 	# Calculate mterm and nterm at time n=1.
-	m1 = getmn!(thlen1,params)
+	m1 = getmn!(thlen1,params.epsilon)
 	# Update len with an explicit, multistep method.
 	len2 = len1 + 0.5*dt*(3*m1-m0)
 	# Create a new ThetaLenType variable and save the new len.
@@ -79,37 +79,26 @@ end
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
 Also returms mterm to be used locally.
 Note: thlen must already be loaded with the correct atau. =#
-function getmn!(thlen::ThetaLenType, params::ParamType)
+function getmn!(thlen::ThetaLenType, epsilon::Float64)
 	thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
-		getmn(thlen.theta, thlen.len, thlen.atau, params)
+		getmn(thlen.theta, thlen.len, thlen.atau, epsilon)
 	return thlen.mterm
 end
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
-function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, params::ParamType)
-	# Make sure that atau is not empty.
+function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsilon::Float64)
 	if atau==[]; throw("atau has not been computed"); return; end
-	# Extract the needed variables.
-	epsilon = params.epsilon
 	alpha = getalpha(endof(theta))
-	# The derivative of theta wrt alpha.
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
-	# The normal velocity.
 	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
-	# Get the tangential velocity and dL/dt.
 	vtang, mterm = tangvel(dtheta, vnorm)
-	# The derivative of the absolute value of shear stress.
-	datau = specdiff(atau)
-	# The nonlinear term in the theta-evolution equation.
+	datau = specdiff(atau)	# Derivative of absolute-value of shear stress.
 	nterm = (datau + dtheta.*vtang)/len
-	# Calculate the motion of the surface-mean points.
 	xsmdot = mean(-vnorm.*sin(theta) + vtang.*cos(theta))
 	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
-	# Return everything.
 	return mterm, nterm, xsmdot, ysmdot
 end
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
 function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
-	# The product of dtheta and vnorm, along with its mean.
 	prod = dtheta.*vnorm
 	mprod = mean(prod)
 	# Formula for mterm = dL/dt.
