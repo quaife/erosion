@@ -209,8 +209,8 @@ function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::Abstrac
 	close(iostream)
 end
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenvec::Vector{ThetaLenType}, tt::Float64,
-		datafolder::AbstractString, plotfolder::AbstractString, cnt::Integer)
+function plotnsave(thlenvec::Vector{ThetaLenType}, datafolder::AbstractString, 
+		plotfolder::AbstractString, tt::Float64, cnt::Integer)
 	# Save the data.
 	cntstr = lpad(cnt,4,0)
 	savefile = string(datafolder,"geom",cntstr,".dat")

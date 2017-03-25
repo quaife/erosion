@@ -35,17 +35,27 @@ Note: It computes the density function only if not done already. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density (if not done already).
 	getdensity!(thlenden, params)
+
+	println("got density")
+
 	# Compute the stress.
 	xv,yv,nvals = getnxy(thlenden)
-	tau = getstress(xv,yv,density,nvals,params.nouter)
+	npts,nbods,ntot = nvals
+	tau = getstress(xv,yv,thlenden.density,nvals,params.nouter)
+
+	println("got stress")
+
 	# Smooth atau and save it in each of the thlen variables.
 	for nn = 1:nbods
 		n1,n2 = n1n2(npts,nn)
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau, params.sigma)
 		if params.fixarea == 1; atau = atau - mean(atau); end
-		thlenv[nn].atau = atau
+		thlenden.thlenvec[nn].atau = atau
 	end
+
+	println("saved atau inside thlenden")
+
 	return
 end
 # getstress: Wrapper for Fortran routine 'computeShearStress' to compute the shear stress.
@@ -53,7 +63,7 @@ function getstress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Flo
 		nvals::Vector{Int}, nouter::Int)
 	npts,nbods,ntot = nvals
 	tau = zeros(Float64, ntot)
-	ccall((:computeShearStress_, "libstokes.so"), Void,
+	ccall((:computeshearstress_, "libstokes.so"), Void,
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
 		&npts, &nbods, &nouter, xx, yy, density, tau)
 	return tau
@@ -63,7 +73,7 @@ Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =
 function getdensity!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.density == []
 		xv,yv,nvals = getnxy(thlenden)
-		thlenv.density = getdensity(xv,yv,nvals,params)
+		thlenden.density = getdensity(xv,yv,nvals,params)
 	end
 	return
 end
@@ -95,11 +105,11 @@ function getallxy(thlenv::Vector{ThetaLenType}, nvals::Vector{Int})
 	return xv,yv
 end
 # getnvals: Calculate npts and nbods
-function getnvals(thlenvec::Vector{ThetaLenType})
+function getnvals(thlenv::Vector{ThetaLenType})
 	nbods = endof(thlenv)
 	npts = endof(thlenv[1].theta)
 	ntot = npts*nbods
-	return npts,nbods,ntot
+	return [npts,nbods,ntot]
 end
 # Calculate n1 and n2 to divy up the separate bodies.
 function n1n2(npts::Integer,nn::Integer)

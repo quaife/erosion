@@ -5,8 +5,14 @@ It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenden0. =#
 function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
 	dt = params.dt
 	epsilon = params.epsilon
+
+	println("stop B, ", endof(thlenden0.thlenvec))
+
 	# Compute the stress at t=0 and take the first step of RK2.
 	getstress!(thlenden0, params)
+
+	println("stop C, ", endof(thlenden0.thlenvec))
+
 	thlenden05 = festep(0.5*dt, thlenden0, thlenden0, epsilon)
 	# Compute the stress at t=0.5*dt and take the second step of RK2.
 	getstress!(thlenden05, params)

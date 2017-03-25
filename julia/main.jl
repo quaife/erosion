@@ -4,7 +4,7 @@ using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
-include("RKstarter")
+include("RKstarter.jl")
 include("misc.jl")
 ##################################################
 
@@ -12,6 +12,7 @@ include("misc.jl")
 function erosion()
 	# Get the input geometry and parameters.
 	thlenden0,params,paramvec,nsteps,nout = getparams()
+	dt = params.dt
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"; newfolder(datafolder)
 	plotfolder = "../figs/"; newfolder(plotfolder)
@@ -19,23 +20,22 @@ function erosion()
 
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
-	#plotnsave(thlenvec0,0.,datafolder,plotfolder,0)
-	
-	thlenden0 = RKstarter!(thlenden0, params)
-	if nout==1; plotnsave(thlenvec1,params.dt,datafolder,plotfolder,1); end
-	
+	plotnsave(thlenden0.thlenvec,datafolder,plotfolder,0.,0)
+
+	println("stop A, ", endof(thlenden0.thlenvec))
+
+	thlenden1 = RKstarter!(thlenden0, params)
+	if nout==1; plotnsave(thlenden1.thlenvec,datafolder,plotfolder,dt,1); end
 	# Enter the time loop to use the multi-step method.
 	nfile = 1
 	for nn = 2:nsteps
-		
-		#stokes!(thlenvec1,params)
-		#advance_thetalen!(thlenvec1,thlenvec0,params)
-		
+		getstress!(thlenden1,params)
+		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
 		if mod(nn,nout)==0
 			# Plot and save the data.
-			tt = nn*params.dt
-			plotnsave(thlenvec1,tt,datafolder,plotfolder,nfile)
+			tt = nn*dt
+			plotnsave(thlenvec1,datafolder,plotfolder,tt,nfile)
 			# Time the computation and write it to the params file.
 			paramvec[end] = (time()-t0)/60.
 			writeparams(paramsoutfile,paramvec)
