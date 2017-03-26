@@ -25,17 +25,21 @@ end
 #################### Multistep routines ####################
 # advance_thetalen!: Dispatch for ThLenDenType.
 function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
-	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
+	thlenden1.thlenvec, thlenden0.thlenvec = 
+		advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
 	thlenden1.density = evec()
+	return thlenden1, thlenden0
 end
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
 function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Call advance_thetalen for each element of the thlenvec.
 	for nn = 1:endof(thlenvec0)
-		advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
+		thlenvec1[nn], thlenvec0[nn] = 
+			advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
 	end
 	# Remove curves with non-positive length.
-	trimthlenvec!(thlenvec1, thlenvec0)
+	thlenvec1, thlenvec0 = trimthlenvec!(thlenvec1, thlenvec0)
+	return thlenvec1, thlenvec0
 end
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
 This is a multi-step method and uses some values from n=0 too.
@@ -58,8 +62,9 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1.
 	thlen0 = deepcopy(thlen1)
 	thlen1 = deepcopy(thlen2)
-	return
+	return thlen1, thlen0
 end
+
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
@@ -81,7 +86,6 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
 	return
 end
-
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
 Also returms mterm to be used locally.
 Note: thlen must already be loaded with the correct atau. =#
@@ -125,4 +129,5 @@ function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaL
 	zind = find(lenvec.<=0)
 	deleteat!(thlenvec0,zind)
 	deleteat!(thlenvec1,zind)
+	return thlenvec1, thlenvec0
 end

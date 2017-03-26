@@ -37,7 +37,7 @@ function erosion()
 		println("max density 1: ", maximum(abs(thlenden1.density)) )
 
 
-		advance_thetalen!(thlenden1,thlenden0,params)
+		thlenden1, thlenden0 = advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
 		if mod(nn,nout)==0
 			# Plot and save the data.
