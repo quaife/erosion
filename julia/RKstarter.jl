@@ -5,12 +5,10 @@ It also calculates mterm, nterm, xsmdot, ysmdot and saves them in thlenden0. =#
 function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
 	dt = params.dt
 	epsilon = params.epsilon
-
-
 	# Compute the stress at t=0 and take the first step of RK2.
 	getstress!(thlenden0, params)
 
-
+	println("In RKstarter, just called getstress! about to call festep")
 
 	thlenden05 = festep(0.5*dt, thlenden0, thlenden0, epsilon)
 	# Compute the stress at t=0.5*dt and take the second step of RK2.
@@ -24,18 +22,25 @@ end
 # festep: Dispatch for ThLenDenType.
 # Take an FE-step for each component of thlenvec.
 function festep(dt::Float64, thlenden0::ThLenDenType, thlendendots::ThLenDenType, epsilon::Float64)
-	
+
+	println("Just got into festep")
 
 	thlenv0 = thlenden0.thlenvec
 	thlenvdots = thlendendots.thlenvec
 	nbods = endof(thlenv0)
 	thlenv1 = new_thlenvec(nbods)
+
+	println("In festep, about to enter for loop, ", typeof(thlenv1))
+
 	for nn = 1:nbods
 		thlen0 = thlenv0[nn]
 		thlendots = thlenvdots[nn]
 		thlen1 = festep(dt, thlen0, thlendots, epsilon)
-		thlenv1[nn] = thlen1
+		println("stop c, ", typeof(thlen1))
+		thlenv1[nn] = deepcopy(thlen1)
+		println("stop d")
 	end
+	println("In festep, just finished for loop")
 	thlenden1 = ThLenDenType(thlenv1,evec())
 
 

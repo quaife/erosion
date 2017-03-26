@@ -22,7 +22,7 @@ function new_thlen()
 	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
 end
 function new_thlenvec(nbods::Int)
-	return [new_thlen for nn=1:nbods]
+	return [new_thlen() for nn=1:nbods]
 end
 function new_thlenden()
 	return ThLenDenType(Array(ThetaLenType,0),evec())
@@ -54,7 +54,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau, params.sigma)
 		if params.fixarea == 1; atau = atau - mean(atau); end
-		thlenden.thlenvec[nn].atau = atau
+		thlenden.thlenvec[nn].atau = atau[:]
 	end
 
 	println("saved atau inside thlenden")
