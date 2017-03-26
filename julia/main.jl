@@ -31,13 +31,7 @@ function erosion()
 	# Enter the time loop to use the multi-step method.
 	for nn = 2:nsteps
 		getstress!(thlenden1,params)
-
-		println("length of atau 1: ", endof(thlenden1.thlenvec[1].atau) )
-		println("max atau 1: ", maximum(abs(thlenden1.thlenvec[1].atau)) )
-		println("max density 1: ", maximum(abs(thlenden1.density)) )
-
-
-		thlenden1, thlenden0 = advance_thetalen!(thlenden1,thlenden0,params)
+		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
 		if mod(nn,nout)==0
 			# Plot and save the data.

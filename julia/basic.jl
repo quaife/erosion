@@ -17,18 +17,33 @@ type ThLenDenType
 	thlenvec::Vector{ThetaLenType}; density::Vector{Float64};
 end
 #################### Object routines #####################
-# Create a new ThetaLenType that has all zeros.
-function new_thlen()
-	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
+# Create new instances of each type.
+function new_thlenden(nbods::Int)
+	return ThLenDenType(new_thlenvec(nbods),evec())
 end
 function new_thlenvec(nbods::Int)
 	return [new_thlen() for nn=1:nbods]
 end
-function new_thlenden(nbods::Int)
-	return ThLenDenType(new_thlenvec(nbods),evec())
+function new_thlen()
+	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
 end
 function evec()
 	return Array(Float64,0)
+end
+# Copy all contents from thlen1 to thlen2.
+function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
+	thlen2.theta = thlen1.theta
+	thlen2.len = thlen1.len
+	thlen2.xsm = thlen1.xsm
+	thlen2.ysm = thlen1.ysm
+	thlen2.xx = thlen1.xx
+	thlen2.yy = thlen1.yy
+	thlen2.atau = thlen1.atau
+	thlen2.mterm = thlen1.mterm
+	thlen2.nterm = thlen1.nterm
+	thlen2.xsmdot = thlen1.xsmdot
+	thlen2.ysmdot = thlen1.ysmdot
+	return
 end
 ##########################################################
 

@@ -25,21 +25,19 @@ end
 #################### Multistep routines ####################
 # advance_thetalen!: Dispatch for ThLenDenType.
 function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
-	thlenden1.thlenvec, thlenden0.thlenvec = 
-		advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
+	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
 	thlenden1.density = evec()
-	return thlenden1, thlenden0
+	return
 end
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
 function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
 	# Call advance_thetalen for each element of the thlenvec.
 	for nn = 1:endof(thlenvec0)
-		thlenvec1[nn], thlenvec0[nn] = 
-			advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
+		advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
 	end
 	# Remove curves with non-positive length.
-	thlenvec1, thlenvec0 = trimthlenvec!(thlenvec1, thlenvec0)
-	return thlenvec1, thlenvec0
+	trimthlenvec!(thlenvec1, thlenvec0)
+	return
 end
 #= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
 This is a multi-step method and uses some values from n=0 too.
@@ -59,10 +57,11 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	# Update surface-mean coordinates with an explicit, multistep method.
 	thlen2.xsm = thlen1.xsm + 0.5*dt*(3*thlen1.xsmdot - thlen0.xsmdot)
 	thlen2.ysm = thlen1.ysm + 0.5*dt*(3*thlen1.ysmdot - thlen0.ysmdot)
-	# Now thlen1 becomes the new thlen0, and thlen2 becomes the new thlen1.
-	thlen0 = deepcopy(thlen1)
-	thlen1 = deepcopy(thlen2)
-	return thlen1, thlen0
+	# Now thlen1 gets copied to thlen0, and thlen2 gets copied to thlen1.
+	# Note: Although tempting, I cannot use deepcopy() because it cuases problems.
+	copy_thlen!(thlen1,thlen0)
+	copy_thlen!(thlen2,thlen1)
+	return
 end
 
 # advance_theta: Advance theta in time with the integrating-factor method.
@@ -129,5 +128,4 @@ function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaL
 	zind = find(lenvec.<=0)
 	deleteat!(thlenvec0,zind)
 	deleteat!(thlenvec1,zind)
-	return thlenvec1, thlenvec0
 end
