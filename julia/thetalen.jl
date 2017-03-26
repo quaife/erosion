@@ -129,3 +129,32 @@ function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaL
 	deleteat!(thlenvec0,zind)
 	deleteat!(thlenvec1,zind)
 end
+
+#################### Converting between x,y and theta,len ####################
+# getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
+function getxy!(thlen::ThetaLenType)
+	# Only compute xx and yy if they are not already loaded in thlen.
+	if thlen.xx==[] || thlen.yy==[]
+		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
+	end
+	return
+end
+#= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
+xsm and ysm are the boundary-averaged values. =#
+function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
+	testtheta(theta)
+	# The partial derivatives dx/dalpha and dy/dalpha.
+	dx = len * (cos(theta) - mean(cos(theta)))
+	dy = len * (sin(theta) - mean(sin(theta)))
+	# Integrate to get the x,y coordinates; result will have mean zero.
+	xx = specint(dx); yy = specint(dy)
+	# Move to have the correct average values.
+	xx += xsm; yy += ysm
+	return xx,yy
+end
+# getnormals: Calculate the surface normals.
+function getnormals(theta::Vector{Float64})
+	nx = -sin(theta)
+	ny = cos(theta)
+	return nx, ny 
+end
