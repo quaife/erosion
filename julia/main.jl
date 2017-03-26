@@ -29,7 +29,7 @@ function erosion()
 		nfile += 1
 	end
 	# Enter the time loop to use the multi-step method.
-	for nn = 2:3
+	for nn = 2:nsteps
 		getstress!(thlenden1,params)
 
 		println("length of atau 1: ", endof(thlenden1.thlenvec[1].atau) )
