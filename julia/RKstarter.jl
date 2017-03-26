@@ -7,34 +7,23 @@ function RKstarter!(thlenden0::ThLenDenType, params::ParamType)
 	epsilon = params.epsilon
 	# Compute the stress at t=0 and take the first step of RK2.
 	getstress!(thlenden0, params)
-
-	println("In RKstarter, just called getstress! about to call festep")
-
 	thlenden05 = festep(0.5*dt, thlenden0, thlenden0, epsilon)
 	# Compute the stress at t=0.5*dt and take the second step of RK2.
 	getstress!(thlenden05, params)
 	thlenden1 = festep(dt, thlenden0, thlenden05, epsilon)
 	# Remove curves with non-positive length and return.
-	trimthlenvec!(thlenden1, thlenden0)
+	trimthlenvec!(thlenden1.thlenvec, thlenden0.thlenvec)
 	return thlenden1
 end
-
 # festep: Dispatch for ThLenDenType.
 # Take an FE-step for each component of thlenvec.
 function festep(dt::Float64, thlenden0::ThLenDenType, thlendendots::ThLenDenType, epsilon::Float64)
-	thlenv0 = thlenden0.thlenvec
-	thlenvdots = thlendendots.thlenvec
-	nbods = endof(thlenv0)
-	thlenv1 = new_thlenvec(nbods)
+	nbods = endof(thlenden0.thlenvec)
+	thlenden1 = new_thlenden(nbods)
 	for nn = 1:nbods
-		thlen0 = thlenv0[nn]
-		thlendots = thlenvdots[nn]
-		thlen1 = festep(dt, thlen0, thlendots, epsilon)
-		println("stop c, ", typeof(thlen1))
-		thlenv1[nn] = deepcopy(thlen1)
-		println("stop d")
+		thlenden1.thlenvec[nn] = 
+			festep(dt, thlenden0.thlenvec[nn], thlendendots.thlenvec[nn], epsilon)
 	end
-	thlenden1 = ThLenDenType(thlenv1,evec())
 	return thlenden1
 end
 # festep: Dispatch for ThetaLenType.

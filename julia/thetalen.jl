@@ -25,7 +25,8 @@ end
 #################### Multistep routines ####################
 # advance_thetalen!: Dispatch for ThLenDenType.
 function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
-	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec)
+	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
+	thlenden1.density = evec()
 end
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
 function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
@@ -59,7 +60,6 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	thlen1 = deepcopy(thlen2)
 	return
 end
-
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
@@ -114,10 +114,6 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 	vtang = specint(dvtang)
 	return vtang, mterm
-end
-# trimthlenvec: Dispatch for ThLenDenType.
-function trimthlenvec!(thlenden1::ThLenDenType, thlenden0::ThLenDenType)
-	trimthlenvec!(thlenden1.thlenvec, thlenden0.thlenvec)
 end
 # trimthlenvec: Remove the curves with non-positive length.
 function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType})
