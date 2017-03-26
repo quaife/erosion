@@ -22,16 +22,10 @@ end
 # festep: Dispatch for ThLenDenType.
 # Take an FE-step for each component of thlenvec.
 function festep(dt::Float64, thlenden0::ThLenDenType, thlendendots::ThLenDenType, epsilon::Float64)
-
-	println("Just got into festep")
-
 	thlenv0 = thlenden0.thlenvec
 	thlenvdots = thlendendots.thlenvec
 	nbods = endof(thlenv0)
 	thlenv1 = new_thlenvec(nbods)
-
-	println("In festep, about to enter for loop, ", typeof(thlenv1))
-
 	for nn = 1:nbods
 		thlen0 = thlenv0[nn]
 		thlendots = thlenvdots[nn]
@@ -40,10 +34,7 @@ function festep(dt::Float64, thlenden0::ThLenDenType, thlendendots::ThLenDenType
 		thlenv1[nn] = deepcopy(thlen1)
 		println("stop d")
 	end
-	println("In festep, just finished for loop")
 	thlenden1 = ThLenDenType(thlenv1,evec())
-
-
 	return thlenden1
 end
 # festep: Dispatch for ThetaLenType.
