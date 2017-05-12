@@ -19,7 +19,7 @@ and I use the inward pointing normal vector. =#
 Note: for 2D Stokes, I have to use log-of-tanh to get the same behvaior near L=0, 
 but avoid problems at L=1 due to log(1) = 0. =#
 function cdfscale(len::Float64)
-	return -1./log(0.5*tanh(2*len))
+	return -1./log(0.5*tanh(2*abs(len)))
 end
 
 #################### Multistep routines ####################
