@@ -19,7 +19,7 @@ and I use the inward pointing normal vector. =#
 Note: for 2D Stokes, I have to use log-of-tanh to get the same behvaior near L=0, 
 but avoid problems at L=1 due to log(1) = 0. =#
 function cdfscale(len::Float64)
-	return -1./log(0.5*tanh(2*abs(len)))
+	return -1./log(0.5*tanh(2*len))
 end
 
 #################### Multistep routines ####################
@@ -73,7 +73,7 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	len2 = thlen2.len
 	alpha = getalpha(endof(theta1))
 	# The function that enters the sigmas of the Guassian filter.
-	lenfun(len::Float64) = len^(-2)*cdfscale(len)
+	lenfun(len::Float64) = abs(len)^(-2)*cdfscale(abs(len))
 	# The first value used in the Gaussian filter.
 	sig1 = sqrt( lenfun(len1) + lenfun(len2) )
 	sig1 *= 2*pi*sqrt(epsilon*dt)

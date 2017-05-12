@@ -65,7 +65,7 @@ function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 	outvec[1] = npts
 	outvec[2] = nbods
 	# For now, make some circles.
-	rad = 0.2
+	rad = [0.2, 0.2, 0.02, 0.1]
 	xsm,ysm = [zeros(Float64,4) for ii=1:2]
 	xsm[1], ysm[1] = +0.1, +0.4
 	xsm[2], ysm[2] = -0.0, -0.4
@@ -77,7 +77,7 @@ function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
 		n1 = vsize*(nn-1)+1 + nparams
 		n2 = vsize*nn + nparams
 		outvec[n1:n2-3] = 0.5*pi + 2*pi*alpha[:]
-		outvec[n2-2] = 2*pi*rad
+		outvec[n2-2] = 2*pi*rad[nn]
 		outvec[n2-1] = xsm[nn]
 		outvec[n2] = ysm[nn]
 	end
@@ -158,7 +158,7 @@ function testtheta(theta::Vector{Float64})
 	m1 = mean(cos(theta))
 	m2 = mean(sin(theta))
 	maxmean = maximum(abs([m1,m2]))
-	thresh = 10./npts
+	thresh = 20./npts
 	if maxmean > thresh
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
