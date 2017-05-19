@@ -3,7 +3,7 @@
 
 c      parameter (ninner = 512)
       parameter (ninner = 32)
-      parameter (nbodies = 1)
+      parameter (nbodies = 2)
       parameter (nouter = 2**12)
 
       dimension centerx(20),centery(20)
@@ -18,7 +18,7 @@ c      parameter (ninner = 512)
       dtheta = twopi/dble(ninner)
 
       centerx(1) = -0.5d0
-      centery(1) = 0.0d0
+      centery(1) = 0.2d0
       centerx(2) = 0.5d0
       centery(2) = -0.0d0
       radius(1) = 2.d-1
@@ -59,12 +59,16 @@ c     pass in the shear_stress and pressure and return the drag
       open(unit=2,file='output/shear_stress.dat')
       open(unit=3,file='output/pressure.dat')
       open(unit=4,file='output/drag.dat')
+c      open(unit=8,file='output/x.dat')
+c      open(unit=9,file='output/y.dat')
       do k = 1,2*ninner*nbodies + 2*nouter + 3*nbodies
         write(1,1000) den(k)
       enddo
       do k = 1,ninner*nbodies
         write(2,1000) shear_stress(k)
         write(3,1000) pressure(k)
+c        write(8,1000) x(k)
+c        write(9,1000) y(k)
       enddo
       do k = 1,2*nbodies
         write(4,1000) drag(k)
@@ -73,6 +77,8 @@ c     pass in the shear_stress and pressure and return the drag
       close(unit=2)
       close(unit=3)
       close(unit=4)
+c      close(unit=8)
+c      close(unit=9)
 
 
 

@@ -97,85 +97,9 @@ c     load boundary condition
 c     solve for the density function with GMRES
 
 
+c 1000 format(E25.16)
       end
 
-c***********************************************************************
-      subroutine computeShearStress(nninner,nnbodies,nnouter,xx,yy,den,
-     $    shear_stress)
-c     Input x and y coordinates and the density function on the
-c     boundary and return the shear stress on the inner walls.  
-      implicit real*8 (a-h,o-z)
-
-      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
-c     x and y coordinates of obstacle
-
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
-c     max points on the boundary of the obstacle      
-
-      dimension x(nmax),y(nmax)
-      dimension centerx(maxbodies),centery(maxbodies)
-      dimension px(nmax),py(nmax)
-c     x and y coordinates of the normal of the obstacle
-      dimension cur(nmax),speed(nmax)
-c     Jacobian and curvature of the geometry
-
-      dimension xouter(nmax),youter(nmax)
-c     x and y coordinates of confining wall
-      dimension px0(nmax), py0(nmax)
-c     x and y coordinates of the normal of the confining wall
-      dimension cur0(nmax), speed0(nmax)
-c     Jacobian and curvature of the confining wall
-
-      dimension den(2*nninner*nnbodies + 3*nnbodies + 2*2**12)
-c     x and y coordinates of the density function
-
-      dimension E11(nninner*nnbodies)
-      dimension E12(nninner*nnbodies)
-      dimension E22(nninner*nnbodies)
-c     components of the deformation gradient on the obstacle
-      dimension shear_stress(nninner*nnbodies)
-c     shear stress on the obstacle
-
-      common /geometry/x,y,centerx,centery,px,py,cur,speed,
-     $    ninner,nbodies
-      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
-c     global variables for the geometry which are needed by the external
-c     matvec routine in gmres
-
-      ninner = nninner
-      nbodies = nnbodies
-      nouter =  nnouter
-c     can't declare input variables into a common field, so need new
-c     variable name for x,y,ninner,nbodies
-      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
-     $    centerx,centery)
-c
-      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
-c     load geometry of initial shape
-
-      call deformation_on_boundary(ninner,nbodies,x,y,
-     $    centerx,centery,
-     $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
-     $    E11,E12,E22)
-c     compute the deformation tensor on the boundary of the interface
-c      open(unit=1,file='output/E11.dat')
-c      open(unit=2,file='output/E12.dat')
-c      open(unit=3,file='output/E22.dat')
-c      do k = 1,ninner*nbodies
-c        write(1,1000) E11(k)
-c        write(2,1000) E12(k)
-c        write(3,1000) E22(k)
-c      enddo
-c      close(unit=1)
-c1000  format(E25.16)
-
-      call compute_shear_stress(ninner,nbodies,px,py,
-     $    E11,E12,E22,shear_stress)
-c     Use the deformation tensor to compute the shear stress
-
-
-      end
 
 
 c***********************************************************************
@@ -337,6 +261,128 @@ c     constant background flow on outer walls on no slip on obstacle
 c     extra terms need for rotlet and stokeslet conditions
 
       end
+
+
+c***********************************************************************
+      subroutine fourierDiff(n,den,wsave)
+      implicit real*8 (a-h,o-z)
+
+      complex *16 den(n)
+      real *8 wsave(4*n+15)
+      complex *16 eye
+
+      dimension modes(n)
+      real *8 work(2*n)
+      lenwork = 2*n
+
+      eye = (0.d0,1.d0)
+
+      do k = 1,n/2
+        modes(k) = k-1
+      enddo
+      do k = n/2+1,n
+        modes(k) = -n+k-1
+      enddo
+
+      call DCFFTI(n,wsave)
+c     Initialize variable for FFT
+
+      call DCFFTF(n,den,wsave)
+c     Take forward FFT
+
+      do k = 1,n/2
+        den(k) = den(k)*eye*dble(k-1)/dble(n)
+      enddo
+c     Multiply by 1i*modes for positive frequencies
+      den(n/2+1) = 0.d0
+c     kill the Nyquist frequency
+      do k=n/2+2,n
+        den(k) = den(k)*eye*dble(-n+k-1)/dble(n)
+      enddo
+c     Multiply by 1i*modes for negative frequencies
+
+      call DCFFTB(n,den,wsave)
+c     Take backward FFT
+
+      end
+
+
+c***********************************************************************
+      subroutine bgFlow(ninner,x,y,u,v)
+      implicit real*8 (a-h,o-z)
+
+      dimension x(ninner),y(ninner)
+      dimension u(ninner),v(ninner)
+
+      do k=1,ninner
+c        u(k) = 1.d0
+c        v(k) = 0.d0
+cc       constant flow
+
+c        u(k) = x(k)
+c        v(k) = -y(k)
+cc       extesional flow
+
+        scal = 1.0d0
+        u(k) = scal*(1.0d0 + y(k))*(1.0d0 - y(k))
+        v(k) = 0.d0
+c       pipe flow
+
+c        u(k) = y(k)
+c        v(k) = 0.d0
+cc       shear flow
+    
+c        u(k) = y(k)/(x(k)**2.d0 + y(k)**2.d0)
+c        v(k) = -x(k)/(x(k)**2.d0 + y(k)**2.d0)
+cc       single Rotlet
+      enddo
+
+      end 
+
+
+c***********************************************************************
+      subroutine compute_derivs(n,nbodies,x,y,px,py,cur,speed)
+      implicit real*8 (a-h,o-z)
+
+      dimension x(n*nbodies),y(n*nbodies)
+      dimension px(n*nbodies),py(n*nbodies)
+      dimension cur(n*nbodies),speed(n*nbodies)
+
+      real *8 Dx(n),Dy(n)
+      real *8 DDx(n),DDy(n)
+      complex *16 zden1(n),zden2(n)
+      real*8 wsave(4*n+15)
+      complex *16 eye
+
+      eye = (0.d0,1.d0)
+
+      do j = 1,nbodies
+        do k = 1,n
+          zden1(k) = x((j-1)*n+k) + eye*y((j-1)*n+k)
+        enddo
+        call fourierDiff(n,zden1,wsave)
+        zden2 = zden1
+        call fourierDiff(n,zden2,wsave)
+c       real part of zden is the first derivative of the x component of
+c       the position, imaginary part of zden is the first derivative of
+c       the y component of the position
+
+        Dx = dreal(zden1)
+        Dy = dimag(zden1)
+        DDx = dreal(zden2)
+        DDy = dimag(zden2)
+        do k=1,n
+          speed((j-1)*n+k) = dsqrt(Dx(k)**2.d0 + Dy(k)**2.d0)
+          px((j-1)*n+k) = -Dy(k)/speed((j-1)*n+k)
+          py((j-1)*n+k) = Dx(k)/speed((j-1)*n+k)
+          cur((j-1)*n+k) = (Dy(k)*DDx(k) - Dx(k)*DDy(k))/
+     $        speed((j-1)*n+k)**3.d0
+        enddo
+      enddo
+        
+
+      end
+
 
 c***********************************************************************
       subroutine solveBIE(ninner,nbodies,nouter,den,rhs,
@@ -1520,6 +1566,85 @@ c     OBSTACLES
 
       end
 
+
+c***********************************************************************
+      subroutine computeShearStress(nninner,nnbodies,nnouter,xx,yy,den,
+     $    shear_stress)
+c     Input x and y coordinates and the density function on the
+c     boundary and return the shear stress on the inner walls.  
+      implicit real*8 (a-h,o-z)
+
+      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
+c     x and y coordinates of obstacle
+
+      parameter (nmax = 2**15)
+      parameter (maxbodies = 10)
+c     max points on the boundary of the obstacle      
+
+      dimension x(nmax),y(nmax)
+      dimension centerx(maxbodies),centery(maxbodies)
+      dimension px(nmax),py(nmax)
+c     x and y coordinates of the normal of the obstacle
+      dimension cur(nmax),speed(nmax)
+c     Jacobian and curvature of the geometry
+
+      dimension xouter(nmax),youter(nmax)
+c     x and y coordinates of confining wall
+      dimension px0(nmax), py0(nmax)
+c     x and y coordinates of the normal of the confining wall
+      dimension cur0(nmax), speed0(nmax)
+c     Jacobian and curvature of the confining wall
+
+      dimension den(2*nninner*nnbodies + 3*nnbodies + 2*2**12)
+c     x and y coordinates of the density function
+
+      dimension E11(nninner*nnbodies)
+      dimension E12(nninner*nnbodies)
+      dimension E22(nninner*nnbodies)
+c     components of the deformation gradient on the obstacle
+      dimension shear_stress(nninner*nnbodies)
+c     shear stress on the obstacle
+
+      common /geometry/x,y,centerx,centery,px,py,cur,speed,
+     $    ninner,nbodies
+      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
+c     global variables for the geometry which are needed by the external
+c     matvec routine in gmres
+
+      ninner = nninner
+      nbodies = nnbodies
+      nouter =  nnouter
+c     can't declare input variables into a common field, so need new
+c     variable name for x,y,ninner,nbodies
+      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
+     $    centerx,centery)
+c
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     load geometry of initial shape
+
+      call deformation_on_boundary(ninner,nbodies,x,y,
+     $    centerx,centery,
+     $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
+     $    E11,E12,E22)
+c     compute the deformation tensor on the boundary of the interface
+c      open(unit=1,file='output/E11.dat')
+c      open(unit=2,file='output/E12.dat')
+c      open(unit=3,file='output/E22.dat')
+c      do k = 1,ninner*nbodies
+c        write(1,1000) E11(k)
+c        write(2,1000) E12(k)
+c        write(3,1000) E22(k)
+c      enddo
+c      close(unit=1)
+c1000  format(E25.16)
+
+      call compute_shear_stress(ninner,nbodies,px,py,
+     $    E11,E12,E22,shear_stress)
+c     Use the deformation tensor to compute the shear stress
+
+
+      end
+
 c***********************************************************************
       subroutine compute_shear_stress(ninner,nbodies,px,py,
      $    E11,E12,E22,shear_stress)
@@ -1556,125 +1681,6 @@ c***********************************************************************
       end
 
 
-c***********************************************************************
-      subroutine fourierDiff(n,den,wsave)
-      implicit real*8 (a-h,o-z)
-
-      complex *16 den(n)
-      real *8 wsave(4*n+15)
-      complex *16 eye
-
-      dimension modes(n)
-      real *8 work(2*n)
-      lenwork = 2*n
-
-      eye = (0.d0,1.d0)
-
-      do k = 1,n/2
-        modes(k) = k-1
-      enddo
-      do k = n/2+1,n
-        modes(k) = -n+k-1
-      enddo
-
-      call DCFFTI(n,wsave)
-c     Initialize variable for FFT
-
-      call DCFFTF(n,den,wsave)
-c     Take forward FFT
-
-      do k = 1,n/2
-        den(k) = den(k)*eye*dble(k-1)/dble(n)
-      enddo
-c     Multiply by 1i*modes for positive frequencies
-      den(n/2+1) = 0.d0
-c     kill the Nyquist frequency
-      do k=n/2+2,n
-        den(k) = den(k)*eye*dble(-n+k-1)/dble(n)
-      enddo
-c     Multiply by 1i*modes for negative frequencies
-
-      call DCFFTB(n,den,wsave)
-c     Take backward FFT
-
-      end
-
-
-c***********************************************************************
-      subroutine bgFlow(ninner,x,y,u,v)
-      implicit real*8 (a-h,o-z)
-
-      dimension x(ninner),y(ninner)
-      dimension u(ninner),v(ninner)
-
-      do k=1,ninner
-c        u(k) = 1.d0
-c        v(k) = 0.d0
-cc       constant flow
-
-c        u(k) = x(k)
-c        v(k) = -y(k)
-cc       extesional flow
-
-        scal = 1.0d0
-        u(k) = scal*(1.0d0 + y(k))*(1.0d0 - y(k))
-        v(k) = 0.d0
-c       pipe flow
-
-c        u(k) = y(k)
-c        v(k) = 0.d0
-cc       shear flow
-    
-c        u(k) = y(k)/(x(k)**2.d0 + y(k)**2.d0)
-c        v(k) = -x(k)/(x(k)**2.d0 + y(k)**2.d0)
-cc       single Rotlet
-      enddo
-
-      end 
-
-
-c***********************************************************************
-      subroutine compute_derivs(n,nbodies,x,y,px,py,cur,speed)
-      implicit real*8 (a-h,o-z)
-
-      dimension x(n*nbodies),y(n*nbodies)
-      dimension px(n*nbodies),py(n*nbodies)
-      dimension cur(n*nbodies),speed(n*nbodies)
-
-      real *8 Dx(n),Dy(n)
-      real *8 DDx(n),DDy(n)
-      complex *16 zden1(n),zden2(n)
-      real*8 wsave(4*n+15)
-      complex *16 eye
-
-      eye = (0.d0,1.d0)
-
-      do j = 1,nbodies
-        do k = 1,n
-          zden1(k) = x((j-1)*n+k) + eye*y((j-1)*n+k)
-        enddo
-        call fourierDiff(n,zden1,wsave)
-        zden2 = zden1
-        call fourierDiff(n,zden2,wsave)
-c       real part of zden is the first derivative of the x component of
-c       the position, imaginary part of zden is the first derivative of
-c       the y component of the position
-
-        Dx = dreal(zden1)
-        Dy = dimag(zden1)
-        DDx = dreal(zden2)
-        DDy = dimag(zden2)
-        do k=1,n
-          speed((j-1)*n+k) = dsqrt(Dx(k)**2.d0 + Dy(k)**2.d0)
-          px((j-1)*n+k) = -Dy(k)/speed((j-1)*n+k)
-          py((j-1)*n+k) = Dx(k)/speed((j-1)*n+k)
-          cur((j-1)*n+k) = (Dy(k)*DDx(k) - Dx(k)*DDy(k))/
-     $        speed((j-1)*n+k)**3.d0
-        enddo
-      enddo
-        
-
-      end
 
 
 c***********************************************************************
