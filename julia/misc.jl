@@ -110,6 +110,16 @@ function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 	return
 end
 
+function plotpressure(pressure::Vector{Float64}, figname::AbstractString)
+	# Make figure of given height and preserve the aspect ratio.
+	height = 400
+	width = 600
+	pp = plot()
+	# Plot the pressure
+	pp = plot(pressure)
+	savefig(pp, figname, width=width, height=height)
+end
+
 #################### Data IO routines ####################
 # readthlenfile: Reads the geometry from a data file.
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
@@ -206,3 +216,4 @@ function writeparams(filename::AbstractString, paramvec::Array)
 	writedlm(iostream, writevec)
 	close(iostream)
 end
+
