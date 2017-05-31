@@ -13,38 +13,30 @@ function erosion()
 	# Get the input geometry and parameters.
 	thlenden0,params,paramvec,nsteps,nout = getparams()
 	dt = params.dt
+
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"; newfolder(datafolder)
 	plotfolder = "../figs/"; newfolder(plotfolder)
 	paramsoutfile = string(datafolder,"params.dat")
-
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
-	plotnsave(thlenden0.thlenvec,datafolder,plotfolder,0.,0)
 	thlenden1 = RKstarter!(thlenden0, params)
+	plotnsave(thlenden0,params,datafolder,plotfolder,0.,0)
 	# Plot and save the data if appropriate.
 	nfile = 1
 	if nout==1
-		plotnsave(thlenden1.thlenvec,datafolder,plotfolder,dt,1)
+		plotnsave(thlenden1,params,datafolder,plotfolder,dt,1)
 		nfile += 1
 	end
 	# Enter the time loop to use the multi-step method.
 	for nn = 2:nsteps
 		getstress!(thlenden1,params)
-
-
 		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
 		if mod(nn,nout)==0
 			# Plot and save the data.
 			tt = nn*dt
-			plotnsave(thlenden1.thlenvec,datafolder,plotfolder,tt,nfile)
-
-			# Compute the pressure and plot it.
-			pressure = getpressure(thlenden0,params)
-			pressfile = string(plotfolder,"press",nfile,".pdf")
-			plotpressure(pressure,pressfile)
-
+			plotnsave(thlenden1,params,datafolder,plotfolder,tt,nfile)
 			# Time the computation and write it to the params file.
 			paramvec[end] = (time()-t0)/60.
 			writeparams(paramsoutfile,paramvec)

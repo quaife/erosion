@@ -190,8 +190,10 @@ function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::Abstrac
 	close(iostream)
 end
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenvec::Vector{ThetaLenType}, datafolder::AbstractString, 
-		plotfolder::AbstractString, tt::Float64, cnt::Integer)
+function plotnsave(thlenden::ThLenDenType, params::ParamType, 
+		datafolder::AbstractString, plotfolder::AbstractString, 
+		tt::Float64, cnt::Integer)
+	thlenvec = thlenden.thlenvec
 	# Save the data.
 	cntstr = lpad(cnt,4,0)
 	savefile = string(datafolder,"geom",cntstr,".dat")
@@ -199,6 +201,10 @@ function plotnsave(thlenvec::Vector{ThetaLenType}, datafolder::AbstractString,
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	plotcurves(thlenvec,plotfile)
+	# Plot the pressure.
+	pressure = getpressure(thlenden,params)
+	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
+	plotpressure(pressure,pressfile)
 end
 # newfolder: If the folder exists, delete it and create a new one.
 function newfolder(foldername::AbstractString)
