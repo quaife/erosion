@@ -31,7 +31,6 @@ function erosion()
 	# Enter the time loop to use the multi-step method.
 	for nn = 2:nsteps
 		getstress!(thlenden1,params)
-		#pressure = getpressure(thlenden1,params)
 
 
 		advance_thetalen!(thlenden1,thlenden0,params)
