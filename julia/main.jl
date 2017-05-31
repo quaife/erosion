@@ -31,9 +31,8 @@ function erosion()
 	# Enter the time loop to use the multi-step method.
 	for nn = 2:nsteps
 		getstress!(thlenden1,params)
+		#pressure = getpressure(thlenden1,params)
 
-		# Compute the pressure.
-		pressure = getpressure(thlenden1,params)
 
 		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
@@ -42,6 +41,8 @@ function erosion()
 			tt = nn*dt
 			plotnsave(thlenden1.thlenvec,datafolder,plotfolder,tt,nfile)
 
+			# Compute the pressure and plot it.
+			pressure = getpressure(thlenden0,params)
 			pressfile = string(plotfolder,"press",nfile,".pdf")
 			plotpressure(pressure,pressfile)
 
