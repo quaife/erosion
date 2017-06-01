@@ -296,6 +296,21 @@ where $g(t)= L^{-2} \mean{\atau}$ and $g^{(n)} = g(t^{(n)})$.
 BUT the problem with this is that I do not yet know $\mean{\atau}$ at time-step $n+1$, so I would have to change my time-stepping strategy which is a significant change to the code structure. Thus, I prefer the first method of using $L \log L$.
 
 
+\subsection{The vanishing rate of the area}
+The rate of area loss is given by
+\begin{equation}
+\dot{A} = -C \abs{\tau} L
+\end{equation}
+We then insert the scaling $\abs{\tau} \sim -1/(L \log L)$ and simplify to get
+\begin{equation}
+\dot{A} = C/\log{A}
+\end{equation}
+which we solve to get
+\begin{equation}
+A (1 - \log A) = C (t_f - t)
+\end{equation}
+In particular, I believe the signs are correct here.
+
 \subsection{How to scale smoothing parameters?}
 We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale with the simulation resolution parameters? The most important resolution parameter is $N$, the total number of points on each body, but there is also $\Delta t$ and maybe some others. Figuring out $\sigma$ is the easier part: $\sigma$ is a lengthscale and should go like $1/N$. On the other hand, $\eps$ is a diffusivity in dimensions. I did a calculation and found that $\eps$ should scale like $2/(\pi^2 N^2)$.
 

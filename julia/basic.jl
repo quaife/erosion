@@ -93,6 +93,23 @@ function getstress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Flo
 	return tau
 end
 
+# getpressure Computes the pressure...
+function getpressure(thlenden::ThLenDenType, params::ParamType)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	pressure = getpressure(xv,yv,thlenden.density,npts,nbods,params.nouter)
+	return pressure
+end
+# getpressure: Wrapper for Fortran routine 'computePressure' to compute the pressure.
+function getpressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
+		npts::Int, nbods::Int, nouter::Int)
+	pressure = zeros(Float64, npts*nbods)
+	ccall((:computepressure_, "libstokes.so"), Void,
+		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
+		&npts, &nbods, &nouter, xx, yy, density, pressure)
+	return pressure
+end
+
+
 #################### Little Routines ####################
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)

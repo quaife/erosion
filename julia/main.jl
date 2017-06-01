@@ -17,26 +17,21 @@ function erosion()
 	datafolder = "../datafiles/run/"; newfolder(datafolder)
 	plotfolder = "../figs/"; newfolder(plotfolder)
 	paramsoutfile = string(datafolder,"params.dat")
-
+	nfile = 1
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
-	plotnsave(thlenden0.thlenvec,datafolder,plotfolder,0.,0)
 	thlenden1 = RKstarter!(thlenden0, params)
-	# Plot and save the data if appropriate.
-	nfile = 1
-	if nout==1
-		plotnsave(thlenden1.thlenvec,datafolder,plotfolder,dt,1)
-		nfile += 1
-	end
+	plotnsave(thlenden0,params,datafolder,plotfolder,0.,0)
 	# Enter the time loop to use the multi-step method.
-	for nn = 2:nsteps
+	for nn = 1:nsteps
 		getstress!(thlenden1,params)
 		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
 		if mod(nn,nout)==0
-			# Plot and save the data.
+			# Plot and save the data in thlenden0
+			# Note: thlenden1 does not yet have the density function computed.
 			tt = nn*dt
-			plotnsave(thlenden1.thlenvec,datafolder,plotfolder,tt,nfile)
+			plotnsave(thlenden0,params,datafolder,plotfolder,tt,nfile)
 			# Time the computation and write it to the params file.
 			paramvec[end] = (time()-t0)/60.
 			writeparams(paramsoutfile,paramvec)

@@ -26,6 +26,7 @@ end
 # advance_thetalen!: Dispatch for ThLenDenType.
 function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
 	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
+	thlenden0.density = thlenden1.density
 	thlenden1.density = evec()
 	return
 end
