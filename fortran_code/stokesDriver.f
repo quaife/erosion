@@ -1,9 +1,9 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-c      parameter (ninner = 512)
-      parameter (ninner = 32)
-      parameter (nbodies = 2)
+      parameter (ninner = 2048)
+c      parameter (ninner = 32)
+      parameter (nbodies = 1)
       parameter (nouter = 2**12)
 
       dimension centerx(20),centery(20)
@@ -17,8 +17,8 @@ c      parameter (ninner = 512)
       twopi = 8.d0*datan(1.d0)
       dtheta = twopi/dble(ninner)
 
-      centerx(1) = -0.5d0
-      centery(1) = 0.2d0
+      centerx(1) = -0.0d0
+      centery(1) = 0.0d0
       centerx(2) = 0.5d0
       centery(2) = -0.0d0
       radius(1) = 2.d-1
@@ -33,7 +33,7 @@ c      parameter (ninner = 512)
           var_rad = radius(j)
           x((j-1)*ninner+k) = centerx(j) + var_rad*
      $          (dcos(phi(j))*dcos(theta) + dsin(phi(j))*dsin(theta))
-          y((j-1)*ninner+k) = centery(j) + var_rad*
+          y((j-1)*ninner+k) = centery(j) + 2.d0*var_rad*
      $          (-dsin(phi(j))*dcos(theta) + dcos(phi(j))*dsin(theta))
         enddo
       enddo
@@ -59,16 +59,16 @@ c     pass in the shear_stress and pressure and return the drag
       open(unit=2,file='output/shear_stress.dat')
       open(unit=3,file='output/pressure.dat')
       open(unit=4,file='output/drag.dat')
-c      open(unit=8,file='output/x.dat')
-c      open(unit=9,file='output/y.dat')
+      open(unit=8,file='output/x.dat')
+      open(unit=9,file='output/y.dat')
       do k = 1,2*ninner*nbodies + 2*nouter + 3*nbodies
         write(1,1000) den(k)
       enddo
       do k = 1,ninner*nbodies
         write(2,1000) shear_stress(k)
         write(3,1000) pressure(k)
-c        write(8,1000) x(k)
-c        write(9,1000) y(k)
+        write(8,1000) x(k)
+        write(9,1000) y(k)
       enddo
       do k = 1,2*nbodies
         write(4,1000) drag(k)

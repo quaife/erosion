@@ -6,12 +6,10 @@ c     that Stokes paradox is avoided
 
       dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
 c     x and y coordinates of obstacle
-c      dimension xxtar(nntargets),yytar(nntargets)
-cc     x and y coordinates of target locations where velocity and
-cc     pressure need to be evaluted
 
       parameter (nmax = 2**15)
       parameter (maxbodies = 10)
+      parameter (ntargets = 2500)
 c     max points on the boundary of the obstacle      
 c      parameter (ntarmax = 20)
       parameter (maxl = 2000, liwork = 30)
@@ -27,10 +25,10 @@ c     x and y coordinates of the normal of the obstacle
       dimension cur(nmax),speed(nmax)
 c     Jacobian and curvature of the geometry
 
-c      dimension xtar(ntarmax),ytar(ntarmax)
+c      dimension xtar(ntargets),ytar(ntargets)
 cc     Target locations
-c      dimension utar(nntargets),vtar(nntargets)
-c      dimension press_tar(nntargets)
+c      dimension utar(ntargets),vtar(ntargets)
+c      dimension press_tar(ntargets)
 cc     Velocity and pressure at target locations
 
       dimension xouter(nmax),youter(nmax)
@@ -72,6 +70,7 @@ c
       call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
 c     load geometry of initial shape
 
+
 c      open(unit=1,file='output/xinner.dat')
 c      open(unit=2,file='output/yinner.dat')
 c      open(unit=3,file='output/xouter.dat')
@@ -96,6 +95,31 @@ c     load boundary condition
      $      gmwork,lrwork,igwork,liwork,maxl,ifmm)
 c     solve for the density function with GMRES
 
+c      call eval_velocity_targets(ninner,nbodies,
+c     $    x,y,centerx,centery,px,py,speed,
+c     $    nouter,xouter,youter,px0,py0,speed0,den,
+c     $    ntargets,xtar,ytar,utar,vtar,press_tar)
+c
+c      open(unit=1,file='output/xtar.dat')
+c      open(unit=2,file='output/ytar.dat')
+c      open(unit=3,file='output/utar.dat')
+c      open(unit=4,file='output/vtar.dat')
+c      open(unit=5,file='output/presstar.dat')
+c
+c      do k = 1,ntargets
+c        write(1,1000) xtar(k)
+c        write(2,1000) ytar(k)
+c        write(3,1000) utar(k)
+c        write(4,1000) vtar(k)
+c        write(5,1000) press_tar(k)
+c      enddo
+c
+c      close(unit=1)
+c      close(unit=2)
+c      close(unit=3)
+c      close(unit=4)
+c      close(unit=5)
+      
 
 c 1000 format(E25.16)
       end
@@ -1687,7 +1711,7 @@ c***********************************************************************
       subroutine eval_velocity_targets(ninner,nbodies,
      $    x,y,centerx,centery,px,py,speed,
      $    nouter,xouter,youter,px0,py0,speed0,den,
-     $    ntargets,xtar,ytar,xxtar,yytar,utar,vtar,press_tar)
+     $    ntargets,xtar,ytar,utar,vtar,press_tar)
 c     Compute the velocity and pressure at a set of target points xtar
 c     and ytar.  Target points must be sufficiently far away from the
 c     each boundary since no near-singular integration is used.  It is
@@ -1704,14 +1728,29 @@ c     just the vanilla trapezoid rule
       dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
       dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
 
-      dimension xxtar(ntargets),yytar(ntargets)
-      dimension xtar(*),ytar(*)
-      dimension utar(*),vtar(*)
-      dimension press_tar(*)
+      dimension xtar(ntargets),ytar(ntargets)
+      dimension utar(ntargets),vtar(ntargets)
+      dimension press_tar(ntargets)
+      
+      xmin = -3.d-1
+      xmax = 3.d-1
+      ymin = -3.d-1
+      ymax = 3.d-1
+      nx = floor(dsqrt(dble(ntargets)))
+      ny = nx
+      dx = (xmax - xmin)/dble(nx-1)
+      dy = (ymax - ymin)/dble(ny-1)
+
+      icount = 0
+      do j = 1,nx
+        do k = 1,ny 
+          icount = icount + 1 
+          xtar(icount) = xmin + dble(j-1)*dx
+          ytar(icount) = ymin + dble(k-1)*dy
+        enddo
+      enddo
 
       do j = 1,ntargets
-        xtar(j) = xxtar(j)
-        ytar(j) = yytar(j)
         utar(j) = 0.d0
         vtar(j) = 0.d0
         press_tar(j) = 0.d0
@@ -1855,6 +1894,7 @@ c     matvec routine in gmres
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
+      eye = (0.d0,1.d0)
 
       ninner = nninner
       nbodies = nnbodies
@@ -1892,7 +1932,7 @@ c           loop over sources
             dendotn = px0(j)*denx(j) + py0(j)*deny(j)
 
             pressure((itar-1)*ninner + k) = 
-     $        pressure((itar-1)*ninner + k) +
+     $        pressure((itar-1)*ninner + k) + 
      $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
      $        speed0(j)*twopi/dble(nouter)/pi
           enddo
