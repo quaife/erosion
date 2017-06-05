@@ -1,0 +1,57 @@
+% Journal of Computational Sciences
+\documentclass[3p]{elsarticle}
+
+% PACKAGES
+\usepackage{graphicx, amsmath, amssymb, amsfonts, mathtools, mathrsfs, color}
+\usepackage{comment, enumerate, tabularx, multirow}
+\usepackage{natbib, hyperref, url}
+\usepackage{algorithm, algpseudocode, pifont, longtable}
+%\usepackage[justification=RaggedRight]{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COMMANDS
+
+% Basic editing
+\newcommand{\tocite}{{\color{blue}(to cite)}}
+\newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
+\newcommand{\np}{\newpage \noindent}
+\newcommand{\HERE}[1]{ \vsp{#1} {\color{blue} HERE} }
+\newcommand{\tofix}{\color{blue}}
+\newcommand{\new}{}		% \color{green}
+\newcommand{\newa}{}		% \color{red}
+\newcommand{\newb}{}		% \color{blue}
+% Basic math, derivatives
+\newcommand{\td}[2]{\frac{d #1 }{d #2}}
+\newcommand{\ttd}[2]{\frac{d^2 #1 }{{d #2}^2}}
+\newcommand{\pd}[2]{ \frac{ \partial #1}{ \partial #2 } }
+\newcommand{\ppd}[2]{ \frac{ \partial^2 #1}{ {\partial #2}^2 } }
+% Basic math, vectors and other
+\newcommand{\BigO}[1]{ \mathcal{O} \left(#1\right) }
+\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\grad}{\nabla} 
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\tavg}[1]{\langle #1 \rangle}
+\newcommand{\norm}[1]{ \left\| #1 \right\| }
+\newcommand{\ip}[1]{ \langle #1 \rangle }
+% For real and imaginary, could use \Re or \Im, or \mathcal{R}, or \text{Re}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\title{Stokes Erosion}
+\author{M. Nicholas J. Moore}
+%\affiliation{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, FL 32306, USA}
+%\thanks{Email addresses for correspondence: moore@math.fsu.edu, nickmoore83@gmail.com}
+
+\begin{abstract}
+Abstract
+\end{abstract}
+\maketitle
+
+
+Stuff \cite{MooreCPAM2017}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
