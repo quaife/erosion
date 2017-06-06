@@ -1,35 +1,17 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
-%% labeling 
-%%   equations \label{e:equation_name}
-%%   sections  \label{s:section_name}
-%%   tables    \label{t:table_name}
-%%   figures   \label{f:figure_name}
-%%   alagorithms \label{a:algorithm_name}
-%%   Apendix \label{A:appendix_name}
-
-%% for graphs and figures:
-%%    tikz (best) or  one of the following: matlab, xfig, ggplot,
-%%     see: http://www.texample.net/tikz/examples/
-
-
-\input{preambles.tex}
-\usepackage{lineno}
-
 \newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}}
 \newcommand{\secref}[1]{\ref{#1}}
 
+\input{preambles.tex}
 \begin{document}
 
 \title{Methods paper for erosion}
 
-\author[fsu1]{Bryan D.~Quaife} \ead{bquaife@fsu.edu}
-\author[fsu3]{Daryn Sagel} \ead{another email address}
-\author[fsu2]{Matthew N.~J.~Moore}\ead{moore@math.fsu.edu}
-\address[fsu1]{Department of Scientific Computing, Florida State
-University, Tallahassee, FL, 32306.}
-\address[fsu2]{Department of Mathematics, Florida State University,
-Tallahassee, FL, 32306.}
+\author[Nick]{M.~Nicholas J.~Moore}
+\author[Bryan]{Bryan D.~Quaife}
+\address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+\address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
 We consider two dimensional eroding bodies in Stokes flow
@@ -44,43 +26,185 @@ We consider two dimensional eroding bodies in Stokes flow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
+
+This is a methods paper
+\begin{itemize}
+  \item Boundary integral equation formulation
+  \item How we compute the shear stress and pressure
+  \item Multiple bodies
+  \item Avoiding stokes paradox
+  \item $\theta-L$ formulation
+  \item Regularization
+\end{itemize}
+
 \cite{moo-ris-chi-zha-she2013}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation\label{s:formulation}} 
+We consider multiple bodies being eroded by a two-dimensional Stokesian
+fluid.  The Stokes paradox is circumvented by using a rounded-off
+rectangle that encloses the eroding bodies.  Then, the flow is driven
+by a boundary conditions, such as a Hagen-Poiseuille flow, on the
+boundary of the outer geometry \todo[inline]{Need a figure here}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Erosion Model} 
+\todo[inline]{Governing equations}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary Integral Equation Formulation} 
 The incompressible Stokes equations are
 \begin{alignat*}{3}
-  \Delta \uu &= \grad p  \qquad && \xx \in \Omega \\
-  \grad \cdot \uu &= 0   && \xx \in \bd\Omega
+  \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
+  \grad \cdot \uu &= 0,   && \xx \in \Gamma.
 \end{alignat*}
+The viscosity $\mu$ sets the time scale, and we will assume that
+$\mu=1$.  The double-layer potential 
+\begin{align}
+  \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\Gamma} 
+    \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
+    \rr \, ds_\yy, \quad \xx \in \Omega,
+    \label{eqn:dlp}
+\end{align}
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the unit outward
+normal.  The double-layer potential can not capture velocity fields
+corresponding to rigid body motions~\cite{pow-mir1987}.  A standard
+method to complete the double-layer potential is to introduce a
+Stokeslet and rotlet due to each interior body
+\begin{align}
+  S[\llambda_k,\cc_k] = \frac{1}{4\pi} \left(-\log \rho \II + 
+    \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_k
+  \quad \text{and} \quad
+  R[\xi_k,\cc_k] = \frac{\rr^\perp}{\rho^2}\xi_k,
+  \label{eqn:stokeslet_rotlet}
+\end{align}
+where $\cc_k$ is a point in the interior of $\Omega_k$, $\rr = \xx -
+\cc_k$, and $\rr^\perp = (r_2,-r_1)$.  
+
+Then, the solution of the Stokes equations with a Dirichlet boundary
+condition $\ff$ can be written in terms of the completed double-layer
+potential
+\begin{align}
+  \uu(\xx) = \DD[\eeta](\xx) + \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
+              \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Omega,
+  \label{eqn:completedDLP}
+\end{align}
+where the density function, Stokeslets, and rotlets satisfy the
+second-kind integral equation
+\begin{align}
+  \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DD[\eeta](\xx) + 
+      \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
+      \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Gamma, \\
+  \llambda_k &= \frac{1}{2\pi}\int_{\Gamma_k} \eeta(\yy) \, ds_\yy, \\
+  \xi_k &= \frac{1}{2\pi}\int_{\Gamma_k} \yy^\perp \cdot \eeta(\yy)
+  \, ds_\yy.
+  \label{eqn:completed_DLP}
+\end{align}
+Finally, because of the incompressibility constraint, the boundary
+condition must satisfy 
+\begin{align}
+  \int_{\Gamma} \ff \cdot \nn \, ds_\yy = 0.
+\end{align}
+These results in a rank-one null space in
+equation~\eqref{eqn:completed_DLP} which is removed by adding the rank
+one modification $\NN_0[\eeta](\xx) = \int_{\Gamma_0} (\nn(\xx) \times
+\nn(\yy))\nn(\yy) \, ds_\yy$, for $\xx \in \Gamma_0$.
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{$\theta-L$ Formulation} 
+\subsection{Computing the Shear Stress, Pressure, and Drag} 
+The governing equations~\eqref{eqn:} require the shear stress which is
+defined on the boundary of each pore.  We are also interested in
+computing the drag on each pore which requires the pressure.
+
+The shear stress is given by
+\begin{align}
+  \tau = \left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
+  \label{eqn:shearStress}
+\end{align}
+where $\ss$ is the unit tangent vector.  We note that for the Stokes
+equations, because of the no-slip boundary condition on the pores, the
+shear stress is identical to the surface vorticity $\tau = u_y - v_x$.
+However, we use equation~\eqref{eqn:shearStress} to compute the shear
+stress since the jump conditions resulting from the double-layer
+potential are known~\cite{qua-bir2014a}.  In particular, we start by
+first computing the deformation tensor $\ssigma = \frac{1}{2}(\nabla\uu
++ \nabla\uu^T)$ of the double-layer potential~\eqref{eqn:dlp} at $\xx
+\in \Omega$
+\begin{align*}
+  \ssigma(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) \,ds_\yy,
+\end{align*}
+where the kernel $K$ is given by
+\begin{align*}
+  K(\xx,\yy) = \frac{1}{2\pi}\left(
+    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
+    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) +
+    \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
+    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
+  \right).
+\end{align*}
+To compute the shear stress at boundary points $\xx_0 \in \bd\Omega$, we
+require the jump in the shear stress as the target point approaches the
+boundary.  The limiting value is given by
+\begin{align}
+  \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}\sigma(\xx) =
+  J[\eeta](\xx_0) + \ssigma(\xx_0) = 
+  \frac{1}{2}\pderiv{\eeta}{\ss} \cdot \ss
+  \left[ \begin{array}{cc}
+    s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
+  \end{array}\right] + \sigma(\xx_0), \quad \xx_0 \in \Gamma.
+\end{align}
+Finally, adding the deformation tensor due to the Stokeslets and rotlets
+in equation~\eqref{eqn:stokeslet_rotlet}, the deformation tensor of the
+complete double-layer potential formulation~\eqref{eqn:completedDLP} is
+\begin{align}
+  \ssigma(\xx_0) = \frac{\rr \cdot \llambda}{4\pi\rho^2} \left(
+    \II - \frac{2}{\rho^2} \rr \otimes \rr \right) -
+  \frac{\xi}{\rho^4} \left(\rr \otimes \rr^\perp + 
+                           \rr^\perp \otimes \rr \right)
+\end{align}
+\todo[inline]{Put together the whole stress calculation correctly}
+
+
+
 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Method\label{s:method}} 
+\section{Numerical Methods\label{s:method}} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quadrature} 
+There are several integrals that we need to compute including the
+double-layer potential velocity field~\eqref{eqn:dlp}, the shear
+stress~\eqref{}, and the pressure~\eqref{}.  By using carefully choosing
+the quadrature rules, high-order solutions can be computed.  For all the
+integrals, the trapezoid rule is used since it achieves spectral
+accuracy for smooth periodic functions.  However, care must be taken
+when the source point and target points coincide.
+
+For the 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Time Stepping} 
 We use a quasi-static formulation ....
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Preconditioner} 
+\subsection{$\theta-L$ Formulation} 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fast Summation} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Spectrally Accurate Shear Stress} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Artificial Diffusion} 
