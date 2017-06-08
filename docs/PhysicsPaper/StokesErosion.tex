@@ -8,8 +8,8 @@
 \usepackage{algorithm, algpseudocode, pifont, longtable}
 %\usepackage[justification=RaggedRight]{caption}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % COMMANDS
 % Basic editing
 \newcommand{\tocite}{{\color{blue}(to cite)}}
@@ -34,24 +34,40 @@
 \newcommand{\norm}[1]{ \left\| #1 \right\| }
 \newcommand{\ip}[1]{ \langle #1 \rangle }
 % For real and imaginary, could use \Re or \Im, or \mathcal{R}, or \text{Re}
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% TITLE AUTHORS ABSTRACT
 \begin{document}
-\title{Stokes Erosion}
+%\title{An eroding porous medium}
+\title{The development of anisotropy in an eroding porous medium}
+%
 \author[Nick]{M.~Nicholas J.~Moore}
 \author[Bryan]{Bryan D.~Quaife}
 \address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
-
 \begin{abstract}
-Abstract
+We numerically simulate the erosion of a porous medium due to an internally flowing fluid. The solid constituents of the porous medium erode under the action of surface shear stress. As the particles shrink, they elongate in the direction of the flow, giving rise to anisotropic conductivity of the porous medium.
 \end{abstract}
 \maketitle
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+
+\section{Introduction}
+Stuff \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017} and other stuff \cite{Rycroft2016, Mitchell2016}.
 
 
-Stuff \cite{MooreCPAM2017}
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.5 \textwidth]{./Figs/shapes.pdf}
+\caption{
+Shapes.}
+\label{fig1}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+
 
 \bibliographystyle{plain}
 \bibliography{refs}
