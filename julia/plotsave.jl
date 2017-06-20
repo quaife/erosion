@@ -148,7 +148,7 @@ function geom2thlen(infile::AbstractString, outfile::AbstractString)
 		len = invec[npts+1]
 		xsm = invec[npts+2]
 		ysm = invec[npts+3]
-		test_theta(thlenvec[nn].theta)
+		test_theta(theta)
 		writedlm(iostream, [theta; len; xsm; ysm])
 		# Delete theta, len, xsm, ysm
 		deleteat!(invec,1:npts+3)
