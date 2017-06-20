@@ -117,7 +117,8 @@ function readthlenfile(filename::AbstractString)
 		thlenvec[nn].ysm = invec[n2]
 	end
 	return thlenvec
-end# testtheta: Test that the theta vector is reasonable.
+end
+# testtheta: Test that the theta vector is reasonable.
 function testtheta(theta::Vector{Float64})
 	npts = endof(theta)
 	# 1) Make sure that the jump between the endpoints is 2*pi.
@@ -140,4 +141,31 @@ function testtheta(theta::Vector{Float64})
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
+end
+
+function geo2thlen(filename::AbstractString)
+	# Open the input data file.
+	iostream = open(filename, "r")
+	invec = readdlm(iostream)
+	close(iostream)
+	# Extract the number of points and bodies.
+	npts = round(Int,invec[2])
+	nbods = round(Int,invec[3])
+
+#=
+	# Consistency test.
+	nparams = 2
+	vsize = npts + 3
+	# Extract the theta, len, xsm, ysm values.
+	thlenvec = [new_thlen() for nn=1:nbods]
+	for nn=1:nbods
+		n1,n2 = n1n2(vsize,nn)
+		n1 += nparams; n2 += nparams
+		thlenvec[nn].theta = invec[n1:n2-3]
+		testtheta(thlenvec[nn].theta)
+		thlenvec[nn].len = invec[n2-2]
+		thlenvec[nn].xsm = invec[n2-1]
+		thlenvec[nn].ysm = invec[n2]
+	end
+=#
 end
