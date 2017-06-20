@@ -5,38 +5,36 @@
 function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 		datafolder::AbstractString, plotfolder::AbstractString,
 		tt::Float64, cnt::Integer)
-	# Extract the variables of interest.
-	thlenvec = thlenden.thlenvec
-	density = thlenden.density
-
-	# Write the geometry data to a file.
+	# The file names.
 	cntstr = lpad(cnt,4,0)
-	geofile = string(datafolder,"geom",cntstr,".dat")
-	write_geo_data(thlenvec,tt,geofile)
-
-	# HERE: Write the density data to a file.
-
-
-	# Write the parameters to a file.
-	paramsoutfile = string(datafolder,"params.dat")
-	write_param_data(paramsoutfile,paramvec)
-
+	geomfile = string(datafolder,"geom",cntstr,".dat")
+	densityfile = 	string(datafolder,"density",cntstr,".dat")
+	paramfile = string(datafolder,"params.dat")
+	# Write the data to a file.
+	write_data(tt,thlenden,geomfile,densityfile)
+	write_params(paramfile,paramvec)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
-	plot_curves(thlenvec,plotfile)
-	# Plot the pressure.
-	pressure = getpressure(thlenden,params)
 	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
+	pressure = getpressure(thlenden,params)
+	plot_curves(thlenden.thlenvec,plotfile)
 	#plot_pressure(pressure,pressfile)
 end
 
 #--------------- SAVING DATA ---------------#
-# write_geo_data: Write the geometry data (theta,len,xsm,ysm,xx,yy) in a file.
-function write_geo_data(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
+#= write_data: Write the geometry data (theta,len,xsm,ysm,xx,yy) 
+and the density-function data in a file. =#
+function write_data(tt::Float64, thlenden::ThLenDenType, 
+		geomfile::AbstractString, densityfile::AbstractString)
+	# The quantities of interest.
+	thlenvec = thlenden.thlenvec
+	density = thlenden.density
+	# Write the geometry data.
+	iostream = open(geomfile, "w")
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
-	iostream = open(filename, "w")
-	writedlm(iostream, [tt; npts; nbods])
+	label = "# Parameters (time, npts, nbods), then geometry (theta, len, xsm, ysm, x, y) for each body"
+	writedlm(iostream, [label; tt; npts; nbods])
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
 		datavec = [thlenvec[nn].theta; thlenvec[nn].len; 
@@ -45,22 +43,13 @@ function write_geo_data(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::A
 		writedlm(iostream, datavec)
 	end
 	close(iostream)
-end
-
-
-
-
-# write_density_data: Write the density function in a file.
-function write_density_data(density::Vector{Float64}, tt::Float64, filename::AbstractString)
-	iostream = open(filename, "w")
+	# Write the density data.
+	iostream = open(densityfile, "w")
 	writedlm(iostream, [tt; density])
+	close(iostream)
 end
-
-
-
-
-# write_param_data: Write the important parameters in an output file.
-function write_param_data(filename::AbstractString, paramvec::Array)
+# write_params: Write the important parameters in an output file.
+function write_params(filename::AbstractString, paramvec::Array)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
 	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]
@@ -161,33 +150,4 @@ function test_theta(theta::Vector{Float64})
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
-end
-
-
-# TO FINISH: Convert geo data file to just the thlen vector.
-function geo2thlen(filename::AbstractString)
-	# Open the input data file.
-	iostream = open(filename, "r")
-	invec = readdlm(iostream)
-	close(iostream)
-	# Extract the number of points and bodies.
-	npts = round(Int,invec[2])
-	nbods = round(Int,invec[3])
-
-#=
-	# Consistency test.
-	nparams = 2
-	vsize = npts + 3
-	# Extract the theta, len, xsm, ysm values.
-	thlenvec = [new_thlen() for nn=1:nbods]
-	for nn=1:nbods
-		n1,n2 = n1n2(vsize,nn)
-		n1 += nparams; n2 += nparams
-		thlenvec[nn].theta = invec[n1:n2-3]
-		testtheta(thlenvec[nn].theta)
-		thlenvec[nn].len = invec[n2-2]
-		thlenvec[nn].xsm = invec[n2-1]
-		thlenvec[nn].ysm = invec[n2]
-	end
-=#
 end
