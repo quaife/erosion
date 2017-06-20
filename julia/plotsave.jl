@@ -9,15 +9,15 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	thlenvec = thlenden.thlenvec
 	density = thlenden.density
 
-	# Save the geometry data.
+	# Write the geometry data to a file.
 	cntstr = lpad(cnt,4,0)
 	geofile = string(datafolder,"geom",cntstr,".dat")
 	write_geo_data(thlenvec,tt,geofile)
 
-	# Save the density data.
+	# HERE: Write the density data to a file.
 
 
-	# Save the parameters.
+	# Write the parameters to a file.
 	paramsoutfile = string(datafolder,"params.dat")
 	write_param_data(paramsoutfile,paramvec)
 
@@ -31,7 +31,7 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 end
 
 #--------------- SAVING DATA ---------------#
-# savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
+# write_geo_data: Write the geometry data (theta,len,xsm,ysm,xx,yy) in a file.
 function write_geo_data(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
@@ -46,7 +46,20 @@ function write_geo_data(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::A
 	end
 	close(iostream)
 end
-# paramsout: Save important parameters in an output file.
+
+
+
+
+# write_density_data: Write the density function in a file.
+function write_density_data(density::Vector{Float64}, tt::Float64, filename::AbstractString)
+	iostream = open(filename, "w")
+	writedlm(iostream, [tt; density])
+end
+
+
+
+
+# write_param_data: Write the important parameters in an output file.
 function write_param_data(filename::AbstractString, paramvec::Array)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
