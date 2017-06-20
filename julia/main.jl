@@ -10,26 +10,19 @@ include("plotsave.jl")
 
 # erosion: The main routine to erode a group of bodies.
 function erosion()
-	# Get the input geometry and parameters.
-	thlenden0,params,paramvec,nsteps,nout = getparams()
-
-
-	# Create the folders for saving the data and plotting figures
-	datafolder = "../datafiles/run/"; newfolder(datafolder)
-	plotfolder = "../figs/"; newfolder(plotfolder)
-	paramsoutfile = string(datafolder,"params.dat")
+	# Get the input geometry, parameters, and other stuff.
+	thlenden0,params,paramvec,nsteps,nout,datafolder,plotfolder = startup()
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
 	thlenden1 = RKstarter!(thlenden0, params)
 	plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,0.,0)
-
 	# Enter the time loop to use the multi-step method.
 	nfile = 1
 	for nn = 1:nsteps
 		getstress!(thlenden1,params)
 		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
-		# Note: Save thlenden0 bc thlenden1 does not yet have the density function computed.
+		# Note: Save thlenden0 because thlenden1 does not yet have the density-function computed.
 		if mod(nn,nout)==0
 			tt = nn*params.dt
 			paramvec[end] = (time()-t0)/60.
@@ -40,7 +33,7 @@ function erosion()
 	return
 end
 
-function getparams()
+function startup()
 	# Read the parameters file.
 	iostream = open("params.dat", "r")
 	paramvecin = readdlm(iostream)[:,1]
@@ -59,8 +52,13 @@ function getparams()
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	dtoutexact = cntout*dt
-	# Save params and paramvec
+	# Save params and paramvec.
 	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea)
 	paramvec = [paramvecin; dtoutexact; cntout; 0.]
-	return thlenden0,params,paramvec,nsteps,cntout
+	# Create the folders for saving the data and plotting figures.
+	datafolder = "../datafiles/run/" 
+	newfolder(datafolder)
+	plotfolder = "../figs/" 
+	newfolder(plotfolder)
+	return thlenden0,params,paramvec,nsteps,cntout,datafolder,plotfolder
 end

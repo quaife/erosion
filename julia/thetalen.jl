@@ -22,7 +22,7 @@ function cdfscale(len::Float64)
 	return -1./log(0.5*tanh(2*len))
 end
 
-#################### Multistep routines ####################
+#--------------- MULTISTEP METHOD ---------------#
 # advance_thetalen!: Dispatch for ThLenDenType.
 function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
 	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
@@ -131,7 +131,7 @@ function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaL
 	deleteat!(thlenvec1,zind)
 end
 
-#################### Converting between x,y and theta,len ####################
+#--------------- OTHER ---------------#
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
 	# Only compute xx and yy if they are not already loaded in thlen.

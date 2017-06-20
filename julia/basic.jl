@@ -1,6 +1,6 @@
 # basic.jl: Basic routines such as datatypes and Stokes solvers.
 
-#################### Object data types ####################
+#--------------- OBJECTS ---------------#
 # ParamType: includes the parameters dt, epsilon, sigma, etc.
 type ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; nouter::Int; ifmm::Int; fixarea::Int;
@@ -46,7 +46,7 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	return
 end
 
-#################### Call Fortran routines ####################
+#--------------- FORTRAN WRAPPERS ---------------#
 # getstress! Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau.
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density only if not done already.
@@ -108,7 +108,7 @@ function getpressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{F
 	return pressure
 end
 
-#################### Little Routines ####################
+#--------------- OTHER ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	npts,nbods = getnvals(thlenden.thlenvec)
