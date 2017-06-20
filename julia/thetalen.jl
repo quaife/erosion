@@ -143,7 +143,7 @@ end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
-	testtheta(theta)
+	test_theta(theta)
 	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
