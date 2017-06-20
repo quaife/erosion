@@ -110,11 +110,12 @@ function read_thlen_file(filename::AbstractString)
 	# Consistency test.
 	assert( endof(invec) == nbods*(npts+3))
 	# Extract thlenvec for each body.
+	thlenvec = new_thlenvec(nbods)
 	for nn=1:nbods
-		thlenvec[nn].theta = datavec[1:npts]
-		thlenvec[nn].len = datavec[npts+1]
-		thlenvec[nn].xsm = datavec[npts+2]
-		thlenvec[nn].ysm = datavec[npts+3]
+		thlenvec[nn].theta = invec[1:npts]
+		thlenvec[nn].len = invec[npts+1]
+		thlenvec[nn].xsm = invec[npts+2]
+		thlenvec[nn].ysm = invec[npts+3]
 		test_theta(thlenvec[nn].theta)
 		deleteat!(invec,1:npts+3)
 	end
