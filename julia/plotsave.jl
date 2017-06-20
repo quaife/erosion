@@ -108,25 +108,26 @@ function read_thlen_file(filename::AbstractString)
 	# Extract the number of points and bodies.
 	npts = round(Int,invec[1])
 	nbods = round(Int,invec[2])
+	deleteat!(invec,1:2)
 	# Consistency test.
-	nparams = 2
-	vsize = npts + 3
-	if (endof(invec) != vsize*nbods+nparams)
+	vecsize = nobds*(npts+3)
+	if (endof(invec) != vecsize)
 		throw("Inconsistency in the data file."); return
 	end
-	# Extract the theta, len, xsm, ysm values.
-	thlenvec = [new_thlen() for nn=1:nbods]
+	# Extract thlenvec for each body.
 	for nn=1:nbods
-		n1,n2 = n1n2(vsize,nn)
-		n1 += nparams; n2 += nparams
-		thlenvec[nn].theta = invec[n1:n2-3]
+		thlenvec[nn].theta = datavec[1:npts]
+		thlenvec[nn].len = datavec[npts+1]
+		thlenvec[nn].xsm = datavec[npts+2]
+		thlenvec[nn].ysm = datavec[npts+3]
 		test_theta(thlenvec[nn].theta)
-		thlenvec[nn].len = invec[n2-2]
-		thlenvec[nn].xsm = invec[n2-1]
-		thlenvec[nn].ysm = invec[n2]
+		deleteat!(invec,1:npts+3)
 	end
 	return thlenvec
 end
+
+
+
 # testtheta: Test that the theta vector is reasonable.
 function test_theta(theta::Vector{Float64})
 	npts = endof(theta)
@@ -150,4 +151,34 @@ function test_theta(theta::Vector{Float64})
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
+end
+
+
+# HERE
+function geom2thlen(filename::AbstractString)
+	# Open the input data file.
+	iostream = open(filename, "r")
+	invec = readdlm(iostream)
+	close(iostream)
+	# Extract the parameters.
+	tt = invec[1]
+	npts = round(Int,invec[2])
+	nbods = round(Int,invec[3])
+
+
+	cnt = 4
+	for bodn=1:nbods
+
+		bodn
+		data = invec[]
+
+#=
+	nparams = 3
+	vsize = 3*npts + 3
+	# Extract ....
+	for nn=1:nbods
+		n1,n2 = n1n2(vsize,nn)
+		n1 += nparams; n2 += nparams
+=#
+
 end

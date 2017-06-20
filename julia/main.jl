@@ -39,8 +39,8 @@ function startup()
 	paramvecin = readdlm(iostream)[:,1]
 	close(iostream)
 	# Read the input geometry file.
-	geoinfile = string(paramvecin[1])
-	thlenvec0 = read_thlen_file(string("../datafiles/",geoinfile))
+	geoinfile = string("../datafiles/",paramvecin[1])
+	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = ThLenDenType(thlenvec0,evec())
 	# Read the other parameters and calculate needed quantities.
 	nouter,tfin,dtout,dtfac,epsfac,sigfac,ifmm,fixarea = paramvecin[2:9]
