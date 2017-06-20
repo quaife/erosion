@@ -2,21 +2,25 @@
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenden::ThLenDenType, params::ParamType, 
-		datafolder::AbstractString, plotfolder::AbstractString, 
+function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
+		datafolder::AbstractString, plotfolder::AbstractString,
 		tt::Float64, cnt::Integer)
-	thlenvec = thlenden.thlenvec
 	# Save the data.
+	thlenvec = thlenden.thlenvec
 	cntstr = lpad(cnt,4,0)
 	savefile = string(datafolder,"geom",cntstr,".dat")
 	savedata(thlenvec,tt,savefile)
+	# Save the parameters.
+	paramsoutfile = string(datafolder,"params.dat")
+	writeparams(paramsoutfile,paramvec)
+
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	plotcurves(thlenvec,plotfile)
 	# Plot the pressure.
 	pressure = getpressure(thlenden,params)
 	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
-	plotpressure(pressure,pressfile)
+	#plotpressure(pressure,pressfile)
 end
 
 #--------------- SAVING DATA ---------------#
@@ -44,36 +48,12 @@ function writeparams(filename::AbstractString, paramvec::Array)
 	writedlm(iostream, writevec)
 	close(iostream)
 end
-
-#--------------- READING DATA ---------------#
-# readthlenfile: Reads the geometry from a data file.
-# The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
-function readthlenfile(filename::AbstractString)
-	# Open the input data file.
-	iostream = open(filename, "r")
-	invec = readdlm(iostream)
-	close(iostream)
-	# Extract the number of points and bodies.
-	npts = round(Int,invec[1])
-	nbods = round(Int,invec[2])
-	# Consistency test.
-	nparams = 2
-	vsize = npts + 3
-	if (endof(invec) != vsize*nbods+nparams)
-		throw("Inconsistency in the data file."); return
+# newfolder: If the folder exists, delete it and create a new one.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername)
+		rm(foldername; recursive=true)
 	end
-	# Extract the theta, len, xsm, ysm values.
-	thlenvec = [new_thlen() for nn=1:nbods]
-	for nn=1:nbods
-		n1,n2 = n1n2(vsize,nn)
-		n1 += nparams; n2 += nparams
-		thlenvec[nn].theta = invec[n1:n2-3]
-		testtheta(thlenvec[nn].theta)
-		thlenvec[nn].len = invec[n2-2]
-		thlenvec[nn].xsm = invec[n2-1]
-		thlenvec[nn].ysm = invec[n2]
-	end
-	return thlenvec
+	mkdir(foldername)
 end
 
 #--------------- PLOTTING DATA ---------------#
@@ -108,8 +88,36 @@ function plotpressure(pressure::Vector{Float64}, figname::AbstractString)
 	savefig(pp, figname, width=width, height=height)
 end
 
-
-# testtheta: Test that the theta vector is reasonable.
+#--------------- READING DATA ---------------#
+# readthlenfile: Reads the geometry from a data file.
+# The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
+function readthlenfile(filename::AbstractString)
+	# Open the input data file.
+	iostream = open(filename, "r")
+	invec = readdlm(iostream)
+	close(iostream)
+	# Extract the number of points and bodies.
+	npts = round(Int,invec[1])
+	nbods = round(Int,invec[2])
+	# Consistency test.
+	nparams = 2
+	vsize = npts + 3
+	if (endof(invec) != vsize*nbods+nparams)
+		throw("Inconsistency in the data file."); return
+	end
+	# Extract the theta, len, xsm, ysm values.
+	thlenvec = [new_thlen() for nn=1:nbods]
+	for nn=1:nbods
+		n1,n2 = n1n2(vsize,nn)
+		n1 += nparams; n2 += nparams
+		thlenvec[nn].theta = invec[n1:n2-3]
+		testtheta(thlenvec[nn].theta)
+		thlenvec[nn].len = invec[n2-2]
+		thlenvec[nn].xsm = invec[n2-1]
+		thlenvec[nn].ysm = invec[n2]
+	end
+	return thlenvec
+end# testtheta: Test that the theta vector is reasonable.
 function testtheta(theta::Vector{Float64})
 	npts = endof(theta)
 	# 1) Make sure that the jump between the endpoints is 2*pi.
@@ -133,14 +141,3 @@ function testtheta(theta::Vector{Float64})
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
 end
-
-
-# newfolder: If the folder exists, delete it and create a new one.
-function newfolder(foldername::AbstractString)
-	if isdir(foldername)
-		rm(foldername; recursive=true)
-	end
-	mkdir(foldername)
-end
-
-

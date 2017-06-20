@@ -12,29 +12,28 @@ include("plotsave.jl")
 function erosion()
 	# Get the input geometry and parameters.
 	thlenden0,params,paramvec,nsteps,nout = getparams()
-	dt = params.dt
+
+
 	# Create the folders for saving the data and plotting figures
 	datafolder = "../datafiles/run/"; newfolder(datafolder)
 	plotfolder = "../figs/"; newfolder(plotfolder)
 	paramsoutfile = string(datafolder,"params.dat")
-	nfile = 1
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
 	thlenden1 = RKstarter!(thlenden0, params)
-	plotnsave(thlenden0,params,datafolder,plotfolder,0.,0)
+	plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,0.,0)
+
 	# Enter the time loop to use the multi-step method.
+	nfile = 1
 	for nn = 1:nsteps
 		getstress!(thlenden1,params)
 		advance_thetalen!(thlenden1,thlenden0,params)
 		# Plot and save the data when appropriate.
+		# Note: Save thlenden0 bc thlenden1 does not yet have the density function computed.
 		if mod(nn,nout)==0
-			# Plot and save the data in thlenden0
-			# Note: thlenden1 does not yet have the density function computed.
-			tt = nn*dt
-			plotnsave(thlenden0,params,datafolder,plotfolder,tt,nfile)
-			# Time the computation and write it to the params file.
+			tt = nn*params.dt
 			paramvec[end] = (time()-t0)/60.
-			writeparams(paramsoutfile,paramvec)
+			plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,tt,nfile)
 			nfile += 1
 		end
 	end
@@ -44,7 +43,7 @@ end
 function getparams()
 	# Read the parameters file.
 	iostream = open("params.dat", "r")
-	paramvecin = readdlm(iostream)
+	paramvecin = readdlm(iostream)[:,1]
 	close(iostream)
 	# Read the input geometry file.
 	geoinfile = string(paramvecin[1])
