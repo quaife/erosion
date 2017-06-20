@@ -5,13 +5,11 @@ function fftnice(fx::Vector)
 	fh = fft(fx)
 	return fftshift(fh)
 end
-
 # ifftnice: shifted ifft.
 function ifftnice(fh::Vector)
 	fhsh = ifftshift(fh)
 	return ifft(fhsh)
 end
-
 # kvec: Construct the vector of k values.
 # In the even case, sets the highest mode to zero or not depending on hmode.
 function kvec(nn::Integer, hmode=0)
@@ -23,7 +21,6 @@ function kvec(nn::Integer, hmode=0)
 		return -nsm : nsm
 	end
 end
-
 # imagtest: Test that the imaginary part is negligible.
 function imagtest(fx::Vector, thold::Float64=1e-10)
 	maxim = maxabs(imag(fx))
@@ -32,7 +29,6 @@ function imagtest(fx::Vector, thold::Float64=1e-10)
 	end
 	return
 end
-
 #= specdiff: Compute the derivative of fx spectrally.
 Default: assumes that the length of the interval is 1.0 =#
 function specdiff(fx::Vector, intvlen::Float64=1.0)	
@@ -43,7 +39,6 @@ function specdiff(fx::Vector, intvlen::Float64=1.0)
 	imagtest(df)
 	return real(df)/intvlen
 end
-
 #= specint: Compute the antiderivative of fx spectrally.
 Assumes that the input fx has mean-zero and 
 forces the output Fx to have mean-zero. =#
@@ -57,7 +52,6 @@ function specint(fx::Vector, intvlen::Float64=1.0)
 	imagtest(Fx)
 	return real(Fx)*intvlen	
 end
-
 # gaussfilter: Apply a Gaussian filter of width sigma.
 function gaussfilter(fx::Vector, sigma::Float64)
 	fh = fftnice(fx)

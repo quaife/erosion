@@ -159,3 +159,8 @@ function getnormals(theta::Vector{Float64})
 	ny = cos(theta)
 	return nx, ny 
 end
+# getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
+function getalpha(npts::Integer)
+	dalpha = 1.0/npts
+	return alpha = collect(range(0.5*dalpha, dalpha, npts))
+end

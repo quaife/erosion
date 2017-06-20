@@ -45,7 +45,6 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.ysmdot = thlen1.ysmdot
 	return
 end
-##########################################################
 
 #################### Call Fortran routines ####################
 # getstress! Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau.
@@ -108,7 +107,6 @@ function getpressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{F
 		&npts, &nbods, &nouter, xx, yy, density, pressure)
 	return pressure
 end
-
 
 #################### Little Routines ####################
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
