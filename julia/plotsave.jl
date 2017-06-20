@@ -5,14 +5,21 @@
 function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 		datafolder::AbstractString, plotfolder::AbstractString,
 		tt::Float64, cnt::Integer)
-	# Save the data.
+	# Extract the variables of interest.
 	thlenvec = thlenden.thlenvec
+	density = thlenden.density
+
+	# Save the geometry data.
 	cntstr = lpad(cnt,4,0)
-	savefile = string(datafolder,"geom",cntstr,".dat")
-	savedata(thlenvec,tt,savefile)
+	geofile = string(datafolder,"geom",cntstr,".dat")
+	write_geo_data(thlenvec,tt,geofile)
+
+	# Save the density data.
+
+
 	# Save the parameters.
 	paramsoutfile = string(datafolder,"params.dat")
-	writeparams(paramsoutfile,paramvec)
+	write_param_data(paramsoutfile,paramvec)
 
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
@@ -25,7 +32,7 @@ end
 
 #--------------- SAVING DATA ---------------#
 # savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
-function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
+function write_geo_data(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
 	nbods = endof(thlenvec)
 	npts = endof(thlenvec[1].theta)
 	iostream = open(filename, "w")
@@ -40,7 +47,7 @@ function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::Abstrac
 	close(iostream)
 end
 # paramsout: Save important parameters in an output file.
-function writeparams(filename::AbstractString, paramvec::Array)
+function write_param_data(filename::AbstractString, paramvec::Array)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
 	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]
@@ -58,7 +65,7 @@ end
 
 #--------------- PLOTTING DATA ---------------#
 # plotcurve: Plot multiple curves from the theta-len values.
-function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
+function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
 	# Make figure of given height and preserve the aspect ratio.
 	axlims = [1.0,1.0]
 	height = 400
@@ -78,7 +85,7 @@ function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 	savefig(pp, figname, width=width, height=height)
 	return
 end
-function plotpressure(pressure::Vector{Float64}, figname::AbstractString)
+function plot_pressure(pressure::Vector{Float64}, figname::AbstractString)
 	# Make figure of given height and preserve the aspect ratio.
 	height = 400
 	width = 600
@@ -91,7 +98,7 @@ end
 #--------------- READING DATA ---------------#
 # readthlenfile: Reads the geometry from a data file.
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
-function readthlenfile(filename::AbstractString)
+function read_thlen_file(filename::AbstractString)
 	# Open the input data file.
 	iostream = open(filename, "r")
 	invec = readdlm(iostream)
@@ -111,7 +118,7 @@ function readthlenfile(filename::AbstractString)
 		n1,n2 = n1n2(vsize,nn)
 		n1 += nparams; n2 += nparams
 		thlenvec[nn].theta = invec[n1:n2-3]
-		testtheta(thlenvec[nn].theta)
+		test_theta(thlenvec[nn].theta)
 		thlenvec[nn].len = invec[n2-2]
 		thlenvec[nn].xsm = invec[n2-1]
 		thlenvec[nn].ysm = invec[n2]
@@ -119,7 +126,7 @@ function readthlenfile(filename::AbstractString)
 	return thlenvec
 end
 # testtheta: Test that the theta vector is reasonable.
-function testtheta(theta::Vector{Float64})
+function test_theta(theta::Vector{Float64})
 	npts = endof(theta)
 	# 1) Make sure that the jump between the endpoints is 2*pi.
 	# Linear extrapolation to estimate theta at alpha=0 from both sides.
@@ -143,6 +150,8 @@ function testtheta(theta::Vector{Float64})
 	end
 end
 
+
+# TO FINISH: Convert geo data file to just the thlen vector.
 function geo2thlen(filename::AbstractString)
 	# Open the input data file.
 	iostream = open(filename, "r")
