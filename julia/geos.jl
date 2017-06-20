@@ -1,6 +1,6 @@
 # geos.jl
+# Geometry routines
 
-#################### Geometry routines ####################
 # circgeo: Creates a circle.
 function circgeo(npts::Integer, rad::Float64, xsm::Float64=0.0, ysm::Float64=0.0)
 	thlen = new_thlen()

@@ -1,39 +1,51 @@
 # misc.jl
+# IO routines for plotting and saving data.
 
-#################### Plotting routines ####################
-# plotcurve: Plot multiple curves from the theta-len values.
-function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
-	# Make figure of given height and preserve the aspect ratio.
-	axlims = [1.0,1.0]
-	height = 400
-	width = axlims[1]/axlims[2]*height
-	pp = plot()
-	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
-	for ii = 1:endof(thlenvec)
-		thlen = thlenvec[ii]
-		if thlen.len<=0
-			throw("Cannot plot a curve with non-positive length.")
-		end
-		getxy!(thlen)
-		xx, yy = thlen.xx, thlen.yy
-		pp = oplot(xx,yy,"-")
+# plotnsave: Calls plotcurves() and savedata()
+function plotnsave(thlenden::ThLenDenType, params::ParamType, 
+		datafolder::AbstractString, plotfolder::AbstractString, 
+		tt::Float64, cnt::Integer)
+	thlenvec = thlenden.thlenvec
+	# Save the data.
+	cntstr = lpad(cnt,4,0)
+	savefile = string(datafolder,"geom",cntstr,".dat")
+	savedata(thlenvec,tt,savefile)
+	# Plot the shapes.
+	plotfile = string(plotfolder,"shape",cntstr,".pdf")
+	plotcurves(thlenvec,plotfile)
+	# Plot the pressure.
+	pressure = getpressure(thlenden,params)
+	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
+	plotpressure(pressure,pressfile)
+end
+
+#--------------- SAVING DATA ---------------#
+# savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
+function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
+	nbods = endof(thlenvec)
+	npts = endof(thlenvec[1].theta)
+	iostream = open(filename, "w")
+	writedlm(iostream, [tt; npts; nbods])
+	for nn=1:nbods
+		getxy!(thlenvec[nn])
+		datavec = [thlenvec[nn].theta; thlenvec[nn].len; 
+			thlenvec[nn].xsm; thlenvec[nn].ysm; 
+			thlenvec[nn].xx; thlenvec[nn].yy]
+		writedlm(iostream, datavec)
 	end
-	# Save the figure in a file.
-	savefig(pp, figname, width=width, height=height)
-	return
+	close(iostream)
+end
+# paramsout: Save important parameters in an output file.
+function writeparams(filename::AbstractString, paramvec::Array)
+	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
+	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
+	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]
+	iostream = open(filename, "w")
+	writedlm(iostream, writevec)
+	close(iostream)
 end
 
-function plotpressure(pressure::Vector{Float64}, figname::AbstractString)
-	# Make figure of given height and preserve the aspect ratio.
-	height = 400
-	width = 600
-	pp = plot()
-	# Plot the pressure
-	pp = plot(pressure)
-	savefig(pp, figname, width=width, height=height)
-end
-
-#################### Data IO routines ####################
+#--------------- READING DATA ---------------#
 # readthlenfile: Reads the geometry from a data file.
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
 function readthlenfile(filename::AbstractString)
@@ -63,6 +75,40 @@ function readthlenfile(filename::AbstractString)
 	end
 	return thlenvec
 end
+
+#--------------- PLOTTING DATA ---------------#
+# plotcurve: Plot multiple curves from the theta-len values.
+function plotcurves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
+	# Make figure of given height and preserve the aspect ratio.
+	axlims = [1.0,1.0]
+	height = 400
+	width = axlims[1]/axlims[2]*height
+	pp = plot()
+	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
+	for ii = 1:endof(thlenvec)
+		thlen = thlenvec[ii]
+		if thlen.len<=0
+			throw("Cannot plot a curve with non-positive length.")
+		end
+		getxy!(thlen)
+		xx, yy = thlen.xx, thlen.yy
+		pp = oplot(xx,yy,"-")
+	end
+	# Save the figure in a file.
+	savefig(pp, figname, width=width, height=height)
+	return
+end
+function plotpressure(pressure::Vector{Float64}, figname::AbstractString)
+	# Make figure of given height and preserve the aspect ratio.
+	height = 400
+	width = 600
+	pp = plot()
+	# Plot the pressure
+	pp = plot(pressure)
+	savefig(pp, figname, width=width, height=height)
+end
+
+
 # testtheta: Test that the theta vector is reasonable.
 function testtheta(theta::Vector{Float64})
 	npts = endof(theta)
@@ -87,38 +133,8 @@ function testtheta(theta::Vector{Float64})
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
 end
-# savedata: Save the all of the data (theta,len,xsm,ysm,xx,yy) in a file.
-function savedata(thlenvec::Vector{ThetaLenType}, tt::Float64, filename::AbstractString)
-	nbods = endof(thlenvec)
-	npts = endof(thlenvec[1].theta)
-	iostream = open(filename, "w")
-	writedlm(iostream, [tt; npts; nbods])
-	for nn=1:nbods
-		getxy!(thlenvec[nn])
-		datavec = [thlenvec[nn].theta; thlenvec[nn].len; 
-			thlenvec[nn].xsm; thlenvec[nn].ysm; 
-			thlenvec[nn].xx; thlenvec[nn].yy]
-		writedlm(iostream, datavec)
-	end
-	close(iostream)
-end
-# plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenden::ThLenDenType, params::ParamType, 
-		datafolder::AbstractString, plotfolder::AbstractString, 
-		tt::Float64, cnt::Integer)
-	thlenvec = thlenden.thlenvec
-	# Save the data.
-	cntstr = lpad(cnt,4,0)
-	savefile = string(datafolder,"geom",cntstr,".dat")
-	savedata(thlenvec,tt,savefile)
-	# Plot the shapes.
-	plotfile = string(plotfolder,"shape",cntstr,".pdf")
-	plotcurves(thlenvec,plotfile)
-	# Plot the pressure.
-	pressure = getpressure(thlenden,params)
-	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
-	plotpressure(pressure,pressfile)
-end
+
+
 # newfolder: If the folder exists, delete it and create a new one.
 function newfolder(foldername::AbstractString)
 	if isdir(foldername)
@@ -126,13 +142,5 @@ function newfolder(foldername::AbstractString)
 	end
 	mkdir(foldername)
 end
-# paramsout: Save important parameters in an output file.
-function writeparams(filename::AbstractString, paramvec::Array)
-	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
-	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
-	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]
-	iostream = open(filename, "w")
-	writedlm(iostream, writevec)
-	close(iostream)
-end
+
 

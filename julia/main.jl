@@ -5,7 +5,7 @@ include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("RKstarter.jl")
-include("misc.jl")
+include("plotsave.jl")
 ##################################################
 
 # erosion: The main routine to erode a group of bodies.
