@@ -98,6 +98,13 @@ function plot_pressure(pressure::Vector{Float64}, figname::AbstractString)
 end
 
 #--------------- READING DATA ---------------#
+# readvec: Read a vector from a data file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream)[:,1]
+	close(iostream)
+	return invec
+end
 # readthlenfile: Reads the geometry from a data file.
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
 function read_thlen_file(filename::AbstractString)
@@ -121,66 +128,32 @@ function read_thlen_file(filename::AbstractString)
 	end
 	return thlenvec
 end
-# readvec: Read a vector from a data file.
-function readvec(filename::AbstractString)
-	iostream = open(filename, "r")
-	invec = readdlm(iostream)[:,1]
-	close(iostream)
-	return invec
-end
-
-
-# testtheta: Test that the theta vector is reasonable.
-function test_theta(theta::Vector{Float64})
-	npts = endof(theta)
-	# 1) Make sure that the jump between the endpoints is 2*pi.
-	# Linear extrapolation to estimate theta at alpha=0 from both sides.
-	th0left = 1.5*theta[end] - 0.5*theta[end-1] - 2*pi
-	th0right = 1.5*theta[1] - 0.5*theta[2]
-	# Compare the two extrpaolations.
-	th0diff = abs(th0left - th0right)
-	thresh = 0.2
-	if th0diff > thresh
-		throw(string("Unacceptable theta vector, ", 
-			"the endpoints do not match: ", signif(th0diff,3), " > ", signif(thresh,3) ))
-	end
-	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
-	m1 = mean(cos(theta))
-	m2 = mean(sin(theta))
-	maxmean = maximum(abs([m1,m2]))
-	thresh = 20./npts
-	if maxmean > thresh
-		throw(string("Unacceptable theta vector, ",
-			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
-	end
-end
-
-
-# HERE
-function geom2thlen(filename::AbstractString)
-	# Open the input data file.
-	iostream = open(filename, "r")
-	invec = readdlm(iostream)
-	close(iostream)
+# geom2thlen: Convert a geom.dat file to thlen.in file.
+function geom2thlen(infile::AbstractString, outfile::AbstractString)
+	# Read the data file.
+	invec = readvec(infile)
 	# Extract the parameters.
 	tt = invec[1]
 	npts = round(Int,invec[2])
 	nbods = round(Int,invec[3])
-
-
-#=	cnt = 4
-	for bodn=1:nbods
-
-		bodn
-		data = invec[]
-=#
-#=
-	nparams = 3
-	vsize = 3*npts + 3
-	# Extract ....
+	deleteat!(invec,1:3)
+	# Consistency test.
+	assert( endof(invec) == nbods*(3*npts+3))
+	# Start to write data.
+	iostream = open(outfile, "w")
+	writedlm(iostream, [npts; nbods])
+	# Write theta, len, xsm, ysm to outfile and skip over xx and yy.
 	for nn=1:nbods
-		n1,n2 = n1n2(vsize,nn)
-		n1 += nparams; n2 += nparams
-=#
-
+		theta = invec[1:npts]
+		len = invec[npts+1]
+		xsm = invec[npts+2]
+		ysm = invec[npts+3]
+		test_theta(thlenvec[nn].theta)
+		writedlm(iostream, [theta; len; xsm; ysm])
+		# Delete theta, len, xsm, ysm
+		deleteat!(invec,1:npts+3)
+		# Delete xx and yy too.
+		deleteat!(invec,1:2*npts)
+	end
+	close(iostream)
 end
