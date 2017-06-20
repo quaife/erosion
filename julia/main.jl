@@ -35,9 +35,7 @@ end
 
 function startup()
 	# Read the parameters file.
-	iostream = open("params.dat", "r")
-	paramvecin = readdlm(iostream)[:,1]
-	close(iostream)
+	paramvecin = readvec("params.dat")
 	# Read the input geometry file.
 	geoinfile = string("../datafiles/",paramvecin[1])
 	thlenvec0 = read_thlen_file(geoinfile)

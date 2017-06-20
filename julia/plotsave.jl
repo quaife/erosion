@@ -101,19 +101,14 @@ end
 # readthlenfile: Reads the geometry from a data file.
 # The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
 function read_thlen_file(filename::AbstractString)
-	# Open the input data file.
-	iostream = open(filename, "r")
-	invec = readdlm(iostream)
-	close(iostream)
+	# Read the data file.
+	invec = readvec(filename)
 	# Extract the number of points and bodies.
 	npts = round(Int,invec[1])
 	nbods = round(Int,invec[2])
 	deleteat!(invec,1:2)
 	# Consistency test.
-	vecsize = nobds*(npts+3)
-	if (endof(invec) != vecsize)
-		throw("Inconsistency in the data file."); return
-	end
+	assert( endof(invec) == nbods*(npts+3))
 	# Extract thlenvec for each body.
 	for nn=1:nbods
 		thlenvec[nn].theta = datavec[1:npts]
@@ -125,7 +120,13 @@ function read_thlen_file(filename::AbstractString)
 	end
 	return thlenvec
 end
-
+# readvec: Read a vector from a data file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream)[:,1]
+	close(iostream)
+	return invec
+end
 
 
 # testtheta: Test that the theta vector is reasonable.
@@ -166,12 +167,12 @@ function geom2thlen(filename::AbstractString)
 	nbods = round(Int,invec[3])
 
 
-	cnt = 4
+#=	cnt = 4
 	for bodn=1:nbods
 
 		bodn
 		data = invec[]
-
+=#
 #=
 	nparams = 3
 	vsize = 3*npts + 3
