@@ -1,12 +1,10 @@
 # main.jl: The main routines to call
-#################### Includes ####################
 using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("RKstarter.jl")
 include("plotsave.jl")
-##################################################
 
 # erosion: The main routine to erode a group of bodies.
 function erosion()
@@ -64,17 +62,31 @@ function startup()
 	return thlenden0,params,paramvec,nsteps,cntout,datafolder,plotfolder
 end
 
-
+# postprocess:
 function postprocess(foldername::AbstractString)
+	# Define the data folder.
 	datafolder = string("../datafiles/",foldername)
-#=
-	ntimes = ???
-	for nn=1:ntimes
-		cntstr = lpad(cnt,4,0)
-		densityfile = string(datafolder,"density",cntstr,".dat")
+	# Read the params data file.
+	paramsfile = string(datafolder,"params.dat")
+	paramvec = readvec(paramsfile)
+	nouter = paramvec[2]
+	ntimes = paramvec[end]
 
-		densitydata = readvec(densityfile)
-=#
+	params = ParamType(0.,0.,0.,nouter,0,0)
+
+	# For each time value, DO STUFF
+	for nn=1:ntimes
+		# Get the file name at each time.
+		cntstr = lpad(cnt,4,0)
+		geomfile = string(datafolder,"geom",cnstr,".dat")
+		densityfile = string(datafolder,"density",cntstr,".dat")
+		# Extract thlenvec and density.
+		tt,thlenvec = read_geom_file(geomfile)
+		density = readvec(densityfile)
+		thlenden = ThLenDenType(thlenvec,density)
+	end
+
+
 	return
 end
 
