@@ -11,8 +11,8 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	densityfile = 	string(datafolder,"density",cntstr,".dat")
 	paramfile = string(datafolder,"params.dat")
 	# Write the data to a file.
-	write_data(tt,thlenden,geomfile,densityfile)
-	write_params(paramfile,paramvec)
+	write_data(tt,thlenden,params.nouter,geomfile,densityfile)
+	write_params(paramvec,paramfile)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
@@ -24,15 +24,14 @@ end
 #--------------- SAVING DATA ---------------#
 #= write_data: Write the geometry data (theta,len,xsm,ysm,xx,yy) 
 and the density-function data in a file. =#
-function write_data(tt::Float64, thlenden::ThLenDenType, 
+function write_data(tt::Float64, thlenden::ThLenDenType, nouter::Int,
 		geomfile::AbstractString, densityfile::AbstractString)
 	# The quantities of interest.
 	thlenvec = thlenden.thlenvec
 	density = thlenden.density
 	# Write the geometry data.
 	iostream = open(geomfile, "w")
-	nbods = endof(thlenvec)
-	npts = endof(thlenvec[1].theta)
+	npts,nbods = getnvals(thlenvec)
 	label = "# Parameters (time, npts, nbods), then geometry (theta, len, xsm, ysm, x, y) for each body"
 	writedlm(iostream, [label; tt; npts; nbods])
 	for nn=1:nbods
@@ -45,11 +44,11 @@ function write_data(tt::Float64, thlenden::ThLenDenType,
 	close(iostream)
 	# Write the density data.
 	iostream = open(densityfile, "w")
-	writedlm(iostream, [tt; density])
+	writedlm(iostream, [tt; npts; nbods; nouter; density])
 	close(iostream)
 end
 # write_params: Write the important parameters in an output file.
-function write_params(filename::AbstractString, paramvec::Array)
+function write_params(paramvec::Array, filename::AbstractString)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes)"
 	writevec = [label1; paramvec[1:end-3]; label2; paramvec[end-2:end-1]; round(paramvec[end],2)]

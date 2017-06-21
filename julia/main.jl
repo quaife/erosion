@@ -30,9 +30,12 @@ function erosion()
 			nfile += 1
 		end
 	end
+	# Post-processing: Compute drag ...
+	postprocess("run")
 	return
 end
 
+# startup: Read params and geoinfile; setup stuff.
 function startup()
 	# Read the parameters file.
 	paramvecin = readvec("params.dat")
@@ -60,3 +63,18 @@ function startup()
 	newfolder(plotfolder)
 	return thlenden0,params,paramvec,nsteps,cntout,datafolder,plotfolder
 end
+
+
+function postprocess(foldername::AbstractString)
+	datafolder = string("../datafiles/",foldername)
+#=
+	ntimes = ???
+	for nn=1:ntimes
+		cntstr = lpad(cnt,4,0)
+		densityfile = string(datafolder,"density",cntstr,".dat")
+
+		densitydata = readvec(densityfile)
+=#
+	return
+end
+
