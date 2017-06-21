@@ -74,7 +74,7 @@ function postprocess(foldername::AbstractString)
 
 	params = ParamType(0.,0.,0.,nouter,0,0)
 
-	# For each time value, DO STUFF
+	# Get thlenden at each time.
 	for nn=1:ntimes
 		# Get the file name at each time.
 		cntstr = lpad(cnt,4,0)
@@ -85,7 +85,6 @@ function postprocess(foldername::AbstractString)
 		density = readvec(densityfile)
 		thlenden = ThLenDenType(thlenvec,density)
 	end
-
 
 	return
 end

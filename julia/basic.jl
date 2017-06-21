@@ -46,8 +46,8 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	return
 end
 
-#--------------- FORTRAN WRAPPERS ---------------#
-# getstress! Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau.
+#= getstress! The main function for calling the necessary Fortran routines.
+Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density (if not loaded already).
 	getdensity!(thlenden, params)
@@ -67,6 +67,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	return
 end
 
+#--------------- FORTRAN WRAPPERS ---------------#
 #= getdensity! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
