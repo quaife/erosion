@@ -73,25 +73,31 @@ function postprocess(foldername::AbstractString)
 	paramvec = readvec(paramsfile)
 	nouter = paramvec[2]
 	ntimes = paramvec[end]
+#	params = ParamType(0.,0.,0.,nouter,0,0)
 
-	params = ParamType(0.,0.,0.,nouter,0,0)
-
-	# Get thlenden at each time.
+	# Read the data at each time step.
 	for nn=0:ntimes
-
-		println("nn = ",nn)
-
 		# Get the file name at each time.
 		nnstr = lpad(nn,4,0)
 		geomfile = string(datafolder,"geom",nnstr,".dat")
 		densityfile = string(datafolder,"density",nnstr,".dat")
-	
-		println(geomfile)
-
 		# Extract thlenvec and density.
 		tt,thlenvec = read_geom_file(geomfile)
 		density = readvec(densityfile)
 		thlenden = ThLenDenType(thlenvec,density)
+		# Compute the pressure and stress (not smoothed, no absolution value)
+		pressure = computepressure(thlenden,nouter)
+		tau = computestress(thlenden,nouter)
+		npts,nbods = getnvals(thlenvec)
+
+
+
+		# For each body, compute the drag...
+		for mm=1:nbods
+			aa = 0
+		end
+
+		println("nn = ", nn)
 	end
 
 	return
