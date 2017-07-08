@@ -158,7 +158,6 @@ function read_geom_file(filename::AbstractString)
 		# Delete xx and yy.
 		deleteat!(invec,1:2*npts)
 	end
-	close(iostream)
 	return tt,thlenvec
 end
 
