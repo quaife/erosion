@@ -76,11 +76,11 @@ function postprocess(foldername::AbstractString)
 #	params = ParamType(0.,0.,0.,nouter,0,0)
 
 	# Read the data at each time step.
-	for nn=0:ntimes
+	for cnt=0:ntimes
 		# Get the file name at each time.
-		nnstr = lpad(nn,4,0)
-		geomfile = string(datafolder,"geom",nnstr,".dat")
-		densityfile = string(datafolder,"density",nnstr,".dat")
+		cntstr = lpad(cnt,4,0)
+		geomfile = string(datafolder,"geom",cntstr,".dat")
+		densityfile = string(datafolder,"density",cntstr,".dat")
 		# Extract thlenvec and density.
 		tt,thlenvec = read_geom_file(geomfile)
 		density = readvec(densityfile)
@@ -92,12 +92,20 @@ function postprocess(foldername::AbstractString)
 
 		# For each body, compute the drag...
 		npts,nbods = getnvals(thlenvec)
-		for mm=1:nbods
-			sx,sy,nx,ny = getns(thlenvec[mm])
-			dragx = 
+		for nn=1:nbods
+			# For each body, get the pressure and stress.
+			n1,n2 = n1n2(npts,nn)
+			press = pressvec[n1:n2]
+			tau = tauvec[n1:n2]
+			# Get the tangent/normal vectors and arc length increment.
+			sx,sy,nx,ny = getns(thlenvec[nn].theta)
+			ds = thlenvec[nn].len / npts
+			# Compute the drag force.
+			dragx = sum(press.*nx - tau.*sx)*ds
+			dragy = sum(press.*ny - tau.*sy)*ds
 		end
 
-		println("nn = ", nn)
+		println("cnt = ", cnt)
 	end
 
 	return
