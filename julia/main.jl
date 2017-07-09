@@ -92,8 +92,9 @@ function postprocess(foldername::AbstractString)
 
 		# For each body, compute the drag...
 		npts,nbods = getnvals(thlenvec)
+		dragxvec,dragyvec = [zeros(Float64,nbods) for ii=1:2]
 		for nn=1:nbods
-			# For each body, get the pressure and stress.
+			# Get the pressure and stress and boddy nn.
 			n1,n2 = n1n2(npts,nn)
 			press = pressvec[n1:n2]
 			tau = tauvec[n1:n2]
@@ -101,13 +102,15 @@ function postprocess(foldername::AbstractString)
 			sx,sy,nx,ny = getns(thlenvec[nn].theta)
 			ds = thlenvec[nn].len / npts
 			# Compute the drag force.
-			dragx = sum(press.*nx - tau.*sx)*ds
-			dragy = sum(press.*ny - tau.*sy)*ds
+			# Note: I believe both should be plus signs due to the conventions.
+			dragxvec[nn] = sum(press.*nx + tau.*sx)*ds
+			dragyvec[nn] = sum(press.*ny + tau.*sy)*ds
 		end
-
+		# Print stuff to test.
 		println("cnt = ", cnt)
+		println("dragx = ", dragxvec[1])
+		println("dragy = ", dragyvec[1])
 	end
-
 	return
 end
 
