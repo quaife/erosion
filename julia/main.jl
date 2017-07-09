@@ -85,16 +85,16 @@ function postprocess(foldername::AbstractString)
 		tt,thlenvec = read_geom_file(geomfile)
 		density = readvec(densityfile)
 		thlenden = ThLenDenType(thlenvec,density)
-		# Compute the pressure and stress (not smoothed, no absolution value)
-		pressure = computepressure(thlenden,nouter)
-		tau = computestress(thlenden,nouter)
-		npts,nbods = getnvals(thlenvec)
-
-
+		# Compute the pressure and stress on all bodies.
+		# Note: the stress is not smoothed and absolute value is not taken.
+		pressvec = computepressure(thlenden,nouter)
+		tauvec = computestress(thlenden,nouter)
 
 		# For each body, compute the drag...
+		npts,nbods = getnvals(thlenvec)
 		for mm=1:nbods
-			aa = 0
+			sx,sy,nx,ny = getns(thlenvec[mm])
+			dragx = 
 		end
 
 		println("nn = ", nn)
