@@ -30,7 +30,7 @@ function erosion()
 			nfile += 1
 		end
 	end
-	# Post-processing: Compute drag ...
+	# Post-process to compute the drag and other quantities.
 	postprocess("run")
 	return
 end
