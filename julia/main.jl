@@ -73,8 +73,6 @@ function postprocess(foldername::AbstractString)
 	paramvec = readvec(paramsfile)
 	nouter = paramvec[2]
 	ntimes = paramvec[end]
-#	params = ParamType(0.,0.,0.,nouter,0,0)
-
 	# Read the data at each time step.
 	for cnt=0:ntimes
 		# Get the file name at each time.
@@ -89,8 +87,8 @@ function postprocess(foldername::AbstractString)
 		# Note: the stress is not smoothed and absolute value is not taken.
 		pressvec = computepressure(thlenden,nouter)
 		tauvec = computestress(thlenden,nouter)
-
-		# For each body, compute the drag...
+		#--------------------------------------#
+		# Compute the drag on each body.
 		npts,nbods = getnvals(thlenvec)
 		dragxvec,dragyvec = [zeros(Float64,nbods) for ii=1:2]
 		for nn=1:nbods
@@ -106,10 +104,12 @@ function postprocess(foldername::AbstractString)
 			dragxvec[nn] = sum(press.*nx + tau.*sx)*ds
 			dragyvec[nn] = sum(press.*ny + tau.*sy)*ds
 		end
-		# Print stuff to test.
-		println("cnt = ", cnt)
-		println("dragx = ", dragxvec[1])
-		println("dragy = ", dragyvec[1])
+		# Save the output to a data file.
+		dragfile = string(datafolder,"drag",cntstr,".dat")
+		iostream = open(dragfile, "w")
+		label = string("# Drag data for ",nbods," bodies. All xdrags then all ydrags.")
+		writedlm(iostream, [label; dragxvec; dragyvec])
+		close(iostream)
 	end
 	return
 end
