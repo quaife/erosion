@@ -14,7 +14,7 @@ type ThetaLenType
 end
 # ThLenDenType: includes the vector of all thlen's and the density function.
 type ThLenDenType
-	thlenvec::Vector{ThetaLenType}; density::Vector{Float64};
+	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
 end
 #################### Object routines #####################
 # Create new instances of each type.
@@ -64,6 +64,15 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 		end
 		thlenden.thlenvec[nn].atau = atau[:]
 	end
+	return
+end
+# getrotdensity! Compute the density on the grid rotated by 90 deg CCW.
+function getrotdensity!(thlenden::ThLenDenType, params::ParamType)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	# Rotate all points by 90 degrees CCW.
+	xrot = -yv
+	yrot = xv
+	thlenden.denrot = computedensity(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
 	return
 end
 
