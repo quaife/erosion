@@ -53,7 +53,7 @@ boundary of the outer geometry \todo[inline]{Need a figure here}
 \begin{gather}
 eqn1 \label{eqn:eqn1} \\
 eqn2 \label{eqn:eqn2} \\
-eqn3 \label{eqn:eqn3}
+\pderiv{\xx}{\nn} = -|\tau| \label{eqn:poreEvolution}
 \end{gather}
 \end{subequations}
 
@@ -76,7 +76,7 @@ $\mu=1$.  The double-layer potential
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\Gamma} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
     \eeta \, ds_\yy, \quad \xx \in \Omega,
-    \label{eqn:dlp}
+    \label{eqn:velocityDLP}
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the unit outward
 normal, solves the incompressible Stokes equations for any sufficiently
@@ -102,15 +102,20 @@ terms of the completed double-layer potential
 \end{align}
 where the density function, Stokeslets, and rotlets satisfy the
 second-kind integral equation
+\begin{subequations}
+\label{eqn:completed_DLP}
 \begin{align}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DD[\eeta](\xx) + 
       \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
-      \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Gamma, \\
-  \llambda_k &= \frac{1}{2\pi}\int_{\Gamma_k} \eeta(\yy) \, ds_\yy, \\
+      \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Gamma, 
+      \label{eqn:DLP}\\
+  \llambda_k &= \frac{1}{2\pi}\int_{\Gamma_k} \eeta(\yy) \, ds_\yy, 
+  \label{eqn:stokeslet} \\
   \xi_k &= \frac{1}{2\pi}\int_{\Gamma_k} \yy^\perp \cdot \eeta(\yy)
   \, ds_\yy.
-  \label{eqn:completed_DLP}
+  \label{eqn:rotlet}
 \end{align}
+\end{subequations}
 Finally, because of the incompressibility constraint, the boundary
 condition must satisfy 
 \begin{align}
@@ -145,14 +150,15 @@ the shear stress, we first compute the deformation tensor $\ssigma =
 \frac{1}{2}(\nabla\uu + \nabla\uu^T)$ of each of these terms
 individually.
 
-Considering the double-layer potential~\eqref{eqn:dlp} evaluated at $\xx
-\in \Omega$, the deformation tensor is
+Considering the double-layer potential~\eqref{eqn:velocityDLP} evaluated
+at $\xx \in \Omega$, the deformation tensor is
+\begin{align}
+  \ssigma^\DD(\xx) = \int_{\bd\Omega} K_\ssigma(\xx,\yy) \eeta(\yy) \,ds_\yy,
+  \label{eqn:shearStressDLP}
+\end{align}
+where the kernel $K_\ssigma$ is given by
 \begin{align*}
-  \ssigma^\DD(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) \,ds_\yy,
-\end{align*}
-where the kernel $K$ is given by
-\begin{align*}
-  K(\xx,\yy) = \frac{1}{2\pi}\left(
+  K_\ssigma(\xx,\yy) = \frac{1}{2\pi}\left(
     2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
     \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) +
     \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
@@ -200,18 +206,19 @@ where
 \begin{align}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\Gamma} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot \eeta \,ds_\yy.
+    \nn \cdot \eeta(\yy) \,ds_\yy.
 \end{align}
 The pressure due to the Stokeslets is
 \begin{align}
-  p^S(\xx_0) = \frac{\rr \cdot \eeta}{2\pi\rho^2},
+  p^S(\xx_0) = \frac{\rr \cdot \llambda}{2\pi\rho^2},
+  \label{eqn:pressureDLP}
 \end{align}
 and the velocity due to a rotlet is pressure-free.  Therefore, once the
 density function and Stokeslets are computed, the pressure at a point
 $\xx_0 \in \Gamma$ is
 \begin{align}
   p(\xx_0) = -\pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0) + 
-              \frac{\rr \cdot \eeta}{2\pi\rho^2}.
+              \frac{\rr \cdot \llambda}{2\pi\rho^2}.
 \end{align}
 
 Finally, with the pressure and shear stress, the drag on a single pore
@@ -220,24 +227,45 @@ with boundary $\Gamma_k$ is
   F_D = \int_{\Gamma_k} (-p \nn + \tau \ss)\,ds.
 \end{align}
 
+\todo[inline]{Describe convention for normal and tangent vectors}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods\label{s:method}} 
-We discretize the second-kind integral equation~\eqref{} using a
-Nystr\"om method.  This results in a dense linear system which we solve
-with fast multipole accelerated GMRES.  Then, the shear stress,
-pressure, and drag must all be computed.  Finally, the pores must be
-eroded according to our erosion model~\eqref{}. \todo[inline]{Give
-section numbers here}
+We discretize the second-kind integral equation~\eqref{eqn:DLP} using a
+Nystr\"om method.  The equations for the
+Stokeslets~\eqref{eqn:stokeslet} and rotlets~\eqref{eqn:rotlet} are
+approximated with the trapezoid rule.  By applying a quadrature method,
+this results in a dense linear system which we solve with fast multipole
+accelerated GMRES.  Because of the second-kind nature of the integral
+equation, the number of GMRES iterations is mesh independent (but not
+geometry independent), and the overall complexity of the Stokes solver
+is proportional to the cost of a single matrix-vector multiplication.
+The shear stress, pressure, and drag must also be computed using
+quadrature, and this can be interpreted as a post-processing step once
+the density function, Stokeslets, and rotlets are computed.  All the
+quadrature methods are described in Section~\ref{sec:quadrature}
+
+Once the shear stress is computed, it is used to update the shape of the
+pores according to the normal flow~\eqref{eqn:poreEvolution}.  To
+eliminate tangling and stretching of the mesh, we use a $\theta-L$
+formulation~\cite{hou-low-she1994} which is described in
+Section~\ref{sec:thetaL}.  In this section, we also describe our time
+stepping method and two regularization terms that are necessary to
+control the curvature of the pores and to maintain spectral accuracy in
+space.
+
+\todo[inline]{Describe the upcoming subsections better}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quadrature} 
+\label{sec:quadrature}
 There are several integrals that we need to compute including the
-double-layer potential velocity field~\eqref{eqn:dlp}, the shear
-stress~\eqref{}, and the pressure~\eqref{}.  By using carefully choosing
-the quadrature rules, high-order solutions can be computed.  For all the
+double-layer potential velocity field~\eqref{eqn:velocityDLP}, the shear
+stress~\eqref{eqn:shearStressDLP}, and the
+pressure~\eqref{eqn:pressureDLP}.  By using carefully choosing the
+quadrature rules, high-order solutions can be computed.  For all the
 integrals, the trapezoid rule is used since it achieves spectral
 accuracy for smooth periodic functions.  However, care must be taken
 when the source point and target points coincide.
@@ -252,25 +280,55 @@ has a removable singularity when $\xx = \yy$.  In particular
   \lim_{\substack{\yy \rightarrow \xx \\ \yy \in \Gamma}} D(\xx,\yy) = 
   \frac{\kappa(\xx)}{2\pi}\ss \otimes \ss,
 \end{align}
-where $\kappa(\xx)$ is the curvature of $\Gamma$ at $\xx$.  By replacing
-the diagonal term 
+where $\kappa(\xx)$ is the curvature of $\Gamma$ at $\xx$.  By using
+this limiting term in when applying the trapezoid rule, spectral
+accuracy is achieved because of the smoothness and periodicity of the
+integrand~\cite{tre-wei2014}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Time Stepping} 
-We use a quasi-static formulation ....
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{$\theta-L$ Formulation} 
-
+For the shear stress and the pressure, we will use odd-even integration
+which achieves spectral accuracy if the integrand is no stronger than
+$\mathcal{O}(\rho^{-1})$.  Since both these integrands are too strong,
+the singularity must be weakened.  This can be done by adding a constant
+density function which has no effect on the shear stress and
+pressure~\cite{}.  In particular, the shear stress due to the
+double-layer potential is equivalent to
+\begin{align}
+  \ssigma^{\DD}(\xx_0) &= \int_{\bd\Omega}K_\ssigma(\xx_0,\yy)
+      \ssigma(\yy) \, ds_{\yy} \\ 
+      &= \int_{\bd\Omega}K_\ssigma(\xx_0,\yy)
+      (\ssigma(\yy) - \ssigma(\xx_0)) \, ds_{\yy}.
+\end{align}
+For the pressure, the double-layer potential is equivalent to
+\begin{align}
+  p^\DD(\xx) = -\frac{1}{\pi}\int_{\Gamma} \frac{1}{\rho^2}
+    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
+    \nn \cdot (\eeta(\yy) - \eeta(\xx_0)) \,ds_\yy.
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fast Summation} 
+All the layer potentials are compatible with a fast summation such as
+the Fast Multipole Method (FMM).  The majority of the 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Artificial Diffusion} 
+\subsection{$\theta-L$ Formulation} 
+\label{sec:thetaL}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Gaussian Filter} 
+We use a quasi-static approximation so that the velocity field
+instantaneously changes with the changing geometry.  Therefore, we can
+alternate between the two main aspects of our simulation
+\begin{enumerate}
+  \item Given a geometry, compute the shear stress of along each of the
+  pores.
+  \item Given the shear stress, update the geometry according to the
+  erosion model.
+\end{enumerate}
+
+\todo[inline]{Artificial Diffusion} 
+\todo[inline]{Gaussian Filter} 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 

@@ -1592,55 +1592,45 @@ c     OBSTACLES
 
 
 c***********************************************************************
-      subroutine computeShearStress(nninner,nnbodies,nnouter,xx,yy,den,
+      subroutine computeShearStress(ninner,nbodies,nouter,x,y,den,
      $    shear_stress)
 c     Input x and y coordinates and the density function on the
 c     boundary and return the shear stress on the inner walls.  
       implicit real*8 (a-h,o-z)
 
-      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
-c     x and y coordinates of obstacle
-
       parameter (nmax = 2**15)
       parameter (maxbodies = 10)
 c     max points on the boundary of the obstacle      
 
-      dimension x(nmax),y(nmax)
-      dimension centerx(maxbodies),centery(maxbodies)
-      dimension px(nmax),py(nmax)
+      dimension x(ninner*nbodies),y(ninner*nbodies)
+      dimension centerx(nbodies),centery(nbodies)
+      dimension px(ninner*nbodies),py(ninner*nbodies)
 c     x and y coordinates of the normal of the obstacle
-      dimension cur(nmax),speed(nmax)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
 c     Jacobian and curvature of the geometry
 
-      dimension xouter(nmax),youter(nmax)
+      dimension xouter(nouter*nbodies),youter(nouter*nbodies)
 c     x and y coordinates of confining wall
-      dimension px0(nmax), py0(nmax)
+      dimension px0(nouter*nbodies), py0(nouter*nbodies)
 c     x and y coordinates of the normal of the confining wall
-      dimension cur0(nmax), speed0(nmax)
+      dimension cur0(nouter*nbodies), speed0(nouter*nbodies)
 c     Jacobian and curvature of the confining wall
 
-      dimension den(2*nninner*nnbodies + 3*nnbodies + 2*2**12)
+      dimension den(2*ninner*nbodies + 3*nbodies + 2*nouter)
 c     x and y coordinates of the density function
 
-      dimension E11(nninner*nnbodies)
-      dimension E12(nninner*nnbodies)
-      dimension E22(nninner*nnbodies)
+      dimension E11(ninner*nbodies)
+      dimension E12(ninner*nbodies)
+      dimension E22(ninner*nbodies)
 c     components of the deformation gradient on the obstacle
-      dimension shear_stress(nninner*nnbodies)
+      dimension tractionx(ninner),tractiony(ninner)
+c     traction which is computed one body at a time
+      dimension shear_stress(ninner*nbodies)
 c     shear stress on the obstacle
 
-      common /geometry/x,y,centerx,centery,px,py,cur,speed,
-     $    ninner,nbodies
-      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
-c     global variables for the geometry which are needed by the external
-c     matvec routine in gmres
-
-      ninner = nninner
-      nbodies = nnbodies
-      nouter =  nnouter
 c     can't declare input variables into a common field, so need new
 c     variable name for x,y,ninner,nbodies
-      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
      $    centerx,centery)
 c
       call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
@@ -1651,36 +1641,6 @@ c     load geometry of initial shape
      $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
      $    E11,E12,E22)
 c     compute the deformation tensor on the boundary of the interface
-c      open(unit=1,file='output/E11.dat')
-c      open(unit=2,file='output/E12.dat')
-c      open(unit=3,file='output/E22.dat')
-c      do k = 1,ninner*nbodies
-c        write(1,1000) E11(k)
-c        write(2,1000) E12(k)
-c        write(3,1000) E22(k)
-c      enddo
-c      close(unit=1)
-c1000  format(E25.16)
-
-      call compute_shear_stress(ninner,nbodies,px,py,
-     $    E11,E12,E22,shear_stress)
-c     Use the deformation tensor to compute the shear stress
-
-
-      end
-
-c***********************************************************************
-      subroutine compute_shear_stress(ninner,nbodies,px,py,
-     $    E11,E12,E22,shear_stress)
-      implicit real*8 (a-h,o-z)
-
-      dimension px(ninner*nbodies),py(ninner*nbodies)
-      dimension E11(ninner*nbodies)
-      dimension E12(ninner*nbodies)
-      dimension E22(ninner*nbodies)
-      dimension shear_stress(ninner*nbodies)
-
-      dimension tractionx(ninner),tractiony(ninner)
 
 
       do ibod = 1,nbodies
@@ -1702,53 +1662,44 @@ c***********************************************************************
         enddo
       enddo
 
+
       end
 
 
-
-
 c***********************************************************************
-      subroutine eval_velocity_targets(ninner,nbodies,
-     $    x,y,centerx,centery,px,py,speed,
-     $    nouter,xouter,youter,px0,py0,speed0,den,
-     $    ntargets,xtar,ytar,utar,vtar,press_tar)
+      subroutine computeVelocityPressureTargets(ninner,nbodies,nouter,
+     $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar)
 c     Compute the velocity and pressure at a set of target points xtar
 c     and ytar.  Target points must be sufficiently far away from the
 c     each boundary since no near-singular integration is used.  It is
 c     just the vanilla trapezoid rule
       implicit real*8 (a-h,o-z)
 
+      parameter (nmax = 2**15)
+
       dimension x(ninner*nbodies),y(ninner*nbodies)
       dimension px(ninner*nbodies),py(ninner*nbodies)
-      dimension speed(ninner*nbodies)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
       dimension centerx(nbodies),centery(nbodies)
       dimension xouter(nouter),youter(nouter)
-      dimension px0(nouter),py0(nouter)
-      dimension speed0(nouter)
+c     x and y coordinates of confining wall
+      dimension px0(nouter), py0(nouter)
+c     x and y coordinates of the normal of the confining wall
+      dimension cur0(nouter), speed0(nouter)
+c     Jacobian and curvature of the confining wall
       dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
       dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
 
       dimension xtar(ntargets),ytar(ntargets)
       dimension utar(ntargets),vtar(ntargets)
       dimension press_tar(ntargets)
-      
-      xmin = -3.d-1
-      xmax = 3.d-1
-      ymin = -3.d-1
-      ymax = 3.d-1
-      nx = floor(dsqrt(dble(ntargets)))
-      ny = nx
-      dx = (xmax - xmin)/dble(nx-1)
-      dy = (ymax - ymin)/dble(ny-1)
 
-      icount = 0
-      do j = 1,nx
-        do k = 1,ny 
-          icount = icount + 1 
-          xtar(icount) = xmin + dble(j-1)*dx
-          ytar(icount) = ymin + dble(k-1)*dy
-        enddo
-      enddo
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     build outer geometry
 
       do j = 1,ntargets
         utar(j) = 0.d0
@@ -1845,7 +1796,7 @@ c     Add in contribution from Rotlets and Stokeslets
 
 
 c***********************************************************************
-      subroutine computePressure(nninner,nnbodies,nnouter,xx,yy,den,
+      subroutine computePressure(ninner,nbodies,nouter,x,y,den,
      $    pressure)
 c     Compute the pressure on the boundary of each grain.  Need to 
 c     remove one order of the singularity by multiplying by the
@@ -1853,59 +1804,42 @@ c     density function at the target point and then use odd-even
 c     integration
       implicit real*8 (a-h,o-z)
 
-      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
-c     x and y coordinates of obstacle
-
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
-c     max points on the boundary of the obstacle      
-
-      dimension x(nmax),y(nmax)
-      dimension centerx(maxbodies),centery(maxbodies)
-      dimension px(nmax),py(nmax)
+      dimension x(ninner*nbodies),y(ninner*nbodies)
+      dimension px(ninner*nbodies),py(ninner*nbodies)
 c     x and y coordinates of the normal of the obstacle
-      dimension cur(nmax),speed(nmax)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
 c     Jacobian and curvature of the geometry
+      dimension centerx(nbodies),centery(nbodies)
 
-      dimension xouter(nmax),youter(nmax)
+      dimension xouter(nouter),youter(nouter)
 c     x and y coordinates of confining wall
-      dimension px0(nmax), py0(nmax)
+      dimension px0(nouter), py0(nouter)
 c     x and y coordinates of the normal of the confining wall
-      dimension cur0(nmax), speed0(nmax)
+      dimension cur0(nouter), speed0(nouter)
 c     Jacobian and curvature of the confining wall
 
-      dimension den(2*nninner*nnbodies + 3*nnbodies + 2*2**12)
+      dimension den(2*ninner*nbodies + 3*nbodies + 2*nouter)
 c     x and y coordinates of the density function
 
-      dimension pressure(nninner*nnbodies)
+      dimension pressure(ninner*nbodies)
 c     shear stress on the obstacle
 
-      dimension denx(max(ninner,2**12))
-      dimension deny(max(ninner,2**12))
+      dimension denx(max(ninner,nouter))
+      dimension deny(max(ninner,nouter))
       complex *16 zden(ninner)
       dimension wsave(4*ninner + 15)
       complex *16 eye
 
-      common /geometry/x,y,centerx,centery,px,py,cur,speed,
-     $    ninner,nbodies
-      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
-c     global variables for the geometry which are needed by the external
-c     matvec routine in gmres
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     build outer geometry
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
       eye = (0.d0,1.d0)
-
-      ninner = nninner
-      nbodies = nnbodies
-      nouter = nnouter
-c     can't declare input variables into a common field, so need new
-c     variable name for x,y,ninner,nbodies
-      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
-     $    centerx,centery)
-c
-      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
-c     load geometry of initial shape
 
       do j = 1,ninner*nbodies
         pressure(j) = 0.d0
@@ -2105,44 +2039,29 @@ c            TARGET POINTS == OBSTACLES
 
 
 c***********************************************************************
-      subroutine computeDrag(nninner,nnbodies,xx,yy,
+      subroutine computeDrag(ninner,nbodies,x,y,
      $    shear_stress,pressure,drag)
 c     Compute the drag of each grain
       implicit real*8 (a-h,o-z)
 
-      dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
-c     x and y coordinates of obstacle
-      dimension drag(2*nnbodies)
-
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
-c     max points on the boundary of the obstacle      
-
-      dimension x(nmax),y(nmax)
-      dimension centerx(maxbodies),centery(maxbodies)
-      dimension px(nmax),py(nmax)
+      dimension x(ninner*nbodies),y(ninner*nbodies)
+      dimension centerx(nbodies),centery(nbodies)
+      dimension px(ninner*nbodies),py(ninner*nbodies)
 c     x and y coordinates of the normal of the obstacle
-      dimension cur(nmax),speed(nmax)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
 c     Jacobian and curvature of the geometry
 
-      dimension shear_stress(nninner*nnbodies)
-      dimension pressure(nninner*nnbodies)
+      dimension shear_stress(ninner*nbodies)
+      dimension pressure(ninner*nbodies)
 c     shear stress and pressure on the obstacle
 
-      common /geometry/x,y,centerx,centery,px,py,cur,speed,
-     $    ninner,nbodies
-c     global variables for the geometry which are needed by the external
-c     matvec routine in gmres
+      dimension drag(2*nbodies)
 
-      pi = 4.d0*datan(1.d0)
-      twopi = 2.d0*pi
-
-      ninner = nninner
-      nbodies = nnbodies
-c     can't declare input variables into a common field, so need new
-c     variable name for x,y,ninner,nbodies
-      call inner_geometry(ninner,nbodies,x,y,xx,yy,px,py,cur,speed,
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
      $    centerx,centery)
+c     build inner geometry
+
+      twopi = 8.d0*datan(1.d0)
 
       do k = 1,2*nbodies
         drag(k) = 0.d0
