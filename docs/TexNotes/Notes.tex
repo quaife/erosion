@@ -36,6 +36,7 @@
 \newcommand{\GG}{\mathcal{G}}
 \newcommand{\Dt}{\Delta t}
 \newcommand{\X}{\bvec{X}}
+\newcommand {\bq} {\bvec{q}}
 % Domains
 \newcommand {\bdry} {\partial B}
 \newcommand {\onBdry} {\text{on } \bdry }
@@ -367,5 +368,35 @@ A = \int x n_x ds = \int y n_y ds
 
 \subsection{Benchmark the interface evolution}
 It would be good to test the interface evolution, in particular verify that the curvature-driven-flow (CDF) is 2nd order accurate in time. Initially, I thought I would be able to get exact solutions for CDF, but it turns out that the PDE (\ref{thetaEvolve}) does not reduce to simply a diffusion equation, but instead still has nonlinear terms, thus making exact solutions impractical. I also tried to recast CDF in polar coordinates for star-shapes, but still the governing PDE is not simple enough to get exact solutions. Also, in the $\theta$-$L$ formulation I tried to determine the normal velocity to make the nonlinear terms vanish, but this does not appear possible either. Instead, I can do a completely numerical convergence test.
+
+
+\section{Permeability, conductivity, drag, resistance, and all of that}
+
+Darcy's law is
+\begin{equation}
+\bq = - \bvec{K} \grad \phi
+\end{equation}
+where $\bq$ is the specific discharge, $\phi = z + p/\gamma$ is the hydraulic head, and $\gamma = \rho g$. The rank-2 tensor $\bvec{K}$ is the {\em conductivity}, which is related to the {\em permeability} $\bvec{k}$ via $\bvec{K} = \bvec{k} \gamma/\mu$, where $\mu$ is the viscosity of the fluid. The units of conductivity are length-per-time (i.e.~velocity) and the units of permeability are length squared.
+Perhaps the most standard parameter to characterize the porous medium is the permeability, so lets focus on that. Let us also eliminate gravity from consideration to get
+\begin{equation}
+\bq = - \bvec{k} \grad p / \mu
+\end{equation}
+Consider first an isotropic medium with permeability $k$ (scalar). I propose that we decompose the permeability into the contribution from channel walls and from the embedded bodies $k = k_{c} + k_{b}$. Lets first figure out the contribution from the channel walls $k_c$. Consider flow in a channel of width $2w$ due to a pressure difference of $\Delta p$ occurring over a length $2 \ell$, so that the pressure gradient is $\grad p = -\Delta p/(2 \ell)$. If I did it correctly, the velocity is
+\begin{equation}
+u(z) = \frac{\Delta p}{4 \mu \ell} (w^2 - z^2)
+\end{equation}
+Then we can calculate the discharge as
+\begin{equation}
+q = \frac{1}{2w} \int_{-w}^{w} u(z) dz = \frac{\Delta p w^2}{6 \mu \ell} = - \frac{w^2}{3 \mu} \grad p
+\end{equation}
+so that the channel permeability is given by
+\begin{equation}
+k_c = w^2/3
+\end{equation}
+This result at least has the correct units (length squared).
+
+
+
+
 
 \end{document}

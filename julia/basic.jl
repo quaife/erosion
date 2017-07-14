@@ -46,44 +46,56 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	return
 end
 
-#--------------- FORTRAN WRAPPERS ---------------#
-# getstress! Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau.
+#= getstress! The main function for calling the necessary Fortran routines.
+Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
-	# Compute the density only if not done already.
-	if thlenden.density == []
-		getdensity!(thlenden, params)
-	end
+	# Compute the density (if not loaded already).
+	computedensity!(thlenden, params)
 	# Compute the stress.
-	npts,nbods,xv,yv = getnxy(thlenden)
-	tau = getstress(xv,yv,thlenden.density,npts,nbods,params.nouter)
+	tau = computestress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
+	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
 		n1,n2 = n1n2(npts,nn)
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau, params.sigma)
-		if params.fixarea == 1; atau = atau - mean(atau); end
+		if params.fixarea == 1
+			atau = atau - mean(atau)
+		end
 		thlenden.thlenvec[nn].atau = atau[:]
 	end
 	return
 end
-#= getdensity! Computes the density function and saves in thlenden.
+
+#--------------- FORTRAN WRAPPERS ---------------#
+#= computedensity! Computes the density function and saves in thlenden.
+Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function getdensity!(thlenden::ThLenDenType, params::ParamType)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	thlenden.density = getdensity(xv,yv,npts,nbods,params)
+function computedensity!(thlenden::ThLenDenType, params::ParamType)
+	if thlenden.density == []
+		npts,nbods,xv,yv = getnxy(thlenden)
+		thlenden.density = computedensity(xv,yv,npts,nbods,params.nouter,params.ifmm)
+	end
 	return
 end
-# getdensity: Wrapper for Fortran routine 'stokesSolver' to get the density function.
-function getdensity(xx::Vector{Float64}, yy::Vector{Float64}, npts::Int, nbods::Int, params::ParamType)
-	nouter = params.nouter
+# computedensity: Wrapper for Fortran routine 'stokesSolver' to get the density function.
+function computedensity(xx::Vector{Float64}, yy::Vector{Float64}, 
+		npts::Int, nbods::Int, nouter::Int, ifmm::Int)
 	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
-		&npts, &nbods, &params.nouter, &params.ifmm, xx, yy, density)
+		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
 	return density
 end
-# getstress: Wrapper for Fortran routine 'computeShearStress' to compute the shear stress.
-function getstress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
+
+# computestress: Dispatch for ThLenDenType.
+function computestress(thlenden::ThLenDenType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	tau = computestress(xv,yv,thlenden.density,npts,nbods,nouter)
+	return tau
+end
+# computestress: Wrapper for Fortran routine 'computeShearStress' to compute the shear stress.
+function computestress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int)
 	tau = zeros(Float64, npts*nbods)
 	ccall((:computeshearstress_, "libstokes.so"), Void,
@@ -92,14 +104,14 @@ function getstress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Flo
 	return tau
 end
 
-# getpressure Computes the pressure...
-function getpressure(thlenden::ThLenDenType, params::ParamType)
+# computepressure: Dispatch for ThLenDenType.
+function computepressure(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	pressure = getpressure(xv,yv,thlenden.density,npts,nbods,params.nouter)
+	pressure = computepressure(xv,yv,thlenden.density,npts,nbods,nouter)
 	return pressure
 end
-# getpressure: Wrapper for Fortran routine 'computePressure' to compute the pressure.
-function getpressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
+# computepressure: Wrapper for Fortran routine 'computePressure' to compute the pressure.
+function computepressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int)
 	pressure = zeros(Float64, npts*nbods)
 	ccall((:computepressure_, "libstokes.so"), Void,
@@ -125,7 +137,7 @@ function getallxy(thlenv::Vector{ThetaLenType}, npts::Int, nbods::Int)
 	end
 	return xv,yv
 end
-# getnvals: Calculate npts and nbods
+# getnvals: Calculate npts and nbods.
 function getnvals(thlenv::Vector{ThetaLenType})
 	nbods = endof(thlenv)
 	npts = endof(thlenv[1].theta)

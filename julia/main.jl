@@ -1,12 +1,10 @@
 # main.jl: The main routines to call
-#################### Includes ####################
 using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("RKstarter.jl")
 include("plotsave.jl")
-##################################################
 
 # erosion: The main routine to erode a group of bodies.
 function erosion()
@@ -19,20 +17,26 @@ function erosion()
 	# Enter the time loop to use the multi-step method.
 	nfile = 1
 	for nn = 1:nsteps
+		# Compute the density function and stress for thlenden1.
 		getstress!(thlenden1,params)
-		advance_thetalen!(thlenden1,thlenden0,params)
-		# Plot and save the data when appropriate.
-		# Note: Save thlenden0 because thlenden1 does not yet have the density-function computed.
+		# Plot and save the data in thlenden1 if appropriate.
 		if mod(nn,nout)==0
 			tt = nn*params.dt
 			paramvec[end] = (time()-t0)/60.
-			plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,tt,nfile)
+			plotnsave(thlenden1,params,paramvec,datafolder,plotfolder,tt,nfile)
 			nfile += 1
 		end
+		# Advance the thlen vectors.
+		advance_thetalen!(thlenden1,thlenden0,params)
+		# Gracefully exit if all of the bodies have disappeared.
+		if endof(thlenden1.thlenvec)==0; break; end
 	end
+	# Post-process to compute the drag and other quantities.
+	postprocess("run")
 	return
 end
 
+# startup: Read params and geoinfile; setup stuff.
 function startup()
 	# Read the parameters file.
 	paramvecin = readvec("params.dat")
@@ -59,4 +63,54 @@ function startup()
 	plotfolder = "../figs/" 
 	newfolder(plotfolder)
 	return thlenden0,params,paramvec,nsteps,cntout,datafolder,plotfolder
+end
+
+# postprocess:
+function postprocess(foldername::AbstractString)
+	# Define the data folder.
+	datafolder = string("../datafiles/",foldername,"/")
+	# Read the params data file.
+	paramsfile = string(datafolder,"params.dat")
+	paramvec = readvec(paramsfile)
+	nouter = paramvec[2]
+	ntimes = paramvec[end]
+	# Read the data at each time step.
+	for cnt=0:ntimes
+		# Get the file name at each time.
+		cntstr = lpad(cnt,4,0)
+		geomfile = string(datafolder,"geom",cntstr,".dat")
+		densityfile = string(datafolder,"density",cntstr,".dat")
+		# Extract thlenvec and density.
+		tt,thlenvec = read_geom_file(geomfile)
+		density = readvec(densityfile)
+		thlenden = ThLenDenType(thlenvec,density)
+		# Compute the pressure and stress on all bodies.
+		# Note: the stress is not smoothed and absolute value is not taken.
+		pressvec = computepressure(thlenden,nouter)
+		tauvec = computestress(thlenden,nouter)
+		#--------------------------------------#
+		# Compute the drag on each body.
+		npts,nbods = getnvals(thlenvec)
+		dragxvec,dragyvec = [zeros(Float64,nbods) for ii=1:2]
+		for nn=1:nbods
+			# Get the pressure and stress and boddy nn.
+			n1,n2 = n1n2(npts,nn)
+			press = pressvec[n1:n2]
+			tau = tauvec[n1:n2]
+			# Get the tangent/normal vectors and arc length increment.
+			sx,sy,nx,ny = getns(thlenvec[nn].theta)
+			ds = thlenvec[nn].len / npts
+			# Compute the drag force.
+			# Note: I believe both should be plus signs due to the conventions.
+			dragxvec[nn] = sum(press.*nx + tau.*sx)*ds
+			dragyvec[nn] = sum(press.*ny + tau.*sy)*ds
+		end
+		# Save the output to a data file.
+		dragfile = string(datafolder,"drag",cntstr,".dat")
+		iostream = open(dragfile, "w")
+		label = string("# Drag data for ",nbods," bodies. All xdrags then all ydrags.")
+		writedlm(iostream, [label; dragxvec; dragyvec])
+		close(iostream)
+	end
+	return
 end

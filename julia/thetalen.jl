@@ -134,7 +134,6 @@ end
 #--------------- OTHER ---------------#
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
-	# Only compute xx and yy if they are not already loaded in thlen.
 	if thlen.xx==[] || thlen.yy==[]
 		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
 	end
@@ -152,12 +151,6 @@ function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	# Move to have the correct average values.
 	xx += xsm; yy += ysm
 	return xx,yy
-end
-# getnormals: Calculate the surface normals.
-function getnormals(theta::Vector{Float64})
-	nx = -sin(theta)
-	ny = cos(theta)
-	return nx, ny 
 end
 # getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
 function getalpha(npts::Integer)
@@ -187,4 +180,15 @@ function test_theta(theta::Vector{Float64})
 		throw(string("Unacceptable theta vector, ",
 			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
 	end
+end
+# getns: Get the normal and tangent directions.
+# Convention: CCW parameterization and inward pointing normal.
+function getns(theta::Vector{Float64})
+	# CCW tangent vector.
+	sx = cos(theta)
+	sy = sin(theta)
+	# Inward pointing normal vector.
+	nx = -sy
+	ny = sx
+	return sx,sy,nx,ny
 end
