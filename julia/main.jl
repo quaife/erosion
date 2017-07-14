@@ -43,10 +43,10 @@ function startup()
 	# Read the input geometry file.
 	geoinfile = string("../datafiles/",paramvecin[1])
 	thlenvec0 = read_thlen_file(geoinfile)
-	thlenden0 = ThLenDenType(thlenvec0,evec())
+	thlenden0 = new_thlenden(thlenvec0)
 	# Read the other parameters and calculate needed quantities.
 	nouter,tfin,dtout,dtfac,epsfac,sigfac,ifmm,fixarea = paramvecin[2:9]
-	npts = endof(thlenvec0[1].theta)
+	npts,nbods = getnvals(thlenden0.thlenvec)
 	dt = dtfac/npts
 	cntout = round(Int,dtout/dt)
 	cntout = max(cntout,1)
@@ -83,7 +83,7 @@ function postprocess(foldername::AbstractString)
 		# Extract thlenvec and density.
 		tt,thlenvec = read_geom_file(geomfile)
 		density = readvec(densityfile)
-		thlenden = ThLenDenType(thlenvec,density)
+		thlenden = new_thlenden(thlenvec,density)
 		# Compute the pressure and stress on all bodies.
 		# Note: the stress is not smoothed and absolute value is not taken.
 		pressvec = computepressure(thlenden,nouter)

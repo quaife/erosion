@@ -18,8 +18,9 @@ type ThLenDenType
 end
 #################### Object routines #####################
 # Create new instances of each type.
-function new_thlenden(nbods::Int)
-	return ThLenDenType(new_thlenvec(nbods),evec())
+function new_thlenden(thlenvec::Vector{ThetaLenType}, 
+		density=evec(), denrot=evec())
+	return ThLenDenType(thlenvec,density,denrot)
 end
 function new_thlenvec(nbods::Int)
 	return [new_thlen() for nn=1:nbods]

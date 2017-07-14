@@ -18,8 +18,8 @@ end
 # festep: Dispatch for ThLenDenType.
 # Take an FE-step for each component of thlenvec.
 function festep(dt::Float64, thlenden0::ThLenDenType, thlendendots::ThLenDenType, epsilon::Float64)
-	nbods = endof(thlenden0.thlenvec)
-	thlenden1 = new_thlenden(nbods)
+	npts,nbods = getnvals(thlenden0.thlenvec)
+	thlenden1 = new_thlenden(new_thlenvec(nbods))
 	for nn = 1:nbods
 		thlenden1.thlenvec[nn] = 
 			festep(dt, thlenden0.thlenvec[nn], thlendendots.thlenvec[nn], epsilon)
