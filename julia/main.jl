@@ -6,6 +6,7 @@ include("thetalen.jl")
 include("RKstarter.jl")
 include("plotsave.jl")
 
+#--------------- MAIN ROUTINE ---------------#
 # erosion: The main routine to erode a group of bodies.
 function erosion()
 	# Get the input geometry, parameters, and other stuff.
@@ -65,7 +66,8 @@ function startup()
 	return thlenden0,params,paramvec,nsteps,cntout,datafolder,plotfolder
 end
 
-# postprocess:
+#--------------- POST PROCESSING ---------------#
+# postprocess: Use the saved data to compute stuff.
 function postprocess(foldername::AbstractString)
 	# Define the data folder.
 	datafolder = string("../datafiles/",foldername,"/")
@@ -84,12 +86,19 @@ function postprocess(foldername::AbstractString)
 		tt,thlenvec = read_geom_file(geomfile)
 		density = readvec(densityfile)
 		thlenden = new_thlenden(thlenvec,density)
-		# Compute the pressure and stress on all bodies.
+
+		#--------------------------------------#
+		# Compute at the target points.
+		targets = TargetsType(evec(), evec(), evec(), evec(), evec())
+		targets.xtar, targets.ytar = setuptargets()
+		compute_velpress_targets!(thlenden,targets,nouter)
+		
+
+		#--------------------------------------#
+		# Compute the drag on each body.
 		# Note: the stress is not smoothed and absolute value is not taken.
 		pressvec = compute_pressure(thlenden,nouter)
 		tauvec = compute_stress(thlenden,nouter)
-		#--------------------------------------#
-		# Compute the drag on each body.
 		npts,nbods = getnvals(thlenvec)
 		dragxvec,dragyvec = [zeros(Float64,nbods) for ii=1:2]
 		for nn=1:nbods
@@ -114,3 +123,38 @@ function postprocess(foldername::AbstractString)
 	end
 	return
 end
+
+function setuptargets()
+	# Specify the x and y locations of the grid.
+	xlocs = [-2.8, -2, -1.2, 1.2, 2, 2.8]
+	ylocs = collect(-0.8: 0.2: 0.8)
+	# Define the grid of xtar and ytar.
+	nx = endof(xlocs)
+	ny = endof(ylocs)
+	ntargs = nx*ny
+	xtar = ones(Float64,ntargs)
+	ytar = ones(Float64,ntargs)
+	for nn=1:nx
+		n1,n2 = n1n2(ny,nn)
+		xtar[n1:n2] = xlocs[nn]
+		ytar[n1:n2] = ylocs
+	end
+	return xtar,ytar
+end
+
+
+
+
+#=
+# targets: Set up the target points to measure velocity and pressure: u,v,p.
+function targets(nn::Integer, xmax::Float64, ymax::Float64)
+	# Make the grid.
+	ytar = collect(linspace(-ymax,ymax,nn))
+	ytar = [ytar; ytar]
+	xtar = ones(Float64,nn)
+	xtar = xmax*[-xtar; xtar]
+	# Initialize u,v,p at target points.
+	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
+	return 2*nn,xtar,ytar,utar,vtar,ptar
+end
+=#

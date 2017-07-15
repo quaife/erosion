@@ -22,10 +22,9 @@ type TargetsType
 	utar::Vector{Float64}; vtar::Vector{Float64}; ptar::Vector{Float64};
 end
 
-#################### Object routines #####################
+#--------------- OBJECT ROUTINES ---------------#
 # Create new instances of each type.
-function new_thlenden(thlenvec::Vector{ThetaLenType}, 
-		density=evec(), denrot=evec())
+function new_thlenden(thlenvec::Vector{ThetaLenType}, density=evec(), denrot=evec())
 	return ThLenDenType(thlenvec,density,denrot)
 end
 function new_thlenvec(nbods::Int)
@@ -53,6 +52,7 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	return
 end
 
+#--------------- MAIN ROUTINES ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
@@ -154,7 +154,6 @@ function compute_velpress_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		&ntargets, xtar, ytar, utar, vtar, press_tar)
 	return utar,vtar,press_tar
 end
-
 
 #--------------- OTHER ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.

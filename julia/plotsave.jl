@@ -15,9 +15,10 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	write_params(paramvec,cnt,paramfile)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
-	pressfile = string(plotfolder,"pressure",cntstr,".pdf")
-	pressure = compute_pressure(thlenden,params.nouter)
 	plot_curves(thlenden.thlenvec,plotfile)
+	# Plot the pressures.
+	#pressfile = string(plotfolder,"pressure",cntstr,".pdf")
+	#pressure = compute_pressure(thlenden,params.nouter)
 	#plot_pressure(pressure,pressfile)
 end
 
