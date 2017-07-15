@@ -146,13 +146,13 @@ function compute_velpress_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
 		npts::Int, nbods::Int, nouter::Int)
 	ntargets = endof(xtar)
-	utar,vtar,press_tar = [zeros(Float64,ntargets) for ii=1:3]
+	utar,vtar,ptar = [zeros(Float64,ntargets) for ii=1:3]
 	ccall((:computevelocitypressuretargets_, "libstokes.so"), Void,
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},
 		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
 		&npts, &nbods, &nouter, xx, yy, density, 
-		&ntargets, xtar, ytar, utar, vtar, press_tar)
-	return utar,vtar,press_tar
+		&ntargets, xtar, ytar, utar, vtar, ptar)
+	return utar,vtar,ptar
 end
 
 #--------------- OTHER ---------------#
