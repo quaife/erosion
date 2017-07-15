@@ -16,6 +16,12 @@ end
 type ThLenDenType
 	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
 end
+# TargetsType: includes x-y coordinates of target points and u,v,pressure.
+type TargetsType
+	xtar::Vector{Float64}; ytar::Vector{Float64};
+	utar::Vector{Float64}; vtar::Vector{Float64}; ptar::Vector{Float64};
+end
+
 #################### Object routines #####################
 # Create new instances of each type.
 function new_thlenden(thlenvec::Vector{ThetaLenType}, 
@@ -51,9 +57,9 @@ end
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density (if not loaded already).
-	computedensity!(thlenden, params)
+	compute_density!(thlenden, params)
 	# Compute the stress.
-	tau = computestress(thlenden, params.nouter)	
+	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
@@ -70,10 +76,8 @@ end
 # getrotdensity! Compute the density on the grid rotated by 90 deg CCW.
 function getrotdensity!(thlenden::ThLenDenType, params::ParamType)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	# Rotate all points by 90 degrees CCW.
-	xrot = -yv
-	yrot = xv
-	thlenden.denrot = computedensity(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
+	xrot,yrot = xyrot(xv,yv)
+	thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
 	return
 end
 
@@ -81,15 +85,15 @@ end
 #= computedensity! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function computedensity!(thlenden::ThLenDenType, params::ParamType)
+function compute_density!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.density == []
 		npts,nbods,xv,yv = getnxy(thlenden)
-		thlenden.density = computedensity(xv,yv,npts,nbods,params.nouter,params.ifmm)
+		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
 	end
 	return
 end
-# computedensity: Wrapper for Fortran routine 'stokesSolver' to get the density function.
-function computedensity(xx::Vector{Float64}, yy::Vector{Float64}, 
+# compute_density: Fortran wrapper.
+function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int, ifmm::Int)
 	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
 	ccall((:stokessolver_, "libstokes.so"), Void, 
@@ -99,13 +103,13 @@ function computedensity(xx::Vector{Float64}, yy::Vector{Float64},
 end
 
 # computestress: Dispatch for ThLenDenType.
-function computestress(thlenden::ThLenDenType, nouter::Int)
+function compute_stress(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	tau = computestress(xv,yv,thlenden.density,npts,nbods,nouter)
+	tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
 	return tau
 end
-# computestress: Wrapper for Fortran routine 'computeShearStress' to compute the shear stress.
-function computestress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
+# compute_stress: Fortran wrapper.
+function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int)
 	tau = zeros(Float64, npts*nbods)
 	ccall((:computeshearstress_, "libstokes.so"), Void,
@@ -115,13 +119,13 @@ function computestress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector
 end
 
 # computepressure: Dispatch for ThLenDenType.
-function computepressure(thlenden::ThLenDenType, nouter::Int)
+function compute_pressure(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	pressure = computepressure(xv,yv,thlenden.density,npts,nbods,nouter)
+	pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
 	return pressure
 end
-# computepressure: Wrapper for Fortran routine 'computePressure' to compute the pressure.
-function computepressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
+# compute_pressure: Fortran wrapper.
+function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int)
 	pressure = zeros(Float64, npts*nbods)
 	ccall((:computepressure_, "libstokes.so"), Void,
@@ -129,6 +133,28 @@ function computepressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vect
 		&npts, &nbods, &nouter, xx, yy, density, pressure)
 	return pressure
 end
+
+# compute_velpress_targets: Dispatch for ThLenDenType and TargetsType.
+function compute_velpress_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	targets.utar,targets.vtar,targets.ptar = compute_velpress_targets(xv,yv,
+		thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
+	return
+end
+# compute_velpress_targets: Fortran wrapper.
+function compute_velpress_targets(xx::Vector{Float64}, yy::Vector{Float64},
+		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
+		npts::Int, nbods::Int, nouter::Int)
+	ntargets = endof(xtar)
+	utar,vtar,press_tar = [zeros(Float64,ntargets) for ii=1:3]
+	ccall((:computevelocitypressuretargets_, "libstokes.so"), Void,
+		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},
+		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
+		&npts, &nbods, &nouter, xx, yy, density, 
+		&ntargets, xtar, ytar, utar, vtar, press_tar)
+	return utar,vtar,press_tar
+end
+
 
 #--------------- OTHER ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
@@ -154,8 +180,13 @@ function getnvals(thlenv::Vector{ThetaLenType})
 	return npts,nbods
 end
 # Calculate n1 and n2 to divy up the separate bodies.
-function n1n2(npts::Integer,nn::Integer)
+function n1n2(npts::Integer, nn::Integer)
 	n1 = npts*(nn-1)+1
 	n2 = npts*nn
 	return n1,n2
+end
+# xyrot: Rotate the x and y coordinates by 90 degrees CCW.
+function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
+	xrot = -yv
+	yrot = xv
 end

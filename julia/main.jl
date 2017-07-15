@@ -86,8 +86,8 @@ function postprocess(foldername::AbstractString)
 		thlenden = new_thlenden(thlenvec,density)
 		# Compute the pressure and stress on all bodies.
 		# Note: the stress is not smoothed and absolute value is not taken.
-		pressvec = computepressure(thlenden,nouter)
-		tauvec = computestress(thlenden,nouter)
+		pressvec = compute_pressure(thlenden,nouter)
+		tauvec = compute_stress(thlenden,nouter)
 		#--------------------------------------#
 		# Compute the drag on each body.
 		npts,nbods = getnvals(thlenvec)
