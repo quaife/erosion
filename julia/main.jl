@@ -92,7 +92,16 @@ function postprocess(foldername::AbstractString)
 		targets = TargetsType(evec(), evec(), evec(), evec(), evec())
 		targets.xtar, targets.ytar = setuptargets()
 		compute_velpress_targets!(thlenden,targets,nouter)
+
 		
+		# Save the output to a data file.
+		targfile = string(datafolder,"targpts",cntstr,".dat")
+		iostream = open(targfile, "w")
+		label = string("# Stuff")
+		writedlm(iostream, [label; targets.xtar; targets.ytar; 
+			targets.utar; targets.vtar; targets.ptar])
+		close(iostream)
+
 
 		#--------------------------------------#
 		# Compute the drag on each body.
