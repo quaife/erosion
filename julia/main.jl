@@ -92,16 +92,13 @@ function postprocess(foldername::AbstractString)
 		targets = TargetsType(evec(), evec(), evec(), evec(), evec())
 		targets.xtar, targets.ytar = setuptargets()
 		compute_velpress_targets!(thlenden,targets,nouter)
-
-		
 		# Save the output to a data file.
-		targfile = string(datafolder,"targpts",cntstr,".dat")
+		targfile = string(datafolder,"targs",cntstr,".dat")
 		iostream = open(targfile, "w")
 		label = string("# Stuff")
 		writedlm(iostream, [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar])
 		close(iostream)
-
 
 		#--------------------------------------#
 		# Compute the drag on each body.
@@ -150,20 +147,3 @@ function setuptargets()
 	end
 	return xtar,ytar
 end
-
-
-
-
-#=
-# targets: Set up the target points to measure velocity and pressure: u,v,p.
-function targets(nn::Integer, xmax::Float64, ymax::Float64)
-	# Make the grid.
-	ytar = collect(linspace(-ymax,ymax,nn))
-	ytar = [ytar; ytar]
-	xtar = ones(Float64,nn)
-	xtar = xmax*[-xtar; xtar]
-	# Initialize u,v,p at target points.
-	utar,vtar,ptar = [zeros(Float64,2*nn) for ii=1:3]
-	return 2*nn,xtar,ytar,utar,vtar,ptar
-end
-=#
