@@ -370,7 +370,7 @@ A = \int x n_x ds = \int y n_y ds
 It would be good to test the interface evolution, in particular verify that the curvature-driven-flow (CDF) is 2nd order accurate in time. Initially, I thought I would be able to get exact solutions for CDF, but it turns out that the PDE (\ref{thetaEvolve}) does not reduce to simply a diffusion equation, but instead still has nonlinear terms, thus making exact solutions impractical. I also tried to recast CDF in polar coordinates for star-shapes, but still the governing PDE is not simple enough to get exact solutions. Also, in the $\theta$-$L$ formulation I tried to determine the normal velocity to make the nonlinear terms vanish, but this does not appear possible either. Instead, I can do a completely numerical convergence test.
 
 
-\section{Permeability, conductivity, drag, resistance, and all of that}
+\section{Permeability, conductivity, drag, resistance, and all that}
 
 Darcy's law is
 \begin{equation}
@@ -381,7 +381,7 @@ Perhaps the most standard parameter to characterize the porous medium is the per
 \begin{equation}
 \bq = - \bvec{k} \grad p / \mu
 \end{equation}
-Consider first an isotropic medium with permeability $k$ (scalar). I propose that we decompose the permeability into the contribution from channel walls and from the embedded bodies $k = k_{c} + k_{b}$. Lets first figure out the contribution from the channel walls $k_c$. Consider flow in a channel of width $2w$ due to a pressure difference of $\Delta p$ occurring over a length $2 \ell$, so that the pressure gradient is $\grad p = -\Delta p/(2 \ell)$. If I did it correctly, the velocity is
+Consider first an isotropic medium with permeability $k$ (scalar). As a warmup, consider flow in a channel of width $2w$ due to a pressure difference of $\Delta p$ occurring over a length $2 \ell$, so that the pressure gradient is $\grad p = -\Delta p/(2 \ell)$. If I did it correctly, the velocity is
 \begin{equation}
 u(z) = \frac{\Delta p}{4 \mu \ell} (w^2 - z^2)
 \end{equation}
@@ -389,13 +389,30 @@ Then we can calculate the discharge as
 \begin{equation}
 q = \frac{1}{2w} \int_{-w}^{w} u(z) dz = \frac{\Delta p w^2}{6 \mu \ell} = - \frac{w^2}{3 \mu} \grad p
 \end{equation}
-so that the channel permeability is given by
+so that the permeability due to the channel walls is given by
 \begin{equation}
-k_c = w^2/3
+k_w = w^2/3
 \end{equation}
 This result at least has the correct units (length squared).
 
+Next, consider measuring the permeability for flow through a matrix of bodies. To accomplish this, we should measure the pressure and velocity along two vertical lines, one at $x = x_0$ and another at $x = -x_0$, and average to get $p^+ = \left< p(x_0) \right>$, $p^- = \left<p(-x_0) \right>$ and the same for $q$. Then the measured value of the total permeability (setting $\mu = 1$), is
+\begin{equation}
+k_{tot} = \frac{x_0 (q^+ + q^-)}{p^- - p^+}
+\end{equation}
+Presumably, $q$ (the average along a vertical cross-section) should be the same everywhere, but we should check this. 
 
+The `total' permeability above includes resistance from both the bodies and the channel walls, and so the value is artificially low (the true permeability of just the bodies will be a bit higher). In electrical circuits, the conductivity and resistivity are simply reciprocals of one another, so I presume the same holds for porous media flow, giving
+\begin{equation}
+\frac{1}{k_{tot}} = \frac{1}{k_w} + \frac{1}{k_b}
+\end{equation}
+ where $k_w = w^2/3$ is from the channel walls and $k_b$ is from the erodible bodies. Then, to compute the permeability from the bodies, we would remove the contribution from the walls. First, lets consider the resistances (the reciprocals of the permeabilities)
+\begin{equation}
+\frac{1}{k_b} = \frac{1}{k_{tot}} - \frac{1}{k_w} = \frac{k_w - k_{tot}}{k_w k_{tot}}
+\end{equation}
+which gives
+\begin{equation}
+k_b = \frac{k_w k_{tot}}{k_w - k_{tot}}
+\end{equation}
 
 
 
