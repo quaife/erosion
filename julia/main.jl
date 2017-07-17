@@ -88,6 +88,13 @@ function postprocess(foldername::AbstractString)
 		thlenden = new_thlenden(thlenvec,density)
 
 		#--------------------------------------#
+		# Compute the permeability
+		k1 = permeability(thlenden,nouter,1.2)
+		k2 = permeability(thlenden,nouter,1.5)
+		k3 = permeability(thlenden,nouter,1.8)
+
+
+		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
 		xlocs = [-2.8, -2, -1.2, 1.2, 2, 2.8]
 		ylocs = collect(-0.8: 0.2: 0.8)
@@ -170,12 +177,12 @@ function permeability(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	qreldiff = 2*(qplus-qminus)/(qplus+qminus)
 	assert(qreldiff < 1e-6)
 
-	println("Pressure at x0 is ", pplus)
-	println("Pressure at -x0 is ", pminus)
-	println("Discharge at x0 is ", qplus)
-	println("Discharge at -x0 is ", qminus)
-
 	# The total permeability
 	ktot = x0*(qplus+qminus)/(pminus - pplus)
+
+	println("Discharge at x0 is ", signif(qplus,4))
+	println("Discharge at -x0 is ", signif(qminus,4))
+	println("The total permeability measured at x0 = ", x0, " is equal to ", signif(ktot,3))
+
 	return ktot
 end
