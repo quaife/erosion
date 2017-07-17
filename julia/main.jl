@@ -88,9 +88,10 @@ function postprocess(foldername::AbstractString)
 		thlenden = new_thlenden(thlenvec,density)
 
 		#--------------------------------------#
-		# Compute at the target points.
-		targets = TargetsType(evec(), evec(), evec(), evec(), evec())
-		targets.xtar, targets.ytar = setuptargets()
+		# Compute velocity and pressure at a set of target points.
+		xlocs = [-2.8, -2, -1.2, 1.2, 2, 2.8]
+		ylocs = collect(-0.8: 0.2: 0.8)
+		targets = setuptargets(xlocs,ylocs)
 		compute_velpress_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
@@ -130,11 +131,8 @@ function postprocess(foldername::AbstractString)
 	return
 end
 
-function setuptargets()
-	# Specify the x and y locations of the grid.
-	xlocs = [-2.8, -2, -1.2, 1.2, 2, 2.8]
-	ylocs = collect(-0.8: 0.2: 0.8)
-	# Define the grid of xtar and ytar.
+# setuptargets: Set up the target points.
+function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	nx = endof(xlocs)
 	ny = endof(ylocs)
 	ntargs = nx*ny
@@ -145,5 +143,39 @@ function setuptargets()
 		xtar[n1:n2] = xlocs[nn]
 		ytar[n1:n2] = ylocs
 	end
-	return xtar,ytar
+	targets = TargetsType(evec(), evec(), evec(), evec(), evec())
+	targets.xtar = xtar
+	targets.ytar = ytar
+	return targets
+end
+
+function permeability(thlenden::ThLenDenType, nouter::Int, x0::Float64)
+	# Set up targets points on a y-grid for midpoint rule.
+	nypts = 5
+	dy = 2./nypts
+	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
+	# Target points for plus/minus x0.
+	tarp = setuptargets([x0],ylocs)
+	tarm = setuptargets([-x0],ylocs)
+	# Comopute the velocities and pressures on each set of target points.
+	compute_velpress_targets!(thlenden,tarp,nouter)
+	compute_velpress_targets!(thlenden,tarm,nouter)
+	# Compute the cross-sectional average pressure and discharge
+	pplus = mean(tarp.ptar)
+	pminus = mean(tarm.ptar)
+	qplus = mean(tarp.utar)
+	qminus = mean(tarm.utar)
+	#= The discharge should be exactly the same at any location x.
+	So check that it is the same at x0 and -x0. =#
+	qreldiff = 2*(qplus-qminus)/(qplus+qminus)
+	assert(qreldiff < 1e-6)
+
+	println("Pressure at x0 is ", pplus)
+	println("Pressure at -x0 is ", pminus)
+	println("Discharge at x0 is ", qplus)
+	println("Discharge at -x0 is ", qminus)
+
+	# The total permeability
+	ktot = x0*(qplus+qminus)/(pminus - pplus)
+	return ktot
 end
