@@ -88,14 +88,6 @@ function postprocess(foldername::AbstractString)
 		thlenden = new_thlenden(thlenvec,density)
 
 		#--------------------------------------#
-		# Compute the permeability
-		println()
-		k1 = permeability(thlenden,nouter,1.2)
-		k2 = permeability(thlenden,nouter,1.5)
-		k3 = permeability(thlenden,nouter,1.8)
-
-
-		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
 		xlocs = [-2.8, -2, -1.2, 1.2, 2, 2.8]
 		ylocs = collect(-0.8: 0.2: 0.8)
@@ -108,6 +100,13 @@ function postprocess(foldername::AbstractString)
 		writedlm(iostream, [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar])
 		close(iostream)
+
+		#--------------------------------------#
+		# Compute the permeability
+		println()
+		r1 = resistivity(thlenden,nouter,1.2)
+		r2 = resistivity(thlenden,nouter,1.5)
+		r3 = resistivity(thlenden,nouter,1.8)
 
 		#--------------------------------------#
 		# Compute the drag on each body.
@@ -157,7 +156,8 @@ function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	return targets
 end
 
-function permeability(thlenden::ThLenDenType, nouter::Int, x0::Float64)
+# resistivity: Compute the resistivity/permeability of the porous matrix.
+function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	# Set up targets points on a y-grid for midpoint rule.
 	nypts = 5
 	dy = 2./nypts
@@ -173,17 +173,20 @@ function permeability(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	pminus = mean(tarm.ptar)
 	qplus = mean(tarp.utar)
 	qminus = mean(tarm.utar)
+	qavg = 0.5*(qplus+qminus)
 	#= The discharge should be exactly the same at any location x.
 	So check that it is the same at x0 and -x0. =#
-	qreldiff = 2*(qplus-qminus)/(qplus+qminus)
+	qreldiff = (qplus-qminus)/qavg
 	assert(qreldiff < 1e-6)
+	# Calculate the total resistivity
+	rtot = (pminus - pplus)/(2*x0*qavg)
+	# Subtract the contribution from the walls.
+	rbods = rtot - 3.
 
-	# The total permeability
-	ktot = x0*(qplus+qminus)/(pminus - pplus)
+	println("At x0 = ",x0," the body resistivity is: ",rbods)
 
-	println("Discharge at x0 is ", signif(qplus,4))
-	println("Discharge at -x0 is ", signif(qminus,4))
-	println("The total permeability measured at x0 = ", x0, " is equal to ", signif(ktot,3))
-
-	return ktot
+	# Calculate the corresponding permeabilities.
+	#ktot = 1/rtot
+	#kbods = 1/rbods
+	return rbods
 end
