@@ -182,9 +182,8 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	rtot = (pminus - pplus)/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
-
 	# For testing.
-	println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
-	println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
+	#println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
+	#println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
 	return rtot,rbods
 end
