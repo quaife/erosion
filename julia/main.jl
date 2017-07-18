@@ -89,6 +89,7 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute the permeability
+		println()
 		k1 = permeability(thlenden,nouter,1.2)
 		k2 = permeability(thlenden,nouter,1.5)
 		k3 = permeability(thlenden,nouter,1.8)
