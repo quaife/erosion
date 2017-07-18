@@ -89,7 +89,7 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = [-2.8, -2, -1.2, 1.2, 2, 2.8]
+		xlocs = [-2.5, -2.0, -1.5, 1.5, 2.0, 2.5]
 		ylocs = collect(-0.8: 0.2: 0.8)
 		targets = setuptargets(xlocs,ylocs)
 		compute_velpress_targets!(thlenden,targets,nouter)
@@ -104,9 +104,9 @@ function postprocess(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the permeability
 		println()
-		rt1,rb1 = resistivity(thlenden,nouter,1.2)
-		rt2, rb2 = resistivity(thlenden,nouter,1.5)
-		rt3, rb3 = resistivity(thlenden,nouter,1.8)
+		rt1,rm1 = resistivity(thlenden, nouter, 1.5)
+		rt2,rm2 = resistivity(thlenden, nouter, 2.0)
+		rt3,rm3 = resistivity(thlenden, nouter, 2.5)
 
 		#--------------------------------------#
 		# Compute the drag on each body.
@@ -159,7 +159,7 @@ end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	# Set up targets points on a y-grid for midpoint rule.
-	nypts = 11
+	nypts = 13
 	dy = 2./nypts
 	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
 	# Target points for plus/minus x0.
@@ -180,10 +180,14 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	assert(qreldiff < 1e-6)
 	# Calculate the total resistivity
 	rtot = (pminus - pplus)/(2*x0*qavg)
-	# Subtract the contribution from the walls.
-	rbods = rtot - 3.
-	# For testing.
-	println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
-	println("At x0 = ", x0, " the body resistivity is: ", signif(rbods,3))
-	return rtot,rbods
+	#= Estimate the resistivity of the porous matrix region by
+	an area-weighted average. =#
+	Amat = 4.
+	Abuf = 4*(x0-1)
+	Atot = Amat+Abuf
+	rbuf = 3.
+	rmat = (rtot*Atot - rbuf*Abuf)/Amat
+	# In the porous matrix region, subtract the contribution from the walls.
+	rmat = rmat - 3.
+	return rtot,rmat
 end
