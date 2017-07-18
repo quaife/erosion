@@ -381,47 +381,40 @@ Perhaps the most standard parameter to characterize the porous medium is the per
 \begin{equation}
 \bq = - \bvec{k} \grad p / \mu
 \end{equation}
-Consider first an isotropic medium with permeability $k$ (scalar). As a warmup, consider flow in a channel of width $2w$ due to a pressure difference of $\Delta p$ occurring over a length $2 \ell$, so that the pressure gradient is $\grad p = -\Delta p/(2 \ell)$. If I did it correctly, the velocity is
+Consider first an isotropic medium with permeability $k$ (scalar). Overall, it is more straightforward to work with the resistivity $r = 1/k$.
+
+As a warmup, consider flow in a channel of width $2w$ due to uniform (negative) pressure gradient $p_x$ in the $x$-direction. The resulting velocity profile is
 \begin{equation}
-u(z) = \frac{\Delta p}{4 \mu \ell} (w^2 - z^2)
+u(z) = -\frac{p_x}{2 \mu} (w^2 - z^2)
 \end{equation}
 Then we can calculate the discharge as
 \begin{equation}
-q = \frac{1}{2w} \int_{-w}^{w} u(z) dz = \frac{\Delta p w^2}{6 \mu \ell} = - \frac{w^2}{3 \mu} \grad p
+q = \frac{1}{2w} \int_{-w}^{w} u(z) dz = - \frac{ p_x w^2}{3 \mu} 
 \end{equation}
-so that the permeability due to the channel walls is given by
-\begin{equation}
-k_w = w^2/3
-\end{equation}
-This result at least has the correct units (length squared).
+so that the permeability due to the channel walls is $k_w = w^2/3$ and the resistivity is $r_w = 3/w^2$.
 
-Next, consider measuring the permeability for flow through a matrix of bodies. To accomplish this, we should measure the pressure and velocity along two vertical lines, one at $x = x_0$ and another at $x = -x_0$, and average to get $p^+ = \left< p(x_0) \right>$, $p^- = \left<p(-x_0) \right>$ and the same for $q$. Then the measured value of the total permeability (setting $\mu = 1$), is
-\begin{equation}
-k_{tot} = \frac{x_0 (q^+ + q^-)}{p^- - p^+}
-\end{equation}
-Presumably, $q$ (the average along a vertical cross-section) should be the same everywhere, but we should check this. 
-
-The `total' permeability above includes resistance from both the bodies and the channel walls, and so the value is artificially low (the true permeability of just the bodies will be a bit higher). In electrical circuits, the conductivity and resistivity are simply reciprocals of one another, so I presume the same holds for porous media flow, giving
-\begin{equation}
-\frac{1}{k_{tot}} = \frac{1}{k_w} + \frac{1}{k_b}
-\end{equation}
- where $k_w = w^2/3$ is from the channel walls and $k_b$ is from the erodible bodies. Then, to compute the permeability from the bodies, we would remove the contribution from the walls. First, lets consider the resistances (the reciprocals of the permeabilities)
-\begin{equation}
-\frac{1}{k_b} = \frac{1}{k_{tot}} - \frac{1}{k_w} = \frac{k_w - k_{tot}}{k_w k_{tot}}
-\end{equation}
-which gives
-\begin{equation}
-k_b = \frac{k_w k_{tot}}{k_w - k_{tot}} \, , .
-\end{equation}
-
-Things are more straightforward in terms of the resistivity, $r = 1/k$, which gives
+Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensionalization). Measure the pressure and velocity along two vertical lines, one at $x = x_0$ and another at $x = -x_0$, and average to get $p^+ = \left< p(x_0) \right>$, $p^- = \left<p(-x_0) \right>$ and the same for $q$. Then the {\em total} resistivity (that of the porous matrix and the channel walls together) is 
 \begin{equation}
 r_{tot} = \frac{p^- - p^+}{2 x_0 q_{avg}}
 \end{equation}
-and the contribution from the walls should be $r_w = 3/w^2$, so we get
+This total resistivity reflects the resistivity from the porous matrix as well as the channel walls. There is a buffer region that lies outside the porous-matrix region ($x_0$ lies in the bugger region), and we would like to remove the contribution from this region. Lets regard the total resistivity as an area-integral of resistivity-density, so that we can write the total in terms of the areas of the regions
 \begin{equation}
-r_{b} = r_{tot} - 3/w^2
+A_{t} r_{t} = A_{b} r_{b} + A_{m} r_{m}
 \end{equation}
+Here, the subscripts are as follows: $t$ stands for total, $b$ for buffer, and $m$ for matrix. Then we can solve for the resistivity in the matrix region
+\begin{equation}
+r_m = \frac{A_t r_t - A_b r_b}{A_m}
+\end{equation}
+In the buffer region, resistivity is only due to channel walls so that $r_b = 3$. The area of the included buffer region depends on $x_0$ via $A_b = 4(x_0 - 1)$. The area of the matrix region is always $A_m = 4$, and $A_t = A_b + A_m$. The resulting resistivity in the matrix, $r_m$, includes the contribution from the bodies as well as the channel walls. We can then subtract the contribution from the walls, to get $\tilde{r}_m$, the resistivity due to the bodies alone as
+\begin{equation}
+\tilde{r}_m = r_m - 3 \, .
+\end{equation}
+Putting everything together, the final formula is
+\begin{equation}
+\tilde{r}_m = x_0 (r_t - 3) \, .
+\end{equation}
+As convoluted as this calculation seems, it does appear to give convergent numerical results that are {\em independent of the choice of $x_0$} (to the expected order of accuracy).
+
 
 
 

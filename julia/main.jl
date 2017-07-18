@@ -104,9 +104,9 @@ function postprocess(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the permeability
 		println()
-		rt1,rm1 = resistivity(thlenden, nouter, 1.5)
-		rt2,rm2 = resistivity(thlenden, nouter, 2.0)
-		rt3,rm3 = resistivity(thlenden, nouter, 2.5)
+		rt1,rb1 = resistivity(thlenden, nouter, 1.5)
+		rt2,rb2 = resistivity(thlenden, nouter, 2.0)
+		rt3,rb3 = resistivity(thlenden, nouter, 2.5)
 
 		#--------------------------------------#
 		# Compute the drag on each body.
@@ -180,14 +180,11 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	assert(qreldiff < 1e-6)
 	# Calculate the total resistivity
 	rtot = (pminus - pplus)/(2*x0*qavg)
-	#= Estimate the resistivity of the porous matrix region by
-	an area-weighted average. =#
-	Amat = 4.
-	Abuf = 4*(x0-1)
-	Atot = Amat+Abuf
-	rbuf = 3.
-	rmat = (rtot*Atot - rbuf*Abuf)/Amat
-	# In the porous matrix region, subtract the contribution from the walls.
-	rmat = rmat - 3.
-	return rtot,rmat
+	# Calculate the resisitvity due only to the bodies.
+	rbods = x0*(rtot - 3)
+
+	# For testing.
+	println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
+	println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
+	return rtot,rbods
 end
