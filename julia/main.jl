@@ -104,9 +104,9 @@ function postprocess(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the permeability
 		println()
-		r1 = resistivity(thlenden,nouter,1.2)
-		r2 = resistivity(thlenden,nouter,1.5)
-		r3 = resistivity(thlenden,nouter,1.8)
+		rt1,rb1 = resistivity(thlenden,nouter,1.2)
+		rt2, rb2 = resistivity(thlenden,nouter,1.5)
+		rt3, rb3 = resistivity(thlenden,nouter,1.8)
 
 		#--------------------------------------#
 		# Compute the drag on each body.
@@ -159,7 +159,7 @@ end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	# Set up targets points on a y-grid for midpoint rule.
-	nypts = 21
+	nypts = 11
 	dy = 2./nypts
 	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
 	# Target points for plus/minus x0.
@@ -182,13 +182,8 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	rtot = (pminus - pplus)/(2*x0*qavg)
 	# Subtract the contribution from the walls.
 	rbods = rtot - 3.
-
+	# For testing.
 	println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
 	println("At x0 = ", x0, " the body resistivity is: ", signif(rbods,3))
-
-
-	# Calculate the corresponding permeabilities.
-	#ktot = 1/rtot
-	#kbods = 1/rbods
-	return rbods
+	return rtot,rbods
 end

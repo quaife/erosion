@@ -11,9 +11,9 @@ function test()
 	#--------------------------------------#
 	# Compute the permeability
 	println()
-	r1 = resistivity(thlenden,nouter,1.2)
-	r2 = resistivity(thlenden,nouter,1.5)
-	r3 = resistivity(thlenden,nouter,1.8)
+	rt1,rb1 = resistivity(thlenden,nouter,1.2)
+	rt2,rb3 = resistivity(thlenden,nouter,1.5)
+	rt2,rb3 = resistivity(thlenden,nouter,1.8)
 end
 
 test()
