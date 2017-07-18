@@ -175,7 +175,11 @@ end
 # getnvals: Calculate npts and nbods.
 function getnvals(thlenv::Vector{ThetaLenType})
 	nbods = endof(thlenv)
-	npts = endof(thlenv[1].theta)
+	if nbods ==0
+		npts = 0
+	else
+		npts = endof(thlenv[1].theta)
+	end
 	return npts,nbods
 end
 # Calculate n1 and n2 to divy up the separate bodies.
