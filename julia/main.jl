@@ -28,13 +28,10 @@ function erosion()
 			plotnsave(thlenden1,params,paramvec,datafolder,plotfolder,tt,nfile)
 			nfile += 1
 		end
-
-		# Advance the thlen vectors.
-		advance_thetalen!(thlenden1,thlenden0,params)
-
 		# Gracefully exit if all of the bodies have disappeared.
 		if endof(thlenden1.thlenvec)==0; break; end
-		
+		# Advance the thlen vectors.
+		advance_thetalen!(thlenden1,thlenden0,params)
 	end
 	# Post-process to compute the drag and other quantities.
 	postprocess("run")
