@@ -74,10 +74,13 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	return
 end
 # getrotdensity! Compute the density on the grid rotated by 90 deg CCW.
-function getrotdensity!(thlenden::ThLenDenType, params::ParamType)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	xrot,yrot = xyrot(xv,yv)
-	thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
+function getrotdensity!(thlenden::ThLenDenType, nouter::Int)
+	if thlenden.denrot == []
+		npts,nbods,xv,yv = getnxy(thlenden)
+		xrot,yrot = xyrot(xv,yv)
+		ifmm = 1
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,nouter,ifmm)
+	end
 	return
 end
 
@@ -149,6 +152,15 @@ function compute_velpress_targets!(thlenden::ThLenDenType, targets::TargetsType,
 		thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
+# compute_velpressrot_targets: Compute the same on the rotated xy grid.
+function compute_velpressrot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+	getrotdensity!(thlenden,nouter)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	xrot,yrot = xyrot(xv,yv)
+	targets.utar,targets.vtar,targets.ptar = compute_velpress_targets(xrot,yrot,
+		thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
+	return
+end
 # compute_velpress_targets: Fortran wrapper.
 function compute_velpress_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
@@ -200,4 +212,5 @@ end
 function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
 	xrot = -yv
 	yrot = xv
+	return xrot,yrot
 end

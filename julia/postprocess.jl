@@ -19,19 +19,21 @@ function postprocess(foldername::AbstractString)
 		# Extract thlenvec and density.
 		tt,thlenvec = read_geom_file(geomfile)
 		density = readvec(densityfile)
-		thlenden = new_thlenden(thlenvec,density)
 		npts,nbods = getnvals(thlenvec)
+		# Create a thlenden variable.
+		thlenden = new_thlenden(thlenvec,density)
 
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
-		rbods = resistivity(thlenden, nouter, 2.0)
+		rbods = resistivity(thlenden, nouter, 2.0, false)
+		rbodsrot = resistivity(thlenden, nouter, 2.0, true)
 		# Compute the drag on each body.
 		dragx,dragy = drag(thlenden, nouter)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
-		lab2 = string("# resistivity, nbods, dragx for each, dragy for each.")
-		resdragdata = [lab1; lab2; rbods; nbods; dragx; dragy]
+		lab2 = string("# resistivity, rotated resistivity, nbods, dragx for each, dragy for each.")
+		resdragdata = [lab1; lab2; rbods; rbodsrot; nbods; dragx; dragy]
 		writedata(resdragdata, resdragfile)
 
 		#--------------------------------------#
@@ -51,7 +53,7 @@ function postprocess(foldername::AbstractString)
 end
 
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
+function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64, rotation::Bool=false)
 	# Set up targets points on a y-grid for midpoint rule.
 	nypts = 13
 	dy = 2./nypts
@@ -59,9 +61,15 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64)
 	# Target points for plus/minus x0.
 	tarp = setuptargets([x0],ylocs)
 	tarm = setuptargets([-x0],ylocs)
-	# Comopute the velocities and pressures on each set of target points.
-	compute_velpress_targets!(thlenden,tarp,nouter)
-	compute_velpress_targets!(thlenden,tarm,nouter)
+	# Compute the velocities and pressures on each set of target points.
+	# Either using the original porous matrix or the rotated one.
+	if rotation==true
+		compute_velpressrot_targets!(thlenden,tarp,nouter)
+		compute_velpressrot_targets!(thlenden,tarm,nouter)
+	else
+		compute_velpress_targets!(thlenden,tarp,nouter)
+		compute_velpress_targets!(thlenden,tarm,nouter)
+	end
 	# Compute the cross-sectional average pressure and discharge
 	pplus = mean(tarp.ptar)
 	pminus = mean(tarm.ptar)
