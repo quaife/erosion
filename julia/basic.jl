@@ -125,7 +125,11 @@ end
 # computepressure: Dispatch for ThLenDenType.
 function compute_pressure(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
+	if nbods ==0
+		pressure = evec()
+	else
+		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
+	end
 	return pressure
 end
 # compute_pressure: Fortran wrapper.

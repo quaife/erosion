@@ -33,11 +33,8 @@ function erosion()
 		# Advance the thlen vectors.
 		advance_thetalen!(thlenden1,thlenden0,params)
 	end
-
-	println("Out of time loop.")
-
 	# Post-process to compute the drag and other quantities.
-	#postprocess("run")
+	postprocess("run")
 	return
 end
 
