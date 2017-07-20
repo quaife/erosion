@@ -105,7 +105,11 @@ end
 # computestress: Dispatch for ThLenDenType.
 function compute_stress(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
+	if nbods == 0
+		tau = evec()
+	else
+		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
+	end
 	return tau
 end
 # compute_stress: Fortran wrapper.

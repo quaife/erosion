@@ -121,7 +121,7 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 end
 # trimthlenvec: Remove the curves with non-positive length.
 function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType})
-	nbods = endof(thlenvec1)
+	npts,nbods = getnvals(thlenvec1)
 	lenvec = zeros(Float64,nbods)
 	for nn=1:nbods
 		lenvec[nn] = thlenvec1[nn].len

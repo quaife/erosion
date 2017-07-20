@@ -28,7 +28,7 @@ function postprocess(foldername::AbstractString)
 		# Compute the drag on each body.
 		dragx,dragy = drag(thlenden, nouter)
 		# Save the data to a file.
-		resdragfile = string(datafolder,"resist",cntstr,".dat")
+		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
 		lab2 = string("# resistivity, nbods, dragx for each, dragy for each.")
 		resdragdata = [lab1; lab2; rbods; nbods; dragx; dragy]
