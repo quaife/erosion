@@ -5,6 +5,7 @@ include("spectral.jl")
 include("thetalen.jl")
 include("RKstarter.jl")
 include("plotsave.jl")
+include("postprocess.jl")
 
 #--------------- MAIN ROUTINE ---------------#
 # erosion: The main routine to erode a group of bodies.
