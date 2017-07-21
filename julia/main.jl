@@ -34,7 +34,7 @@ function erosion()
 		advance_thetalen!(thlenden1,thlenden0,params)
 	end
 	# Post-process to compute the drag and other quantities.
-	postprocess("run")
+	#postprocess("run")
 	return
 end
 
