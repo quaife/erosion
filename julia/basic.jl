@@ -76,12 +76,12 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	return
 end
 # getrotdensity! Compute the density on the grid rotated by 90 deg CCW.
-function getrotdensity!(thlenden::ThLenDenType, nouter::Int)
+function getrotdensity!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.denrot == []
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
 		ifmm = 1
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,nouter,ifmm)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
 	end
 	return
 end
