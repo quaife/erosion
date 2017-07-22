@@ -59,7 +59,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density (if not loaded already).
 	compute_density!(thlenden, params)
 	# Also compute the density on the rotated grid to save in data files.
-	getrotdensity!(thlenden, params)
+	compute_denrot!(thlenden, params)
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
@@ -75,16 +75,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	end
 	return
 end
-# getrotdensity! Compute the density on the grid rotated by 90 deg CCW.
-function getrotdensity!(thlenden::ThLenDenType, params::ParamType)
-	if thlenden.denrot == []
-		npts,nbods,xv,yv = getnxy(thlenden)
-		xrot,yrot = xyrot(xv,yv)
-		ifmm = 1
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
-	end
-	return
-end
+
 
 #--------------- FORTRAN WRAPPERS ---------------#
 #= computedensity! Computes the density function and saves in thlenden.
@@ -94,6 +85,15 @@ function compute_density!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.density == []
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
+	end
+	return
+end
+# compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
+function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
+	if thlenden.denrot == []
+		npts,nbods,xv,yv = getnxy(thlenden)
+		xrot,yrot = xyrot(xv,yv)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
 	end
 	return
 end

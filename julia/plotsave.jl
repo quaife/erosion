@@ -131,10 +131,11 @@ end
 # read_density_file: Read the density file to get the density and rotated density.
 function read_density_file(filename::AbstractString)
 	dendata = readvec(filename)
-	nden = endof(dendata)
-	assert(iseven(nden))
-	density = dendata[1:nden/2]
-	denrot = dendata[nden/2+1:nden]
+	nn = endof(dendata)
+	assert(iseven(nn))
+	nhalf = div(nn,2)
+	density = dendata[1:nhalf]
+	denrot = dendata[nhalf+1:nn]
 	return density, denrot
 end
 # readvec: Read a vector from a data file.

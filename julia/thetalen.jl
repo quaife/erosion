@@ -28,6 +28,7 @@ function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, par
 	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
 	thlenden0.density = thlenden1.density
 	thlenden1.density = evec()
+	thlenden1.denrot = evec()
 	return
 end
 # advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
