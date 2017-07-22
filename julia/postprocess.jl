@@ -132,10 +132,3 @@ function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	targets.ytar = ytar
 	return targets
 end
-
-# writedata
-function writedata(data::Vector, filename::AbstractString)
-	iostream = open(filename, "w")
-	writedlm(iostream, data)
-	close(iostream)
-end

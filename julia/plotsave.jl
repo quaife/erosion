@@ -11,8 +11,8 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	densityfile = 	string(datafolder,"density",cntstr,".dat")
 	paramfile = string(datafolder,"params.dat")
 	# Write the data to a file.
-	write_data(tt,thlenden,geomfile,densityfile)
-	write_params(paramvec,cnt,paramfile)
+	save_geo_density(tt,thlenden,geomfile,densityfile)
+	save_params(paramvec,cnt,paramfile)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
@@ -22,15 +22,14 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	#plot_pressure(pressure,pressfile)
 end
 
+
 #--------------- SAVING DATA ---------------#
-#= write_data: Write the geometry data (theta,len,xsm,ysm,xx,yy) 
+#= save_geo_density: Save the geometry data (theta,len,xsm,ysm,xx,yy) 
 and the density-function data in a file. =#
-function write_data(tt::Float64, thlenden::ThLenDenType,
+function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 		geomfile::AbstractString, densityfile::AbstractString)
-	# The quantities of interest.
-	thlenvec = thlenden.thlenvec
-	density = thlenden.density
 	# Write the geometry data.
+	thlenvec = thlenden.thlenvec
 	iostream = open(geomfile, "w")
 	npts,nbods = getnvals(thlenvec)
 	label = "# Parameters (time, npts, nbods), then geometry (theta, len, xsm, ysm, x, y) for each body"
@@ -44,19 +43,21 @@ function write_data(tt::Float64, thlenden::ThLenDenType,
 	end
 	close(iostream)
 	# Write the density data.
-	iostream = open(densityfile, "w")
-	label = "# The density function."
-	writedlm(iostream, [label; density])
-	close(iostream)
+	densitydata = [thlenden.density; thlenden.denrot]
+	writedata(densitydata,densityfile)
 end
 # write_params: Write the important parameters in an output file.
-function write_params(paramvec::Array, cnt::Int, filename::AbstractString)
+function save_params(paramvec::Array, cnt::Int, filename::AbstractString)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes), lastcnt"
-	writevec = [label1; paramvec[1:end-3]; 
+	paramdata = [label1; paramvec[1:end-3]; 
 		label2; paramvec[end-2:end-1]; round(paramvec[end],2); cnt]
+	writedata(paramdata, filename)
+end
+# writedata: Write generic data to a file.
+function writedata(data::Vector, filename::AbstractString)
 	iostream = open(filename, "w")
-	writedlm(iostream, writevec)
+	writedlm(iostream, data)
 	close(iostream)
 end
 # newfolder: If the folder exists, delete it and create a new one.
@@ -66,6 +67,73 @@ function newfolder(foldername::AbstractString)
 	end
 	mkdir(foldername)
 end
+
+#--------------- READING DATA ---------------#
+# read_thlen_file: Read a thlen file.
+# The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
+function read_thlen_file(filename::AbstractString)
+	# Read the data file.
+	invec = readvec(filename)
+	# Extract the number of points and bodies.
+	npts = round(Int,invec[1])
+	nbods = round(Int,invec[2])
+	deleteat!(invec,1:2)
+	# Consistency test.
+	assert( endof(invec) == nbods*(npts+3))
+	# Extract thlenvec for each body.
+	thlenvec = new_thlenvec(nbods)
+	for nn=1:nbods
+		thlenvec[nn].theta = invec[1:npts]
+		thlenvec[nn].len = invec[npts+1]
+		thlenvec[nn].xsm = invec[npts+2]
+		thlenvec[nn].ysm = invec[npts+3]
+		test_theta(thlenvec[nn].theta)
+		deleteat!(invec,1:npts+3)
+	end
+	return thlenvec
+end
+# read_geom_file: Read a geometry file.
+#= The data in the file is t (physical time), npts, nbods, 
+then theta, len, xsm, ysm, xx, yy for each body. =#
+function read_geom_file(filename::AbstractString)
+	# Read the data file.
+	invec = readvec(filename)
+	# Extract the parameters.
+	tt = invec[1]
+	npts = round(Int,invec[2])
+	nbods = round(Int,invec[3])
+	deleteat!(invec,1:3)
+	# Consistency test.
+	assert( endof(invec) == nbods*(3*npts+3))
+	# Read theta, len, xsm, ysm, xx, yy and save in thlenvec.
+	thlenvec = new_thlenvec(nbods)
+	for nn=1:nbods
+		# Read theta, len, xsm, ysm.
+		thlenvec[nn].theta = invec[1:npts]
+		thlenvec[nn].len = invec[npts+1]
+		thlenvec[nn].xsm = invec[npts+2]
+		thlenvec[nn].ysm = invec[npts+3]
+		test_theta(thlenvec[nn].theta)
+		# Delete theta, len, xsm, ysm
+		deleteat!(invec,1:npts+3)
+		# Read xx and yy.
+		thlenvec[nn].xx = invec[1:npts]
+		thlenvec[nn].yy = invec[npts+1:2*npts]
+		# Delete xx and yy.
+		deleteat!(invec,1:2*npts)
+	end
+	return tt,thlenvec
+end
+# readvec: Read a vector from a data file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream)[:,1]
+	close(iostream)
+	return invec
+end
+#= REDO using read_geom_file
+# geom2thlen: Convert a geom.dat file to thlen.in file. =#
+
 
 #--------------- PLOTTING DATA ---------------#
 # plotcurve: Plot multiple curves from the theta-len values.
@@ -98,100 +166,3 @@ function plot_pressure(pressure::Vector{Float64}, figname::AbstractString)
 	pp = plot(pressure)
 	savefig(pp, figname, width=width, height=height)
 end
-
-#--------------- READING DATA ---------------#
-# readvec: Read a vector from a data file.
-function readvec(filename::AbstractString)
-	iostream = open(filename, "r")
-	invec = readdlm(iostream)[:,1]
-	close(iostream)
-	return invec
-end
-# read_thlen_file: Read a thlen file.
-# The data in the file is npts and nbods and then theta,len,xsm,yxm for each body.
-function read_thlen_file(filename::AbstractString)
-	# Read the data file.
-	invec = readvec(filename)
-	# Extract the number of points and bodies.
-	npts = round(Int,invec[1])
-	nbods = round(Int,invec[2])
-	deleteat!(invec,1:2)
-	# Consistency test.
-	assert( endof(invec) == nbods*(npts+3))
-	# Extract thlenvec for each body.
-	thlenvec = new_thlenvec(nbods)
-	for nn=1:nbods
-		thlenvec[nn].theta = invec[1:npts]
-		thlenvec[nn].len = invec[npts+1]
-		thlenvec[nn].xsm = invec[npts+2]
-		thlenvec[nn].ysm = invec[npts+3]
-		test_theta(thlenvec[nn].theta)
-		deleteat!(invec,1:npts+3)
-	end
-	return thlenvec
-end
-
-# read_geom_file: Read a geometry file.
-function read_geom_file(filename::AbstractString)
-	# Read the data file.
-	invec = readvec(filename)
-	# Extract the parameters.
-	tt = invec[1]
-	npts = round(Int,invec[2])
-	nbods = round(Int,invec[3])
-	deleteat!(invec,1:3)
-	# Consistency test.
-	assert( endof(invec) == nbods*(3*npts+3))
-	# Read theta, len, xsm, ysm, xx, yy and save in thlenvec.
-	thlenvec = new_thlenvec(nbods)
-	for nn=1:nbods
-		# Read theta, len, xsm, ysm.
-		thlenvec[nn].theta = invec[1:npts]
-		thlenvec[nn].len = invec[npts+1]
-		thlenvec[nn].xsm = invec[npts+2]
-		thlenvec[nn].ysm = invec[npts+3]
-		test_theta(thlenvec[nn].theta)
-		# Delete theta, len, xsm, ysm
-		deleteat!(invec,1:npts+3)
-		# Read xx and yy.
-		thlenvec[nn].xx = invec[1:npts]
-		thlenvec[nn].yy = invec[npts+1:2*npts]
-		# Delete xx and yy.
-		deleteat!(invec,1:2*npts)
-	end
-	return tt,thlenvec
-end
-
-
-
-#= REDO using read_geom_file
-# geom2thlen: Convert a geom.dat file to thlen.in file.
-function geom2thlen(infile::AbstractString, outfile::AbstractString)
-	# Read the data file.
-	invec = readvec(infile)
-	# Extract the parameters.
-	tt = invec[1]
-	npts = round(Int,invec[2])
-	nbods = round(Int,invec[3])
-	deleteat!(invec,1:3)
-	# Consistency test.
-	assert( endof(invec) == nbods*(3*npts+3))
-	# Start to write data.
-	iostream = open(outfile, "w")
-	writedlm(iostream, [npts; nbods])
-	# Write theta, len, xsm, ysm to outfile and skip over xx and yy.
-	for nn=1:nbods
-		theta = invec[1:npts]
-		len = invec[npts+1]
-		xsm = invec[npts+2]
-		ysm = invec[npts+3]
-		test_theta(theta)
-		writedlm(iostream, [theta; len; xsm; ysm])
-		# Delete theta, len, xsm, ysm
-		deleteat!(invec,1:npts+3)
-		# Delete xx and yy too.
-		deleteat!(invec,1:2*npts)
-	end
-	close(iostream)
-end
-=#

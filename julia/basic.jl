@@ -58,6 +58,8 @@ Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density (if not loaded already).
 	compute_density!(thlenden, params)
+	# Also compute the density on the rotated grid to save in data files.
+	getrotdensity!(thlenden, params)
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
@@ -154,7 +156,6 @@ function compute_velpress_targets!(thlenden::ThLenDenType, targets::TargetsType,
 end
 # compute_velpressrot_targets: Compute the same on the rotated xy grid.
 function compute_velpressrot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
-	getrotdensity!(thlenden,nouter)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	xrot,yrot = xyrot(xv,yv)
 	targets.utar,targets.vtar,targets.ptar = compute_velpress_targets(xrot,yrot,
