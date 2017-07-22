@@ -20,8 +20,8 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	#pressfile = string(plotfolder,"pressure",cntstr,".pdf")
 	#pressure = compute_pressure(thlenden,params.nouter)
 	#plot_pressure(pressure,pressfile)
+	return
 end
-
 
 #--------------- SAVING DATA ---------------#
 #= save_geo_density: Save the geometry data (theta,len,xsm,ysm,xx,yy) 
@@ -45,6 +45,7 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	# Write the density data.
 	densitydata = [thlenden.density; thlenden.denrot]
 	writedata(densitydata,densityfile)
+	return
 end
 # write_params: Write the important parameters in an output file.
 function save_params(paramvec::Array, cnt::Int, filename::AbstractString)
@@ -53,12 +54,14 @@ function save_params(paramvec::Array, cnt::Int, filename::AbstractString)
 	paramdata = [label1; paramvec[1:end-3]; 
 		label2; paramvec[end-2:end-1]; round(paramvec[end],2); cnt]
 	writedata(paramdata, filename)
+	return
 end
 # writedata: Write generic data to a file.
 function writedata(data::Vector, filename::AbstractString)
 	iostream = open(filename, "w")
 	writedlm(iostream, data)
 	close(iostream)
+	return
 end
 # newfolder: If the folder exists, delete it and create a new one.
 function newfolder(foldername::AbstractString)
@@ -66,6 +69,7 @@ function newfolder(foldername::AbstractString)
 		rm(foldername; recursive=true)
 	end
 	mkdir(foldername)
+	return
 end
 
 #--------------- READING DATA ---------------#
@@ -124,6 +128,15 @@ function read_geom_file(filename::AbstractString)
 	end
 	return tt,thlenvec
 end
+# read_density_file: Read the density file to get the density and rotated density.
+function read_density_file(filename::AbstractString)
+	dendata = readvec(filename)
+	nden = endof(dendata)
+	assert(iseven(nden))
+	density = dendata[1:nden/2]
+	denrot = dendata[nden/2+1:nden]
+	return density, denrot
+end
 # readvec: Read a vector from a data file.
 function readvec(filename::AbstractString)
 	iostream = open(filename, "r")
@@ -165,4 +178,5 @@ function plot_pressure(pressure::Vector{Float64}, figname::AbstractString)
 	# Plot the pressure
 	pp = plot(pressure)
 	savefig(pp, figname, width=width, height=height)
+	return
 end

@@ -16,12 +16,12 @@ function postprocess(foldername::AbstractString)
 		cntstr = lpad(cnt,4,0)
 		geomfile = string(datafolder,"geom",cntstr,".dat")
 		densityfile = string(datafolder,"density",cntstr,".dat")
-		# Extract thlenvec and density.
+		# Extract thlenvec, density, and denrot.
 		tt,thlenvec = read_geom_file(geomfile)
-		density = readvec(densityfile)
+		density,denrot = read_density_file(densityfile)
+		# Create variables.
 		npts,nbods = getnvals(thlenvec)
-		# Create a thlenden variable.
-		thlenden = new_thlenden(thlenvec,density)
+		thlenden = new_thlenden(thlenvec,density,denrot)
 
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
@@ -89,7 +89,7 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64, rotation:
 	#println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
 	return rbods
 end
-
+# drag: Compute the drag.
 function drag(thlenden::ThLenDenType, nouter::Int)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
@@ -114,7 +114,6 @@ function drag(thlenden::ThLenDenType, nouter::Int)
 	end
 	return dragxvec, dragyvec
 end
-
 # setuptargets: Set up the target points.
 function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	nx = endof(xlocs)
