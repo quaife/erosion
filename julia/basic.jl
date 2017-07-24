@@ -78,7 +78,7 @@ end
 
 
 #--------------- FORTRAN WRAPPERS ---------------#
-#= computedensity! Computes the density function and saves in thlenden.
+#= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
 function compute_density!(thlenden::ThLenDenType, params::ParamType)
@@ -107,13 +107,24 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	return density
 end
 
-# computestress: Dispatch for ThLenDenType.
+# compute_stress: Dispatch for ThLenDenType.
 function compute_stress(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods == 0
 		tau = evec()
 	else
 		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
+	end
+	return tau
+end
+# compute_stressrot: Compute the stress on the rotated grid
+function compute_stressrot()
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods == 0
+		tau = evec()
+	else
+		xrot,yrot = xyrot(xv,yv)
+		tau = compute_stress(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
 	end
 	return tau
 end
@@ -127,7 +138,7 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vecto
 	return tau
 end
 
-# computepressure: Dispatch for ThLenDenType.
+# compute_pressure: Dispatch for ThLenDenType.
 function compute_pressure(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods ==0
@@ -136,6 +147,17 @@ function compute_pressure(thlenden::ThLenDenType, nouter::Int)
 		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
 	end
 	return pressure
+end
+# compute_pressrot: Compute the pressure on a rotated grid.
+function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods ==0
+		pressrot = evec()
+	else
+		xrot,yrot = xyrot(xv,yv)
+		pressrot = compute_pressure(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
+	end
+	return pressrot
 end
 # compute_pressure: Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 

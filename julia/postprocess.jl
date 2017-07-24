@@ -32,8 +32,10 @@ function postprocess(foldername::AbstractString)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
-		lab2 = string("# resistivity, rotated resistivity, nbods, dragx for each, dragy for each.")
-		resdragdata = [lab1; lab2; rbods; rbodsrot; nbods; dragx; dragy]
+		lab2 = string("# nbods, resistivity, rotated resistivity, 
+			total dragx and dragy, rotated dragx and dragy.")
+		resdragdata = [lab1; lab2; nbods; rbods; rbodsrot; 
+			dragx; dragy; ]
 		writedata(resdragdata, resdragfile)
 
 		#--------------------------------------#
@@ -89,16 +91,17 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64, rotation:
 	#println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
 	return rbods
 end
-# drag: Compute the drag.
+# drag: Compute the total drag on all of the bodies combined.
 function drag(thlenden::ThLenDenType, nouter::Int)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
 	tauvec = compute_stress(thlenden,nouter)
 	pressvec = compute_pressure(thlenden,nouter)
-	# Compute the drag on each body individually.
+	# Initialization.
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
-	dragxvec,dragyvec = [zeros(Float64,nbods) for ii=1:2]
+	dragx = 0.
+	dragy = 0.
 	for nn=1:nbods
 		# Get the pressure and stress and body nn.
 		n1,n2 = n1n2(npts,nn)
@@ -109,10 +112,10 @@ function drag(thlenden::ThLenDenType, nouter::Int)
 		ds = thlenvec[nn].len / npts
 		# Compute the drag force.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
-		dragxvec[nn] = sum(press.*nx + tau.*sx)*ds
-		dragyvec[nn] = sum(press.*ny + tau.*sy)*ds
+		dragx += sum(press.*nx + tau.*sx)*ds
+		dragy += sum(press.*ny + tau.*sy)*ds
 	end
-	return dragxvec, dragyvec
+	return dragx, dragy
 end
 # setuptargets: Set up the target points.
 function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
