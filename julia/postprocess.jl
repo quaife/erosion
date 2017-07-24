@@ -28,14 +28,15 @@ function postprocess(foldername::AbstractString)
 		rbods = resistivity(thlenden, nouter, 2.0, false)
 		rbodsrot = resistivity(thlenden, nouter, 2.0, true)
 		# Compute the drag on each body.
-		dragx,dragy = drag(thlenden, nouter)
+		dragx, dragy = drag(thlenden, nouter, false)
+		dragxrot, dragyrot = drag(thlenden, nouter, true)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
 		lab2 = string("# nbods, resistivity, rotated resistivity, 
 			total dragx and dragy, rotated dragx and dragy.")
 		resdragdata = [lab1; lab2; nbods; rbods; rbodsrot; 
-			dragx; dragy; ]
+			dragx; dragy; dragxrot; dragyrot]
 		writedata(resdragdata, resdragfile)
 
 		#--------------------------------------#
@@ -92,13 +93,22 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64, rotation:
 	return rbods
 end
 # drag: Compute the total drag on all of the bodies combined.
-function drag(thlenden::ThLenDenType, nouter::Int)
+function drag(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
-	tauvec = compute_stress(thlenden,nouter)
-	pressvec = compute_pressure(thlenden,nouter)
-	# Initialization.
-	thlenvec = thlenden.thlenvec
+	if rotation==true
+		tauvec = compute_stressrot(thlenden,nouter)
+		pressvec = compute_pressrot(thlenden,nouter)
+		
+		### CHECK THIS
+		thlenvec = thlenden.thlenvec + 0.5*pi
+		###
+
+	else
+		tauvec = compute_stress(thlenden,nouter)
+		pressvec = compute_pressure(thlenden,nouter)
+		thlenvec = thlenden.thlenvec
+	end
 	npts,nbods = getnvals(thlenvec)
 	dragx = 0.
 	dragy = 0.
