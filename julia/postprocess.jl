@@ -25,16 +25,15 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
-		rbods = resistivity(thlenden, nouter, 2.0, false)
-		rbodsrot = resistivity(thlenden, nouter, 2.0, true)
+		rbods = resistivity(thlenden, nouter, 2.0)
+		rbodsrot = resistivity(thlenden, nouter, 2.0; rotation=true)
 		# Compute the drag on each body.
-		dragx, dragy = drag(thlenden, nouter, false)
-		dragxrot, dragyrot = drag(thlenden, nouter, true)
+		dragx, dragy = drag(thlenden, nouter)
+		dragxrot, dragyrot = drag(thlenden, nouter; rotation=true)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
-		lab2 = string("# nbods, resistivity, rotated resistivity, 
-			total dragx and dragy, rotated dragx and dragy.")
+		lab2 = string("# nbods, resistivity, rotated resistivity, total dragx and dragy, rotated dragx and dragy.")
 		resdragdata = [lab1; lab2; nbods; rbods; rbodsrot; 
 			dragx; dragy; dragxrot; dragyrot]
 		writedata(resdragdata, resdragfile)
@@ -56,7 +55,7 @@ function postprocess(foldername::AbstractString)
 end
 
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64, rotation::Bool=false)
+function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64; rotation::Bool=false)
 	# Set up targets points on a y-grid for midpoint rule.
 	nypts = 13
 	dy = 2./nypts
@@ -93,22 +92,17 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64, rotation:
 	return rbods
 end
 # drag: Compute the total drag on all of the bodies combined.
-function drag(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
+function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
 	if rotation==true
 		tauvec = compute_stressrot(thlenden,nouter)
 		pressvec = compute_pressrot(thlenden,nouter)
-		
-		### CHECK THIS
-		thlenvec = thlenden.thlenvec + 0.5*pi
-		###
-
 	else
 		tauvec = compute_stress(thlenden,nouter)
 		pressvec = compute_pressure(thlenden,nouter)
-		thlenvec = thlenden.thlenvec
 	end
+	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
 	dragx = 0.
 	dragy = 0.
@@ -118,7 +112,11 @@ function drag(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
 		press = pressvec[n1:n2]
 		tau = tauvec[n1:n2]
 		# Get the tangent/normal vectors and arc length increment.
-		sx,sy,nx,ny = getns(thlenvec[nn].theta)
+		if rotation==true
+			sx,sy,nx,ny = getnsrot(thlenvec[nn].theta)
+		else
+			sx,sy,nx,ny = getns(thlenvec[nn].theta)
+		end
 		ds = thlenvec[nn].len / npts
 		# Compute the drag force.
 		# Note: I believe both should be plus signs due to the conventions of s and n.

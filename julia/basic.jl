@@ -118,7 +118,7 @@ function compute_stress(thlenden::ThLenDenType, nouter::Int)
 	return tau
 end
 # compute_stressrot: Compute the stress on the rotated grid
-function compute_stressrot()
+function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods == 0
 		tau = evec()

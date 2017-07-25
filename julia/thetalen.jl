@@ -193,3 +193,13 @@ function getns(theta::Vector{Float64})
 	ny = sx
 	return sx,sy,nx,ny
 end
+# getns: Get the normal and tangent directions on the rotated grid.
+function getnsrot(theta::Vector{Float64})
+	# CCW tangent vector.
+	sx = -sin(theta)
+	sy = cos(theta)
+	# Inward pointing normal vector.
+	nx = -sy
+	ny = sx
+	return sx,sy,nx,ny
+end
