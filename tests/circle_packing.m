@@ -4,13 +4,16 @@ function [xc,yc,radii] = circle_packing(n_bodies)
 
 xc = []; yc = []; radii = [];
 
-mu = 0.1;
-% parameter for exponential distribution of radii
+%mu = 0.1;
+%% parameter for exponential distribution of radii
+A = 1.0;
+B = 1.0;
 
 while numel(xc) == 0
   xp = 2*rand - 1;
   yp = 2*rand - 1;
-  rp = -log(rand(1))/mu;
+%  rp = -log(rand(1))/mu;
+  rp = gamrnd(A,B);
   % first point
   iouter = check_outer(xp,yp,rp);
   % check if it leaves the outer boundary
@@ -28,8 +31,9 @@ while (numel(xc) < n_bodies)
   xp = 2*rand - 1;
   yp = 2*rand - 1;
   % uniformly distributed random center
-  rp = -log(rand(1))/mu;
+%  rp = -log(rand(1))/mu;
   % exponentially distributed random radii
+  rp = gamrnd(A,B);
   iouter = check_outer(xp,yp,rp);
   % check if new circle leaves the outer boundary
 
@@ -50,9 +54,9 @@ end
 %xc = [-0.301 0 0.301];
 %yc = [0 0 0];
 
-radii = 0.1;
-xc = 0;
-yc = 0;
+%radii = 0.1;
+%xc = 0;
+%yc = 0;
 
 N = 128;
 theta = (0:N-1)'*2*pi/N;
@@ -65,14 +69,14 @@ end
 axis equal;
 axis([-1 1 -1 1])
 
-fid = fopen('thlen.dat','w');
-fprintf(fid,'%d\n',N);
-fprintf(fid,'%d\n',n_bodies);
-for k = 1:n_bodies
-  fprintf(fid,'%20.16e\n',theta+pi/2+pi/N);
-  fprintf(fid,'%20.16e\n',[2*pi*radii(k),xc(k),yc(k)]);
-end
-fclose(fid);
+%fid = fopen('thlen.dat','w');
+%fprintf(fid,'%d\n',N);
+%fprintf(fid,'%d\n',n_bodies);
+%for k = 1:n_bodies
+%  fprintf(fid,'%20.16e\n',theta+pi/2+pi/N);
+%  fprintf(fid,'%20.16e\n',[2*pi*radii(k),xc(k),yc(k)]);
+%end
+%fclose(fid);
 
 
 end

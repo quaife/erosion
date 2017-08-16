@@ -2042,6 +2042,8 @@ c***********************************************************************
       subroutine computeDrag(ninner,nbodies,x,y,
      $    shear_stress,pressure,drag)
 c     Compute the drag of each grain
+c     THIS IS NOT BEING USED AS THERE IS A JULIA VERSION SO THAT WE WERE
+c     CLEAR WITH THE NORMAL AND TANGENTIAL VECTOR CONVENTIONS
       implicit real*8 (a-h,o-z)
 
       dimension x(ninner*nbodies),y(ninner*nbodies)
