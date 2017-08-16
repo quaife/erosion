@@ -1,9 +1,9 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-c      parameter (ninner = 1024)
+c      parameter (ninner = 4096)
       parameter (ninner = 128)
-      parameter (nbodies = 2)
+      parameter (nbodies = 1)
       parameter (nouter = 2**12)
       parameter (ntargets = 40)
       parameter (maxbodies = 10)
@@ -22,35 +22,46 @@ c      parameter (ninner = 1024)
       dimension vtar(ntargets*ntargets)
       dimension press_tar(ntargets*ntargets)
 
-      twopi = 8.d0*datan(1.d0)
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
       dtheta = twopi/dble(ninner)
 
       centerx(1) = -0.0d0
       centery(1) = 0.0d0
-      centerx(2) = 0.8d0
+c      centerx(2) = 0.8d0
+      centerx(2) = 0.0d0
       centery(2) = -0.1d0
       radius(1) = 2.d-1
       radius(2) = 2.d-1
       phi(1) = 0.d0
       phi(2) = 0.d0
 
+      Nphi = 128
+      dphi = twopi/Nphi
+      open(unit=21,file='output/dragx.dat')
+      open(unit=22,file='output/dragy.dat')
+
+      do kk = 1,Nphi
+        phi(1) = dble(kk-1)*dphi
 
       do j = 1,nbodies
         do k = 1,ninner
           theta = dble(k-1)*dtheta
           var_rad = radius(j)
           x((j-1)*ninner+k) = centerx(j) + var_rad*
-     $          (dcos(phi(j))*dcos(theta) + dsin(phi(j))*dsin(theta))
-          y((j-1)*ninner+k) = centery(j) + 2.d0*var_rad*
-     $          (-dsin(phi(j))*dcos(theta) + dcos(phi(j))*dsin(theta))
+     $          (dcos(phi(j))*dcos(theta) + 
+     $           dsin(phi(j))*2.d0*dsin(theta))
+          y((j-1)*ninner+k) = centery(j) + var_rad*
+     $          (-dsin(phi(j))*dcos(theta) + 
+     $           dcos(phi(j))*2.d0*dsin(theta))
         enddo
       enddo
 
 
       xmin = -1.d0
-      xmax = 2.d0
-      ymin = -5.d-1
-      ymax = 5.d-1
+      xmax = 1.d0
+      ymin = -8.d-1
+      ymax = 8.d-1
       nx = ntargets
       ny = ntargets
       dx = (xmax - xmin)/dble(nx-1)
@@ -80,7 +91,12 @@ c     pass in the density function and return the pressure
       call computeDrag(ninner,nbodies,x,y,
      $      shear_stress,pressure,drag)
 c     pass in the shear_stress and pressure and return the drag
-
+        write(21,1000) drag(1)
+        write(22,1000) drag(2)
+      enddo
+      close(unit=21)
+      close(unit=22)
+    
       call computeVelocityPressureTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets*ntargets,xtar,ytar,utar,vtar,press_tar)
 
@@ -123,8 +139,10 @@ c     pass in the shear_stress and pressure and return the drag
         write(8,1000) press_tar(k)
       enddo
 
+      write(6,1010) phi(1),drag(1),drag(2)
 
  1000 format(E25.16)
+ 1010 format(ES20.4)
 
 
 

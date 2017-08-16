@@ -290,7 +290,7 @@ which achieves spectral accuracy if the integrand is no stronger than
 $\mathcal{O}(\rho^{-1})$.  Since both these integrands are too strong,
 the singularity must be weakened.  This can be done by adding a constant
 density function which has no effect on the shear stress and
-pressure~\cite{}.  In particular, the shear stress due to the
+pressure~\cite{poz1992}.  In particular, the shear stress due to the
 double-layer potential is equivalent to
 \begin{align}
   \ssigma^{\DD}(\xx_0) &= \int_{\bd\Omega}K_\ssigma(\xx_0,\yy)
@@ -307,9 +307,22 @@ For the pressure, the double-layer potential is equivalent to
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fast Summation} 
-All the layer potentials are compatible with a fast summation such as
-the Fast Multipole Method (FMM).  The majority of the 
+The majority of the computational cost comes from evaluating the the
+double-layer potential $\mathcal{D}$ in equation~\eqref{eqn:DLP}.  This
+layer potential can be efficiently evaluated using a fast summation
+method such as the Fast Multipole Method
+(FMM)~\cite{gre-rok1987}\footnote{The FMM for the Stokes double-layer
+poetntial was supplied by Manas Rachh.}.  By using the
+FMM,~\eqref{eqn:completed_DLP} can be solved with $\mathcal{O}(N)$
+operations, where $N$ is the total number of discretization points.
 
+In our erosion model, the shear stress must be computed which requires
+evaulating the layer potential~\eqref{eqn:shearStressDLP}.  In our
+implementation, this calculation is done directly which requires
+$\mathcal{O}(N^2)$ operations.  This complexity could be reduced with
+the kernel-independent FMM~\cite{yin-bir-zor2004}.  However, since this
+calculation is only computed once per time step, unlike the velocity
+double-layer potential that must be evaluated at each GMRES iteration.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{$\theta-L$ Formulation} 
