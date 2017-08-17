@@ -43,7 +43,7 @@ function startup()
 	# Read the parameters file.
 	paramvecin = readvec("params.dat")
 	# Read the input geometry file.
-	geoinfile = string("../datafiles/",paramvecin[1])
+	geoinfile = string("../geometries/",paramvecin[1])
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
 	# Read the other parameters and calculate needed quantities.

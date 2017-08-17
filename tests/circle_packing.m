@@ -6,8 +6,8 @@ xc = []; yc = []; radii = [];
 
 %mu = 0.1;
 %% parameter for exponential distribution of radii
-A = 1.0;
-B = 1.0;
+A = 10;
+B = 1e-2;
 
 while numel(xc) == 0
   xp = 2*rand - 1;
@@ -58,7 +58,7 @@ end
 %xc = 0;
 %yc = 0;
 
-N = 128;
+N = 512;
 theta = (0:N-1)'*2*pi/N;
 clf; hold on
 for k = 1:numel(xc)
@@ -69,14 +69,14 @@ end
 axis equal;
 axis([-1 1 -1 1])
 
-%fid = fopen('thlen.dat','w');
-%fprintf(fid,'%d\n',N);
-%fprintf(fid,'%d\n',n_bodies);
-%for k = 1:n_bodies
-%  fprintf(fid,'%20.16e\n',theta+pi/2+pi/N);
-%  fprintf(fid,'%20.16e\n',[2*pi*radii(k),xc(k),yc(k)]);
-%end
-%fclose(fid);
+fid = fopen('thlen.dat','w');
+fprintf(fid,'%d\n',N);
+fprintf(fid,'%d\n',n_bodies);
+for k = 1:n_bodies
+  fprintf(fid,'%20.16e\n',theta+pi/2+pi/N);
+  fprintf(fid,'%20.16e\n',[2*pi*radii(k),xc(k),yc(k)]);
+end
+fclose(fid);
 
 
 end

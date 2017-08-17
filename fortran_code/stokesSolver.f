@@ -8,10 +8,9 @@ c     that Stokes paradox is avoided
 c     x and y coordinates of obstacle
 
       parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
+      parameter (maxbodies = 50)
       parameter (ntargets = 2500)
 c     max points on the boundary of the obstacle      
-c      parameter (ntarmax = 20)
       parameter (maxl = 2000, liwork = 30)
       parameter (lrwork = 10 + nmax*(maxl+6) + 
      $     maxl*(maxl+3))
@@ -506,7 +505,7 @@ c     potential
       implicit real*8 (a-h,o-z)
 
       parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
+      parameter (maxbodies = 50)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -893,7 +892,7 @@ c     potential
       implicit real*8 (a-h,o-z)
 
       parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
+      parameter (maxbodies = 50)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -1599,7 +1598,7 @@ c     boundary and return the shear stress on the inner walls.
       implicit real*8 (a-h,o-z)
 
       parameter (nmax = 2**15)
-      parameter (maxbodies = 10)
+      parameter (maxbodies = 50)
 c     max points on the boundary of the obstacle      
 
       dimension x(ninner*nbodies),y(ninner*nbodies)
