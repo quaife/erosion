@@ -263,7 +263,12 @@ where
 & \sigma_2 = 2 \pi \sqrt{\eps \Dt} \sqrt{g(L^{n-1}) + 2 g(L^{n}) + g(L^{n+1}) }
 \end{align}
 where $g(L) = L^{-2} f(L)$.
-%This will also modify the scaling law for area vs time!!!
+
+Note: in my code, I used
+\begin{equation}
+f(L) = - \frac{1}{ \log \left( \frac{1}{2} \tanh \left( 2 L\right) \right) }
+\end{equation}
+This way, we have $f(L) \sim -1/ \log L$ as $L \to 0$, and $f(L)$ is positive for all values of $L$.
 
 \vsp{2}
 {\bf  Alternative}: Perhaps I just want to calculate the mean of the shear stress directly and use it to scale the curvature driven flow. This idea gives
