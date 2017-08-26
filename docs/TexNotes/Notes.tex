@@ -127,7 +127,7 @@ The drag on a body is given by integrating the traction on the surface. If my ab
 
 
 \section{Scaling law and interface smoothing}
-For Stokes flow, the shear stress scales like
+For 3D Stokes flow, the shear stress scales like
 \begin{equation}
 \tau \sim \mu V/L
 \end{equation}
@@ -231,11 +231,15 @@ where
 
 
 \subsection{Different scaling of the stress}
-Some numerical tests reveal that the stress scales like $\tau \sim 1/(L \log L)$, instead of the naive $1/L$. This might because we are in a 2D bounded domain (Stokes paradox type stuff). So we need to modify the curvature driven flow to have the same scaling. To this end, modify Eq.~(\ref{Vn1}) to read
+Some numerical tests reveal that for 2D Stokes flow the stress scales like $\tau \sim 1/(L \log L)$, instead of the naive $1/L$. This is because we are in a 2D bounded domain (Stokes paradox type stuff). So we need to modify the curvature driven flow to have the same scaling. To this end, modify Eq.~(\ref{Vn1}) to read
 \begin{equation}
 V_n = \atau + \eps f(L) \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
-where for 2D Stokes flow, we will have $f(L) = -1/\log L$. Carrying through this change, Eq.~(\ref{Vn2}) becomes
+For 2D Stokes flow, we have 
+\begin{equation}
+f(L) = \frac{1}{\log (W/L)}
+\end{equation}
+where $W$ is the lengthscale of the 3rd dimension (e.g. the length of a long cylinder). The 2D approximation requires $W \gg L$, and in the code I chose $W = 2 \pi$. Carrying through this change, Eq.~(\ref{Vn2}) becomes
 \begin{equation}
 V_n = \atau + \eps L^{-1} f(L) \left(\pd{\theta}{\alpha} - 2 \pi \right)
 \end{equation}
@@ -264,42 +268,6 @@ where
 \end{align}
 where $g(L) = L^{-2} f(L)$.
 
-Note: in my code, I used
-\begin{equation}
-f(L) = - \frac{1}{ \log \left( \frac{1}{2} \tanh \left( 2 L\right) \right) }
-\end{equation}
-This way, we have $f(L) \sim -1/ \log L$ as $L \to 0$, and $f(L)$ is positive for all values of $L$.
-
-\vsp{2}
-{\bf  Alternative}: Perhaps I just want to calculate the mean of the shear stress directly and use it to scale the curvature driven flow. This idea gives
-\begin{equation}
-V_n = \atau + \eps \mean{\atau} \left(\kappa - \frac{2 \pi}{L} \right)
-\end{equation}
-which gives
-\begin{equation}
-V_n = \atau + \eps L^{-1} \mean{\atau} \left(\pd{\theta}{\alpha} - 2 \pi \right)
-\end{equation}
-Then we get
-\begin{equation}
-\pd{\theta}{t} = \eps L^{-2} \mean{\atau} \ppd{\theta}{\alpha} + L^{-1} \left( \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{equation}
-Then to evolve $\theta$ spectrally, we use
-\begin{equation}
-\td{\thh_k}{t} + 4 \pi^2 k^2 \eps L^{-2} \mean{\atau}  \thh_k = \hat{N}_k
-\end{equation}
-Then the Gaussian filter stuff becomes
-\begin{equation}
-\label{intfact}
-\thh^{(n+1)} = \GG(\theta^{(n)}, \sigma_1) 
-+ \frac{\Dt}{2} \left( 3 \GG(N^{(n)}, \sigma_1) - \GG(N^{(n-1)}), \sigma_2 \right)
-\end{equation}
-where
-\begin{align}
-& \sigma_1 = 2 \pi \sqrt{\eps \Dt} \sqrt{g^{n} + g^{n+1} } 	\\
-& \sigma_2 = 2 \pi \sqrt{\eps \Dt} \sqrt{g^{n-1} + 2 g^{n} + g^{n+1} }
-\end{align}
-where $g(t)= L^{-2} \mean{\atau}$ and $g^{(n)} = g(t^{(n)})$.
-BUT the problem with this is that I do not yet know $\mean{\atau}$ at time-step $n+1$, so I would have to change my time-stepping strategy which is a significant change to the code structure. Thus, I prefer the first method of using $L \log L$.
 
 
 \subsection{The vanishing rate of the area}
@@ -316,6 +284,7 @@ which we solve to get
 A (1 - \log A) = C (t_f - t)
 \end{equation}
 In particular, I believe the signs are correct here.
+BUT, I am not so sure of this calculation anymore, now that $W$ is included.
 
 \subsection{How to scale smoothing parameters?}
 We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale with the simulation resolution parameters? The most important resolution parameter is $N$, the total number of points on each body, but there is also $\Delta t$ and maybe some others. Figuring out $\sigma$ is the easier part: $\sigma$ is a lengthscale and should go like $1/N$. On the other hand, $\eps$ is a diffusivity in dimensions. I did a calculation and found that $\eps$ should scale like $2/(\pi^2 N^2)$.

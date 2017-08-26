@@ -50,6 +50,7 @@ function postprocess(foldername::AbstractString)
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar]
 		writedata(targdata, targfile)
+		println("Finished step ", cnt, " of ", ntimes, ".")
 	end
 	return
 end
@@ -81,7 +82,10 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64; rotation:
 	#= The discharge should be exactly the same at any location x.
 	So check that it is the same at x0 and -x0. =#
 	qreldiff = (qplus-qminus)/qavg
-	assert(qreldiff < 1e-6)
+	#assert(qreldiff < 1e-6)
+	if qreldiff > 1e-6
+		warn("The flux does not match at x0 and -x0: qreldiff = ", qreldiff)
+	end
 	# Calculate the total resistivity
 	rtot = (pminus - pplus)/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
