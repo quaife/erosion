@@ -53,7 +53,7 @@ boundary of the outer geometry \todo[inline]{Need a figure here}
 \begin{gather}
 eqn1 \label{eqn:eqn1} \\
 eqn2 \label{eqn:eqn2} \\
-\pderiv{\xx}{\nn} = -|\tau| \label{eqn:poreEvolution}
+\pderiv{\xx}{\nn} = -|\tau| \label{eqn:bodyEvolution}
 \end{gather}
 \end{subequations}
 
@@ -132,14 +132,14 @@ rank-one modification $\NN_0[\eeta](\xx) = \int_{\Gamma_0} (\nn(\xx) \times
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the Shear Stress, Pressure, and Drag} 
 The governing equations~\eqref{eqn:erosionModel} require the shear
-stress which is defined on the boundary of each pore.  The shear stress
+stress which is defined on the boundary of each body.  The shear stress
 is given by
 \begin{align}
   \tau = \left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
   \label{eqn:shearStress}
 \end{align}
 where $\ss$ is the unit tangent vector.  We note that for the Stokes
-equations, because of the no-slip boundary condition on the pores, the
+equations, because of the no-slip boundary condition on the bodies, the
 shear stress is identical to the surface vorticity $\tau = u_y - v_x$.
 However, we use equation~\eqref{eqn:shearStress} to compute the shear
 stress since the jump conditions resulting from the double-layer
@@ -221,7 +221,7 @@ $\xx_0 \in \Gamma$ is
               \frac{\rr \cdot \llambda}{2\pi\rho^2}.
 \end{align}
 
-Finally, with the pressure and shear stress, the drag on a single pore
+Finally, with the pressure and shear stress, the drag on a single body
 with boundary $\Gamma_k$ is
 \begin{align}
   F_D = \int_{\Gamma_k} (-p \nn + \tau \ss)\,ds.
@@ -248,12 +248,12 @@ the density function, Stokeslets, and rotlets are computed.  All the
 quadrature methods are described in Section~\ref{sec:quadrature}
 
 Once the shear stress is computed, it is used to update the shape of the
-pores according to the normal flow~\eqref{eqn:poreEvolution}.  To
+bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To
 eliminate tangling and stretching of the mesh, we use a \thL
 formulation~\cite{hou-low-she1994} which is described in
 Section~\ref{sec:thetaL}.  In this section, we also describe our time
 stepping method and two regularization terms that are necessary to
-control the curvature of the pores and to maintain spectral accuracy in
+control the curvature of the bodies and to maintain spectral accuracy in
 space.
 
 \todo[inline]{Describe the upcoming subsections better}
@@ -332,16 +332,18 @@ We use a quasi-static approximation so that the velocity field
 instantaneously changes with the changing geometry.  Therefore, we can
 alternate between the two main aspects of our simulation
 \begin{enumerate}
-  \item Given a geometry, compute the shear stress of along each of the
-  pores.
+  \item Given a geometry, compute the shear stress of along the boundary
+    of each of the bodies.
   \item Given the shear stress, update the geometry according to the
-  erosion model.
+    erosion model.
 \end{enumerate}
 
 \vsp{2}
 To handle boundary evolution, we use the \thL    method, which offers certain advantages in the ability to stabilize fluid-structure interaction problems. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW direction and the normal vector points into the bodies (our out of the fluid). (BRYAN: Can we use these conventions throughout the paper?)
 
-In order to regularize boundary evolution, we modify Eq.~(\ref{eqn:poreEvolution}) to include a curvature-driven component (also corrected errors in this equation)
+In order to regularize boundary evolution, we modify
+Eq.~(\ref{eqn:bodyEvolution}) to include a curvature-driven component
+(also corrected errors in this equation)
 \begin{equation}
 \pderiv{\xx}{t} = |\tau| \nn + \eps \elfun(L) \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
