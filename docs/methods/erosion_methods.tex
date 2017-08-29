@@ -43,28 +43,74 @@ This is a methods paper
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation\label{s:formulation}} 
-We consider multiple bodies being eroded by a two-dimensional Stokesian
-fluid.  The Stokes paradox is circumvented by using a rounded-off
-rectangle that encloses the eroding bodies.  Then, the flow is driven
-by a boundary conditions, such as a Hagen-Poiseuille flow, on the
-boundary of the outer geometry \todo[inline]{Need a figure here}
-\begin{subequations}
+Let us first define the main variables used to model erosion.  We only
+consider flows that are confined by a solid wall $\Gamma$ that encloses
+$M$ eroding bodies.  The bodies are denoted as $\gamma_k$,
+$k=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup
+\gamma_M$.  Neglecting inertial forces, the dynamics of the fluid is
+fully characterized by the position of the bodies $\xx_k(s,t) \in
+\gamma_k$, where $s$ is the arclength and $t$ is time.  Given
+$\xx_k(s,t)$, $k=1,\ldots,M$, derived variables include the fluid
+velocity $\uu$, the pressure $p$, and the shear stress $\tau$.   On the
+bounding wall, we prescribed a velocity $\UU(\xx,t)$.  Then, the
+governing equations are
+\begin{equation}
 \label{eqn:erosionModel}
-\begin{gather}
-eqn1 \label{eqn:eqn1} \\
-eqn2 \label{eqn:eqn2} \\
-\pderiv{\xx}{\nn} = -|\tau| \label{eqn:bodyEvolution}
-\end{gather}
-\end{subequations}
+\begin{split}
+  \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{conservation
+of momentum}\\
+\grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap
+&&\mbox{conservation of mass} \\
+\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{no slip on the
+bodies} \\
+\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{outer wall
+velocity} \\
+\dot{\xx}(t) = -|\tau| \nn, &\hspace{20pt} \xx \in \gamma,
+&&\mbox{erosion model},
+\end{split}
+\end{equation}
+where $\nn$ is the outward unit normal vector which points away from the
+fluid.  The outer wall is formed by rounding off the corners of $[-3,3]
+\times [-1,1]$, and we enforce the Hagen-Poiseuille flow
+\begin{align}
+  \uu(\xx) = (1-y^2,0)
+\end{align}
+on $\Gamma$.  To minimize the boundary effects of the inflow and
+outflow, we only place bodies in the center third, $[-1,1] \times
+[-1,1]$, of the fluid domain.
+\begin{figure}[htpb]
+  \centering
+  \input{figs/schematic.tikz}
+  \caption{\label{fig:schematic} A schematic for the governing
+    equations.  A no-slip boundary condition is imposed on each body
+    $\gamma_k$ whose unit normal points outward relative to the
+    geometry.  On the outer geometry $\Gamma$, a pipe flow is imposed.
+    Finally, the bodies are eroded according to the shear stress applied
+    by the Stokesian fluid.}
+\end{figure}
+
+Our erosion model is based on the shear stress, and this model is
+discussed in more detail in Section~\ref{sec:erosion}.  We then describe
+how the incompressible Stokes equations are solved in $\Omega$ using a
+boundary integral equation in Section~\ref{sec:bies}.  Then, in
+Section~\ref{sec:qois}, we discuss how the shear stress, pressure, and
+drag can all be readily computed.  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Erosion Model} 
-\todo[inline]{Governing equations}
+\label{sec:erosion}
+\todo[inline]{Describe the erosion model and its justification}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary Integral Equation Formulation} 
+\label{sec:bies}
+We use a quasi-static approximation.  That is, at each time step, we
+freeze the geometry, solve the incompressible Stokes equations, and then
+update the geometry according to the erosion model.  A flow diagram is
+illustrated in Figure~\ref{fig:workflow}.
+
 The incompressible Stokes equations are
 \begin{alignat*}{3}
   \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
@@ -131,6 +177,7 @@ rank-one modification $\NN_0[\eeta](\xx) = \int_{\Gamma_0} (\nn(\xx) \times
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the Shear Stress, Pressure, and Drag} 
+\label{sec:qois}
 The governing equations~\eqref{eqn:erosionModel} require the shear
 stress which is defined on the boundary of each body.  The shear stress
 is given by

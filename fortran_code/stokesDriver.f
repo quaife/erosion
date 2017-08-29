@@ -4,7 +4,7 @@
 c      parameter (ninner = 4096)
       parameter (ninner = 128)
       parameter (nbodies = 1)
-      parameter (nouter = 2**12)
+      parameter (nouter = 2**8)
       parameter (ntargets = 40)
       parameter (maxbodies = 10)
 

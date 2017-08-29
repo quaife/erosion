@@ -72,20 +72,20 @@ c     load geometry of initial shape
 
 c      open(unit=1,file='output/xinner.dat')
 c      open(unit=2,file='output/yinner.dat')
-c      open(unit=3,file='output/xouter.dat')
-c      open(unit=4,file='output/youter.dat')
+      open(unit=3,file='output/xouter.dat')
+      open(unit=4,file='output/youter.dat')
 c      do k = 1,ninner*nbodies
 c        write(1,1000) x(k)
 c        write(2,1000) y(k)
 c      enddo
-c      do k = 1,nouter
-c        write(3,1000) xouter(k)
-c        write(4,1000) youter(k)
-c      enddo
+      do k = 1,nouter
+        write(3,1000) xouter(k)
+        write(4,1000) youter(k)
+      enddo
 c      close(unit=1)
 c      close(unit=2)
-c      close(unit=3)
-c      close(unit=4)
+      close(unit=3)
+      close(unit=4)
 
       call bd_condition(ninner,nbodies,x,y,nouter,xouter,youter,rhs)
 c     load boundary condition
@@ -120,7 +120,7 @@ c      close(unit=4)
 c      close(unit=5)
       
 
-c 1000 format(E25.16)
+ 1000 format(E25.16)
       end
 
 
