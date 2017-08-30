@@ -1,10 +1,10 @@
-\begin{tikzpicture}[scale=1.0] 
+\begin{tikzpicture}[scale=1.5] 
 
 \begin{axis}[ 
 axis equal image, 
 scale only axis, 
-xmin=-3.1, 
-xmax=4.0, 
+xmin=-3.04, 
+xmax=3.6, 
 ymin=-1.1, 
 ymax=1.1, 
 hide axis, 
@@ -614,6 +614,7 @@ hide axis,
 
 \node[font = \Huge,color=black] at (500,110) {$\Omega$};
 \node[font = \normalsize,color=red] at (328,143) {$\nn$};
+\node[font = \normalsize,color=red] at (368,135) {$\ss$};
 \path[->,line width=1.2](240,90) edge (260,100);
 \node at (225,90) {$\gamma_k$};
 \path[->,line width=1.2,color=black](140,50) edge (120,14);
@@ -639,6 +640,11 @@ plot coordinates{
   (0.0966,0.0793)
 };
 
+\addplot[color=red,line width=0.5pt,solid,->]
+plot coordinates{
+  (0.3865,0.3172)
+  (0.6244,0.0273)
+};
 
 
 \end{axis}

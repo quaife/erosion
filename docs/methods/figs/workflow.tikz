@@ -1,0 +1,67 @@
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=11em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex', line width=2pt]
+
+\begin{tikzpicture}[node distance = 2cm, auto]
+% Place nodes
+\node[block] (init) {{\bf INITIALIZE MODEL} \\ 
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item initialize pores
+  \item select $N$, $\Delta t$, $\epsilon$
+\end{itemize}
+};
+
+
+\node[block, below of=init, node distance=10em] (stokes) {{\bf FLUID
+SOLVER} \\
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item solve incompressible Stokes equations 
+  \item compute shear stress
+\end{itemize}
+};
+
+
+\node[block, right of=stokes, node distance=14em] (thetaL) {{\bf ERODE
+PORES} \\
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item Compute and smooth normal velocity
+  \item Update $\theta$ and $L$
+  \item Compute new pore shapes
+\end{itemize}
+};
+
+
+\node[block, right of=init, node distance=14em] (QOI) {{\bf COMPUTE
+QUANTITIES OF INTEREST} \\
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item pressure
+  \item drag
+  \item velocity
+\end{itemize}
+};
+
+\node[block, right of=QOI, node distance=14em,yshift=-5em] (output)
+{{\bf WRITE TO FILE} \\
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item Geometry
+  \item Density function
+  \item Pressure
+  \item Drag
+\end{itemize}
+};
+
+
+%% draw rounded rectangle around the time stepping routines
+\draw[rounded corners=15pt,red,line width=2pt]
+  (-2.5,-5.2) rectangle ++(9.8,3.4);
+
+  
+%% Draw edges
+\path [line] (init) -- (stokes);
+\path [line] ([yshift=1em]stokes.east) -- ([yshift=1em]thetaL.west);
+\path [line] ([yshift=-1em]thetaL.west) -- ([yshift=-1em]stokes.east);
+\path [line] (stokes) -- (QOI.west);
+\path [line] (QOI.east) -- ([yshift = 2em]output.west);
+\path [line] (thetaL.east) -- ([yshift = -2em]output.west);
+
+
+\end{tikzpicture}

@@ -72,12 +72,13 @@ velocity} \\
 where $\nn$ is the outward unit normal vector which points away from the
 fluid.  The outer wall is formed by rounding off the corners of $[-3,3]
 \times [-1,1]$, and we enforce the Hagen-Poiseuille flow
-\begin{align}
+\begin{align*}
   \uu(\xx) = (1-y^2,0)
-\end{align}
-on $\Gamma$.  To minimize the boundary effects of the inflow and
-outflow, we only place bodies in the center third, $[-1,1] \times
-[-1,1]$, of the fluid domain.
+\end{align*}
+on $\Gamma$.  The boundary of the fluid domain is $\bd\Omega = \gamma_1
+\cup \cdots \cup \gamma_M \cup \Gamma$.  To minimize the boundary
+effects of the inflow and outflow, we only place bodies in the center
+third, $[-1,1] \times [-1,1]$, of the fluid domain.
 \begin{figure}[htpb]
   \centering
   \input{figs/schematic.tikz}
@@ -87,6 +88,17 @@ outflow, we only place bodies in the center third, $[-1,1] \times
     geometry.  On the outer geometry $\Gamma$, a pipe flow is imposed.
     Finally, the bodies are eroded according to the shear stress applied
     by the Stokesian fluid.}
+\end{figure}
+
+We use a quasi-static approximation.  That is, at each time step, we
+freeze the geometry, solve the incompressible Stokes equations, and then
+update the geometry according to the erosion model.  A flow diagram is
+illustrated in Figure~\ref{fig:workflow}.  The two steps inside the red
+rectangle describes a time step in the quasi-static approximation
+\begin{figure}[htpb]
+  \centering
+  \input{figs/workflow.tikz}
+  \caption{\label{fig:workflow}A caption.}
 \end{figure}
 
 Our erosion model is based on the shear stress, and this model is
@@ -106,18 +118,17 @@ drag can all be readily computed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary Integral Equation Formulation} 
 \label{sec:bies}
-We use a quasi-static approximation.  That is, at each time step, we
-freeze the geometry, solve the incompressible Stokes equations, and then
-update the geometry according to the erosion model.  A flow diagram is
-illustrated in Figure~\ref{fig:workflow}.
-
-The incompressible Stokes equations are
+Here we focus on solving the incompressible Stokes equations with
+Dirichlet boundary conditions
 \begin{alignat*}{3}
   \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
-  \grad \cdot \uu &= 0,   && \xx \in \Gamma.
+  \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
+  \uu &= \ff,  && \xx \in \bd\Omega.
 \end{alignat*}
 The viscosity $\mu$ sets the time scale, and we will assume that
-$\mu=1$.  The double-layer potential
+$\mu=1$.  We start by defining the double-layer potential, which is the
+convolution of the stresslet with a function $\eeta:\bd\Omega
+\rightarrow \RR^2$,
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\Gamma} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
@@ -125,11 +136,12 @@ $\mu=1$.  The double-layer potential
     \label{eqn:velocityDLP}
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the unit outward
-normal, solves the incompressible Stokes equations for any sufficiently
-smooth density function $\eeta$.  However, the double-layer potential can not capture velocity fields
-corresponding to rigid body motions~\cite{pow-mir1987}.  A standard
-method to complete the double-layer potential is to introduce a
-Stokeslet and rotlet due to each interior body
+normal.  For any density function $\eeta$, the double-layer potential
+satisfies the incompressible Stokes equations, but the double-layer
+potential can not capture velocity fields corresponding to rigid body
+motions~\cite{pow-mir1987}.  A standard method to complete the
+double-layer potential is to introduce a Stokeslet and rotlet due to
+each interior body
 \begin{align}
   S[\llambda_k,\cc_k] = \frac{1}{4\pi} \left(-\log \rho \II + 
     \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_k
@@ -137,19 +149,17 @@ Stokeslet and rotlet due to each interior body
   R[\xi_k,\cc_k] = \frac{\rr^\perp}{\rho^2}\xi_k,
   \label{eqn:stokeslet_rotlet}
 \end{align}
-where $\cc_k$ is a point in the interior of $\Omega_k$, $\rr = \xx -
-\cc_k$, and $\rr^\perp = (r_2,-r_1)$.  Then, the solution of the Stokes
-equations with a Dirichlet boundary condition $\ff$ can be written in
-terms of the completed double-layer potential
+where $\cc_k$ is a point inside the $k^{th}$ body,  $\rr = \xx - \cc_k$,
+and $\rr^\perp = (r_2,-r_1)$.  Then, the solution of the Stokes
+equations with a Dirichlet boundary condition $\ff$ is
 \begin{align}
+  \label{eqn:completed_DLP}
   \uu(\xx) = \DD[\eeta](\xx) + \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
               \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Omega,
-  \label{eqn:completedDLP}
 \end{align}
-where the density function, Stokeslets, and rotlets satisfy the
-second-kind integral equation
+where the density function, Stokeslets, and rotlets satisfy
 \begin{subequations}
-\label{eqn:completed_DLP}
+\label{eqn:completed_BIE}
 \begin{align}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DD[\eeta](\xx) + 
       \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
@@ -164,13 +174,13 @@ second-kind integral equation
 \end{subequations}
 Finally, because of the incompressibility constraint, the boundary
 condition must satisfy 
-\begin{align}
+\begin{align*}
   \int_{\Gamma} \ff \cdot \nn \, ds_\yy = 0.
-\end{align}
-This results in a rank-one null space of
-equation~\eqref{eqn:completed_DLP} which we remove by adding the 
-rank-one modification $\NN_0[\eeta](\xx) = \int_{\Gamma_0} (\nn(\xx) \times
-\nn(\yy))\nn(\yy) \, ds_\yy$, for $\xx \in \Gamma_0$.
+\end{align*}
+The result is a rank-one null space of~\eqref{eqn:completed_BIE} which
+is removed by adding the rank-one modification $\NN_0[\eeta](\xx) =
+\int_{\Gamma_0} (\nn(\xx) \otimes \nn(\yy))\nn(\yy) \, ds_\yy$, for $\xx
+\in \Gamma_0$.
 
 
 
@@ -178,104 +188,111 @@ rank-one modification $\NN_0[\eeta](\xx) = \int_{\Gamma_0} (\nn(\xx) \times
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the Shear Stress, Pressure, and Drag} 
 \label{sec:qois}
-The governing equations~\eqref{eqn:erosionModel} require the shear
-stress which is defined on the boundary of each body.  The shear stress
-is given by
+There are several quantities besides the velocity that need to be
+comnputed.  First, the shear stress along $\gamma_k$ is required by the
+governing equations~\eqref{eqn:erosionModel}.  In addition, to study
+characteristics of the flow, the pressure and drag must also be
+computed.  Once equation~\eqref{eqn:completed_DLP} is solved for the
+density function, Stokeslets, and rotlets, all of these quantities can
+be computed by evaluating layer potentials that we now derive.
+
+\subsubsection{Shear Stress}
+The shear stress is defined by
 \begin{align}
   \tau = \left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
   \label{eqn:shearStress}
 \end{align}
-where $\ss$ is the unit tangent vector.  We note that for the Stokes
-equations, because of the no-slip boundary condition on the bodies, the
-shear stress is identical to the surface vorticity $\tau = u_y - v_x$.
-However, we use equation~\eqref{eqn:shearStress} to compute the shear
-stress since the jump conditions resulting from the double-layer
-potential are known~\cite{qua-bir2014a}.  The velocity field of the
-completed double-layer potential involves three terms: the double-layer
-potential $\DD$, the Stokeslets $S$, and the rotlets $R$.  To compute
-the shear stress, we first compute the deformation tensor $\ssigma =
-\frac{1}{2}(\nabla\uu + \nabla\uu^T)$ of each of these terms
-individually.
+where $\ss$ is the unit tangent vector (Figure~\ref{fig:schematic}).  We
+note that for the Stokes equations, because of the no-slip boundary
+condition on the bodies, the shear stress is identical to the surface
+vorticity $\tau = u_y - v_x$.  However, we use
+equation~\eqref{eqn:shearStress} to compute the shear stress since the
+jump conditions resulting from the double-layer potential are
+known~\cite{qua-bir2014a}.  The velocity field of the completed
+double-layer potential~\eqref{eqn:completed_DLP} involves three terms:
+the double-layer potential $\DD$, the Stokeslets $S$, and the rotlets
+$R$.  To compute the shear stress, we first compute the deformation
+tensor $\ssigma = \frac{1}{2}(\nabla\uu + \nabla\uu^T)$ of each of these
+terms individually.
 
-Considering the double-layer potential~\eqref{eqn:velocityDLP} evaluated
-at $\xx \in \Omega$, the deformation tensor is
-\begin{align}
-  \ssigma^\DD(\xx) = \int_{\bd\Omega} K_\ssigma(\xx,\yy) \eeta(\yy) \,ds_\yy,
+The deformation tensor of the double-layer
+potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
+\begin{equation}
   \label{eqn:shearStressDLP}
-\end{align}
-where the kernel $K_\ssigma$ is given by
-\begin{align*}
-  K_\ssigma(\xx,\yy) = \frac{1}{2\pi}\left(
+  \begin{aligned}
+  \ssigma^\DD(\xx) = \frac{1}{2\pi}\int_{\bd\Omega} &\left(
     2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
-    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) +
-    \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
+    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
+    \right. \\
+    &\left.
+    +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-  \right).
-\end{align*}
+  \right) ds_\yy.
+  \end{aligned}
+\end{equation}
 We are interested in the deformation tensor at boundary points $\xx_0
 \in \bd\Omega$, and this requires an expression for the jump in
 $\ssigma^\DD(\xx)$ as $\xx \rightarrow \xx_0 \in \Gamma$.  The limiting
 value is given by~\cite{qua-bir2014a}
-\begin{align}
+\begin{align*}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}\sigma_\DD(\xx) =
   J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) = 
   \frac{1}{2}\pderiv{\eeta}{\ss} \cdot \ss
   \left[ \begin{array}{cc}
     s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
   \end{array}\right] + \ssigma^\DD(\xx_0), \quad \xx_0 \in \Gamma.
-\end{align}
+\end{align*}
 
-The deformation tensor due to the Stokeslets and rotlets in
-equation~\eqref{eqn:stokeslet_rotlet} are
-\begin{align}
+The deformation tensor due to the Stokeslets and
+rotlets~\eqref{eqn:stokeslet_rotlet} are
+\begin{align*}
   \ssigma^S(\xx_0) &= \frac{\rr \cdot \llambda}{4\pi\rho^2} \left(
     \II - \frac{2}{\rho^2} \rr \otimes \rr \right),  \\
   \ssigma^R(\xx_0) &= -\frac{\xi}{\rho^4} \left(\rr \otimes \rr^\perp + 
                            \rr^\perp \otimes \rr \right).
-\end{align}
+\end{align*}
 Now that the deformation tensor of each component of the completed
 double-layer potential are computed, the shear stress at $\xx_0 \in
-\Gamma$ can be computed as
-\begin{align}
+\Gamma$ can be written as
+\begin{align*}
   \tau = \left(J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) + 
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
-\end{align}
+\end{align*}
 
+\subsubsection{Pressure}
 To compute the pressure at $\xx_0 \in \Gamma$, we follow the same
 procedure used for the shear stress.  In particular, we compute the
-pressure due to each of the three terms that compose the completed
-double-layer potential.  They are given by
-\begin{align}
+pressure due to each of the three terms in the completed double-layer
+potential~\eqref{eqn:completed_DLP}.  They are given by
+\begin{align*}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
   -\pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0),
-\end{align}
+\end{align*}
 where
-\begin{align}
+\begin{align*}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\Gamma} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
     \nn \cdot \eeta(\yy) \,ds_\yy.
-\end{align}
+\end{align*}
 The pressure due to the Stokeslets is
 \begin{align}
   p^S(\xx_0) = \frac{\rr \cdot \llambda}{2\pi\rho^2},
   \label{eqn:pressureDLP}
 \end{align}
-and the velocity due to a rotlet is pressure-free.  Therefore, once the
-density function and Stokeslets are computed, the pressure at a point
-$\xx_0 \in \Gamma$ is
-\begin{align}
+and the pressure of a rotlet is zero.  Therefore, once the density
+function and Stokeslets are computed, the pressure at a point $\xx_0 \in
+\Gamma$ is
+\begin{align*}
   p(\xx_0) = -\pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0) + 
               \frac{\rr \cdot \llambda}{2\pi\rho^2}.
-\end{align}
+\end{align*}
 
+\subsubsection{Drag}
 Finally, with the pressure and shear stress, the drag on a single body
 with boundary $\Gamma_k$ is
-\begin{align}
+\begin{align*}
   F_D = \int_{\Gamma_k} (-p \nn + \tau \ss)\,ds.
-\end{align}
-
-\todo[inline]{Describe convention for normal and tangent vectors}
-
+\end{align*}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,15 +335,15 @@ accuracy for smooth periodic functions.  However, care must be taken
 when the source point and target points coincide.
 
 For the velocity field, the kernel of the integral operator
-\begin{align}
+\begin{align*}
   D(\xx,\yy) = \frac{\rr \cdot \nn}{\rho^2} 
                \frac{\rr \otimes \rr}{\rho^2}
-\end{align}
+\end{align*}
 has a removable singularity when $\xx = \yy$.  In particular
-\begin{align}
+\begin{align*}
   \lim_{\substack{\yy \rightarrow \xx \\ \yy \in \Gamma}} D(\xx,\yy) = 
   \frac{\kappa(\xx)}{2\pi}\ss \otimes \ss,
-\end{align}
+\end{align*}
 where $\kappa(\xx)$ is the curvature of $\Gamma$ at $\xx$.  By using
 this limiting term in when applying the trapezoid rule, spectral
 accuracy is achieved because of the smoothness and periodicity of the
@@ -339,18 +356,18 @@ the singularity must be weakened.  This can be done by adding a constant
 density function which has no effect on the shear stress and
 pressure~\cite{poz1992}.  In particular, the shear stress due to the
 double-layer potential is equivalent to
-\begin{align}
+\begin{align*}
   \ssigma^{\DD}(\xx_0) &= \int_{\bd\Omega}K_\ssigma(\xx_0,\yy)
       \ssigma(\yy) \, ds_{\yy} \\ 
       &= \int_{\bd\Omega}K_\ssigma(\xx_0,\yy)
       (\ssigma(\yy) - \ssigma(\xx_0)) \, ds_{\yy}.
-\end{align}
+\end{align*}
 For the pressure, the double-layer potential is equivalent to
-\begin{align}
+\begin{align*}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\Gamma} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
     \nn \cdot (\eeta(\yy) - \eeta(\xx_0)) \,ds_\yy.
-\end{align}
+\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fast Summation} 
@@ -360,7 +377,7 @@ layer potential can be efficiently evaluated using a fast summation
 method such as the Fast Multipole Method
 (FMM)~\cite{gre-rok1987}\footnote{The FMM for the Stokes double-layer
 poetntial was supplied by Manas Rachh.}.  By using the
-FMM,~\eqref{eqn:completed_DLP} can be solved with $\mathcal{O}(N)$
+FMM,~\eqref{eqn:completed_BIE} can be solved with $\mathcal{O}(N)$
 operations, where $N$ is the total number of discretization points.
 
 In our erosion model, the shear stress must be computed which requires
