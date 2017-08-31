@@ -1,5 +1,5 @@
 FORTRAN = gfortran
-FFLAGS = -c -O3 -fPIC
+FFLAGS = -c -O3 -fPIC -fopenmp
 
 OBJS=\
 bhcommon_oldtree.o\
