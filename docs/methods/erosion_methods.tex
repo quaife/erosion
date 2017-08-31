@@ -86,10 +86,9 @@ third, $[-1,1] \times [-1,1]$, of the fluid domain.
     equations.  A no-slip boundary condition is imposed on each body
     $\gamma_k$ whose unit normal points outward relative to the
     geometry.  On the outer geometry $\Gamma$, a pipe flow is imposed.
-    Finally, the bodies are eroded according to the shear stress applied
-    by the Stokesian fluid.}
-    \todo[inline]{$\ss$ should go the other way.  Draw dashed lines
-    showing the buffer region}
+    The bodies are eroded according to the shear stress applied by the
+    Stokesian fluid.  Finally, the bodies are constrained to the middle
+    third of the channel that is located between the dashed lines.}
 \end{figure}
 
 We use a quasi-static approximation.  That is, at each time step, we
@@ -114,6 +113,15 @@ drag can all be readily computed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Erosion Model} 
 \label{sec:erosion}
+
+To model erosion, we the normal velocity is prescribed to be
+proportional to the absolute value of the shear stress.  The constant of
+proportionality sets the time scale, and we set its value to be -1
+\begin{align}
+  \dot{\xx}(t) = -|\tau| \nn.
+  \label{eqn:bodyEvolution}
+\end{align}
+
 \todo[inline]{Describe the erosion model and its justification}
 
 
@@ -199,6 +207,8 @@ density function, Stokeslets, and rotlets, all of these quantities can
 be computed by evaluating layer potentials that we now derive.
 
 \subsubsection{Shear Stress}
+\todo[inline]{check all signs in this section.  Fortran code assumes an
+inward pointing normal}
 The shear stress is defined by
 \begin{align}
   \tau = \left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
@@ -262,6 +272,8 @@ double-layer potential are computed, the shear stress at $\xx_0 \in
 \end{align*}
 
 \subsubsection{Pressure}
+\todo[inline]{check all signs in this section.  Fortran code assumes an
+inward pointing normal}
 To compute the pressure at $\xx_0 \in \Gamma$, we follow the same
 procedure used for the shear stress.  In particular, we compute the
 pressure due to each of the three terms in the completed double-layer
@@ -290,6 +302,8 @@ function and Stokeslets are computed, the pressure at a point $\xx_0 \in
 \end{align*}
 
 \subsubsection{Drag}
+\todo[inline]{check all signs in this section.  Fortran code assumes an
+inward pointing normal}
 Finally, with the pressure and shear stress, the drag on a single body
 with boundary $\Gamma_k$ is
 \begin{align*}
@@ -344,7 +358,7 @@ For the velocity field, the kernel of the integral operator
 has a removable singularity when $\xx = \yy$.  In particular
 \begin{align*}
   \lim_{\substack{\yy \rightarrow \xx \\ \yy \in \Gamma}} D(\xx,\yy) = 
-  \frac{\kappa(\xx)}{2\pi}\ss \otimes \ss,
+  -\frac{\kappa(\xx)}{2\pi}\ss \otimes \ss,
 \end{align*}
 where $\kappa(\xx)$ is the curvature of $\Gamma$ at $\xx$.  By using
 this limiting term in when applying the trapezoid rule, spectral

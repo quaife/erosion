@@ -10,6 +10,16 @@ ymax=1.1,
 hide axis, 
 ] 
 
+\addplot [color=black,dashed,line width=1] coordinates{ 
+  (-1,-1)
+  (-1,+1)
+}; 
+
+\addplot [color=black,dashed,line width=1] coordinates{ 
+  (1,-1)
+  (1,+1)
+}; 
+
 \addplot [color=black,solid,line width=2] coordinates{ 
 (3.0000e+00,0.0000e+00)
 (3.0000e+00,2.4549e-02)
@@ -613,8 +623,8 @@ hide axis,
 %\draw[step=50] (0,0) grid (1200,300);
 
 \node[font = \Huge,color=black] at (500,110) {$\Omega$};
-\node[font = \normalsize,color=red] at (328,143) {$\nn$};
-\node[font = \normalsize,color=red] at (368,135) {$\ss$};
+\node[font = \normalsize,color=red] at (338,122) {$\nn$};
+\node[font = \normalsize,color=red] at (342,158) {$\ss$};
 \path[->,line width=1.2](240,90) edge (260,100);
 \node at (225,90) {$\gamma_k$};
 \path[->,line width=1.2,color=black](140,50) edge (120,14);
@@ -643,7 +653,7 @@ plot coordinates{
 \addplot[color=red,line width=0.5pt,solid,->]
 plot coordinates{
   (0.3865,0.3172)
-  (0.6244,0.0273)
+  (0.1486,0.6071)
 };
 
 
