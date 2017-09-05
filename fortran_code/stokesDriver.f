@@ -1,11 +1,10 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-c      parameter (ninner = 4096)
       parameter (ninner = 128)
-      parameter (nbodies = 1)
+      parameter (nbodies = 2)
       parameter (nouter = 2**8)
-      parameter (ntargets = 40)
+      parameter (ntargets = 400)
       parameter (maxbodies = 10)
 
       dimension centerx(maxbodies),centery(maxbodies)
@@ -21,6 +20,7 @@ c      parameter (ninner = 4096)
       dimension utar(ntargets*ntargets)
       dimension vtar(ntargets*ntargets)
       dimension press_tar(ntargets*ntargets)
+      dimension vort_tar(ntargets*ntargets)
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
@@ -28,21 +28,20 @@ c      parameter (ninner = 4096)
 
       centerx(1) = -0.0d0
       centery(1) = 0.0d0
-c      centerx(2) = 0.8d0
-      centerx(2) = 0.0d0
+      centerx(2) = 0.8d0
       centery(2) = -0.1d0
       radius(1) = 2.d-1
       radius(2) = 2.d-1
       phi(1) = 0.d0
       phi(2) = 0.d0
 
-      Nphi = 128
-      dphi = twopi/Nphi
-      open(unit=21,file='output/dragx.dat')
-      open(unit=22,file='output/dragy.dat')
+c      Nphi = 128
+c      dphi = twopi/Nphi
+c      open(unit=21,file='output/dragx.dat')
+c      open(unit=22,file='output/dragy.dat')
 
-      do kk = 1,Nphi
-        phi(1) = dble(kk-1)*dphi
+c      do kk = 1,Nphi
+c        phi(1) = dble(kk-1)*dphi
 
       do j = 1,nbodies
         do k = 1,ninner
@@ -50,10 +49,10 @@ c      centerx(2) = 0.8d0
           var_rad = radius(j)
           x((j-1)*ninner+k) = centerx(j) + var_rad*
      $          (dcos(phi(j))*dcos(theta) + 
-     $           dsin(phi(j))*2.d0*dsin(theta))
+     $           2.d0*dsin(phi(j))*dsin(theta))
           y((j-1)*ninner+k) = centery(j) + var_rad*
      $          (-dsin(phi(j))*dcos(theta) + 
-     $           dcos(phi(j))*2.d0*dsin(theta))
+     $           2.d0*dcos(phi(j))*dsin(theta))
         enddo
       enddo
 
@@ -81,6 +80,9 @@ c      centerx(2) = 0.8d0
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
 
+      call computeVorticityTargets(ninner,nbodies,nouter,
+     $      x,y,den,ntargets*ntargets,xtar,ytar,vort_tar)
+
       call computeShearStress(ninner,nbodies,nouter,x,y,den,
      $    shear_stress)
 c     pass in the density function and return the shear_stress
@@ -91,11 +93,11 @@ c     pass in the density function and return the pressure
       call computeDrag(ninner,nbodies,x,y,
      $      shear_stress,pressure,drag)
 c     pass in the shear_stress and pressure and return the drag
-        write(21,1000) drag(1)
-        write(22,1000) drag(2)
-      enddo
-      close(unit=21)
-      close(unit=22)
+c      write(21,1000) drag(1)
+c      write(22,1000) drag(2)
+c      enddo
+c      close(unit=21)
+c      close(unit=22)
     
       call computeVelocityPressureTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets*ntargets,xtar,ytar,utar,vtar,press_tar)
@@ -131,15 +133,23 @@ c     pass in the shear_stress and pressure and return the drag
       open(unit=3,file='output/utar.dat')
       open(unit=4,file='output/vtar.dat')
       open(unit=8,file='output/press_tar.dat')
+      open(unit=9,file='output/vort_tar.dat')
       do k = 1,ntargets**2
         write(1,1000) xtar(k)
         write(2,1000) ytar(k)
         write(3,1000) utar(k)
         write(4,1000) vtar(k)
         write(8,1000) press_tar(k)
+        write(9,1000) vort_tar(k)
       enddo
+      close(unit=1)
+      close(unit=2)
+      close(unit=3)
+      close(unit=4)
+      close(unit=8)
+      close(unit=9)
 
-      write(6,1010) phi(1),drag(1),drag(2)
+c      write(6,1010) phi(1),drag(1),drag(2)
 
  1000 format(E25.16)
  1010 format(ES20.4)

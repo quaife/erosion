@@ -140,18 +140,18 @@ $\mu=1$.  We start by defining the double-layer potential, which is the
 convolution of the stresslet with a function $\eeta:\bd\Omega
 \rightarrow \RR^2$,
 \begin{align}
-  \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\Gamma} 
+  \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
-    \eeta \, ds_\yy, \quad \xx \in \Omega,
+    \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
     \label{eqn:velocityDLP}
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the unit outward
-normal.  For any density function $\eeta$, the double-layer potential
-satisfies the incompressible Stokes equations, but the double-layer
-potential can not capture velocity fields corresponding to rigid body
-motions~\cite{pow-mir1987}.  A standard method to complete the
-double-layer potential is to introduce a Stokeslet and rotlet due to
-each interior body
+normal at $\yy$.  For any density function $\eeta$, the double-layer
+potential satisfies the incompressible Stokes equations, but the
+double-layer potential can not capture velocity fields corresponding to
+rigid body motions~\cite{pow-mir1987}.  A standard method to complete
+the double-layer potential is to introduce a Stokeslet and rotlet
+centered inside each interior body
 \begin{align}
   S[\llambda_k,\cc_k] = \frac{1}{4\pi} \left(-\log \rho \II + 
     \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_k
@@ -175,9 +175,9 @@ where the density function, Stokeslets, and rotlets satisfy
       \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
       \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Gamma, 
       \label{eqn:DLP}\\
-  \llambda_k &= \frac{1}{2\pi}\int_{\Gamma_k} \eeta(\yy) \, ds_\yy, 
+  \llambda_k &= \frac{1}{2\pi}\int_{\gamma_k} \eeta(\yy) \, ds_\yy, 
   \label{eqn:stokeslet} \\
-  \xi_k &= \frac{1}{2\pi}\int_{\Gamma_k} \yy^\perp \cdot \eeta(\yy)
+  \xi_k &= \frac{1}{2\pi}\int_{\gamma_k} \yy^\perp \cdot \eeta(\yy)
   \, ds_\yy.
   \label{eqn:rotlet}
 \end{align}
@@ -185,13 +185,14 @@ where the density function, Stokeslets, and rotlets satisfy
 Finally, because of the incompressibility constraint, the boundary
 condition must satisfy 
 \begin{align*}
-  \int_{\Gamma} \ff \cdot \nn \, ds_\yy = 0.
+  \int_{\bd\Omega} \ff \cdot \nn \, ds_\yy = 0.
 \end{align*}
 The result is a rank-one null space of~\eqref{eqn:completed_BIE} which
-is removed by adding the rank-one modification $\NN_0[\eeta](\xx) =
-\int_{\Gamma_0} (\nn(\xx) \otimes \nn(\yy))\nn(\yy) \, ds_\yy$, for $\xx
-\in \Gamma_0$.
-
+is removed by adding the rank-one modification 
+\begin{align}
+  \NN_0[\eeta](\xx) = \int_{\Gamma} 
+    (\nn(\xx) \otimes \nn(\yy))\nn(\yy) \, ds_\yy, \quad \xx \in \Gamma.
+\end{align}
 
 
 
@@ -199,8 +200,8 @@ is removed by adding the rank-one modification $\NN_0[\eeta](\xx) =
 \subsection{Computing the Shear Stress, Pressure, and Drag} 
 \label{sec:qois}
 There are several quantities besides the velocity that need to be
-comnputed.  First, the shear stress along $\gamma_k$ is required by the
-governing equations~\eqref{eqn:erosionModel}.  In addition, to study
+comnputed.  First, the governing equations~\eqref{eqn:erosionModel}
+require the shear stress along $\gamma_k$.  In addition, to study
 characteristics of the flow, the pressure and drag must also be
 computed.  Once equation~\eqref{eqn:completed_DLP} is solved for the
 density function, Stokeslets, and rotlets, all of these quantities can

@@ -276,6 +276,25 @@ c     generic boundary condition
       endif
 c     constant background flow on outer walls on no slip on obstacle
 
+      if (0 .eq. 1) then
+        do k = 1,nouter
+          rho2 = (xouter(k)-2.d0)**2.d0 + (youter(k)+2.d0)**2.d0
+          rhs(k) = ((youter(k)+2.d0)**2.d0 - (xouter(k)-2.d0)**2.d0)/
+     $        rho2**2.d0
+          rhs(k + nouter) = -2.d0*(xouter(k)-2.d0)*(youter(k)+2.d0)/
+     $        rho2**2.d0
+        enddo
+
+        do k = 1,ninner*nbodies
+          rho2 = (x(k)-2.d0)**2.d0 + (y(k)+2.d0)**2.d0
+          rhs(2*nouter + k) = ((y(k)+2.d0)**2.d0 - (x(k)-2.d0)**2.d0)/
+     $        rho2**2.d0
+          rhs(2*nouter + k + ninner) = -2.d0*(x(k)-2.d0)*(y(k)+2.d0)/
+     $        rho2**2.d0
+        enddo
+      endif
+
+
       do k = 1,nbodies
         rhs(2*nouter+2*ninner*nbodies+3*(k-1)+1) = 0.d0
         rhs(2*nouter+2*ninner*nbodies+3*(k-1)+2) = 0.d0
@@ -1664,7 +1683,6 @@ c     compute the deformation tensor on the boundary of the interface
 
       end
 
-
 c***********************************************************************
       subroutine computeVelocityPressureTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar)
@@ -1786,6 +1804,113 @@ c         stokeslet contribution
           utar(j) = utar(j) + rot*ry/rho2
           vtar(j) = vtar(j) - rot*rx/rho2
 c         rotlet contribution
+        enddo
+      enddo
+c     Add in contribution from Rotlets and Stokeslets
+
+
+      end
+
+c***********************************************************************
+      subroutine computeVorticityTargets(ninner,nbodies,nouter,
+     $    x,y,den,ntargets,xtar,ytar,vort_tar)
+c     Compute the vorticity at a set of target points xtar and ytar.
+c     Target points must be sufficiently far away from the each boundary since
+c     no near-singular integration is used.  It is just the vanilla trapezoid
+c     rule
+      implicit real*8 (a-h,o-z)
+
+      parameter (nmax = 2**15)
+
+      dimension x(ninner*nbodies),y(ninner*nbodies)
+      dimension px(ninner*nbodies),py(ninner*nbodies)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
+      dimension centerx(nbodies),centery(nbodies)
+      dimension xouter(nouter),youter(nouter)
+c     x and y coordinates of confining wall
+      dimension px0(nouter), py0(nouter)
+c     x and y coordinates of the normal of the confining wall
+      dimension cur0(nouter), speed0(nouter)
+c     Jacobian and curvature of the confining wall
+      dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
+      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
+
+      dimension xtar(ntargets),ytar(ntargets)
+      dimension vort_tar(ntargets)
+
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     build outer geometry
+
+      do j = 1,ntargets
+        vort_tar(j) = 0.d0
+      enddo
+
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+c     Contribution from the density function on the solid wall
+      do k=1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k+nouter)
+      enddo
+c     Density function defined on the outer geometry
+
+      do j = 1,ntargets
+        do k = 1,nouter
+          rx = xtar(j) - xouter(k)
+          ry = ytar(j) - youter(k)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdotn = rx*px0(k) + ry*py0(k)
+          rdotden = rx*denx(k) + ry*deny(k)
+          routn = -rx*py0(k) + ry*px0(k)
+          routden = -rx*deny(k) + ry*denx(k)
+
+          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $      rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
+        enddo
+      enddo
+
+c     Contribution from the density function on each inner obstacle
+      do isou = 1,nbodies
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
+        enddo
+c       Density function defined on the inner geometry
+
+        do j = 1,ntargets
+          do k = 1,ninner
+            rx = xtar(j) - x((isou-1)*ninner + k)
+            ry = ytar(j) - y((isou-1)*ninner + k)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdotn = rx*px((isou-1)*ninner + k) + 
+     $              ry*py((isou-1)*ninner + k)
+            rdotden = rx*denx(k) + ry*deny(k)
+            routn = -rx*py((isou-1)*ninner+k) + ry*px((isou-1)*ninner+k)
+            routden = -rx*deny(k) + ry*denx(k)
+
+            vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $        rho2**2.d0*speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi 
+          enddo
+        enddo
+      enddo
+
+c     Contribution from Rotlets and Stokeslets.  Rotlets have no
+c     vorticity
+      do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        do j = 1,ntargets
+          rx = xtar(j) - centerx(ibod)
+          ry = ytar(j) - centery(ibod)
+          rho2 = rx**2.d0 + ry**2.d0
+          vort_tar(j) = vort_tar(j) + 2.d0*(ry*sto1 - rx*sto2)/
+     $        rho2/twopi
+c         stokeslet contribution
         enddo
       enddo
 c     Add in contribution from Rotlets and Stokeslets
