@@ -1,7 +1,7 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 128)
+      parameter (ninner = 4096)
       parameter (nbodies = 2)
       parameter (nouter = 2**8)
       parameter (ntargets = 400)
@@ -28,7 +28,7 @@
 
       centerx(1) = -0.0d0
       centery(1) = 0.0d0
-      centerx(2) = 0.8d0
+      centerx(2) = 0.5d0
       centery(2) = -0.1d0
       radius(1) = 2.d-1
       radius(2) = 2.d-1
@@ -75,10 +75,30 @@ c        phi(1) = dble(kk-1)*dphi
         enddo
       enddo
 
+c      icount = 0
+c      do j = 1,30
+c        var_rad = radius(1)*(1.d0 + 1.d-2*j)
+c        do k = 1,ninner
+c          icount = icount + 1
+c          theta = dble(k-1)*dtheta
+c          xtar(icount) = centerx(1) + var_rad*
+c     $        (dcos(phi(1))*dcos(theta) + 
+c     $        2.d0*dsin(phi(1))*dsin(theta))
+c          ytar(icount) = centery(1) + var_rad*
+c     $        (-dsin(phi(1))*dcos(theta) + 
+c     $        2.d0*dcos(phi(1))*dsin(theta))
+c        enddo
+c      enddo
+
       ifmm = 1
       call stokesSolver(ninner,nbodies,nouter,ifmm,x,y,den)
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
+
+
+c      do k = 2*nouter+2*ninner + 1,2*nouter + 2*ninner + 3
+c        den(k) = 0.d0
+c      enddo
 
       call computeVorticityTargets(ninner,nbodies,nouter,
      $      x,y,den,ntargets*ntargets,xtar,ytar,vort_tar)

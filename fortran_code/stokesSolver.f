@@ -1908,7 +1908,7 @@ c     vorticity
           rx = xtar(j) - centerx(ibod)
           ry = ytar(j) - centery(ibod)
           rho2 = rx**2.d0 + ry**2.d0
-          vort_tar(j) = vort_tar(j) + 2.d0*(ry*sto1 - rx*sto2)/
+          vort_tar(j) = vort_tar(j) + (ry*sto1 - rx*sto2)/
      $        rho2/twopi
 c         stokeslet contribution
         enddo
