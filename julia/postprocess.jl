@@ -40,11 +40,10 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = [-2.5, -2.0, -1.5, 1.5, 2.0, 2.5]
+		xlocs = collect(-2.5: 0.5: 2.5)		#[-2.5, -2.0, -1.5, 1.5, 2.0, 2.5]
 		ylocs = collect(-0.8: 0.2: 0.8)
 		targets = setuptargets(xlocs,ylocs)
-		compute_velpress_targets!(thlenden,targets,nouter)
-		compute_vorticity_targets!(thlenden,targets,nouter)
+		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
@@ -69,11 +68,11 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64; rotation:
 	# Compute the velocities and pressures on each set of target points.
 	# Either using the original porous matrix or the rotated one.
 	if rotation==true
-		compute_velpressrot_targets!(thlenden,tarp,nouter)
-		compute_velpressrot_targets!(thlenden,tarm,nouter)
+		compute_qoirot_targets!(thlenden,tarp,nouter)
+		compute_qoirot_targets!(thlenden,tarm,nouter)
 	else
-		compute_velpress_targets!(thlenden,tarp,nouter)
-		compute_velpress_targets!(thlenden,tarm,nouter)
+		compute_qoi_targets!(thlenden,tarp,nouter)
+		compute_qoi_targets!(thlenden,tarm,nouter)
 	end
 	# Compute the cross-sectional average pressure and discharge
 	pplus = mean(tarp.ptar)

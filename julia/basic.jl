@@ -77,8 +77,16 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	return
 end
 
-
 #--------------- FORTRAN WRAPPERS ---------------#
+# compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
+function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
+	if thlenden.denrot == []
+		npts,nbods,xv,yv = getnxy(thlenden)
+		xrot,yrot = xyrot(xv,yv)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
+	end
+	return
+end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
@@ -86,15 +94,6 @@ function compute_density!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.density == []
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
-	end
-	return
-end
-# compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
-function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
-	if thlenden.denrot == []
-		npts,nbods,xv,yv = getnxy(thlenden)
-		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
 	end
 	return
 end
@@ -108,16 +107,6 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	return density
 end
 
-# compute_stress: Dispatch for ThLenDenType.
-function compute_stress(thlenden::ThLenDenType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods == 0
-		tau = evec()
-	else
-		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
-	end
-	return tau
-end
 # compute_stressrot: Compute the stress on the rotated grid
 function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -126,6 +115,16 @@ function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	else
 		xrot,yrot = xyrot(xv,yv)
 		tau = compute_stress(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
+	end
+	return tau
+end
+# compute_stress: Dispatch for ThLenDenType.
+function compute_stress(thlenden::ThLenDenType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods == 0
+		tau = evec()
+	else
+		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
 	end
 	return tau
 end
@@ -139,16 +138,6 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vecto
 	return tau
 end
 
-# compute_pressure: Dispatch for ThLenDenType.
-function compute_pressure(thlenden::ThLenDenType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods ==0
-		pressure = evec()
-	else
-		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
-	end
-	return pressure
-end
 # compute_pressrot: Compute the pressure on a rotated grid.
 function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -160,6 +149,16 @@ function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
 	end
 	return pressrot
 end
+# compute_pressure: Dispatch for ThLenDenType.
+function compute_pressure(thlenden::ThLenDenType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods ==0
+		pressure = evec()
+	else
+		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
+	end
+	return pressure
+end
 # compute_pressure: Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int)
@@ -170,53 +169,33 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vec
 	return pressure
 end
 
-# compute_velpress_targets: Dispatch for ThLenDenType and TargetsType.
-function compute_velpress_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	targets.utar,targets.vtar,targets.ptar = compute_velpress_targets(xv,yv,
-		thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
-	return
-end
 # compute_velpressrot_targets: Compute the same on the rotated xy grid.
-function compute_velpressrot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+function compute_qoirot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	xrot,yrot = xyrot(xv,yv)
-	targets.utar,targets.vtar,targets.ptar = compute_velpress_targets(xrot,yrot,
-		thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
+	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
+		compute_qoi_targets(xrot,yrot,thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
-# compute_velpress_targets: Fortran wrapper.
-function compute_velpress_targets(xx::Vector{Float64}, yy::Vector{Float64},
-		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
-		npts::Int, nbods::Int, nouter::Int)
-	ntargets = endof(xtar)
-	utar,vtar,ptar = [zeros(Float64,ntargets) for ii=1:3]
-	ccall((:computevelocitypressuretargets_, "libstokes.so"), Void,
-		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},
-		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
-		&npts, &nbods, &nouter, xx, yy, density, 
-		&ntargets, xtar, ytar, utar, vtar, ptar)
-	return utar,vtar,ptar
-end
-# compute_vorticity_targets: Dispatch for ThLenDenType and TargetsType.
-function compute_vorticity_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+# compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
+function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	targets.vortar = compute_vorticity_targets(xv,yv,
-		thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
+	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
+		compute_qoi_targets(xv,yv,thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
-# compute_vorticity_targets: Fortran wrapper.
-function compute_vorticity_targets(xx::Vector{Float64}, yy::Vector{Float64},
+# compute_qoi_targets: Fortran wrapper.
+function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
 		npts::Int, nbods::Int, nouter::Int)
 	ntargets = endof(xtar)
-	vortar = zeros(Float64,ntargets)
-	ccall((:computevorticitytargets_, "libstokes.so"), Void,
-		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},
-		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
+	utar,vtar,ptar,vortar = [zeros(Float64,ntargets) for ii=1:4]
+	ccall((:computeqoitargets_, "libstokes.so"), Void,
+		(Ptr{Int}, Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64},
+		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
 		&npts, &nbods, &nouter, xx, yy, density, 
-		&ntargets, xtar, ytar, vortar)
-	return vortar
+		&ntargets, xtar, ytar, utar, vtar, ptar, vortar)
+	return utar,vtar,ptar,vortar
 end
 
 #--------------- OTHER ---------------#
