@@ -1,8 +1,8 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 4096)
-      parameter (nbodies = 2)
+      parameter (ninner = 1024)
+      parameter (nbodies = 3)
       parameter (nouter = 2**8)
       parameter (ntargets = 400)
       parameter (maxbodies = 10)
@@ -21,19 +21,24 @@
       dimension vtar(ntargets*ntargets)
       dimension press_tar(ntargets*ntargets)
       dimension vort_tar(ntargets*ntargets)
+      dimension iside(ntargets*ntargets)
+      dimension inear(ntargets*ntargets)
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
       dtheta = twopi/dble(ninner)
 
-      centerx(1) = -0.0d0
       centery(1) = 0.0d0
       centerx(2) = 0.5d0
+      centerx(3) = -0.4d0
       centery(2) = -0.1d0
+      centery(3) = 0.1d0
       radius(1) = 2.d-1
-      radius(2) = 2.d-1
+      radius(2) = 1.d-1
+      radius(3) = 5.d-2
       phi(1) = 0.d0
       phi(2) = 0.d0
+      phi(3) = pi/4.d0
 
 c      Nphi = 128
 c      dphi = twopi/Nphi
@@ -95,13 +100,19 @@ c      enddo
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
 
+      call classifyPoints(ninner,nbodies,x,y,
+     $      ntargets*ntargets,xtar,ytar,iside,inear)
+c
+c      call computeVorticityTargets(ninner,nbodies,nouter,
+c     $      x,y,den,ntargets*ntargets,xtar,ytar,vort_tar)
+c
+c      call computeVelocityPressureTargets(ninner,nbodies,nouter,
+c     $    x,y,den,ntargets*ntargets,xtar,ytar,utar,vtar,press_tar)
+c
+      call computeQoiTargets(ninner,nbodies,nouter,x,y,den,
+     $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
 
-c      do k = 2*nouter+2*ninner + 1,2*nouter + 2*ninner + 3
-c        den(k) = 0.d0
-c      enddo
 
-      call computeVorticityTargets(ninner,nbodies,nouter,
-     $      x,y,den,ntargets*ntargets,xtar,ytar,vort_tar)
 
       call computeShearStress(ninner,nbodies,nouter,x,y,den,
      $    shear_stress)
@@ -119,8 +130,16 @@ c      enddo
 c      close(unit=21)
 c      close(unit=22)
     
-      call computeVelocityPressureTargets(ninner,nbodies,nouter,
-     $    x,y,den,ntargets*ntargets,xtar,ytar,utar,vtar,press_tar)
+
+
+c      do k = 1,ntargets*ntargets
+c        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
+c          utar(k) = 0.d0
+c          vtar(k) = 0.d0
+c          press_tar(k) = 0.d0
+c          vort_tar(k) = 0.d0
+c        endif
+c      enddo
 
 
       open(unit=1,file='output/den.dat')

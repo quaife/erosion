@@ -160,8 +160,8 @@ centered inside each interior body
   \label{eqn:stokeslet_rotlet}
 \end{align}
 where $\cc_k$ is a point inside the $k^{th}$ body,  $\rr = \xx - \cc_k$,
-and $\rr^\perp = (r_2,-r_1)$.  Then, the solution of the Stokes
-equations with a Dirichlet boundary condition $\ff$ is
+and $\rr^\perp = (r_2,-r_1)$.  Then, any solution of the Stokes
+equations with a Dirichlet boundary condition $\ff$ can be written as
 \begin{align}
   \label{eqn:completed_DLP}
   \uu(\xx) = \DD[\eeta](\xx) + \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
@@ -197,13 +197,13 @@ is removed by adding the rank-one modification
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Computing the Shear Stress, Pressure, and Drag} 
+\subsection{Computing the Shear Stress, Vorticity Pressure, and Drag} 
 \label{sec:qois}
 There are several quantities besides the velocity that need to be
-comnputed.  First, the governing equations~\eqref{eqn:erosionModel}
+computed.  First, the governing equations~\eqref{eqn:erosionModel}
 require the shear stress along $\gamma_k$.  In addition, to study
-characteristics of the flow, the pressure and drag must also be
-computed.  Once equation~\eqref{eqn:completed_DLP} is solved for the
+characteristics of the flow, the vorticity, pressure, and drag must also
+be computed.  Once equation~\eqref{eqn:completed_DLP} is solved for the
 density function, Stokeslets, and rotlets, all of these quantities can
 be computed by evaluating layer potentials that we now derive.
 
@@ -215,18 +215,18 @@ The shear stress is defined by
   \tau = \left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
   \label{eqn:shearStress}
 \end{align}
-where $\ss$ is the unit tangent vector (Figure~\ref{fig:schematic}).  We
-note that for the Stokes equations, because of the no-slip boundary
-condition on the bodies, the shear stress is identical to the surface
-vorticity $\tau = u_y - v_x$.  However, we use
-equation~\eqref{eqn:shearStress} to compute the shear stress since the
-jump conditions resulting from the double-layer potential are
-known~\cite{qua-bir2014a}.  The velocity field of the completed
-double-layer potential~\eqref{eqn:completed_DLP} involves three terms:
-the double-layer potential $\DD$, the Stokeslets $S$, and the rotlets
-$R$.  To compute the shear stress, we first compute the deformation
-tensor $\ssigma = \frac{1}{2}(\nabla\uu + \nabla\uu^T)$ of each of these
-terms individually.
+where $\ss$ and $\nn$ are the unit tangent and normal vectors,
+respectively (Figure~\ref{fig:schematic}).  We note that for the Stokes
+equations, because of the no-slip boundary condition on the bodies, the
+shear stress is identical to the surface vorticity $\tau = u_y - v_x$.
+However, we use equation~\eqref{eqn:shearStress} to compute the shear
+stress since the jump conditions resulting from the double-layer
+potential are known~\cite{qua-bir2014a}.  The velocity field of the
+completed double-layer potential~\eqref{eqn:completed_DLP} involves
+three terms: the double-layer potential $\DD$, the Stokeslets $S$, and
+the rotlets $R$.  To compute the shear stress, we first compute the
+deformation tensor $\ssigma = \frac{1}{2}(\nabla\uu + \nabla\uu^T)$ of
+each of these terms individually.
 
 The deformation tensor of the double-layer
 potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is

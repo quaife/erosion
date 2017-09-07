@@ -1616,10 +1616,6 @@ c     Input x and y coordinates and the density function on the
 c     boundary and return the shear stress on the inner walls.  
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
-      parameter (maxbodies = 50)
-c     max points on the boundary of the obstacle      
-
       dimension x(ninner*nbodies),y(ninner*nbodies)
       dimension centerx(nbodies),centery(nbodies)
       dimension px(ninner*nbodies),py(ninner*nbodies)
@@ -1683,6 +1679,163 @@ c     compute the deformation tensor on the boundary of the interface
 
       end
 
+
+c***********************************************************************
+      subroutine computeQoiTargets(ninner,nbodies,nouter,
+     $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
+c     Compute the velocity, pressure, and vorticity at a set of target 
+c     points xtar and ytar.  Target points must be sufficiently far away 
+c     from the each boundary since no near-singular integration is used.  
+c     It is just the vanilla trapezoid rule, but will assign a value of
+c     zero for points that are inside or close to the boundary
+      implicit real*8 (a-h,o-z)
+
+      dimension x(ninner*nbodies),y(ninner*nbodies)
+      dimension px(ninner*nbodies),py(ninner*nbodies)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
+      dimension centerx(nbodies),centery(nbodies)
+      dimension xouter(nouter),youter(nouter)
+c     x and y coordinates of confining wall
+      dimension px0(nouter), py0(nouter)
+c     x and y coordinates of the normal of the confining wall
+      dimension cur0(nouter), speed0(nouter)
+c     Jacobian and curvature of the confining wall
+      dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
+      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
+
+      dimension xtar(ntargets),ytar(ntargets)
+      dimension utar(ntargets),vtar(ntargets)
+      dimension press_tar(ntargets)
+      dimension vort_tar(ntargets)
+
+      dimension iside(ntargets)
+      dimension inear(ntargets)
+
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     build outer geometry
+
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+      do j = 1,ntargets
+        utar(j) = 0.d0
+        vtar(j) = 0.d0
+        press_tar(j) = 0.d0
+        vort_tar(j) = 0.d0
+      enddo
+
+c     Contribution from the density function on the solid wall
+      do k=1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k+nouter)
+      enddo
+c     Density function defined on the outer geometry
+
+      do j = 1,ntargets
+        do k = 1,nouter
+          rx = xtar(j) - xouter(k)
+          ry = ytar(j) - youter(k)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdotn = rx*px0(k) + ry*py0(k)
+          rdotden = rx*denx(k) + ry*deny(k)
+          dendotn = px0(k)*denx(k) + py0(k)*deny(k)
+          routn = -rx*py0(k) + ry*px0(k)
+          routden = -rx*deny(k) + ry*denx(k)
+
+          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $      speed0(k)*twopi/dble(nouter)/pi
+          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $      speed0(k)*twopi/dble(nouter)/pi
+          press_tar(j) = press_tar(j) + 
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed0(k)*twopi/dble(nouter)/pi
+          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $      rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
+        enddo
+      enddo
+
+c     Contribution from the density function on each inner obstacle
+      do isou = 1,nbodies
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
+        enddo
+c       Density function defined on the inner geometry
+
+        do j = 1,ntargets
+          do k = 1,ninner
+            rx = xtar(j) - x((isou-1)*ninner + k)
+            ry = ytar(j) - y((isou-1)*ninner + k)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdotn = rx*px((isou-1)*ninner + k) + 
+     $              ry*py((isou-1)*ninner + k)
+            rdotden = rx*denx(k) + ry*deny(k)
+            dendotn = px((isou-1)*ninner + k)*denx(k) + 
+     $                py((isou-1)*ninner + k)*deny(k)
+            routn = -rx*py((isou-1)*ninner+k) + ry*px((isou-1)*ninner+k)
+            routden = -rx*deny(k) + ry*denx(k)
+
+            utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+            vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+            press_tar(j) = press_tar(j) + 
+     $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+            vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $        rho2**2.d0*speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi 
+          enddo
+        enddo
+      enddo
+
+c     Contribution from Rotlets and Stokeslets
+      do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
+        do j = 1,ntargets
+          rx = xtar(j) - centerx(ibod)
+          ry = ytar(j) - centery(ibod)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdots = rx*sto1 + ry*sto2
+          utar(j) = utar(j) + 5.d-1/twopi*
+     $        (-5.d-1*dlog(rho2)*sto1 + rdots/rho2*rx)
+          vtar(j) = vtar(j) + 5.d-1/twopi*
+     $        (-5.d-1*dlog(rho2)*sto2 + rdots/rho2*ry)
+          press_tar(j) = press_tar(j) + 1.d0/twopi*
+     $        rdots/rho2
+          vort_tar(j) = vort_tar(j) + (ry*sto1 - rx*sto2)/
+     $        rho2/twopi
+c         stokeslet contribution
+
+          utar(j) = utar(j) + rot*ry/rho2
+          vtar(j) = vtar(j) - rot*rx/rho2
+c         rotlet contribution
+        enddo
+      enddo
+c     Add in contribution from Rotlets and Stokeslets
+
+      
+      call classifyPoints(ninner,nbodies,x,y,
+     $      ntargets,xtar,ytar,iside,inear)
+
+      do k = 1,ntargets
+        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
+          utar(k) = 0.d0
+          vtar(k) = 0.d0
+          press_tar(k) = 0.d0
+          vort_tar(k) = 0.d0
+        endif
+      enddo
+
+
+
+      end
+
 c***********************************************************************
       subroutine computeVelocityPressureTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar)
@@ -1691,8 +1844,6 @@ c     and ytar.  Target points must be sufficiently far away from the
 c     each boundary since no near-singular integration is used.  It is
 c     just the vanilla trapezoid rule
       implicit real*8 (a-h,o-z)
-
-      parameter (nmax = 2**15)
 
       dimension x(ninner*nbodies),y(ninner*nbodies)
       dimension px(ninner*nbodies),py(ninner*nbodies)
@@ -1814,13 +1965,11 @@ c     Add in contribution from Rotlets and Stokeslets
 c***********************************************************************
       subroutine computeVorticityTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,vort_tar)
-c     Compute the vorticity at a set of target points xtar and ytar.
-c     Target points must be sufficiently far away from the each boundary since
-c     no near-singular integration is used.  It is just the vanilla trapezoid
-c     rule
+c     Compute the vorticity at a set of target points xtar and ytar.  
+c     Target points must be sufficiently far away from the each 
+c     boundary since no near-singular integration is used.  It is just 
+c     the vanilla trapezoid rule
       implicit real*8 (a-h,o-z)
-
-      parameter (nmax = 2**15)
 
       dimension x(ninner*nbodies),y(ninner*nbodies)
       dimension px(ninner*nbodies),py(ninner*nbodies)
@@ -1918,6 +2067,90 @@ c     Add in contribution from Rotlets and Stokeslets
 
       end
 
+
+c***********************************************************************
+      subroutine classifyPoints(ninner,nbodies,x,y,
+     $      ntargets,xtar,ytar,iside,inear)
+c     construct a matrix iside which is 1 if a point is inside the fluid
+c     domain and 0 if it is outside the fluid domain (ie. in a body).
+c     Also construct a matrix inear which is 1 if a point is close to a
+c     boundary and 0 otherwise
+
+      implicit real*8 (a-h,o-z)
+
+      dimension x(ninner*nbodies),y(ninner*nbodies)
+      dimension px(ninner*nbodies),py(ninner*nbodies)
+      dimension cur(ninner*nbodies),speed(ninner*nbodies)
+      dimension centerx(nbodies),centery(nbodies)
+      dimension xtar(ntargets),ytar(ntargets)
+      dimension iside(ntargets),inear(ntargets)
+      
+      dimension arclengths(nbodies)
+      dimension dist_bodies(nbodies)
+
+      twopi = 8.d0*datan(1.d0)
+
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      do j = 1,nbodies
+        arclengths(j) = 0.d0
+        do k = (j-1)*ninner+1,j*ninner
+          arclengths(j) = arclengths(j) + speed(k)
+        enddo
+        arclengths(j) = arclengths(j)*twopi/dble(ninner)
+        arclengths(j) = arclengths(j)/dble(ninner)
+c       ds term
+      enddo
+
+      do i = 1,ntargets
+        inear(i) = 0.d0
+c       assume point is not too close to a boundary
+        ibodycp = 1
+        indexcp = 1
+c       index of the closest body to target point and the index
+c       of the closest point on that body
+
+        dist_min = 1.d10
+        do j = 1,nbodies
+          dist_bodies(j) = 1.d10
+          do k = 1,ninner
+            ind = (j-1)*ninner + k
+            dist2 = (xtar(i) - x(ind))**2.d0 + (ytar(i) - y(ind))**2.d0
+            if (dist2 .lt. dist_bodies(j)) then
+              dist_bodies(j) = dist2
+            endif
+            if (dist2 .lt. dist_min) then
+              dist_min = dist2
+              ibodycp = j
+              indexcp = k
+            endif
+          enddo
+
+          if (dsqrt(dist_bodies(j)) .lt. 5.d0*arclengths(j)) then
+            inear(i) = 1
+          endif
+        enddo
+
+        ind = (ibodycp - 1)*ninner + indexcp
+        vec_dot_n = (xtar(i) - x(ind))*px(ind) + 
+     $              (ytar(i) - y(ind))*py(ind)
+c       This quanitity will be negative if it is a point in the fluid
+c       and it will be positive if it is a point in a body
+
+        if (vec_dot_n .lt. 0.d0) then
+          iside(i) = 1
+        else
+          iside(i) = 0
+        endif
+
+
+      enddo
+            
+
+
+      end
 
 c***********************************************************************
       subroutine computePressure(ninner,nbodies,nouter,x,y,den,
