@@ -19,7 +19,8 @@ end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 type TargetsType
 	xtar::Vector{Float64}; ytar::Vector{Float64};
-	utar::Vector{Float64}; vtar::Vector{Float64}; ptar::Vector{Float64};
+	utar::Vector{Float64}; vtar::Vector{Float64};
+	ptar::Vector{Float64}; vortar::Vector{Float64};
 end
 
 #--------------- OBJECT ROUTINES ---------------#
@@ -196,6 +197,26 @@ function compute_velpress_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		&npts, &nbods, &nouter, xx, yy, density, 
 		&ntargets, xtar, ytar, utar, vtar, ptar)
 	return utar,vtar,ptar
+end
+# compute_vorticity_targets: Dispatch for ThLenDenType and TargetsType.
+function compute_vorticity_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	targets.vortar = compute_vorticity_targets(xv,yv,
+		thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
+	return
+end
+# compute_vorticity_targets: Fortran wrapper.
+function compute_vorticity_targets(xx::Vector{Float64}, yy::Vector{Float64},
+		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
+		npts::Int, nbods::Int, nouter::Int)
+	ntargets = endof(xtar)
+	vortar = zeros(Float64,ntargets)
+	ccall((:computevorticitytargets_, "libstokes.so"), Void,
+		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},
+		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
+		&npts, &nbods, &nouter, xx, yy, density, 
+		&ntargets, xtar, ytar, vortar)
+	return vortar
 end
 
 #--------------- OTHER ---------------#

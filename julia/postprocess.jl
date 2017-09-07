@@ -44,12 +44,14 @@ function postprocess(foldername::AbstractString)
 		ylocs = collect(-0.8: 0.2: 0.8)
 		targets = setuptargets(xlocs,ylocs)
 		compute_velpress_targets!(thlenden,targets,nouter)
+		compute_vorticity_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
-		label = string("# Data at grid of target points: x, y, u, v, pressure.")
+		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
 		targdata = [label; targets.xtar; targets.ytar; 
-			targets.utar; targets.vtar; targets.ptar]
+			targets.utar; targets.vtar; targets.ptar; targets.vortar]
 		writedata(targdata, targfile)
+		# Print progress.
 		println("Finished step ", cnt, " of ", ntimes, ".")
 	end
 	return
@@ -141,7 +143,7 @@ function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 		xtar[n1:n2] = xlocs[nn]
 		ytar[n1:n2] = ylocs
 	end
-	targets = TargetsType(evec(), evec(), evec(), evec(), evec())
+	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
 	targets.xtar = xtar
 	targets.ytar = ytar
 	return targets
