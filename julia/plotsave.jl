@@ -151,16 +151,21 @@ end
 function geom2thlen(geofile::AbstractString, thlenfile::AbstractString)
 	tt,thlenvec = read_geom_file(geofile)
 	npts,nbods = getnvals(thlenvec)
-	datavec = zeros(Float64, nbods*(npts+3))
+	datavec = zeros(Float64, 2)
+	datavec[1] = npts
+	datavec[2] = nbods
 	for nn=1:nbods
 		test_theta(thlenvec[nn].theta)
-		n1,n2 = n1n2(npts+3,nn)
-		datavec[n1:n2-3] = thlenvec[nn].theta
-		datavec[n2-2] = thlenvec[nn].len
-		datavec[n2-1] = thlenvec[nn].xsm
-		datavec[n2] = thlenvec[nn].ysm
+		append!(datavec, [thlenvec[nn].theta; 
+			thlenvec[nn].len; thlenvec[nn].xsm; thlenvec[nn].ysm])
 	end
 	writedata(datavec, thlenfile)
+end
+# Generic version that automatically names the files.
+function geom2thlen(geomnum::AbstractString)
+	geofile = string("../datafiles/run/geom", geomnum, ".dat")
+	thlenfile = "../thlen.in"
+	geom2thlen(geofile,thlenfile)
 end
 
 #--------------- PLOTTING DATA ---------------#
