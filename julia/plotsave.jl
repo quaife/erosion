@@ -23,7 +23,7 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	return
 end
 
-#--------------- SAVING DATA ---------------#
+#--------------- WRITING DATA ---------------#
 #= save_geo_density: Save the geometry data (theta,len,xsm,ysm,xx,yy) 
 and the density-function data in a file. =#
 function save_geo_density(tt::Float64, thlenden::ThLenDenType,
@@ -145,9 +145,23 @@ function readvec(filename::AbstractString)
 	close(iostream)
 	return invec
 end
-#= REDO using read_geom_file
-# geom2thlen: Convert a geom.dat file to thlen.in file. =#
 
+#--------------- OTHER ---------------#
+# geom2thlen: Convert a geom.dat file to thlen.in file. =#
+function geom2thlen(geofile::AbstractString, thlenfile::AbstractString)
+	tt,thlenvec = read_geom_file(geofile)
+	npts,nbods = getnvals(thlenvec)
+	datavec = zeros(Float64, nbods*(npts+3))
+	for nn=1:nbods
+		test_theta(thlenvec[nn].theta)
+		n1,n2 = n1n2(npts+3,nn)
+		datavec[n1:n2-3] = thlenvec[nn].theta
+		datavec[n2-2] = thlenvec[nn].len
+		datavec[n2-1] = thlenvec[nn].xsm
+		datavec[n2] = thlenvec[nn].ysm
+	end
+	writedata(datavec, thlenfile)
+end
 
 #--------------- PLOTTING DATA ---------------#
 # plotcurve: Plot multiple curves from the theta-len values.
