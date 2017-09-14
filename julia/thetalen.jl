@@ -64,7 +64,6 @@ function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::P
 	copy_thlen!(thlen2,thlen1)
 	return
 end
-
 # advance_theta: Advance theta in time with the integrating-factor method.
 function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
 	# Extract the needed variables.
@@ -88,6 +87,13 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	#thlen2 = krasnyfilter(thlen2 - 2*pi*alpha) + 2*pi*alpha	
 	return
 end
+
+# CALL KRASNY ABOVE.
+
+
+
+
+
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
 Also returms mterm to be used locally.
 Note: thlen must already be loaded with the correct atau. =#
