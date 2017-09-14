@@ -22,10 +22,10 @@ function kvec(nn::Integer, hmode=0)
 	end
 end
 # imagtest: Test that the imaginary part is negligible.
-function imagtest(fx::Vector, thold::Float64=1e-10)
-	maxim = maxabs(imag(fx))
-	if maxim > thold
-		warn("imag part too big: ", maxim)
+function imagtest(fx::Vector, relthold::Float64=1e-10)
+	maximrel = maxabs(imag(fx))/maxabs(fx)
+	if maximrel > relthold
+		warn("imag part too big: ", maximrel)
 	end
 	return
 end
@@ -61,14 +61,9 @@ function gaussfilter(fx::Vector, sigma::Float64)
 	return real(fs)
 end
 # krasnyfilter: Apply a Krasny filter to the spectrum.
-function krasnyfilter!(fx::Vector, thold::Float64=1e-10)
+function krasnyfilter!(fx::Vector, relthold::Float64=1e-10)
 	fh = nicefft(fx)
-	fh[abs(fh).<thold] = 0.0
+	absthold = relthold*maxabs(fh)
+	fh[abs(fh) .< absthold] = 0.0
 	return niceifft(fh)
 end
-
-# Relative or absolute tests
-
-#function krasnyfilter!(uu, thold)
-#	uu[abs(uu)<thold] = zero(eltype(uu))
-#end
