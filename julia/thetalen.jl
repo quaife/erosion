@@ -82,8 +82,10 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	sig2 = sqrt( lenfun(len0) + 2*lenfun(len1) + lenfun(len2) )
 	sig2 *= 2*pi*sqrt(epsilon*dt)
 	# Apply the appropriate Gaussian filters to advance theta in time.
-	thlen2.theta = gaussfilter( theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
+	thlen2.theta = gaussfilter(theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
 	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
+	# Apply a Krasny-filter to theta.
+	#thlen2 = krasnyfilter(thlen2 - 2*pi*alpha) + 2*pi*alpha	
 	return
 end
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
