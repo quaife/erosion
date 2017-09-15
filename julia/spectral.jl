@@ -61,9 +61,11 @@ function gaussfilter(fx::Vector, sigma::Float64)
 	return real(fs)
 end
 # krasnyfilter: Apply a Krasny filter to the spectrum.
-function krasnyfilter!(fx::Vector, relthold::Float64=1e-10)
-	fh = nicefft(fx)
+function krasnyfilter(fx::Vector, relthold::Float64=1e-10)
+	fh = fftnice(fx)
 	absthold = relthold*maxabs(fh)
 	fh[abs(fh) .< absthold] = 0.0
-	return niceifft(fh)
+	fx = ifftnice(fh)
+	imagtest(fx)
+	return real(fx)
 end

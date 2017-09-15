@@ -84,7 +84,7 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	thlen2.theta = gaussfilter(theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
 	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
 	# Apply a Krasny-filter to theta.
-	#thlen2 = krasnyfilter(thlen2 - 2*pi*alpha) + 2*pi*alpha	
+	thlen2.theta = krasnyfilter(thlen2.theta - 2*pi*alpha) + 2*pi*alpha	
 	return
 end
 
@@ -168,16 +168,16 @@ end
 # testtheta: Test that the theta vector is reasonable.
 function test_theta(theta::Vector{Float64})
 	npts = endof(theta)
-	# 1) Make sure that the jump between the endpoints is 2*pi.
-	# Linear extrapolation to estimate theta at alpha=0 from both sides.
-	th0left = 1.5*theta[end] - 0.5*theta[end-1] - 2*pi
-	th0right = 1.5*theta[1] - 0.5*theta[2]
+	# 1) Make sure that the jump in tangent angle between the endpoints is 2*pi.
+	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
+	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
 	# Compare the two extrpaolations.
 	th0diff = abs(th0left - th0right)
 	thresh = 0.2
 	if th0diff > thresh
 		throw(string("Unacceptable theta vector, ", 
-			"the endpoints do not match: ", signif(th0diff,3), " > ", signif(thresh,3) ))
+			"the tangent angles do not match: ", signif(th0diff,3), " > ", signif(thresh,3) ))
 	end
 	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
 	m1 = mean(cos(theta))
