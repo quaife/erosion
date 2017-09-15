@@ -21,14 +21,6 @@ function kvec(nn::Integer, hmode=0)
 		return -nsm : nsm
 	end
 end
-# imagtest: Test that the imaginary part is negligible.
-function imagtest(fx::Vector, relthold::Float64=1e-10)
-	maximrel = maxabs(imag(fx))/maxabs(fx)
-	if maximrel > relthold
-		warn("imag part too big: ", maximrel)
-	end
-	return
-end
 #= specdiff: Compute the derivative of fx spectrally.
 Default: assumes that the length of the interval is 1.0 =#
 function specdiff(fx::Vector, intvlen::Float64=1.0)	
@@ -60,12 +52,21 @@ function gaussfilter(fx::Vector, sigma::Float64)
 	fs = ifftnice(fh)
 	return real(fs)
 end
-# krasnyfilter: Apply a Krasny filter to the spectrum.
-function krasnyfilter(fx::Vector, relthold::Float64=1e-10)
+# imagtest: Test that the imaginary part is negligible.
+function imagtest(fx::Vector, relthold::Float64=1e-8)
+	maximrel = maxabs(imag(fx))/maxabs(fx)
+	if maximrel > relthold
+		warn("imag part too big: ", maximrel)
+	end
+	return
+end
+#= krasnyfilter: Apply a Krasny filter to the spectrum.
+function krasnyfilter(fx::Vector, relthold::Float64=1e-8)
 	fh = fftnice(fx)
 	absthold = relthold*maxabs(fh)
 	fh[abs(fh) .< absthold] = 0.0
 	fx = ifftnice(fh)
 	imagtest(fx)
 	return real(fx)
-end
+end =#
+# The Krasny filter does not delay the shape instability, so I voided it.

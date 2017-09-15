@@ -21,7 +21,7 @@ function cdfscale(len::Float64)
 	return 1./log(2*pi/len)
 end
 
-#--------------- MULTISTEP METHOD ---------------#
+#--------------- MULTISTEP METHOD FOR THETA AND LEN ---------------#
 # advance_thetalen!: Dispatch for ThLenDenType.
 function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
 	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
@@ -83,17 +83,12 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	# Apply the appropriate Gaussian filters to advance theta in time.
 	thlen2.theta = gaussfilter(theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
 	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
-	# Apply a Krasny-filter to theta.
-	thlen2.theta = krasnyfilter(thlen2.theta - 2*pi*alpha) + 2*pi*alpha	
+	# Apply a Krasny-filter to theta (voided)
+	### thlen2.theta = krasnyfilter(thlen2.theta - 2*pi*alpha) + 2*pi*alpha	
 	return
 end
 
-# CALL KRASNY ABOVE.
-
-
-
-
-
+#--------------- DETAILS OF THE MULTISTEP METHOD ---------------#
 #= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
 Also returms mterm to be used locally.
 Note: thlen must already be loaded with the correct atau. =#
