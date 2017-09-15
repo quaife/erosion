@@ -1,10 +1,10 @@
       program stokesDriver
       implicit real*8 (a-h,o-z)
 
-      parameter (ninner = 1024)
-      parameter (nbodies = 3)
+      parameter (ninner = 256)
+      parameter (nbodies = 2)
       parameter (nouter = 2**8)
-      parameter (ntargets = 400)
+      parameter (ntargets = 120)
       parameter (maxbodies = 10)
 
       dimension centerx(maxbodies),centery(maxbodies)
@@ -62,8 +62,8 @@ c        phi(1) = dble(kk-1)*dphi
       enddo
 
 
-      xmin = -1.d0
-      xmax = 1.d0
+      xmin = -8.d-1
+      xmax = 8.d-1
       ymin = -8.d-1
       ymax = 8.d-1
       nx = ntargets
@@ -82,7 +82,7 @@ c        phi(1) = dble(kk-1)*dphi
 
 c      icount = 0
 c      do j = 1,30
-c        var_rad = radius(1)*(1.d0 + 1.d-2*j)
+c        var_rad = radius(1)*(1.04d0 + 1.d-2*j)
 c        do k = 1,ninner
 c          icount = icount + 1
 c          theta = dble(k-1)*dtheta
@@ -100,8 +100,8 @@ c      enddo
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
 
-      call classifyPoints(ninner,nbodies,x,y,
-     $      ntargets*ntargets,xtar,ytar,iside,inear)
+c      call classifyPoints(ninner,nbodies,x,y,
+c     $      ntargets*ntargets,xtar,ytar,iside,inear)
 c
 c      call computeVorticityTargets(ninner,nbodies,nouter,
 c     $      x,y,den,ntargets*ntargets,xtar,ytar,vort_tar)
@@ -111,7 +111,6 @@ c     $    x,y,den,ntargets*ntargets,xtar,ytar,utar,vtar,press_tar)
 c
       call computeQoiTargets(ninner,nbodies,nouter,x,y,den,
      $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
-
 
 
       call computeShearStress(ninner,nbodies,nouter,x,y,den,
@@ -130,17 +129,6 @@ c      enddo
 c      close(unit=21)
 c      close(unit=22)
     
-
-
-c      do k = 1,ntargets*ntargets
-c        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
-c          utar(k) = 0.d0
-c          vtar(k) = 0.d0
-c          press_tar(k) = 0.d0
-c          vort_tar(k) = 0.d0
-c        endif
-c      enddo
-
 
       open(unit=1,file='output/den.dat')
       open(unit=2,file='output/shear_stress.dat')

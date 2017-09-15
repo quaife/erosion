@@ -306,6 +306,36 @@ c     extra terms need for rotlet and stokeslet conditions
 
 
 c***********************************************************************
+      subroutine fourierUpsample(n,nrate,zIn,zOut)
+      implicit real*8 (a-h,o-z)
+
+      complex *16 zIn(n)
+      complex *16 zOut(n*nrate)
+
+      dimension wsave(4*n*nrate + 15)
+
+      call DCFFTI(n,wsave)
+      call DCFFTF(n,zIn,wsave)
+c     Take forward FFT
+
+      do k = 1,n*nrate
+        zOut(k) = 0.d0
+      enddo
+
+      do k = 1,n/2
+        zOut(k) = zIn(k)/dble(n)
+        zOut(n*nrate - k + 1) = zIn(n - k + 1)/dble(n)
+      enddo
+
+      call DCFFTI(n*nrate,wsave)
+      call DCFFTB(n*nrate,zOut,wsave)
+c     Take backward FFT
+
+
+
+      end
+
+c***********************************************************************
       subroutine fourierDiff(n,den,wsave)
       implicit real*8 (a-h,o-z)
 
@@ -1679,17 +1709,192 @@ c     compute the deformation tensor on the boundary of the interface
 
       end
 
+c***********************************************************************
+c      subroutine computeQoiTargetsOld(ninner,nbodies,nouter,
+c     $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
+cc     Compute the velocity, pressure, and vorticity at a set of target 
+cc     points xtar and ytar.  Target points must be sufficiently far 
+cc     away from the each boundary since no near-singular integration 
+cc     is used.  
+cc     It is just the vanilla trapezoid rule, but will assign a value of
+cc     zero for points that are inside or close to the boundary
+c      implicit real*8 (a-h,o-z)
+c
+cc     input variables
+c      dimension x(ninner*nbodies),y(ninner*nbodies)
+c      dimension px(ninner*nbodies),py(ninner*nbodies)
+c      dimension cur(ninner*nbodies),speed(ninner*nbodies)
+c      dimension centerx(nbodies),centery(nbodies)
+c      dimension xouter(nouter),youter(nouter)
+cc     x and y coordinates of confining wall
+c      dimension px0(nouter), py0(nouter)
+cc     x and y coordinates of the normal of the confining wall
+c      dimension cur0(nouter), speed0(nouter)
+cc     Jacobian and curvature of the confining wall
+c      dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
+c      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
+c
+cc     output variables
+c      dimension xtar(ntargets),ytar(ntargets)
+c      dimension utar(ntargets),vtar(ntargets)
+c      dimension press_tar(ntargets)
+c      dimension vort_tar(ntargets)
+c
+cc     local variables
+c      dimension iside(ntargets)
+c      dimension nnear(nbodies)
+c      dimension indnear(ntargets,nbodies)
+c      dimension iup(ntargets,nbodies)
+c
+cc     nnear is the number of near points for each body
+cc     indnear is the index of the points that are close to a 
+cc     particular body
+c      call classifyPoints(ninner,nbodies,x,y,
+c     $      ntargets,xtar,ytar,iside,nnear,indnear,iup)
+c
+c      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+c     $    centerx,centery)
+cc     build inner geometry
+c
+c      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+cc     build outer geometry
+c
+c      pi = 4.d0*datan(1.d0)
+c      twopi = 2.d0*pi
+c
+c      do j = 1,ntargets
+c        utar(j) = 0.d0
+c        vtar(j) = 0.d0
+c        press_tar(j) = 0.d0
+c        vort_tar(j) = 0.d0
+c      enddo
+c
+cc     Contribution from the density function on the solid wall
+c      do k=1,nouter
+c        denx(k) = den(k)
+c        deny(k) = den(k+nouter)
+c      enddo
+cc     Density function defined on the outer geometry
+c
+c      do j = 1,ntargets
+c        do k = 1,nouter
+c          rx = xtar(j) - xouter(k)
+c          ry = ytar(j) - youter(k)
+c          rho2 = rx**2.d0 + ry**2.d0
+c          rdotn = rx*px0(k) + ry*py0(k)
+c          rdotden = rx*denx(k) + ry*deny(k)
+c          dendotn = px0(k)*denx(k) + py0(k)*deny(k)
+c          routn = -rx*py0(k) + ry*px0(k)
+c          routden = -rx*deny(k) + ry*denx(k)
+c
+c          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+c     $      speed0(k)*twopi/dble(nouter)/pi
+c          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+c     $      speed0(k)*twopi/dble(nouter)/pi
+c          press_tar(j) = press_tar(j) + 
+c     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+c     $        speed0(k)*twopi/dble(nouter)/pi
+c          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+c     $      rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
+c        enddo
+c      enddo
+c
+cc     Contribution from the density function on each inner obstacle
+c      do isou = 1,nbodies
+c        do k = 1,ninner
+c          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
+c          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
+c        enddo
+cc       Density function defined on the inner geometry
+c
+c        do j = 1,ntargets
+c          do k = 1,ninner
+c            rx = xtar(j) - x((isou-1)*ninner + k)
+c            ry = ytar(j) - y((isou-1)*ninner + k)
+c            rho2 = rx**2.d0 + ry**2.d0
+c            rdotn = rx*px((isou-1)*ninner + k) + 
+c     $              ry*py((isou-1)*ninner + k)
+c            rdotden = rx*denx(k) + ry*deny(k)
+c            dendotn = px((isou-1)*ninner + k)*denx(k) + 
+c     $                py((isou-1)*ninner + k)*deny(k)
+c            routn = -rx*py((isou-1)*ninner+k) + ry*px((isou-1)*ninner+k)
+c            routden = -rx*deny(k) + ry*denx(k)
+c
+c            utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+c     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+c            vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+c     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+c            press_tar(j) = press_tar(j) + 
+c     $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+c     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+c            vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+c     $        rho2**2.d0*speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi 
+c          enddo
+c        enddo
+c      enddo
+c
+cc     Contribution from Rotlets and Stokeslets
+c      do ibod = 1,nbodies
+c        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+c        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+c        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
+c        do j = 1,ntargets
+c          rx = xtar(j) - centerx(ibod)
+c          ry = ytar(j) - centery(ibod)
+c          rho2 = rx**2.d0 + ry**2.d0
+c          rdots = rx*sto1 + ry*sto2
+c          utar(j) = utar(j) + 5.d-1/twopi*
+c     $        (-5.d-1*dlog(rho2)*sto1 + rdots/rho2*rx)
+c          vtar(j) = vtar(j) + 5.d-1/twopi*
+c     $        (-5.d-1*dlog(rho2)*sto2 + rdots/rho2*ry)
+c          press_tar(j) = press_tar(j) + 1.d0/twopi*
+c     $        rdots/rho2
+c          vort_tar(j) = vort_tar(j) + (ry*sto1 - rx*sto2)/
+c     $        rho2/twopi
+cc         stokeslet contribution
+c
+c          utar(j) = utar(j) + rot*ry/rho2
+c          vtar(j) = vtar(j) - rot*rx/rho2
+cc         rotlet contribution
+c        enddo
+c      enddo
+cc     Add in contribution from Rotlets and Stokeslets
+c
+c      
+c      
+c
+c      do k = 1,ntargets
+cc        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
+c        if (iside(k) .eq. 0) then
+c          utar(k) = 0.d0
+c          vtar(k) = 0.d0
+c          press_tar(k) = 0.d0
+c          vort_tar(k) = 0.d0
+c        endif
+c      enddo
+c
+c
+c      do j=1,nbodies
+c        do k = 1,nnear(j)
+c          if (iside(indnear(k,j)) .ne. 0) then
+c            utar(indnear(k,j)) = dble(iup(k,j))
+c            vtar(indnear(k,j)) = dble(iup(k,j))
+c          endif
+c        enddo
+c      enddo
+c
+c
+c
+c      end
 
 c***********************************************************************
       subroutine computeQoiTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
 c     Compute the velocity, pressure, and vorticity at a set of target 
-c     points xtar and ytar.  Target points must be sufficiently far away 
-c     from the each boundary since no near-singular integration is used.  
-c     It is just the vanilla trapezoid rule, but will assign a value of
-c     zero for points that are inside or close to the boundary
+c     points xtar and ytar.
       implicit real*8 (a-h,o-z)
 
+c     input variables
       dimension x(ninner*nbodies),y(ninner*nbodies)
       dimension px(ninner*nbodies),py(ninner*nbodies)
       dimension cur(ninner*nbodies),speed(ninner*nbodies)
@@ -1703,23 +1908,28 @@ c     Jacobian and curvature of the confining wall
       dimension den(2*nouter + 2*ninner*nbodies + 3*nbodies)
       dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
 
+c     output variables
       dimension xtar(ntargets),ytar(ntargets)
       dimension utar(ntargets),vtar(ntargets)
       dimension press_tar(ntargets)
       dimension vort_tar(ntargets)
 
+c     local variables
       dimension iside(ntargets)
-      dimension inear(ntargets)
-
-      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
-     $    centerx,centery)
-c     build inner geometry
-
-      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
-c     build outer geometry
+      dimension iup(ntargets)
+      dimension xtar_level(ntargets),ytar_level(ntargets)
+      dimension utar_level(ntargets),vtar_level(ntargets)
+      dimension press_tar_level(ntargets),vort_tar_level(ntargets)
+      dimension xup(16*ninner),yup(16*ninner)
+      dimension pxup(16*ninner),pyup(16*ninner)
+      dimension curup(16*ninner),speedup(16*ninner)
+      dimension denxup(16*ninner),denyup(16*ninner)
+      complex *16 eye
+      complex *16 zin(16*ninner),zout(16*ninner)
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
+      eye = (0.d0,1.d0)
 
       do j = 1,ntargets
         utar(j) = 0.d0
@@ -1728,6 +1938,14 @@ c     build outer geometry
         vort_tar(j) = 0.d0
       enddo
 
+      call inner_geometry(ninner,nbodies,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+c     build inner geometry
+      call outer_geometry(nouter,xouter,youter,px0,py0,cur0,speed0)
+c     build outer geometry
+
 c     Contribution from the density function on the solid wall
       do k=1,nouter
         denx(k) = den(k)
@@ -1735,6 +1953,7 @@ c     Contribution from the density function on the solid wall
       enddo
 c     Density function defined on the outer geometry
 
+c     Contribution from outer wall
       do j = 1,ntargets
         do k = 1,nouter
           rx = xtar(j) - xouter(k)
@@ -1755,40 +1974,6 @@ c     Density function defined on the outer geometry
      $        speed0(k)*twopi/dble(nouter)/pi
           vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
      $      rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
-        enddo
-      enddo
-
-c     Contribution from the density function on each inner obstacle
-      do isou = 1,nbodies
-        do k = 1,ninner
-          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
-          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
-        enddo
-c       Density function defined on the inner geometry
-
-        do j = 1,ntargets
-          do k = 1,ninner
-            rx = xtar(j) - x((isou-1)*ninner + k)
-            ry = ytar(j) - y((isou-1)*ninner + k)
-            rho2 = rx**2.d0 + ry**2.d0
-            rdotn = rx*px((isou-1)*ninner + k) + 
-     $              ry*py((isou-1)*ninner + k)
-            rdotden = rx*denx(k) + ry*deny(k)
-            dendotn = px((isou-1)*ninner + k)*denx(k) + 
-     $                py((isou-1)*ninner + k)*deny(k)
-            routn = -rx*py((isou-1)*ninner+k) + ry*px((isou-1)*ninner+k)
-            routden = -rx*deny(k) + ry*denx(k)
-
-            utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
-     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-            vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
-     $        speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-            press_tar(j) = press_tar(j) + 
-     $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
-     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-            vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
-     $        rho2**2.d0*speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi 
-          enddo
         enddo
       enddo
 
@@ -1819,12 +2004,241 @@ c         rotlet contribution
       enddo
 c     Add in contribution from Rotlets and Stokeslets
 
-      
-      call classifyPoints(ninner,nbodies,x,y,
-     $      ntargets,xtar,ytar,iside,inear)
+
+      do ibod = 1,nbodies
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
+        enddo
+
+        do j = 1,ninner
+          xup(j) = x((ibod-1)*ninner + j)
+          yup(j) = y((ibod-1)*ninner + j)
+          denxup(j) = denx(j)
+          denyup(j) = deny(j)
+        enddo
+c
+        call classifyPoints(ninner,xup,yup,
+     $    ntargets,xtar,ytar,iside,nnear,iup)
+
+c       START OF DOING POINTS THAT REQUIRE NO UPSAMPLING
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 1) then
+            xtar_level(icount) = xtar(j)
+            ytar_level(icount) = ytar(j)
+            icount = icount + 1
+          endif
+        enddo
+
+        call evalLPbodies(ninner,xup,yup,
+     $    denxup,denyup,icount-1,xtar_level,ytar_level,
+     $    utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 1) then
+            utar(j) = utar(j) + utar_level(icount)
+            vtar(j) = vtar(j) + vtar_level(icount)
+            press_tar(j) = press_tar(j) + press_tar_level(icount)
+            vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+            icount = icount + 1
+          endif
+        enddo
+c       END OF DOING POINTS THAT REQUIRE NO UPSAMPLING
+
+c       START OF DOING POINTS THAT REQUIRE 2X UPSAMPLING
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 2) then
+            xtar_level(icount) = xtar(j)
+            ytar_level(icount) = ytar(j)
+            icount = icount + 1
+          endif
+        enddo
+
+        do k = 1,ninner
+          zin(k) = xup(k) + eye*yup(k)
+        enddo
+        call fourierUpsample(ninner,2,zin,zout)
+        do k = 1,2*ninner
+          xup(k) = dreal(zout(k))
+          yup(k) = dimag(zout(k))
+        enddo
+c       upsample geometry by a factor of 2
+        do k = 1,ninner
+          zin(k) = denxup(k) + eye*denyup(k)
+        enddo
+        call fourierUpsample(ninner,2,zin,zout)
+        do k = 1,2*ninner
+          denxup(k) = dreal(zout(k))
+          denyup(k) = dimag(zout(k))
+        enddo
+c       upsample density by a factor of 2
+
+        call evalLPbodies(2*ninner,xup,yup,
+     $    denxup,denyup,icount-1,xtar_level,ytar_level,
+     $    utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 2) then
+            utar(j) = utar(j) + utar_level(icount)
+            vtar(j) = vtar(j) + vtar_level(icount)
+            press_tar(j) = press_tar(j) + press_tar_level(icount)
+            vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+            icount = icount + 1
+          endif
+        enddo
+c       END OF DOING POINTS THAT REQUIRE 2X UPSAMPLING
+
+c       START OF DOING POINTS THAT REQUIRE 4X UPSAMPLING
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 4) then
+            xtar_level(icount) = xtar(j)
+            ytar_level(icount) = ytar(j)
+            icount = icount + 1
+          endif
+        enddo
+
+        do k = 1,2*ninner
+          zin(k) = xup(k) + eye*yup(k)
+        enddo
+        call fourierUpsample(2*ninner,2,zin,zout)
+        do k = 1,4*ninner
+          xup(k) = dreal(zout(k))
+          yup(k) = dimag(zout(k))
+        enddo
+c       upsample geometry by a factor of 2
+        do k = 1,2*ninner
+          zin(k) = denxup(k) + eye*denyup(k)
+        enddo
+        call fourierUpsample(2*ninner,2,zin,zout)
+        do k = 1,4*ninner
+          denxup(k) = dreal(zout(k))
+          denyup(k) = dimag(zout(k))
+        enddo
+c       upsample density by a factor of 2
+
+        call evalLPbodies(4*ninner,xup,yup,
+     $    denxup,denyup,icount-1,xtar_level,ytar_level,
+     $    utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 4) then
+            utar(j) = utar(j) + utar_level(icount)
+            vtar(j) = vtar(j) + vtar_level(icount)
+            press_tar(j) = press_tar(j) + press_tar_level(icount)
+            vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+            icount = icount + 1
+          endif
+        enddo
+c       END OF DOING POINTS THAT REQUIRE 4X UPSAMPLING
+
+c       START OF DOING POINTS THAT REQUIRE 8X UPSAMPLING
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 8) then
+            xtar_level(icount) = xtar(j)
+            ytar_level(icount) = ytar(j)
+            icount = icount + 1
+          endif
+        enddo
+
+        do k = 1,4*ninner
+          zin(k) = xup(k) + eye*yup(k)
+        enddo
+        call fourierUpsample(4*ninner,2,zin,zout)
+        do k = 1,8*ninner
+          xup(k) = dreal(zout(k))
+          yup(k) = dimag(zout(k))
+        enddo
+c       upsample geometry by a factor of 2
+        do k = 1,4*ninner
+          zin(k) = denxup(k) + eye*denyup(k)
+        enddo
+        call fourierUpsample(4*ninner,2,zin,zout)
+        do k = 1,8*ninner
+          denxup(k) = dreal(zout(k))
+          denyup(k) = dimag(zout(k))
+        enddo
+c       upsample density by a factor of 2
+
+        call evalLPbodies(8*ninner,xup,yup,
+     $    denxup,denyup,icount-1,xtar_level,ytar_level,
+     $    utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 8) then
+            utar(j) = utar(j) + utar_level(icount)
+            vtar(j) = vtar(j) + vtar_level(icount)
+            press_tar(j) = press_tar(j) + press_tar_level(icount)
+            vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+            icount = icount + 1
+          endif
+        enddo
+c       END OF DOING POINTS THAT REQUIRE 8X UPSAMPLING
+
+c       START OF DOING POINTS THAT REQUIRE 16X UPSAMPLING
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 16) then
+            xtar_level(icount) = xtar(j)
+            ytar_level(icount) = ytar(j)
+            icount = icount + 1
+          endif
+        enddo
+
+        do k = 1,8*ninner
+          zin(k) = xup(k) + eye*yup(k)
+        enddo
+        call fourierUpsample(8*ninner,2,zin,zout)
+        do k = 1,16*ninner
+          xup(k) = dreal(zout(k))
+          yup(k) = dimag(zout(k))
+        enddo
+c       upsample geometry by a factor of 2
+        do k = 1,8*ninner
+          zin(k) = denxup(k) + eye*denyup(k)
+        enddo
+        call fourierUpsample(8*ninner,2,zin,zout)
+        do k = 1,16*ninner
+          denxup(k) = dreal(zout(k))
+          denyup(k) = dimag(zout(k))
+        enddo
+c       upsample density by a factor of 2
+
+        call evalLPbodies(16*ninner,xup,yup,
+     $    denxup,denyup,icount-1,xtar_level,ytar_level,
+     $    utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+        icount = 1
+        do j=1,ntargets
+          if (iup(j) .eq. 16) then
+            utar(j) = utar(j) + utar_level(icount)
+            vtar(j) = vtar(j) + vtar_level(icount)
+            press_tar(j) = press_tar(j) + press_tar_level(icount)
+            vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+            icount = icount + 1
+          endif
+        enddo
+c       END OF DOING POINTS THAT REQUIRE 16X UPSAMPLING
+
+        do j=1,ntargets
+          if (iside(j) .eq. 0 .or. iup(j) .gt. 16) then
+            utar(j) = 1.0d20
+            vtar(j) = 1.0d20
+            press_tar(j) = 1.0d20
+            vort_tar(j) = 1.0d20
+          endif
+        enddo
+      enddo
 
       do k = 1,ntargets
-        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
+        if (abs(utar(k)) .ge. 1.0d8) then
           utar(k) = 0.d0
           vtar(k) = 0.d0
           press_tar(k) = 0.d0
@@ -1832,6 +2246,88 @@ c     Add in contribution from Rotlets and Stokeslets
         endif
       enddo
 
+c      do k = 1,ntargets
+c        if (iside(k) .eq. 0 .or. iup(k) .gt. 16) then
+cc        if (iside(k) .eq. 0) then
+c          utar(k) = 0.d0
+c          vtar(k) = 0.d0
+c          press_tar(k) = 0.d0
+c          vort_tar(k) = 0.d0
+c        endif
+cc        if (iup(k) .eq. 16) then
+cc          utar(k) = 16.d0
+cc          vtar(k) = 16.d0
+cc        endif
+cc        if (iup(k) .eq. 8) then
+cc          utar(k) = 8.d0
+cc          vtar(k) = 8.d0
+cc        endif
+cc        if (iup(k) .eq. 4) then
+cc          utar(k) = 4.d0
+cc          vtar(k) = 4.d0
+cc        endif
+cc        if (iup(k) .eq. 2) then
+cc          utar(k) = 2.d0
+cc          vtar(k) = 2.d0
+cc        endif
+c      enddo
+
+
+      end
+
+c***********************************************************************
+      subroutine evalLPbodies(ninner,x,y,
+     $    denx,deny,ntargets,xtar,ytar,
+     $    utar,vtar,press_tar,vort_tar)
+      implicit real*8 (a-h,o-z)
+
+c     input variables
+      dimension x(ninner),y(ninner)
+      dimension denx(ninner),deny(ninner)
+      dimension xtar(ntargets),ytar(ntargets)
+
+c     output variables
+      dimension utar(ntargets),vtar(ntargets)
+      dimension press_tar(ntargets),vort_tar(ntargets)
+
+c     local variables
+      dimension px(ninner),py(ninner)
+      dimension cur(ninner),speed(ninner)
+      dimension centerx(1),centery(1)
+
+      call inner_geometry(ninner,1,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+      do j = 1,ntargets
+        utar(j) = 0.d0
+        vtar(j) = 0.d0
+        press_tar(j) = 0.d0
+        vort_tar(j) = 0.d0
+        do k = 1,ninner
+          rx = xtar(j) - x(k)
+          ry = ytar(j) - y(k)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdotn = rx*px(k) + ry*py(k)
+          rdotden = rx*denx(k) + ry*deny(k)
+          dendotn = px(k)*denx(k) +  py(k)*deny(k)
+          routn = -rx*py(k) + ry*px(k)
+          routden = -rx*deny(k) + ry*denx(k)
+
+          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $      speed(k)*twopi/dble(ninner)/pi
+          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $      speed(k)*twopi/dble(ninner)/pi
+          press_tar(j) = press_tar(j) + 
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed(k)*twopi/dble(ninner)/pi
+          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $      rho2**2.d0*speed(k)*twopi/dble(ninner)/pi 
+        enddo
+      enddo
 
 
       end
@@ -2067,9 +2563,8 @@ c     Add in contribution from Rotlets and Stokeslets
 
       end
 
-
 c***********************************************************************
-      subroutine classifyPoints(ninner,nbodies,x,y,
+      subroutine classifyPointsOld(ninner,nbodies,x,y,
      $      ntargets,xtar,ytar,iside,inear)
 c     construct a matrix iside which is 1 if a point is inside the fluid
 c     domain and 0 if it is outside the fluid domain (ie. in a body).
@@ -2147,6 +2642,148 @@ c       and it will be positive if it is a point in a body
 
 
       enddo
+            
+
+      end
+
+c***********************************************************************
+      subroutine classifyPoints(ninner,x,y,
+     $      ntargets,xtar,ytar,iside,nnear,iup)
+c     construct a matrix iside which is 1 if a point is inside the fluid
+c     domain and 0 if it is outside the fluid domain (ie. in a body).
+c     Also construct a matrix inear which is 1 if a point is close to a
+c     boundary and 0 otherwise
+
+      implicit real*8 (a-h,o-z)
+
+      dimension x(ninner),y(ninner)
+      dimension px(ninner),py(ninner)
+      dimension cur(ninner),speed(ninner)
+      dimension centerx(1),centery(1)
+      dimension xtar(ntargets),ytar(ntargets)
+      dimension iside(ntargets)
+      dimension iup(ntargets)
+
+      complex *16 z(ninner),dz(ninner),d2z(ninner)
+      complex *16 h,dh,d2h
+      dimension wsave(4*ninner + 15)
+      complex *16 eye
+      dimension modes(ninner)
+      
+      eye = (0.d0,1.d0)
+      twopi = 8.d0*datan(1.d0)
+
+      do k = 1,ninner/2
+        modes(k) = k-1
+      enddo
+      do k=ninner/2+1,ninner
+        modes(k) = -ninner + k - 1
+      enddo
+
+      call inner_geometry(ninner,1,x,y,x,y,px,py,cur,speed,
+     $    centerx,centery)
+c     build inner geometry
+
+      call DCFFTI(ninner,wsave)
+      do k = 1,ninner
+        z(k) = x(k) + eye*y(k)
+      enddo
+
+      call DCFFTF(ninner,z,wsave)
+      do k = 1,ninner
+        dz(k) = eye*modes(k)*z(k)
+        d2z(k) = -modes(k)*modes(k)*z(k)
+      enddo
+c     Compute shape and its first two derivatives in Fourier space
+
+      nnear = 0
+      arclength = 0.d0
+      do k = 1,ninner
+        arclength = arclength + speed(k)
+      enddo
+      arclength = arclength*twopi/dble(ninner)
+      arclength = arclength/dble(ninner)
+c     ds term
+
+      do i = 1,ntargets
+        indexcp = 1
+c       index of the closest body to target point and the index
+c       of the closest point on that body
+
+        dist_body = 1.d10
+        do k = 1,ninner
+          dist2 = (xtar(i) - x(k))**2.d0 + (ytar(i) - y(k))**2.d0
+          if (dist2 .lt. dist_body) then
+            dist_body = dist2
+            indexcp = k
+          endif
+        enddo
+c       closest discretization point, but this isn't good enough to 
+c       use to define what upsampling rate is necessary.  Need to do
+c       a few Newton iterations to find the actual distance.
+
+        theta = dble(indexcp-1)*twopi/dble(ninner)
+        do inewton = 1,5
+          h = 0.d0
+          dh = 0.d0
+          d2h = 0.d0
+          do k = 1,ninner
+            h = h + z(k)*exp(eye*modes(k)*theta)
+            dh = dh + dz(k)*exp(eye*modes(k)*theta)
+            d2h = d2h + d2z(k)*exp(eye*modes(k)*theta)
+          enddo
+          h = h/dble(ninner)
+          dh = dh/dble(ninner)
+          d2h = d2h/dble(ninner)
+          if (dabs(centerx(1) - 0.5d0) .le. 1.d-8 
+     $          .and. i .eq. 7734) then
+          endif
+
+          f = (dreal(h) - xtar(i))*dreal(dh) + 
+     $        (dimag(h) - ytar(i))*dimag(dh)
+          df = (dreal(h) - xtar(i))*dreal(d2h) + 
+     $         (dimag(h) - ytar(i))*dimag(d2h) + 
+     $         abs(dh)**2.d0
+
+          theta = theta - f/df
+        enddo
+
+        h = 0.d0
+        do k = 1,ninner
+          h = h + z(k)*exp(eye*modes(k)*theta)
+        enddo
+        h = h/dble(ninner)
+        dist_body = (dreal(h) - xtar(i))**2.d0 + 
+     $              (dimag(h) - ytar(i))**2.d0
+
+        if (dsqrt(dist_body) .lt. 3.125d-1*arclength) then
+          iup(i) = 100
+        elseif (dsqrt(dist_body) .lt. 6.25d-1*arclength) then
+          iup(i) = 16
+        elseif (dsqrt(dist_body) .lt. 1.25d0*arclength) then
+          iup(i) = 8 
+        elseif (dsqrt(dist_body) .lt. 2.5d0*arclength) then
+          iup(i) = 4 
+        elseif (dsqrt(dist_body) .lt. 5.0d0*arclength) then
+          iup(i) = 2 
+        elseif (dsqrt(dist_body) .ge. 5.0d0*arclength) then
+          iup(i) = 1 
+        endif
+
+
+        vec_dot_n = (xtar(i) - x(indexcp))*px(indexcp) + 
+     $              (ytar(i) - y(indexcp))*py(indexcp)
+c       This quanitity will be negative if it is a point in the fluid
+c       and it will be positive if it is a point in a body
+
+        if (vec_dot_n .lt. 0.d0) then
+          iside(i) = 1
+        else
+          iside(i) = 0
+        endif
+
+      enddo
+
             
 
 
