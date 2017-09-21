@@ -150,13 +150,14 @@ normal at $\yy$.  For any density function $\eeta$, the double-layer
 potential satisfies the incompressible Stokes equations, but the
 double-layer potential can not capture velocity fields corresponding to
 rigid body motions~\cite{pow-mir1987}.  A standard method to complete
-the double-layer potential is to introduce a Stokeslet and rotlet
+the double-layer potential is to introduce a Stokeslets and rotlets
 centered inside each interior body
 \begin{align}
   S[\llambda_k,\cc_k] = \frac{1}{4\pi} \left(-\log \rho \II + 
     \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_k
   \quad \text{and} \quad
-  R[\xi_k,\cc_k] = \frac{\rr_k^\perp}{\rho^2}\xi_k,
+  R[\xi_k,\cc_k] = \frac{\rr_k^\perp}{\rho^2}\xi_k, 
+  \quad k=1,\ldots,M
   \label{eqn:stokeslet_rotlet}
 \end{align}
 where  $\rr = \xx - \cc_k$, $\cc_k$ is a point inside the $k^{th}$ body,
@@ -344,6 +345,7 @@ with boundary $\gamma_k$ is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods\label{s:method}} 
+There are several 
 We discretize the second-kind integral equation~\eqref{eqn:DLP} using a
 Nystr\"om method.  The equations for the
 Stokeslets~\eqref{eqn:stokeslet} and rotlets~\eqref{eqn:rotlet} are
@@ -368,6 +370,10 @@ control the curvature of the bodies and to maintain spectral accuracy in
 space.
 
 \todo[inline]{Describe the upcoming subsections better}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Spatial Discretization}
+\todo[inline]{compute all derivatives in spectral space}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quadrature} 
