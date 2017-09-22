@@ -177,10 +177,11 @@ where the density function, Stokeslets, and rotlets satisfy
       \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
       \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \bd\Omega, 
       \label{eqn:DLP}\\
-  \llambda_k &= \frac{1}{2\pi}\int_{\gamma_k} \eeta(\yy) \, ds_\yy, 
+  \llambda_k &= \frac{1}{2\pi}\int_{\gamma_k} \eeta(\yy) \, ds_\yy,
+  \quad k=1,\ldots,M
   \label{eqn:stokeslet} \\
   \xi_k &= \frac{1}{2\pi}\int_{\gamma_k} \yy^\perp \cdot \eeta(\yy)
-  \, ds_\yy.
+  \, ds_\yy, \quad k=1,\ldots,M.
   \label{eqn:rotlet}
 \end{align}
 \end{subequations}
@@ -199,16 +200,18 @@ is removed by adding the rank-one modification
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Computing the Shear Stress, Vorticity, Pressure, and Drag} 
+\subsection{Computing Quantities of Interest}
 \label{sec:qois}
 There are several quantities besides the velocity that need to be
 computed.  First, the governing equations~\eqref{eqn:erosionModel}
 require the shear stress along $\gamma_k$.  In addition, to study
-characteristics of the flow, the vorticity, pressure, and drag must also
-be computed.  Once equation~\eqref{eqn:completed_DLP} is solved for the
-density function, Stokeslets, and rotlets, all of these quantities can
-be computed by evaluating layer potentials that we now derive.
+characteristics of the flow, the vorticity, pressure, and drag, and
+resistivity will also be computed.  Once
+equation~\eqref{eqn:completed_DLP} is solved for the density function,
+Stokeslets, and rotlets, all of these quantities can be computed by
+evaluating layer potentials that we now derive.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Shear Stress}
 The shear stress is defined by
 \begin{align*}
@@ -271,6 +274,7 @@ shear stress at $\xx_0 \in \bd\Omega$ can be computed as
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
 \end{align*}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Vorticity}
 For the Stokes equations, on boundaries that have a no-slip boundary
 condition, the shear stress is equivalent to the vorticity $w = v_x -
@@ -299,6 +303,7 @@ is
 \end{align*}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Pressure}
 To compute the pressure at $\xx \in \overline{\Omega}$, we follow the
 same procedure used for the shear stress.  We first find the pressure of
@@ -316,13 +321,14 @@ the pressure is
 To compute the pressure at $\xx_0 \in \bd\Omega$, we must take the limit
 of equation~\eqref{eqn:pressureDLP} when $\xx$ tends to $\xx_0$.  The
 limiting value is given by~\cite{qua-bir2014a}
-\begin{align*}
+\begin{align}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
     \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
-\end{align*}
+  \label{eqn:pressureDLPdiag}
+\end{align}
 The pressure due to the Stokeslets is
 \begin{align*}
-  p^S(\xx_0) = \frac{\rr \cdot \llambda}{2\pi\rho^2},
+  p^S(\xx_0) = \sum_{k=1}^{M}\frac{\rr \cdot \llambda_k}{2\pi\rho^2},
 \end{align*}
 and the pressure due to the rotlets is zero.  Therefore, once the
 density function and Stokeslets are computed, the pressure at a point
@@ -332,33 +338,106 @@ $\xx_0 \in \bd\Omega$ is
               p^{S}(\xx_0).
 \end{align*}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Drag}
 \todo[inline]{check all signs in this section.  Fortran code assumes a
 normal pointing into the eroding body and a tangent vector that
 corresponds to a couterclockwise parameterization}
 Finally, with the pressure and shear stress, the drag on a single body
 with boundary $\gamma_k$ is
-\begin{align*}
+\begin{align}
   F_D = \int_{\gamma_k} (-p \nn + \tau \ss)\,ds.
-\end{align*}
+  \label{eqn:drag}
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Resistivity}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods\label{s:method}} 
-There are several 
-We discretize the second-kind integral equation~\eqref{eqn:DLP} using a
-Nystr\"om method.  The equations for the
-Stokeslets~\eqref{eqn:stokeslet} and rotlets~\eqref{eqn:rotlet} are
-approximated with the trapezoid rule.  By applying a quadrature method,
-this results in a dense linear system which we solve with fast multipole
-accelerated GMRES.  Because of the second-kind nature of the integral
-equation, the number of GMRES iterations is mesh independent (but not
-geometry independent), and the overall complexity of the Stokes solver
-is proportional to the cost of a single matrix-vector multiplication.
-The shear stress, pressure, and drag must also be computed using
-quadrature, and this can be interpreted as a post-processing step once
-the density function, Stokeslets, and rotlets are computed.  All the
-quadrature methods are described in Section~\ref{sec:quadrature}
+There are three main numerical methods that need to developed: the
+boundary integral equation solver~\eqref{eqn:completed_BIE}, computing
+the quantities of interest in Section~\ref{sec:qois}, and updating the
+shape of the eroding bodies with equation~\eqref{eqn:bodyEvolution}.  In
+order to compute stable simulations with long time horizons, we use
+numerical methods that achieve spectral accuracy in space, second-order
+in time, and maintain an equispaced discretization of the bodies.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Spatial Discretization}
+Each body will be represented with $N_\iin$ points.  Because
+the boundary of each body is closed, it can be represented with spectral
+accuracy as a Fourier series
+\begin{align*}
+  \xx^k(\theta) = \sum_{j = -N/2}^{N/2-1} \hat{x}_j^k e^{ij\theta}.
+\end{align*}
+There are several instances where derivatives of the shape must be
+taken, and this is done with spectral accuracy by differentiating the
+Fourier series term-by-term
+\begin{align*}
+  \frac{d\xx^k(\theta)}{d\theta} = 
+      \sum_{j = -N/2}^{N/2-1} ij\hat{x}_j^k e^{ij\theta}.
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quadrature} 
+There are several integrals that need to be evaluated.  This includes
+the double-layer potential for target points both
+off~\eqref{eqn:velocityDLP} and on~\eqref{eqn:DLP} the $\bd\Omega$, the
+shear stress~\eqref{eqn:shearStressDLP}, the
+vorticity~\eqref{eqn:vorticityDLP}, the pressure both
+off~\eqref{eqn:pressureDLP} and on~\eqref{eqn:pressureDLPdiag} the
+boundary, the drag~\eqref{eqn:drag}, and the resistivity.  Most of the
+integrands involved in these calculations are both smooth and periodic,
+and the suitably adjusted trapezoid rule will result in spectral
+accuracy~\cite{tre-wei2014}.
+
+To numerically solve the completed double-layer
+potential~\eqref{eqn:completed_BIE}, we start by discretizing each
+interior body $\gamma_k$ with $N_\iin$ points, and the outer geometry
+$\Gamma$ with $N_\out$ points.  We let $N = MN_\iin + N_\out$ be the
+total number of discretization points, and we apply the trapezoid rule
+which results in the linear system
+\begin{align*}
+  \ff(\xx_i^k) = \sum_{\ell = 1}^{M}\sum_{j=1}^{N} 
+    K(\xx_i^k,\xx_j^\ell) \eeta(\xx_j^\ell) 
+      \Delta s_{j}^{\ell}, \quad i=1,\ldots,N, \: k=1\ldots,M
+\end{align*}
+where $\Delta s_j^\ell$ is the arclength term of $\gamma_\ell$ at
+$\xx_j^\ell \in \gamma_\ell$, or the corresponding term if $\xx_k \in
+\Gamma$, and
+\begin{align*}
+  K(\xx,\yy) = \frac{1}{\pi} \frac{\rr \cdot \nn}{\rho^2} 
+      \frac{\rr \otimes \rr}{\rho^2},
+\end{align*}
+where $\rr = \xx - \yy$, and $\rho = \|\rr\|$, is the kernel of the
+double-layer potential.  The Stokeslet~\eqref{eqn:stokeslet} and
+rotlet~\eqref{eqn:rotlet} strengths are also discretized with the
+trapezoid rule
+\begin{align*}
+  \llambda_k &= \sum_{k=1}^{N_\iin} \eeta(\xx_k) 
+    \Delta s_{k} \quad \text{and} \quad
+  \mu_k = \sum_{k=1}^{N_\iin} \xx_k^\perp \cdot
+    \eeta(\xx_k) \Delta s_{k}.
+\end{align*}
+\todo[inline]{need to pick a good notation for the indices}
+
+
+
+By applying a quadrature method, this results in a dense linear system
+which we solve with fast multipole accelerated GMRES.  Because of the
+second-kind nature of the integral equation, the number of GMRES
+iterations is mesh independent (but not geometry independent), and the
+overall complexity of the Stokes solver is proportional to the cost of a
+single matrix-vector multiplication.  The shear stress, pressure, and
+drag must also be computed using quadrature, and this can be interpreted
+as a post-processing step once the density function, Stokeslets, and
+rotlets are computed.  All the quadrature methods are described in
+Section~\ref{sec:quadrature}
 
 Once the shear stress is computed, it is used to update the shape of the
 bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To
@@ -369,14 +448,7 @@ stepping method and two regularization terms that are necessary to
 control the curvature of the bodies and to maintain spectral accuracy in
 space.
 
-\todo[inline]{Describe the upcoming subsections better}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Spatial Discretization}
-\todo[inline]{compute all derivatives in spectral space}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quadrature} 
 \label{sec:quadrature}
 There are several integrals that we need to compute including the
 double-layer potential velocity field~\eqref{eqn:velocityDLP}, the shear
