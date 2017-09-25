@@ -91,7 +91,8 @@ function read_thlen_file(filename::AbstractString)
 		thlenvec[nn].len = invec[npts+1]
 		thlenvec[nn].xsm = invec[npts+2]
 		thlenvec[nn].ysm = invec[npts+3]
-		test_theta(thlenvec[nn].theta)
+		test_theta_ends(thlenvec[nn].theta)
+		test_theta_means(thlenvec[nn].theta)
 		deleteat!(invec,1:npts+3)
 	end
 	return thlenvec
@@ -117,7 +118,8 @@ function read_geom_file(filename::AbstractString)
 		thlenvec[nn].len = invec[npts+1]
 		thlenvec[nn].xsm = invec[npts+2]
 		thlenvec[nn].ysm = invec[npts+3]
-		test_theta(thlenvec[nn].theta)
+		test_theta_ends(thlenvec[nn].theta)
+		test_theta_means(thlenvec[nn].theta)
 		# Delete theta, len, xsm, ysm
 		deleteat!(invec,1:npts+3)
 		# Read xx and yy.
@@ -155,7 +157,8 @@ function geom2thlen(geofile::AbstractString, thlenfile::AbstractString)
 	datavec[1] = npts
 	datavec[2] = nbods
 	for nn=1:nbods
-		test_theta(thlenvec[nn].theta)
+		test_theta_ends(thlenvec[nn].theta)
+		test_theta_means(thlenvec[nn].theta)
 		append!(datavec, [thlenvec[nn].theta; 
 			thlenvec[nn].len; thlenvec[nn].xsm; thlenvec[nn].ysm])
 	end

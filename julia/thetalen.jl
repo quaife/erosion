@@ -145,7 +145,7 @@ end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
-	test_theta(theta)
+	test_theta_means(theta)
 	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
@@ -159,30 +159,6 @@ end
 function getalpha(npts::Integer)
 	dalpha = 1.0/npts
 	return alpha = collect(range(0.5*dalpha, dalpha, npts))
-end
-# testtheta: Test that the theta vector is reasonable.
-function test_theta(theta::Vector{Float64})
-	npts = endof(theta)
-	# 1) Make sure that the jump in tangent angle between the endpoints is 2*pi.
-	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
-	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
-	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
-	# Compare the two extrpaolations.
-	th0diff = abs(th0left - th0right)
-	thresh = 0.2
-	if th0diff > thresh
-		throw(string("Unacceptable theta vector, ", 
-			"the tangent angles do not match: ", signif(th0diff,3), " > ", signif(thresh,3) ))
-	end
-	# 2) Make sure that cos(theta) and sin(theta) have zero mean.
-	m1 = mean(cos(theta))
-	m2 = mean(sin(theta))
-	maxmean = maximum(abs([m1,m2]))
-	thresh = 20./npts
-	if maxmean > thresh
-		throw(string("Unacceptable theta vector, ",
-			"the means are not right: ", signif(maxmean,3), " > ", signif(thresh,3) ))
-	end
 end
 # getns: Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
@@ -204,4 +180,34 @@ function getnsrot(theta::Vector{Float64})
 	nx = -sy
 	ny = sx
 	return sx,sy,nx,ny
+end
+
+#--------------- Tests for the theta vector ---------------#
+#= test_theta_means: Test that cos(theta) and sin(theta) have zero mean.
+These are conditions for theta to describe a closed curve 
+in the equal arc length frame. =#
+function test_theta_means(theta::Vector{Float64})
+	npts = endof(theta)
+	m1 = mean(cos(theta))
+	m2 = mean(sin(theta))
+	maxmean = maximum(abs([m1,m2]))
+	thresh = 20./npts
+	if maxmean > thresh
+		warn("theta means")
+		println("The max mean of sin, cos is: ", signif(maxmean,3), " > ", signif(thresh,3))
+	end
+	return
+end
+# test_theta_ends: Test that the difference between the first and last tangent angles is 2pi.
+function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
+	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
+	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
+	# Compare the two extrpaolations.
+	th0diff = abs(th0left - th0right)
+	if th0diff > thresh
+		throw("theta ends") 
+		println("The difference between the ends is: ", signif(th0diff,3), " > ", signif(thresh,3))
+	end
+	return
 end
