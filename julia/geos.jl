@@ -52,32 +52,37 @@ function make1circ(filename::AbstractString, npts::Integer, rad::Float64,
 	return
 end
 # make4circs: Makes up to four circles and stores the data in a file.
-function make4circs(filename::AbstractString, npts::Integer, nbods::Integer)
+function make6circs(filename::AbstractString, npts::Integer)
 	# Create the data vector.
-	nparams = 2
-	vsize = npts + 3
-	outvec = zeros(Float64,vsize*nbods+nparams)
-	outvec[1] = npts
-	outvec[2] = nbods
-	# For now, make some circles.
-	rad = [0.2, 0.2, 0.02, 0.1]
-	xsm,ysm = [zeros(Float64,4) for ii=1:2]
-	xsm[1], ysm[1] = +0.1, +0.4
-	xsm[2], ysm[2] = -0.0, -0.4
-	xsm[3], ysm[3] = +0.4, +0.1
-	xsm[4], ysm[4] = -0.1, +0.0
+	nbods = 6
+	datavec = zeros(Float64, 2)
+	datavec[1] = npts
+	datavec[2] = nbods
+	# Make some circles.
+	rad = [0.37, 0.41, 0.30, 0.26, 0.23, 0.19]
+	xsm,ysm = [zeros(Float64,nbods) for ii=1:2]
+	xsm[1], ysm[1] = -0.40, -0.14
+	xsm[2], ysm[2] = +0.38, +0.30
+	xsm[3], ysm[3] = +0.60, -0.41
+	xsm[4], ysm[4] = -0.50, +0.60
+	xsm[5], ysm[5] = +0.08, -0.62
+	xsm[6], ysm[6] = -0.73, -0.62
+	# Define things.
 	alpha = getalpha(npts)
+	thlenvec = new_thlenvec(nbods)
+	theta = 0.5*pi + 2*pi*alpha[:]
 	# Save the theta, len, xsm, ysm values in a single vector.
 	for nn=1:nbods
-		n1 = vsize*(nn-1)+1 + nparams
-		n2 = vsize*nn + nparams
-		outvec[n1:n2-3] = 0.5*pi + 2*pi*alpha[:]
-		outvec[n2-2] = 2*pi*rad[nn]
-		outvec[n2-1] = xsm[nn]
-		outvec[n2] = ysm[nn]
+		len = 2*pi*rad[nn]
+		# Create thlenvec for plotting.
+		thlenvec[nn].theta = theta
+		thlenvec[nn].len = len
+		thlenvec[nn].xsm = xsm[nn]
+		thlenvec[nn].ysm = ysm[nn]
+		# Save in outvec for writing to file.
+		append!(datavec, [theta; len; xsm[nn]; ysm[nn]])
 	end
-	iostream = open(filename, "w")
-	writedlm(iostream, outvec)
-	close(iostream)
+	writedata(datavec, filename)
+	plot_curves(thlenvec, "../fig0.pdf")
 	return
 end
