@@ -40,8 +40,8 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = collect(-2.5: 0.5: 2.5)		#[-2.5, -2.0, -1.5, 1.5, 2.0, 2.5]
-		ylocs = collect(-0.8: 0.2: 0.8)
+		xlocs = collect(-1.10: 0.05: 1.10)
+		ylocs = collect(-0.95: 0.05: 0.95)
 		targets = setuptargets(xlocs,ylocs)
 		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
