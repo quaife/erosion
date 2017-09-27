@@ -137,7 +137,7 @@ function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaL
 	for nn=1:nbods
 		lenvec[nn] = thlenvec1[nn].len
 	end
-	zind = find(lenvec.<minlen | lenvec.>maxlen)
+	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
 	deleteat!(thlenvec0,zind)
 	deleteat!(thlenvec1,zind)
 end
