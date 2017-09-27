@@ -52,20 +52,20 @@ function make1circ(filename::AbstractString, npts::Integer, rad::Float64,
 	return
 end
 # make4circs: Makes up to four circles and stores the data in a file.
-function make6circs(filename::AbstractString, npts::Integer)
+function make6circs(npts::Integer, filename::AbstractString="../06circ.in")
 	# Create the data vector.
 	nbods = 6
 	datavec = zeros(Float64, 2)
 	datavec[1] = npts
 	datavec[2] = nbods
 	# Make some circles.
-	rad = [0.37, 0.41, 0.30, 0.26, 0.23, 0.19]
+	rad = [0.39, 0.38, 0.30, 0.26, 0.25, 0.13]
 	xsm,ysm = [zeros(Float64,nbods) for ii=1:2]
 	xsm[1], ysm[1] = -0.40, -0.14
-	xsm[2], ysm[2] = +0.38, +0.30
+	xsm[2], ysm[2] = +0.38, +0.42
 	xsm[3], ysm[3] = +0.60, -0.41
-	xsm[4], ysm[4] = -0.50, +0.60
-	xsm[5], ysm[5] = +0.08, -0.62
+	xsm[4], ysm[4] = -0.22, +0.70
+	xsm[5], ysm[5] = +0.07, -0.62
 	xsm[6], ysm[6] = -0.73, -0.62
 	# Define things.
 	alpha = getalpha(npts)
