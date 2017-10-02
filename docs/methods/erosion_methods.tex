@@ -37,7 +37,6 @@ This is a methods paper
   \item Regularization
 \end{itemize}
 
-\cite{moo-ris-chi-zha-she2013}
 
 
 
@@ -123,6 +122,7 @@ proportionality sets the time scale, and we set its value to be -1
 \end{align}
 
 \todo[inline]{Describe the erosion model and its justification}
+\cite{moo-ris-chi-zha-she2013}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -357,7 +357,7 @@ with boundary $\gamma_k$ is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods\label{s:method}} 
-There are three main numerical methods that need to developed: the
+There are three main numerical methods that need to be developed:~the
 boundary integral equation solver~\eqref{eqn:completed_BIE}, computing
 the quantities of interest in Section~\ref{sec:qois}, and updating the
 shape of the eroding bodies with equation~\eqref{eqn:bodyEvolution}.  In
@@ -368,15 +368,13 @@ in time, and maintain an equispaced discretization of the bodies.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Spatial Discretization}
-Each body will be represented with $N_\iin$ points.  Because
-the boundary of each body is closed, it can be represented with spectral
-accuracy as a Fourier series
+Each body will be represented with $N_\iin$ points.  The boundary is
+represented with the Fourier series
 \begin{align*}
   \xx^k(\theta) = \sum_{j = -N/2}^{N/2-1} \hat{x}_j^k e^{ij\theta}.
 \end{align*}
-There are several instances where derivatives of the shape must be
-taken, and this is done with spectral accuracy by differentiating the
-Fourier series term-by-term
+Derivatives of the shape must be taken which is easily done by
+differentiating the Fourier series term-by-term
 \begin{align*}
   \frac{d\xx^k(\theta)}{d\theta} = 
       \sum_{j = -N/2}^{N/2-1} ij\hat{x}_j^k e^{ij\theta}.
@@ -385,28 +383,33 @@ Fourier series term-by-term
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quadrature} 
-There are several integrals that need to be evaluated.  This includes
-the double-layer potential for target points both
-off~\eqref{eqn:velocityDLP} and on~\eqref{eqn:DLP} the $\bd\Omega$, the
-shear stress~\eqref{eqn:shearStressDLP}, the
-vorticity~\eqref{eqn:vorticityDLP}, the pressure both
-off~\eqref{eqn:pressureDLP} and on~\eqref{eqn:pressureDLPdiag} the
-boundary, the drag~\eqref{eqn:drag}, and the resistivity.  Most of the
-integrands involved in these calculations are both smooth and periodic,
-and the suitably adjusted trapezoid rule will result in spectral
-accuracy~\cite{tre-wei2014}.
+Integrals that need to be approximated are the double-layer potential
+for target points both off the boundary~\eqref{eqn:velocityDLP} and on
+the boundary~\eqref{eqn:DLP}, the shear
+stress~\eqref{eqn:shearStressDLP}, the
+vorticity~\eqref{eqn:vorticityDLP}, the pressure both off the
+boundary~\eqref{eqn:pressureDLP} and on the
+boundary~\eqref{eqn:pressureDLPdiag}, the drag~\eqref{eqn:drag}, and the
+resistivity.  The integrands of each of these integrals, except for the
+resistivity, are smooth and periodic.  Under this condition the
+trapezoid rule guarantees spectral accuracy~\cite{tre-wei2014}.
+However, before the trapezoid rule can be applied, singularity
+subtraction and odd-even integration~\cite{sid-isr1988} method must be
+used.
 
-To numerically solve the completed double-layer
+\subsubsection{Velocity}
+To numerically evaluate the completed double-layer
 potential~\eqref{eqn:completed_BIE}, we start by discretizing each
-interior body $\gamma_k$ with $N_\iin$ points, and the outer geometry
-$\Gamma$ with $N_\out$ points.  We let $N = MN_\iin + N_\out$ be the
-total number of discretization points, and we apply the trapezoid rule
-which results in the linear system
-\begin{align*}
-  \ff(\xx_i^k) = \sum_{\ell = 1}^{M}\sum_{j=1}^{N} 
+interior body $\gamma_k$ with $N_\iin$ points, the outer geometry
+$\Gamma$ with $N_\out$ points, and define $N = MN_\iin + N_\out$ to be
+the total number of discretization points.  The double-layer potential
+in~\eqref{eqn:DLP} is discretized with the trapezoid rule as
+\begin{align}
+  \DD[\eeta](\xx_i^k) = \sum_{\ell = 1}^{M}\sum_{j=1}^{N} 
     K(\xx_i^k,\xx_j^\ell) \eeta(\xx_j^\ell) 
-      \Delta s_{j}^{\ell}, \quad i=1,\ldots,N, \: k=1\ldots,M
-\end{align*}
+      \Delta s_{j}^{\ell}, \quad i=1,\ldots,N, \: k=1\ldots,M,
+  \label{eqn:trapDLP}
+\end{align}
 where $\Delta s_j^\ell$ is the arclength term of $\gamma_\ell$ at
 $\xx_j^\ell \in \gamma_\ell$, or the corresponding term if $\xx_k \in
 \Gamma$, and
@@ -414,30 +417,72 @@ $\xx_j^\ell \in \gamma_\ell$, or the corresponding term if $\xx_k \in
   K(\xx,\yy) = \frac{1}{\pi} \frac{\rr \cdot \nn}{\rho^2} 
       \frac{\rr \otimes \rr}{\rho^2},
 \end{align*}
-where $\rr = \xx - \yy$, and $\rho = \|\rr\|$, is the kernel of the
-double-layer potential.  The Stokeslet~\eqref{eqn:stokeslet} and
-rotlet~\eqref{eqn:rotlet} strengths are also discretized with the
-trapezoid rule
+where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the
+double-layer potential.  The diagonal term of~\eqref{eqn:trapDLP} is
+replaced with the limiting value of the double-layer potential
 \begin{align*}
-  \llambda_k &= \sum_{k=1}^{N_\iin} \eeta(\xx_k) 
-    \Delta s_{k} \quad \text{and} \quad
-  \mu_k = \sum_{k=1}^{N_\iin} \xx_k^\perp \cdot
-    \eeta(\xx_k) \Delta s_{k}.
+  D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)),
 \end{align*}
-\todo[inline]{need to pick a good notation for the indices}
+where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent
+vector at $\xx \in \bd\Omega$.  The Stokeslet~\eqref{eqn:stokeslet} and
+rotlet~\eqref{eqn:rotlet} strengths are also discretized with the
+trapezoid rule, and the resulting discretization
+of~\eqref{eqn:completed_BIE} is
+\begin{equation}
+  \label{eqn:completed_BIE_discretized}
+  \begin{aligned}
+    \ff(\xx_i^k) &= -\frac{1}{2}\ssigma(\xx_i^k) + 
+      \sum_{\ell = 1}^{M}\sum_{j=1}^{N} 
+      K(\xx_i^k,\xx_j^\ell) \eeta(\xx_j^\ell) \Delta s_{j}^{\ell} +
+      \sum_{\ell=1}^M S[\llambda_k,\cc_k](\xx_i^k) +
+      \sum_{\ell=1}^M R[\xi_k,\cc_k](\xx_i^k), \\
+    \llambda_k &= \sum_{i=1}^{N_\iin} \eeta(\xx_i^k) 
+      \Delta s_i^k \\ 
+    \mu_k &= \sum_{i=1}^{N_\iin} {(\xx_i^k)}^\perp \cdot
+      \eeta(\xx_i^k) \Delta s_i^k,
+  \end{aligned}
+\end{equation}
+for $i=1,\ldots,N$, $k=1,\ldots,M$.
+
+The dense linear system~\eqref{eqn:completed_BIE_discretized} is solved
+iteratively with GMRES.  The most expensive part is computing the
+double sum for all target and source points.  A direct summation would
+require $\bigO(N^2)$ operations, but this is reduced to $\bigO(N)$ by
+using the Fast Mutlipole method for the Stokes double-layer
+potential~\cite{gre-rok1987,rac-???} \todo[inline]{sent email to Manas
+asking about this}.  Since we are discretizing a second-kind integral
+equation, the number of GMRES iterations is bounded independent of
+$N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
+solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
+
+\subsubsection{Shear Stress}
+In our erosion model, the shear stress must be computed which requires
+evaulating the layer potential~\eqref{eqn:shearStressDLP}.  In our
+implementation, this calculation is done directly which requires
+$\bigO(N^2)$ operations.  This complexity could be reduced with
+the kernel-independent FMM~\cite{yin-bir-zor2004}.  However, since this
+calculation is only computed once per time step, unlike the velocity
+double-layer potential that must be evaluated at each GMRES iteration.  
+
+
+\subsubsection{Vorticity}
+
+
+\subsubsection{Pressure}
+
+
+\subsubsection{Drag}
 
 
 
-By applying a quadrature method, this results in a dense linear system
-which we solve with fast multipole accelerated GMRES.  Because of the
-second-kind nature of the integral equation, the number of GMRES
-iterations is mesh independent (but not geometry independent), and the
-overall complexity of the Stokes solver is proportional to the cost of a
-single matrix-vector multiplication.  The shear stress, pressure, and
-drag must also be computed using quadrature, and this can be interpreted
-as a post-processing step once the density function, Stokeslets, and
-rotlets are computed.  All the quadrature methods are described in
-Section~\ref{sec:quadrature}
+\subsubsection{Resistivity}
+
+
+
+The shear stress, pressure, and drag must also be computed using
+quadrature, and this can be interpreted as a post-processing step once
+the density function, Stokeslets, and rotlets are computed.  All the
+quadrature methods are described in Section~\ref{sec:quadrature}
 
 Once the shear stress is computed, it is used to update the shape of the
 bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To
@@ -449,35 +494,10 @@ control the curvature of the bodies and to maintain spectral accuracy in
 space.
 
 
-\label{sec:quadrature}
-There are several integrals that we need to compute including the
-double-layer potential velocity field~\eqref{eqn:velocityDLP}, the shear
-stress~\eqref{eqn:shearStressDLP}, vorticity~\eqref{eqn:vorticityDLP},
-and the pressure~\eqref{eqn:pressureDLP}.  By using carefully choosing
-the quadrature rules, high-order solutions can be computed.  For all the
-integrals, the trapezoid rule is used since it achieves spectral
-accuracy for smooth periodic functions.  However, care must be taken
-when the source point and target points coincide.
-
-For the velocity field, the kernel of the integral operator
-\begin{align*}
-  D(\xx,\yy) = \frac{\rr \cdot \nn}{\rho^2} 
-               \frac{\rr \otimes \rr}{\rho^2}
-\end{align*}
-has a removable singularity when $\xx = \yy$.  In particular
-\begin{align*}
-  \lim_{\substack{\yy \rightarrow \xx \\ \yy \in \bd\Omega}} D(\xx,\yy) = 
-  -\frac{\kappa(\xx)}{2\pi}\ss \otimes \ss,
-\end{align*}
-where $\kappa(\xx)$ is the curvature of $\bd\Omega$ at $\xx$.  By using
-this limiting term in when applying the trapezoid rule, spectral
-accuracy is achieved because of the smoothness and periodicity of the
-integrand~\cite{tre-wei2014}.
-
 For the shear stress and the pressure, we will use odd-even integration
 which achieves spectral accuracy if the integrand is no stronger than
-$\mathcal{O}(\rho^{-1})$.  Since both these integrands are too strong,
-the singularity must be weakened.  This can be done by adding a constant
+$\bigO(\rho^{-1})$.  Since both these integrands are too strong, the
+singularity must be weakened.  This can be done by adding a constant
 density function which has no effect on the shear stress and
 pressure~\cite{poz1992}.  In particular, the shear stress due to the
 double-layer potential is equivalent to
@@ -494,24 +514,7 @@ For the pressure, the double-layer potential is equivalent to
     \nn \cdot (\eeta(\yy) - \eeta(\xx_0)) \,ds_\yy.
 \end{align*}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Fast Summation} 
-The majority of the computational cost comes from evaluating the the
-double-layer potential $\mathcal{D}$ in equation~\eqref{eqn:DLP}.  This
-layer potential can be efficiently evaluated using a fast summation
-method such as the Fast Multipole Method
-(FMM)~\cite{gre-rok1987}\footnote{The FMM for the Stokes double-layer
-poetntial was supplied by Manas Rachh.}.  By using the
-FMM,~\eqref{eqn:completed_BIE} can be solved with $\mathcal{O}(N)$
-operations, where $N$ is the total number of discretization points.
 
-In our erosion model, the shear stress must be computed which requires
-evaulating the layer potential~\eqref{eqn:shearStressDLP}.  In our
-implementation, this calculation is done directly which requires
-$\mathcal{O}(N^2)$ operations.  This complexity could be reduced with
-the kernel-independent FMM~\cite{yin-bir-zor2004}.  However, since this
-calculation is only computed once per time step, unlike the velocity
-double-layer potential that must be evaluated at each GMRES iteration.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{{\thL} Formulation} 
