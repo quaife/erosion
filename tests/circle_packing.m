@@ -85,7 +85,7 @@ end
 function iouter = check_outer(x,y,r)
 % check if the points is outside of the computational domain
 
-dist = 0.9;
+dist = 0.99;
 xmin = -1*dist;
 xmax = 1*dist;
 ymin = -1*dist;
