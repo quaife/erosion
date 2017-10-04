@@ -200,6 +200,11 @@ Then, using the above $V_n$, the equation for $\theta$ simplifies to
 \label{thetaEvolve}
 \pd{\theta}{t} = \eps L^{\beta-2} \ppd{\theta}{\alpha} + L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
 \end{equation}
+Version for talk
+\begin{align}
+& \td{L}{t} = - \mean{\pd{\theta}{\alpha} V_n} \\
+& \pd{\theta}{t} = \eps L^{-2} \ppd{\theta}{\alpha} + L^{-1} \left( \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
+\end{align}
 
 We now discuss the numerical methods used to solve the above evolution equations. For $L$, we use an explicit method
 \begin{equation}
