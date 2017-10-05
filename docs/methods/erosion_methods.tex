@@ -397,6 +397,11 @@ However, before the trapezoid rule can be applied, singularity
 subtraction and odd-even integration~\cite{sid-isr1988} method must be
 used.
 
+The shear stress, pressure, and drag must also be computed using
+quadrature, and this can be interpreted as a post-processing step once
+the density function, Stokeslets, and rotlets are computed.
+
+
 \subsubsection{Velocity}
 To numerically evaluate the completed double-layer
 potential~\eqref{eqn:completed_BIE}, we start by discretizing each
@@ -464,36 +469,6 @@ the kernel-independent FMM~\cite{yin-bir-zor2004}.  However, since this
 calculation is only computed once per time step, unlike the velocity
 double-layer potential that must be evaluated at each GMRES iteration.  
 
-
-\subsubsection{Vorticity}
-
-
-\subsubsection{Pressure}
-
-
-\subsubsection{Drag}
-
-
-
-\subsubsection{Resistivity}
-
-
-
-The shear stress, pressure, and drag must also be computed using
-quadrature, and this can be interpreted as a post-processing step once
-the density function, Stokeslets, and rotlets are computed.  All the
-quadrature methods are described in Section~\ref{sec:quadrature}
-
-Once the shear stress is computed, it is used to update the shape of the
-bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To
-eliminate tangling and stretching of the mesh, we use a {\thL}
-formulation~\cite{hou-low-she1994} which is described in
-Section~\ref{sec:thetaL}.  In this section, we also describe our time
-stepping method and two regularization terms that are necessary to
-control the curvature of the bodies and to maintain spectral accuracy in
-space.
-
-
 For the shear stress and the pressure, we will use odd-even integration
 which achieves spectral accuracy if the integrand is no stronger than
 $\bigO(\rho^{-1})$.  Since both these integrands are too strong, the
@@ -507,6 +482,17 @@ double-layer potential is equivalent to
       &= \int_{\bd\Omega}K_\ssigma(\xx_0,\yy)
       (\ssigma(\yy) - \ssigma(\xx_0)) \, ds_{\yy}.
 \end{align*}
+
+Once the shear stress is computed, it is used to update the shape of the
+bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To
+eliminate tangling and stretching of the mesh, we use a {\thL}
+formulation~\cite{hou-low-she1994} which is described in
+Section~\ref{sec:thetaL}.
+
+\subsubsection{Vorticity}
+
+
+\subsubsection{Pressure}
 For the pressure, the double-layer potential is equivalent to
 \begin{align*}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
@@ -515,10 +501,29 @@ For the pressure, the double-layer potential is equivalent to
 \end{align*}
 
 
+\subsubsection{Drag}
+
+
+
+\subsubsection{Resistivity}
+
+
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{{\thL} Formulation} 
 \label{sec:thetaL}
+
+In this section, we also describe our time stepping method and two
+regularization terms that are necessary to control the curvature of the
+bodies and to maintain spectral accuracy in space.
+
+
 
 We use a quasi-static approximation so that the velocity field
 instantaneously changes with the changing geometry.  Therefore, we can
