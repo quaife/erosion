@@ -74,13 +74,6 @@ function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::Thet
 	alpha = getalpha(endof(theta1))
 	# The function that enters the sigmas of the Guassian filter.
 	lenfun(len::Float64) = abs(len)^(-2)*cdfscale(abs(len))
-	
-	println("len1 = ", len1)
-	println("len2 = ", len2)
-	println("lenfun(len1) = ", lenfun(len1))
-	println("lenfun(len2) = ", lenfun(len2))
-	println()
-
 	# The first value used in the Gaussian filter.
 	sig1 = sqrt( lenfun(len1) + lenfun(len2) )
 	sig1 *= 2*pi*sqrt(epsilon*dt)
