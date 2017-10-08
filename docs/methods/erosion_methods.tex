@@ -539,19 +539,24 @@ alternate between the two main aspects of our simulation
 To handle boundary evolution, we use the {\thL}    method, which offers certain advantages in the ability to stabilize fluid-structure interaction problems. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW direction and the normal vector points into the bodies (our out of the fluid).
 
 
-In order to regularize boundary evolution, we modify
-Eq.~(\ref{eqn:bodyEvolution}) to include a curvature-driven component
-(also corrected errors in this equation)
+In order to regularize boundary evolution, we modify the normal velocity in Eq.~(\ref{eqn:bodyEvolution}) as follows
 \begin{equation}
-\dot{\xx}(t) = \abs{\tau} \nn + \eps \elfun(L) \left(\kappa - \frac{2 \pi}{L} \right)
+\Vn = \abs{\tau} + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
-The curvature term acts to smooth bodies that have high-frequency oscillations.
+Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body. The second term on the right acts to smooth bodies that have high-frequency oscillations. Since we have subtracted the mean curvature, $2\pi/L$, this term is area-preserving, so that the only material loss is due to the shear stress. We chose the prefactor $\log^{-1} \left(2\pi/L \right)$, so that, for 2D Stokes flow, this term scales the same as shear stress as $L \to 0$. Thus, the relative strength of the smoothing is always the same. 
 
-Simple form for my talk
+We now introduce the tangent angle, $\theta$, defined through the relation
 \begin{equation}
-\dot{\xx}(t) = \abs{\tau} \nn + \eps \kappa
+(x_s, y_s) = (\cos \theta, \sin \theta)
 \end{equation}
+where $s$ is arc length. We also introduce the normalized arc length $\alpha = s / L$. In terms of these new variables, the curvature can be expressed as
+\begin{equation}
+\kappa = \frac{1}{L} \pderiv{\theta}{\alpha}
+\end{equation}
+Substitution into Eq.~(\ref{})
 
+
+\vsp{5}
 \todo[inline]{Artificial Diffusion} 
 \todo[inline]{Gaussian Filter} 
 
