@@ -575,7 +575,7 @@ The interface evolution is then given by
 Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
 \begin{align}
 & \tderiv{L}{t} = - \mean{\thalpha \Vn} \\
-& \pderiv{\theta}{t} = L^{-1} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
+& \pderiv{\theta}{t} = \frac{1}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
 \end{align}
 Inserting Eq.~(\ref{eqn:Vn2}) for the normal velocity gives
 \begin{equation}
@@ -586,12 +586,12 @@ For simplicity, we introduce the variables
 \begin{align}
 & M = - \mean{\thalpha \Vn} \\
 & N = \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
-& \elfun(L) = \frac{1}{L^{2} \log \left(2\pi/L \right)}
+& \elfun = \frac{1}{L^{2} \log \left(2\pi/L \right)}
 \end{align}
 Then the evolution equations can be expressed as
 \begin{align}
 & \tderiv{L}{t} = M \\
-& \pderiv{\theta}{t} = \eps \elfun(L) \ppd{\theta}{\alpha} + N
+& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + N
 \end{align}
 We treat $\theta$ spectrally
 \begin{equation}
@@ -599,23 +599,24 @@ We treat $\theta$ spectrally
 \end{equation}
 Then we get
 \begin{equation}
-\tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun(L) \thhat_k = \hat{N}_k
+\tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun \thhat_k = \hat{N}_k
 \end{equation}
 We introduce the integrating factor
 \begin{equation}
-\mu = \exp \left( 4 \eps \pi^2 k^2 \int \elfun(L) dt \right)
+\mu = \exp \left( 4 \eps \pi^2 k^2 \int \elfun dt \right)
 \end{equation}
 so that the solution can be represented as
 \begin{align}
-\thhat_k(t) & = \frac{1}{\mu} \int \mu \hat{N}_k dt 
-= \int_0^t \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^t \elfun(L) dt'' \right) \hat{N}_k \, dt'
+\thhat_k(t) & = \frac{1}{\mu} \int^t \mu \hat{N}_k dt'
+= \thhat_k(0) + \int_0^t \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^t \elfun dt'' \right) \hat{N}_k \, dt'
 % LONGER FORM
 %& = \exp \left( -4 \eps \pi^2 k^2 \int_0^t \elfun(L) ds \right) \, 
 %\int_0^t \exp \left( 4 \eps \pi^2 k^2 \int_0^s \elfun(L) ds' \right) \hat{N}_k ds \\
 \end{align}
 where $t'$ and $t''$ are simply dummy variables for integration. We can get the exact relationship
 \begin{equation}
-\thhat_k(t + \Delta t) = \thhat_k(t) + \int_t^{t+\Delta t}
+\thhat_k(t + \Delta t) = \thhat_k(t) 
++ \int_t^{t+\Delta t} \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^{t+\Delta t} \elfun dt'' \right) \hat{N}_k \, dt'
 \end{equation}
 
 
