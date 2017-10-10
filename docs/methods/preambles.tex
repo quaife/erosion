@@ -69,7 +69,6 @@
 \newcommand{\nn}{{\mathbf{n}}}
 \newcommand{\NN}{{\mathcal{N}}}
 \newcommand{\out}{\mathrm{out}}
-\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
 \newcommand{\rr}{{\mathbf{r}}}
 \newcommand{\RR}{{\mathbb{R}}}
 \renewcommand{\ss}{{\mathbf{s}}}
@@ -83,11 +82,20 @@
 
 \def\gap{\hspace*{.2in}}
 
+% Derivatives
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\tderiv}[2]{\frac{d #1}{d #2}}
+\newcommand{\ppd}[2]{\frac{\partial^2 #1}{{\partial #2}^2}}
+
 % Nick's commands
 \newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\mean}[1]{\left< #1 \right>}
 \newcommand{\thL}{$\theta$--$L$}
 \newcommand{\eps}{\varepsilon}
-\newcommand{\elfun}{\zeta}
-\newcommand{\abs}[1]{\lvert #1 \rvert}
 \newcommand{\Vn}{V_n}
+\newcommand{\Vs}{V_s}
 \newcommand{\atau}{\abs{\tau}}
+\newcommand{\thalpha}{\pderiv{\theta}{\alpha}}
+\newcommand{\elfun}{\zeta}
+\newcommand{\thhat}{\hat{\theta}}

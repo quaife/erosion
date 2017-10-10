@@ -542,8 +542,7 @@ alternate between the two main aspects of our simulation
 \end{enumerate}
 
 \vsp{2}
-To handle boundary evolution, we use the {\thL}    method, which offers certain advantages in the ability to stabilize fluid-structure interaction problems. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW direction and the normal vector points into the bodies (our out of the fluid).
-
+To handle boundary evolution, we use the {\thL}    method, which offers certain advantages in the ability to stabilize fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW direction and the normal vector points into the bodies (our out of the fluid).
 
 In order to regularize boundary evolution, we modify the normal velocity in Eq.~(\ref{eqn:bodyEvolution}) as follows
 \begin{equation}
@@ -564,6 +563,59 @@ Substitution into Eq.~(\ref{eqn:Vn}) gives
 \begin{equation}
 \label{eqn:Vn2}
 \Vn = \atau + \frac{\eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 2 \pi \right)
+\end{equation}
+The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
+\begin{equation}
+\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
+\end{equation}
+The interface evolution is then given by
+\begin{equation}
+\dot{\xx}(t) = \Vn \nn + \Vs \ss.
+\end{equation}
+Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
+\begin{align}
+& \tderiv{L}{t} = - \mean{\thalpha \Vn} \\
+& \pderiv{\theta}{t} = L^{-1} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
+\end{align}
+Inserting Eq.~(\ref{eqn:Vn2}) for the normal velocity gives
+\begin{equation}
+\pderiv{\theta}{t} = \frac{\eps}{L^{2} \log \left(2\pi/L \right)} \ppd{\theta}{\alpha} 
++ \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\end{equation}
+For simplicity, we introduce the variables
+\begin{align}
+& M = - \mean{\thalpha \Vn} \\
+& N = \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+& \elfun(L) = \frac{1}{L^{2} \log \left(2\pi/L \right)}
+\end{align}
+Then the evolution equations can be expressed as
+\begin{align}
+& \tderiv{L}{t} = M \\
+& \pderiv{\theta}{t} = \eps \elfun(L) \ppd{\theta}{\alpha} + N
+\end{align}
+We treat $\theta$ spectrally
+\begin{equation}
+\theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{2\pi i k \alpha}
+\end{equation}
+Then we get
+\begin{equation}
+\tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun(L) \thhat_k = \hat{N}_k
+\end{equation}
+We introduce the integrating factor
+\begin{equation}
+\mu = \exp \left( 4 \eps \pi^2 k^2 \int \elfun(L) dt \right)
+\end{equation}
+so that the solution can be represented as
+\begin{align}
+\thhat_k(t) & = \frac{1}{\mu} \int \mu \hat{N}_k dt 
+= \int_0^t \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^t \elfun(L) dt'' \right) \hat{N}_k \, dt'
+% LONGER FORM
+%& = \exp \left( -4 \eps \pi^2 k^2 \int_0^t \elfun(L) ds \right) \, 
+%\int_0^t \exp \left( 4 \eps \pi^2 k^2 \int_0^s \elfun(L) ds' \right) \hat{N}_k ds \\
+\end{align}
+where $t'$ and $t''$ are simply dummy variables for integration. We can get the exact relationship
+\begin{equation}
+\thhat_k(t + \Delta t) = \thhat_k(t) + \int_t^{t+\Delta t}
 \end{equation}
 
 
