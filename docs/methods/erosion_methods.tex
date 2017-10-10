@@ -547,7 +547,8 @@ To handle boundary evolution, we use the {\thL}    method, which offers certain 
 
 In order to regularize boundary evolution, we modify the normal velocity in Eq.~(\ref{eqn:bodyEvolution}) as follows
 \begin{equation}
-\Vn = \abs{\tau} + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
+\label{eqn:Vn}
+\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
 Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body. The second term on the right acts to smooth bodies that have high-frequency oscillations. Since we have subtracted the mean curvature, $2\pi/L$, this term is area-preserving, so that the only material loss is due to the shear stress. We chose the prefactor $\log^{-1} \left(2\pi/L \right)$, so that, for 2D Stokes flow, this term scales the same as shear stress as $L \to 0$. Thus, the relative strength of the smoothing is always the same. 
 
@@ -559,7 +560,17 @@ where $s$ is arc length. We also introduce the normalized arc length $\alpha = s
 \begin{equation}
 \kappa = \frac{1}{L} \pderiv{\theta}{\alpha}
 \end{equation}
-Substitution into Eq.~(\ref{})
+Substitution into Eq.~(\ref{eqn:Vn}) gives
+\begin{equation}
+\label{eqn:Vn2}
+\Vn = \atau + \frac{\eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 2 \pi \right)
+\end{equation}
+
+
+
+
+
+
 
 
 \vsp{5}
