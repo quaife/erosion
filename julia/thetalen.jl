@@ -105,7 +105,7 @@ function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsi
 	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
 	vtang, mterm = tangvel(dtheta, vnorm)
 	datau = specdiff(atau)	# Derivative of absolute-value of shear stress.
-	nterm = (datau + mult_dealias(dtheta,vtang))/len
+	nterm = (datau + vecmult(dtheta,vtang))/len
 	# Get the derivatives of xsm and ysm: should I dealias products here?
 	xsmdot = mean(-vnorm.*sin(theta) + vtang.*cos(theta))
 	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
@@ -113,7 +113,7 @@ function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsi
 end
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
 function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
-	prod = mult_dealias(dtheta,vnorm)
+	prod = vecmult(dtheta,vnorm)
 	mprod = mean(prod)
 	# Formula for mterm = dL/dt.
 	mterm = -mprod
@@ -123,32 +123,10 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
-# mult_dealias: Multiply two vectors while upsampling to dealias.
-function mult_dealias(uu::Vector{Float64}, vv::Vector{Float64})
-	# Get the size of the vectors.
-	npts = endof(uu)
-	assert(endof(vv) == npts)
-	# Get some integers.	
-	nov2 = div(npts,2)
-	nzeros = 0*npts
-	# Transform to spectral space.
-	uhat = fft(uu)
-	vhat = fft(vv)
-	# Upsample by nzeros.
-	uhat = [uhat[1:nov2]; zeros(nzeros); uhat[nov2+1:npts]]
-	vhat = [vhat[1:nov2]; zeros(nzeros); vhat[nov2+1:npts]]
-	# Return to physical space and multiply.
-	uup, vup = ifft(uhat), ifft(vhat)
-	imagtest(uup); imagtest(vup)
-	uup, vup = real(uup), real(vup)
-	product = uup .* vup
-	# Transform to spectral space and downsample the product.
-	prodhat = fft(product)
-	deleteat!(prodhat, nov2+1:nov2+nzeros)
-	# Transform back to physical space, test the imaginary part, and return.
-	product = ifft(prodhat) * (npts+nzeros)/npts
-	imagtest(product)
-	return real(product)
+#
+function vecmult(uu::Vector{Float64},vv::Vector{Float64})
+#	return mult_dealias(uu,vv)
+	return uu.*vv
 end
 # trimthlenvec: Remove the curves with length too small or too big.
 function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
@@ -240,3 +218,34 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	end
 	return
 end
+
+#--------------- De-aliasing multiplications ---------------#
+#= This did not seem to improve stability any, so I voided it.
+# mult_dealias: Multiply two vectors while upsampling to dealias.
+function mult_dealias(uu::Vector{Float64}, vv::Vector{Float64})
+	# Get the size of the vectors.
+	npts = endof(uu)
+	assert(endof(vv) == npts)
+	# Get some integers.	
+	nov2 = div(npts,2)
+	nzeros = npts
+	# Transform to spectral space.
+	uhat = fft(uu)
+	vhat = fft(vv)
+	# Upsample by nzeros.
+	uhat = [uhat[1:nov2]; zeros(nzeros); uhat[nov2+1:npts]]
+	vhat = [vhat[1:nov2]; zeros(nzeros); vhat[nov2+1:npts]]
+	# Return to physical space and multiply.
+	uup, vup = ifft(uhat), ifft(vhat)
+	imagtest(uup); imagtest(vup)
+	uup, vup = real(uup), real(vup)
+	product = uup .* vup
+	# Transform to spectral space and downsample the product.
+	prodhat = fft(product)
+	deleteat!(prodhat, nov2+1:nov2+nzeros)
+	# Transform back to physical space, test the imaginary part, and return.
+	product = ifft(prodhat) * (npts+nzeros)/npts
+	imagtest(product)
+	return real(product)
+end
+=#
