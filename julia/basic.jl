@@ -105,22 +105,14 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	# Use the olddensity as the initial guess unless it is empty.
 	if endof(olddensity) == 0
 		density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
-		println("\n \n Using trivial guess")
-		println(" size of density (all zeros) is ", endof(density))
+		println("\n\nUsing the trivial initial guess")
 	else 
 		density = deepcopy(olddensity)
-		println("\n \n \n Using old density function as guess")
-		println(" size of olddensity = ", endof(olddensity), "\n")
+		println("\n\nUsing the previous density function for the initial guess")
 	end
-
-
-
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
 		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
-
-	println(" size of newly computed density = ", endof(density), "\n")
-
 	return density
 end
 
