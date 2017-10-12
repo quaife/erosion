@@ -96,7 +96,7 @@ c        enddo
 c      enddo
 
       do j = 1,2*ninner*nbodies + 3*nbodies + 2*nouter
-        den(j) = 1.d0
+        den(j) = 0.d0
       enddo
 
       ifmm = 1
