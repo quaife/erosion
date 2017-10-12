@@ -508,9 +508,9 @@ c        rhs(2*nouter + k) = dexp(dcos(theta))
 c        rhs(2*nouter + k + ninner) = dexp(dsin(theta))
 c      enddo
 
-      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
-        den(k) = rhs(k)
-      enddo
+c      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
+c        den(k) = rhs(k)
+c      enddo
 c     initial guess
 
 cc      DEBUG
@@ -1920,12 +1920,17 @@ c     local variables
       dimension xtar_level(ntargets),ytar_level(ntargets)
       dimension utar_level(ntargets),vtar_level(ntargets)
       dimension press_tar_level(ntargets),vort_tar_level(ntargets)
-      dimension xup(16*ninner),yup(16*ninner)
-      dimension pxup(16*ninner),pyup(16*ninner)
-      dimension curup(16*ninner),speedup(16*ninner)
-      dimension denxup(16*ninner),denyup(16*ninner)
+      dimension xup(16*max(ninner,nouter))
+      dimension yup(16*max(ninner,nouter))
+      dimension pxup(16*max(ninner,nouter))
+      dimension pyup(16*max(ninner,nouter))
+      dimension curup(16*max(ninner,nouter))
+      dimension speedup(16*max(ninner,nouter))
+      dimension denxup(16*max(ninner,nouter))
+      dimension denyup(16*max(ninner,nouter))
       complex *16 eye
-      complex *16 zin(16*ninner),zout(16*ninner)
+      complex *16 zin(16*max(ninner,nouter))
+      complex *16 zout(16*max(ninner,nouter))
 
       pi = 4.d0*datan(1.d0)
       twopi = 2.d0*pi
@@ -1953,29 +1958,234 @@ c     Contribution from the density function on the solid wall
       enddo
 c     Density function defined on the outer geometry
 
-c     Contribution from outer wall
-      do j = 1,ntargets
-        do k = 1,nouter
-          rx = xtar(j) - xouter(k)
-          ry = ytar(j) - youter(k)
-          rho2 = rx**2.d0 + ry**2.d0
-          rdotn = rx*px0(k) + ry*py0(k)
-          rdotden = rx*denx(k) + ry*deny(k)
-          dendotn = px0(k)*denx(k) + py0(k)*deny(k)
-          routn = -rx*py0(k) + ry*px0(k)
-          routden = -rx*deny(k) + ry*denx(k)
 
-          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
-     $      speed0(k)*twopi/dble(nouter)/pi
-          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
-     $      speed0(k)*twopi/dble(nouter)/pi
-          press_tar(j) = press_tar(j) + 
-     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
-     $        speed0(k)*twopi/dble(nouter)/pi
-          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
-     $      rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
-        enddo
+      do j = 1,nouter
+        xup(j) = xouter(j)
+        yup(j) = youter(j)
+        denxup(j) = denx(j)
+        denyup(j) = deny(j)
       enddo
+
+      call classifyPoints(nouter,xup,yup,
+     $    ntargets,xtar,ytar,iside,nnear,iup)
+
+      do k = 1,ntargets
+        if (iside(k) .eq. 1 .or. iup(k) .gt. 16) then
+          utar(k) = 1.0d20
+          vtar(k) = 1.0d20
+          press_tar(k) = 1.0d20
+          vort_tar(k) = 1.0d20
+        endif
+      enddo
+
+c     START OF DOING POINTS THAT REQUIRE NO UPSAMPLING
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 1 .and. iside(j) .eq. 0) then
+          xtar_level(icount) = xtar(j)
+          ytar_level(icount) = ytar(j)
+          icount = icount + 1
+        endif
+      enddo
+
+      call evalLPouter(nouter,xup,yup,
+     $  denxup,denyup,icount-1,xtar_level,ytar_level,
+     $  utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 1 .and. iside(j) .eq. 0) then
+          utar(j) = utar(j) + utar_level(icount)
+          vtar(j) = vtar(j) + vtar_level(icount)
+          press_tar(j) = press_tar(j) + press_tar_level(icount)
+          vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+          icount = icount + 1
+        endif
+      enddo
+c     END OF DOING POINTS THAT REQUIRE NO UPSAMPLING
+
+c     START OF DOING POINTS THAT REQUIRE 2X UPSAMPLING
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 2 .and. iside(j) .eq. 0) then
+          xtar_level(icount) = xtar(j)
+          ytar_level(icount) = ytar(j)
+          icount = icount + 1
+        endif
+      enddo
+
+      do k = 1,nouter
+        zin(k) = xup(k) + eye*yup(k)
+      enddo
+      call fourierUpsample(nouter,2,zin,zout)
+      do k = 1,2*nouter
+        xup(k) = dreal(zout(k))
+        yup(k) = dimag(zout(k))
+      enddo
+c     upsample geometry by a factor of 2
+      do k = 1,nouter
+        zin(k) = denxup(k) + eye*denyup(k)
+      enddo
+      call fourierUpsample(nouter,2,zin,zout)
+      do k = 1,2*nouter
+        denxup(k) = dreal(zout(k))
+        denyup(k) = dimag(zout(k))
+      enddo
+c     upsample density by a factor of 2
+
+      call evalLPouter(2*nouter,xup,yup,
+     $  denxup,denyup,icount-1,xtar_level,ytar_level,
+     $  utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 2 .and. iside(j) .eq. 0) then
+          utar(j) = utar(j) + utar_level(icount)
+          vtar(j) = vtar(j) + vtar_level(icount)
+          press_tar(j) = press_tar(j) + press_tar_level(icount)
+          vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+          icount = icount + 1
+        endif
+      enddo
+c     END OF DOING POINTS THAT REQUIRE 2X UPSAMPLING
+
+
+c     START OF DOING POINTS THAT REQUIRE 4X UPSAMPLING
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 4 .and. iside(j) .eq. 0) then
+          xtar_level(icount) = xtar(j)
+          ytar_level(icount) = ytar(j)
+          icount = icount + 1
+        endif
+      enddo
+
+      do k = 1,2*nouter
+        zin(k) = xup(k) + eye*yup(k)
+      enddo
+      call fourierUpsample(2*nouter,2,zin,zout)
+      do k = 1,4*nouter
+        xup(k) = dreal(zout(k))
+        yup(k) = dimag(zout(k))
+      enddo
+c     upsample geometry by a factor of 2
+      do k = 1,2*nouter
+        zin(k) = denxup(k) + eye*denyup(k)
+      enddo
+      call fourierUpsample(2*nouter,2,zin,zout)
+      do k = 1,4*nouter
+        denxup(k) = dreal(zout(k))
+        denyup(k) = dimag(zout(k))
+      enddo
+c     upsample density by a factor of 2
+
+      call evalLPouter(4*nouter,xup,yup,
+     $  denxup,denyup,icount-1,xtar_level,ytar_level,
+     $  utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 4 .and. iside(j) .eq. 0) then
+          utar(j) = utar(j) + utar_level(icount)
+          vtar(j) = vtar(j) + vtar_level(icount)
+          press_tar(j) = press_tar(j) + press_tar_level(icount)
+          vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+          icount = icount + 1
+        endif
+      enddo
+c     END OF DOING POINTS THAT REQUIRE 4X UPSAMPLING
+
+
+c     START OF DOING POINTS THAT REQUIRE 8X UPSAMPLING
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 8 .and. iside(j) .eq. 0) then
+          xtar_level(icount) = xtar(j)
+          ytar_level(icount) = ytar(j)
+          icount = icount + 1
+        endif
+      enddo
+
+      do k = 1,4*nouter
+        zin(k) = xup(k) + eye*yup(k)
+      enddo
+      call fourierUpsample(4*nouter,2,zin,zout)
+      do k = 1,8*nouter
+        xup(k) = dreal(zout(k))
+        yup(k) = dimag(zout(k))
+      enddo
+c     upsample geometry by a factor of 2
+      do k = 1,4*nouter
+        zin(k) = denxup(k) + eye*denyup(k)
+      enddo
+      call fourierUpsample(4*nouter,2,zin,zout)
+      do k = 1,8*nouter
+        denxup(k) = dreal(zout(k))
+        denyup(k) = dimag(zout(k))
+      enddo
+c     upsample density by a factor of 2
+
+      call evalLPouter(8*nouter,xup,yup,
+     $  denxup,denyup,icount-1,xtar_level,ytar_level,
+     $  utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 8 .and. iside(j) .eq. 0) then
+          utar(j) = utar(j) + utar_level(icount)
+          vtar(j) = vtar(j) + vtar_level(icount)
+          press_tar(j) = press_tar(j) + press_tar_level(icount)
+          vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+          icount = icount + 1
+        endif
+      enddo
+c     END OF DOING POINTS THAT REQUIRE 8X UPSAMPLING
+
+c     START OF DOING POINTS THAT REQUIRE 16X UPSAMPLING
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 16 .and. iside(j) .eq. 0) then
+          xtar_level(icount) = xtar(j)
+          ytar_level(icount) = ytar(j)
+          icount = icount + 1
+        endif
+      enddo
+
+      do k = 1,8*nouter
+        zin(k) = xup(k) + eye*yup(k)
+      enddo
+      call fourierUpsample(8*nouter,2,zin,zout)
+      do k = 1,16*nouter
+        xup(k) = dreal(zout(k))
+        yup(k) = dimag(zout(k))
+      enddo
+c     upsample geometry by a factor of 2
+      do k = 1,8*nouter
+        zin(k) = denxup(k) + eye*denyup(k)
+      enddo
+      call fourierUpsample(8*nouter,2,zin,zout)
+      do k = 1,16*nouter
+        denxup(k) = dreal(zout(k))
+        denyup(k) = dimag(zout(k))
+      enddo
+c     upsample density by a factor of 2
+
+      call evalLPouter(16*nouter,xup,yup,
+     $  denxup,denyup,icount-1,xtar_level,ytar_level,
+     $  utar_level,vtar_level,press_tar_level,vort_tar_level)
+
+      icount = 1
+      do j=1,ntargets
+        if (iup(j) .eq. 16 .and. iside(j) .eq. 0) then
+          utar(j) = utar(j) + utar_level(icount)
+          vtar(j) = vtar(j) + vtar_level(icount)
+          press_tar(j) = press_tar(j) + press_tar_level(icount)
+          vort_tar(j) = vort_tar(j) + vort_tar_level(icount)
+          icount = icount + 1
+        endif
+      enddo
+c     END OF DOING POINTS THAT REQUIRE 16X UPSAMPLING
+
 
 c     Contribution from Rotlets and Stokeslets
       do ibod = 1,nbodies
@@ -2246,32 +2456,6 @@ c       END OF DOING POINTS THAT REQUIRE 16X UPSAMPLING
         endif
       enddo
 
-c      do k = 1,ntargets
-c        if (iside(k) .eq. 0 .or. iup(k) .gt. 16) then
-cc        if (iside(k) .eq. 0) then
-c          utar(k) = 0.d0
-c          vtar(k) = 0.d0
-c          press_tar(k) = 0.d0
-c          vort_tar(k) = 0.d0
-c        endif
-cc        if (iup(k) .eq. 16) then
-cc          utar(k) = 16.d0
-cc          vtar(k) = 16.d0
-cc        endif
-cc        if (iup(k) .eq. 8) then
-cc          utar(k) = 8.d0
-cc          vtar(k) = 8.d0
-cc        endif
-cc        if (iup(k) .eq. 4) then
-cc          utar(k) = 4.d0
-cc          vtar(k) = 4.d0
-cc        endif
-cc        if (iup(k) .eq. 2) then
-cc          utar(k) = 2.d0
-cc          vtar(k) = 2.d0
-cc        endif
-c      enddo
-
 
       end
 
@@ -2332,6 +2516,60 @@ c     build inner geometry
 
       end
 
+c***********************************************************************
+      subroutine evalLPouter(n,x,y,
+     $    denx,deny,ntargets,xtar,ytar,
+     $    utar,vtar,press_tar,vort_tar)
+      implicit real*8 (a-h,o-z)
+
+c     input variables
+      dimension x(n),y(n)
+      dimension denx(n),deny(n)
+      dimension xtar(ntargets),ytar(ntargets)
+
+c     output variables
+      dimension utar(ntargets),vtar(ntargets)
+      dimension press_tar(ntargets),vort_tar(ntargets)
+
+c     local variables
+      dimension px(n),py(n)
+      dimension cur(n),speed(n)
+
+      call outer_geometry(n,x,y,px,py,cur,speed)
+c     build inner geometry
+
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+
+      do j = 1,ntargets
+        utar(j) = 0.d0
+        vtar(j) = 0.d0
+        press_tar(j) = 0.d0
+        vort_tar(j) = 0.d0
+        do k = 1,n
+          rx = xtar(j) - x(k)
+          ry = ytar(j) - y(k)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdotn = rx*px(k) + ry*py(k)
+          rdotden = rx*denx(k) + ry*deny(k)
+          dendotn = px(k)*denx(k) +  py(k)*deny(k)
+          routn = -rx*py(k) + ry*px(k)
+          routden = -rx*deny(k) + ry*denx(k)
+
+          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $      speed(k)*twopi/dble(n)/pi
+          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $      speed(k)*twopi/dble(n)/pi
+          press_tar(j) = press_tar(j) + 
+     $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $        speed(k)*twopi/dble(n)/pi
+          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $      rho2**2.d0*speed(k)*twopi/dble(n)/pi 
+        enddo
+      enddo
+
+
+      end
 c***********************************************************************
       subroutine computeVelocityPressureTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar)
@@ -2783,8 +3021,6 @@ c       and it will be positive if it is a point in a body
         endif
 
       enddo
-
-            
 
 
       end

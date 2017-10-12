@@ -64,8 +64,8 @@ c        phi(1) = dble(kk-1)*dphi
 
       xmin = -8.d-1
       xmax = 8.d-1
-      ymin = -8.d-1
-      ymax = 8.d-1
+      ymin = -0.99d0
+      ymax = 0.99d0
       nx = ntargets
       ny = ntargets
       dx = (xmax - xmin)/dble(nx-1)
@@ -94,6 +94,10 @@ c     $        (-dsin(phi(1))*dcos(theta) +
 c     $        2.d0*dcos(phi(1))*dsin(theta))
 c        enddo
 c      enddo
+
+      do j = 1,2*ninner*nbodies + 3*nbodies + 2*nouter
+        den(j) = 1.d0
+      enddo
 
       ifmm = 1
       call stokesSolver(ninner,nbodies,nouter,ifmm,x,y,den)
