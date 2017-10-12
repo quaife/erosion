@@ -105,23 +105,15 @@ function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsi
 	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
 	vtang, mterm = tangvel(dtheta, vnorm)
 	datau = specdiff(atau)	# Derivative of absolute-value of shear stress.
-	
-
-	# HERE
-	nterm = (datau + dtheta.*vtang)/len
-
-	# HERE?
+	nterm = (datau + mult_dealias(dtheta,vtang))/len
+	# Get the derivatives of xsm and ysm: should I dealias products here?
 	xsmdot = mean(-vnorm.*sin(theta) + vtang.*cos(theta))
 	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
 	return mterm, nterm, xsmdot, ysmdot
 end
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
 function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
-
-	# HERE
-	prod = dtheta.*vnorm
-	
-
+	prod = mult_dealias(dtheta,vnorm)
 	mprod = mean(prod)
 	# Formula for mterm = dL/dt.
 	mterm = -mprod
@@ -131,18 +123,6 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
-# trimthlenvec: Remove the curves with length too small or too big.
-function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
-		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
-	npts,nbods = getnvals(thlenvec1)
-	lenvec = zeros(Float64,nbods)
-	for nn=1:nbods
-		lenvec[nn] = thlenvec1[nn].len
-	end
-	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
-	deleteat!(thlenvec0,zind)
-	deleteat!(thlenvec1,zind)
-end
 # mult_dealias: Multiply two vectors while upsampling to dealias.
 function mult_dealias(uu::Vector{Float64}, vv::Vector{Float64})
 	# Get the size of the vectors.
@@ -150,7 +130,7 @@ function mult_dealias(uu::Vector{Float64}, vv::Vector{Float64})
 	assert(endof(vv) == npts)
 	# Get some integers.	
 	nov2 = div(npts,2)
-	nzeros = npts
+	nzeros = 0*npts
 	# Transform to spectral space.
 	uhat = fft(uu)
 	vhat = fft(vv)
@@ -169,6 +149,18 @@ function mult_dealias(uu::Vector{Float64}, vv::Vector{Float64})
 	product = ifft(prodhat) * (npts+nzeros)/npts
 	imagtest(product)
 	return real(product)
+end
+# trimthlenvec: Remove the curves with length too small or too big.
+function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
+		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
+	npts,nbods = getnvals(thlenvec1)
+	lenvec = zeros(Float64,nbods)
+	for nn=1:nbods
+		lenvec[nn] = thlenvec1[nn].len
+	end
+	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
+	deleteat!(thlenvec0,zind)
+	deleteat!(thlenvec1,zind)
 end
 
 #--------------- OTHER ---------------#
