@@ -20,7 +20,7 @@ function erosion()
 	nfile = 1
 	for nn = 1:nsteps
 		# Compute the density function and stress for thlenden1.
-		getstress!(thlenden1,params)
+		getstress!(thlenden1,params, thlenden0.density)
 		# Plot and save the data in thlenden1 if appropriate.
 		if mod(nn,nout)==0
 			tt = nn*params.dt
