@@ -508,9 +508,9 @@ c        rhs(2*nouter + k) = dexp(dcos(theta))
 c        rhs(2*nouter + k + ninner) = dexp(dsin(theta))
 c      enddo
 
-      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
-        den(k) = rhs(k)
-      enddo
+c      do k = 1,2*nouter+2*ninner*nbodies+3*nbodies
+c        den(k) = rhs(k)
+c      enddo
 c     initial guess
 
 cc      DEBUG

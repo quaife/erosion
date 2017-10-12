@@ -95,6 +95,10 @@ c     $        2.d0*dcos(phi(1))*dsin(theta))
 c        enddo
 c      enddo
 
+      do j = 1,2*ninner*nbodies + 3*nbodies + 2*nouter
+        den(j) = 1.d0
+      enddo
+
       ifmm = 1
       call stokesSolver(ninner,nbodies,nouter,ifmm,x,y,den)
 c     pass in number of points and x and y coordinates and return the
