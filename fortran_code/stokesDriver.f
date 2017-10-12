@@ -64,8 +64,8 @@ c        phi(1) = dble(kk-1)*dphi
 
       xmin = -8.d-1
       xmax = 8.d-1
-      ymin = -8.d-1
-      ymax = 8.d-1
+      ymin = -0.99d0
+      ymax = 0.99d0
       nx = ntargets
       ny = ntargets
       dx = (xmax - xmin)/dble(nx-1)
