@@ -259,14 +259,17 @@ where
 \end{align*}
 The deformation tensor of the Stokeslets and
 rotlets~\eqref{eqn:stokeslet_rotlet} are
-\begin{align*}
+\begin{equation}
+  \label{eqn:shearStressSR}
+  \begin{aligned}
   \ssigma^S(\xx_0) &= \sum_{k=1}^{M}
     \frac{\rr \cdot \llambda_k}{4\pi\rho^2} \left(
     \II - \frac{2}{\rho^2} \rr \otimes \rr \right),  \\
   \ssigma^R(\xx_0) &= -\sum_{k=1}^M
     \frac{\xi_k}{\rho^4} \left(\rr \otimes \rr^\perp + 
     \rr^\perp \otimes \rr \right),
-\end{align*}
+  \end{aligned}
+\end{equation}
 where $\rr = \xx - \cc_k$, $\cc_k$ is the point chosen inside body
 $\gamma_k$, and $\rho = \|\rr_k\|$.  Now that the deformation tensor of
 each component of the completed double-layer potential is computed, the
@@ -440,12 +443,12 @@ needs to be solved is
       K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} +
       \sum_{k=1}^M S[\llambda_k,\cc_k](\xx_i) +
       \sum_{k=1}^M R[\xi_k,\cc_k](\xx_i) + 
-      \sum_{\xx_j \in \Gamma} \nn(\xx_i) \otimes
-      \nn(\xx_j)\eeta(\xx_j), \\
+      \sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
+      \nn(\xx_j))\eeta(\xx_j), \\
     \llambda_k &= \sum_{\xx_i \in \gamma_k} \eeta(\xx_i) 
       \Delta s_i \\ 
     \mu_k &= \sum_{\xx_i \in \gamma_k}
-      {(\xx_i^k)}^\perp \cdot \eeta(\xx_i^k) \Delta s_i^k,
+      {(\xx_i^k - \cc_k)}^\perp \cdot \eeta(\xx_i^k) \Delta s_i^k,
   \end{aligned}
 \end{equation}
 for $i=1,\ldots,N$, $k=1,\ldots,M$.
@@ -462,38 +465,55 @@ $N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
 solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
 
 \subsubsection{Shear Stress}
-We have decomposed the shear stress into the contributions due to three
-different terms.  The contributions from the Stokeslets and the rotlets
-can be directly evaluated since $\rr \neq 0$ for all $\xx \in \gamma$.
-However, the kernel of the shear stress due to the double-layer
-potential~\eqref{eqn:shearStressDLP} has a singularity that is
-asymptotic to $\bigO(\rho^2)$ when $\yy \rightarrow \xx$.  The strength
-of this singularity can be reduced  by taking advantage of
-the fact that a velocity field due to a constant density function has no
-shear stress~\cite{poz1992}.  Therefore, the shear stress can be
-evaluated as 
+We have decomposed the deformation tensor into the contributions due to
+three different terms.  The contributions from the Stokeslets and the
+rotlets can be directly evaluated since $\rr \neq 0$ for all $\xx \in
+\gamma$.  However, the kernel of the deformation tensor due to the
+double-layer potential~\eqref{eqn:shearStressDLP} has a singularity that
+is asymptotic to $\bigO(\rho^2)$ when $\yy \rightarrow \xx$.  The
+strength of this singularity can be reduced  by using the fact that a
+velocity field due to a constant density function is
+constant~\cite{poz1992}.  Therefore, the first part of the deformation
+tensor can be evaluated as 
 \begin{align*}
   \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
-      (\ssigma(\yy) - \ssigma(\xx)) \, ds_{\yy},
+      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega
 \end{align*}
-This expression for the shear stress has a singularity that is
+\todo[inline]{haven't said what $K_\ssigma$ is}
+This expression for the deformation tensor has a singularity that is
 asymptotic to $\bigO(\rho)$ when $\yy \rightarrow \xx$.  Finally, to
-achieve a spectrally accurate discretization for the shear stress, we
-use odd-even integration~\cite{sid-isr1988}.  That is, the shear stress
-due to the double-layer potential on body $k$ is approximated by using
-the trapezoid rule using all points $\xx_i \notin \gamma_k$ and the even
-(odd) indexed points if $i$ is odd (even).
+achieve a spectrally accurate discretization for the deformation tensor,
+we use odd-even integration~\cite{sid-isr1988}.  That is, the
+deformation tensor due to the double-layer potential at a discretization
+point $\xx_i$ on body $\gamma_k$, with $i$ being odd, is approximated as
+\begin{align*}
+  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_k}
+    K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
+  \sum_{\substack{\xx_j \in \gamma_k \\ j \: \mathtt{even}}}
+    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
+\end{align*}
+and a similar approximation is used when $i$ is even.  The deformation
+tensor due to the Stokeslets and rotlets is given in
+equation~\eqref{eqn:shearStressSR}, and then the shear stress can be
+computed by computing the deformation tensor in the normal direction,
+and taking the inner product with the tangent direction.
 
-In our implementation, the shear stress is computed with a direct
+In our implementation, the deformation tensor is computed with a direct
 summation, and this requires $\bigO(N^2)$ operations.  Since this
 calculation is only computed once per time step, while the velocity is
 calculated at each GMRES iteration, the computational cost is
-manageable.  However, in future work, to simulate erosion in a
-dense packing of grains, a fast summation method, such as the
+manageable.  However, in future work, to simulate erosion in a dense
+packing of grains, a fast summation method, such as the
 kernel-independent FMM~\cite{yin-bir-zor2004}, will be incorporated. 
 
 
 \subsubsection{Vorticity}
+Since the vorticity is equivalent to the shear stress on $\bd\Omega$, we
+only need to compute the vorticity at target points $\xx \in \Omega$ in
+the interior.  This is done with the trapezoid rule by computing
+\begin{align*}
+  \omega(\xx_i) = \sum_{j=1}^N \frac{}{}
+\end{align*}
 
 
 \subsubsection{Pressure}
