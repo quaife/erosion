@@ -60,9 +60,11 @@ function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vecto
 	# Compute the density (if not loaded already).
 	compute_density!(thlenden, params, olddensity)
 	
+
 	# Also compute the density on the rotated grid to save in data files.
 	#compute_denrot!(thlenden, params)
 	
+
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
@@ -105,10 +107,10 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	# Use the olddensity as the initial guess unless it is empty.
 	if endof(olddensity) == 0
 		density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
-		println("\n\nUsing the trivial initial guess")
+		println("\nNo initial guess in GMRES")
 	else 
 		density = deepcopy(olddensity)
-		println("\n\nUsing the previous density function for the initial guess")
+		println("\nUsing an initial guess in GMRES")
 	end
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
