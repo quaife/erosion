@@ -56,11 +56,15 @@ end
 #--------------- MAIN ROUTINES ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
-function getstress!(thlenden::ThLenDenType, params::ParamType)
+function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64}=evec())
 	# Compute the density (if not loaded already).
-	compute_density!(thlenden, params)
+	compute_density!(thlenden, params, olddensity)
+	
+
 	# Also compute the density on the rotated grid to save in data files.
-	compute_denrot!(thlenden, params)
+	#compute_denrot!(thlenden, params)
+	
+
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
@@ -90,17 +94,24 @@ end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function compute_density!(thlenden::ThLenDenType, params::ParamType)
+function compute_density!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64})
 	if thlenden.density == []
 		npts,nbods,xv,yv = getnxy(thlenden)
-		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
+		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm, olddensity)
 	end
 	return
 end
 # compute_density: Fortran wrapper.
 function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, 
-		npts::Int, nbods::Int, nouter::Int, ifmm::Int)
-	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
+		npts::Int, nbods::Int, nouter::Int, ifmm::Int, olddensity::Vector{Float64})
+	# Use the olddensity as the initial guess unless it is empty.
+	if endof(olddensity) == 0
+		density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
+		println("\nNo initial guess in GMRES")
+	else 
+		density = deepcopy(olddensity)
+		println("\nUsing an initial guess in GMRES")
+	end
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
 		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
