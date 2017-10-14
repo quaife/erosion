@@ -42,6 +42,20 @@
 \newcommand {\onBdry} {\text{on } \bdry }
 \newcommand {\xfar} {\text{as } \abs{\bvec{x}} \to \infty }
 
+% FROM METHODS TEX
+\newcommand{\xx}{{\mathbf{x}}}
+\renewcommand{\ss}{{\mathbf{s}}}
+\newcommand{\nn}{{\mathbf{n}}}
+% Derivatives
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\tderiv}[2]{\frac{d #1}{d #2}}
+% Nick's commands
+\newcommand{\thL}{$\theta$--$L$}
+\newcommand{\Vn}{V_n}
+\newcommand{\Vs}{V_s}
+\newcommand{\thalpha}{\pderiv{\theta}{\alpha}}
+\newcommand{\elfun}{\zeta}
+\newcommand{\thhat}{\hat{\theta}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TITLE
@@ -82,8 +96,7 @@ The interface velocity of the eroding body is linearly proportional to the absol
 \begin{equation}
 V_n = -C \atau
 \end{equation}
-where $C$ is a constant.
-
+where $C$ is a constant. In what follows, we will scale time on an erosion timescale (non-dimensionalize) and thus set $C=1$.
 
 
 \subsection{The calculation to show stress is equal to vorticity}
@@ -131,154 +144,18 @@ For 3D Stokes flow, the shear stress scales like
 \begin{equation}
 \tau \sim \mu V/L
 \end{equation}
-where $V$ and $L$ are a characteristic velocity and length scale respectively. To evolve the interface in our numerical method, we will probably need to introduce some smoothing to mitigate high frequencies. A common approach is to introduce a small curvature term into the interface velocity, sometimes called the method of vanishing viscosity. The most basic implementation would be
+where $V$ and $L$ are a characteristic velocity and length scale respectively.  However, for 2D Stokes flow we have Stokes paradox and slender body effects. The analogous scaling of the stress is
 \begin{equation}
-V_n = - C \atau - \eps \kappa
+\tau \sim \frac{\mu V}{L \log(W/L)}
 \end{equation}
-where $\eps$ is a small parameter and $\kappa$ is the surface curvature. However, we have two additional preferences
-\begin{enumerate}
-\item As the body changes size, we would like the influence of the curvature term relative to the shear stress to remain the same.
-\item We prefer the curvature term not to change the size of the body.
-\end{enumerate}
-Fortunately, the first requirement is already satisfied since both $\tau$ and $\kappa$ scale like $1/L$. To satisfy the second requirement, we replace $\kappa$ with this same quantity minus its mean. To allow for some generality, we allow the curvature term by to be scaled by a power of $L$, giving
-\begin{equation}
-V_n = - C \atau - \eps L^{\beta} \left(\kappa - \frac{2 \pi}{L} \right)
-\end{equation}
-Thus, for the present case of Stokes flow $\beta=0$, but for the previous case of high-Reynolds-number flow $\beta=1/2$.
-
-\section{Numerical interface evolution}
-
-To evolve the interface numerically, we use the $\theta$-$L$ method. Rather than re-derive the formulas, I will use the convention from Shelley 1994, with the curve parameterized in the CCW direction and the normal vector pointing {\em inward}. With this convention, the normal interface velocity is the negative of what it was previously, giving
-\begin{equation}
-\label{Vn1}
-V_n = C \atau + \eps L^{\beta} \left(\kappa - \frac{2 \pi}{L} \right)
-\end{equation}
-Recall that for Stokes flow, $\beta = 0$.
-
-Now, the interface $\X = (x,y)$ evolves according to
-\begin{equation}
-\pd{\bvec{X}}{t} = V_n \nhat + V_s \shat
-\end{equation}
-where $\nhat = (-y_s, x_s)$ is the inward pointing normal vector and $\shat = (x_s, y_s)$ is the tangential vector (running in the CCW direction). Here, we have introduced a tangential velocity $V_s$ that will be chosen to keep the curve in the equal-arclength parameterization. We will frequently use a normalized arclength $\alpha = s/L$, where $L$ is the total length of the curve.
-
-We introduce the tangent angle $\theta$, defined by
-\begin{equation}
-(x_s, y_s) = (\cos \theta, \sin \theta)
-\end{equation}
-so that we have
-\begin{equation}
-\tan \theta = y_s/x_s = y_\alpha / x_\alpha
-\end{equation}
-Remember the identity that $x_s^2 + y_s^2 = 1$ as this is very useful.
-The curvature is given by
-\begin{equation}
-\kappa = x_s y_{ss} - x_{ss} y_s = \pd{\theta}{s} = L^{-1} \pd{\theta}{\alpha}
-\end{equation}
-We are using the standard convention, where a convex shape, like a circle, has positive curvature. The normal velocity now can be written as
-\begin{equation}
-\label{Vn2}
-V_n = C \atau + \eps L^{\beta-1} \left(\pd{\theta}{\alpha} - 2 \pi \right)
-\end{equation}
-
-We now discuss how to choose $V_s$ to remain in the equal-arclength frame of reference. We will use the term
-\begin{equation}
-\gamma = \pd{\theta}{\alpha} V_n
-\end{equation}
-Then the necessary tangential velocity is determined by
-\begin{equation}
-\td{V_s}{\alpha} = \gamma - \mean{\gamma}
-\end{equation}
-where $\mean{}$ indicates the mean value.
-
-We now discuss how to evolve $\theta$ and $L$ forward in time according to the interface velocity given above. The resulting evolution equations are
-\begin{align}
-& \td{L}{t} = - \mean{\gamma} \\
-& \pd{\theta}{t} = L^{-1} \left( \pd{V_n}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{align}
-Then, using the above $V_n$, the equation for $\theta$ simplifies to
-\begin{equation}
-\label{thetaEvolve}
-\pd{\theta}{t} = \eps L^{\beta-2} \ppd{\theta}{\alpha} + L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{equation}
-Simpler version for my talk
-\begin{align}
-& \td{L}{t} = - \mean{\pd{\theta}{\alpha} V_n} \\
-& \pd{\theta}{t} = \eps L^{-2} \ppd{\theta}{\alpha} + L^{-1} \left( \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{align}
-
-We now discuss the numerical methods used to solve the above evolution equations. For $L$, we use an explicit method
-\begin{equation}
-L^{(n+1)} = L^{(n)} + \frac{\Dt}{2} \left( 3 M^{(n)} - M^{(n-1)} \right)
-\end{equation}
-where
-\begin{equation}
-M = \td{L}{t} = -\mean{\gamma}
-\end{equation}
-For $\theta$, we use a spectral method, giving
-\begin{equation}
-\td{\thh_k}{t} + 4 \pi^2 k^2 \eps L^{\beta-2} \thh_k = \hat{N}_k
-\end{equation}
-where the nonlinear terms are grouped together as
-\begin{equation}
-N = L^{-1} \left( C \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{equation}
-We evolve with the integrating-factor method. When recast in terms of Gaussian filters, this gives
-\begin{equation}
-\label{intfact}
-\thh^{(n+1)} = \GG(\theta^{(n)}, \sigma_1) 
-+ \frac{\Dt}{2} \left( 3 \GG(N^{(n)}, \sigma_1) - \GG(N^{(n-1)}), \sigma_2 \right)
-\end{equation}
-where
-\begin{align}
-& \sigma_1 = 2 \pi \sqrt{\eps \Dt} \sqrt{(L^{n})^{\beta-2} + (L^{n+1})^{\beta-2} } 	\\
-& \sigma_2 = 2 \pi \sqrt{\eps \Dt} \sqrt{(L^{n-1})^{\beta-2} + 2 (L^{n})^{\beta-2} + (L^{n+1})^{\beta-2} }
-\end{align}
-
-
-\subsection{Different scaling of the stress}
-Some numerical tests reveal that for 2D Stokes flow the stress scales like $\tau \sim 1/(L \log L)$, instead of the naive $1/L$. This is because we are in a 2D bounded domain (Stokes paradox type stuff). So we need to modify the curvature driven flow to have the same scaling. To this end, modify Eq.~(\ref{Vn1}) to read
-\begin{equation}
-V_n = \atau + \eps f(L) \left(\kappa - \frac{2 \pi}{L} \right)
-\end{equation}
-For 2D Stokes flow, we have 
-\begin{equation}
-f(L) = \frac{1}{\log (W/L)}
-\end{equation}
-where $W$ is the lengthscale of the 3rd dimension (e.g. the length of a long cylinder). The 2D approximation requires $W \gg L$, and in the code I chose $W = 2 \pi$. Carrying through this change, Eq.~(\ref{Vn2}) becomes
-\begin{equation}
-V_n = \atau + \eps L^{-1} f(L) \left(\pd{\theta}{\alpha} - 2 \pi \right)
-\end{equation}
-and Eq.~(\ref{thetaEvolve}) becomes
-\begin{equation}
-\pd{\theta}{t} = \eps L^{-2} f(L) \ppd{\theta}{\alpha} + L^{-1} \left( \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{equation}
-Then to evolve $\theta$ spectrally, we use
-\begin{equation}
-\td{\thh_k}{t} + 4 \pi^2 k^2 \eps L^{-2} f(L)  \thh_k = \hat{N}_k
-\end{equation}
-where the nonlinear terms are grouped together as
-\begin{equation}
-N = L^{-1} \left( \pd{\atau}{\alpha} + \pd{\theta}{\alpha} V_s \right)
-\end{equation}
-We evolve with the integrating-factor method. When recast in terms of Gaussian filters, this gives
-\begin{equation}
-\label{intfact}
-\thh^{(n+1)} = \GG(\theta^{(n)}, \sigma_1) 
-+ \frac{\Dt}{2} \left( 3 \GG(N^{(n)}, \sigma_1) - \GG(N^{(n-1)}), \sigma_2 \right)
-\end{equation}
-where
-\begin{align}
-& \sigma_1 = 2 \pi \sqrt{\eps \Dt} \sqrt{g(L^{n}) + g(L^{n+1}) } 	\\
-& \sigma_2 = 2 \pi \sqrt{\eps \Dt} \sqrt{g(L^{n-1}) + 2 g(L^{n}) + g(L^{n+1}) }
-\end{align}
-where $g(L) = L^{-2} f(L)$.
+where $W$ is the width in the third dimension. In the following, we will take $W = 2\pi$, since a body cannot have a length greater than $2\pi$ and still fit inside the domain.
 
 
 
 \subsection{The vanishing rate of the area}
 The rate of area loss is given by
 \begin{equation}
-\dot{A} = -C \abs{\tau} L
+\dot{A} = - \abs{\tau} L
 \end{equation}
 We then insert the scaling $\abs{\tau} \sim -1/(L \log L)$ and simplify to get
 \begin{equation}
@@ -291,10 +168,111 @@ A (1 - \log A) = C (t_f - t)
 In particular, I believe the signs are correct here.
 BUT, I am not so sure of this calculation anymore, now that $W$ is included.
 
+
+\section{Numerical interface evolution}
+
+To handle boundary evolution, we use the {\thL} method, which offers certain advantages in the ability to stabilize fluid-structure interaction problems. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW direction and the normal vector points into the bodies (our out of the fluid).
+
+In order to regularize boundary evolution, we modify the normal velocity as follows
+\begin{equation}
+\label{eqn:Vn}
+\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
+\end{equation}
+Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body. The second term on the right acts to smooth bodies that have high-frequency oscillations. This is sometimes called the method of vanishing viscosity. Since we have subtracted the mean curvature, $2\pi/L$, this term is area-preserving, so that the only material loss is due to the shear stress. We chose the prefactor $\log^{-1} \left(2\pi/L \right)$, so that, for 2D Stokes flow, this term scales the same as shear stress as $L \to 0$. Thus, the relative strength of the smoothing is always the same. 
+
+
+Note: The curvature is given by
+\begin{equation}
+\kappa = x_s y_{ss} - x_{ss} y_s = \pd{\theta}{s} = L^{-1} \pd{\theta}{\alpha}
+\end{equation}
+We are using the standard convention, where a convex shape, like a circle, has positive curvature.
+
+We now introduce the tangent angle, $\theta$, defined through the relation
+\begin{equation}
+\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
+\end{equation}
+where $s$ is arc length. We also introduce the normalized arc length $\alpha = s / L$. 
+
+Note: We have this relation
+\begin{equation}
+\tan \theta = y_s/x_s = y_\alpha / x_\alpha
+\end{equation}
+and remember the identity that $x_s^2 + y_s^2 = 1$ as this is very useful.
+
+In terms of these new variables, the curvature can be expressed as
+\begin{equation}
+\kappa = \frac{1}{L} \pderiv{\theta}{\alpha}
+\end{equation}
+Substitution into Eq.~(\ref{eqn:Vn}) gives
+\begin{equation}
+\label{eqn:Vn2}
+\Vn = \atau + \frac{\eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 2 \pi \right)
+\end{equation}
+The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by Shelley 1994 as
+\begin{equation}
+\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
+\end{equation}
+The interface evolution is then given by
+\begin{equation}
+\dot{\xx}(t) = \Vn \nn + \Vs \ss.
+\end{equation}
+
+Note: with the above conventions, we have $\nn = (-y_s, x_s)$ as the inward pointing normal vector and $\ss = (x_s, y_s)$ as the tangential vector (running in the CCW direction). 
+
+Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
+\begin{align}
+& \tderiv{L}{t} = - \mean{\thalpha \Vn} \\
+& \pderiv{\theta}{t} = \frac{1}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
+\end{align}
+Inserting Eq.~(\ref{eqn:Vn2}) for the normal velocity gives
+\begin{equation}
+\pderiv{\theta}{t} = \frac{\eps}{L^{2} \log \left(2\pi/L \right)} \ppd{\theta}{\alpha} 
++ \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\end{equation}
+For simplicity, we introduce the variables
+\begin{align}
+& M = - \mean{\thalpha \Vn} \\
+& N = \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+& \elfun = \frac{1}{L^{2} \log \left(2\pi/L \right)}
+\end{align}
+Then the evolution equations can be expressed as
+\begin{align}
+& \tderiv{L}{t} = M \\
+& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + N
+\end{align}
+We treat $\theta$ spectrally
+\begin{equation}
+\theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{2\pi i k \alpha}
+\end{equation}
+Then we get
+\begin{equation}
+\tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun \thhat_k = \hat{N}_k
+\end{equation}
+We introduce the integrating factor
+\begin{equation}
+\mu = \exp \left( 4 \eps \pi^2 k^2 \int \elfun dt \right)
+\end{equation}
+so that the solution can be represented as
+\begin{align}
+\thhat_k(t) & = \frac{1}{\mu} \int^t \mu \hat{N}_k dt'
+= \thhat_k(0) + \int_0^t \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^t \elfun dt'' \right) \hat{N}_k \, dt'
+% LONGER FORM
+%& = \exp \left( -4 \eps \pi^2 k^2 \int_0^t \elfun(L) ds \right) \, 
+%\int_0^t \exp \left( 4 \eps \pi^2 k^2 \int_0^s \elfun(L) ds' \right) \hat{N}_k ds \\
+\end{align}
+where $t'$ and $t''$ are simply dummy variables for integration. We can get the exact relationship
+\begin{equation}
+\thhat_k(t + \Delta t) = \thhat_k(t) 
++ \int_t^{t+\Delta t} \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^{t+\Delta t} \elfun dt'' \right) \hat{N}_k \, dt'
+\end{equation}
+
+
+
+
 \subsection{How to scale smoothing parameters?}
 We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale with the simulation resolution parameters? The most important resolution parameter is $N$, the total number of points on each body, but there is also $\Delta t$ and maybe some others. Figuring out $\sigma$ is the easier part: $\sigma$ is a lengthscale and should go like $1/N$. On the other hand, $\eps$ is a diffusivity in dimensions. I did a calculation and found that $\eps$ should scale like $2/(\pi^2 N^2)$.
 
-The calculation is based on looking at Eq.~(\ref{intfact}), where $\sigma_1 \sim 2 \pi \sqrt{\eps \Delta t}$. For the largest wavenumbers, $k_{max} \sim N/2$, we want the smoothing to beat the nonlinear term (so that overall, these modes decay). So we need $e^{-\pi^2 \eps \Delta t N^2 / 2} < 1 - C\Delta t$, which gives $\eps > 2C/(\pi^2 N^2)$, independent of $\Delta t$. If $C=1$, this gives roughly $\eps > 0.2/ N^2$. However, this analysis did not take into account how the spectrum of the nonlinear term decays (or maybe it even grows???)
+The calculation is based on looking at Eq.~?, where $\sigma_1 \sim 2 \pi \sqrt{\eps \Delta t}$. For the largest wavenumbers, $k_{max} \sim N/2$, we want the smoothing to beat the nonlinear term (so that overall, these modes decay). So we need $e^{-\pi^2 \eps \Delta t N^2 / 2} < 1 - C\Delta t$, which gives $\eps > 2C/(\pi^2 N^2)$, independent of $\Delta t$. If $C=1$, this gives roughly $\eps > 0.2/ N^2$. However, this analysis did not take into account how the spectrum of the nonlinear term decays (or maybe it even grows???)
 
 
 \subsection{Tracking a reference point: the surface-averaged coordinates}
