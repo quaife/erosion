@@ -388,9 +388,9 @@ $N_\out$ points.  Derivatives of the shape are computed in Fourier space
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quadrature} 
 Integrals that need to be approximated are the double-layer potential
-for target points both off the boundary~\eqref{eqn:velocityDLP} and on
-the boundary~\eqref{eqn:DLP}, the shear
-stress~\eqref{eqn:shearStressDLP}, the
+for for the velocity at target points both off the
+boundary~\eqref{eqn:velocityDLP} and on the boundary~\eqref{eqn:DLP},
+the shear stress~\eqref{eqn:shearStressDLP}, the
 vorticity~\eqref{eqn:vorticityDLP}, the pressure both off and on the
 boundary~\eqref{eqn:pressureDLP}, the drag~\eqref{eqn:drag}, and the
 resistivity.   The shear stress, pressure, and drag must also be
@@ -398,15 +398,19 @@ computed using quadrature, and this can be interpreted as a
 post-processing step once the density function, Stokeslets, and rotlets
 are computed.
 
-The integrands of each of these integrals, except for the resistivity,
-are smooth and periodic.  Therefore, the trapezoid rule guarantees
-spectral accuracy~\cite{tre-wei2014}.  However, before the trapezoid
-rule can be applied, singularity subtraction and odd-even
-integration~\cite{sid-isr1988} method must be used.  In addition, when
-the target point is near $\bd\Omega$, a near-singular integration scheme
-must be used.
+All the integrands, except for the resistivity, are periodic, so the
+trapezoid rule guarantees spectral accuracy~\cite{tre-wei2014}.
+However, before the trapezoid rule can be applied, singularity
+subtraction and odd-even integration~\cite{sid-isr1988} must be used.
+In addition, when the target point is near $\bd\Omega$, a near-singular
+integration scheme must be used.
+
+\todo[inline]{Organize as first doing points on the boundary (velocity,
+shear stress, pressure, drag) and the points off the boundary (velocity,
+vorticity, pressure, resistivity)}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Velocity}
 To numerically evaluate the completed double-layer
 potential~\eqref{eqn:completed_BIE}, we define $N = MN_\iin + N_\out$ to
@@ -431,7 +435,7 @@ replaced with the limiting value of the double-layer potential
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)),
 \end{align*}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent
-vector at $\xx \in \bd\Omega$.  The equations for the strengths of the
+vector at $\xx \in \bd\Omega$.  The strengths of the
 Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are
 also discretized with the trapezoid rule.  Applying this discretization
 strategy to~\eqref{eqn:completed_BIE}, the dense linear system that
@@ -451,19 +455,34 @@ needs to be solved is
       {(\xx_i^k - \cc_k)}^\perp \cdot \eeta(\xx_i^k) \Delta s_i^k,
   \end{aligned}
 \end{equation}
-for $i=1,\ldots,N$, $k=1,\ldots,M$.
+for $i=1,\ldots,N$, $k=1,\ldots,M$.  Since all the integrands are smooth
+and periodic, by using the trapezoid rule, we are guaranteed that the
+numerical solutions converges to the true solution with spectral
+accuracy.
 
 The dense linear system~\eqref{eqn:completed_BIE_discretized} is solved
-iteratively with GMRES.  The most expensive part is computing the $N$
-term sum for all target points.  A direct summation would require
-$\bigO(N^2)$ operations, but this is reduced to $\bigO(N)$ by using the
-Fast Mutlipole method for the Stokes double-layer
+iteratively with GMRES~\cite{saa-sch1986}.  The most expensive part is
+computing the $N$ term sum for all target points.  A direct summation
+would require $\bigO(N^2)$ operations, but this is reduced to $\bigO(N)$
+by using the Fast Mutlipole method for the Stokes double-layer
 potential~\cite{gre-rok1987,rac-???} \todo[inline]{sent email to Manas
 asking about this}.  Since we are discretizing a second-kind integral
 equation, the number of GMRES iterations is bounded independent of
 $N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
 solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
 
+To compute the velocity at an interior point $\xx \in \Omega$, the
+integrand is periodic and smooth, so the trapezoid rule rule achieves
+spectral accuracy.  Therefore, the velocity at a target points $\xx \in
+\Omega$ is approximate by
+\begin{align*}
+  \uu(\xx) = \sum_{j=1}^N K(\xx,\xx_j) \eeta(\xx_j) \Delta s_j.
+\end{align*}
+If the velocity needs to be computed at $N_\tar$ points in $\Omega$,
+where $N_\tar$ is large, the FMM is used to reduce the complexity from
+$\bigO(N_\tar N)$ to $\bigO(N_\tar + N)$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Shear Stress}
 We have decomposed the deformation tensor into the contributions due to
 three different terms.  The contributions from the Stokeslets and the
@@ -478,21 +497,21 @@ double-layer potential~\eqref{eqn:shearStressDLP}
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
   \right),
 \end{align*}
-has a singularity that is asymptotic to $\bigO(\rho^2)$ when $\yy
-\rightarrow \xx$.  The strength of this singularity can be reduced  by
-using the fact that a velocity field due to a constant density function
-is constant~\cite{poz1992}.  Therefore, the first part of the
-deformation tensor can be evaluated as 
+has a singularity that is asymptotic to $\bigO(\rho^{-2})$ when $\yy
+\rightarrow \xx$.  The singularity strength can be reduced since the
+velocity corresponding to a constant density function is
+constant~\cite{poz1992}.  Therefore, the deformation tensor of the
+double-layer potential is equivalent to
 \begin{align*}
   \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
       (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
 \end{align*}
 This expression for the deformation tensor has a singularity that is
-asymptotic to $\bigO(\rho)$ when $\yy \rightarrow \xx$.  Finally, to
-achieve a spectrally accurate discretization for the deformation tensor,
-we use odd-even integration~\cite{sid-isr1988}.  That is, the
-deformation tensor due to the double-layer potential at a discretization
-point $\xx_i$ on body $\gamma_k$, with $i$ being odd, is approximated as
+asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
+to achieve spectral accuracy, we apply odd-even
+integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
+the double-layer potential at a discretization point $\xx_i$ on body
+$\gamma_k$, with $i$ being odd, is approximated as
 \begin{align*}
   \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_k}
     K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
@@ -514,10 +533,11 @@ packing of grains, a fast summation method, such as the
 kernel-independent FMM~\cite{yin-bir-zor2004}, will be incorporated. 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Vorticity}
 Since the vorticity is equivalent to the shear stress on $\bd\Omega$, we
-only need to compute the vorticity at target points $\xx \in \Omega$ in
-the interior.  This is done with the trapezoid rule by computing
+only need to compute the vorticity at target points at interior points
+$\xx \in \Omega$.  This is done with the trapezoid rule by computing
 \begin{align*}
   \omega(\xx_i) = \sum_{j=1}^N K_\omega (\xx_i,\xx_j) \cdot \eeta_j 
     \Delta s_j,
@@ -529,6 +549,7 @@ where
 \end{align*}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Pressure}
 For the pressure, the double-layer potential is equivalent to
 \begin{align*}
@@ -538,10 +559,12 @@ For the pressure, the double-layer potential is equivalent to
 \end{align*}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Drag}
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Resistivity}
 
 
@@ -575,9 +598,15 @@ alternate between the two main aspects of our simulation
 \end{enumerate}
 
 \vsp{2}
-To handle boundary evolution, we use the {\thL}    method, which offers certain advantages in the ability to stabilize fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW direction and the normal vector points into the bodies (our out of the fluid).
+To handle boundary evolution, we use the {\thL}    method, which offers
+certain advantages in the ability to stabilize fluid-structure
+interaction problems \cite{hou-low-she1994}. Throughout this section, we
+use the following conventions: the bodies are parametrized in the CCW
+direction and the normal vector points into the bodies (our out of the
+fluid).
 
-In order to regularize boundary evolution, we modify the normal velocity in Eq.~(\ref{eqn:bodyEvolution}) as follows
+In order to regularize boundary evolution, we modify the normal velocity
+in Eq.~(\ref{eqn:bodyEvolution}) as follows
 \begin{equation}
 \label{eqn:Vn}
 \Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
