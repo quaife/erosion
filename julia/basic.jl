@@ -8,9 +8,7 @@ end
 # ThetaLenType: includes the geometry data for each body and memory terms.
 type ThetaLenType
 	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64;
-	xx::Vector{Float64}; yy::Vector{Float64};
-	atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64}; 
-	xsmdot::Float64; ysmdot::Float64;
+	xx::Vector{Float64}; yy::Vector{Float64}; atau::Vector{Float64}; 
 end
 # ThLenDenType: includes the vector of all thlen's and the density function.
 type ThLenDenType
@@ -32,11 +30,13 @@ function new_thlenvec(nbods::Int)
 	return [new_thlen() for nn=1:nbods]
 end
 function new_thlen()
-	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
+	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec())
 end
 function evec()
 	return Array(Float64,0)
 end
+
+
 # Copy all contents from thlen1 to thlen2.
 function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.theta = thlen1.theta
@@ -59,12 +59,6 @@ Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64}=evec())
 	# Compute the density (if not loaded already).
 	compute_density!(thlenden, params, olddensity)
-	
-
-	# Also compute the density on the rotated grid to save in data files.
-	#compute_denrot!(thlenden, params)
-	
-
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.

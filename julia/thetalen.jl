@@ -21,82 +21,44 @@ function cdfscale(len::Float64)
 	return 1./log(2*pi/len)
 end
 
-#--------------- MULTISTEP METHOD FOR THETA AND LEN ---------------#
-# advance_thetalen!: Dispatch for ThLenDenType.
-function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
-	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
-	thlenden0.density = thlenden1.density
-	thlenden1.density = evec()
-	thlenden1.denrot = evec()
-	return
-end
-# advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
-function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
-	# Call advance_thetalen for each element of the thlenvec.
-	for nn = 1:endof(thlenvec0)
-		advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
-	end
-	# Remove curves with non-positive length.
-	trimthlenvec!(thlenvec1, thlenvec0)
-	return
-end
-#= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
-This is a multi-step method and uses some values from n=0 too.
-Note: thlen1 must already be loaded with the correct atua, which is used in getmn!() =#
-function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
-	# Extract the needed variables.
-	dt, m0, len1 = params.dt, thlen0.mterm, thlen1.len
-	# Calculate mterm and nterm at time n=1.
-	m1 = getmn!(thlen1,params.epsilon)
-	# Update len with an explicit, multistep method.
-	len2 = len1 + 0.5*dt*(3*m1-m0)
-	# Create a new ThetaLenType variable and save the new len.
-	thlen2 = new_thlen()
-	thlen2.len = len2
-	# Update theta with a multistep, integrating-factor method.
-	advance_theta!(thlen2,thlen1,thlen0,params)
-	# Update surface-mean coordinates with an explicit, multistep method.
-	thlen2.xsm = thlen1.xsm + 0.5*dt*(3*thlen1.xsmdot - thlen0.xsmdot)
-	thlen2.ysm = thlen1.ysm + 0.5*dt*(3*thlen1.ysmdot - thlen0.ysmdot)
-	# Now thlen1 gets copied to thlen0, and thlen2 gets copied to thlen1.
-	# Note: Although tempting, I cannot use deepcopy() because it cuases problems.
-	copy_thlen!(thlen1,thlen0)
-	copy_thlen!(thlen2,thlen1)
-	return
-end
-# advance_theta: Advance theta in time with the integrating-factor method.
-function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
-	# Extract the needed variables.
-	dt, epsilon = params.dt, params.epsilon
-	theta1, len1, n1 = thlen1.theta, thlen1.len, thlen1.nterm
-	len0, n0 = thlen0.len, thlen0.nterm
-	len2 = thlen2.len
-	alpha = getalpha(endof(theta1))
-	# The function that enters the sigmas of the Guassian filter.
-	lenfun(len::Float64) = abs(len)^(-2)*cdfscale(abs(len))
-	# The first value used in the Gaussian filter.
-	sig1 = sqrt( lenfun(len1) + lenfun(len2) )
-	sig1 *= 2*pi*sqrt(epsilon*dt)
-	# The second value used in the Gaussian filter.
-	sig2 = sqrt( lenfun(len0) + 2*lenfun(len1) + lenfun(len2) )
-	sig2 *= 2*pi*sqrt(epsilon*dt)
-	# Apply the appropriate Gaussian filters to advance theta in time.
-	thlen2.theta = gaussfilter(theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
-	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
-	# Apply a Krasny-filter to theta (voided)
-	### thlen2.theta = krasnyfilter(thlen2.theta - 2*pi*alpha) + 2*pi*alpha	
-	return
+
+
+function RK2(thld0::ThLenDenType)
+	getstress!(thld0, params)
+	thld05 = feuler(thld0, 0.5*dt, thld0)
+	getstress!(thld05, params)
+	thld1 = feuler(thld0, dt, thld05)
 end
 
-#--------------- DETAILS OF THE MULTISTEP METHOD ---------------#
-#= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
-Also returms mterm to be used locally.
-Note: thlen must already be loaded with the correct atau. =#
-function getmn!(thlen::ThetaLenType, epsilon::Float64)
-	thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
-		getmn(thlen.theta, thlen.len, thlen.atau, epsilon)
-	return thlen.mterm
+function feuler(thld0::ThLenDenType, dt, derivs::ThLenDenType)
+	npts, nbods = getnvals(thld0.thlenvec)
+	thlv1 = new_thlenvec(npts)
+	for nn = 1:nbods
+		thlv1[nn] = feuler(thld0.thlenvec[nn], dt, derivs.thlenvec[nn].atau)
+	end
+	thld1 = new_thlenden(thlv1)
+	return thld1
 end
+
+function feuler(thl0::ThetaLenType, dt::Float64, atau::Vector{Float64})
+	mterm, nterm, xsmdot, ysmdot = getmn( ??? )
+	len05 = thl0.len + dt*mterm
+
+	theta05 = gaussfilter(thl0.theta + dt*nterm)
+
+
+
+
+
+
+
+
+
+
+
+
+
+#--------------- SMALL ROUTINES ---------------#
 # getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
 function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsilon::Float64)
 	if atau==[]; throw("atau has not been computed"); return; end
@@ -123,25 +85,18 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
-#
+
+#--------------- MORE SMALL ROUTINES ---------------#
+# vecmult: Multiply two vectors with or without dealiasing.
 function vecmult(uu::Vector{Float64},vv::Vector{Float64})
 #	return mult_dealias(uu,vv)
 	return uu.*vv
 end
-# trimthlenvec: Remove the curves with length too small or too big.
-function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
-		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
-	npts,nbods = getnvals(thlenvec1)
-	lenvec = zeros(Float64,nbods)
-	for nn=1:nbods
-		lenvec[nn] = thlenvec1[nn].len
-	end
-	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
-	deleteat!(thlenvec0,zind)
-	deleteat!(thlenvec1,zind)
+# getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
+function getalpha(npts::Integer)
+	dalpha = 1.0/npts
+	return alpha = collect(range(0.5*dalpha, dalpha, npts))
 end
-
-#--------------- OTHER ---------------#
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
 	if thlen.xx==[] || thlen.yy==[]
@@ -162,11 +117,19 @@ function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	xx += xsm; yy += ysm
 	return xx,yy
 end
-# getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
-function getalpha(npts::Integer)
-	dalpha = 1.0/npts
-	return alpha = collect(range(0.5*dalpha, dalpha, npts))
+# trimthlenvec: Remove the curves with length too small or too big.
+function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
+		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
+	npts,nbods = getnvals(thlenvec1)
+	lenvec = zeros(Float64,nbods)
+	for nn=1:nbods
+		lenvec[nn] = thlenvec1[nn].len
+	end
+	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
+	deleteat!(thlenvec0,zind)
+	deleteat!(thlenvec1,zind)
 end
+
 # getns: Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
 function getns(theta::Vector{Float64})
