@@ -243,9 +243,9 @@ Then the evolution equations can be expressed as
 \end{align}
 We treat $\theta$ spectrally
 \begin{equation}
-\theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{2\pi i k \alpha}
+\theta(\alpha,t) = 2 \pi \alpha + \sum_{k = -\infty}^{\infty} \thhat_k(t) e^{2\pi i k \alpha}
 \end{equation}
-Then we get
+where $2 \pi \alpha$ is the linear part and does not depend on time. Then we get
 \begin{equation}
 \label{thODEs}
 \tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun \thhat_k = \hat{N}_k

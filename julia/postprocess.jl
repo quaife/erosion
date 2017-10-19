@@ -147,3 +147,21 @@ function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	targets.ytar = ytar
 	return targets
 end
+
+# getns: Get the normal and tangent directions.
+# Convention: CCW parameterization and inward pointing normal.
+function getns(theta::Vector{Float64})
+	# CCW tangent vector.
+	sx, sy = cos(theta), sin(theta)
+	# Inward pointing normal vector.
+	nx, ny = -sy, sx
+	return sx,sy,nx,ny
+end
+# getns: Get the normal and tangent directions on the rotated grid.
+function getnsrot(theta::Vector{Float64})
+	# CCW tangent vector.
+	sx, sy = -sin(theta), cos(theta)
+	# Inward pointing normal vector.
+	nx, ny = -sy, sx
+	return sx,sy,nx,ny
+end
