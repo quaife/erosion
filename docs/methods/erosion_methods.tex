@@ -117,7 +117,7 @@ drag can all be readily computed.
 
 To model erosion, we the normal velocity is prescribed to be
 proportional to the absolute value of the shear stress.  The constant of
-proportionality sets the time scale, and we set its value to be -1
+proportionality sets the time scale, and we set its value to be 1
 \begin{align}
   \dot{\xx}(t) = \abs{\tau} \nn.
   \label{eqn:bodyEvolution}
@@ -318,6 +318,7 @@ is
   p^{D}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
     \nn \cdot \eeta(\yy) \,ds_\yy.
+    \label{eqn:pressureDLP}
 \end{align}
 To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
 as $\xx$ tends to $\xx_0$.  The limiting value is given
@@ -331,14 +332,11 @@ The pressure due to the Stokeslets is
   p^S(\xx_0) = \sum_{k=1}^{M}\frac{\rr \cdot \llambda_k}{2\pi\rho^2},
 \end{align*}
 and the pressure due to the rotlets is zero.  Therefore, the pressure is
-\begin{equation}
-\label{eqn:pressureDLP}
-\begin{aligned}
+\begin{align*}
   p(\xx) &= p^{\DD}(\xx) + p^{S}(\xx), \quad &&\xx \in \Omega,\\
   p(\xx) &= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
               p^{S}(\xx), && \xx \in \bd\Omega.
-\end{aligned}
-\end{equation}
+\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Drag}
@@ -354,6 +352,10 @@ with boundary $\gamma_k$ is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Resistivity}
+\begin{align}
+  some equation
+  \label{eqn:resistivity}
+\end{align}
 
 
 
@@ -368,9 +370,17 @@ simulations with long time horizons, we use numerical methods that
 achieve spectral accuracy in space, second-order accuracy in time, and
 maintain an equispaced discretization of the bodies.
 
+In Section~\ref{sec:spatial_discretization}, we describe how the
+geometry is represented.  Then, Sections~\ref{sec:on_boundary}
+and~\ref{sec:off_boundary} describe how the velocity and other
+quantities of interest are computed at points on and off the boundary,
+respectively.  Then, in Section~\ref{sec:thetaL}, methods used to update
+the shape are described.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Spatial Discretization}
+\label{sec:spatial_discretization}
 Each body is represented with at $N_\iin$ points as the Fourier series
 \begin{align*}
   \xx^k(\theta) = \sum_{j = -N/2}^{N/2-1} \hat{x}_j^k e^{ij\theta},
@@ -386,29 +396,22 @@ $N_\out$ points.  Derivatives of the shape are computed in Fourier space
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quadrature} 
-Integrals that need to be approximated are the double-layer potential
-for for the velocity at target points both off the
-boundary~\eqref{eqn:velocityDLP} and on the boundary~\eqref{eqn:DLP},
-the shear stress~\eqref{eqn:shearStressDLP}, the
-vorticity~\eqref{eqn:vorticityDLP}, the pressure both off and on the
-boundary~\eqref{eqn:pressureDLP}, the drag~\eqref{eqn:drag}, and the
-resistivity.   The shear stress, pressure, and drag must also be
-computed using quadrature, and this can be interpreted as a
-post-processing step once the density function, Stokeslets, and rotlets
-are computed.
+\subsection{Quadrature: On Boundary Calculations} 
+\label{sec:on_boundary}
+We start by discussing the quadrature methods that are used to compute
+the velocity~\eqref{eqn:DLP}, shear stress~\ref{eqn:shearStressDLP},
+pressure~\eqref{eqn:pressureDLP}, and drag~\eqref{eqn:drag} at target
+points on the boundary of the domain.  The velocity on $\bd\Omega$ is
+required to solve the integral equation~\eqref{eqn:completed_BIE} for
+the density function, Stokeslets and rotlets.  Once these are computed,
+computing the shear stress, pressure, and drag is a post-processing
+step.
 
-All the integrands, except for the resistivity, are periodic, so the
-trapezoid rule guarantees spectral accuracy~\cite{tre-wei2014}.
-However, before the trapezoid rule can be applied, singularity
-subtraction and odd-even integration~\cite{sid-isr1988} must be used.
-In addition, when the target point is near $\bd\Omega$, a near-singular
-integration scheme must be used.
-
-\todo[inline]{Organize as first doing points on the boundary (velocity,
-shear stress, pressure, drag) and the points off the boundary (velocity,
-vorticity, pressure, resistivity)}
-
+All these integrals involve integrands that are both periodic and
+smooth, so the trapezoid rule guarantees spectral
+accuracy~\cite{tre-wei2014}.  However, before the trapezoid rule can be
+applied, singularity subtraction and odd-even
+integration~\cite{sid-isr1988} must be used.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Velocity}
@@ -444,10 +447,11 @@ needs to be solved is
   \label{eqn:completed_BIE_discretized}
   \begin{aligned}
     \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
-      K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} +
-      \sum_{k=1}^M S[\llambda_k,\cc_k](\xx_i) +
-      \sum_{k=1}^M R[\xi_k,\cc_k](\xx_i) + 
-      \sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
+      K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
+      \sum_{k=1}^M S[\llambda_k,\cc_k](\xx_i) \\
+      &\hspace{40pt}
+      +\sum_{k=1}^M R[\xi_k,\cc_k](\xx_i) 
+      +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
       \nn(\xx_j))\eeta(\xx_j), \\
     \llambda_k &= \sum_{\xx_i \in \gamma_k} \eeta(\xx_i) 
       \Delta s_i \\ 
@@ -460,27 +464,6 @@ and periodic, by using the trapezoid rule, we are guaranteed that the
 numerical solutions converges to the true solution with spectral
 accuracy.
 
-The dense linear system~\eqref{eqn:completed_BIE_discretized} is solved
-iteratively with GMRES~\cite{saa-sch1986}.  The most expensive part is
-computing the $N$ term sum for all target points.  A direct summation
-would require $\bigO(N^2)$ operations, but this is reduced to $\bigO(N)$
-by using the Fast Mutlipole method for the Stokes double-layer
-potential~\cite{gre-rok1987,rac-???} \todo[inline]{sent email to Manas
-asking about this}.  Since we are discretizing a second-kind integral
-equation, the number of GMRES iterations is bounded independent of
-$N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
-solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
-
-To compute the velocity at an interior point $\xx \in \Omega$, the
-integrand is periodic and smooth, so the trapezoid rule rule achieves
-spectral accuracy.  Therefore, the velocity at a target points $\xx \in
-\Omega$ is approximate by
-\begin{align*}
-  \uu(\xx) = \sum_{j=1}^N K(\xx,\xx_j) \eeta(\xx_j) \Delta s_j.
-\end{align*}
-If the velocity needs to be computed at $N_\tar$ points in $\Omega$,
-where $N_\tar$ is large, the FMM is used to reduce the complexity from
-$\bigO(N_\tar N)$ to $\bigO(N_\tar + N)$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Shear Stress}
@@ -512,17 +495,166 @@ to achieve spectral accuracy, we apply odd-even
 integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
 the double-layer potential at a discretization point $\xx_i$ on body
 $\gamma_k$, with $i$ being odd, is approximated as
-\begin{align*}
+\begin{align}
   \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_k}
     K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
   \sum_{\substack{\xx_j \in \gamma_k \\ j \: \mathtt{even}}}
     K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
-\end{align*}
+  \label{eqn:stressOddEven}
+\end{align}
 and a similar approximation is used when $i$ is even.  The deformation
 tensor due to the Stokeslets and rotlets is given in
 equation~\eqref{eqn:shearStressSR}, and then the shear stress can be
 computed by computing the deformation tensor in the normal direction,
 and taking the inner product with the tangent direction.
+
+\todo[inline]{discuss how we handle jump condition ... Fourier
+differentiation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Pressure}
+Similar to the shear stress, the singularity of the pressure
+corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is
+too strong for the trapezoid rule to be directly applied.  Therefore, we
+again subtract a constant density function and write the pressure as
+\begin{align*}
+  p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
+    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
+    \nn \cdot (\eeta(\yy) - \eeta(\xx_0)) \,ds_\yy.
+\end{align*}
+Then, identical to how the shear stress is
+computed~\eqref{eqn:stressOddEven}, odd-even integration is used to
+evaluate this layer potential for pressure.
+
+\todo[inline]{discuss how we handle jump condition ... Fourier
+differentiation}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Drag}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quadrature: Off Boundary Calculations} 
+\label{sec:off_boundary}
+To analyze the flow, we compute quantities at target points that are in
+the interior of the domain.  In particular, we develop numerical methods
+to compute the velocity~\eqref{eqn:velocityDLP},
+pressure~\eqref{eqn:pressureDLP}, vorticity~\eqref{eqn:vorticityDLP} and
+resistivity~\eqref{eqn:resistivity}.  
+
+Similar to when the target points are on the boundary of the domain, all
+the integrals, except for the resistivity, involve integrands that are
+both periodic and smooth.  However, when the target points are close to
+the boundary of the domain, the integrand becomes nearly-singular, and
+these large derivatives result in a loss of accuracy that needs to be
+rectified.  We will be adopting a near-singular integration scheme that
+allows us to compute all quantities of interest sufficiently close to
+$\bd\Omega$ for the results we are untested in.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Near-singular integration}
+To accurately compute quantities such as the velocity at points $\xx \in
+\Omega$, we adopt a near-singular integration scheme entirely based on
+upsampling.  Since we are only interested in computing the velocity and
+vorticity for visualizing the flow, and the pressure is only required
+far away from any boundary, only a finite amount of upsampling is
+required to achieve an acceptable error.
+
+Computing the velocity, pressure, and vorticity at a point $\xx \in
+\Omega$ requires evaluating the layer potential
+\begin{align*}
+  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy,
+\end{align*}
+where $\phi$ is either the velocity, pressure, or vorticity, and the
+kernel $K$ is in
+equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
+and~\eqref{eqn:pressureDLP}.  This integral is approximated with a
+trapezoid rule, which can be easily done with the $N$ points where the
+density function has been solved
+\begin{align}
+  \phi(\xx) \approx \sum_{k=1}^N q_k K(\xx,\yy_k),
+  \label{eqn:layerPotential}
+\end{align}
+where $q$ contains the quadrature weights, Jacobian, and density
+function.  Based on numerical experiments, the error of the $N$-point
+trapezoid rule is acceptable for points $\xx$ that are more than 5
+arclength spacings from $\bd\Omega$.
+
+For points that are closer than 5 arclength spacings to $\bd\Omega$, we
+use an upsampled trapezoid rule.  The required upsampling of the
+geometry and the density function is done with a Fourier interpolant.
+To minimize the number of discretization points that are used to
+approximate the layer potential~\eqref{eqn:layerPotential}, we the
+upsampling rate given in Table~\ref{tbl:upsampling}.  For points that
+are closer than $5/16$ of an arclength from $\bd\Omega$, a value of 0 is
+simply assigned to $\phi$.
+
+In future work, such as sedimenting eroding bodies, bodies will come too
+close to one another for upsampling to only used.  Therefore, we plan to
+implement a near-singular integration scheme that uses either
+near-singular interpolation~\cite{qua-bir2014a}, quadrature by
+expansion~\cite{klo-bar-gre-one2013}, Barycentric
+interpolation~\cite{bar-wu-vee2015}, or panel-based
+quadrature~\cite{hel-oja2008a}.
+
+
+\begin{table}[htpb]
+\centering
+\begin{tabular}{|c|ccccc|}
+  \hline
+  $d(\xx,\bd\Omega)$ &
+  $[5h,\infty]$ &
+  $[\frac{5}{2}h,5h]$ &
+  $[\frac{5}{4}h,\frac{5}{2}h]$ & 
+  $[\frac{5}{8}h,\frac{5}{4}h]$ &
+  $[\frac{5}{16}h,\frac{5}{8}h]$ \\ [2ex]
+  \hline
+  Upsample Rate & 1 & 2 & 4 & 8 & 16 \\
+  \hline
+\end{tabular}
+\caption{\label{tbl:upsampling}The upsampling rate used in our
+near-singular integration scheme.  $d(\xx,\bd\Omega)$ is the distance
+between a points $\xx \in \Omega$ and the boundary of the domain
+$\bd\Omega$, and $h$ is an arclength spacing.}
+\end{table}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Resistivity}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Accelerating the Layer Potential Evaluations}
+To compute the velocity at an interior point $\xx \in \Omega$, the
+integrand is periodic and smooth, so the trapezoid rule rule achieves
+spectral accuracy.  Therefore, the velocity at a target points $\xx \in
+\Omega$ is approximate by
+\begin{align*}
+  \uu(\xx) = \sum_{j=1}^N K(\xx,\xx_j) \eeta(\xx_j) \Delta s_j.
+\end{align*}
+If the velocity needs to be computed at $N_\tar$ points in $\Omega$,
+where $N_\tar$ is large, the FMM is used to reduce the complexity from
+$\bigO(N_\tar N)$ to $\bigO(N_\tar + N)$.
+
+The dense linear system~\eqref{eqn:completed_BIE_discretized} is solved
+iteratively with GMRES~\cite{saa-sch1986}.  The most expensive part is
+computing the $N$ term sum for all target points.  A direct summation
+would require $\bigO(N^2)$ operations, but this is reduced to $\bigO(N)$
+by using the Fast Mutlipole method for the Stokes double-layer
+potential~\cite{gre-rok1987,rac-???} \todo[inline]{sent email to Manas
+asking about this}.  Since we are discretizing a second-kind integral
+equation, the number of GMRES iterations is bounded independent of
+$N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
+solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
 
 In our implementation, the deformation tensor is computed with a direct
 summation, and this requires $\bigO(N^2)$ operations.  Since this
@@ -532,40 +664,6 @@ manageable.  However, in future work, to simulate erosion in a dense
 packing of grains, a fast summation method, such as the
 kernel-independent FMM~\cite{yin-bir-zor2004}, will be incorporated. 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Vorticity}
-Since the vorticity is equivalent to the shear stress on $\bd\Omega$, we
-only need to compute the vorticity at target points at interior points
-$\xx \in \Omega$.  This is done with the trapezoid rule by computing
-\begin{align*}
-  \omega(\xx_i) = \sum_{j=1}^N K_\omega (\xx_i,\xx_j) \cdot \eeta_j 
-    \Delta s_j,
-\end{align*}
-where
-\begin{align*}
-  K_\omega (\xx,\yy) =  -\frac{\rr}{\pi}
-    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4}.
-\end{align*}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Pressure}
-For the pressure, the double-layer potential is equivalent to
-\begin{align*}
-  p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
-    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot (\eeta(\yy) - \eeta(\xx_0)) \,ds_\yy.
-\end{align*}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Drag}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Resistivity}
 
 
 
