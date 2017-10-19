@@ -66,7 +66,7 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	return
 end
 
-#--------------- MAIN ROUTINES ---------------#
+#--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64}=evec())
@@ -89,6 +89,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vecto
 end
 
 #--------------- FORTRAN WRAPPERS ---------------#
+#--- THE DENSITY FUNCTION ---#
 # compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
 function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.denrot == []
@@ -125,7 +126,7 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
 	return density
 end
-
+#--- THE SHEAR STRESS ---#
 # compute_stressrot: Compute the stress on the rotated grid
 function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -156,7 +157,7 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vecto
 		&npts, &nbods, &nouter, xx, yy, density, tau)
 	return tau
 end
-
+#--- THE PRESSURE ---#
 # compute_pressrot: Compute the pressure on a rotated grid.
 function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -187,7 +188,7 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vec
 		&npts, &nbods, &nouter, xx, yy, density, pressure)
 	return pressure
 end
-
+#--- THE QUANTITIES OF INTEREST ---#
 # compute_velpressrot_targets: Compute the same on the rotated xy grid.
 function compute_qoirot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -217,7 +218,7 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 	return utar,vtar,ptar,vortar
 end
 
-#--------------- OTHER ---------------#
+#--------------- SMALL ROUTINES ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	npts,nbods = getnvals(thlenden.thlenvec)

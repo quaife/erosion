@@ -19,23 +19,26 @@ and I use the inward pointing normal vector. =#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
 function rungekutta4(thld0::ThLenDenType, params::ParamType)
 
+	# Extract dt.
 	# NEXT: specify dt adaptively
+	dt = params.dt
+	epsilon = params.epsilon
 
 	# Compute the derivatives k1.
 	k1 = getderivs(thld0, params)
 	# Compute the derivatives k2.
-	thldtemp = feuler(thld0, 0.5*dt, k1, params.epsilon)
+	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
 	k2 = getderivs(thldtemp, params)
 	# Compute the derivatives k3.
-	thldtemp = feuler(thld0, 0.5*dt, k2, params.epsilon)
+	thldtemp = feuler(thld0, 0.5*dt, k2, epsilon)
 	k3 = getderivs(thldtemp, params)
 	# Compute the derivatives k4.
-	thldtemp = feuler(thld0, dt, k3, params.epsilon)
+	thldtemp = feuler(thld0, dt, k3, epsilon)
 	k4 = getderivs(thldtemp, params)
 	# Compute the average derivatives and take the RK4 step.
 	kavg = getkavg(k1,k2,k3,k4)
-	thld1 = feuler(thld0, dt, kavg, params.epsilon)
-	return thld1
+	thld1 = feuler(thld0, dt, kavg, epsilon)
+	return thld1, dt
 end
 #= feuler: Take a step of forward Euler for all of the bodies.
 The derivatives specified by dvec. =#

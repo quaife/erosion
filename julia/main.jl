@@ -3,7 +3,6 @@ using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
-include("RKstarter.jl")
 include("plotsave.jl")
 include("postprocess.jl")
 
@@ -17,17 +16,13 @@ function erosion()
 	plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,0.,0)
 	
 	# Enter the time loop and apply RK2.
-	nfile = 1
+	nfile = 1; tt = 0.
 	for nn = 1:nsteps
-
-
-
-
-		# Compute the density function and stress for thlenden1.
-		getstress!(thlenden1,params)
-		# Plot and save the data in thlenden1 if appropriate.
+		# Advance the variables forward one timestep with RK4.
+		thlenden1, dt = rungekutta4(thlenden0, params)
+		tt += dt
+		# Plot and save the data if appropriate.
 		if mod(nn,nout)==0
-			tt = ???
 			compute_denrot!(thlenden, params)	
 			paramvec[end] = (time()-t0)/60.
 			plotnsave(thlenden1,params,paramvec,datafolder,plotfolder,tt,nfile)
