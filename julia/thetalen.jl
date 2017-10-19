@@ -14,12 +14,6 @@ I use the same convention for tangential and normal vectors as Shelley 1994.
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
 
-#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
-2D Stokes: cdfscale = 1/log(W/L), where W > L is lengthscale of 3rd dimension.
-3D Stokes, cdfscale = 1; high Reynolds, cdfscale = sqrt(L) =#
-function cdfscale(len::Float64)
-	return 1./log(2*pi/len)
-end
 
 
 
@@ -29,7 +23,7 @@ function RK2(thld0::ThLenDenType)
 	getstress!(thld05, params)
 	thld1 = feuler(thld0, dt, thld05)
 end
-
+# feuler: Update ThLenDenType with forward Euler and integrating factor.
 function feuler(thld0::ThLenDenType, dt, derivs::ThLenDenType)
 	npts, nbods = getnvals(thld0.thlenvec)
 	thlv1 = new_thlenvec(npts)
@@ -39,15 +33,29 @@ function feuler(thld0::ThLenDenType, dt, derivs::ThLenDenType)
 	thld1 = new_thlenden(thlv1)
 	return thld1
 end
-
+# feuler: Update theta and len with forward Euler and integrating factor.
 function feuler(thl0::ThetaLenType, dt::Float64, atau::Vector{Float64})
+	th0, len0 = thl0.theta, thl0.len
+	xsm0, ysm0 = thl0.xsm, thl0.ysm
 	mterm, nterm, xsmdot, ysmdot = getmn( ??? )
-	len05 = thl0.len + dt*mterm
-
-	theta05 = gaussfilter(thl0.theta + dt*nterm)
-
-
-
+	# Advance len first with forward Euler.
+	len1 = len0 + dt*mterm
+	# Advance theta with combination of integrating factor and forward Euler.
+	sigma = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
+	th1 = gaussfilter(th0+dt*nterm, sigma)
+	# Advance xsm and ysm with forward Euler.
+	xsm1 = xsm0 + dt*xsmdot
+	ysm1 = ysm0 + dt*ysmdot 
+	# Save new values in thlen type.
+	thl1 = new_thlen()
+	thl1.theta, thl1.len = th1, len1
+	thl1.xsm, thl1.ysm = xsm1, ysm1
+	return thl1
+end
+# elfun: How to scale the smoothing with len.
+function elfun(len::Float64)
+	return 1./(len^2 * log(2*pi/len))
+end
 
 
 

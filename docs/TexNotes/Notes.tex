@@ -272,7 +272,7 @@ Here, we have introduced
 \end{equation}
 Discretizing with trapezoid rule (and using the fact that $L$ can be solved for first to get $L^{(n+1/2)}$) gives
 \begin{equation}
-\nu = \exp \left(-2 \eps \pi^2 k^2 \dt \left( \elfun^{(n+1/2)} + \elfun^{n}\right)\right)
+\nu = \exp \left(-\eps \pi^2 k^2 \dt \left( \elfun^{(n+1/2)} + \elfun^{n}\right)\right)
 \end{equation}
 Then we take the second step to $t_{n+1}$ as follows
 \begin{align}
@@ -285,7 +285,7 @@ where now we have
 \end{equation}
 which when discretized becomes
 \begin{equation}
-\nu = \exp \left(-4 \eps \pi^2 k^2 \dt \left( \elfun^{(n+1)} + \elfun^{n}\right)\right)
+\nu = \exp \left(-2 \eps \pi^2 k^2 \dt \left( \elfun^{(n+1)} + \elfun^{n}\right)\right)
 \end{equation}
 
 
