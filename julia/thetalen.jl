@@ -17,40 +17,121 @@ and I use the inward pointing normal vector. =#
 
 
 
-function RK2(thld0::ThLenDenType)
-	getstress!(thld0, params)
-	thld05 = feuler(thld0, 0.5*dt, thld0)
-	getstress!(thld05, params)
-	thld1 = feuler(thld0, dt, thld05)
+
+
+
+
+
+
+
+
+function RK4(thld0::ThLenDenType, params::ParamType)
+	
+	epsilon = params.epsilon
+
+	# Compute the derivatives k1.
+	k1 = getderivs(thld0, params)
+	# Compute the derivatives k2.
+	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
+	k2 = getderivs(thldtemp, params)
+	# Compute the derivatives k3.
+	thldtemp = feuler(thld0, 0.5*dt, k2)
+	k3 = getderivs(thldtemp, params)
+	# Compute the derivatives k4.
+	thldtemp = feuler(thld0, dt, k3)
+	k4 = getderivs(thldtemp, params)
+	# Compute the average derivatives and take the RK4 step.
+	kavg = getkavg(k1,k2,k3,k4)
+	thld1 = feuler(thld0, dt, kavg)
+	return thld1
 end
-# feuler: Update ThLenDenType with forward Euler and integrating factor.
-function feuler(thld0::ThLenDenType, dt, derivs::ThLenDenType)
+# feuler: Take a step of forward Euler with the derivatives specified by dvec.
+function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsilon::Float64)
 	npts, nbods = getnvals(thld0.thlenvec)
-	thlv1 = new_thlenvec(npts)
+	thlv1 = new_thlenvec(nbods)
 	for nn = 1:nbods
-		thlv1[nn] = feuler(thld0.thlenvec[nn], dt, derivs.thlenvec[nn].atau)
+		# Extract the variables for body nn.
+		thlen = thld0.thlenvec[nn]
+		derivs = dvec[nn]
+		th0, len0, xsm0, ysm0 = thlen.theta, thlen.len, thlen.xsm, thlen.ysm
+		mterm, nterm = derivs.mterm, derivs.nterm
+		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
+		# Advance len with forward Euler first.
+		len1 = len0 + dt*mterm
+		# Advance theta with combination of integrating factor and forward Euler.
+		sigma = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
+		th1 = gaussfilter(th0+dt*nterm, sigma)
+		# Advance xsm and ysm with forward Euler.
+		xsm1 = xsm0 + dt*xsmdot
+		ysm1 = ysm0 + dt*ysmdot 
+		# Save new values in thlenvec type.
+		thlv1[nn].theta, thlv1[nn].len = th1, len1
+		thlv1[nn].xsm, thlv1[nn].ysm = xsm1, ysm1
 	end
 	thld1 = new_thlenden(thlv1)
 	return thld1
 end
-# feuler: Update theta and len with forward Euler and integrating factor.
-function feuler(thl0::ThetaLenType, dt::Float64, atau::Vector{Float64})
-	th0, len0 = thl0.theta, thl0.len
-	xsm0, ysm0 = thl0.xsm, thl0.ysm
-	mterm, nterm, xsmdot, ysmdot = getmn( ??? )
-	# Advance len first with forward Euler.
-	len1 = len0 + dt*mterm
-	# Advance theta with combination of integrating factor and forward Euler.
-	sigma = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
-	th1 = gaussfilter(th0+dt*nterm, sigma)
-	# Advance xsm and ysm with forward Euler.
-	xsm1 = xsm0 + dt*xsmdot
-	ysm1 = ysm0 + dt*ysmdot 
-	# Save new values in thlen type.
-	thl1 = new_thlen()
-	thl1.theta, thl1.len = th1, len1
-	thl1.xsm, thl1.ysm = xsm1, ysm1
-	return thl1
+
+#--------------- SMALL ROUTINES ---------------#
+# getkavg: Average all of the k values for RK4
+function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
+		k3::Vector{DerivsType}, k4::Vector{DerivsType})
+	nbods = endof(k1)
+	kavg = new_dvec(nbods)
+	for nn=1:nbods
+		mavg = (k1[nn].mterm + 2*k2[nn].mterm + 2*k3[nn].mterm + k4[nn].mterm)/6.
+		navg = (k1[nn].nterm + 2*k2[nn].nterm + 2*k3[nn].nterm + k4[nn].nterm)/6.
+		xdavg = (k1[nn].xsmdot + 2*k2[nn].xsmdot + 2*k3[nn].xsmdot + k4[nn].xsmdot)/6.
+		ydavg = (k1[nn].ysmdot + 2*k2[nn].ysmdot + 2*k3[nn].ysmdot + k4[nn].ysmdot)/6.
+		kavg[nn].mterm, kavg[nn].nterm = mavg, navg
+		kavg[nn].xsmdot, kavg[nn].ysmdot = xdavg, ydavg 
+	end
+	return kavg
+end
+# getderivs: Get the vector of derivative terms for all the bodies.
+function getderivs(thlenden::ThLenDenType, params::ParamType)
+	getstress!(thlenden, params)
+	npts, nbods = getnvals(thlenden.thlenvec)
+	dvec = new_dvec(nbods)
+	for nn = 1:nbods
+		thlen = thlenden.thlenvec[nn]
+		dvec[nn] = getderivs(thlen, params)
+	end
+	return dvec
+end
+#= getderivs: Calculate the derivatives of theta, len, xsm, ysm for a single body.
+mterm=dL/dt; nterm is the nonlinear term in d/dt of theta. =#
+function getderivs(thlen::ThetaLenType, params::ParamType)
+	# Extract the variables.
+	theta, len, atau = thlen.theta, thlen.len, thlen.atau
+	epsilon = params.epsilon
+	# Make sure atau has been computed.
+	if atau==[]; throw("atau has not been computed"); return; end
+	# Calculate the derivative terms.
+	alpha = getalpha(endof(theta))
+	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
+	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
+	vtang, mterm = tangvel(dtheta, vnorm)
+	# Derivative of absolute-value of shear stress.
+	datau = specdiff(atau)	
+	nterm = (datau + vecmult(dtheta,vtang))/len
+	# Get the derivatives of xsm and ysm.
+	xsmdot = mean(-vecmult(vnorm,sin(theta)) + vecmult(vtang,cos(theta)))
+	ysmdot = mean( vecmult(vnorm,cos(theta)) + vecmult(vtang,sin(theta)))
+	derivs = DerivsType(mterm, nterm, xsmdot, ysmdot)
+	return derivs
+end
+# tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
+function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
+	prod = vecmult(dtheta,vnorm)
+	mprod = mean(prod)
+	# Formula for mterm = dL/dt.
+	mterm = -mprod
+	# The derivative of the tangnential velocity wrt alpha.
+	dvtang = prod - mprod
+	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
+	vtang = specint(dvtang)
+	return vtang, mterm
 end
 # elfun: How to scale the smoothing with len.
 function elfun(len::Float64)
@@ -66,33 +147,6 @@ end
 
 
 
-#--------------- SMALL ROUTINES ---------------#
-# getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
-function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsilon::Float64)
-	if atau==[]; throw("atau has not been computed"); return; end
-	alpha = getalpha(endof(theta))
-	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
-	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
-	vtang, mterm = tangvel(dtheta, vnorm)
-	datau = specdiff(atau)	# Derivative of absolute-value of shear stress.
-	nterm = (datau + vecmult(dtheta,vtang))/len
-	# Get the derivatives of xsm and ysm: should I dealias products here?
-	xsmdot = mean(-vnorm.*sin(theta) + vtang.*cos(theta))
-	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
-	return mterm, nterm, xsmdot, ysmdot
-end
-# tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
-function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
-	prod = vecmult(dtheta,vnorm)
-	mprod = mean(prod)
-	# Formula for mterm = dL/dt.
-	mterm = -mprod
-	# The derivative of the tangnential velocity wrt alpha.
-	dvtang = prod - mprod
-	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
-	vtang = specint(dvtang)
-	return vtang, mterm
-end
 
 #--------------- MORE SMALL ROUTINES ---------------#
 # vecmult: Multiply two vectors with or without dealiasing.

@@ -1,18 +1,22 @@
 # basic.jl: Basic routines such as datatypes and Stokes solvers.
 
 #--------------- OBJECTS ---------------#
-# ParamType: includes the parameters dt, epsilon, sigma, etc.
-type ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; nouter::Int; ifmm::Int; fixarea::Int;
+# ThLenDenType: Includes the vector of all thlens and the density function.
+type ThLenDenType
+	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
 end
-# ThetaLenType: includes the geometry data for each body and memory terms.
+# ThetaLenType: Includes the geometry data and stress of a single body.
 type ThetaLenType
 	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64;
 	xx::Vector{Float64}; yy::Vector{Float64}; atau::Vector{Float64}; 
 end
-# ThLenDenType: includes the vector of all thlen's and the density function.
-type ThLenDenType
-	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
+# ParamType: Includes the parameters dt, epsilon, sigma, etc.
+type ParamType
+	dt::Float64; epsilon::Float64; sigma::Float64; nouter::Int; ifmm::Int; fixarea::Int;
+end
+# DerivsType: Includes the derivatives of theta, len, xsm, ysm
+type DerivsType
+	mterm::Float64; nterm::Vector{Float64}; xsmdot::Float64; ysmdot::Float64
 end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 type TargetsType
@@ -32,11 +36,20 @@ end
 function new_thlen()
 	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec())
 end
+function new_dvec(nbods::Int)
+	return [new_derivs() for nn=1:nbods]
+end
+function new_derivs()
+	return DerivsType(0.,evec(),0.,0.)
+end
 function evec()
 	return Array(Float64,0)
 end
 
 
+
+
+# DELETE????
 # Copy all contents from thlen1 to thlen2.
 function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.theta = thlen1.theta
@@ -106,6 +119,7 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 		density = deepcopy(olddensity)
 		println("\nUsing an initial guess in GMRES")
 	end
+	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
 		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
