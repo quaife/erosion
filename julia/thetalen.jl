@@ -26,6 +26,9 @@ function rungekutta4(thld0::ThLenDenType, params::ParamType)
 
 	# Compute the derivatives k1.
 	k1 = getderivs(thld0, params)
+
+	println("m1 = ", k1[1].mterm)
+
 	# Compute the derivatives k2.
 	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
 	k2 = getderivs(thldtemp, params)
@@ -37,7 +40,15 @@ function rungekutta4(thld0::ThLenDenType, params::ParamType)
 	k4 = getderivs(thldtemp, params)
 	# Compute the average derivatives and take the RK4 step.
 	kavg = getkavg(k1,k2,k3,k4)
+
+	println("mavg = ", kavg[1].mterm)
+
+
 	thld1 = feuler(thld0, dt, kavg, epsilon)
+
+	println("In rungekutta4, len0 = ", thld0.thlenvec[1].len)
+	println("In rungekutta4, len1 = ", thld1.thlenvec[1].len)
+
 	return thld1, dt
 end
 #= feuler: Take a step of forward Euler for all of the bodies.
@@ -47,15 +58,16 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 	thlv1 = new_thlenvec(nbods)
 	for nn = 1:nbods
 		# Extract the variables for body nn.
-		thlen = thld0.thlenvec[nn]
+		thlen0 = thld0.thlenvec[nn]
 		derivs = dvec[nn]
-		th0, len0, xsm0, ysm0 = thlen.theta, thlen.len, thlen.xsm, thlen.ysm
+		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
 		mterm, nterm = derivs.mterm, derivs.nterm
 		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
 		# Advance len with forward Euler first.
 		len1 = len0 + dt*mterm
 		# Advance theta with combination of integrating factor and forward Euler.
 		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
+		alpha = getalpha(npts)
 		th1 = gaussfilter(th0-2*pi*alpha+dt*nterm, sig1) + 2*pi*alpha
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt*xsmdot
@@ -67,6 +79,7 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 	thld1 = new_thlenden(thlv1)
 	return thld1
 end
+
 # getkavg: Average all of the k values for RK4
 function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
 		k3::Vector{DerivsType}, k4::Vector{DerivsType})

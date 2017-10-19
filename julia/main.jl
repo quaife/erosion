@@ -10,26 +10,28 @@ include("postprocess.jl")
 # erosion: The main routine to erode a group of bodies.
 function erosion()
 	# Get the input geometry, parameters, and other stuff.
-	thlenden0,params,paramvec,nsteps,nout,datafolder,plotfolder = startup()
+	thlenden,params,paramvec,nsteps,nout,datafolder,plotfolder = startup()
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
-	plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,0.,0)
+	plotnsave(thlenden,params,paramvec,datafolder,plotfolder,0.,0)
 	
 	# Enter the time loop and apply RK2.
 	nfile = 1; tt = 0.
 	for nn = 1:nsteps
 		# Advance the variables forward one timestep with RK4.
-		thlenden1, dt = rungekutta4(thlenden0, params)
+		thlenden, dt = rungekutta4(thlenden, params)
 		tt += dt
+
+		println("In main, len = ", thlenden.thlenvec[1].len)
+
 		# Plot and save the data if appropriate.
 		if mod(nn,nout)==0
-			compute_denrot!(thlenden, params)	
 			paramvec[end] = (time()-t0)/60.
-			plotnsave(thlenden1,params,paramvec,datafolder,plotfolder,tt,nfile)
+			plotnsave(thlenden,params,paramvec,datafolder,plotfolder,tt,nfile)
 			nfile += 1
 		end
 		# Gracefully exit if all of the bodies have disappeared.
-		if endof(thlenden1.thlenvec)==0; break; end
+		if endof(thlenden.thlenvec)==0; break; end
 	end
 	return
 end

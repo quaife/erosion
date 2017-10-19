@@ -1,14 +1,14 @@
 # basic.jl: Basic routines such as datatypes and Stokes solvers.
 
 #--------------- OBJECTS ---------------#
-# ThLenDenType: Includes the vector of all thlens and the density function.
-type ThLenDenType
-	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
-end
 # ThetaLenType: Includes the geometry data and stress of a single body.
 type ThetaLenType
 	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64;
 	xx::Vector{Float64}; yy::Vector{Float64}; atau::Vector{Float64}; 
+end
+# ThLenDenType: Includes the vector of all thlens and the density function.
+type ThLenDenType
+	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
 end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
 type ParamType
@@ -95,7 +95,7 @@ function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.denrot == []
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,evec())
 	end
 	return
 end
