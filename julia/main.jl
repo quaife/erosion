@@ -3,7 +3,6 @@ using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
-include("RKstarter.jl")
 include("plotsave.jl")
 include("postprocess.jl")
 
@@ -11,30 +10,29 @@ include("postprocess.jl")
 # erosion: The main routine to erode a group of bodies.
 function erosion()
 	# Get the input geometry, parameters, and other stuff.
-	thlenden0,params,paramvec,nsteps,nout,datafolder,plotfolder = startup()
+	thlenden,params,paramvec,nsteps,nout,datafolder,plotfolder = startup()
 	# Begin the erosion computation with the RK starter.
 	t0 = time()
-	thlenden1 = RKstarter!(thlenden0, params)
-	plotnsave(thlenden0,params,paramvec,datafolder,plotfolder,0.,0)
-	# Enter the time loop to use the multi-step method.
-	nfile = 1
+	plotnsave(thlenden,params,paramvec,datafolder,plotfolder,0.,0)
+	
+	# Enter the time loop and apply RK2.
+	nfile = 1; tt = 0.
 	for nn = 1:nsteps
-		# Compute the density function and stress for thlenden1.
-		getstress!(thlenden1,params)
-		# Plot and save the data in thlenden1 if appropriate.
+		# Advance the variables forward one timestep with RK4.
+		thlenden, dt = rungekutta4(thlenden, params)
+		tt += dt
+
+		println("In main, len = ", thlenden.thlenvec[1].len)
+
+		# Plot and save the data if appropriate.
 		if mod(nn,nout)==0
-			tt = nn*params.dt
 			paramvec[end] = (time()-t0)/60.
-			plotnsave(thlenden1,params,paramvec,datafolder,plotfolder,tt,nfile)
+			plotnsave(thlenden,params,paramvec,datafolder,plotfolder,tt,nfile)
 			nfile += 1
 		end
 		# Gracefully exit if all of the bodies have disappeared.
-		if endof(thlenden1.thlenvec)==0; break; end
-		# Advance the thlen vectors.
-		advance_thetalen!(thlenden1,thlenden0,params)
+		if endof(thlenden.thlenvec)==0; break; end
 	end
-	# Post-process to compute the drag and other quantities.
-	#postprocess("run")
 	return
 end
 

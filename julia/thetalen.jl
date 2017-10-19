@@ -14,134 +14,149 @@ I use the same convention for tangential and normal vectors as Shelley 1994.
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
 
-#= cdfscale: The function to scale the curvature-driven flow appropriately with the shear stress. 
-2D Stokes: cdfscale = 1/log(W/L), where W > L is lengthscale of 3rd dimension.
-3D Stokes, cdfscale = 1; high Reynolds, cdfscale = sqrt(L) =#
-function cdfscale(len::Float64)
-	return 1./log(2*pi/len)
-end
 
-#--------------- MULTISTEP METHOD FOR THETA AND LEN ---------------#
-# advance_thetalen!: Dispatch for ThLenDenType.
-function advance_thetalen!(thlenden1::ThLenDenType, thlenden0::ThLenDenType, params::ParamType)
-	advance_thetalen!(thlenden1.thlenvec, thlenden0.thlenvec, params)
-	thlenden0.density = thlenden1.density
-	thlenden1.density = evec()
-	thlenden1.denrot = evec()
-	return
+#--------------- TIME-STEPPING ROUTINES ---------------#
+# rungekutta4: Take a step forward with 4th order Runge-Kutta.
+function rungekutta4(thld0::ThLenDenType, params::ParamType)
+
+	# Extract dt.
+	# NEXT: specify dt adaptively
+	dt = params.dt
+	epsilon = params.epsilon
+
+	# Compute the derivatives k1.
+	k1 = getderivs(thld0, params)
+
+	println("m1 = ", k1[1].mterm)
+
+	# Compute the derivatives k2.
+	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
+	k2 = getderivs(thldtemp, params)
+	# Compute the derivatives k3.
+	thldtemp = feuler(thld0, 0.5*dt, k2, epsilon)
+	k3 = getderivs(thldtemp, params)
+	# Compute the derivatives k4.
+	thldtemp = feuler(thld0, dt, k3, epsilon)
+	k4 = getderivs(thldtemp, params)
+	# Compute the average derivatives and take the RK4 step.
+	kavg = getkavg(k1,k2,k3,k4)
+
+	println("mavg = ", kavg[1].mterm)
+
+
+	thld1 = feuler(thld0, dt, kavg, epsilon)
+
+	println("In rungekutta4, len0 = ", thld0.thlenvec[1].len)
+	println("In rungekutta4, len1 = ", thld1.thlenvec[1].len)
+
+	return thld1, dt
 end
-# advance_thetalen!: Dispatch for vectors of ThetaLenType to handle multiple bodies.
-function advance_thetalen!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, params::ParamType)
-	# Call advance_thetalen for each element of the thlenvec.
-	for nn = 1:endof(thlenvec0)
-		advance_thetalen!(thlenvec1[nn],thlenvec0[nn],params)
+#= feuler: Take a step of forward Euler for all of the bodies.
+The derivatives specified by dvec. =#
+function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsilon::Float64)
+	npts, nbods = getnvals(thld0.thlenvec)
+	thlv1 = new_thlenvec(nbods)
+	for nn = 1:nbods
+		# Extract the variables for body nn.
+		thlen0 = thld0.thlenvec[nn]
+		derivs = dvec[nn]
+		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
+		mterm, nterm = derivs.mterm, derivs.nterm
+		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
+		# Advance len with forward Euler first.
+		len1 = len0 + dt*mterm
+		# Advance theta with combination of integrating factor and forward Euler.
+		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
+		alpha = getalpha(npts)
+		th1 = gaussfilter(th0-2*pi*alpha+dt*nterm, sig1) + 2*pi*alpha
+		# Advance xsm and ysm with forward Euler.
+		xsm1 = xsm0 + dt*xsmdot
+		ysm1 = ysm0 + dt*ysmdot 
+		# Save new values in thlenvec type.
+		thlv1[nn].theta, thlv1[nn].len = th1, len1
+		thlv1[nn].xsm, thlv1[nn].ysm = xsm1, ysm1
 	end
-	# Remove curves with non-positive length.
-	trimthlenvec!(thlenvec1, thlenvec0)
-	return
-end
-#= advance_thetalen: Advance theta and len from time-step n=1 to n=2.
-This is a multi-step method and uses some values from n=0 too.
-Note: thlen1 must already be loaded with the correct atua, which is used in getmn!() =#
-function advance_thetalen!(thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
-	# Extract the needed variables.
-	dt, m0, len1 = params.dt, thlen0.mterm, thlen1.len
-	# Calculate mterm and nterm at time n=1.
-	m1 = getmn!(thlen1,params.epsilon)
-	# Update len with an explicit, multistep method.
-	len2 = len1 + 0.5*dt*(3*m1-m0)
-	# Create a new ThetaLenType variable and save the new len.
-	thlen2 = new_thlen()
-	thlen2.len = len2
-	# Update theta with a multistep, integrating-factor method.
-	advance_theta!(thlen2,thlen1,thlen0,params)
-	# Update surface-mean coordinates with an explicit, multistep method.
-	thlen2.xsm = thlen1.xsm + 0.5*dt*(3*thlen1.xsmdot - thlen0.xsmdot)
-	thlen2.ysm = thlen1.ysm + 0.5*dt*(3*thlen1.ysmdot - thlen0.ysmdot)
-	# Now thlen1 gets copied to thlen0, and thlen2 gets copied to thlen1.
-	# Note: Although tempting, I cannot use deepcopy() because it cuases problems.
-	copy_thlen!(thlen1,thlen0)
-	copy_thlen!(thlen2,thlen1)
-	return
-end
-# advance_theta: Advance theta in time with the integrating-factor method.
-function advance_theta!(thlen2::ThetaLenType, thlen1::ThetaLenType, thlen0::ThetaLenType, params::ParamType)
-	# Extract the needed variables.
-	dt, epsilon = params.dt, params.epsilon
-	theta1, len1, n1 = thlen1.theta, thlen1.len, thlen1.nterm
-	len0, n0 = thlen0.len, thlen0.nterm
-	len2 = thlen2.len
-	alpha = getalpha(endof(theta1))
-	# The function that enters the sigmas of the Guassian filter.
-	lenfun(len::Float64) = abs(len)^(-2)*cdfscale(abs(len))
-	# The first value used in the Gaussian filter.
-	sig1 = sqrt( lenfun(len1) + lenfun(len2) )
-	sig1 *= 2*pi*sqrt(epsilon*dt)
-	# The second value used in the Gaussian filter.
-	sig2 = sqrt( lenfun(len0) + 2*lenfun(len1) + lenfun(len2) )
-	sig2 *= 2*pi*sqrt(epsilon*dt)
-	# Apply the appropriate Gaussian filters to advance theta in time.
-	thlen2.theta = gaussfilter(theta1 - 2*pi*alpha, sig1) + 2*pi*alpha
-	thlen2.theta += 0.5*dt*( 3*gaussfilter(n1,sig1) - gaussfilter(n0,sig2) )
-	# Apply a Krasny-filter to theta (voided)
-	### thlen2.theta = krasnyfilter(thlen2.theta - 2*pi*alpha) + 2*pi*alpha	
-	return
+	thld1 = new_thlenden(thlv1)
+	return thld1
 end
 
-#--------------- DETAILS OF THE MULTISTEP METHOD ---------------#
-#= getmn!: Dispatch for ThetaLenType input; saves mterm and nterm in thlen.
-Also returms mterm to be used locally.
-Note: thlen must already be loaded with the correct atau. =#
-function getmn!(thlen::ThetaLenType, epsilon::Float64)
-	thlen.mterm, thlen.nterm, thlen.xsmdot, thlen.ysmdot = 
-		getmn(thlen.theta, thlen.len, thlen.atau, epsilon)
-	return thlen.mterm
+# getkavg: Average all of the k values for RK4
+function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
+		k3::Vector{DerivsType}, k4::Vector{DerivsType})
+	nbods = endof(k1)
+	kavg = new_dvec(nbods)
+	for nn=1:nbods
+		mavg = (k1[nn].mterm + 2*k2[nn].mterm + 2*k3[nn].mterm + k4[nn].mterm)/6.
+		navg = (k1[nn].nterm + 2*k2[nn].nterm + 2*k3[nn].nterm + k4[nn].nterm)/6.
+		xdavg = (k1[nn].xsmdot + 2*k2[nn].xsmdot + 2*k3[nn].xsmdot + k4[nn].xsmdot)/6.
+		ydavg = (k1[nn].ysmdot + 2*k2[nn].ysmdot + 2*k3[nn].ysmdot + k4[nn].ysmdot)/6.
+		kavg[nn].mterm, kavg[nn].nterm = mavg, navg
+		kavg[nn].xsmdot, kavg[nn].ysmdot = xdavg, ydavg 
+	end
+	return kavg
 end
-# getmn: Calculates mterm and nterm: mterm=dL/dt and nterm is the nonlinear term.
-function getmn(theta::Vector{Float64}, len::Float64, atau::Vector{Float64}, epsilon::Float64)
+# getderivs: Get the derivative terms for all of the bodies.
+function getderivs(thlenden::ThLenDenType, params::ParamType)
+	getstress!(thlenden, params)
+	nbods = endof(thlenden.thlenvec)
+	dvec = new_dvec(nbods)
+	for nn = 1:nbods
+		thlen = thlenden.thlenvec[nn]
+		dvec[nn] = getderivs(thlen, params.epsilon)
+	end
+	return dvec
+end
+#= getderivs: Get the derivative terms for a single body.
+These are the derivatives of theta, len, xsm, and ysm.
+mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
+function getderivs(thlen::ThetaLenType, epsilon::Float64)
+	# Extract the variables.
+	theta, len, atau = thlen.theta, thlen.len, thlen.atau
+	# Make sure atau has been computed.
 	if atau==[]; throw("atau has not been computed"); return; end
+	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
-	vnorm = atau + epsilon*cdfscale(len)*len^(-1) * (dtheta - 2*pi)
+	vnorm = atau + epsilon*len*elfun(len) * (dtheta - 2*pi)
 	vtang, mterm = tangvel(dtheta, vnorm)
-	datau = specdiff(atau)	# Derivative of absolute-value of shear stress.
+	# Derivative of absolute-value of shear stress.
+	datau = specdiff(atau)	
 	nterm = (datau + vecmult(dtheta,vtang))/len
-	# Get the derivatives of xsm and ysm: should I dealias products here?
-	xsmdot = mean(-vnorm.*sin(theta) + vtang.*cos(theta))
-	ysmdot = mean( vnorm.*cos(theta) + vtang.*sin(theta))
-	return mterm, nterm, xsmdot, ysmdot
+	# Get the derivatives of xsm and ysm.
+	xsmdot = mean(-vecmult(vnorm,sin(theta)) + vecmult(vtang,cos(theta)))
+	ysmdot = mean( vecmult(vnorm,cos(theta)) + vecmult(vtang,sin(theta)))
+	derivs = DerivsType(mterm, nterm, xsmdot, ysmdot)
+	return derivs
 end
 # tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
 function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
-	prod = vecmult(dtheta,vnorm)
-	mprod = mean(prod)
+	dthvn = vecmult(dtheta,vnorm)
+	mdthvn = mean(dthvn)
 	# Formula for mterm = dL/dt.
-	mterm = -mprod
+	mterm = -mdthvn
 	# The derivative of the tangnential velocity wrt alpha.
-	dvtang = prod - mprod
+	dvtang = dthvn - mdthvn
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 	vtang = specint(dvtang)
 	return vtang, mterm
 end
-#
+# elfun: How to scale the smoothing with len.
+function elfun(len::Float64)
+	return 1./(len^2 * log(2*pi/len))
+end
+
+
+#--------------- SMALL ROUTINES ---------------#
+# vecmult: Multiply two vectors with or without dealiasing.
 function vecmult(uu::Vector{Float64},vv::Vector{Float64})
 #	return mult_dealias(uu,vv)
 	return uu.*vv
 end
-# trimthlenvec: Remove the curves with length too small or too big.
-function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
-		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
-	npts,nbods = getnvals(thlenvec1)
-	lenvec = zeros(Float64,nbods)
-	for nn=1:nbods
-		lenvec[nn] = thlenvec1[nn].len
-	end
-	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
-	deleteat!(thlenvec0,zind)
-	deleteat!(thlenvec1,zind)
+# getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
+function getalpha(npts::Integer)
+	dalpha = 1.0/npts
+	return alpha = collect(range(0.5*dalpha, dalpha, npts))
 end
-
-#--------------- OTHER ---------------#
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
 	if thlen.xx==[] || thlen.yy==[]
@@ -161,32 +176,6 @@ function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	# Move to have the correct average values.
 	xx += xsm; yy += ysm
 	return xx,yy
-end
-# getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
-function getalpha(npts::Integer)
-	dalpha = 1.0/npts
-	return alpha = collect(range(0.5*dalpha, dalpha, npts))
-end
-# getns: Get the normal and tangent directions.
-# Convention: CCW parameterization and inward pointing normal.
-function getns(theta::Vector{Float64})
-	# CCW tangent vector.
-	sx = cos(theta)
-	sy = sin(theta)
-	# Inward pointing normal vector.
-	nx = -sy
-	ny = sx
-	return sx,sy,nx,ny
-end
-# getns: Get the normal and tangent directions on the rotated grid.
-function getnsrot(theta::Vector{Float64})
-	# CCW tangent vector.
-	sx = -sin(theta)
-	sy = cos(theta)
-	# Inward pointing normal vector.
-	nx = -sy
-	ny = sx
-	return sx,sy,nx,ny
 end
 
 #--------------- Tests for the theta vector ---------------#
@@ -219,33 +208,21 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	return
 end
 
-#--------------- De-aliasing multiplications ---------------#
-#= This did not seem to improve stability any, so I voided it.
-# mult_dealias: Multiply two vectors while upsampling to dealias.
-function mult_dealias(uu::Vector{Float64}, vv::Vector{Float64})
-	# Get the size of the vectors.
-	npts = endof(uu)
-	assert(endof(vv) == npts)
-	# Get some integers.	
-	nov2 = div(npts,2)
-	nzeros = npts
-	# Transform to spectral space.
-	uhat = fft(uu)
-	vhat = fft(vv)
-	# Upsample by nzeros.
-	uhat = [uhat[1:nov2]; zeros(nzeros); uhat[nov2+1:npts]]
-	vhat = [vhat[1:nov2]; zeros(nzeros); vhat[nov2+1:npts]]
-	# Return to physical space and multiply.
-	uup, vup = ifft(uhat), ifft(vhat)
-	imagtest(uup); imagtest(vup)
-	uup, vup = real(uup), real(vup)
-	product = uup .* vup
-	# Transform to spectral space and downsample the product.
-	prodhat = fft(product)
-	deleteat!(prodhat, nov2+1:nov2+nzeros)
-	# Transform back to physical space, test the imaginary part, and return.
-	product = ifft(prodhat) * (npts+nzeros)/npts
-	imagtest(product)
-	return real(product)
+
+
+
+
+#=
+# trimthlenvec: Remove the curves with length too small or too big.
+function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
+		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
+	npts,nbods = getnvals(thlenvec1)
+	lenvec = zeros(Float64,nbods)
+	for nn=1:nbods
+		lenvec[nn] = thlenvec1[nn].len
+	end
+	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
+	deleteat!(thlenvec0,zind)
+	deleteat!(thlenvec1,zind)
 end
 =#

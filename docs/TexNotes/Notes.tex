@@ -56,6 +56,7 @@
 \newcommand{\thalpha}{\pderiv{\theta}{\alpha}}
 \newcommand{\elfun}{\zeta}
 \newcommand{\thhat}{\hat{\theta}}
+\newcommand{\dt}{\Delta t}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TITLE
@@ -242,28 +243,49 @@ Then the evolution equations can be expressed as
 \end{align}
 We treat $\theta$ spectrally
 \begin{equation}
-\theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{2\pi i k \alpha}
+\theta(\alpha,t) = 2 \pi \alpha + \sum_{k = -\infty}^{\infty} \thhat_k(t) e^{2\pi i k \alpha}
 \end{equation}
-Then we get
+where $2 \pi \alpha$ is the linear part and does not depend on time. Then we get
 \begin{equation}
+\label{thODEs}
 \tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun \thhat_k = \hat{N}_k
 \end{equation}
 We introduce the integrating factor
 \begin{equation}
-\mu = \exp \left( 4 \eps \pi^2 k^2 \int \elfun dt \right)
+\mu_k = \exp \left( 4 \eps \pi^2 k^2 \int \elfun dt \right)
 \end{equation}
-so that the solution can be represented as
+so that our system becomes
 \begin{align}
-\thhat_k(t) & = \frac{1}{\mu} \int^t \mu \hat{N}_k dt'
-= \thhat_k(0) + \int_0^t \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^t \elfun dt'' \right) \hat{N}_k \, dt'
-% LONGER FORM
-%& = \exp \left( -4 \eps \pi^2 k^2 \int_0^t \elfun(L) ds \right) \, 
-%\int_0^t \exp \left( 4 \eps \pi^2 k^2 \int_0^s \elfun(L) ds' \right) \hat{N}_k ds \\
+\label{Leq}
+& \tderiv{L}{t} = M \\
+\label{theq}
+& \tderiv{}{t}\left( \mu_k \theta_k \right) = \mu_k \hat{N}_k
 \end{align}
-where $t'$ and $t''$ are simply dummy variables for integration. We can get the exact relationship
+We discretize Eqs.~(\ref{Leq})--(\ref{theq}) with a second-order Runge-Kutta method (the midpoint RK2). In the first step, we go from time $t_n$ and take a half-step to $t_{n+1/2}$
+\begin{align}
+& L^{(n+1/2)}  = L^{(n)} + \frac{1}{2}\dt \, M^{(n)} \\
+& \theta_k^{(n+1/2)} = \nu \left( \theta_k^{(n)} + \frac{1}{2} \dt \,  \hat{N}_k^{(n)} \right)
+\end{align}
+Here, we have introduced
 \begin{equation}
-\thhat_k(t + \Delta t) = \thhat_k(t) 
-+ \int_t^{t+\Delta t} \exp \left( -4 \eps \pi^2 k^2 \int_{t'}^{t+\Delta t} \elfun dt'' \right) \hat{N}_k \, dt'
+\nu = \frac{\mu_k^{(n)}}{\mu_k^{(n+1/2)}} = \exp \left( -4 \eps \pi^2 k^2 \int_{t_n}^{t_{n+1/2}} \zeta \, dt \right)
+\end{equation}
+Discretizing with trapezoid rule (and using the fact that $L$ can be solved for first to get $L^{(n+1/2)}$) gives
+\begin{equation}
+\nu = \exp \left(-\eps \pi^2 k^2 \dt \left( \elfun^{(n+1/2)} + \elfun^{n}\right)\right)
+\end{equation}
+Then we take the second step to $t_{n+1}$ as follows
+\begin{align}
+& L^{(n+1)}  = L^{(n)} + \dt \, M^{(n+1/2)} \\
+& \theta_k^{(n+1)} = \nu \left( \theta_k^{(n)} + \dt \,  \hat{N}_k^{(n+1/2)} \right)
+\end{align}
+where now we have
+\begin{equation}
+\nu = \frac{\mu_k^{(n)}}{\mu_k^{(n+1)}} = \exp \left( -4 \eps \pi^2 k^2 \int_{t_n}^{t_{n+1}} \zeta \, dt \right)
+\end{equation}
+which when discretized becomes
+\begin{equation}
+\nu = \exp \left(-2 \eps \pi^2 k^2 \dt \left( \elfun^{(n+1)} + \elfun^{n}\right)\right)
 \end{equation}
 
 

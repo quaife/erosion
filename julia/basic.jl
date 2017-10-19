@@ -1,20 +1,22 @@
 # basic.jl: Basic routines such as datatypes and Stokes solvers.
 
 #--------------- OBJECTS ---------------#
-# ParamType: includes the parameters dt, epsilon, sigma, etc.
+# ThetaLenType: Includes the geometry data and stress of a single body.
+type ThetaLenType
+	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64;
+	xx::Vector{Float64}; yy::Vector{Float64}; atau::Vector{Float64}; 
+end
+# ThLenDenType: Includes the vector of all thlens and the density function.
+type ThLenDenType
+	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
+end
+# ParamType: Includes the parameters dt, epsilon, sigma, etc.
 type ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; nouter::Int; ifmm::Int; fixarea::Int;
 end
-# ThetaLenType: includes the geometry data for each body and memory terms.
-type ThetaLenType
-	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64;
-	xx::Vector{Float64}; yy::Vector{Float64};
-	atau::Vector{Float64}; mterm::Float64; nterm::Vector{Float64}; 
-	xsmdot::Float64; ysmdot::Float64;
-end
-# ThLenDenType: includes the vector of all thlen's and the density function.
-type ThLenDenType
-	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
+# DerivsType: Includes the derivatives of theta, len, xsm, ysm
+type DerivsType
+	mterm::Float64; nterm::Vector{Float64}; xsmdot::Float64; ysmdot::Float64
 end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 type TargetsType
@@ -32,11 +34,22 @@ function new_thlenvec(nbods::Int)
 	return [new_thlen() for nn=1:nbods]
 end
 function new_thlen()
-	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec(),0.,evec(),0.,0.)
+	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec())
+end
+function new_dvec(nbods::Int)
+	return [new_derivs() for nn=1:nbods]
+end
+function new_derivs()
+	return DerivsType(0.,evec(),0.,0.)
 end
 function evec()
 	return Array(Float64,0)
 end
+
+
+
+
+# DELETE????
 # Copy all contents from thlen1 to thlen2.
 function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	thlen2.theta = thlen1.theta
@@ -53,18 +66,12 @@ function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
 	return
 end
 
-#--------------- MAIN ROUTINES ---------------#
+#--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64}=evec())
 	# Compute the density (if not loaded already).
 	compute_density!(thlenden, params, olddensity)
-	
-
-	# Also compute the density on the rotated grid to save in data files.
-	#compute_denrot!(thlenden, params)
-	
-
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
@@ -82,12 +89,13 @@ function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vecto
 end
 
 #--------------- FORTRAN WRAPPERS ---------------#
+#--- THE DENSITY FUNCTION ---#
 # compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
 function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.denrot == []
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,evec())
 	end
 	return
 end
@@ -112,12 +120,13 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 		density = deepcopy(olddensity)
 		println("\nUsing an initial guess in GMRES")
 	end
+	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
 		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
 	return density
 end
-
+#--- THE SHEAR STRESS ---#
 # compute_stressrot: Compute the stress on the rotated grid
 function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -148,7 +157,7 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vecto
 		&npts, &nbods, &nouter, xx, yy, density, tau)
 	return tau
 end
-
+#--- THE PRESSURE ---#
 # compute_pressrot: Compute the pressure on a rotated grid.
 function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -179,7 +188,7 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vec
 		&npts, &nbods, &nouter, xx, yy, density, pressure)
 	return pressure
 end
-
+#--- THE QUANTITIES OF INTEREST ---#
 # compute_velpressrot_targets: Compute the same on the rotated xy grid.
 function compute_qoirot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -209,7 +218,7 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 	return utar,vtar,ptar,vortar
 end
 
-#--------------- OTHER ---------------#
+#--------------- SMALL ROUTINES ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	npts,nbods = getnvals(thlenden.thlenvec)

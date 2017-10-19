@@ -3,8 +3,9 @@
 
 # plotnsave: Calls plotcurves() and savedata()
 function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
-		datafolder::AbstractString, plotfolder::AbstractString,
-		tt::Float64, cnt::Integer)
+		datafolder::AbstractString, plotfolder::AbstractString, tt::Float64, cnt::Integer)
+	# Compute the density function on the rotated grid.
+	compute_denrot!(thlenden, params)
 	# The file names.
 	cntstr = lpad(cnt,4,0)
 	geomfile = string(datafolder,"geom",cntstr,".dat")
