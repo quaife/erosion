@@ -251,12 +251,13 @@ by~\cite{qua-bir2014a}
   J[\eeta](\xx_0) + \ssigma^\DD(\xx_0), \quad \xx_0 \in \bd\Omega,
 \end{align*} 
 where
-\begin{align*}
+\begin{align}
   J[\eeta](\xx_0) = \frac{1}{2}\pderiv{\eeta}{\ss} \cdot \ss
   \left[ \begin{array}{cc}
     s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
   \end{array}\right].
-\end{align*}
+  \label{eqn:shearStressJump}
+\end{align}
 The deformation tensor of the Stokeslets and
 rotlets~\eqref{eqn:stokeslet_rotlet} are
 \begin{equation}
@@ -323,10 +324,11 @@ is
 To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
 as $\xx$ tends to $\xx_0$.  The limiting value is given
 by~\cite{qua-bir2014a}
-\begin{align*}
+\begin{align}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
     \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
-\end{align*}
+  \label{eqn:pressureJump}
+\end{align}
 The pressure due to the Stokeslets is
 \begin{align*}
   p^S(\xx_0) = \sum_{k=1}^{M}\frac{\rr \cdot \llambda_k}{2\pi\rho^2},
@@ -504,12 +506,12 @@ $\gamma_k$, with $i$ being odd, is approximated as
 \end{align}
 and a similar approximation is used when $i$ is even.  The deformation
 tensor due to the Stokeslets and rotlets is given in
-equation~\eqref{eqn:shearStressSR}, and then the shear stress can be
-computed by computing the deformation tensor in the normal direction,
-and taking the inner product with the tangent direction.
-
-\todo[inline]{discuss how we handle jump condition ... Fourier
-differentiation}
+equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
+deformation tensor~\eqref{eqn:shearStressJump} is added, and the
+required arclength derivative is computed in Fourier space.  Then, the
+shear stress can be computed by computing the deformation tensor in the
+normal direction, and taking the inner product with the tangent
+direction.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Pressure}
@@ -524,11 +526,9 @@ again subtract a constant density function and write the pressure as
 \end{align*}
 Then, identical to how the shear stress is
 computed~\eqref{eqn:stressOddEven}, odd-even integration is used to
-evaluate this layer potential for pressure.
-
-\todo[inline]{discuss how we handle jump condition ... Fourier
-differentiation}
-
+evaluate this layer potential for pressure.  Finally, to add the jump
+condition~\eqref{eqn:pressureJump}, Fourier differentiation is used to
+compute the arclength derivative. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
