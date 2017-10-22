@@ -21,9 +21,6 @@ function erosion()
 		# Advance the variables forward one timestep with RK4.
 		thlenden, dt = rungekutta4(thlenden, params)
 		tt += dt
-
-		println("In main, len = ", thlenden.thlenvec[1].len)
-
 		# Plot and save the data if appropriate.
 		if mod(nn,nout)==0
 			paramvec[end] = (time()-t0)/60.

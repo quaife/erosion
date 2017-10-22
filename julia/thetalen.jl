@@ -14,21 +14,18 @@ I use the same convention for tangential and normal vectors as Shelley 1994.
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
 
-
 #--------------- TIME-STEPPING ROUTINES ---------------#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
 function rungekutta4(thld0::ThLenDenType, params::ParamType)
-
-	# Extract dt.
-	# NEXT: specify dt adaptively
-	dt = params.dt
+	# Extract parameters.
+	# TO DO: specify dt adaptively
+	dtmax = params.dt
+	dt = dtmax
 	epsilon = params.epsilon
-
 	# Compute the derivatives k1.
 	k1 = getderivs(thld0, params)
-
-	println("m1 = ", k1[1].mterm)
-
+	# Check if the length is too small, if so, delete the body gracefully.
+	checklen!(thld0, k1, dtmax)
 	# Compute the derivatives k2.
 	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
 	k2 = getderivs(thldtemp, params)
@@ -40,21 +37,14 @@ function rungekutta4(thld0::ThLenDenType, params::ParamType)
 	k4 = getderivs(thldtemp, params)
 	# Compute the average derivatives and take the RK4 step.
 	kavg = getkavg(k1,k2,k3,k4)
-
-	println("mavg = ", kavg[1].mterm)
-
-
 	thld1 = feuler(thld0, dt, kavg, epsilon)
-
-	println("In rungekutta4, len0 = ", thld0.thlenvec[1].len)
-	println("In rungekutta4, len1 = ", thld1.thlenvec[1].len)
-
 	return thld1, dt
 end
-#= feuler: Take a step of forward Euler for all of the bodies.
-The derivatives specified by dvec. =#
+#= feuler: Take a step of forward Euler for all of the bodies with 
+the time derivatives specified by dvec. =#
 function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsilon::Float64)
 	npts, nbods = getnvals(thld0.thlenvec)
+	assert(endof(dvec) == nbods)
 	thlv1 = new_thlenvec(nbods)
 	for nn = 1:nbods
 		# Extract the variables for body nn.
@@ -65,6 +55,8 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
 		# Advance len with forward Euler first.
 		len1 = len0 + dt*mterm
+		# Make sure that the length is non-negative.
+		assert(len1 >= 0.)
 		# Advance theta with combination of integrating factor and forward Euler.
 		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
 		alpha = getalpha(npts)
@@ -78,22 +70,6 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 	end
 	thld1 = new_thlenden(thlv1)
 	return thld1
-end
-
-# getkavg: Average all of the k values for RK4
-function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
-		k3::Vector{DerivsType}, k4::Vector{DerivsType})
-	nbods = endof(k1)
-	kavg = new_dvec(nbods)
-	for nn=1:nbods
-		mavg = (k1[nn].mterm + 2*k2[nn].mterm + 2*k3[nn].mterm + k4[nn].mterm)/6.
-		navg = (k1[nn].nterm + 2*k2[nn].nterm + 2*k3[nn].nterm + k4[nn].nterm)/6.
-		xdavg = (k1[nn].xsmdot + 2*k2[nn].xsmdot + 2*k3[nn].xsmdot + k4[nn].xsmdot)/6.
-		ydavg = (k1[nn].ysmdot + 2*k2[nn].ysmdot + 2*k3[nn].ysmdot + k4[nn].ysmdot)/6.
-		kavg[nn].mterm, kavg[nn].nterm = mavg, navg
-		kavg[nn].xsmdot, kavg[nn].ysmdot = xdavg, ydavg 
-	end
-	return kavg
 end
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
@@ -113,12 +89,14 @@ function getderivs(thlen::ThetaLenType, epsilon::Float64)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
 	# Make sure atau has been computed.
-	if atau==[]; throw("atau has not been computed"); return; end
+	if atau==[]; throw("Problem: atau has not yet been computed"); return; end
 	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
 	vnorm = atau + epsilon*len*elfun(len) * (dtheta - 2*pi)
 	vtang, mterm = tangvel(dtheta, vnorm)
+	# Check that mterm is negative.
+	assert(mterm <= 0.)
 	# Derivative of absolute-value of shear stress.
 	datau = specdiff(atau)	
 	nterm = (datau + vecmult(dtheta,vtang))/len
@@ -144,7 +122,38 @@ end
 function elfun(len::Float64)
 	return 1./(len^2 * log(2*pi/len))
 end
-
+# function checklen!: Check if the length is too small, if so, delete the body gracefully.
+function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Float64)
+	ndts = 1.	# The number of dt values to look into the future for len.
+	nbods = endof(thlenden.thlenvec)
+	assert(endof(kvec) == nbods)
+	for nn = 1:nbods
+		len = thlenden.thlenvec[nn].len
+		mterm = kvec[nn].mterm
+		#= According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
+		So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. 
+		If len is too small, delete the body in thlenden and its derivatives in kvec. =#
+		if len <= -2*mterm*ndts*dtmax
+			deleteat!(thlenden.thlenvec,nn)
+			deleteat!(kvec,nn)
+		end
+	end
+end
+# getkavg: Average all of the k values for RK4
+function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
+		k3::Vector{DerivsType}, k4::Vector{DerivsType})
+	nbods = endof(k1)
+	kavg = new_dvec(nbods)
+	for nn=1:nbods
+		mavg = (k1[nn].mterm + 2*k2[nn].mterm + 2*k3[nn].mterm + k4[nn].mterm)/6.
+		navg = (k1[nn].nterm + 2*k2[nn].nterm + 2*k3[nn].nterm + k4[nn].nterm)/6.
+		xdavg = (k1[nn].xsmdot + 2*k2[nn].xsmdot + 2*k3[nn].xsmdot + k4[nn].xsmdot)/6.
+		ydavg = (k1[nn].ysmdot + 2*k2[nn].ysmdot + 2*k3[nn].ysmdot + k4[nn].ysmdot)/6.
+		kavg[nn].mterm, kavg[nn].nterm = mavg, navg
+		kavg[nn].xsmdot, kavg[nn].ysmdot = xdavg, ydavg 
+	end
+	return kavg
+end
 
 #--------------- SMALL ROUTINES ---------------#
 # vecmult: Multiply two vectors with or without dealiasing.
@@ -208,21 +217,3 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	return
 end
 
-
-
-
-
-#=
-# trimthlenvec: Remove the curves with length too small or too big.
-function trimthlenvec!(thlenvec1::Vector{ThetaLenType}, thlenvec0::Vector{ThetaLenType}, 
-		minlen::Float64 = 1e-6, maxlen::Float64 = 2*pi)
-	npts,nbods = getnvals(thlenvec1)
-	lenvec = zeros(Float64,nbods)
-	for nn=1:nbods
-		lenvec[nn] = thlenvec1[nn].len
-	end
-	zind = find((lenvec.<minlen) | (lenvec.>maxlen))
-	deleteat!(thlenvec0,zind)
-	deleteat!(thlenvec1,zind)
-end
-=#
