@@ -127,6 +127,7 @@ function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Floa
 	ndts = 1.	# The number of dt values to look into the future for len.
 	nbods = endof(thlenden.thlenvec)
 	assert(endof(kvec) == nbods)
+	deletevec = Array(Int,0)
 	for nn = 1:nbods
 		len = thlenden.thlenvec[nn].len
 		mterm = kvec[nn].mterm
@@ -134,10 +135,11 @@ function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Floa
 		So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. 
 		If len is too small, delete the body in thlenden and its derivatives in kvec. =#
 		if len <= -2*mterm*ndts*dtmax
-			deleteat!(thlenden.thlenvec,nn)
-			deleteat!(kvec,nn)
+			append!(deletevec,[nn])
 		end
 	end
+	deleteat!(thlenden.thlenvec, deletevec)
+	deleteat!(kvec, deletevec)
 end
 # getkavg: Average all of the k values for RK4
 function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
