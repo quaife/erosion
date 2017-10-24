@@ -329,9 +329,10 @@ by~\cite{qua-bir2014a}
   \label{eqn:pressureJump}
 \end{align}
 The pressure due to the Stokeslets is
-\begin{align*}
+\begin{align}
   p^S(\xx_0) = \sum_{k=1}^{M}\frac{\rr \cdot \llambda_k}{2\pi\rho^2},
-\end{align*}
+  \label{eqn:shearPressureSR}
+\end{align}
 and the pressure due to the rotlets is zero.  Therefore, the pressure is
 \begin{align*}
   p(\xx) &= p^{\DD}(\xx) + p^{S}(\xx), \quad &&\xx \in \Omega,\\
@@ -509,8 +510,7 @@ equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
 deformation tensor~\eqref{eqn:shearStressJump} is added, and the
 required arclength derivative is computed in Fourier space.  Then, the
 shear stress can be computed by computing the deformation tensor in the
-normal direction, and taking the inner product with the tangent
-direction.
+normal vector, and taking the inner product with the tangent vector.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Pressure}
@@ -521,13 +521,15 @@ again subtract a constant density function and write the pressure as
 \begin{align*}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot (\eeta(\yy) - \eeta(\xx_0)) \,ds_\yy.
+    \nn \cdot (\eeta(\yy) - \eeta(\xx)) \,ds_\yy, 
+    \quad \xx \in \bd\Omega
 \end{align*}
 Then, identical to how the shear stress is
 computed~\eqref{eqn:stressOddEven}, odd-even integration is used to
-evaluate this layer potential for pressure.  Finally, to add the jump
-condition~\eqref{eqn:pressureJump}, Fourier differentiation is used to
-compute the arclength derivative. 
+evaluate this layer potential for pressure.  The pressure due to the
+Stokeslets are given in equation~\eqref{eqn:shearPressureSR}.  Finally,
+to add the jump condition~\eqref{eqn:pressureJump}, Fourier
+differentiation is used to compute the arclength derivative. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -542,16 +544,15 @@ To analyze the flow, we compute quantities at target points that are in
 the interior of the domain.  In particular, we develop numerical methods
 to compute the velocity~\eqref{eqn:velocityDLP},
 pressure~\eqref{eqn:pressureDLP}, vorticity~\eqref{eqn:vorticityDLP} and
-resistivity~\eqref{eqn:resistivity}.  
-
-Similar to when the target points are on the boundary of the domain, all
-the integrals, except for the resistivity, involve integrands that are
-both periodic and smooth.  However, when the target points are close to
-the boundary of the domain, the integrand becomes nearly-singular, and
-these large derivatives result in a loss of accuracy that needs to be
-rectified.  We will be adopting a near-singular integration scheme that
-allows us to compute all quantities of interest sufficiently close to
-$\bd\Omega$ for the results we are untested in.
+resistivity~\eqref{eqn:resistivity}.  Since the target points are not on
+the boundary of the domain, all the integrals, except for the
+resistivity, involve integrands that are both periodic and smooth.
+However, when the target points are close to the boundary of the domain,
+the integrand becomes nearly-singular, and these large derivatives
+result in a loss of accuracy that needs to be rectified.  We will be
+adopting a near-singular integration scheme that allows us to compute
+all quantities of interest sufficiently close to $\bd\Omega$ for the
+quantities of interest.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -571,36 +572,28 @@ Computing the velocity, pressure, and vorticity at a point $\xx \in
 where $\phi$ is either the velocity, pressure, or vorticity, and the
 kernel $K$ is in
 equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
-and~\eqref{eqn:pressureDLP}.  This integral is approximated with a
-trapezoid rule, which can be easily done with the $N$ points where the
-density function has been solved
+or~\eqref{eqn:pressureDLP}.  This integral is approximated with a
+trapezoid rule, 
 \begin{align}
-  \phi(\xx) \approx \sum_{k=1}^N q_k K(\xx,\yy_k),
+  \phi(\xx) = \sum_{k=1}^N q_k K(\xx,\yy_k),
   \label{eqn:layerPotential}
 \end{align}
 where $q$ contains the quadrature weights, Jacobian, and density
-function.  Based on numerical experiments, the error of the $N$-point
-trapezoid rule is acceptable for points $\xx$ that are more than 5
-arclength spacings from $\bd\Omega$.
+function.  Note that this sum can only be computed once
+equation~\eqref{eqn:completed_BIE} has been solved for the density
+function $\eeta$.  Based on numerical experiments, the error of the
+$N$-point trapezoid rule is acceptable for points $\xx$ that are more
+than 5 arclength spacings from $\bd\Omega$.
 
 For points that are closer than 5 arclength spacings to $\bd\Omega$, we
 use an upsampled trapezoid rule.  The required upsampling of the
 geometry and the density function is done with a Fourier interpolant.
 To minimize the number of discretization points that are used to
-approximate the layer potential~\eqref{eqn:layerPotential}, we the
-upsampling rate given in Table~\ref{tbl:upsampling}.  For points that
-are closer than $5/16$ of an arclength from $\bd\Omega$, a value of 0 is
-simply assigned to $\phi$.
-
-In future work, such as sedimenting eroding bodies, bodies will come too
-close to one another for upsampling to only used.  Therefore, we plan to
-implement a near-singular integration scheme that uses either
-near-singular interpolation~\cite{qua-bir2014a}, quadrature by
-expansion~\cite{klo-bar-gre-one2013}, Barycentric
-interpolation~\cite{bar-wu-vee2015}, or panel-based
-quadrature~\cite{hel-oja2008a}.
-
-
+approximate the layer potential~\eqref{eqn:layerPotential}, we use the
+same upsampling rate for all target points that are in the same dyadic
+interval (Table~\ref{tbl:upsampling}).  For points that are closer than
+$5/16$ of an arclength from $\bd\Omega$, a value of 0 is simply assigned
+to $\phi$.
 \begin{table}[htpb]
 \centering
 \begin{tabular}{|c|ccccc|}
@@ -621,6 +614,18 @@ between a points $\xx \in \Omega$ and the boundary of the domain
 $\bd\Omega$, and $h$ is an arclength spacing.}
 \end{table}
 
+In future work, such as sedimenting eroding bodies, bodies will come too
+close to one another for upsampling to only used.  Therefore, we plan to
+implement a near-singular integration scheme that uses either
+near-singular interpolation~\cite{qua-bir2014a}, quadrature by
+expansion~\cite{klo-bar-gre-one2013}, Barycentric
+interpolation~\cite{bar-wu-vee2015}, or panel-based
+quadrature~\cite{hel-oja2008a}.  In addition, even with accurate
+quadrature, bodies can overlap because of discretization errors, and
+this can be avoided with contact algorithms such as, for example, recent
+work of Lu et al.~\cite{lu-rah-zor2017}.
+
+
 
 
 
@@ -634,36 +639,28 @@ $\bd\Omega$, and $h$ is an arclength spacing.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Accelerating the Layer Potential Evaluations}
 \label{sec:fmm}
-To compute the velocity at an interior point $\xx \in \Omega$, the
-integrand is periodic and smooth, so the trapezoid rule rule achieves
-spectral accuracy.  Therefore, the velocity at a target points $\xx \in
-\Omega$ is approximate by
-\begin{align*}
-  \uu(\xx) = \sum_{j=1}^N K(\xx,\xx_j) \eeta(\xx_j) \Delta s_j.
-\end{align*}
-If the velocity needs to be computed at $N_\tar$ points in $\Omega$,
-where $N_\tar$ is large, the FMM is used to reduce the complexity from
-$\bigO(N_\tar N)$ to $\bigO(N_\tar + N)$.
-
-The dense linear system~\eqref{eqn:completed_BIE_discretized} is solved
-iteratively with GMRES~\cite{saa-sch1986}.  The most expensive part is
-computing the $N$ term sum for all target points.  A direct summation
-would require $\bigO(N^2)$ operations, but this is reduced to $\bigO(N)$
-by using the Fast Mutlipole method for the Stokes double-layer
-potential~\cite{gre-rok1987,rac-???} \todo[inline]{sent email to Manas
-asking about this}.  Since we are discretizing a second-kind integral
-equation, the number of GMRES iterations is bounded independent of
-$N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
+The bulk of the computational work is evaluating discretizations of
+layer potentials~\eqref{eqn:layerPotential} at a large number of points.
+If a direct summation method is used to evaluate these sums at $N_\tar$
+points, this requires $\bigO(NN_\tar)$ operations.  The layer potential
+that is evaluated most frequently is in the GMRES iteration where the
+layer potential $\DD$ is evaluated to compute the velocity at all points
+on the boundary must be evaluated~\eqref{eqn:DLP}.  To reduce the
+computational cost of this calculation, we use the Fast Multipole Method
+(FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the complexity from
+$\bigO(N^2)$ to $\bigO(N)$.  Since we are discretizing a second-kind
+integral equation, the number of GMRES iterations is bounded independent
+of $N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
 solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
 
-In our implementation, the deformation tensor is computed with a direct
-summation, and this requires $\bigO(N^2)$ operations.  Since this
-calculation is only computed once per time step, while the velocity is
-calculated at each GMRES iteration, the computational cost is
-manageable.  However, in future work, to simulate erosion in a dense
-packing of grains, a fast summation method, such as the
-kernel-independent FMM~\cite{yin-bir-zor2004}, will be incorporated. 
-
+In our implementation, the deformation tensor and vorticity are computed
+with a direct summation, and this requires $\bigO(N^2)$ and $\bigO(N
+N_\tar)$ operations, respectively.  Since this calculation is only
+computed once per time step, while the velocity is calculated at each
+GMRES iteration, the computational cost is manageable.  However, in
+future work, to simulate erosion in a dense packing of grains, a fast
+summation method, such as the kernel-independent
+FMM~\cite{yin-bir-zor2004}, will be incorporated. 
 
 
 
@@ -795,8 +792,38 @@ where $t'$ and $t''$ are simply dummy variables for integration. We can get the 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
 
+Runs to do
+\begin{itemize}
+  \item Single body
+  \begin{itemize}
+    \item Aspect ratio and opening angle
+    \item Drag and resistivity
+    \item Anisotropy
+    \item Vorticity
+  \end{itemize}
+  \item $\bigO(5)$ bodies
+  \begin{itemize}
+    \item Drag and resistivity
+    \item Anisotropy
+    \item Long channels between flat faces
+    \item Vorticity
+  \end{itemize}
+  \item $\bigO(50)$ bodies
+  \begin{itemize}
+    \item Drag and resistivity
+    \item Anisotropy
+    \item Vorticity
+  \end{itemize}
+\end{itemize}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions\label{s:conclusions}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\bf Acknowledgments} The authors would like to thank Manas Rachh
+for supplying the FMM for the Stokes double-layer potential.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
