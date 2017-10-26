@@ -6,7 +6,7 @@ xc = []; yc = []; radii = [];
 
 %mu = 0.1;
 %% parameter for exponential distribution of radii
-A = 25;
+A = 15;
 B = 1e-2;
 
 while numel(xc) == 0
@@ -103,7 +103,7 @@ end
 %%%%%%%%%%%%%%%%%%%%
 function iinner = check_inner(xp,yp,rp,xc,yc,radii)
 
-buffer = 1.3;
+buffer = 1.1;
 % buffer == 1 => circles can be infintesimally close
 dist = sqrt((xp - xc).^2 + (yp - yc).^2);
 iinner = any(dist < buffer*radii + buffer*rp);
