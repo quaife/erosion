@@ -6,7 +6,7 @@ xc = []; yc = []; radii = [];
 
 %mu = 0.1;
 %% parameter for exponential distribution of radii
-A = 10;
+A = 25;
 B = 1e-2;
 
 while numel(xc) == 0
@@ -58,11 +58,11 @@ end
 %xc = 0;
 %yc = 0;
 
-N = 512;
+N = 128;
 theta = (0:N-1)'*2*pi/N;
 clf; hold on
 for k = 1:numel(xc)
-  fill(xc(k)+radii(k)*cos(theta),yc(k)+radii(k)*sin(theta),'k')
+  plot(xc(k)+radii(k)*cos(theta),yc(k)+radii(k)*sin(theta),'k-o')
 end
 % plot circles and radii
 
@@ -85,7 +85,7 @@ end
 function iouter = check_outer(x,y,r)
 % check if the points is outside of the computational domain
 
-dist = 0.99;
+dist = 0.95;
 xmin = -1*dist;
 xmax = 1*dist;
 ymin = -1*dist;
