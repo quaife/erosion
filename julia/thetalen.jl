@@ -18,15 +18,13 @@ and I use the inward pointing normal vector. =#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
 function rungekutta4(thld0::ThLenDenType, params::ParamType)
 	# Extract parameters.
-	# TO DO: specify dt adaptively
-	dtmax = params.dt
-	dt = dtmax
+	dt = params.dt
 	epsilon = params.epsilon
 	# Compute the derivatives k1.
 	println("Stage 1 of Runge-Kutta")
 	k1 = getderivs(thld0, params)
 	# Check if the length is too small, if so, delete the body gracefully.
-	checklen!(thld0, k1, dtmax)
+	checklen!(thld0, k1, dt)
 	# Compute the derivatives k2.
 	println("\nStage 2 of Runge-Kutta")
 	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)

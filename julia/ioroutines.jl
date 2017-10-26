@@ -4,8 +4,8 @@
 # plotnsave: Calls plotcurves() and savedata()
 function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 		datafolder::AbstractString, plotfolder::AbstractString, tt::Float64, cnt::Integer)
-	println("\nOUTPUT NUMBER ", cnt)
 	# Compute the density function on the orgintal and the rotated grid.
+	println("\nOUTPUT NUMBER ", cnt)
 	getstress!(thlenden, params)
 	compute_denrot!(thlenden, params)
 	# The file names.
@@ -19,10 +19,6 @@ function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",cntstr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
-	# Plot the pressures.
-	#pressfile = string(plotfolder,"pressure",cntstr,".pdf")
-	#pressure = compute_pressure(thlenden,params.nouter)
-	#plot_pressure(pressure,pressfile)
 	return
 end
 
@@ -50,12 +46,12 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	writedata(densitydata,densityfile)
 	return
 end
-# write_params: Write the important parameters in an output file.
+# save_params: Write the important parameters in an output file.
 function save_params(paramvec::Array, cnt::Int, filename::AbstractString)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
-	label2 = "# Calculated Parameters: dtoutexact, cntout, cputime (minutes), lastcnt"
-	paramdata = [label1; paramvec[1:end-3]; 
-		label2; paramvec[end-2:end-1]; round(paramvec[end],2); cnt]
+	label2 = "# Calculated Parameters: cntout, cputime (minutes), last file number"
+	paramdata = [label1; paramvec[1:end-3];
+		label2; paramvec[end-1]; round(paramvec[end],2); cnt]
 	writedata(paramdata, filename)
 	return
 end
@@ -193,16 +189,6 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 		pp = oplot(xx,yy,"-")
 	end
 	# Save the figure in a file.
-	savefig(pp, figname, width=width, height=height)
-	return
-end
-function plot_pressure(pressure::Vector{Float64}, figname::AbstractString)
-	# Make figure of given height and preserve the aspect ratio.
-	height = 400
-	width = 600
-	pp = plot()
-	# Plot the pressure
-	pp = plot(pressure)
 	savefig(pp, figname, width=width, height=height)
 	return
 end
