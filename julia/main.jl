@@ -3,7 +3,7 @@ using Winston
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
-include("plotsave.jl")
+include("ioroutines.jl")
 include("postprocess.jl")
 
 #--------------- MAIN ROUTINE ---------------#
