@@ -42,7 +42,7 @@ function rungekutta4(thld0::ThLenDenType, params::ParamType)
 	# Compute the average derivatives and take the RK4 step.
 	kavg = getkavg(k1,k2,k3,k4)
 	thld1 = feuler(thld0, dt, kavg, epsilon)
-	println("Runge-Kutta step complete.\n\n")
+	println("Runge-Kutta step complete.\n")
 	return thld1, dt
 end
 #= feuler: Take a step of forward Euler for all of the bodies with 

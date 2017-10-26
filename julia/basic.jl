@@ -49,9 +49,9 @@ end
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
-function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64}=evec())
+function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density if not loaded already.
-	compute_density!(thlenden, params, olddensity)
+	compute_density!(thlenden, params)
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
 	# Smooth atau and save it in each of the thlen variables.
@@ -73,11 +73,11 @@ end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function compute_density!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64})
+function compute_density!(thlenden::ThLenDenType, params::ParamType)
 	if thlenden.density == []
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
-		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm, olddensity)
+		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
 	end
 	return
 end
@@ -87,21 +87,14 @@ function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,evec())
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
 	end
 	return
 end
 # compute_density: Fortran wrapper.
 function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, 
-		npts::Int, nbods::Int, nouter::Int, ifmm::Int, olddensity::Vector{Float64})
-	# Use the olddensity as the initial guess unless it is empty.
-	if endof(olddensity) == 0
-		density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
-		println("No initial guess in GMRES")
-	else 
-		density = deepcopy(olddensity)
-		println("Using an initial guess in GMRES")
-	end
+		npts::Int, nbods::Int, nouter::Int, ifmm::Int)
+	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
 	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Void, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
