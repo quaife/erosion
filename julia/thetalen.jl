@@ -94,7 +94,7 @@ function getderivs(thlen::ThetaLenType, epsilon::Float64)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
 	# Make sure atau has been computed.
-	if atau==[]; throw("Problem: atau has not yet been computed"); return; end
+	assert(endof(atau)>0)
 	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi

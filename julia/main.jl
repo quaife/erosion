@@ -15,7 +15,7 @@ function erosion()
 	t0 = time()
 	plotnsave(thlenden,params,paramvec,datafolder,plotfolder,0.,0)
 	
-	# Enter the time loop and apply RK2.
+	# Enter the time loop to apply Runge-Kutta.
 	nfile = 1; tt = 0.
 	for nn = 1:nsteps
 		# Advance the variables forward one timestep with RK4.
