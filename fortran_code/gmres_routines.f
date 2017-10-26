@@ -2689,7 +2689,10 @@ C
  25         CONTINUE
             ERR = RATMAX
             IF( RATMAX.LE.TOL ) ISDGMR = 1
-            IF( IUNIT.GT.0 ) WRITE(IUNIT,1020) ITER, IELMAX, RATMAX
+c            IF( IUNIT.GT.0 ) WRITE(IUNIT,1020) ITER, IELMAX, RATMAX
+            IF( IUNIT.GT.0 .AND. MOD(IUNIT,10) .EQ. 0) THEN
+              WRITE(IUNIT,1020) ITER, IELMAX, RATMAX
+            ENDIF
             RETURN
          ENDIF
       ENDIF
@@ -2734,7 +2737,8 @@ C         err = ||SX*(x-TrueSolution)||/||SX*TrueSolution|| (2-Norms).
          ENDIF
       ENDIF
 C
-      IF( IUNIT.NE.0 ) THEN
+c      IF( IUNIT.NE.0 ) THEN
+      IF( IUNIT.GT.0 .AND. MOD(ITER,10) .EQ. 0) THEN
          IF( ITER.EQ.0 ) THEN
             WRITE(IUNIT,1000) N, ITOL, MAXL, KMP
          ENDIF
