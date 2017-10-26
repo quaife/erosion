@@ -4,7 +4,9 @@
 # plotnsave: Calls plotcurves() and savedata()
 function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
 		datafolder::AbstractString, plotfolder::AbstractString, tt::Float64, cnt::Integer)
-	# Compute the density function on the rotated grid.
+	println("\nAt output step ", cnt)
+	# Compute the density function on the orgintal and the rotated grid.
+	getstress!(thlenden, params)
 	compute_denrot!(thlenden, params)
 	# The file names.
 	cntstr = lpad(cnt,4,0)

@@ -23,21 +23,26 @@ function rungekutta4(thld0::ThLenDenType, params::ParamType)
 	dt = dtmax
 	epsilon = params.epsilon
 	# Compute the derivatives k1.
+	println("Taking step 1 of Runge-Kutta")
 	k1 = getderivs(thld0, params)
 	# Check if the length is too small, if so, delete the body gracefully.
 	checklen!(thld0, k1, dtmax)
 	# Compute the derivatives k2.
+	println("\nTaking step 2 of Runge-Kutta")
 	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
 	k2 = getderivs(thldtemp, params)
 	# Compute the derivatives k3.
+	println("\nTaking step 3 of Runge-Kutta")
 	thldtemp = feuler(thld0, 0.5*dt, k2, epsilon)
 	k3 = getderivs(thldtemp, params)
 	# Compute the derivatives k4.
+	println("\nTaking step 4 of Runge-Kutta")
 	thldtemp = feuler(thld0, dt, k3, epsilon)
 	k4 = getderivs(thldtemp, params)
 	# Compute the average derivatives and take the RK4 step.
 	kavg = getkavg(k1,k2,k3,k4)
 	thld1 = feuler(thld0, dt, kavg, epsilon)
+	println("Runge-Kutta step complete.\n\n")
 	return thld1, dt
 end
 #= feuler: Take a step of forward Euler for all of the bodies with 

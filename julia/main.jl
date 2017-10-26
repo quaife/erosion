@@ -19,6 +19,7 @@ function erosion()
 	nfile = 1; tt = 0.
 	for nn = 1:nsteps
 		# Advance the variables forward one timestep with RK4.
+		println("\n\nAt time step ", nn)
 		thlenden, dt = rungekutta4(thlenden, params)
 		tt += dt
 		# Plot and save the data if appropriate.

@@ -46,31 +46,11 @@ function evec()
 	return Array(Float64,0)
 end
 
-
-
-
-# DELETE????
-# Copy all contents from thlen1 to thlen2.
-function copy_thlen!(thlen1::ThetaLenType, thlen2::ThetaLenType)
-	thlen2.theta = thlen1.theta
-	thlen2.len = thlen1.len
-	thlen2.xsm = thlen1.xsm
-	thlen2.ysm = thlen1.ysm
-	thlen2.xx = thlen1.xx
-	thlen2.yy = thlen1.yy
-	thlen2.atau = thlen1.atau
-	thlen2.mterm = thlen1.mterm
-	thlen2.nterm = thlen1.nterm
-	thlen2.xsmdot = thlen1.xsmdot
-	thlen2.ysmdot = thlen1.ysmdot
-	return
-end
-
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64}=evec())
-	# Compute the density (if not loaded already).
+	# Compute the density if not loaded already.
 	compute_density!(thlenden, params, olddensity)
 	# Compute the stress.
 	tau = compute_stress(thlenden, params.nouter)	
@@ -90,22 +70,24 @@ end
 
 #--------------- FORTRAN WRAPPERS ---------------#
 #--- THE DENSITY FUNCTION ---#
-# compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
-function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
-	if thlenden.denrot == []
-		npts,nbods,xv,yv = getnxy(thlenden)
-		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,evec())
-	end
-	return
-end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
 function compute_density!(thlenden::ThLenDenType, params::ParamType, olddensity::Vector{Float64})
 	if thlenden.density == []
+		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm, olddensity)
+	end
+	return
+end
+# compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
+function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
+	if thlenden.denrot == []
+		println("Computing the rotated density function.")
+		npts,nbods,xv,yv = getnxy(thlenden)
+		xrot,yrot = xyrot(xv,yv)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,evec())
 	end
 	return
 end
@@ -115,10 +97,10 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	# Use the olddensity as the initial guess unless it is empty.
 	if endof(olddensity) == 0
 		density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
-		println("\nNo initial guess in GMRES")
+		println("No initial guess in GMRES")
 	else 
 		density = deepcopy(olddensity)
-		println("\nUsing an initial guess in GMRES")
+		println("Using an initial guess in GMRES")
 	end
 	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Void, 
@@ -126,7 +108,18 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
 	return density
 end
+
 #--- THE SHEAR STRESS ---#
+# compute_stress: Dispatch for ThLenDenType.
+function compute_stress(thlenden::ThLenDenType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods == 0
+		tau = evec()
+	else
+		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
+	end
+	return tau
+end
 # compute_stressrot: Compute the stress on the rotated grid
 function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -135,16 +128,6 @@ function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
 	else
 		xrot,yrot = xyrot(xv,yv)
 		tau = compute_stress(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
-	end
-	return tau
-end
-# compute_stress: Dispatch for ThLenDenType.
-function compute_stress(thlenden::ThLenDenType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods == 0
-		tau = evec()
-	else
-		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
 	end
 	return tau
 end
@@ -157,7 +140,18 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vecto
 		&npts, &nbods, &nouter, xx, yy, density, tau)
 	return tau
 end
+
 #--- THE PRESSURE ---#
+# compute_pressure: Dispatch for ThLenDenType.
+function compute_pressure(thlenden::ThLenDenType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods ==0
+		pressure = evec()
+	else
+		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
+	end
+	return pressure
+end
 # compute_pressrot: Compute the pressure on a rotated grid.
 function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
@@ -169,16 +163,6 @@ function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
 	end
 	return pressrot
 end
-# compute_pressure: Dispatch for ThLenDenType.
-function compute_pressure(thlenden::ThLenDenType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods ==0
-		pressure = evec()
-	else
-		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
-	end
-	return pressure
-end
 # compute_pressure: Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int)
@@ -189,19 +173,19 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vec
 	return pressure
 end
 #--- THE QUANTITIES OF INTEREST ---#
+# compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
+function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
+		compute_qoi_targets(xv,yv,thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
+	return
+end
 # compute_velpressrot_targets: Compute the same on the rotated xy grid.
 function compute_qoirot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	xrot,yrot = xyrot(xv,yv)
 	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
 		compute_qoi_targets(xrot,yrot,thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
-	return
-end
-# compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
-function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-		compute_qoi_targets(xv,yv,thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
 # compute_qoi_targets: Fortran wrapper.
