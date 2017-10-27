@@ -10,22 +10,22 @@ include("postprocess.jl")
 # erosion: The main routine to erode a group of bodies.
 function erosion()
 	# Get the input geometry, parameters, and other stuff.
-	thlenden,params,tfin,cntout = startup()
+	thlenden,params = startup()
 	# Save the output at t=0.
-	t0 = time()
 	nn=0; nfile = 0; tt = 0.;
-	plotnsave(nfile,tt,thlenden,params,t0)
+	plotnsave(nfile,tt,thlenden,params)
 	
 	# Enter the time loop to apply Runge-Kutta.
-	while(tt <= tfin && endof(thlenden.thlenvec) > 0)
+	while(tt <= params.tfin && endof(thlenden.thlenvec) > 0)
 		# Advance the variables forward one timestep with RK4.
-		println("\n\n\n\nTIME STEP ", nn+1)
+		nn += 1
+		println("\n\n\n\nTIME STEP ", nn)
 		thlenden, dt = rungekutta4(thlenden, params)
-		tt += dt; nn += 1
+		tt += dt
 		# Plot and save the data if appropriate.
-		if mod(nn,cntout)==0
+		if mod(nn, params.cntout)==0
 			nfile += 1
-			plotnsave(nfile,tt,thlenden,params,t0)
+			plotnsave(nfile,tt,thlenden,params)
 		end
 	end
 	return
@@ -47,14 +47,12 @@ function startup()
 	cntout = max(cntout,1)
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea)
-	# Create the folders for the plots and data.
-	new_plotdatafolders()
-	save_params(paramvec,cntout)
-	return thlenden0,params,tfin,cntout
+	cput0 = time()
+	# Save the parameters in an object.
+	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea,tfin,cntout,cput0)
+	# Create new data folders
+	datafolder, plotfolder = getfoldernames()
+	newfolder(datafolder)
+	newfolder(plotfolder)
+	return thlenden0,params
 end
-
-#= fixed parameters
-plot and data folder names
-cntout, t0
-=#

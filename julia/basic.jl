@@ -15,6 +15,7 @@ end
 type ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
 	nouter::Int; ifmm::Int; fixarea::Int;
+	tfin::Float64; cntout::Int; cput0::Float64
 end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm
 type DerivsType

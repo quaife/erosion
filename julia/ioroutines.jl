@@ -2,7 +2,7 @@
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType, t0::FLoat64)
+function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
 	# Preliminary stuff.
 	println("\nOUTPUT NUMBER ", nfile)
 	# Compute the density functions.
@@ -13,36 +13,15 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	nfilestr = lpad(nfile,4,0)
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
+	paramsfile = string(datafolder,"params.dat")
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
 
-	update_params(nfile, t0)
+	save_params(params,nfile,paramsfile)
 
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
-	return
-end
-
-#--------------- DEALING WITH FOLDERS ---------------#
-# getfoldernames: Set the name of the data and plot folders.
-function getfoldernames()
-	datafolder = "../datafiles/run/"
-	plotfolder = "../figs/"
-	return datafolder, plotfolder
-end
-# new_plotdatafolders: Get new data and plot folders.
-function new_plotdatafolders()
-	datafolder, plotfolder = getfoldernames()
-	newfolder(datafolder)
-	newfolder(plotfolder)
-end
-# newfolder: If the folder exists, delete it. Then create a new folder.
-function newfolder(foldername::AbstractString)
-	if isdir(foldername)
-		rm(foldername; recursive=true)
-	end
-	mkdir(foldername)
 	return
 end
 
@@ -77,39 +56,31 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	writedata(densitydata,densityfile)
 	return
 end
-
-#--------------- PARAMETERS DATA ---------------#
-# outparamsfile: Set the name of the output parameters file.
-function outparamsfile()
-	datafolder, plotfolder = getfoldernames()
-	paramsfile = string(datafolder,"params.dat")
-	return paramsfile
-end
 # save_params: Write the important parameters in an output file.
-function save_params(paramvec::Array, cntout::Int)
-	outparamsfile = outparamsfile()
+function save_params(params::ParamType, nfile::Int, paramsfile::AbstractString)
+	paramvec = readvec("params.dat")
+	cputime = round( (time()-params.cput0)/60. , 2)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: cntout, cputime (minutes), last file number"
-	paramdata = [label1; paramvec; label2; cntout; 0.; 0]
+	paramdata = [label1; paramvec; label2; params.cntout; cputime; nfile]
 	writedata(paramdata, outparamsfile)
 	return
 end
-# update_params: Just update the output parameters file with cputime and last count.
-function update_params(nfile::Int, t0::Float64)
-
-	paramvec = readvec("params.dat")
-	cputime = round((time()-t0)/60.,2)
-	#round(cputime,2)
-
-	outparamsfile = outparamsfile()
-	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
-	label2 = "# Calculated Parameters: cntout, cputime (minutes), last file number"
-	paramdata = [label1; paramvec; label2; cntout; cputime; nfile]
-	writedata( , )
-
-
+#--------------- HANDLING FOLDERS ---------------#
+# getfoldernames: Set the name of the data and plot folders.
+function getfoldernames()
+	datafolder = "../datafiles/run/"
+	plotfolder = "../figs/"
+	return datafolder, plotfolder
 end
-
+# newfolder: If the folder exists, delete it. Then create a new folder.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername)
+		rm(foldername; recursive=true)
+	end
+	mkdir(foldername)
+	return
+end
 
 #--------------- READING DATA ---------------#
 # read_thlen_file: Read a thlen file.
