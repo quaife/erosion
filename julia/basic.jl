@@ -8,15 +8,18 @@ type ThetaLenType
 end
 # ThLenDenType: Includes the vector of all thlens and the density function.
 type ThLenDenType
-	thlenvec::Vector{ThetaLenType}; density::Vector{Float64}; denrot::Vector{Float64};
+	thlenvec::Vector{ThetaLenType}; 
+	density::Vector{Float64}; denrot::Vector{Float64};
 end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
 type ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; nouter::Int; ifmm::Int; fixarea::Int;
+	dt::Float64; epsilon::Float64; sigma::Float64; 
+	nouter::Int; ifmm::Int; fixarea::Int;
 end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm
 type DerivsType
-	mterm::Float64; nterm::Vector{Float64}; xsmdot::Float64; ysmdot::Float64
+	mterm::Float64; nterm::Vector{Float64}; 
+	xsmdot::Float64; ysmdot::Float64
 end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 type TargetsType

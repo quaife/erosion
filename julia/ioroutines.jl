@@ -2,27 +2,58 @@
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(thlenden::ThLenDenType, params::ParamType, paramvec::Vector,
-		datafolder::AbstractString, plotfolder::AbstractString, tt::Float64, cnt::Integer)
-	# Compute the density function on the orgintal and the rotated grid.
-	println("\nOUTPUT NUMBER ", cnt)
+function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType, t0::FLoat64)
+	# Preliminary stuff.
+	println("\nOUTPUT NUMBER ", nfile)
+	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_denrot!(thlenden, params)
 	# The file names.
-	cntstr = lpad(cnt,4,0)
-	geomfile = string(datafolder,"geom",cntstr,".dat")
-	densityfile = 	string(datafolder,"density",cntstr,".dat")
-	paramfile = string(datafolder,"params.dat")
+	datafolder, plotfolder = getfoldernames()
+	nfilestr = lpad(nfile,4,0)
+	geomfile = string(datafolder,"geom",nfilestr,".dat")
+	densityfile = string(datafolder,"density",nfilestr,".dat")
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
-	save_params(paramvec,cnt,paramfile)
+
+	update_params(nfile, t0)
+
 	# Plot the shapes.
-	plotfile = string(plotfolder,"shape",cntstr,".pdf")
+	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
 	return
 end
 
+#--------------- DEALING WITH FOLDERS ---------------#
+# getfoldernames: Set the name of the data and plot folders.
+function getfoldernames()
+	datafolder = "../datafiles/run/"
+	plotfolder = "../figs/"
+	return datafolder, plotfolder
+end
+# new_plotdatafolders: Get new data and plot folders.
+function new_plotdatafolders()
+	datafolder, plotfolder = getfoldernames()
+	newfolder(datafolder)
+	newfolder(plotfolder)
+end
+# newfolder: If the folder exists, delete it. Then create a new folder.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername)
+		rm(foldername; recursive=true)
+	end
+	mkdir(foldername)
+	return
+end
+
 #--------------- WRITING DATA ---------------#
+# writedata: Write generic data to a file.
+function writedata(data::Vector, filename::AbstractString)
+	iostream = open(filename, "w")
+	writedlm(iostream, data)
+	close(iostream)
+	return
+end
 #= save_geo_density: Save the geometry data (theta,len,xsm,ysm,xx,yy) 
 and the density-function data in a file. =#
 function save_geo_density(tt::Float64, thlenden::ThLenDenType,
@@ -46,30 +77,39 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	writedata(densitydata,densityfile)
 	return
 end
+
+#--------------- PARAMETERS DATA ---------------#
+# outparamsfile: Set the name of the output parameters file.
+function outparamsfile()
+	datafolder, plotfolder = getfoldernames()
+	paramsfile = string(datafolder,"params.dat")
+	return paramsfile
+end
 # save_params: Write the important parameters in an output file.
-function save_params(paramvec::Array, cnt::Int, filename::AbstractString)
+function save_params(paramvec::Array, cntout::Int)
+	outparamsfile = outparamsfile()
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: cntout, cputime (minutes), last file number"
-	paramdata = [label1; paramvec[1:end-3];
-		label2; paramvec[end-1]; round(paramvec[end],2); cnt]
-	writedata(paramdata, filename)
+	paramdata = [label1; paramvec; label2; cntout; 0.; 0]
+	writedata(paramdata, outparamsfile)
 	return
 end
-# writedata: Write generic data to a file.
-function writedata(data::Vector, filename::AbstractString)
-	iostream = open(filename, "w")
-	writedlm(iostream, data)
-	close(iostream)
-	return
+# update_params: Just update the output parameters file with cputime and last count.
+function update_params(nfile::Int, t0::Float64)
+
+	paramvec = readvec("params.dat")
+	cputime = round((time()-t0)/60.,2)
+	#round(cputime,2)
+
+	outparamsfile = outparamsfile()
+	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
+	label2 = "# Calculated Parameters: cntout, cputime (minutes), last file number"
+	paramdata = [label1; paramvec; label2; cntout; cputime; nfile]
+	writedata( , )
+
+
 end
-# newfolder: If the folder exists, delete it and create a new one.
-function newfolder(foldername::AbstractString)
-	if isdir(foldername)
-		rm(foldername; recursive=true)
-	end
-	mkdir(foldername)
-	return
-end
+
 
 #--------------- READING DATA ---------------#
 # read_thlen_file: Read a thlen file.
