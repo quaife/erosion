@@ -57,12 +57,12 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	return
 end
 # save_params: Write the important parameters in an output file.
-function save_params(params::ParamType, nfile::Int, paramsfile::AbstractString)
+function save_params(params::ParamType, nfile::Int, outparamsfile::AbstractString)
 	paramvec = readvec("params.dat")
 	cputime = round( (time()-params.cput0)/60. , 2)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
-	label2 = "# Calculated Parameters: cntout, cputime (minutes), last file number"
-	paramdata = [label1; paramvec; label2; params.cntout; cputime; nfile]
+	label2 = "# Calculated Parameters: cntout, last file number, cputime (minutes)"
+	paramdata = [label1; paramvec; label2; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
 end
