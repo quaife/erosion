@@ -16,9 +16,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	paramsfile = string(datafolder,"params.dat")
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
-
 	save_params(params,nfile,paramsfile)
-
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
@@ -61,8 +59,8 @@ function save_params(params::ParamType, nfile::Int, outparamsfile::AbstractStrin
 	paramvec = readvec("params.dat")
 	cputime = round( (time()-params.cput0)/60. , 2)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
-	label2 = "# Calculated Parameters: cntout, last file number, cputime (minutes)"
-	paramdata = [label1; paramvec; label2; params.cntout; nfile; cputime]
+	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"
+	paramdata = [label1; paramvec; label2; params.npts; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
 end

@@ -42,9 +42,19 @@ function startup()
 	geoinfile = string("../geometries/",paramvec[1])
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
-	# Read the other parameters and calculate needed quantities.
+	npts,nbods = getnvals(thlenvec0)
+	# Define the object params.
+	params = getparams(paramvec,npts)
+	# Create new data folders
+	datafolder, plotfolder = getfoldernames()
+	newfolder(datafolder)
+	newfolder(plotfolder)
+	return thlenden0,params
+end
+# function getparams: Define the object of parameters.
+function getparams(paramvec::Vector, npts::Int)
+	# Read the parameters and calculate needed quantities.
 	nouter,tfin,dtout,dtfac,epsfac,sigfac,ifmm,fixarea = paramvec[2:9]
-	npts,nbods = getnvals(thlenden0.thlenvec)
 	dt = dtfac/npts
 	cntout = round(Int,dtout/dt)
 	cntout = max(cntout,1)
@@ -52,10 +62,6 @@ function startup()
 	sigma = sigfac/npts
 	cput0 = time()
 	# Save the parameters in an object.
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea,tfin,cntout,cput0)
-	# Create new data folders
-	datafolder, plotfolder = getfoldernames()
-	newfolder(datafolder)
-	newfolder(plotfolder)
-	return thlenden0,params
+	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea,npts,tfin,cntout,cput0)
+	return params
 end

@@ -9,7 +9,9 @@ function postprocess(foldername::AbstractString)
 	paramsfile = string(datafolder,"params.dat")
 	paramvec = readvec(paramsfile)
 	nouter = paramvec[2]
-	ntimes = paramvec[end]
+	npts = paramvec[10]
+	ntimes = paramvec[12]
+	params = getparams(paramvec[1:9],npts)
 	# Read the data at each time step.
 	for cnt=0:ntimes
 		# Get the file name at each time.
@@ -40,8 +42,8 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = collect(-2.00: 0.02: 2.00)
-		ylocs = collect(-0.98: 0.02: 0.98)
+		xlocs = collect(-2.00: 0.1: 2.00)
+		ylocs = collect(-0.98: 0.1: 0.98)
 		targets = setuptargets(xlocs,ylocs)
 		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
@@ -52,6 +54,11 @@ function postprocess(foldername::AbstractString)
 		writedata(targdata, targfile)
 		# Print progress.
 		println("Finished step ", cnt, " of ", ntimes, ".")
+
+		#--------------------------------------#
+		# Compute the stress on each body.
+		getstress!(thlenden,params)
+		stressfile = string(datafolder,"stress",cntstr,".dat")
 	end
 	return
 end
@@ -112,7 +119,7 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 	dragx = 0.
 	dragy = 0.
 	for nn=1:nbods
-		# Get the pressure and stress and body nn.
+		# Get the pressure and stress on body nn.
 		n1,n2 = n1n2(npts,nn)
 		press = pressvec[n1:n2]
 		tau = tauvec[n1:n2]
