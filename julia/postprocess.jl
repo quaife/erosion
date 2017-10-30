@@ -56,9 +56,12 @@ function postprocess(foldername::AbstractString)
 		println("Finished step ", cnt, " of ", ntimes, ".")
 
 		#--------------------------------------#
-		# Compute the stress on each body.
+		# Save the stress on each body.
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
+		label = string("# Data ")
+		stressvec = [thlenden.thlenvec[ii].atau for ii=1:nbods]
+		writedata([label; stressvec], stressfile)
 	end
 	return
 end
