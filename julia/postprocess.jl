@@ -60,8 +60,12 @@ function postprocess(foldername::AbstractString)
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Data ")
-		stressvec = [thlenden.thlenvec[ii].atau for ii=1:nbods]
-		writedata([label; stressvec], stressfile)
+		atauvec = zeros(Float64, npts*nbods)
+		for nn=1:nbods
+			n1,n2 = n1n2(npts,nbods)
+			atauvec[n1:n2] = thlenden.thlenvec[nn].atau
+		end
+		writedata([label; atauvec], stressfile)
 	end
 	return
 end
