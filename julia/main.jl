@@ -28,6 +28,9 @@ function erosion()
 			plotnsave(nfile,tt,thlenden,params)
 		end
 	end
+	# Plot and save one last time with zero bodies.
+	nfile += 1
+	plotnsave(nfile,tt,thlenden,params)
 	return
 end
 
