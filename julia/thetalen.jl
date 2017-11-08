@@ -16,43 +16,42 @@ and I use the inward pointing normal vector. =#
 
 #--------------- TIME-STEPPING ROUTINES ---------------#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
-function rungekutta4(thld0::ThLenDenType, params::ParamType)
+function rungekutta2(thld0::ThLenDenType, params::ParamType)
 	# Extract parameters.
 	dt = params.dt
 	epsilon = params.epsilon
-	# Compute the derivatives k1.
+	# Stage 1
 	println("Stage 1 of Runge-Kutta")
-	k1 = getderivs(thld0, params)
+	# Get the derivatives.
+	dvec = getderivs(thld0, params)
 	# Check if the length is too small, if so, delete the body gracefully.
-	checklen!(thld0, k1, dt)
-	# Compute the derivatives k2.
+	checklen!(thld0, dvec, dt)
+	# Take step 1 of RK2.
+	thld05 = onestep(thld0, dvec, 0.5*dt, epsilon)
+	# Stage 2
 	println("\nStage 2 of Runge-Kutta")
-	thldtemp = feuler(thld0, 0.5*dt, k1, epsilon)
-	k2 = getderivs(thldtemp, params)
-	# Compute the derivatives k3.
-	println("\nStage 3 of Runge-Kutta")
-	thldtemp = feuler(thld0, 0.5*dt, k2, epsilon)
-	k3 = getderivs(thldtemp, params)
-	# Compute the derivatives k4.
-	println("\nStage 4 of Runge-Kutta")
-	thldtemp = feuler(thld0, dt, k3, epsilon)
-	k4 = getderivs(thldtemp, params)
-	# Compute the average derivatives and take the RK4 step.
-	kavg = getkavg(k1,k2,k3,k4)
-	thld1 = feuler(thld0, dt, kavg, epsilon)
+	# Get the lengths and the derivatives.
+	lenv05 = getlens(thld05)
+	dvec = getderivs(thld05, params)
+	# Take step 2 of RK2.
+	thld1 = onestep(thld0, dvec, dt, epsilon, lenv05)
 	println("Completed Runge-Kutta step.")
 	return thld1, dt
 end
-#= feuler: Take a step of forward Euler for all of the bodies with 
+
+#= onestep: Take a step of forward for all of the bodies with 
 the time derivatives specified by dvec. =#
-function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsilon::Float64)
+function onestep(thld0::ThLenDenType, dvec::Vector{DerivsType}, 
+		dt::Float64, epsilon::Float64, lenv05::Vector{Float64}=evec())
 	npts, nbods = getnvals(thld0.thlenvec)
 	assert(endof(dvec) == nbods)
+	# If lenv05 is input, then use step 2 of RK2.
+	endof(lenv05)>0? step2=true : step2=false 
+	# Start loop over bodies.
 	thlv1 = new_thlenvec(nbods)
 	for nn = 1:nbods
 		# Extract the variables for body nn.
-		thlen0 = thld0.thlenvec[nn]
-		derivs = dvec[nn]
+		thlen0, derivs = thld0.thlenvec[nn], dvec[nn]
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
 		mterm, nterm = derivs.mterm, derivs.nterm
 		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
@@ -60,10 +59,19 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 		len1 = len0 + dt*mterm
 		# Make sure that the length is non-negative.
 		assert(len1 >= 0.)
-		# Advance theta with combination of integrating factor and forward Euler.
+		# Compute the sigmas for the Guassian filters.
 		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
+		# If this is step 2 of RK2, have to use len05 for sig2.
+		if step2
+			len05 = lenv05[nn]
+			sig2 = 2*pi*sqrt(epsilon*0.5*dt*(elfun(len05)+elfun(len1)))
+		else
+			sig2 = sig1
+		end
+		# Advance theta using integrating factor and explicit term.
 		alpha = getalpha(npts)
-		th1 = gaussfilter(th0-2*pi*alpha + dt*nterm, sig1) + 2*pi*alpha
+		th1 = gaussfilter(th0-2*pi*alpha, sig1) + 2*pi*alpha
+		th1 += gaussfilter(dt*nterm, sig2)
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt*xsmdot
 		ysm1 = ysm0 + dt*ysmdot 
@@ -74,6 +82,7 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 	thld1 = new_thlenden(thlv1)
 	return thld1
 end
+
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
@@ -125,7 +134,7 @@ end
 function elfun(len::Float64)
 	return 1./(len^2 * log(2*pi/len))
 end
-# function checklen!: Check if the length is too small, if so, delete the body gracefully.
+# checklen!: Check if the length is too small, if so, delete the body gracefully.
 function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Float64)
 	ndts = 1.	# The number of dt values to look into the future for len.
 	nbods = endof(thlenden.thlenvec)
@@ -144,21 +153,16 @@ function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Floa
 	deleteat!(thlenden.thlenvec, deletevec)
 	deleteat!(kvec, deletevec)
 end
-# getkavg: Average all of the k values for RK4
-function getkavg(k1::Vector{DerivsType}, k2::Vector{DerivsType}, 
-		k3::Vector{DerivsType}, k4::Vector{DerivsType})
-	nbods = endof(k1)
-	kavg = new_dvec(nbods)
-	for nn=1:nbods
-		mavg = (k1[nn].mterm + 2*k2[nn].mterm + 2*k3[nn].mterm + k4[nn].mterm)/6.
-		navg = (k1[nn].nterm + 2*k2[nn].nterm + 2*k3[nn].nterm + k4[nn].nterm)/6.
-		xdavg = (k1[nn].xsmdot + 2*k2[nn].xsmdot + 2*k3[nn].xsmdot + k4[nn].xsmdot)/6.
-		ydavg = (k1[nn].ysmdot + 2*k2[nn].ysmdot + 2*k3[nn].ysmdot + k4[nn].ysmdot)/6.
-		kavg[nn].mterm, kavg[nn].nterm = mavg, navg
-		kavg[nn].xsmdot, kavg[nn].ysmdot = xdavg, ydavg 
+# Extract the vector of len values from ThLenDenType.
+function getlens(thld::ThLenDenType)
+	nbods = endof(thld.thlenvec)
+	lenv = zeros(Float64,nbods)
+	for nn = 1:nbods
+		lenv[nn] = thld.thlenvec[nn].len
 	end
-	return kavg
+	return lenv
 end
+
 
 #--------------- SMALL ROUTINES ---------------#
 # vecmult: Multiply two vectors with or without dealiasing.
