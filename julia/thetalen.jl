@@ -140,7 +140,8 @@ function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Floa
 		#= According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
 		So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. 
 		If len is too small, delete the body in thlenden and its derivatives in kvec. =#
-		if (len <= -2*mterm*ndts*dtmax || mterm > 0.)
+		minlen = -2*mterm*ndts*dtmax
+		if (len <= minlen || mterm > 0.)
 			append!(deletevec,[nn])
 		end
 	end
