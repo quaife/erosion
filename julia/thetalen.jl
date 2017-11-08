@@ -142,6 +142,7 @@ function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Floa
 		If len is too small, delete the body in thlenden and its derivatives in kvec. =#
 		minlen = -2*mterm*ndts*dtmax
 		if (len <= minlen || mterm > 0.)
+			if mterm > 0.; warn("mterm is positive!"); end
 			append!(deletevec,[nn])
 		end
 	end
