@@ -22,18 +22,14 @@ function rungekutta2(thld0::ThLenDenType, params::ParamType)
 	epsilon = params.epsilon
 	# Stage 1
 	println("Stage 1 of Runge-Kutta")
-	# Get the derivatives.
 	dvec = getderivs(thld0, params)
-	# Check if the length is too small, if so, delete the body gracefully.
 	checklen!(thld0, dvec, dt)
-	# Take step 1 of RK2.
 	thld05 = onestep(thld0, dvec, 0.5*dt, epsilon)
 	# Stage 2
 	println("\nStage 2 of Runge-Kutta")
-	# Get the lengths and the derivatives.
 	lenv05 = getlens(thld05)
 	dvec = getderivs(thld05, params)
-	# Take step 2 of RK2.
+	checklen!(thld05, dvec, 0.5*dt)
 	thld1 = onestep(thld0, dvec, dt, epsilon, lenv05)
 	println("Completed Runge-Kutta step.")
 	return thld1, dt
@@ -107,8 +103,6 @@ function getderivs(thlen::ThetaLenType, epsilon::Float64)
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
 	vnorm = atau + epsilon*len*elfun(len) * (dtheta - 2*pi)
 	vtang, mterm = tangvel(dtheta, vnorm)
-	# Check that mterm is negative.
-	assert(mterm <= 0.)
 	# Derivative of absolute-value of shear stress.
 	datau = specdiff(atau)	
 	nterm = (datau + vecmult(dtheta,vtang))/len
@@ -146,7 +140,7 @@ function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Floa
 		#= According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
 		So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. 
 		If len is too small, delete the body in thlenden and its derivatives in kvec. =#
-		if len <= -2*mterm*ndts*dtmax
+		if (len <= -2*mterm*ndts*dtmax || mterm > 0.)
 			append!(deletevec,[nn])
 		end
 	end
