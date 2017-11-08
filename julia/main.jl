@@ -8,9 +8,13 @@ include("postprocess.jl")
 
 #--------------- MAIN ROUTINE ---------------#
 # erosion: The main routine to erode a group of bodies.
-function erosion()
+function erosion(dt::Float64 = -1.)
 	# Get the input geometry, parameters, and other stuff.
 	thlenden,params = startup()
+	# Modify dt if necessary.
+	if dt > 0.
+		params.dt = dt
+	end
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
@@ -31,7 +35,7 @@ function erosion()
 	# Plot and save one last time with zero bodies.
 	nfile += 1
 	plotnsave(nfile,tt,thlenden,params)
-	return
+	return thlenden,params,tt
 end
 
 # startup: Read params and geoinfile; setup stuff.

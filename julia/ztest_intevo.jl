@@ -1,4 +1,4 @@
-# Test the curvature driven flow
+# Test the interface evolution via simple curvature driven flow.
 
 function test()
 	# Test convergence with respect to dt.
