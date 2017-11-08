@@ -8,8 +8,8 @@
 
 \title{Methods paper for erosion}
 
-\author[Nick]{M.~Nicholas J.~Moore}
 \author[Bryan]{Bryan D.~Quaife}
+\author[Nick]{M.~Nicholas J.~Moore}
 \address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
@@ -26,8 +26,6 @@ We consider two dimensional eroding bodies in Stokes flow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
-
-\todo[inline]{Bryan, I think you should be first author on this paper.}
 
 This is a methods paper
 \begin{itemize}
@@ -388,14 +386,14 @@ used to update the shape are described.
 \label{sec:spatial_discretization}
 Each body is represented with $N_\iin$ points as the Fourier series
 \begin{align*}
-  \xx^k(\theta) = \sum_{j = -N_\iin /2}^{N_\iin /2-1} \hat{x}_j^k e^{ij\theta},
-    \quad k=1,\ldots,M.
+  \xx^k(\alpha) = \sum_{j = -N_\iin /2}^{N_\iin /2-1} 
+    \hat{x}_j^k e^{ij\alpha}, \quad k=1,\ldots,M.
 \end{align*}
 The exterior geometry is represented with a Fourier series using
 $N_\out$ points.  Derivatives of the shape are computed in Fourier space
 \begin{align*}
-  \frac{d\xx^k(\theta)}{d\theta} = 
-    \sum_{j = -N_\out /2}^{N_\out /2-1} ij\hat{x}_j^k e^{ij\theta},
+  \frac{d\xx^k(\alpha)}{d\alpha} = 
+    \sum_{j = -N_\out /2}^{N_\out /2-1} ij\hat{x}_j^k e^{ij\alpha},
     \quad k=1,\ldots,M.
 \end{align*}
 
@@ -703,7 +701,7 @@ direction and the normal vector points into the bodies (our out of the
 fluid).
 
 In order to regularize boundary evolution, we modify the normal velocity
-in Eq.~(\ref{eqn:bodyEvolution}) as follows
+in Eq.~\eqref{eqn:bodyEvolution} as follows
 \begin{equation}
 \label{eqn:Vn}
 \Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
@@ -718,7 +716,7 @@ where $s$ is arc length. We also introduce the normalized arc length $\alpha = s
 \begin{equation}
 \kappa = \frac{1}{L} \pderiv{\theta}{\alpha}
 \end{equation}
-Substitution into Eq.~(\ref{eqn:Vn}) gives
+Substitution into Eq.~\eqref{eqn:Vn} gives
 \begin{equation}
 \label{eqn:Vn2}
 \Vn = \atau + \frac{\eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 2 \pi \right)
@@ -739,7 +737,7 @@ Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the 
 \label{eqn:thetaevo0}
 & \pderiv{\theta}{t} = \frac{1}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
 \end{align}
-Inserting Eq.~(\ref{eqn:Vn2}) for the normal velocity gives
+Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
 \begin{equation}
 \pderiv{\theta}{t} = \frac{\eps}{L^{2} \log \left(2\pi/L \right)} \ppd{\theta}{\alpha} 
 + \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
@@ -753,17 +751,21 @@ For simplicity, we introduce the variables
 & N = \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
 & \elfun = \frac{1}{L^{2} \log \left(2\pi/L \right)}
 \end{align} 
-Then Eq.~(\ref{eqn:thetaevo0}) can be rewritten as
+Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \begin{equation}
 \label{eqn:thetaevo1}
 \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + N
 \end{equation}
-Note that the $\elfun$ depends only on $L(t)$, and so the highest order derivative in Eq.~(\ref{eqn:thetaevo1}) is {\em linear} in the variable $\alpha$. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for the stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
+Note that the $\elfun$ depends only on $L(t)$, and so the highest order
+derivative in Eq.~\eqref{eqn:thetaevo1} is {\em linear} in the variable $\alpha$. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for the stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
 \begin{align}
 & \theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{2\pi i k \alpha} \\
 & N(\alpha,t)  = \sum_{k = -\infty}^{\infty} \hat{N}_k e^{2\pi i k \alpha}
 \end{align}
-Equation (\ref{eqn:thetaevo1}) gives a set of ODEs for the coefficients
+\todo[inline]{Earlier, I assumed the geometry is $2\pi$ periodic.  Is it
+possible to use this convention cleanly for the presentation?  This
+allows us to avoid the long superscripts $2\pi i k \alpha$}
+Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
 \begin{equation}
 \tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun \thhat_k = \hat{N}_k
 \end{equation}
@@ -779,7 +781,12 @@ Then the evolution equations for $L$ and $\theta$ can be recast as the coupled s
 \label{eqn:thetaevo2}
 & \tderiv{}{t}\left( \mu_k \theta_k \right) = \mu_k \hat{N}_k
 \end{align}
-We solve system (\ref{eqn:Levo2})--(\ref{eqn:thetaevo2}) for the variables $L$ and $\{ \mu_k \theta_k \}$ with a 2nd-order Runge-Kutta method. At each stage, we must recover $\theta(\alpha,t)$ from  $\{ \mu_k \theta_k \}$ in order to compute the shear stress as needed in Eqs.~(\ref{eq:M}) and (\ref{eq:N}) for $M$ and $N$. For this, we compute $\mu_k$ from Eq.~(\ref{eq:mu}) using the trapezoid rule, then recover $\theta(\alpha, t)$ via a Gaussian filter....
+We solve system~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} for the
+variables $L$ and $\{ \mu_k \theta_k \}$ with a 2nd-order Runge-Kutta
+method. At each stage, we must recover $\theta(\alpha,t)$ from  $\{
+  \mu_k \theta_k \}$ in order to compute the shear stress as needed in
+  Eqs.~\eqref{eq:M} and~\eqref{eq:N} for $M$ and $N$. For this, we
+  compute $\mu_k$ from Eq.~\eqref{eq:mu} using the trapezoid rule, then recover $\theta(\alpha, t)$ via a Gaussian filter....
 
 
 
