@@ -779,7 +779,7 @@ Then the evolution equations for $L$ and $\theta$ can be recast as the coupled s
 \label{eqn:thetaevo2}
 & \tderiv{}{t}\left( \mu_k \theta_k \right) = \mu_k \hat{N}_k
 \end{align}
-We solve system (\ref{eqn:Levo2})--(\ref{eqn:thetaevo2}) for the variables $L$ and $\{ \mu_k \theta_k \}$ with a 4th-order Runge-Kutta method. At each stage, we must recover $\theta(\alpha,t)$ from  $\{ \mu_k \theta_k \}$ in order to compute the shear stress as needed in Eqs.~(\ref{eq:M}) and (\ref{eq:N}) for $M$ and $N$. For this, we compute $\mu_k$ from Eq.~(\ref{eq:mu}) using the trapezoid rule, then recover $\theta(\alpha, t)$ via a Gaussian filter....
+We solve system (\ref{eqn:Levo2})--(\ref{eqn:thetaevo2}) for the variables $L$ and $\{ \mu_k \theta_k \}$ with a 2nd-order Runge-Kutta method. At each stage, we must recover $\theta(\alpha,t)$ from  $\{ \mu_k \theta_k \}$ in order to compute the shear stress as needed in Eqs.~(\ref{eq:M}) and (\ref{eq:N}) for $M$ and $N$. For this, we compute $\mu_k$ from Eq.~(\ref{eq:mu}) using the trapezoid rule, then recover $\theta(\alpha, t)$ via a Gaussian filter....
 
 
 

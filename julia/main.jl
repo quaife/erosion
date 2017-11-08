@@ -16,7 +16,7 @@ function erosion()
 	plotnsave(nfile,tt,thlenden,params)
 	
 	# Enter the time loop to apply Runge-Kutta.
-	while(tt <= params.tfin && endof(thlenden.thlenvec) > 0)
+	while(tt < params.tfin - 0.1*params.dt && endof(thlenden.thlenvec) > 0)
 		# Advance the variables forward one timestep with RK4.
 		nn += 1
 		println("\n\n\n\nTIME STEP ", nn)
