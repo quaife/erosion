@@ -60,7 +60,8 @@ function save_params(params::ParamType, nfile::Int, outparamsfile::AbstractStrin
 	cputime = round( (time()-params.cput0)/60. , 2)
 	label1 = "# Input Parameters: geoinfile, nouter, tfin, dtout, dtfac, epsfac, sigfac, iffm, fixarea"
 	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"
-	paramdata = [label1; paramvec; label2; params.npts; params.cntout; nfile; cputime]
+	paramdata = [label1; paramvec; label2; 
+		params.npts; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
 end

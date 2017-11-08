@@ -63,7 +63,7 @@ function feuler(thld0::ThLenDenType, dt::Float64, dvec::Vector{DerivsType}, epsi
 		# Advance theta with combination of integrating factor and forward Euler.
 		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
 		alpha = getalpha(npts)
-		th1 = gaussfilter(th0-2*pi*alpha+dt*nterm, sig1) + 2*pi*alpha
+		th1 = gaussfilter(th0-2*pi*alpha + dt*nterm, sig1) + 2*pi*alpha
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt*xsmdot
 		ysm1 = ysm0 + dt*ysmdot 
