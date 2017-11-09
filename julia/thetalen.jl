@@ -27,9 +27,8 @@ function rungekutta2(thld0::ThLenDenType, params::ParamType)
 	thld05 = onestep(thld0, dvec, 0.5*dt, epsilon)
 	# Stage 2
 	println("\nStage 2 of Runge-Kutta")
-	lenv05 = getlens(thld05)
 	dvec = getderivs(thld05, params)
-	checklen!(thld05, dvec, 0.5*dt)
+	lenv05 = getlens(thld05)
 	thld1 = onestep(thld0, dvec, dt, epsilon, lenv05)
 	println("Completed Runge-Kutta step.")
 	return thld1, dt
@@ -53,8 +52,8 @@ function onestep(thld0::ThLenDenType, dvec::Vector{DerivsType},
 		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
 		# Advance len with forward Euler first.
 		len1 = len0 + dt*mterm
-		# Make sure that the length is non-negative.
-		assert(len1 >= 0.)
+		# Make sure that the length is positive.
+		assert(len1 > 0.)
 		# Compute the sigmas for the Guassian filters.
 		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
 		# If this is step 2 of RK2, have to use len05 for sig2.
@@ -128,26 +127,29 @@ end
 function elfun(len::Float64)
 	return 1./(len^2 * log(2*pi/len))
 end
-# checklen!: Check if the length is too small, if so, delete the body gracefully.
-function checklen!(thlenden::ThLenDenType, kvec::Vector{DerivsType}, dtmax::Float64)
-	ndts = 1.	# The number of dt values to look into the future for len.
+#= checklen!: Check if the length is too small, if so, delete the body gracefully.
+According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
+So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. =#
+function checklen!(thlenden::ThLenDenType, dvec::Vector{DerivsType}, dtmax::Float64)
+	ndts = 1.5	# The number of dt values to look into the future for len.
 	nbods = endof(thlenden.thlenvec)
-	assert(endof(kvec) == nbods)
+	assert(endof(dvec) == nbods)
 	deletevec = Array(Int,0)
 	for nn = 1:nbods
 		len = thlenden.thlenvec[nn].len
-		mterm = kvec[nn].mterm
-		#= According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
-		So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. 
-		If len is too small, delete the body in thlenden and its derivatives in kvec. =#
+		mterm = dvec[nn].mterm
 		minlen = -2*mterm*ndts*dtmax
 		if (len <= minlen || mterm > 0.)
 			if mterm > 0.; warn("mterm is positive!"); end
 			append!(deletevec,[nn])
+			println("\n Deleting at index ", nn)
 		end
 	end
 	deleteat!(thlenden.thlenvec, deletevec)
-	deleteat!(kvec, deletevec)
+	deleteat!(dvec, deletevec)
+
+	println("Size of thlenvec = ", endof(thlenden.thlenvec))
+	println("Size of dvec = ", endof(dvec))
 end
 # Extract the vector of len values from ThLenDenType.
 function getlens(thld::ThLenDenType)
@@ -182,6 +184,7 @@ end
 xsm and ysm are the boundary-averaged values. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	test_theta_means(theta)
+	assert(len) > 0.
 	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len * (cos(theta) - mean(cos(theta)))
 	dy = len * (sin(theta) - mean(sin(theta)))
