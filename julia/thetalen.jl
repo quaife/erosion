@@ -147,9 +147,6 @@ function checklen!(thlenden::ThLenDenType, dvec::Vector{DerivsType}, dtmax::Floa
 	end
 	deleteat!(thlenden.thlenvec, deletevec)
 	deleteat!(dvec, deletevec)
-
-	println("Size of thlenvec = ", endof(thlenden.thlenvec))
-	println("Size of dvec = ", endof(dvec))
 end
 # Extract the vector of len values from ThLenDenType.
 function getlens(thld::ThLenDenType)
