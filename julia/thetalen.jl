@@ -22,54 +22,50 @@ function rungekutta2(thld0::ThLenDenType, params::ParamType)
 	epsilon = params.epsilon
 	# Stage 1
 	println("Stage 1 of Runge-Kutta")
-	dvec = getderivs(thld0, params)
-	checklen!(thld0, dvec, dt)
-	thld05 = onestep(thld0, dvec, 0.5*dt, epsilon)
+	thld05 = timestep!(thld0, thld0, 0.5*dt, 0.5*dt, params)
 	# Stage 2
-	println("\nStage 2 of Runge-Kutta")
-	dvec = getderivs(thld05, params)
-	lenv05 = getlens(thld05)
-	thld1 = onestep(thld0, dvec, dt, epsilon, lenv05)
+	println("\nStage 2 of Runge-Kutta")	
+	thld1 = timestep!(thld0, thld05, dt, 0.5*dt, params)
 	println("Completed Runge-Kutta step.")
 	return thld1, dt
 end
-
-#= onestep: Take a step of forward for all of the bodies with 
-the time derivatives specified by dvec. =#
-function onestep(thld0::ThLenDenType, dvec::Vector{DerivsType}, 
-		dt::Float64, epsilon::Float64, lenv05::Vector{Float64}=evec())
+#= timestep: Take a step of forward for all of the bodies.
+dt1 is the step-size, dt2 is used in the Gaussian filter.  =#
+function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType, 
+		dt1::Float64, dt2::Float64, params::ParamType)
+	# Compute the time derivatives and remove small bodies if needed.
+	dvec = getderivs(thld_derivs, params)
+	deletevec = delete_indices(thld0, dvec, dt1)
+	deleteat!(thld0.thlenvec, deletevec)
+	deleteat!(dvec, deletevec)
+	# Only delete thld_derivs if it is different from thld0.
+	if (thld0 != thld_derivs)
+		deleteat!(thld_derivs.thlenvec, deletevec)
+	end
+	# Loop over all bodies and advance each forward in time.
 	npts, nbods = getnvals(thld0.thlenvec)
-	assert(endof(dvec) == nbods)
-	# If lenv05 is input, then use step 2 of RK2.
-	endof(lenv05)>0? step2=true : step2=false 
-	# Start loop over bodies.
+	assert(endof(dvec) == endof(thld_derivs.thlenvec) == nbods);
 	thlv1 = new_thlenvec(nbods)
+	epsilon = params.epsilon
 	for nn = 1:nbods
 		# Extract the variables for body nn.
 		thlen0, derivs = thld0.thlenvec[nn], dvec[nn]
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
-		mterm, nterm = derivs.mterm, derivs.nterm
-		xsmdot, ysmdot = derivs.xsmdot, derivs.ysmdot
-		# Advance len with forward Euler first.
-		len1 = len0 + dt*mterm
-		# Make sure that the length is positive.
-		assert(len1 > 0.)
+		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
+		lenderivs = thld_derivs.thlenvec[nn].len
+		# Advance len first.
+		len1 = len0 + dt1*mterm
+		assert(len1 > 0.)	
 		# Compute the sigmas for the Guassian filters.
-		sig1 = 2*pi*sqrt(epsilon*dt*(elfun(len0)+elfun(len1)))
-		# If this is step 2 of RK2, have to use len05 for sig2.
-		if step2
-			len05 = lenv05[nn]
-			sig2 = 2*pi*sqrt(epsilon*0.5*dt*(elfun(len05)+elfun(len1)))
-		else
-			sig2 = sig1
-		end
+		sig1 = 2*pi*sqrt(epsilon*dt1*(elfun(len0)+elfun(len1)))
+		sig2 = 2*pi*sqrt(epsilon*dt2*(elfun(lenderivs)+elfun(len1)))
 		# Advance theta using integrating factor and explicit term.
 		alpha = getalpha(npts)
 		th1 = gaussfilter(th0-2*pi*alpha, sig1) + 2*pi*alpha
-		th1 += gaussfilter(dt*nterm, sig2)
+		th1 += gaussfilter(dt1*nterm, sig2)
 		# Advance xsm and ysm with forward Euler.
-		xsm1 = xsm0 + dt*xsmdot
-		ysm1 = ysm0 + dt*ysmdot 
+		xsm1 = xsm0 + dt1*xsmdot
+		ysm1 = ysm0 + dt1*ysmdot 
 		# Save new values in thlenvec type.
 		thlv1[nn].theta, thlv1[nn].len = th1, len1
 		thlv1[nn].xsm, thlv1[nn].ysm = xsm1, ysm1
@@ -78,6 +74,27 @@ function onestep(thld0::ThLenDenType, dvec::Vector{DerivsType},
 	return thld1
 end
 
+#--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
+#= delete_indices: Find the bodies where the length is too small.
+According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
+So if len <= -2*mterm times some multiple of dt, the body will vanish soon. =#
+function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
+	ndts = 1.2	# The number of dt values to look into the future for len.
+	thlv = thld0.thlenvec
+	nbods = endof(thlv)
+	assert(endof(dvec) == nbods)
+	deletevec = Array(Int,0)
+	for nn = 1:nbods
+		len = thlv[nn].len
+		mterm = dvec[nn].mterm
+		minlen = -2*mterm*ndts*dt
+		if (len <= minlen || mterm > 0.)
+			if mterm > 0.; warn("mterm is positive!"); end
+			append!(deletevec,[nn])
+		end
+	end
+	return deletevec
+end
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
@@ -127,37 +144,6 @@ end
 function elfun(len::Float64)
 	return 1./(len^2 * log(2*pi/len))
 end
-#= checklen!: Check if the length is too small, if so, delete the body gracefully.
-According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
-So if len <= -2*mterm times some multiple of dtmax, the body will vanish soon. =#
-function checklen!(thlenden::ThLenDenType, dvec::Vector{DerivsType}, dtmax::Float64)
-	ndts = 1.5	# The number of dt values to look into the future for len.
-	nbods = endof(thlenden.thlenvec)
-	assert(endof(dvec) == nbods)
-	deletevec = Array(Int,0)
-	for nn = 1:nbods
-		len = thlenden.thlenvec[nn].len
-		mterm = dvec[nn].mterm
-		minlen = -2*mterm*ndts*dtmax
-		if (len <= minlen || mterm > 0.)
-			if mterm > 0.; warn("mterm is positive!"); end
-			append!(deletevec,[nn])
-			println("\n Deleting at index ", nn)
-		end
-	end
-	deleteat!(thlenden.thlenvec, deletevec)
-	deleteat!(dvec, deletevec)
-end
-# Extract the vector of len values from ThLenDenType.
-function getlens(thld::ThLenDenType)
-	nbods = endof(thld.thlenvec)
-	lenv = zeros(Float64,nbods)
-	for nn = 1:nbods
-		lenv[nn] = thld.thlenvec[nn].len
-	end
-	return lenv
-end
-
 
 #--------------- SMALL ROUTINES ---------------#
 # vecmult: Multiply two vectors with or without dealiasing.
