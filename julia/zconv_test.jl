@@ -31,8 +31,8 @@ function convtest()
 	println("\nThe final times: ", round(ttv,6))
 	println("The dt values: ", round(dtv,6))
 	println("\nThe drag values: ", round(dragv,3))
-	println("\nError: ", round(errv,4))
-	println("\nOrder: ", round(orderv,2))
+	println("The error: ", round(errv,4))
+	println("The order: ", round(orderv,2))
 end
 
 convtest()
