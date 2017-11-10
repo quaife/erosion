@@ -20,7 +20,6 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
 	save_params(params,nfile,paramsfile)
-
 	return
 end
 
