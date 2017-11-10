@@ -1,5 +1,0 @@
-20 circles of variable radii
-Each circle discretized with 512 points
-Radii comes from a Gamma distribution
-Centers are uniformly distributed
-All circles are entirely contained in the box [-0.9,0.9] x [-0.9 0.9]

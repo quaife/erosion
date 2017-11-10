@@ -5,21 +5,22 @@
 function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
 	# Preliminary stuff.
 	println("\nOUTPUT NUMBER ", nfile)
-	# Compute the density functions.
-	getstress!(thlenden, params)
-	compute_denrot!(thlenden, params)
 	# The file names.
 	datafolder, plotfolder = getfoldernames()
 	nfilestr = lpad(nfile,4,0)
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
 	paramsfile = string(datafolder,"params.dat")
-	# Write the data to a file.
-	save_geo_density(tt,thlenden,geomfile,densityfile)
-	save_params(params,nfile,paramsfile)
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
+	# Compute the density functions.
+	getstress!(thlenden, params)
+	compute_denrot!(thlenden, params)
+	# Write the data to a file.
+	save_geo_density(tt,thlenden,geomfile,densityfile)
+	save_params(params,nfile,paramsfile)
+
 	return
 end
 
