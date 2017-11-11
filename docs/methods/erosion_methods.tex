@@ -749,6 +749,7 @@ For simplicity, we introduce the variables
 & M = - \mean{\thalpha \Vn} \\
 \label{eq:N}
 & N = \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+\label{eq:elfun}
 & \elfun = \frac{1}{L^{2} \log \left(2\pi/L \right)}
 \end{align} 
 Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
@@ -779,14 +780,37 @@ Then the evolution equations for $L$ and $\theta$ can be recast as the coupled s
 \label{eqn:Levo2}
 & \tderiv{L}{t} = M \\
 \label{eqn:thetaevo2}
-& \tderiv{}{t}\left( \mu_k \theta_k \right) = \mu_k \hat{N}_k
+& \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \hat{N}_k
 \end{align}
-We solve system~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} for the
-variables $L$ and $\{ \mu_k \theta_k \}$ with a 2nd-order Runge-Kutta
-method. At each stage, we must recover $\theta(\alpha,t)$ from  $\{
-  \mu_k \theta_k \}$ in order to compute the shear stress as needed in
-  Eqs.~\eqref{eq:M} and~\eqref{eq:N} for $M$ and $N$. For this, we
-  compute $\mu_k$ from Eq.~\eqref{eq:mu} using the trapezoid rule, then recover $\theta(\alpha, t)$ via a Gaussian filter....
+We solve system \eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} with a combination of an explicit, second-order Runge-Kutta method (RK2) and trapezoid rule to compute the integrating factor, $\mu_k$. There is not a unique second-order Runge-Kutta method, and we choose the {\em midpoint} version to maximize the smoothing effect of the curvature term.
+
+At the first stage of RK2 (the half step), we discretize Eqs.~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} as
+\begin{align}
+\label{eq:L12}
+& \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = M^{(n)} \\
+& \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \thhat_k^{(n)}}{\Dt/2} = \hat{N}_k^{(n)}
+\end{align}
+where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the trapezoid rule
+\begin{equation}
+\mu_k^{(n+1/2)} = \exp \left( \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
+\end{equation}
+Notice in Eq.~\eqref{eq:elfun}, that $\elfun$ depends only on $L(t)$. Hence, we just need to update $L^{(n+1/2)}$ first via Eq.~\eqref{eq:L12}, and we have what we need to compute $\mu_k^{(n+1/2)}$. It is instructive to recast as
+\begin{equation}
+\thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{N}_k^{(n)} \right)
+\exp \left( - \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
+\end{equation}
+so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$.
+
+Next, at the second stage of RK2, we discretize as
+\begin{align}
+& \frac{L^{(n+1)} - L^{(n)}}{\Dt} = M^{(n+1/2)} \\
+& \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \hat{N}_k^{(n+1/2)}
+\end{align}
+We again compute the integrating factor, $\mu_k^{(n+1)}$ via the trapezoid rule, giving
+\begin{equation}
+\thhat_k^{(n+1)} = \left( \thhat_k^{(n)} + \Dt \, \hat{N}_k^{(n+1/2)} \right)
+\exp \left( - 2 \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right)
+\end{equation}
 
 
 
