@@ -804,14 +804,16 @@ so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1
 Next, at the second stage of RK2, we discretize as
 \begin{align}
 & \frac{L^{(n+1)} - L^{(n)}}{\Dt} = M^{(n+1/2)} \\
-& \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \hat{N}_k^{(n+1/2)}
+& \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \mu_k^{(n+1/2)} \hat{N}_k^{(n+1/2)}
 \end{align}
 We again compute the integrating factor, $\mu_k^{(n+1)}$ via the trapezoid rule, giving
-\begin{equation}
-\thhat_k^{(n+1)} = \left( \thhat_k^{(n)} + \Dt \, \hat{N}_k^{(n+1/2)} \right)
-\exp \left( - 2 \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right)
-\end{equation}
-
+\begin{align}
+\thhat_k^{(n+1)} = & \thhat_k^{(n)}
+\exp \left( - 2 \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right) +  \\
+& \Dt \, \hat{N}_k^{(n+1/2)}
+\exp \left( - \eps \pi^2 k^2 \Dt \left( \elfun^{(n+1/2)} + \elfun^{(n+1)} \right) \right)
+\end{align}
+CHECK
 
 
 
