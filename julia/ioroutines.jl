@@ -4,7 +4,7 @@
 # plotnsave: Calls plotcurves() and savedata()
 function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
 	# Preliminary stuff.
-	println("\nOUTPUT NUMBER ", nfile)
+	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
 	datafolder, plotfolder = getfoldernames()
 	nfilestr = lpad(nfile,4,0)

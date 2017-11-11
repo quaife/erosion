@@ -89,7 +89,11 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 		mterm = dvec[nn].mterm
 		minlen = -2*mterm*ndts*dt
 		if (len <= minlen || mterm > 0.)
-			if mterm > 0.; warn("mterm is positive!"); end
+			println("\n\n--------------------------------------------------")
+			println("DELETING BODY ", nn)
+			println("len = ", signif(len,3), "; mterm = ", signif(mterm,3))
+			if mterm > 0.; warn("mterm is positive."); end;
+			println("--------------------------------------------------\n")
 			append!(deletevec,[nn])
 		end
 	end
