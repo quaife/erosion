@@ -79,7 +79,8 @@ end
 According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
 So if len <= -2*mterm times some multiple of dt, the body will vanish soon. =#
 function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
-	ndts = 1.2	# The number of dt values to look into the future for len.
+	# ndts: The number of dt values to look into the future for len.
+	ndts = 1.0
 	thlv = thld0.thlenvec
 	nbods = endof(thlv)
 	assert(endof(dvec) == nbods)
