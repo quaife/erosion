@@ -712,14 +712,14 @@ We now introduce the tangent angle, $\theta$, defined through the relation
 \begin{equation}
 \left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
 \end{equation}
-where $s$ is arc length. We also introduce the normalized arc length $\alpha = s / L$. In terms of these new variables, the curvature can be expressed as
+where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
 \begin{equation}
-\kappa = \frac{1}{L} \pderiv{\theta}{\alpha}
+\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
 \end{equation}
 Substitution into Eq.~\eqref{eqn:Vn} gives
 \begin{equation}
 \label{eqn:Vn2}
-\Vn = \atau + \frac{\eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 2 \pi \right)
+\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
 \end{equation}
 
 The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
@@ -733,24 +733,24 @@ The interface evolution is then given by
 Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
 \begin{align}
 \label{eqn:Levo0}
-& \tderiv{L}{t} = - \mean{\thalpha \Vn} \\
+& \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
 \label{eqn:thetaevo0}
-& \pderiv{\theta}{t} = \frac{1}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
+& \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
 \end{align}
 Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
 \begin{equation}
-\pderiv{\theta}{t} = \frac{\eps}{L^{2} \log \left(2\pi/L \right)} \ppd{\theta}{\alpha} 
-+ \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\pderiv{\theta}{t} = \frac{4 \pi^2 \eps}{L^{2} \log \left(2\pi/L \right)} \ppd{\theta}{\alpha} 
++ \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
 \end{equation}
 
 For simplicity, we introduce the variables
 \begin{align}
 \label{eq:M}
-& M = - \mean{\thalpha \Vn} \\
+& M = - 2 \pi \mean{\thalpha \Vn} \\
 \label{eq:N}
-& N = \frac{1}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+& N = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
 \label{eq:elfun}
-& \elfun = \frac{1}{L^{2} \log \left(2\pi/L \right)}
+& \elfun = \frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
 \end{align} 
 Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \begin{equation}
@@ -760,20 +760,17 @@ Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 Note that the $\elfun$ depends only on $L(t)$, and so the highest order
 derivative in Eq.~\eqref{eqn:thetaevo1} is {\em linear} in the variable $\alpha$. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for the stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
 \begin{align}
-& \theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{2\pi i k \alpha} \\
-& N(\alpha,t)  = \sum_{k = -\infty}^{\infty} \hat{N}_k e^{2\pi i k \alpha}
+& \theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{ i k \alpha} \\
+& N(\alpha,t)  = \sum_{k = -\infty}^{\infty} \hat{N}_k e^{ i k \alpha}
 \end{align}
-\todo[inline]{Earlier, I assumed the geometry is $2\pi$ periodic.  Is it
-possible to use this convention cleanly for the presentation?  This
-allows us to avoid the long superscripts $2\pi i k \alpha$}
 Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
 \begin{equation}
-\tderiv{\thhat_k}{t} +  4 \eps \pi^2 k^2  \elfun \thhat_k = \hat{N}_k
+\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{N}_k
 \end{equation}
 We introduce the integrating factor
 \begin{equation}
 \label{eq:mu}
-\mu_k = \exp \left( 4 \eps \pi^2 k^2 \int \elfun \, dt \right)
+\mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right)
 \end{equation}
 Then the evolution equations for $L$ and $\theta$ can be recast as the coupled system of ODEs
 \begin{align}
@@ -792,12 +789,12 @@ At the first stage of RK2 (the half step), we discretize Eqs.~\eqref{eqn:Levo2}-
 \end{align}
 where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the trapezoid rule
 \begin{equation}
-\mu_k^{(n+1/2)} = \exp \left( \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
+\mu_k^{(n+1/2)} = \exp \left( \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
 \end{equation}
 Notice in Eq.~\eqref{eq:elfun}, that $\elfun$ depends only on $L(t)$. Hence, we just need to update $L^{(n+1/2)}$ first via Eq.~\eqref{eq:L12}, and we have what we need to compute $\mu_k^{(n+1/2)}$. It is instructive to recast as
 \begin{equation}
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{N}_k^{(n)} \right)
-\exp \left( - \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
+\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
 \end{equation}
 so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$.
 
@@ -809,9 +806,9 @@ Next, at the second stage of RK2, we discretize as
 We again compute the integrating factor, $\mu_k^{(n+1)}$ via the trapezoid rule, giving
 \begin{align}
 \thhat_k^{(n+1)} = & \thhat_k^{(n)}
-\exp \left( - 2 \eps \pi^2 k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right) +  \\
+\exp \left( - \frac{1}{2} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right) +  \\
 & \Dt \, \hat{N}_k^{(n+1/2)}
-\exp \left( - \eps \pi^2 k^2 \Dt \left( \elfun^{(n+1/2)} + \elfun^{(n+1)} \right) \right)
+\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n+1/2)} + \elfun^{(n+1)} \right) \right)
 \end{align}
 CHECK
 
