@@ -44,12 +44,12 @@ This is a methods paper
 \section{Formulation\label{s:formulation}} 
 Let us first define the main variables used to model erosion.  We only
 consider flows that are confined by a solid wall $\Gamma$ that encloses
-$M$ eroding bodies.  The bodies are denoted as $\gamma_k$,
-$k=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup
+$M$ eroding bodies.  The bodies are denoted as $\gamma_\ell$,
+$\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup
 \gamma_M$.  Neglecting inertial forces, the dynamics of the fluid is
-fully characterized by the position of the bodies $\xx_k(s,t) \in
-\gamma_k$, where $s$ is the arclength and $t$ is time.  Given
-$\xx_k(s,t)$, $k=1,\ldots,M$, derived variables include the fluid
+fully characterized by the position of the bodies $\xx_\ell(s,t) \in
+\gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given
+$\xx_\ell(s,t)$, $\ell=1,\ldots,M$, derived variables include the fluid
 velocity $\uu$, the pressure $p$, and the shear stress $\tau$.   On the
 bounding wall, we prescribed a velocity $\UU(\xx,t)$.  Then, the
 governing equations are
@@ -84,7 +84,7 @@ third, $[-1,1] \times [-1,1]$, of the fluid domain.
   \input{figs/schematic.tikz}
   \caption{\label{fig:schematic} A schematic for the governing
     equations.  A no-slip boundary condition is imposed on each body
-    $\gamma_k$ whose unit normal points outward relative to the
+    $\gamma_\ell$ whose unit normal points outward relative to the
     geometry.  On the outer geometry $\Gamma$, a pipe flow is imposed.
     The bodies are eroded at a rate that is proportional to the
     magnitude of the shear stress applied by the Stokesian fluid.  The
@@ -157,36 +157,37 @@ motions~\cite{pow-mir1987}.  A standard method to remove this rank
 deficiency is to complement the double-layer potential with a Stokeslets
 and rotlets centered inside each interior body
 \begin{align}
-  S[\llambda_k,\cc_k] = \frac{1}{4\pi} \left(-\log \rho \II + 
-    \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_k
+  S[\llambda_\ell,\cc_\ell] = \frac{1}{4\pi} \left(-\log \rho \II + 
+    \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_\ell
   \quad \text{and} \quad
-  R[\xi_k,\cc_k] = \frac{\rr^\perp}{\rho^2}\xi_k, 
-  \quad k=1,\ldots,M,
+  R[\xi_\ell,\cc_\ell] = \frac{\rr^\perp}{\rho^2}\xi_\ell, 
+  \quad \ell=1,\ldots,M,
   \label{eqn:stokeslet_rotlet}
 \end{align}
-where  $\rr = \xx - \cc_k$, $\cc_k$ is a point inside the $k^{th}$ body,
-$\rr^\perp = (r_2,-r_1)$, and $\rho = \|\rr\|$.  Then, any solution of
-the Stokes equations with a Dirichlet boundary condition $\ff$ can be
-written in terms of the completed double-layer potential
+where  $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
+$\ell^{th}$ body, $\rr^\perp = (r_2,-r_1)$, and $\rho = \|\rr\|$.  Then,
+any solution of the Stokes equations with a Dirichlet boundary condition
+$\ff$ can be written in terms of the completed double-layer potential
 \begin{align}
   \label{eqn:completed_DLP}
-  \uu(\xx) = \DD[\eeta](\xx) + \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
-              \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx), \quad \xx \in \Omega,
+  \uu(\xx) = \DD[\eeta](\xx) + 
+    \sum_{\ell=1}^{M} S[\llambda_\ell,\cc_\ell](\xx) +
+    \sum_{\ell=1}^{M} R[\xi_\ell,\cc_\ell](\xx), \quad \xx \in \Omega,
 \end{align}
 where the density function, Stokeslets, and rotlets satisfy
 \begin{subequations}
 \label{eqn:completed_BIE}
 \begin{align}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DD[\eeta](\xx) + 
-      \sum_{k=1}^{M} S[\llambda_k,\cc_k](\xx) +
-      \sum_{k=1}^{M} R[\xi_k,\cc_k](\xx) + \NN_0[\eeta](\xx),
+      \sum_{\ell=1}^{M} S[\llambda_\ell,\cc_\ell](\xx) +
+      \sum_{\ell=1}^{M} R[\xi_\ell,\cc_\ell](\xx) + \NN_0[\eeta](\xx),
       \quad \xx \in \bd\Omega, 
       \label{eqn:DLP}\\
-  \llambda_k &= \frac{1}{2\pi}\int_{\gamma_k} \eeta(\yy) \, ds_\yy,
-  \quad k=1,\ldots,M,
+  \llambda_\ell &= \frac{1}{2\pi}\int_{\gamma_\ell} \eeta(\yy) \, ds_\yy,
+  \quad \ell=1,\ldots,M,
   \label{eqn:stokeslet} \\
-  \xi_k &= \frac{1}{2\pi}\int_{\gamma_k} \yy^\perp \cdot \eeta(\yy)
-  \, ds_\yy, \quad k=1,\ldots,M.
+  \xi_\ell &= \frac{1}{2\pi}\int_{\gamma_\ell} \yy^\perp \cdot \eeta(\yy)
+  \, ds_\yy, \quad \ell=1,\ldots,M.
   \label{eqn:rotlet}
 \end{align}
 \end{subequations}
@@ -205,7 +206,7 @@ $\ff$.
 \label{sec:qois}
 There are several quantities besides the velocity that need to be
 computed.  First, the governing equations~\eqref{eqn:erosionModel}
-require the shear stress along $\gamma_k$.  In addition, to study
+require the shear stress along $\gamma_\ell$.  In addition, to study
 characteristics of the flow, the vorticity, pressure, and drag, and
 resistivity will also be computed.  Once
 equation~\eqref{eqn:completed_DLP} is solved for the density function,
@@ -263,18 +264,18 @@ rotlets~\eqref{eqn:stokeslet_rotlet} are
 \begin{equation}
   \label{eqn:shearStressSR}
   \begin{aligned}
-  \ssigma^S(\xx_0) &= \sum_{k=1}^{M}
-    \frac{\rr \cdot \llambda_k}{4\pi\rho^2} \left(
+  \ssigma^S(\xx_0) &= \sum_{\ell=1}^{M}
+    \frac{\rr \cdot \llambda_\ell}{4\pi\rho^2} \left(
     \II - \frac{2}{\rho^2} \rr \otimes \rr \right),  \\
-  \ssigma^R(\xx_0) &= -\sum_{k=1}^M
-    \frac{\xi_k}{\rho^4} \left(\rr \otimes \rr^\perp + 
+  \ssigma^R(\xx_0) &= -\sum_{\ell=1}^M
+    \frac{\xi_\ell}{\rho^4} \left(\rr \otimes \rr^\perp + 
     \rr^\perp \otimes \rr \right),
   \end{aligned}
 \end{equation}
-where $\rr = \xx - \cc_k$, $\cc_k$ is the point chosen inside body
-$\gamma_k$, and $\rho = \|\rr_k\|$.  Now that the deformation tensor of
-each component of the completed double-layer potential is computed, the
-shear stress at $\xx_0 \in \bd\Omega$ is
+where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is the point chosen inside body
+$\gamma_\ell$, and $\rho = \|\rr_\ell\|$.  Now that the deformation
+tensor of each component of the completed double-layer potential is
+computed, the shear stress at $\xx_0 \in \bd\Omega$ is
 \begin{align*}
   \tau = -2 \left(J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) + 
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
@@ -297,8 +298,8 @@ double-layer potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
 \end{align}
 The vorticity due to the Stokeslet is
 \begin{align*}
-  w^S(\xx) = -\frac{1}{\pi} \sum_{k=1}^{M} 
-    \frac{\rr \cdot \llambda_k^\perp}{\rho^2},
+  w^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
+    \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2},
 \end{align*}
 and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
 \in \Omega$ is
@@ -330,7 +331,7 @@ by~\cite{qua-bir2014a}
 \end{align}
 The pressure due to the Stokeslets is
 \begin{align}
-  p^S(\xx_0) = \sum_{k=1}^{M}\frac{\rr \cdot \llambda_k}{2\pi\rho^2},
+  p^S(\xx_0) = \sum_{\ell=1}^{M}\frac{\rr \cdot \llambda_\ell}{2\pi\rho^2},
   \label{eqn:shearPressureSR}
 \end{align}
 and the pressure due to the rotlets is zero.  Therefore, the pressure is
@@ -346,9 +347,9 @@ and the pressure due to the rotlets is zero.  Therefore, the pressure is
 normal pointing into the eroding body and a tangent vector that
 corresponds to a couterclockwise parameterization}
 With the pressure and shear stress, the drag on a single body with
-boundary $\gamma_k$ is
+boundary $\gamma_\ell$ is
 \begin{align}
-  F_D = \int_{\gamma_k} (-p \nn + \tau \ss)\,ds.
+  F_D = \int_{\gamma_\ell} (-p \nn + \tau \ss)\,ds.
   \label{eqn:drag}
 \end{align}
 
@@ -386,15 +387,15 @@ used to update the shape are described.
 \label{sec:spatial_discretization}
 Each body is represented with $N_\iin$ points as the Fourier series
 \begin{align*}
-  \xx^k(\alpha) = \sum_{j = -N_\iin /2}^{N_\iin /2-1} 
-    \hat{x}_j^k e^{ij\alpha}, \quad k=1,\ldots,M.
+  \xx^\ell(\alpha) = \sum_{k = -N_\iin /2}^{N_\iin /2-1} 
+    \hat{x}_k^\ell e^{ik\alpha}, \quad \ell=1,\ldots,M.
 \end{align*}
 The exterior geometry is represented with a Fourier series using
 $N_\out$ points.  Derivatives of the shape are computed in Fourier space
 \begin{align*}
-  \frac{d\xx^k(\alpha)}{d\alpha} = 
-    \sum_{j = -N_\out /2}^{N_\out /2-1} ij\hat{x}_j^k e^{ij\alpha},
-    \quad k=1,\ldots,M.
+  \frac{d\xx^\ell(\alpha)}{d\alpha} = 
+    \sum_{k = -N_\out /2}^{N_\out /2-1} ik\hat{x}_k^\ell e^{ik\alpha},
+    \quad \ell=1,\ldots,M.
 \end{align*}
 
 
@@ -449,23 +450,21 @@ needs to be solved is
   \begin{aligned}
     \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
       K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
-      \sum_{k=1}^M S[\llambda_k,\cc_k](\xx_i) \\
+      \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) \\
       &\hspace{40pt}
-      +\sum_{k=1}^M R[\xi_k,\cc_k](\xx_i) 
+      +\sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) 
       +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
       \nn(\xx_j))\eeta(\xx_j), \\
-    \llambda_k &= \sum_{\xx_i \in \gamma_k} \eeta(\xx_i) 
+    \llambda_\ell &= \sum_{\xx_i \in \gamma_\ell} \eeta(\xx_i) 
       \Delta s_i, \\ 
-    \mu_k &= \sum_{\xx_i \in \gamma_k}
-      {(\xx_i - \cc_k)}^\perp \cdot \eeta(\xx_i) \Delta s_i,
+    \mu_\ell &= \sum_{\xx_i \in \gamma_\ell}
+      {(\xx_i - \cc_\ell)}^\perp \cdot \eeta(\xx_i) \Delta s_i,
   \end{aligned}
 \end{equation}
-for $i=1,\ldots,N$, $k=1,\ldots,M$.  Since all the integrands are smooth
-and periodic, by using the trapezoid rule, we are guaranteed that the
-numerical solutions converges to the true solution with spectral
+for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  Since all the integrands are
+smooth and periodic, by using the trapezoid rule, we are guaranteed that
+the numerical solutions converges to the true solution with spectral
 accuracy.
-
-\todo[inline]{Above, and throughout the paper, could we index the bodies with $m = 1, \dots M$, and reserve the index $k$ for Fourier components. When I see $k$ I always think wavenumber for some reason.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Shear Stress}
@@ -497,11 +496,11 @@ asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
 to achieve spectral accuracy, we apply odd-even
 integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
 the double-layer potential at a discretization point $\xx_i$ on body
-$\gamma_k$, with $i$ being odd, is approximated as
+$\gamma_\ell$, with $i$ being odd, is approximated as
 \begin{align}
-  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_k}
+  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_\ell}
     K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
-  \sum_{\substack{\xx_j \in \gamma_k \\ j \: \mathtt{even}}}
+  \sum_{\substack{\xx_j \in \gamma_\ell \\ j \: \mathtt{even}}}
     K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
   \label{eqn:stressOddEven}
 \end{align}
@@ -576,7 +575,7 @@ equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
 or~\eqref{eqn:pressureDLP}.  This integral is approximated with a
 trapezoid rule, 
 \begin{align}
-  \phi(\xx) = \sum_{k=1}^N q_k K(\xx,\yy_k),
+  \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j),
   \label{eqn:layerPotential}
 \end{align}
 where $q$ contains the quadrature weights, Jacobian, and density

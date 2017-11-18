@@ -626,7 +626,7 @@ hide axis,
 \node[font = \normalsize,color=red] at (338,122) {$\nn$};
 \node[font = \normalsize,color=red] at (342,158) {$\ss$};
 \path[->,line width=1.2](240,90) edge (260,100);
-\node at (225,90) {$\gamma_k$};
+\node at (225,90) {$\gamma_\ell$};
 \path[->,line width=1.2,color=black](140,50) edge (120,14);
 \node[font = \Large,color=black] at (150,70) {$\Gamma$};
 
