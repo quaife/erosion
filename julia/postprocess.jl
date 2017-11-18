@@ -8,10 +8,10 @@ function postprocess(foldername::AbstractString)
 	# Read the params data file.
 	paramsfile = string(datafolder,"params.dat")
 	paramvec = readvec(paramsfile)
-	nouter = paramvec[2]
 	npts = paramvec[10]
 	ntimes = paramvec[12]
 	params = getparams(paramvec[1:9],npts)
+	nouter = params.nouter
 	# Read the data at each time step.
 	for cnt=0:ntimes
 		# Get the file name at each time.
