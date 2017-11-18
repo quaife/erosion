@@ -11,14 +11,11 @@ include("postprocess.jl")
 function erosion(dt::Float64 = -1.)
 	# Get the input geometry, parameters, and other stuff.
 	thlenden,params = startup()
-	# Modify dt if necessary.
-	if dt > 0.
-		params.dt = dt
-	end
+	# Modify dt based on input to erosion if necessary.
+	dt > 0? params.dt = dt : 0
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
-	
 	# Enter the time loop to apply Runge-Kutta.
 	while(tt < params.tfin - 0.1*params.dt && endof(thlenden.thlenvec) > 0)
 		# Advance the variables forward one timestep with RK4.
@@ -58,12 +55,10 @@ end
 # function getparams: Define the object of parameters.
 function getparams(paramvec::Vector, npts::Int)
 	# Read the parameters and calculate needed quantities.
-	nouter,tfin,dtout,dtfac,epsfac,sigfac,ifmm,fixarea = paramvec[2:9]
-	dt = dtfac/npts
-	cntout = round(Int,dtout/dt)
-	cntout = max(cntout,1)
+	epsfac,sigfac,dt,dtout,tfin,nouter,ifmm,fixarea = paramvec[2:9]
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
+	cntout = max(round(Int,dtout/dt),1)
 	cput0 = time()
 	# Save the parameters in an object.
 	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea,npts,tfin,cntout,cput0)
