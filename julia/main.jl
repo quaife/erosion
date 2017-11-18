@@ -13,6 +13,7 @@ function erosion(dt::Float64 = -1.)
 	thlenden,params = startup()
 	# Modify dt based on input to erosion if necessary.
 	dt > 0? params.dt = dt : 0
+	println("Running erosion with dt = ", signif(params.dt,3))
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
