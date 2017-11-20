@@ -33,6 +33,9 @@ function erosion(dt::Float64 = -1.)
 	# Plot and save one last time with zero bodies.
 	nfile += 1
 	plotnsave(nfile,tt,thlenden,params)
+	cputime = round( (time()-params.cput0)/60. , 2)
+	println("\n\n\nCOMPLETED SIMULATION")
+	println("cpu time = ", cputime, " minutes.\n\n")
 	return thlenden,params,tt
 end
 
