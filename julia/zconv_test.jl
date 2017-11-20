@@ -1,4 +1,4 @@
-# Test the 2nd order convergence in dt.
+2# Test the 2nd order convergence in dt.
 # In params.dat, I use 01circ256.in; tfin = 0.01.
 include("main.jl")
 include("postprocess.jl")
@@ -10,7 +10,7 @@ end
 
 # Test the convergence wrt dt.
 function convtest()
-	nits = 5
+	nits = 6
 	dragv = zeros(Float64,nits)
 	dtv = zeros(Float64,nits)
 	ttv = zeros(Float64,nits)
