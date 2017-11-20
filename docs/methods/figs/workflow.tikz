@@ -5,7 +5,7 @@
 % Place nodes
 \node[block] (init) {{\bf INITIALIZE MODEL} \\ 
 \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
-  \item initialize pores
+  \item initialize bodies 
   \item select $N$, $\Delta t$, $\epsilon$
 \end{itemize}
 };
@@ -21,7 +21,7 @@ SOLVER} \\
 
 
 \node[block, right of=stokes, node distance=14em] (thetaL) {{\bf ERODE
-PORES} \\
+BODIES} \\
 \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
   \item Compute and smooth normal velocity
   \item Update $\theta$ and $L$
