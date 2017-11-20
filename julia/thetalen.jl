@@ -76,8 +76,8 @@ end
 
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
 #= delete_indices: Find the bodies where the length is too small.
-According to the scaling laws (neglecting the log term), len = -2*mterm*(tf-t) 
-So if len <= -2*mterm times some multiple of dt, the body will vanish soon. =#
+Neglecting the log term, L should vanish like sqrt(t).
+The midpoint rule in RK2 gives the sqrt(2) factor. =#
 function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
 	# ndts: The number of dt values to look into the future for len.
 	ndts = 1.0
@@ -88,7 +88,7 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 	for nn = 1:nbods
 		len = thlv[nn].len
 		mterm = dvec[nn].mterm
-		minlen = -2*mterm*ndts*dt
+		minlen = -sqrt(2)*mterm*ndts*dt
 		if (len <= minlen || mterm > 0.)
 			println("\n\n--------------------------------------------------")
 			println("DELETING BODY ", nn)
