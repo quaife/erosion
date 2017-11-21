@@ -185,12 +185,14 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType})
 
 	# ROUGH FOR NOW
 	nstep = round(Int,npts/64)
+	nstep = max(nstep,1)
+	ind = nstep:2*nstep:npts
 
 	for nn = 1:nbods
 		thlen = thlenv[nn]
-		xx,yy = thlen.xx[1:nstep:end], thlen.yy[1:nstep:end]
+		xx,yy = thlen.xx[ind], thlen.yy[ind]
 		sx,sy,nx,ny = getns(thlen.theta)
-		nxx,nyy = nx[1:nstep:end], ny[1:nstep:end]
+		nxx,nyy = nx[ind], ny[ind]
 
 		#ds = thlen.len/npts
 		append!(xtar, vec(xx*ones(1,mm) - 0.02*nxx*spacevec))
