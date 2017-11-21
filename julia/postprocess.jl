@@ -42,9 +42,9 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = collect(-2.00: 0.05: 2.00)
-		ylocs = collect(-0.98: 0.05: 0.98)
-		targets = setuptargets(xlocs,ylocs)
+		xlocs = collect(-2.00: 0.1: 2.00)
+		ylocs = collect(-0.95: 0.1: 0.95)
+		targets = regbodtargs(xlocs,ylocs,thlenvec)
 		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
@@ -77,8 +77,8 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64; rotation:
 	dy = 2./nypts
 	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
 	# Target points for plus/minus x0.
-	tarp = setuptargets([x0],ylocs)
-	tarm = setuptargets([-x0],ylocs)
+	tarp = regulargridtargs([x0],ylocs)
+	tarm = regulargridtargs([-x0],ylocs)
 	# Compute the velocities and pressures on each set of target points.
 	# Either using the original porous matrix or the rotated one.
 	if rotation==true
@@ -144,22 +144,53 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 	end
 	return dragx, dragy
 end
-# setuptargets: Set up the target points.
-function setuptargets(xlocs::Vector{Float64}, ylocs::Vector{Float64})
+
+# regbodtargs: Set up target points on a regular and body fitted grid.
+function regbodtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64}, thlenv::Vector{ThetaLenType})
+	xreg,yreg = regulargrid(xlocs,ylocs)
+	xbod,ybod = bodyfitgrid(thlenv)
+	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
+	targets.xtar = [xreg; xbod]
+	targets.ytar = [yreg; ybod]
+	return targets
+end
+# regulargridtargs: Set up target points on a regular grid; return targets.
+function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
+	xtar,ytar = regulargrid(xlocs,ylocs)
+	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
+	targets.xtar = xtar
+	targets.ytar = ytar
+	return targets
+end
+# regulargrid: Set up target points on a regular grid; return x and y.
+function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	nx = endof(xlocs)
 	ny = endof(ylocs)
 	ntargs = nx*ny
-	xtar = ones(Float64,ntargs)
-	ytar = ones(Float64,ntargs)
+	xtar = zeros(Float64,ntargs)
+	ytar = zeros(Float64,ntargs)
 	for nn=1:nx
 		n1,n2 = n1n2(ny,nn)
 		xtar[n1:n2] = xlocs[nn]
 		ytar[n1:n2] = ylocs
 	end
-	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
-	targets.xtar = xtar
-	targets.ytar = ytar
-	return targets
+	return xtar,ytar
+end
+# bodyfitgrid: Set up target points on a body fitted grid.
+function bodyfitgrid(thlenv::Vector{ThetaLenType})
+	npts,nbods = getnvals(thlenv)
+	xtar,ytar = Array(Float64,0), Array(Float64,0)
+	spacevec = [3 6 9]
+	mm = endof(spacevec)
+	for nn = 1:nbods
+		thlen = thlenv[nn]
+		xx,yy = thlen.xx, thlen.yy
+		ds = thlen.len/npts
+		sx,sy,nx,ny = getns(thlen.theta)
+		append!(xtar, vec(xx*ones(1,mm) - ds*nx*spacevec))
+		append!(ytar, vec(yy*ones(1,mm) - ds*ny*spacevec))
+	end
+	return xtar,ytar
 end
 
 # getns: Get the normal and tangent directions.
