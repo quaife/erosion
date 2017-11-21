@@ -42,8 +42,8 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = collect(-2.00: 0.1: 2.00)
-		ylocs = collect(-0.95: 0.1: 0.95)
+		xlocs = collect(-2.00: 0.05: 2.00)
+		ylocs = collect(-0.95: 0.05: 0.95)
 		targets = regbodtargs(xlocs,ylocs,thlenvec)
 		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
@@ -180,18 +180,25 @@ end
 function bodyfitgrid(thlenv::Vector{ThetaLenType})
 	npts,nbods = getnvals(thlenv)
 	xtar,ytar = Array(Float64,0), Array(Float64,0)
-	spacevec = [3 6 9]
+	spacevec = transpose(collect(1:2:9))
 	mm = endof(spacevec)
+
+	# ROUGH FOR NOW
+	nstep = round(Int,npts/64)
+
 	for nn = 1:nbods
 		thlen = thlenv[nn]
-		xx,yy = thlen.xx, thlen.yy
-		ds = thlen.len/npts
+		xx,yy = thlen.xx[1:nstep:end], thlen.yy[1:nstep:end]
 		sx,sy,nx,ny = getns(thlen.theta)
-		append!(xtar, vec(xx*ones(1,mm) - ds*nx*spacevec))
-		append!(ytar, vec(yy*ones(1,mm) - ds*ny*spacevec))
+		nxx,nyy = nx[1:nstep:end], ny[1:nstep:end]
+
+		#ds = thlen.len/npts
+		append!(xtar, vec(xx*ones(1,mm) - 0.02*nxx*spacevec))
+		append!(ytar, vec(yy*ones(1,mm) - 0.02*nyy*spacevec))
 	end
 	return xtar,ytar
 end
+
 
 # getns: Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
