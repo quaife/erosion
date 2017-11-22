@@ -150,12 +150,34 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 	xlocs = collect(-1. - hh: hh: 1. + hh)
 	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
 	xreg,yreg = regulargrid(xlocs,ylocs)
-	# Body fit grid.
-	xbod,ybod = bodyfitgrid(thlenv)
+	# Body-fitted grid.
+	spacevec = 0.02*collect(1:2:5)
+	nptslayer = 16
+	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
+	# Combine the regular and body fitted grid into a single set of points.
 	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
 	targets.xtar = [xreg; xbod]
 	targets.ytar = [yreg; ybod]
 	return targets
+end
+# bodyfitgrid: Set up target points on a body fitted grid.
+function bodyfitgrid(thlenv::Vector{ThetaLenType}, 
+		spacevec::Vector{Float64}, nptslayer::Int)
+	npts,nbods = getnvals(thlenv)
+	# Use nptslayer in each layer.
+	ind0 = max(round(Int, npts/(2*nptslayer)), 1)
+	ind = ind0:2*ind0:npts
+	nlayers = endof(spacevec)
+	xtar,ytar = Array(Float64,0), Array(Float64,0)
+	for nn = 1:nbods
+		thlen = thlenv[nn]
+		xx,yy = thlen.xx[ind], thlen.yy[ind]
+		nx,ny = getns(thlen.theta)[3:4]
+		nx,ny = nx[ind],ny[ind]
+		append!(xtar, vec(xx*ones(1,nlayers) - nx*transpose(spacevec)))
+		append!(ytar, vec(yy*ones(1,nlayers) - ny*transpose(spacevec)))
+	end
+	return xtar,ytar
 end
 # regulargridtargs: Set up target points on a regular grid; return targets.
 function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
@@ -176,29 +198,6 @@ function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 		n1,n2 = n1n2(ny,nn)
 		xtar[n1:n2] = xlocs[nn]
 		ytar[n1:n2] = ylocs
-	end
-	return xtar,ytar
-end
-# bodyfitgrid: Set up target points on a body fitted grid.
-function bodyfitgrid(thlenv::Vector{ThetaLenType})
-	npts,nbods = getnvals(thlenv)
-	xtar,ytar = Array(Float64,0), Array(Float64,0)
-	# Create target points just off of the body.
-	hh = 0.02
-	spacevec = hh*transpose(collect(1:2:9))
-	nlayers = endof(spacevec)
-	# Use only 32 points per layer.
-	nstep = round(Int,npts/64)
-	nstep = max(nstep,1)
-	ind = nstep:2*nstep:npts
-	# Loop over all bodies.
-	for nn = 1:nbods
-		thlen = thlenv[nn]
-		xx,yy = thlen.xx[ind], thlen.yy[ind]
-		nx = getns(thlen.theta)[3][ind]
-		ny = getns(thlen.theta)[4][ind]
-		append!(xtar, vec(xx*ones(1,nlayers) - nx*spacevec))
-		append!(ytar, vec(yy*ones(1,nlayers) - ny*spacevec))
 	end
 	return xtar,ytar
 end
