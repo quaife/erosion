@@ -152,7 +152,7 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 	xreg,yreg = regulargrid(xlocs,ylocs)
 	# Body-fitted grid.
 	spacevec = 0.02*collect(1:2:5)
-	nptslayer = 16
+	nptslayer = 32
 	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
 	# Combine the regular and body fitted grid into a single set of points.
 	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
