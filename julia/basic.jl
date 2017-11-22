@@ -56,8 +56,10 @@ Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density if not loaded already.
 	compute_density!(thlenden, params)
+
+
 	# Compute the stress.
-	tau = compute_stress(thlenden, params.nouter)	
+	tau = compute_stress(thlenden, params.nouter)
 	# Smooth atau and save it in each of the thlen variables.
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
@@ -103,16 +105,10 @@ end
 
 #--- THE SHEAR STRESS ---#
 # compute_stress: Dispatch for ThLenDenType.
-function compute_stress(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods == 0
-		tau = evec()
-	elseif rotation == false
-		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
-	elseif rotation == true
-		xrot,yrot = xyrot(xv,yv)
-		tau = compute_stress(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
-	end
+function compute_stress(thlenden::ThLenDenType, nouter::Int; 
+		fixpdrop::Bool=false, rotation::Bool=false)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,fixpdrop,rotation)
+	tau = compute_stress(xv,yv,density,npts,nbods,nouter)
 	return tau
 end
 # compute_stress: Fortran wrapper.
@@ -127,16 +123,10 @@ end
 
 #--- THE PRESSURE ---#
 # compute_pressure: Dispatch for ThLenDenType.
-function compute_pressure(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods ==0
-		pressure = evec()
-	elseif rotation == false
-		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
-	elseif rotation ==true
-		xrot,yrot = xyrot(xv,yv)
-		pressrot = compute_pressure(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
-	end
+function compute_pressure(thlenden::ThLenDenType, nouter::Int;
+		fixpdrop::Bool=false, rotation::Bool=false)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,fixpdrop,rotation)
+	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter)
 	return pressure
 end
 # compute_pressure: Fortran wrapper.
@@ -150,16 +140,11 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vec
 end
 #--- THE QUANTITIES OF INTEREST ---#
 # compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
-function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, 
-		nouter::Int, rotation::Bool=false)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if rotation == false
-		targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-			compute_qoi_targets(xv,yv,thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
-	else
-		xrot,yrot = xyrot(xv,yv)
-		targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-			compute_qoi_targets(xrot,yrot,thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
+function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int;
+		fixpdrop::Bool=false, rotation::Bool=false)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,fixpdrop,rotation)
+	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
+			compute_qoi_targets(xv,vy,density,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
 # compute_qoi_targets: Fortran wrapper.
@@ -174,6 +159,28 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		&npts, &nbods, &nouter, xx, yy, density, 
 		&ntargets, xtar, ytar, utar, vtar, ptar, vortar)
 	return utar,vtar,ptar,vortar
+end
+# getnxyden: Get these values depending on fixpdrop and rotation.
+function getnxyden(thlenden::ThLenDenType, fixpdrop::Bool, rotation::Bool)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	if nbods > 0
+		# Rescale, if desired, to keep consant pressure drop.
+		rescale = 1.
+		if fixpdrop == true
+			# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
+			pdrop = getpdrop(thlenden, nouter)[1]
+			rescale = 8./pdrop
+		end
+		if rotation == false
+			density = rescale * thlenden.density
+		else
+			density = rescale * thlenden.denrot
+			xv,yv = xyrot(xv,yv)
+		end
+	else
+		density = evec()
+	end
+	return npts,nbods,xv,yv,density
 end
 
 #--------------- SMALL ROUTINES ---------------#
@@ -196,7 +203,7 @@ end
 # getnvals: Calculate npts and nbods.
 function getnvals(thlenv::Vector{ThetaLenType})
 	nbods = endof(thlenv)
-	if nbods ==0
+	if nbods == 0
 		npts = 0
 	else
 		npts = endof(thlenv[1].theta)
@@ -215,7 +222,6 @@ function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
 	yrot = xv
 	return xrot,yrot
 end
-
 # getpdrop: Calculate the pressure drop from -x0 to x0. Also get the average flux.
 function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0, rotation::Bool=false)
 	# Set up targets points on two vertical slices.

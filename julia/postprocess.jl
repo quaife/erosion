@@ -69,8 +69,7 @@ function postprocess(foldername::AbstractString)
 end
 
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64; rotation::Bool=false)
-	x0 = 2.0
+function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; rotation::Bool=false)
 	pdrop,qavg = getpdrop(thlenden,nouter,x0,rotation)
 	# Calculate the total resistivity
 	rtot = pdrop/(2*x0*qavg)
