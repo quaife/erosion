@@ -58,7 +58,7 @@ end
 function save_params(params::ParamType, nfile::Int, outparamsfile::AbstractString)
 	paramvec = readvec("params.dat")
 	cputime = round( (time()-params.cput0)/60. , 2)
-	label1 = "# Input Parameters: geoinfile, epsfac, sigfac, dt, dtout, tfin, nouter, iffm, fixarea"
+	label1 = "# Input Parameters: geoinfile, epsfac, sigfac, dt, dtout, tfin, nouter, iffm, fixarea, pressdrop"
 	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"
 	paramdata = [label1; paramvec; label2; 
 		params.npts; params.cntout; nfile; cputime]

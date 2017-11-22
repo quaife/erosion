@@ -14,7 +14,7 @@ end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
 type ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
-	nouter::Int; ifmm::Int; fixarea::Int;
+	nouter::Int; ifmm::Int; fixarea::Int; fixpdrop::Int;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64
 end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm
@@ -77,17 +77,12 @@ end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function compute_density!(thlenden::ThLenDenType, params::ParamType)
-	if thlenden.density == []
+function compute_density!(thlenden::ThLenDenType, params::ParamType, rotation::Bool=false)
+	if (rotation == false & thlenden.density == [])
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
-	end
-	return
-end
-# compute_denrot! Compute the density on the grid rotated by 90 deg CCW.
-function compute_denrot!(thlenden::ThLenDenType, params::ParamType)
-	if thlenden.denrot == []
+	elseif (rotation == true & thlenden.denrot == [])
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
@@ -108,21 +103,13 @@ end
 
 #--- THE SHEAR STRESS ---#
 # compute_stress: Dispatch for ThLenDenType.
-function compute_stress(thlenden::ThLenDenType, nouter::Int)
+function compute_stress(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods == 0
 		tau = evec()
-	else
+	elseif rotation == false
 		tau = compute_stress(xv,yv,thlenden.density,npts,nbods,nouter)
-	end
-	return tau
-end
-# compute_stressrot: Compute the stress on the rotated grid
-function compute_stressrot(thlenden::ThLenDenType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods == 0
-		tau = evec()
-	else
+	elseif rotation == true
 		xrot,yrot = xyrot(xv,yv)
 		tau = compute_stress(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
 	end
@@ -140,25 +127,17 @@ end
 
 #--- THE PRESSURE ---#
 # compute_pressure: Dispatch for ThLenDenType.
-function compute_pressure(thlenden::ThLenDenType, nouter::Int)
+function compute_pressure(thlenden::ThLenDenType, nouter::Int, rotation::Bool=false)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods ==0
 		pressure = evec()
-	else
+	elseif rotation == false
 		pressure = compute_pressure(xv,yv,thlenden.density,npts,nbods,nouter)
-	end
-	return pressure
-end
-# compute_pressrot: Compute the pressure on a rotated grid.
-function compute_pressrot(thlenden::ThLenDenType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods ==0
-		pressrot = evec()
-	else
+	elseif rotation ==true
 		xrot,yrot = xyrot(xv,yv)
 		pressrot = compute_pressure(xrot,yrot,thlenden.denrot,npts,nbods,nouter)
 	end
-	return pressrot
+	return pressure
 end
 # compute_pressure: Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
@@ -171,18 +150,16 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vec
 end
 #--- THE QUANTITIES OF INTEREST ---#
 # compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
-function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
+function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, 
+		nouter::Int, rotation::Bool=false)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-		compute_qoi_targets(xv,yv,thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
-	return
-end
-# compute_velpressrot_targets: Compute the same on the rotated xy grid.
-function compute_qoirot_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	xrot,yrot = xyrot(xv,yv)
-	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-		compute_qoi_targets(xrot,yrot,thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
+	if rotation == false
+		targets.utar, targets.vtar, targets.ptar, targets.vortar = 
+			compute_qoi_targets(xv,yv,thlenden.density,targets.xtar,targets.ytar,npts,nbods,nouter)
+	else
+		xrot,yrot = xyrot(xv,yv)
+		targets.utar, targets.vtar, targets.ptar, targets.vortar = 
+			compute_qoi_targets(xrot,yrot,thlenden.denrot,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
 # compute_qoi_targets: Fortran wrapper.
@@ -237,4 +214,32 @@ function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
 	xrot = -yv
 	yrot = xv
 	return xrot,yrot
+end
+
+# getpdrop: Calculate the pressure drop from -x0 to x0. Also get the average flux.
+function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0, rotation::Bool=false)
+	# Set up targets points on two vertical slices.
+	nypts = 13
+	dy = 2./nypts
+	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
+	# Target points for plus/minus x0.
+	tarp = regulargridtargs([x0],ylocs)
+	tarm = regulargridtargs([-x0],ylocs)
+	compute_qoi_targets!(thlenden,tarp,nouter,rotation)
+	compute_qoi_targets!(thlenden,tarm,nouter,rotation)
+	# Compute the pressure drop.
+	pplus = mean(tarp.ptar)
+	pminus = mean(tarm.ptar)
+	pdrop = pminus-pplus
+	# Compute the flux.
+	qplus = mean(tarp.utar)
+	qminus = mean(tarm.utar)
+	qavg = 0.5*(qplus+qminus)
+	#= The discharge should be exactly the same at any location x.
+	So check that it is the same at x0 and -x0. =#
+	qreldiff = (qplus-qminus)/qavg
+	if qreldiff > 1e-3
+		warn("The flux does not match at x0 and -x0: qreldiff = ", qreldiff)
+	end
+	return pdrop,qavg
 end

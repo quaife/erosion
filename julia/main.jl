@@ -59,12 +59,12 @@ end
 # function getparams: Define the object of parameters.
 function getparams(paramvec::Vector, npts::Int)
 	# Read the parameters and calculate needed quantities.
-	epsfac,sigfac,dt,dtout,tfin,nouter,ifmm,fixarea = paramvec[2:9]
+	epsfac,sigfac,dt,dtout,tfin,nouter,ifmm,fixarea,fixpdrop = paramvec[2:10]
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	cntout = max(round(Int,dtout/dt),1)
 	cput0 = time()
 	# Save the parameters in an object.
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea,npts,tfin,cntout,cput0)
+	params = ParamType(dt,epsilon,sigma,nouter,ifmm,fixarea,fixpdrop,npts,tfin,cntout,cput0)
 	return params
 end

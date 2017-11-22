@@ -8,9 +8,9 @@ function postprocess(foldername::AbstractString)
 	# Read the params data file.
 	paramsfile = string(datafolder,"params.dat")
 	paramvec = readvec(paramsfile)
-	npts = paramvec[10]
-	ntimes = paramvec[12]
-	params = getparams(paramvec[1:9],npts)
+	npts = paramvec[end-3]
+	ntimes = paramvec[end-1]
+	params = getparams(paramvec[1:10],npts)
 	nouter = params.nouter
 	# Read the data at each time step.
 	for cnt=0:ntimes
@@ -41,7 +41,7 @@ function postprocess(foldername::AbstractString)
 		writedata(resdragdata, resdragfile)
 
 		#--------------------------------------#
-		# Compute velocity and pressure at a set of target points.
+		# Compute velocity, pressure, vorticity at a set of target points.
 		targets = regbodtargs(thlenvec)
 		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
@@ -70,37 +70,10 @@ end
 
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64; rotation::Bool=false)
-	# Set up targets points on a y-grid for midpoint rule.
-	nypts = 13
-	dy = 2./nypts
-	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
-	# Target points for plus/minus x0.
-	tarp = regulargridtargs([x0],ylocs)
-	tarm = regulargridtargs([-x0],ylocs)
-	# Compute the velocities and pressures on each set of target points.
-	# Either using the original porous matrix or the rotated one.
-	if rotation==true
-		compute_qoirot_targets!(thlenden,tarp,nouter)
-		compute_qoirot_targets!(thlenden,tarm,nouter)
-	else
-		compute_qoi_targets!(thlenden,tarp,nouter)
-		compute_qoi_targets!(thlenden,tarm,nouter)
-	end
-	# Compute the cross-sectional average pressure and discharge
-	pplus = mean(tarp.ptar)
-	pminus = mean(tarm.ptar)
-	qplus = mean(tarp.utar)
-	qminus = mean(tarm.utar)
-	qavg = 0.5*(qplus+qminus)
-	#= The discharge should be exactly the same at any location x.
-	So check that it is the same at x0 and -x0. =#
-	qreldiff = (qplus-qminus)/qavg
-	#assert(qreldiff < 1e-6)
-	if qreldiff > 1e-6
-		warn("The flux does not match at x0 and -x0: qreldiff = ", qreldiff)
-	end
+	x0 = 2.0
+	pdrop,qavg = getpdrop(thlenden,nouter,x0,rotation)
 	# Calculate the total resistivity
-	rtot = (pminus - pplus)/(2*x0*qavg)
+	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
 	# For testing.
@@ -112,13 +85,8 @@ end
 function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
-	if rotation==true
-		tauvec = compute_stressrot(thlenden,nouter)
-		pressvec = compute_pressrot(thlenden,nouter)
-	else
-		tauvec = compute_stress(thlenden,nouter)
-		pressvec = compute_pressure(thlenden,nouter)
-	end
+	tauvec = compute_stress(thlenden,nouter,rotation)
+	pressvec = compute_pressure(thlenden,nouter,rotation)
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
 	dragx = 0.
@@ -129,11 +97,7 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 		press = pressvec[n1:n2]
 		tau = tauvec[n1:n2]
 		# Get the tangent/normal vectors and arc length increment.
-		if rotation==true
-			sx,sy,nx,ny = getnsrot(thlenvec[nn].theta)
-		else
-			sx,sy,nx,ny = getns(thlenvec[nn].theta)
-		end
+		sx,sy,nx,ny = getns(thlenvec[nn].theta,rotation)
 		ds = thlenvec[nn].len / npts
 		# Compute the drag force.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
@@ -143,6 +107,7 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 	return dragx, dragy
 end
 
+#----------- TARGET POINTS -----------#
 # regbodtargs: Set up target points on a regular and body fitted grid.
 function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Regular grid.
@@ -201,20 +166,15 @@ function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	end
 	return xtar,ytar
 end
-
 # getns: Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
-function getns(theta::Vector{Float64})
+function getns(theta::Vector{Float64}, rotation::Bool=false)
 	# CCW tangent vector.
-	sx, sy = cos(theta), sin(theta)
-	# Inward pointing normal vector.
-	nx, ny = -sy, sx
-	return sx,sy,nx,ny
-end
-# getns: Get the normal and tangent directions on the rotated grid.
-function getnsrot(theta::Vector{Float64})
-	# CCW tangent vector.
-	sx, sy = -sin(theta), cos(theta)
+	if rotation == false
+		sx, sy = cos(theta), sin(theta)
+	else
+		sx, sy = -sin(theta), cos(theta)
+	end
 	# Inward pointing normal vector.
 	nx, ny = -sy, sx
 	return sx,sy,nx,ny
