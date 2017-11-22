@@ -57,7 +57,11 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density if not loaded already.
 	compute_density!(thlenden, params)
 	# Compute the stress.
-	tau = compute_stress(thlenden, params.nouter, fixpdrop = Bool(params.fixpdrop), rotation = false)
+	tau = compute_stress(thlenden, params.nouter, fixpdrop = false, rotation = false)
+	
+	#fixpdrop = Bool(params.fixpdrop)
+	println("In getstress!, tau = ", tau)
+
 	# Smooth atau and save it in each of the thlen variables.
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
@@ -106,6 +110,9 @@ end
 function compute_stress(thlenden::ThLenDenType, nouter::Int; 
 		fixpdrop::Bool=false, rotation::Bool=false)
 	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
+
+	println("In compute_stress, npts,nbods = ", npts,nbods)
+
 	tau = compute_stress(xv,yv,density,npts,nbods,nouter)
 	return tau
 end
