@@ -56,10 +56,8 @@ Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density if not loaded already.
 	compute_density!(thlenden, params)
-
-
 	# Compute the stress.
-	tau = compute_stress(thlenden, params.nouter)
+	tau = compute_stress(thlenden, params.nouter, fixpdrop = Bool(params.fixpdrop), rotation = false)
 	# Smooth atau and save it in each of the thlen variables.
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
@@ -79,7 +77,7 @@ end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function compute_density!(thlenden::ThLenDenType, params::ParamType, rotation::Bool=false)
+function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	if (rotation == false & thlenden.density == [])
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
@@ -107,7 +105,7 @@ end
 # compute_stress: Dispatch for ThLenDenType.
 function compute_stress(thlenden::ThLenDenType, nouter::Int; 
 		fixpdrop::Bool=false, rotation::Bool=false)
-	npts,nbods,xv,yv,density = getnxyden(thlenden,fixpdrop,rotation)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
 	tau = compute_stress(xv,yv,density,npts,nbods,nouter)
 	return tau
 end
@@ -125,7 +123,7 @@ end
 # compute_pressure: Dispatch for ThLenDenType.
 function compute_pressure(thlenden::ThLenDenType, nouter::Int;
 		fixpdrop::Bool=false, rotation::Bool=false)
-	npts,nbods,xv,yv,density = getnxyden(thlenden,fixpdrop,rotation)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
 	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter)
 	return pressure
 end
@@ -142,9 +140,9 @@ end
 # compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
 function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int;
 		fixpdrop::Bool=false, rotation::Bool=false)
-	npts,nbods,xv,yv,density = getnxyden(thlenden,fixpdrop,rotation)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
 	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-			compute_qoi_targets(xv,vy,density,targets.xtar,targets.ytar,npts,nbods,nouter)
+			compute_qoi_targets(xv,yv,density,targets.xtar,targets.ytar,npts,nbods,nouter)
 	return
 end
 # compute_qoi_targets: Fortran wrapper.
@@ -161,7 +159,7 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 	return utar,vtar,ptar,vortar
 end
 # getnxyden: Get these values depending on fixpdrop and rotation.
-function getnxyden(thlenden::ThLenDenType, fixpdrop::Bool, rotation::Bool)
+function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation::Bool)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods > 0
 		# Rescale, if desired, to keep consant pressure drop.
@@ -231,8 +229,8 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0, rotati
 	# Target points for plus/minus x0.
 	tarp = regulargridtargs([x0],ylocs)
 	tarm = regulargridtargs([-x0],ylocs)
-	compute_qoi_targets!(thlenden,tarp,nouter,rotation)
-	compute_qoi_targets!(thlenden,tarm,nouter,rotation)
+	compute_qoi_targets!(thlenden,tarp,nouter, rotation=rotation)
+	compute_qoi_targets!(thlenden,tarm,nouter, rotation=rotation)
 	# Compute the pressure drop.
 	pplus = mean(tarp.ptar)
 	pminus = mean(tarm.ptar)

@@ -43,7 +43,7 @@ function postprocess(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points.
 		targets = regbodtargs(thlenvec)
-		compute_qoi_targets!(thlenden,targets,nouter)
+		compute_qoi_targets!(thlenden,targets,nouter,fixpdrop=false,rotation=rotation)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
@@ -84,8 +84,8 @@ end
 function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
-	tauvec = compute_stress(thlenden,nouter,rotation)
-	pressvec = compute_pressure(thlenden,nouter,rotation)
+	tauvec = compute_stress(thlenden,nouter,fixpdrop=false,rotation=rotation)
+	pressvec = compute_pressure(thlenden,nouter,fixpdrop=false,rotation=rotation)
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
 	dragx = 0.
