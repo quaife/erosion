@@ -42,9 +42,7 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute velocity and pressure at a set of target points.
-		xlocs = collect(-2.00: 0.05: 2.00)
-		ylocs = collect(-0.95: 0.05: 0.95)
-		targets = regbodtargs(xlocs,ylocs,thlenvec)
+		targets = regbodtargs(thlenvec)
 		compute_qoi_targets!(thlenden,targets,nouter)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
@@ -146,8 +144,13 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 end
 
 # regbodtargs: Set up target points on a regular and body fitted grid.
-function regbodtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64}, thlenv::Vector{ThetaLenType})
+function regbodtargs(thlenv::Vector{ThetaLenType})
+	# Regular grid.
+	hh = 0.10
+	xlocs = collect(-1. - hh: hh: 1. + hh)
+	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
 	xreg,yreg = regulargrid(xlocs,ylocs)
+	# Body fit grid.
 	xbod,ybod = bodyfitgrid(thlenv)
 	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
 	targets.xtar = [xreg; xbod]
@@ -180,27 +183,25 @@ end
 function bodyfitgrid(thlenv::Vector{ThetaLenType})
 	npts,nbods = getnvals(thlenv)
 	xtar,ytar = Array(Float64,0), Array(Float64,0)
-	spacevec = transpose(collect(1:2:9))
-	mm = endof(spacevec)
-
-	# ROUGH FOR NOW
+	# Create target points just off of the body.
+	hh = 0.02
+	spacevec = hh*transpose(collect(1:2:9))
+	nlayers = endof(spacevec)
+	# Use only 32 points per layer.
 	nstep = round(Int,npts/64)
 	nstep = max(nstep,1)
 	ind = nstep:2*nstep:npts
-
+	# Loop over all bodies.
 	for nn = 1:nbods
 		thlen = thlenv[nn]
 		xx,yy = thlen.xx[ind], thlen.yy[ind]
-		sx,sy,nx,ny = getns(thlen.theta)
-		nxx,nyy = nx[ind], ny[ind]
-
-		#ds = thlen.len/npts
-		append!(xtar, vec(xx*ones(1,mm) - 0.02*nxx*spacevec))
-		append!(ytar, vec(yy*ones(1,mm) - 0.02*nyy*spacevec))
+		nx = getns(thlen.theta)[3][ind]
+		ny = getns(thlen.theta)[4][ind]
+		append!(xtar, vec(xx*ones(1,nlayers) - nx*spacevec))
+		append!(ytar, vec(yy*ones(1,nlayers) - ny*spacevec))
 	end
 	return xtar,ytar
 end
-
 
 # getns: Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
