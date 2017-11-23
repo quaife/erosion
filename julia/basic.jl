@@ -135,9 +135,12 @@ end
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
 		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
 	pressure = zeros(Float64, npts*nbods)
-	ccall((:computepressure_, "libstokes.so"), Void,
-		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
-		&npts, &nbods, &nouter, xx, yy, density, pressure)
+	if nbods > 0
+		ccall((:computepressure_, "libstokes.so"), Void,
+			(Ptr{Int},Ptr{Int},Ptr{Int},
+			Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
+			&npts, &nbods, &nouter, xx, yy, density, pressure)
+	end
 	return pressure
 end
 #--- THE QUANTITIES OF INTEREST ---#
@@ -226,7 +229,7 @@ end
 #= getpdrop: Calculate the pressure drop from -x0 to x0. 
 Also get the average flux while at it. =#
 function getpdrop(thlenden::ThLenDenType, nouter::Int, 
-		x0::Float64 = 2.0, rotation::Bool=false)
+		x0::Float64 = 2.0; rotation::Bool=false)
 	# Set up targets points on two vertical slices.
 	nypts = 13
 	dy = 2./nypts

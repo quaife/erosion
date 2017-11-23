@@ -28,10 +28,10 @@ function postprocess(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		rbods = resistivity(thlenden, nouter, 2.0)
-		rbodsrot = resistivity(thlenden, nouter, 2.0; rotation=true)
+		rbodsrot = resistivity(thlenden, nouter, 2.0, rotation=true)
 		# Compute the drag on each body.
 		dragx, dragy = drag(thlenden, nouter)
-		dragxrot, dragyrot = drag(thlenden, nouter; rotation=true)
+		dragxrot, dragyrot = drag(thlenden, nouter, rotation=true)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
@@ -43,7 +43,7 @@ function postprocess(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points.
 		targets = regbodtargs(thlenvec)
-		compute_qoi_targets!(thlenden,targets,nouter,fixpdrop=false,rotation=rotation)
+		compute_qoi_targets!(thlenden,targets,nouter, fixpdrop = params.fixpdrop)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
@@ -69,12 +69,14 @@ function postprocess(foldername::AbstractString)
 end
 
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; rotation::Bool=false)
-	pdrop,qavg = getpdrop(thlenden,nouter,x0,rotation)
+function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; 
+		rotation::Bool=false)
+	pdrop,qavg = getpdrop(thlenden,nouter,x0, rotation=rotation)
 	# Calculate the total resistivity
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
+	
 	# For testing.
 	#println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
 	#println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
