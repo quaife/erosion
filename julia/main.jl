@@ -59,8 +59,8 @@ end
 # function getparams: Define the object of parameters.
 function getparams(paramvec::Vector, npts::Int)
 	# Read the parameters and calculate needed quantities.
-	epsfac,sigfac,dt,dtout,tfin,nouter,ifmm,fixarea,fixpdrop = paramvec[2:8]
-	fixarea,fixpdrop = Bool(paramvec[9:10])
+	epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[2:8]
+	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	cntout = max(round(Int,dtout/dt),1)

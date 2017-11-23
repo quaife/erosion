@@ -111,8 +111,8 @@ function compute_stress(thlenden::ThLenDenType, nouter::Int;
 	return tau
 end
 # compute_stress: Fortran wrapper.
-function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
-		npts::Int, nbods::Int, nouter::Int)
+function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, 
+		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
 	tau = zeros(Float64, npts*nbods)
 	ccall((:computeshearstress_, "libstokes.so"), Void,
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
@@ -129,8 +129,8 @@ function compute_pressure(thlenden::ThLenDenType, nouter::Int;
 	return pressure
 end
 # compute_pressure: Fortran wrapper.
-function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, density::Vector{Float64}, 
-		npts::Int, nbods::Int, nouter::Int)
+function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
+		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
 	pressure = zeros(Float64, npts*nbods)
 	ccall((:computepressure_, "libstokes.so"), Void,
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
@@ -160,34 +160,28 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		&ntargets, xtar, ytar, utar, vtar, ptar, vortar)
 	return utar,vtar,ptar,vortar
 end
+
+#--------------- SMALL ROUTINES ---------------#
 # getnxyden: Get these values depending on fixpdrop and rotation.
 function getnxyden(thlenden::ThLenDenType, nouter::Int, 
 		fixpdrop::Bool, rotation::Bool)
 	npts,nbods,xv,yv = getnxy(thlenden)
-	if nbods > 0
-		# Rescale, if desired, to keep consant pressure drop.
-		rescale = 1.
-		if fixpdrop == true
-			# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
-			pdrop = getpdrop(thlenden, nouter)[1]
-			rescale = 8./pdrop
-		end
-		if rotation == false
-			density = rescale * thlenden.density
-		else
-			density = rescale * thlenden.denrot
-			xv,yv = xyrot(xv,yv)
-		end
+	# Consider fixpdrop.
+	rescale = 1.
+	if fixpdrop
+		pdrop = getpdrop(thlenden, nouter)[1]
+		rescale = 8./pdrop
+		# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
+	end
+	# Consider rotation.
+	if rotation
+		xv,yv = xyrot(xv,yv)
+		density = rescale * thlenden.denrot
 	else
-
-		density = evec()
-		### NEED TO CORRECT THIS
-        
+		density = rescale * thlenden.density
 	end
 	return npts,nbods,xv,yv,density
 end
-
-#--------------- SMALL ROUTINES ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	npts,nbods = getnvals(thlenden.thlenvec)
