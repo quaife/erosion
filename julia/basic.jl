@@ -79,11 +79,11 @@ end
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
 function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
-	if (rotation == false & endof(thlenden.density) == 0)
+	if (rotation == false && endof(thlenden.density) == 0)
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
-	elseif (rotation == true & endof(thlenden.density) == 0)
+	elseif (rotation == true && endof(thlenden.denrot) == 0)
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
@@ -114,9 +114,12 @@ end
 function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, 
 		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
 	tau = zeros(Float64, npts*nbods)
-	ccall((:computeshearstress_, "libstokes.so"), Void,
-		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
-		&npts, &nbods, &nouter, xx, yy, density, tau)
+	if nbods > 0
+		ccall((:computeshearstress_, "libstokes.so"), Void,
+			(Ptr{Int},Ptr{Int},Ptr{Int},
+			Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
+			&npts, &nbods, &nouter, xx, yy, density, tau)
+	end
 	return tau
 end
 

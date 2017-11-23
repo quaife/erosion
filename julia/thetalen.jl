@@ -53,12 +53,6 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
 		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
 		lenderivs = thld_derivs.thlenvec[nn].len
-		
-
-		println("mterm = ", mterm)
-		println("len0 = ", len0)
-
-
 		# Advance len first.
 		len1 = len0 + dt1*mterm
 		assert(len1 > 0.)	

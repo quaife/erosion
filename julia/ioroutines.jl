@@ -17,6 +17,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
+
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
 	save_params(params,nfile,paramsfile)

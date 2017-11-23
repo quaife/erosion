@@ -129,7 +129,8 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType},
 		spacevec::Vector{Float64}, nptslayer::Int)
 	npts,nbods = getnvals(thlenv)
 	# Use nptslayer in each layer.
-	ind0 = max(round(Int, npts/(2*nptslayer)), 1)
+	ind0 = div(npts,2*nptslayer)
+	ind0 = max(ind0,1)
 	ind = ind0:2*ind0:npts
 	nlayers = endof(spacevec)
 	xtar,ytar = Array(Float64,0), Array(Float64,0)
