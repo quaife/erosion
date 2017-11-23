@@ -57,7 +57,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 
 		println("mterm = ", mterm)
 		println("len0 = ", len0)
-		
+
 
 		# Advance len first.
 		len1 = len0 + dt1*mterm
@@ -98,7 +98,8 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 		if (len <= minlen || mterm > 0.)
 			println("\n\n--------------------------------------------------")
 			println("DELETING BODY ", nn)
-			println("mterm = ", signif(mterm,3), "; len = ", signif(len,3), "; minlen = ", signif(minlen,3))
+			println("mterm = ", signif(mterm,3), "; len = ", 
+				signif(len,3), "; minlen = ", signif(minlen,3))
 			if mterm > 0.; warn("mterm is positive."); end;
 			println("--------------------------------------------------\n")
 			append!(deletevec,[nn])
@@ -201,11 +202,13 @@ function test_theta_means(theta::Vector{Float64})
 	thresh = 20./npts
 	if maxmean > thresh
 		warn("theta means")
-		println("The max mean of sin, cos is: ", signif(maxmean,3), " > ", signif(thresh,3))
+		println("The max mean of sin, cos is: ", 
+			signif(maxmean,3), " > ", signif(thresh,3))
 	end
 	return
 end
-# test_theta_ends: Test that the difference between the first and last tangent angles is 2pi.
+#= test_theta_ends: Test that the difference between the 
+first and last tangent angles is 2pi. =#
 function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
 	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
@@ -214,7 +217,8 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	th0diff = abs(th0left - th0right)
 	if th0diff > thresh
 		throw("theta ends") 
-		println("The difference between the ends is: ", signif(th0diff,3), " > ", signif(thresh,3))
+		println("The difference between the ends is: ", 
+			signif(th0diff,3), " > ", signif(thresh,3))
 	end
 	return
 end

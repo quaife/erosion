@@ -14,7 +14,7 @@ end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
 type ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
-	nouter::Int; ifmm::Int; fixarea::Int; fixpdrop::Int;
+	nouter::Int; ifmm::Int; fixarea::Bool; fixpdrop::Bool;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64
 end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm
@@ -57,18 +57,15 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density if not loaded already.
 	compute_density!(thlenden, params)
 	# Compute the stress.
-	tau = compute_stress(thlenden, params.nouter, fixpdrop = false, rotation = false)
-	
-	#fixpdrop = Bool(params.fixpdrop)
-	println("In getstress!, tau = ", tau)
-
+	tau = compute_stress(thlenden, params.nouter, 
+		fixpdrop = params.fixpdrop, rotation = false)
 	# Smooth atau and save it in each of the thlen variables.
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
 		n1,n2 = n1n2(npts,nn)
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau, params.sigma)
-		if params.fixarea == 1
+		if params.fixarea
 			atau = atau - mean(atau)
 		end
 		thlenden.thlenvec[nn].atau = atau[:]
@@ -82,11 +79,11 @@ end
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
 function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
-	if (rotation == false & thlenden.density == [])
+	if (rotation == false & endof(thlenden.density) == 0)
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
-	elseif (rotation == true & thlenden.denrot == [])
+	elseif (rotation == true & endof(thlenden.density) == 0)
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
@@ -110,9 +107,6 @@ end
 function compute_stress(thlenden::ThLenDenType, nouter::Int; 
 		fixpdrop::Bool=false, rotation::Bool=false)
 	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
-
-	println("In compute_stress, npts,nbods = ", npts,nbods)
-
 	tau = compute_stress(xv,yv,density,npts,nbods,nouter)
 	return tau
 end
@@ -160,13 +154,15 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 	utar,vtar,ptar,vortar = [zeros(Float64,ntargets) for ii=1:4]
 	ccall((:computeqoitargets_, "libstokes.so"), Void,
 		(Ptr{Int}, Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64},
-		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
+		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, 
+		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
 		&npts, &nbods, &nouter, xx, yy, density, 
 		&ntargets, xtar, ytar, utar, vtar, ptar, vortar)
 	return utar,vtar,ptar,vortar
 end
 # getnxyden: Get these values depending on fixpdrop and rotation.
-function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation::Bool)
+function getnxyden(thlenden::ThLenDenType, nouter::Int, 
+		fixpdrop::Bool, rotation::Bool)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	if nbods > 0
 		# Rescale, if desired, to keep consant pressure drop.
@@ -183,7 +179,10 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation
 			xv,yv = xyrot(xv,yv)
 		end
 	else
+
 		density = evec()
+		### NEED TO CORRECT THIS
+        
 	end
 	return npts,nbods,xv,yv,density
 end
@@ -227,8 +226,10 @@ function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
 	yrot = xv
 	return xrot,yrot
 end
-# getpdrop: Calculate the pressure drop from -x0 to x0. Also get the average flux.
-function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0, rotation::Bool=false)
+#= getpdrop: Calculate the pressure drop from -x0 to x0. 
+Also get the average flux while at it. =#
+function getpdrop(thlenden::ThLenDenType, nouter::Int, 
+		x0::Float64 = 2.0, rotation::Bool=false)
 	# Set up targets points on two vertical slices.
 	nypts = 13
 	dy = 2./nypts
