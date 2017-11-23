@@ -13,7 +13,7 @@ function postprocess(foldername::AbstractString)
 	params = getparams(paramvec[1:10],npts)
 	nouter = params.nouter
 	# Read the data at each time step.
-	for cnt=0:ntimes
+	for cnt=1:ntimes
 		# Get the file name at each time.
 		cntstr = lpad(cnt,4,0)
 		geomfile = string(datafolder,"geom",cntstr,".dat")
@@ -50,8 +50,6 @@ function postprocess(foldername::AbstractString)
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar; targets.vortar]
 		writedata(targdata, targfile)
-		# Print progress.
-		println("Finished step ", cnt, " of ", ntimes, ".")
 
 		#--------------------------------------#
 		# Save the stress on each body.
@@ -64,6 +62,8 @@ function postprocess(foldername::AbstractString)
 			atauvec[n1:n2] = thlenden.thlenvec[nn].atau
 		end
 		writedata([label; atauvec], stressfile)
+		# Print progress.
+		println("Finished step ", cnt, " of ", ntimes, ".")
 	end
 	return
 end
@@ -113,7 +113,7 @@ end
 function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Regular grid.
 	hh = 0.10
-	xlocs = collect(-1. - hh: hh: 1. + hh)
+	xlocs = collect(-2.: hh: 2.)
 	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
 	xreg,yreg = regulargrid(xlocs,ylocs)
 	# Body-fitted grid.
