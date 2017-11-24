@@ -223,7 +223,7 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation
 	return npts,nbods,xv,yv,density
 end
 # getrescale: Get the rescale factor.
-function getrescale(thlenden::ThLenDenType, nouter::Int, fixprop::Bool)
+function getrescale(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
 	rescale = 1.
 	if fixpdrop
