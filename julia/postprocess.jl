@@ -13,7 +13,7 @@ function postprocess(foldername::AbstractString)
 	params = getparams(paramvec[1:10],npts)
 	nouter = params.nouter
 	# Read the data at each time step.
-	for cnt=1:ntimes
+	for cnt=0:ntimes
 		# Get the file name at each time.
 		cntstr = lpad(cnt,4,0)
 		geomfile = string(datafolder,"geom",cntstr,".dat")
