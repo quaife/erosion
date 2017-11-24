@@ -33,8 +33,10 @@ end
 dt1 is the step-size, dt2 is used in the Gaussian filter.  =#
 function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType, 
 		dt1::Float64, dt2::Float64, params::ParamType)
-	# Compute the time derivatives and remove small bodies if needed.
+	# Compute the time derivatives and umax = rescale factor.
 	dvec = getderivs(thld_derivs, params)
+	umax = getrescale(thld_derivs, nouter)
+	# Remove small bodies if needed.
 	deletevec = delete_indices(thld0, dvec, dt1)
 	deleteat!(thld0.thlenvec, deletevec)
 	deleteat!(dvec, deletevec)
@@ -57,8 +59,8 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		len1 = len0 + dt1*mterm
 		assert(len1 > 0.)	
 		# Compute the sigmas for the Guassian filters.
-		sig1 = 2*pi*sqrt(epsilon*dt1*(elfun(len0)+elfun(len1)))
-		sig2 = 2*pi*sqrt(epsilon*dt2*(elfun(lenderivs)+elfun(len1)))
+		sig1 = 2*pi*sqrt(epsilon*dt1*(elfun(len0,umax)+elfun(len1,umax)))
+		sig2 = 2*pi*sqrt(epsilon*dt2*(elfun(lenderivs,umax)+elfun(len1,umax)))
 		# Advance theta using integrating factor and explicit term.
 		alpha = getalpha(npts)
 		th1 = gaussfilter(th0-2*pi*alpha, sig1) + 2*pi*alpha
@@ -104,18 +106,19 @@ end
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
+	umax = getrescale(thlenden, params.nouter)
 	nbods = endof(thlenden.thlenvec)
 	dvec = new_dvec(nbods)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
-		dvec[nn] = getderivs(thlen, params.epsilon)
+		dvec[nn] = getderivs(thlen, params.epsilon, umax)
 	end
 	return dvec
 end
 #= getderivs: Get the derivative terms for a single body.
 These are the derivatives of theta, len, xsm, and ysm.
 mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
-function getderivs(thlen::ThetaLenType, epsilon::Float64)
+function getderivs(thlen::ThetaLenType, epsilon::Float64, umax::Float64=1.)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
 	# Make sure atau has been computed.
@@ -123,7 +126,7 @@ function getderivs(thlen::ThetaLenType, epsilon::Float64)
 	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
-	vnorm = atau + epsilon*len*elfun(len) * (dtheta - 2*pi)
+	vnorm = atau + epsilon*len*elfun(len,umax) * (dtheta - 2*pi)
 	vtang, mterm = tangvel(dtheta, vnorm)
 	# Derivative of absolute-value of shear stress.
 	datau = specdiff(atau)	
@@ -147,8 +150,8 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	return vtang, mterm
 end
 # elfun: How to scale the smoothing with len.
-function elfun(len::Float64)
-	return 1./(len^2 * log(2*pi/len))
+function elfun(len::Float64, umax::Float64=1.)
+	return umax/(len^2 * log(2*pi/len))
 end
 
 #--------------- SMALL ROUTINES ---------------#

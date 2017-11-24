@@ -168,27 +168,6 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 end
 
 #--------------- SMALL ROUTINES ---------------#
-# getnxyden: Get these values depending on fixpdrop and rotation.
-function getnxyden(thlenden::ThLenDenType, nouter::Int, 
-		fixpdrop::Bool, rotation::Bool)
-	npts,nbods,xv,yv = getnxy(thlenden)
-	# Consider fixpdrop.
-	rescale = 1.
-	if fixpdrop
-		pdrop = getpdrop(thlenden, nouter)[1]
-		rescale = 10 * 8./pdrop
-		println("Fixing pdrop, rescale factor = ", rescale)
-		# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
-	end
-	# Consider rotation.
-	if rotation
-		xv,yv = xyrot(xv,yv)
-		density = rescale * thlenden.denrot
-	else
-		density = rescale * thlenden.density
-	end
-	return npts,nbods,xv,yv,density
-end
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	npts,nbods = getnvals(thlenden.thlenvec)
@@ -226,6 +205,32 @@ function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
 	xrot = -yv
 	yrot = xv
 	return xrot,yrot
+end
+
+#--------------- KEEP PRESSURE DROP FIXED ---------------#
+# getnxyden: Get these values depending on fixpdrop and rotation.
+function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation::Bool)
+	npts,nbods,xv,yv = getnxy(thlenden)
+	# Consider fixpdrop.
+	rescale = 1.
+	if fixpdrop
+		rescale = getrescale(thlenden, nouter)
+		println("Fixing pdrop, rescale factor = ", rescale)
+	end
+	# Consider rotation.
+	if rotation
+		xv,yv = xyrot(xv,yv)
+		density = rescale * thlenden.denrot
+	else
+		density = rescale * thlenden.density
+	end
+	return npts,nbods,xv,yv,density
+end
+# getrescale: Get the rescale factor.
+function getrescale(thlenden::ThLenDenType, nouter::Int)
+	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
+	pdrop = getpdrop(thlenden, nouter)[1]
+	return 10 * 8./pdrop
 end
 #= getpdrop: Calculate the pressure drop from -x0 to x0. 
 Also get the average flux while at it. =#
