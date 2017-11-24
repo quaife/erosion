@@ -212,11 +212,7 @@ end
 function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation::Bool)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	# Consider fixpdrop.
-	rescale = 1.
-	if fixpdrop
-		rescale = getrescale(thlenden, nouter)
-		println("Fixing pdrop, rescale factor = ", rescale)
-	end
+	rescale = getrescale(thlenden, nouter, fixpdrop)
 	# Consider rotation.
 	if rotation
 		xv,yv = xyrot(xv,yv)
@@ -227,10 +223,15 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation
 	return npts,nbods,xv,yv,density
 end
 # getrescale: Get the rescale factor.
-function getrescale(thlenden::ThLenDenType, nouter::Int)
+function getrescale(thlenden::ThLenDenType, nouter::Int, fixprop::Bool)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
-	pdrop = getpdrop(thlenden, nouter)[1]
-	return 10 * 8./pdrop
+	rescale = 1.
+	if fixpdrop
+		pdrop = getpdrop(thlenden, nouter)[1]
+		rescale =  10 * 8./pdrop
+		println("Fixing pdrop, rescale factor = ", rescale)
+	end
+	return rescale
 end
 #= getpdrop: Calculate the pressure drop from -x0 to x0. 
 Also get the average flux while at it. =#

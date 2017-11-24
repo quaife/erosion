@@ -35,7 +35,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		dt1::Float64, dt2::Float64, params::ParamType)
 	# Compute the time derivatives and umax = rescale factor.
 	dvec = getderivs(thld_derivs, params)
-	umax = getrescale(thld_derivs, params.nouter)
+	umax = getrescale(thld_derivs, params.nouter, params.fixpdrop)
 	# Remove small bodies if needed.
 	deletevec = delete_indices(thld0, dvec, dt1)
 	deleteat!(thld0.thlenvec, deletevec)
@@ -106,7 +106,7 @@ end
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
-	umax = getrescale(thlenden, params.nouter)
+	umax = getrescale(thlenden, params.nouter, params.fixpdrop)
 	nbods = endof(thlenden.thlenvec)
 	dvec = new_dvec(nbods)
 	for nn = 1:nbods
