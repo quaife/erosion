@@ -210,7 +210,7 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	# Compare the two extrpaolations.
 	th0diff = abs(th0left - th0right)
 	if th0diff > thresh
-		throw("theta ends") 
+		warn("theta ends") 
 		println("The difference between the ends is: ", 
 			signif(th0diff,3), " > ", signif(thresh,3))
 	end
