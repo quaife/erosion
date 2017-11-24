@@ -176,7 +176,8 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int,
 	rescale = 1.
 	if fixpdrop
 		pdrop = getpdrop(thlenden, nouter)[1]
-		rescale = 2 * 8./pdrop
+		rescale = 10 * 8./pdrop
+		println("Fixing pdrop, rescale factor = ", rescale)
 		# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
 	end
 	# Consider rotation.
