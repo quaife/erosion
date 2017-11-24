@@ -35,7 +35,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		dt1::Float64, dt2::Float64, params::ParamType)
 	# Compute the time derivatives and umax = rescale factor.
 	dvec = getderivs(thld_derivs, params)
-	umax = getrescale(thld_derivs, nouter)
+	umax = getrescale(thld_derivs, params.nouter)
 	# Remove small bodies if needed.
 	deletevec = delete_indices(thld0, dvec, dt1)
 	deleteat!(thld0.thlenvec, deletevec)
