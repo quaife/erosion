@@ -203,3 +203,36 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 	savefig(pp, figname, width=width, height=height)
 	return
 end
+
+#--------------- Tests for the theta vector ---------------#
+#= test_theta_means: Test that cos(theta) and sin(theta) have zero mean.
+These are conditions for theta to describe a closed curve 
+in the equal arc length frame. =#
+function test_theta_means(theta::Vector{Float64})
+	npts = endof(theta)
+	m1 = mean(cos(theta))
+	m2 = mean(sin(theta))
+	maxmean = maximum(abs([m1,m2]))
+	thresh = 20./npts
+	if maxmean > thresh
+		warn("theta means")
+		println("The max mean of sin, cos is: ", 
+			signif(maxmean,3), " > ", signif(thresh,3))
+	end
+	return
+end
+#= test_theta_ends: Test that the difference between the 
+first and last tangent angles is 2pi. =#
+function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
+	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
+	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
+	# Compare the two extrpaolations.
+	th0diff = abs(th0left - th0right)
+	if th0diff > thresh
+		warn("theta ends") 
+		println("The difference between the ends is: ", 
+			signif(th0diff,3), " > ", signif(thresh,3))
+	end
+	return
+end

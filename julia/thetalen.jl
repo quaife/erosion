@@ -77,32 +77,6 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 end
 
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
-#= delete_indices: Find the bodies where the length is too small.
-Neglecting the log term, L should vanish like sqrt(t).
-The midpoint rule in RK2 gives the sqrt(2) factor. =#
-function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
-	# ndts: The number of dt values to look into the future for len.
-	ndts = 1.0
-	thlv = thld0.thlenvec
-	nbods = endof(thlv)
-	assert(endof(dvec) == nbods)
-	deletevec = Array(Int,0)
-	for nn = 1:nbods
-		len = thlv[nn].len
-		mterm = dvec[nn].mterm
-		minlen = -sqrt(2)*mterm*ndts*dt
-		if (len <= minlen || mterm > 0.)
-			println("\n\n--------------------------------------------------")
-			println("DELETING BODY ", nn)
-			println("mterm = ", signif(mterm,3), "; len = ", 
-				signif(len,3), "; minlen = ", signif(minlen,3))
-			if mterm > 0.; warn("mterm is positive."); end;
-			println("--------------------------------------------------\n")
-			append!(deletevec,[nn])
-		end
-	end
-	return deletevec
-end
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
@@ -153,6 +127,32 @@ end
 function elfun(len::Float64, umax::Float64=1.)
 	return umax/(len^2 * log(2*pi/len))
 end
+#= delete_indices: Find the bodies where the length is too small.
+Neglecting the log term, L should vanish like sqrt(t).
+The midpoint rule in RK2 gives the sqrt(2) factor. =#
+function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
+	# ndts: The number of dt values to look into the future for len.
+	ndts = 1.0
+	thlv = thld0.thlenvec
+	nbods = endof(thlv)
+	assert(endof(dvec) == nbods)
+	deletevec = Array(Int,0)
+	for nn = 1:nbods
+		len = thlv[nn].len
+		mterm = dvec[nn].mterm
+		minlen = -sqrt(2)*mterm*ndts*dt
+		if (len <= minlen || mterm > 0.)
+			println("\n\n--------------------------------------------------")
+			println("DELETING BODY ", nn)
+			println("mterm = ", signif(mterm,3), "; len = ", 
+				signif(len,3), "; minlen = ", signif(minlen,3))
+			if mterm > 0.; warn("mterm is positive."); end;
+			println("--------------------------------------------------\n")
+			append!(deletevec,[nn])
+		end
+	end
+	return deletevec
+end
 
 #--------------- SMALL ROUTINES ---------------#
 # vecmult: Multiply two vectors with or without dealiasing.
@@ -186,37 +186,3 @@ function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	xx += xsm; yy += ysm
 	return xx,yy
 end
-
-#--------------- Tests for the theta vector ---------------#
-#= test_theta_means: Test that cos(theta) and sin(theta) have zero mean.
-These are conditions for theta to describe a closed curve 
-in the equal arc length frame. =#
-function test_theta_means(theta::Vector{Float64})
-	npts = endof(theta)
-	m1 = mean(cos(theta))
-	m2 = mean(sin(theta))
-	maxmean = maximum(abs([m1,m2]))
-	thresh = 20./npts
-	if maxmean > thresh
-		warn("theta means")
-		println("The max mean of sin, cos is: ", 
-			signif(maxmean,3), " > ", signif(thresh,3))
-	end
-	return
-end
-#= test_theta_ends: Test that the difference between the 
-first and last tangent angles is 2pi. =#
-function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
-	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
-	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
-	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
-	# Compare the two extrpaolations.
-	th0diff = abs(th0left - th0right)
-	if th0diff > thresh
-		warn("theta ends") 
-		println("The difference between the ends is: ", 
-			signif(th0diff,3), " > ", signif(thresh,3))
-	end
-	return
-end
-
