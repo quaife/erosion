@@ -23,7 +23,7 @@ function kvec(nn::Integer, hmode=0)
 end
 #= specdiff: Compute the derivative of fx spectrally.
 Default: assumes that the length of the interval is 1.0 =#
-function specdiff(fx::Vector, intvlen::Float64=1.0)	
+function specdiff(fx::Vector, intvlen::Float64=2*pi)	
 	fh = fftnice(fx)
 	kv = kvec(length(fx), 0)
 	dfh = 2*pi*im * kv.*fh
@@ -34,7 +34,7 @@ end
 #= specint: Compute the antiderivative of fx spectrally.
 Assumes that the input fx has mean-zero and 
 forces the output Fx to have mean-zero. =#
-function specint(fx::Vector, intvlen::Float64=1.0)
+function specint(fx::Vector, intvlen::Float64=2*pi)
 	fh = fftnice(fx)
 	kv = kvec(length(fx), 0)
 	Fh = fh./(2*pi*im*kv)
@@ -44,23 +44,41 @@ function specint(fx::Vector, intvlen::Float64=1.0)
 	imagtest(Fx)
 	return real(Fx)*intvlen	
 end
-# gaussfilter: Apply a Gaussian filter of width sigma.
-function gaussfilter(fx::Vector, sigma::Float64)
-	fh = fftnice(fx)
-	kv = kvec(length(fx), 1)
-	fh .*= exp(-0.5*sigma^2 * abs(kv).^2)
-	fs = ifftnice(fh)
-	return real(fs)
-end
 # imagtest: Test that the imaginary part is negligible.
 function imagtest(fx::Vector, relthold::Float64=1e-8)
-	maximrel = maxabs(imag(fx))/maxabs(fx)
-	if maximrel > relthold
-		warn("imag part too big: ", maximrel)
-	end
-	return
+    maximrel = maxabs(imag(fx))/maxabs(fx)
+    if maximrel > relthold
+        warn("imag part too big: ", maximrel)
+    end
+    return
 end
-#= krasnyfilter: Apply a Krasny filter to the spectrum.
+
+
+# expsmooth: Equivalent to a Gaussian filter.
+function expsmooth(fx::Vector, factor::Float64)
+    fh = fftnice(fx)
+    kv = kvec(length(fx), 1)
+    fh .*= exp(-factor*abs(kv).^2)
+    fs = ifftnice(fh)
+    imagtest(fs)
+    return real(fs) 
+end
+# expsmooth(fx, -0.5*sigma^2) = gaussfilter(fx, sigma)
+
+
+
+#------------------OBSELETE BELOW------------------#
+#=
+# gaussfilter: Apply a Gaussian filter of width sigma.
+function gaussfilter(fx::Vector, sigma::Float64)
+   fh = fftnice(fx)
+   kv = kvec(length(fx), 1)
+   fh .*= exp(-0.5*sigma^2 * abs(kv).^2)
+   fs = ifftnice(fh)
+   return real(fs)
+end
+# krasnyfilter: Apply a Krasny filter to the spectrum.
+# The Krasny filter does not delay the shape instability, so I voided it.
 function krasnyfilter(fx::Vector, relthold::Float64=1e-8)
 	fh = fftnice(fx)
 	absthold = relthold*maxabs(fh)
@@ -68,5 +86,5 @@ function krasnyfilter(fx::Vector, relthold::Float64=1e-8)
 	fx = ifftnice(fh)
 	imagtest(fx)
 	return real(fx)
-end =#
-# The Krasny filter does not delay the shape instability, so I voided it.
+end 
+=#

@@ -35,7 +35,11 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		dt1::Float64, dt2::Float64, params::ParamType)
 	# Compute the time derivatives and umax = rescale factor.
 	dvec = getderivs(thld_derivs, params)
-	umax = getrescale(thld_derivs, params.nouter, params.fixpdrop)
+
+
+###	umax = getumax(thld_derivs, params.nouter, params.fixpdrop)	
+
+
 	# Remove small bodies if needed.
 	deletevec = delete_indices(thld0, dvec, dt1)
 	deleteat!(thld0.thlenvec, deletevec)
@@ -58,13 +62,22 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		# Advance len first.
 		len1 = len0 + dt1*mterm
 		assert(len1 > 0.)	
+
+
+
+		# MODIFY
 		# Compute the sigmas for the Guassian filters.
 		sig1 = 2*pi*sqrt(epsilon*dt1*(elfun(len0,umax)+elfun(len1,umax)))
 		sig2 = 2*pi*sqrt(epsilon*dt2*(elfun(lenderivs,umax)+elfun(len1,umax)))
 		# Advance theta using integrating factor and explicit term.
 		alpha = getalpha(npts)
-		th1 = gaussfilter(th0-2*pi*alpha, sig1) + 2*pi*alpha
+		th1 = gaussfilter(th0 - alpha, sig1) + alpha
 		th1 += gaussfilter(dt1*nterm, sig2)
+
+
+
+
+
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
@@ -76,35 +89,55 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	return thld1
 end
 
+
+
+# zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
+function zetafun(len::Float64, matau::Float64)
+	return 2*pi/len * matau
+end
+
+
+
+
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
-	umax = getrescale(thlenden, params.nouter, params.fixpdrop)
+
+
+###	umax = getumax(thlenden, params.nouter, params.fixpdrop)
+
+
 	nbods = endof(thlenden.thlenvec)
 	dvec = new_dvec(nbods)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
-		dvec[nn] = getderivs(thlen, params.epsilon, umax)
+		dvec[nn] = getderivs(thlen, params.epsilon)
 	end
 	return dvec
 end
 #= getderivs: Get the derivative terms for a single body.
 These are the derivatives of theta, len, xsm, and ysm.
 mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
-function getderivs(thlen::ThetaLenType, epsilon::Float64, umax::Float64=1.)
+function getderivs(thlen::ThetaLenType, epsilon::Float64)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
 	# Make sure atau has been computed.
 	assert(endof(atau)>0)
 	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
-	dtheta = specdiff(theta - 2*pi*alpha) + 2*pi
-	vnorm = atau + epsilon*len*elfun(len,umax) * (dtheta - 2*pi)
+	dtheta = specdiff(theta - alpha) + 1.0
+
+	
+	# MODIFY
+	vnorm = atau + epsilon*len*elfun(len,umax) * (dtheta - 1.0)
 	vtang, mterm = tangvel(dtheta, vnorm)
+	
+
+
 	# Derivative of absolute-value of shear stress.
 	datau = specdiff(atau)	
-	nterm = (datau + vecmult(dtheta,vtang))/len
+	nterm = 2*pi/len * (datau + vecmult(dtheta,vtang))
 	# Get the derivatives of xsm and ysm.
 	xsmdot = mean(-vecmult(vnorm,sin(theta)) + vecmult(vtang,cos(theta)))
 	ysmdot = mean( vecmult(vnorm,cos(theta)) + vecmult(vtang,sin(theta)))
@@ -122,10 +155,6 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 	vtang = specint(dvtang)
 	return vtang, mterm
-end
-# elfun: How to scale the smoothing with len.
-function elfun(len::Float64, umax::Float64=1.)
-	return umax/(len^2 * log(2*pi/len))
 end
 #= delete_indices: Find the bodies where the length is too small.
 Neglecting the log term, L should vanish like sqrt(t).
@@ -160,9 +189,9 @@ function vecmult(uu::Vector{Float64},vv::Vector{Float64})
 #	return mult_dealias(uu,vv)
 	return uu.*vv
 end
-# getalpha: Calculate the parameterization variable, alpha = s/L, using an offset grid.
+# getalpha: Get alpha = 2pi*s/L, using an offset grid.
 function getalpha(npts::Integer)
-	dalpha = 1.0/npts
+	dalpha = 2*pi/npts
 	return alpha = collect(range(0.5*dalpha, dalpha, npts))
 end
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
@@ -178,11 +207,44 @@ function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	test_theta_means(theta)
 	assert(len > 0.)
 	# The partial derivatives dx/dalpha and dy/dalpha.
-	dx = len * (cos(theta) - mean(cos(theta)))
-	dy = len * (sin(theta) - mean(sin(theta)))
+	dx = len/(2*pi) * (cos(theta) - mean(cos(theta)))
+	dy = len/(2*pi) * (sin(theta) - mean(sin(theta)))
 	# Integrate to get the x,y coordinates; result will have mean zero.
 	xx = specint(dx); yy = specint(dy)
 	# Move to have the correct average values.
 	xx += xsm; yy += ysm
 	return xx,yy
+end
+
+#--------------- Tests for the theta vector ---------------#
+#= test_theta_means: Test that cos(theta) and sin(theta) have zero mean.
+These are conditions for theta to describe a closed curve 
+in the equal arc length frame. =#
+function test_theta_means(theta::Vector{Float64})
+	npts = endof(theta)
+	m1 = mean(cos(theta))
+	m2 = mean(sin(theta))
+	maxmean = maximum(abs([m1,m2]))
+	thresh = 20./npts
+	if maxmean > thresh
+		warn("theta means")
+		println("The max mean of sin, cos is: ", 
+			signif(maxmean,3), " > ", signif(thresh,3))
+	end
+	return
+end
+#= test_theta_ends: Test that the difference between the 
+first and last tangent angles is 2pi. =#
+function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
+	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
+	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
+	# Compare the two extrpaolations.
+	th0diff = abs(th0left - th0right)
+	if th0diff > thresh
+		warn("theta ends") 
+		println("The difference between the ends is: ", 
+			signif(th0diff,3), " > ", signif(thresh,3))
+	end
+	return
 end

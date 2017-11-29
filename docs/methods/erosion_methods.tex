@@ -713,9 +713,12 @@ In order to regularize boundary evolution, we modify the normal velocity
 in Eq.~\eqref{eqn:bodyEvolution} as follows
 \begin{equation}
 \label{eqn:Vn}
-\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
+\Vn = \atau + \eps \mean{\atau} \left( \frac{L \kappa}{2\pi} - 1 \right)
+%\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
-Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body. The second term on the right acts to smooth bodies that have high-frequency oscillations. Since we have subtracted the mean curvature, $2\pi/L$, this term is area-preserving, so that the only material loss is due to the shear stress. We chose the prefactor $\log^{-1} \left(2\pi/L \right)$, so that, for 2D Stokes flow, this term scales the same as shear stress as $L \to 0$. Thus, the relative strength of the smoothing is always the same. 
+Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body. The second term on the right acts to smooth bodies that have high-frequency oscillations. Since we have subtracted the mean curvature, $2\pi/L$, this term is area-preserving, so that the only material loss is due to the shear stress. 
+\todo[inline]{Modify the text here.}
+We chose the prefactor $\log^{-1} \left(2\pi/L \right)$, so that, for 2D Stokes flow, this term scales the same as shear stress as $L \to 0$. Thus, the relative strength of the smoothing is always the same. 
 
 We now introduce the tangent angle, $\theta$, defined through the relation
 \begin{equation}
@@ -728,7 +731,8 @@ where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2
 Substitution into Eq.~\eqref{eqn:Vn} gives
 \begin{equation}
 \label{eqn:Vn2}
-\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
+\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
+%\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
 \end{equation}
 
 The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
@@ -748,8 +752,8 @@ Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the 
 \end{align}
 Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
 \begin{equation}
-\pderiv{\theta}{t} = \frac{4 \pi^2 \eps}{L^{2} \log \left(2\pi/L \right)} \ppd{\theta}{\alpha} 
-+ \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\pderiv{\theta}{t} = \frac{2\pi}{L} \left(
+\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
 \end{equation}
 
 For simplicity, we introduce the variables
@@ -759,7 +763,8 @@ For simplicity, we introduce the variables
 \label{eq:N}
 & N = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
 \label{eq:elfun}
-& \elfun = \frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
+& \elfun = \frac{2 \pi  \mean{\atau}}{L}
+%\frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
 \end{align} 
 Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \begin{equation}
@@ -797,14 +802,17 @@ At the first stage of RK2 (the half step), we discretize Eqs.~\eqref{eqn:Levo2}-
 & \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = M^{(n)} \\
 & \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \thhat_k^{(n)}}{\Dt/2} = \hat{N}_k^{(n)}
 \end{align}
-where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the trapezoid rule
+where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the left-end-point rule (first order, consistent with first forward Euler step of RK2)
 \begin{equation}
-\mu_k^{(n+1/2)} = \exp \left( \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
+\mu_k^{(n+1/2)} = \exp \left( \epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
+%\exp \left( \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
 \end{equation}
+\todo[inline]{modify text below}
 Notice in Eq.~\eqref{eq:elfun}, that $\elfun$ depends only on $L(t)$. Hence, we just need to update $L^{(n+1/2)}$ first via Eq.~\eqref{eq:L12}, and we have what we need to compute $\mu_k^{(n+1/2)}$. It is instructive to recast as
 \begin{equation}
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{N}_k^{(n)} \right)
-\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
+\exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
+%\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
 \end{equation}
 so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$.
 
@@ -813,12 +821,17 @@ Next, at the second stage of RK2, we discretize as
 & \frac{L^{(n+1)} - L^{(n)}}{\Dt} = M^{(n+1/2)} \\
 & \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \mu_k^{(n+1/2)} \hat{N}_k^{(n+1/2)}
 \end{align}
-We again compute the integrating factor, $\mu_k^{(n+1)}$ via the trapezoid rule, giving
+We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integration rule), giving
 \begin{align}
-\thhat_k^{(n+1)} = & \thhat_k^{(n)}
-\exp \left( - \frac{1}{2} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right) +  \\
+\thhat_k^{(n+1)} = 
+& \thhat_k^{(n)}
+\exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) +  \\
 & \Dt \, \hat{N}_k^{(n+1/2)}
-\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n+1/2)} + \elfun^{(n+1)} \right) \right)
+\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
+%& \thhat_k^{(n)}
+%\exp \left( - \frac{1}{2} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right) +  \\
+%& \Dt \, \hat{N}_k^{(n+1/2)}
+%\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n+1/2)} + \elfun^{(n+1)} \right) \right)
 \end{align}
 CHECK
 
