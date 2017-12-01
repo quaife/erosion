@@ -33,13 +33,8 @@ end
 dt1 is the step-size, dt2 is used in the Gaussian filter.  =#
 function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType, 
 		dt1::Float64, dt2::Float64, params::ParamType)
-	# Compute the time derivatives and umax = rescale factor.
+	# Compute the time derivatives.
 	dvec = getderivs(thld_derivs, params)
-
-
-###	umax = getumax(thld_derivs, params.nouter, params.fixpdrop)	
-
-
 	# Remove small bodies if needed.
 	deletevec = delete_indices(thld0, dvec, dt1)
 	deleteat!(thld0.thlenvec, deletevec)
@@ -55,28 +50,31 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	epsilon = params.epsilon
 	for nn = 1:nbods
 		# Extract the variables for body nn.
-		thlen0, derivs = thld0.thlenvec[nn], dvec[nn]
+		# thlen0
+		thlen0  = thld0.thlenvec[nn]
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
+		# derivs
+		derivs = dvec[nn]
 		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
-		lenderivs = thld_derivs.thlenvec[nn].len
+		# thlend	
+		thlend = thld_derivs.thlenvec[nn]
+		lend = thlend.len
+		# matau = mean(atau)
+		matau0 = mean(thlen0.atau)
+		mataud = mean(thlend.atau)	
 		# Advance len first.
 		len1 = len0 + dt1*mterm
 		assert(len1 > 0.)	
 
-
-
-		# MODIFY
-		# Compute the sigmas for the Guassian filters.
-		sig1 = 2*pi*sqrt(epsilon*dt1*(elfun(len0,umax)+elfun(len1,umax)))
-		sig2 = 2*pi*sqrt(epsilon*dt2*(elfun(lenderivs,umax)+elfun(len1,umax)))
-		# Advance theta using integrating factor and explicit term.
-		alpha = getalpha(npts)
-		th1 = gaussfilter(th0 - alpha, sig1) + alpha
-		th1 += gaussfilter(dt1*nterm, sig2)
-
-
-
-
+		# To advance theta, need zeta.
+		zeta0 = zetafun(len0,matau0)
+		zetad = zetafun(lend,mataud)
+		# The factors in the exponential smoothing.
+		fac1 = epsilon*dt1*zetad
+		fac2 = epsilon*dt2*0.5*(3*zetad-zeta0)
+		# Advance to get the next theta.
+		th1 = expsmooth(th0-alpha,fac1) + alpha
+		th1 += dt1*expsmooth(nterm,fac2)
 
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt1*xsmdot
@@ -88,26 +86,15 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	thld1 = new_thlenden(thlv1)
 	return thld1
 end
-
-
-
 # zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
 function zetafun(len::Float64, matau::Float64)
 	return 2*pi/len * matau
 end
 
-
-
-
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
-
-
-###	umax = getumax(thlenden, params.nouter, params.fixpdrop)
-
-
 	nbods = endof(thlenden.thlenvec)
 	dvec = new_dvec(nbods)
 	for nn = 1:nbods
@@ -127,20 +114,16 @@ function getderivs(thlen::ThetaLenType, epsilon::Float64)
 	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - alpha) + 1.0
-
-	
-	# MODIFY
-	vnorm = atau + epsilon*len*elfun(len,umax) * (dtheta - 1.0)
+	matau = mean(atau)
+	vnorm = atau + epsilon*matau*(dtheta - 1.0)
 	vtang, mterm = tangvel(dtheta, vnorm)
-	
-
-
 	# Derivative of absolute-value of shear stress.
 	datau = specdiff(atau)	
 	nterm = 2*pi/len * (datau + vecmult(dtheta,vtang))
 	# Get the derivatives of xsm and ysm.
 	xsmdot = mean(-vecmult(vnorm,sin(theta)) + vecmult(vtang,cos(theta)))
 	ysmdot = mean( vecmult(vnorm,cos(theta)) + vecmult(vtang,sin(theta)))
+	# Save in object.
 	derivs = DerivsType(mterm, nterm, xsmdot, ysmdot)
 	return derivs
 end

@@ -17,7 +17,7 @@ type ParamType
 	nouter::Int; ifmm::Int; fixarea::Bool; fixpdrop::Bool;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64
 end
-# DerivsType: Includes the derivatives of theta, len, xsm, ysm
+# DerivsType: Includes the derivatives of theta, len, xsm, ysm.
 type DerivsType
 	mterm::Float64; nterm::Vector{Float64}; 
 	xsmdot::Float64; ysmdot::Float64
@@ -44,7 +44,7 @@ function new_dvec(nbods::Int)
 	return [new_derivs() for nn=1:nbods]
 end
 function new_derivs()
-	return DerivsType(0.,evec(),0.,0.)
+	return DerivsType(0.,evec(),0.,0.,0.)
 end
 function evec()
 	return Array(Float64,0)
