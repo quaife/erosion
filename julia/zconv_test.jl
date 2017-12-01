@@ -10,7 +10,7 @@ end
 
 # Test the convergence wrt dt.
 function convtest()
-	nits = 5
+	nits = 6
 	dragv = zeros(Float64,nits)
 	dtv = zeros(Float64,nits)
 	ttv = zeros(Float64,nits)
