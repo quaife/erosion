@@ -48,6 +48,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	assert(endof(dvec) == endof(thld_derivs.thlenvec) == nbods);
 	thlv1 = new_thlenvec(nbods)
 	epsilon = params.epsilon
+	alpha = getalpha(npts)
 	for nn = 1:nbods
 		# Extract the variables for body nn.
 		# thlen0
@@ -65,7 +66,6 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		# Advance len first.
 		len1 = len0 + dt1*mterm
 		assert(len1 > 0.)	
-
 		# To advance theta, need zeta.
 		zeta0 = zetafun(len0,matau0)
 		zetad = zetafun(lend,mataud)
@@ -75,7 +75,6 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		# Advance to get the next theta.
 		th1 = expsmooth(th0-alpha,fac1) + alpha
 		th1 += dt1*expsmooth(nterm,fac2)
-
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
@@ -132,7 +131,7 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	dthvn = vecmult(dtheta,vnorm)
 	mdthvn = mean(dthvn)
 	# Formula for mterm = dL/dt.
-	mterm = -mdthvn
+	mterm = -2*pi*mdthvn
 	# The derivative of the tangnential velocity wrt alpha.
 	dvtang = dthvn - mdthvn
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.

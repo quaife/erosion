@@ -46,25 +46,25 @@ function specint(fx::Vector, intvlen::Float64=2*pi)
 end
 # imagtest: Test that the imaginary part is negligible.
 function imagtest(fx::Vector, relthold::Float64=1e-8)
-    maximrel = maxabs(imag(fx))/maxabs(fx)
-    if maximrel > relthold
-        warn("imag part too big: ", maximrel)
-    end
-    return
+	maximrel = maxabs(imag(fx))/maxabs(fx)
+	if maximrel > relthold
+		warn("imag part too big: ", maximrel)
+	end
+	return
 end
-
-
-# expsmooth: Equivalent to a Gaussian filter.
+# expsmooth: Smooth in Fourier space.
 function expsmooth(fx::Vector, factor::Float64)
-    fh = fftnice(fx)
-    kv = kvec(length(fx), 1)
-    fh .*= exp(-factor*abs(kv).^2)
-    fs = ifftnice(fh)
-    imagtest(fs)
-    return real(fs) 
+	fh = fftnice(fx)
+	kv = kvec(length(fx), 1)
+	fh .*= exp(-factor*abs(kv).^2)
+	fs = ifftnice(fh)
+	imagtest(fs)
+	return real(fs) 
 end
-# expsmooth(fx, -0.5*sigma^2) = gaussfilter(fx, sigma)
-
+# gaussfilter: Apply a Gaussian filter of width sigma.
+function gaussfilter(fx::Vector, sigma::Float64)
+	return expsmooth(fx, 0.5*sigma^2)
+end
 
 
 #------------------OBSELETE BELOW------------------#

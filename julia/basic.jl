@@ -44,7 +44,7 @@ function new_dvec(nbods::Int)
 	return [new_derivs() for nn=1:nbods]
 end
 function new_derivs()
-	return DerivsType(0.,evec(),0.,0.,0.)
+	return DerivsType(0.,evec(),0.,0.)
 end
 function evec()
 	return Array(Float64,0)
