@@ -229,7 +229,7 @@ function getumax(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
 	if fixpdrop
 		pdrop = getpdrop(thlenden, nouter)[1]
 		umax =  10 * 8./pdrop
-		println("Fixing pdrop, umax = ", umax)
+		println("Fixing pdrop, umax = ", signif(umax,3))
 	end
 	return umax
 end
@@ -258,7 +258,7 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int,
 	So check that it is the same at x0 and -x0. =#
 	qreldiff = (qplus-qminus)/qavg
 	if qreldiff > 1e-3
-		warn("The flux does not match at x0 and -x0: qreldiff = ", qreldiff)
+		warn("The flux does not match at x0 and -x0: qreldiff = ", signif(qreldiff,3))
 	end
 	return pdrop,qavg
 end
