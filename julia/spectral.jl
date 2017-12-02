@@ -69,14 +69,6 @@ end
 
 #------------------OBSELETE BELOW------------------#
 #=
-# gaussfilter: Apply a Gaussian filter of width sigma.
-function gaussfilter(fx::Vector, sigma::Float64)
-   fh = fftnice(fx)
-   kv = kvec(length(fx), 1)
-   fh .*= exp(-0.5*sigma^2 * abs(kv).^2)
-   fs = ifftnice(fh)
-   return real(fs)
-end
 # krasnyfilter: Apply a Krasny filter to the spectrum.
 # The Krasny filter does not delay the shape instability, so I voided it.
 function krasnyfilter(fx::Vector, relthold::Float64=1e-8)
