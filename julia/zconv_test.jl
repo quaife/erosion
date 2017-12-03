@@ -1,7 +1,6 @@
 2# Test the 2nd order convergence in dt.
 # In params.dat, I use 01circ256.in; tfin = 0.01.
 include("main.jl")
-include("postprocess.jl")
 
 #= Calculate the order of convergence given a vector of errors. =#
 function order(Nfac::Integer, errv::Vector{Float64})
@@ -9,8 +8,7 @@ function order(Nfac::Integer, errv::Vector{Float64})
 end
 
 # Test the convergence wrt dt.
-function convtest()
-	nits = 7
+function convtest(nits::Int)
 	dragv = zeros(Float64,nits)
 	dtv = zeros(Float64,nits)
 	ttv = zeros(Float64,nits)
@@ -34,5 +32,3 @@ function convtest()
 	println("The error: ", round(errv,4))
 	println("The order: ", round(orderv,2))
 end
-
-convtest()
