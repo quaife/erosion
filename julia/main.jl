@@ -22,6 +22,7 @@ function erosion(dt::Float64 = -1.)
 		# Advance the variables forward one timestep with RK4.
 		nn += 1
 		println("\n\n\nTIME STEP ", nn)
+		println("t/tfin = ", signif(tt/params.tfin,3))
 		thlenden, dt = rungekutta2(thlenden, params)
 		tt += dt
 		# Plot and save the data if appropriate.

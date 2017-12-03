@@ -15,6 +15,7 @@ function convtest(nits::Int)
 	# Loop over different dt values.
 	dt = 2e-3
 	for nn=1:nits
+		println("\n\nCONVERGENCE TEST: running number ", nn, " out of ", nits)
 		thlenden,params,tt = erosion(dt)
 		dragv[nn] = drag(thlenden,params.nouter)[1]
 		dtv[nn] = dt
