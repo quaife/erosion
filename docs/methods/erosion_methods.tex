@@ -380,7 +380,7 @@ equation~\eqref{eqn:completed_BIE}, computing the quantities of interest
 in Section~\ref{sec:qois}, and updating the shape of the eroding bodies
 with equation~\eqref{eqn:bodyEvolution}.  So that we can form stable
 simulations with long time horizons, we use numerical methods that
-achieve spectral accuracy in space, fourth-order accuracy in time, and
+achieve spectral accuracy in space, second-order accuracy in time, and
 maintain an equispaced discretization of the bodies.
 
 In Section~\ref{sec:spatial_discretization}, we describe how the
@@ -397,14 +397,12 @@ used to update the shape are described.
 \label{sec:spatial_discretization}
 Each body is represented with $N_\iin$ points as the Fourier series
 \begin{align*}
-  \xx^\ell(\alpha) = \sum_{k = -N_\iin /2}^{N_\iin /2-1} 
-    \hat{x}_k^\ell e^{ik\alpha}, \quad \ell=1,\ldots,M.
+  \xx^\ell(\alpha) = \FourierSum \hat{x}_k^\ell e^{ik\alpha}, \quad \ell=1,\ldots,M.
 \end{align*}
 The exterior geometry is represented with a Fourier series using
 $N_\out$ points.  Derivatives of the shape are computed in Fourier space
 \begin{align*}
-  \frac{d\xx(\alpha)}{d\alpha} = 
-    \sum_{k = -N_\out /2}^{N_\out /2-1} ik\hat{x}_k e^{ik\alpha}.
+  \frac{d\xx(\alpha)}{d\alpha} = \FourierSum ik\hat{x}_k e^{ik\alpha}.
 \end{align*}
 
 
@@ -677,31 +675,17 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 \subsection{{\thL} Formulation} 
 \label{sec:thetaL}
 
-In this section, we also describe our time stepping method and two
-regularization terms that are necessary to control the curvature of the
-bodies and to maintain spectral accuracy in space.
+% BRYAN'S ORIGINAL TEXT
+%In this section, we also describe our time stepping method and two regularization terms that are necessary to control the curvature of the bodies and to maintain spectral accuracy in space.
 
+%Once the shear stress is computed, it is used to update the shape of the bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To eliminate tangling and stretching of the mesh, we use a {\thL}formulation~\cite{hou-low-she1994} which is described in Section~\ref{sec:thetaL}.
 
-Once the shear stress is computed, it is used to update the shape of the
-bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To
-eliminate tangling and stretching of the mesh, we use a {\thL}
-formulation~\cite{hou-low-she1994} which is described in
-Section~\ref{sec:thetaL}.
+%We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
+%\begin{enumerate}
+%\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
+%\item Given the shear stress, update the geometry according to the erosion model.
+%\end{enumerate}
 
-
-
-
-We use a quasi-static approximation so that the velocity field
-instantaneously changes with the changing geometry.  Therefore, we can
-alternate between the two main aspects of our simulation
-\begin{enumerate}
-  \item Given a geometry, compute the shear stress of along the boundary
-    of each of the bodies.
-  \item Given the shear stress, update the geometry according to the
-    erosion model.
-\end{enumerate}
-
-\vsp{2}
 To handle boundary evolution, we use the {\thL}    method, which offers
 certain advantages in the ability to stabilize fluid-structure
 interaction problems \cite{hou-low-she1994}. Throughout this section, we
@@ -716,9 +700,7 @@ in Eq.~\eqref{eqn:bodyEvolution} as follows
 \Vn = \atau + \eps \mean{\atau} \left( \frac{L \kappa}{2\pi} - 1 \right)
 %\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
 \end{equation}
-Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body. The second term on the right acts to smooth bodies that have high-frequency oscillations. Since we have subtracted the mean curvature, $2\pi/L$, this term is area-preserving, so that the only material loss is due to the shear stress. 
-\todo[inline]{Modify the text here.}
-We chose the prefactor $\log^{-1} \left(2\pi/L \right)$, so that, for 2D Stokes flow, this term scales the same as shear stress as $L \to 0$. Thus, the relative strength of the smoothing is always the same. 
+Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
 
 We now introduce the tangent angle, $\theta$, defined through the relation
 \begin{equation}
@@ -759,9 +741,9 @@ Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
 For simplicity, we introduce the variables
 \begin{align}
 \label{eq:M}
-& M = - 2 \pi \mean{\thalpha \Vn} \\
+& \Mterm = - 2 \pi \mean{\thalpha \Vn} \\
 \label{eq:N}
-& N = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
 \label{eq:elfun}
 & \elfun = \frac{2 \pi  \mean{\atau}}{L}
 %\frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
@@ -769,18 +751,16 @@ For simplicity, we introduce the variables
 Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \begin{equation}
 \label{eqn:thetaevo1}
-\pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + N
+\pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
 \end{equation}
-\todo[inline]{Change $N$ to something else $\mathcal{N}$}
-Note that the $\elfun$ depends only on $L(t)$, and so the highest order
-derivative in Eq.~\eqref{eqn:thetaevo1} is {\em linear} in the variable $\alpha$. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for the stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
+Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
 \begin{align}
-& \theta(\alpha,t) = \sum_{k = -\infty}^{\infty} \thhat_k e^{ i k \alpha} \\
-& N(\alpha,t)  = \sum_{k = -\infty}^{\infty} \hat{N}_k e^{ i k \alpha}
+& \theta(\alpha,t) = \FourierSum \thhat_k e^{ i k \alpha} \\
+& \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
 Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
 \begin{equation}
-\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{N}_k
+\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{\NLterm}_k
 \end{equation}
 We introduce the integrating factor
 \begin{equation}
@@ -790,54 +770,45 @@ We introduce the integrating factor
 Then the evolution equations for $L$ and $\theta$ can be recast as the coupled system of ODEs
 \begin{align}
 \label{eqn:Levo2}
-& \tderiv{L}{t} = M \\
+& \tderiv{L}{t} = \Mterm \\
 \label{eqn:thetaevo2}
-& \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \hat{N}_k
+& \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \hat{\NLterm}_k
 \end{align}
-We solve system \eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} with a combination of an explicit, second-order Runge-Kutta method (RK2) and trapezoid rule to compute the integrating factor, $\mu_k$. There is not a unique second-order Runge-Kutta method, and we choose the {\em midpoint} version to maximize the smoothing effect of the curvature term.
+We solve system \eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} with an explicit, second-order Runge-Kutta method (RK2). In particular, we choose the {\em midpoint} RK2 method so as to maximize the smoothing effect of the curvature term.
 
 At the first stage of RK2 (the half step), we discretize Eqs.~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} as
 \begin{align}
 \label{eq:L12}
-& \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = M^{(n)} \\
-& \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \thhat_k^{(n)}}{\Dt/2} = \hat{N}_k^{(n)}
+& \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = \Mterm^{(n)} \\
+& \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \thhat_k^{(n)}}{\Dt/2} = \hat{\NLterm}_k^{(n)}
 \end{align}
-where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the left-end-point rule (first order, consistent with first forward Euler step of RK2)
+where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the left-end-point rule (first order, consistent with first forward Euler step of RK2)
 \begin{equation}
 \mu_k^{(n+1/2)} = \exp \left( \epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
-%\exp \left( \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
 \end{equation}
-\todo[inline]{modify text below}
-Notice in Eq.~\eqref{eq:elfun}, that $\elfun$ depends only on $L(t)$. Hence, we just need to update $L^{(n+1/2)}$ first via Eq.~\eqref{eq:L12}, and we have what we need to compute $\mu_k^{(n+1/2)}$. It is instructive to recast as
+It is instructive to recast as
 \begin{equation}
-\thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{N}_k^{(n)} \right)
+\thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
 \exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
-%\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1/2)} \right) \right)
 \end{equation}
-so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute $M^{(n+1/2)}$ and $\hat{N}_k^{(n+1/2)}$.
+so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute $\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$.
 
 Next, at the second stage of RK2, we discretize as
 \begin{align}
-& \frac{L^{(n+1)} - L^{(n)}}{\Dt} = M^{(n+1/2)} \\
-& \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \mu_k^{(n+1/2)} \hat{N}_k^{(n+1/2)}
+& \frac{L^{(n+1)} - L^{(n)}}{\Dt} = \Mterm^{(n+1/2)} \\
+& \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}
 \end{align}
 We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integration rule), giving
 \begin{align}
 \thhat_k^{(n+1)} = 
 & \thhat_k^{(n)}
 \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) +  \\
-& \Dt \, \hat{N}_k^{(n+1/2)}
+& \Dt \, \hat{\NLterm}_k^{(n+1/2)}
 \exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
-%& \thhat_k^{(n)}
-%\exp \left( - \frac{1}{2} \eps k^2 \Dt \left( \elfun^{(n)} + \elfun^{(n+1)} \right) \right) +  \\
-%& \Dt \, \hat{N}_k^{(n+1/2)}
-%\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( \elfun^{(n+1/2)} + \elfun^{(n+1)} \right) \right)
 \end{align}
-CHECK
 
 
-
-\vsp{5}
+\newpage
 \todo[inline]{Artificial Diffusion} 
 \todo[inline]{Gaussian Filter} 
 
