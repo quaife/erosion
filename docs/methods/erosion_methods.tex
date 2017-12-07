@@ -805,16 +805,29 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 & \Dt \, \hat{\NLterm}_k^{(n+1/2)}
 \exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
 \end{align}
-
-
-\newpage
-\todo[inline]{Artificial Diffusion} 
 \todo[inline]{Gaussian Filter} 
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
+
+\subsection{Single-body validation results}
+
+\subsubsection{The uniform stress geometry}
+
+\subsubsection{The vanishing rate of area}
+In three-dimensional Stokes flow, the shear stress vanishes as
+\begin{equation}
+\tau_{3D} \sim \mu V/L
+\end{equation}
+However, this law must be modified for 2D flow, which represents 3D bodies of large extent. As the body vanishes, the walls have an ever decreasing influence. Thus, the stress must be consistent with free-space slender-body theory as it vanishes. The stress law consistent with slender body theory (a long cylinder held perpendicular to a flow) is
+\begin{equation}
+\tau_{2D} \sim \frac{4 \pi \mu V}{L \log(W/L)}
+\end{equation}
+
+
+% NEWPAGE
+\newpage
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
