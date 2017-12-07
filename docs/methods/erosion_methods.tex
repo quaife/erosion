@@ -697,8 +697,7 @@ In order to regularize boundary evolution, we modify the normal velocity
 in Eq.~\eqref{eqn:bodyEvolution} as follows
 \begin{equation}
 \label{eqn:Vn}
-\Vn = \atau + \eps \mean{\atau} \left( \frac{L \kappa}{2\pi} - 1 \right)
-%\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
+\Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
 \end{equation}
 Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
 
