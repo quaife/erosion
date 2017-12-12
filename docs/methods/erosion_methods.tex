@@ -754,8 +754,9 @@ Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
 \end{equation}
 Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
+\todo[inline]{Check theta equation}
 \begin{align}
-& \theta(\alpha,t) = \FourierSum \thhat_k e^{ i k \alpha} \\
+& \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
 & \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
 Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
