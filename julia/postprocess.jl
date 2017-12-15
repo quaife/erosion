@@ -30,8 +30,8 @@ function postprocess(foldername::AbstractString)
 		rbods = resistivity(thlenden, nouter, 2.0)
 		rbodsrot = resistivity(thlenden, nouter, 2.0, rotation=true)
 		# Compute the drag on each body.
-		dragx, dragy = drag(thlenden, nouter)
-		dragxrot, dragyrot = drag(thlenden, nouter, rotation=true)
+		dragx, dragy, tauvec = drag(thlenden, nouter)
+		dragxrot, dragyrot, tauvecrot = drag(thlenden, nouter, rotation=true)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
@@ -55,13 +55,13 @@ function postprocess(foldername::AbstractString)
 		# Save the stress on each body.
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
-		label = string("# Data ")
+		label = string("# Smoothed atau, Raw atau ")
 		atauvec = zeros(Float64, npts*nbods)
 		for nn=1:nbods
 			n1,n2 = n1n2(npts,nbods)
 			atauvec[n1:n2] = thlenden.thlenvec[nn].atau
 		end
-		writedata([label; atauvec], stressfile)
+		writedata([label; atauvec; tauvec], stressfile)
 		# Print progress.
 		println("Finished step ", cnt, " of ", ntimes, ".")
 	end
@@ -105,7 +105,7 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 		dragx += sum(press.*nx + tau.*sx)*ds
 		dragy += sum(press.*ny + tau.*sy)*ds
 	end
-	return dragx, dragy
+	return dragx, dragy, tauvec
 end
 
 #----------- TARGET POINTS -----------#
