@@ -8,15 +8,15 @@ include("postprocess.jl")
 
 #--------------- MAIN ROUTINE ---------------#
 # erosion: The main routine to erode a group of bodies.
-function erosion(dt::Float64 = -1.)
+function erosion(; paramsfile="params.in", dt::Float64 = -1.)
 	# Get the input geometry, parameters, and other stuff.
-	thlenden,params = startup()
+	thlenden,params = startup(paramsfile)
 	# Modify dt based on input to erosion if necessary.
 	dt > 0? params.dt = dt : 0
 	println("Running erosion with dt = ", signif(params.dt,3))
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
-	plotnsave(nfile,tt,thlenden,params)
+	plotnsave(nfile,tt,thlenden,params,paramsfile)
 	# Enter the time loop to apply Runge-Kutta.
 	while(tt < params.tfin - 0.1*params.dt && endof(thlenden.thlenvec) > 0)
 		# Advance the variables forward one timestep with RK4.
@@ -28,12 +28,12 @@ function erosion(dt::Float64 = -1.)
 		# Plot and save the data if appropriate.
 		if mod(nn, params.cntout)==0
 			nfile += 1
-			plotnsave(nfile,tt,thlenden,params)
+			plotnsave(nfile,tt,thlenden,params,paramsfile)
 		end
 	end
 	# Plot and save one last time with zero bodies.
 	nfile += 1
-	plotnsave(nfile,tt,thlenden,params)
+	plotnsave(nfile,tt,thlenden,params,paramsfile)
 	cputime = round( (time()-params.cput0)/60. , 2)
 	println("\n\n\nCOMPLETED SIMULATION")
 	println("cpu time = ", cputime, " minutes.\n\n")
@@ -41,9 +41,9 @@ function erosion(dt::Float64 = -1.)
 end
 
 # startup: Read params and geoinfile; setup stuff.
-function startup()
+function startup(paramsfile::AbstractString)
 	# Read the parameters file.
-	paramvec = readvec("params.dat")
+	paramvec = readvec(paramsfile)
 	# Read the input geometry file.
 	geoinfile = string("../geometries/",paramvec[1])
 	thlenvec0 = read_thlen_file(geoinfile)

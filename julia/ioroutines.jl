@@ -2,7 +2,8 @@
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
+function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, 
+		params::ParamType, inparamsfile::AbstractString)
 	# Preliminary stuff.
 	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
@@ -10,7 +11,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	nfilestr = lpad(nfile,4,0)
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
-	paramsfile = string(datafolder,"params.dat")
+	outparamsfile = string(datafolder,"params.dat")
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
@@ -20,7 +21,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
-	save_params(params,nfile,paramsfile)
+	save_params(params,nfile,inparamsfile,outparamsfile)
 	return
 end
 
@@ -56,8 +57,9 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	return
 end
 # save_params: Write the important parameters in an output file.
-function save_params(params::ParamType, nfile::Int, outparamsfile::AbstractString)
-	paramvec = readvec("params.dat")
+function save_params(params::ParamType, nfile::Int, 
+		inparamsfile::AbstractString, outparamsfile::AbstractString)
+	paramvec = readvec(inparamsfile)
 	cputime = round( (time()-params.cput0)/60. , 2)
 	label1 = "# Input Parameters: geoinfile, epsfac, sigfac, dt, dtout, tfin, nouter, iffm, fixarea, pressdrop"
 	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"

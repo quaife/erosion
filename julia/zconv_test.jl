@@ -1,4 +1,4 @@
-2# Test the 2nd order convergence in dt.
+# Test the 2nd order convergence in dt.
 # In params.dat, I use 01circ256.in; tfin = 0.01.
 include("main.jl")
 
@@ -16,7 +16,7 @@ function convtest(nits::Int)
 	dt = 2e-3
 	for nn=1:nits
 		println("\n\nCONVERGENCE TEST: running number ", nn, " out of ", nits)
-		thlenden,params,tt = erosion(dt)
+		thlenden,params,tt = erosion(dt = dt)
 		dragv[nn] = drag(thlenden,params.nouter)[1]
 		dtv[nn] = dt
 		ttv[nn] = tt
