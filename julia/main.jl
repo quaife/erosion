@@ -65,7 +65,7 @@ function startup(paramsfile::AbstractString)
 	newfolder(datafolder)
 	newfolder(plotfolder)
 	# Save the input parameters file.
-	saveparamsfile = string(datafolder,"params.in")
+	saveparamsfile = string(datafolder,"aparams.in")
 	writedata(paramvec,saveparamsfile)
 	return thlenden0,params
 end
