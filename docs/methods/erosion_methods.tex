@@ -27,6 +27,35 @@ We consider two dimensional eroding bodies in Stokes flow
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
+\paragraph{Contributions}
+
+
+\paragraph{Limitations} There are two main limitations of the current
+work.  First, the flow is assumed to be two-dimensional.  Although
+several flows can be described to good accuracy under a two-dimensional
+approximation, certain phenomena occur only in three-dimensional.  The
+boundary integral equation formulation for the fluid solver exists, and
+the main challenges of a BIE solver have been addressed by other groups
+including surface representation~\cite{yin-bir-zor2006,
+vee-rah-bir-zor2011}, near-singular integration~\cite{yin-bir-zor2006,
+kli-tor2016b}, and fast summation methods~\cite{yin-bir-zor2004,
+ros-ols2015}.  The more significant challenge of extending our work to
+three dimensions is guaranteeing that the mesh does not become
+distorted, which can be done, for example, by using an extension of the
+two-dimensional {\thL} formulation~\cite{amb-sie-tlu2013}.
+
+The second limitation is that the eroding bodies are fixed.  While
+mobile eroding bodies have been considered~\cite{Mitchell2016}, only a
+single body is simulated.  When multiple bodies are present, especially
+in dense suspensions, numerical errors can cause bodies to unphysically
+come into contact.  However, by including a small force and
+torque~\cite{lu-rah-zor2017}, contact can be avoided.
+
+\paragraph{Related work}
+
+
+\paragraph{Outline of the paper}
+
 This is a methods paper
 \begin{itemize}
   \item Boundary integral equation formulation
@@ -293,7 +322,7 @@ Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \label{eqn:thetaevo1}
 \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
 \end{equation}
-Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. 
+Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the \thL method, and allows us to use very stable, implicit methods for this stiff term. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
