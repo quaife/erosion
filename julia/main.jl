@@ -6,17 +6,26 @@ include("thetalen.jl")
 include("ioroutines.jl")
 include("postprocess.jl")
 
+
 #--------------- MAIN ROUTINE ---------------#
-# erosion: The main routine to erode a group of bodies.
-function erosion(; paramsfile="params.in", dt::Float64 = -1.)
-	# Get the input geometry, parameters, and other stuff.
+# Dispatch to call the main routine with dt and tfin set by params file.
+function erosion(paramsfile::AbstractString = "params.in")
 	thlenden,params = startup(paramsfile)
-	# Modify dt based on input to erosion if necessary.
-	dt > 0? params.dt = dt : 0
-	println("Running erosion with dt = ", signif(params.dt,3))
+	erosion(thlenden,params)
+end
+# Dispatch to call the main routine with dt and tfin set by the caller.
+function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
+	thlenden,params = startup(paramsfile)
+	params.dt = dt; params.tfin = tfin
+	erosion(thlenden,params)
+end
+# erosion: The main routine to erode a group of bodies.
+function erosion(thlenden::ThLenDenType, params::ParamType)
+	println("Running erosion with dt = ", signif(params.dt,3), 
+		" and tfin = ", signif(params.tfin,3))
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
-	plotnsave(nfile,tt,thlenden,params,paramsfile)
+	plotnsave(nfile,tt,thlenden,params)
 	# Enter the time loop to apply Runge-Kutta.
 	while(tt < params.tfin - 0.1*params.dt && endof(thlenden.thlenvec) > 0)
 		# Advance the variables forward one timestep with RK4.
@@ -28,12 +37,12 @@ function erosion(; paramsfile="params.in", dt::Float64 = -1.)
 		# Plot and save the data if appropriate.
 		if mod(nn, params.cntout)==0
 			nfile += 1
-			plotnsave(nfile,tt,thlenden,params,paramsfile)
+			plotnsave(nfile,tt,thlenden,params)
 		end
 	end
 	# Plot and save one last time with zero bodies.
 	nfile += 1
-	plotnsave(nfile,tt,thlenden,params,paramsfile)
+	plotnsave(nfile,tt,thlenden,params)
 	cputime = round( (time()-params.cput0)/60. , 2)
 	println("\n\n\nCOMPLETED SIMULATION")
 	println("cpu time = ", cputime, " minutes.\n\n")
@@ -55,6 +64,9 @@ function startup(paramsfile::AbstractString)
 	datafolder, plotfolder = getfoldernames()
 	newfolder(datafolder)
 	newfolder(plotfolder)
+	# Save the input parameters file.
+	outparamsfile = string(datafolder,"params.in")
+	writedata(paramvec,outparamsfile)
 	return thlenden0,params
 end
 # function getparams: Define the object of parameters.

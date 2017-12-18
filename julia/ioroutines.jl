@@ -2,8 +2,7 @@
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
-function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, 
-		params::ParamType, inparamsfile::AbstractString)
+function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
 	# Preliminary stuff.
 	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
@@ -11,17 +10,16 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType,
 	nfilestr = lpad(nfile,4,0)
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
-	outparamsfile = string(datafolder,"params.dat")
+	pinfofile = string(datafolder,"pinfo.out")
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
 	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
-
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
-	save_params(params,nfile,inparamsfile,outparamsfile)
+	save_pinfo(params,nfile,pinfofile)
 	return
 end
 
@@ -56,15 +54,11 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	writedata(densitydata,densityfile)
 	return
 end
-# save_params: Write the important parameters in an output file.
-function save_params(params::ParamType, nfile::Int, 
-		inparamsfile::AbstractString, outparamsfile::AbstractString)
-	paramvec = readvec(inparamsfile)
+# save_pinfo: Save info about the parameters.
+function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString)
 	cputime = round( (time()-params.cput0)/60. , 2)
-	label1 = "# Input Parameters: geoinfile, epsfac, sigfac, dt, dtout, tfin, nouter, iffm, fixarea, pressdrop"
 	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"
-	paramdata = [label1; paramvec; label2; 
-		params.npts; params.cntout; nfile; cputime]
+	paramdata = [label2; params.npts; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
 end

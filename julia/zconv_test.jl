@@ -6,9 +6,10 @@ include("main.jl")
 function order(Nfac::Integer, errv::Vector{Float64})
 	return log(errv[1:end-1]./errv[2:end])./log(Nfac)
 end
-
 # Test the convergence wrt dt.
-function convtest(nits::Int)
+function convtest(tfin::Float64, nits::Int)
+	paramsfile = "params.in"
+	# Initialize arrays.
 	dragv = zeros(Float64,nits)
 	dtv = zeros(Float64,nits)
 	ttv = zeros(Float64,nits)
@@ -16,7 +17,7 @@ function convtest(nits::Int)
 	dt = 2e-3
 	for nn=1:nits
 		println("\n\nCONVERGENCE TEST: running number ", nn, " out of ", nits)
-		thlenden,params,tt = erosion(dt = dt)
+		thlenden,params,tt = erosion(paramsfile,dt,tfin)
 		dragv[nn] = drag(thlenden,params.nouter)[1]
 		dtv[nn] = dt
 		ttv[nn] = tt
