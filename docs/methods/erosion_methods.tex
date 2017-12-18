@@ -47,7 +47,8 @@ This is a methods paper
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-
+% Figure generated using 20circ128.in with epsfac = 8, sigfac = 8, dt = 2e-4, fixpdrop = 1.
+% Figure was made after the code changes regarding scaling the smoothing on the average stress on each body.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,6 +210,90 @@ Here,
 is being used to remove the rank one null space that results from the
 compatibility constraint that results from the flux-free requirement of
 $\ff$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interface evolution in the {\thL} framework} 
+\label{sec:thetaL}
+
+% BRYAN'S ORIGINAL TEXT
+%In this section, we also describe our time stepping method and two regularization terms that are necessary to control the curvature of the bodies and to maintain spectral accuracy in space.
+
+%Once the shear stress is computed, it is used to update the shape of the bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To eliminate tangling and stretching of the mesh, we use a {\thL}formulation~\cite{hou-low-she1994} which is described in Section~\ref{sec:thetaL}.
+
+%We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
+%\begin{enumerate}
+%\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
+%\item Given the shear stress, update the geometry according to the erosion model.
+%\end{enumerate}
+
+To handle boundary evolution, we use the {\thL} framework, which offers
+certain advantages in the ability to stabilize fluid-structure
+interaction problems \cite{hou-low-she1994}. Throughout this section, we
+use the following conventions: the bodies are parametrized in the CCW
+direction and the normal vector points into the bodies (our out of the
+fluid).
+
+In order to regularize boundary evolution, we modify the normal velocity
+in Eq.~\eqref{eqn:bodyEvolution} as follows
+\begin{equation}
+\label{eqn:Vn}
+\Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
+\end{equation}
+Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
+
+We now introduce the tangent angle, $\theta$, defined through the relation
+\begin{equation}
+\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
+\end{equation}
+where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
+\begin{equation}
+\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
+\end{equation}
+Substitution into Eq.~\eqref{eqn:Vn} gives
+\begin{equation}
+\label{eqn:Vn2}
+\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
+%\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
+\end{equation}
+
+The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
+\begin{equation}
+\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
+\end{equation}
+The interface evolution is then given by
+\begin{equation}
+\dot{\xx}(t) = \Vn \nn + \Vs \ss.
+\end{equation}
+Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
+\begin{align}
+\label{eqn:Levo0}
+& \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
+\label{eqn:thetaevo0}
+& \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
+\end{align}
+Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
+\begin{equation}
+\pderiv{\theta}{t} = \frac{2\pi}{L} \left(
+\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\end{equation}
+
+For simplicity, we introduce the variables
+\begin{align}
+\label{eq:M}
+& \Mterm = - 2 \pi \mean{\thalpha \Vn} \\
+\label{eq:N}
+& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+\label{eq:elfun}
+& \elfun = \frac{2 \pi  \mean{\atau}}{L}
+%\frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
+\end{align} 
+Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
+\begin{equation}
+\label{eqn:thetaevo1}
+\pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
+\end{equation}
+Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -671,91 +756,14 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{{\thL} Formulation} 
-\label{sec:thetaL}
 
-% BRYAN'S ORIGINAL TEXT
-%In this section, we also describe our time stepping method and two regularization terms that are necessary to control the curvature of the bodies and to maintain spectral accuracy in space.
 
-%Once the shear stress is computed, it is used to update the shape of the bodies according to the normal flow~\eqref{eqn:bodyEvolution}.  To eliminate tangling and stretching of the mesh, we use a {\thL}formulation~\cite{hou-low-she1994} which is described in Section~\ref{sec:thetaL}.
-
-%We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
-%\begin{enumerate}
-%\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
-%\item Given the shear stress, update the geometry according to the erosion model.
-%\end{enumerate}
-
-To handle boundary evolution, we use the {\thL}    method, which offers
-certain advantages in the ability to stabilize fluid-structure
-interaction problems \cite{hou-low-she1994}. Throughout this section, we
-use the following conventions: the bodies are parametrized in the CCW
-direction and the normal vector points into the bodies (our out of the
-fluid).
-
-In order to regularize boundary evolution, we modify the normal velocity
-in Eq.~\eqref{eqn:bodyEvolution} as follows
-\begin{equation}
-\label{eqn:Vn}
-\Vn = \atau + \eps \mean{\atau} \left( \frac{L \kappa}{2\pi} - 1 \right)
-%\Vn = \atau + \frac{\eps}{\log \left(2\pi/L \right)} \left(\kappa - \frac{2 \pi}{L} \right)
-\end{equation}
-Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
-
-We now introduce the tangent angle, $\theta$, defined through the relation
-\begin{equation}
-\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
-\end{equation}
-where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
-\begin{equation}
-\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
-\end{equation}
-Substitution into Eq.~\eqref{eqn:Vn} gives
-\begin{equation}
-\label{eqn:Vn2}
-\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
-%\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
-\end{equation}
-
-The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
-\begin{equation}
-\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
-\end{equation}
-The interface evolution is then given by
-\begin{equation}
-\dot{\xx}(t) = \Vn \nn + \Vs \ss.
-\end{equation}
-Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
+%% TIME-STEPPING %%
+\subsection{Time-stepping with the {\thL} method} 
+We will evolve $\theta$ in spectral space, and so introduce the transforms
+\todo[inline]{Check theta equation}
 \begin{align}
-\label{eqn:Levo0}
-& \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
-\label{eqn:thetaevo0}
-& \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
-\end{align}
-Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
-\begin{equation}
-\pderiv{\theta}{t} = \frac{2\pi}{L} \left(
-\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
-\end{equation}
-
-For simplicity, we introduce the variables
-\begin{align}
-\label{eq:M}
-& \Mterm = - 2 \pi \mean{\thalpha \Vn} \\
-\label{eq:N}
-& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
-\label{eq:elfun}
-& \elfun = \frac{2 \pi  \mean{\atau}}{L}
-%\frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
-\end{align} 
-Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
-\begin{equation}
-\label{eqn:thetaevo1}
-\pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
-\end{equation}
-Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. We will evolve $\theta$ in spectral space, and so introduce the transforms
-\begin{align}
-& \theta(\alpha,t) = \FourierSum \thhat_k e^{ i k \alpha} \\
+& \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
 & \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
 Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
@@ -806,26 +814,54 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 & \Dt \, \hat{\NLterm}_k^{(n+1/2)}
 \exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
 \end{align}
-
-
-\newpage
-\todo[inline]{Artificial Diffusion} 
 \todo[inline]{Gaussian Filter} 
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
 
+\subsection{Single-body validation results}
+
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.9 \textwidth]{./figs/fig3.pdf}
-\caption{Shrinking body and area.}
-\label{fig1}
+\includegraphics[width = 0.9 \textwidth]{./figs/01bodseq.pdf}
+\caption{One body}
+\label{}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Figure from datafile 01circ1024aa;
+% Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixpdrop = 0
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.99 \textwidth]{./figs/IntfacesStressArea.pdf}
+\caption{One body}
+\label{}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Figure from datafile 01circ1024aa;
+% Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixpdrop = 0
+
+\subsubsection{The vanishing rate of area}
+In three-dimensional Stokes flow, the shear stress vanishes as
+\begin{equation}
+\tau_{3D} \sim \mu V/L
+\end{equation}
+However, this law must be modified for 2D flow, which represents 3D bodies of large extent. As the body vanishes, the walls have an ever decreasing influence. Thus, the stress must be consistent with free-space slender-body theory as it vanishes. The stress law consistent with slender body theory (a long cylinder held perpendicular to a flow) is
+\begin{equation}
+\tau_{2D} \sim \frac{4 \pi \mu V}{L \log(W/L)}
+\end{equation}
+
+\subsubsection{The uniform stress geometry}
+
+
+% NEWPAGE
+\newpage
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]

@@ -6,21 +6,20 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	# Preliminary stuff.
 	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
-	datafolder, plotfolder = getfoldernames()
+	datafolder, plotfolder = getfoldernames(params.paramsfile)
 	nfilestr = lpad(nfile,4,0)
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
-	paramsfile = string(datafolder,"params.dat")
+	pinfofile = string(datafolder,"apinfo.out")
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
 	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
-
 	# Write the data to a file.
 	save_geo_density(tt,thlenden,geomfile,densityfile)
-	save_params(params,nfile,paramsfile)
+	save_pinfo(params,nfile,pinfofile)
 	return
 end
 
@@ -55,22 +54,19 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 	writedata(densitydata,densityfile)
 	return
 end
-# save_params: Write the important parameters in an output file.
-function save_params(params::ParamType, nfile::Int, outparamsfile::AbstractString)
-	paramvec = readvec("params.dat")
+# save_pinfo: Save info about the parameters.
+function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString)
 	cputime = round( (time()-params.cput0)/60. , 2)
-	label1 = "# Input Parameters: geoinfile, epsfac, sigfac, dt, dtout, tfin, nouter, iffm, fixarea, pressdrop"
 	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"
-	paramdata = [label1; paramvec; label2; 
-		params.npts; params.cntout; nfile; cputime]
+	paramdata = [label2; params.npts; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
 end
 #--------------- HANDLING FOLDERS ---------------#
 # getfoldernames: Set the name of the data and plot folders.
-function getfoldernames()
-	datafolder = "../datafiles/run/"
-	plotfolder = "../figs/"
+function getfoldernames(paramsfile::AbstractString)
+	datafolder = string("../datafiles/run_",paramsfile,"/")
+	plotfolder = string("../figs_",paramsfile,"/")
 	return datafolder, plotfolder
 end
 # newfolder: If the folder exists, delete it. Then create a new folder.
