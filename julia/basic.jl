@@ -65,9 +65,6 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 		n1,n2 = n1n2(npts,nn)
 		atau = abs(tau[n1:n2])
 		atau = gaussfilter(atau, params.sigma)
-		if params.fixarea
-			atau = atau - mean(atau)
-		end
 		thlenden.thlenvec[nn].atau = atau[:]
 	end
 	return

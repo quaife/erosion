@@ -98,26 +98,28 @@ function getderivs(thlenden::ThLenDenType, params::ParamType)
 	dvec = new_dvec(nbods)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
-		dvec[nn] = getderivs(thlen, params.epsilon)
+		dvec[nn] = getderivs(thlen, params.epsilon, params.fixarea)
 	end
 	return dvec
 end
 #= getderivs: Get the derivative terms for a single body.
 These are the derivatives of theta, len, xsm, and ysm.
 mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
-function getderivs(thlen::ThetaLenType, epsilon::Float64)
+function getderivs(thlen::ThetaLenType, epsilon::Float64, fixarea::Bool)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
 	# Make sure atau has been computed.
 	assert(endof(atau)>0)
+	# Compute the effective atau to be used in evolution, depending on fixarea.
+	matau = mean(atau)
+	ataueff = atau - fixarea*matau
 	# Calculate the derivative terms.
 	alpha = getalpha(endof(theta))
 	dtheta = specdiff(theta - alpha) + 1.0
-	matau = mean(atau)
-	vnorm = atau + epsilon*matau*(dtheta - 1.0)
+	vnorm = ataueff + epsilon*matau*(dtheta - 1.0)
 	vtang, mterm = tangvel(dtheta, vnorm)
 	# Derivative of absolute-value of shear stress.
-	datau = specdiff(atau)	
+	datau = specdiff(atau)
 	nterm = 2*pi/len * (datau + vecmult(dtheta,vtang))
 	# Get the derivatives of xsm and ysm.
 	xsmdot = mean(-vecmult(vnorm,sin(theta)) + vecmult(vtang,cos(theta)))
@@ -144,6 +146,7 @@ The midpoint rule in RK2 gives the sqrt(2) factor. =#
 function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
 	# ndts: The number of dt values to look into the future for len.
 	ndts = 1.0
+	mthresh = 10.
 	thlv = thld0.thlenvec
 	nbods = endof(thlv)
 	assert(endof(dvec) == nbods)
@@ -152,12 +155,12 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 		len = thlv[nn].len
 		mterm = dvec[nn].mterm
 		minlen = -sqrt(2)*mterm*ndts*dt
-		if (len <= minlen || mterm > 0.)
+		if mterm > 0.; warn("mterm is positive."); end;
+		if (len <= minlen || mterm > mthresh)
 			println("\n\n--------------------------------------------------")
 			println("DELETING BODY ", nn)
 			println("mterm = ", signif(mterm,3), "; len = ", 
 				signif(len,3), "; minlen = ", signif(minlen,3))
-			if mterm > 0.; warn("mterm is positive."); end;
 			println("--------------------------------------------------\n")
 			append!(deletevec,[nn])
 		end
