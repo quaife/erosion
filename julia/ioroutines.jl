@@ -6,7 +6,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	# Preliminary stuff.
 	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
-	datafolder, plotfolder = getfoldernames()
+	datafolder, plotfolder = getfoldernames(params.paramsfile)
 	nfilestr = lpad(nfile,4,0)
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
@@ -64,9 +64,9 @@ function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString
 end
 #--------------- HANDLING FOLDERS ---------------#
 # getfoldernames: Set the name of the data and plot folders.
-function getfoldernames()
-	datafolder = "../datafiles/run/"
-	plotfolder = "../figs/"
+function getfoldernames(paramsfile::AbstractString)
+	datafolder = string("../datafiles/run_",paramsfile,"/")
+	plotfolder = string("../figs_",paramsfile,"/")
 	return datafolder, plotfolder
 end
 # newfolder: If the folder exists, delete it. Then create a new folder.

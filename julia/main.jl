@@ -54,25 +54,25 @@ function startup(paramsfile::AbstractString)
 	# Read the parameters file.
 	paramvec = readvec(paramsfile)
 	# Read the input geometry file.
-	geoinfile = string("../geometries/",paramvec[1])
+	geoinfile = string("../geometries/",paramvec[1],".in")
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
 	npts,nbods = getnvals(thlenvec0)
 	# Define the object params.
-	params = getparams(paramvec,npts)
+	params = getparams(paramvec,npts,paramsfile)
 	# Create new data folders
-	datafolder, plotfolder = getfoldernames()
+	datafolder, plotfolder = getfoldernames(params.paramsfile)
 	newfolder(datafolder)
 	newfolder(plotfolder)
 	# Save the input parameters file.
-	outparamsfile = string(datafolder,"params.in")
-	writedata(paramvec,outparamsfile)
+	saveparamsfile = string(datafolder,"params.in")
+	writedata(paramvec,saveparamsfile)
 	return thlenden0,params
 end
 # function getparams: Define the object of parameters.
-function getparams(paramvec::Vector, npts::Int)
+function getparams(paramvec::Vector, npts::Int, paramsfile::AbstractString)
 	# Read the parameters and calculate needed quantities.
-	epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[2:8]
+	geofile,epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[1:8]
 	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
@@ -80,6 +80,6 @@ function getparams(paramvec::Vector, npts::Int)
 	cput0 = time()
 	# Save the parameters in an object.
 	params = ParamType(dt,epsilon,sigma,nouter,ifmm,
-		fixarea,fixpdrop,npts,tfin,cntout,cput0)
+		fixarea,fixpdrop,npts,tfin,cntout,cput0,geofile,paramsfile)
 	return params
 end
