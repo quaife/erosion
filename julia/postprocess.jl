@@ -3,19 +3,6 @@
 
 # postprocess: Use the saved data to compute stuff.
 function postprocess(foldername::AbstractString)
-	
-	#= OLD
-	# Define the data folder.
-	datafolder = string("../datafiles/",foldername,"/")
-	# Read the params data file.
-	paramsfile = string(datafolder,"params.dat")
-	paramvec = readvec(paramsfile)
-	npts = paramvec[end-3]
-	ntimes = paramvec[end-1]
-	params = getparams(paramvec[1:10],npts)
-	nouter = params.nouter
-	=#
-
 	# Define the data folder and files.
 	datafolder = string("../datafiles/",foldername,"/")
 	paramsfile = string(datafolder,"aparams.in")
