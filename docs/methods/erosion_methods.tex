@@ -866,14 +866,27 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.99 \textwidth]{./figs/IntfacesStressArea.pdf}
+\includegraphics[width = 0.99 \textwidth]{./figs/01shrink_plots.pdf}
 \caption{One body}
 \label{}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure from datafile 01circ1024aa;
-% Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixpdrop = 0
+% Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.99 \textwidth]{./figs/01fix_plots.pdf}
+\caption{One body fixed area}
+\label{}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Figure from datafile 01circ1024cc
+% Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 1, fixpdrop = 0
+
 
 \subsubsection{The vanishing rate of area}
 In three-dimensional Stokes flow, the shear stress vanishes as
@@ -891,16 +904,6 @@ However, this law must be modified for 2D flow, which represents 3D bodies of la
 % NEWPAGE
 \newpage
 
-
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
-\begin{center}
-\includegraphics[width = 0.99 \textwidth]{./figs/fig4.pdf}
-\caption{Final shape.}
-\label{fig2}
-\end{center}
-\end{figure}
- %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
 Runs to do
 \begin{itemize}
