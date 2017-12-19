@@ -3,6 +3,8 @@
 
 # postprocess: Use the saved data to compute stuff.
 function postprocess(foldername::AbstractString)
+	
+	#= OLD
 	# Define the data folder.
 	datafolder = string("../datafiles/",foldername,"/")
 	# Read the params data file.
@@ -11,6 +13,19 @@ function postprocess(foldername::AbstractString)
 	npts = paramvec[end-3]
 	ntimes = paramvec[end-1]
 	params = getparams(paramvec[1:10],npts)
+	nouter = params.nouter
+	=#
+
+	# Define the data folder and files.
+	datafolder = string("../datafiles/",foldername,"/")
+	paramsfile = string(datafolder,"aparams.in")
+	pinfofile = string(datafolder,"apinfo.out")
+	# Get extra information from apinfo.
+	pinfovec = readvec(pinfofile)
+	npts = Int(pinfovec[1])
+	ntimes = Int(pinfovec[3])
+	# Get the params object.
+	params = getparams(paramsfile,npts)
 	nouter = params.nouter
 	# Read the data at each time step.
 	for cnt=0:ntimes

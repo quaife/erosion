@@ -51,15 +51,14 @@ end
 
 # startup: Read params and geoinfile; setup stuff.
 function startup(paramsfile::AbstractString)
-	# Read the parameters file.
-	paramvec = readvec(paramsfile)
 	# Read the input geometry file.
+	paramvec = readvec(paramsfile)
 	geoinfile = string("../geometries/",paramvec[1],".in")
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
 	npts,nbods = getnvals(thlenvec0)
 	# Define the object params.
-	params = getparams(paramvec,npts,paramsfile)
+	params = getparams(paramsfile,npts)
 	# Create new data folders
 	datafolder, plotfolder = getfoldernames(params.paramsfile)
 	newfolder(datafolder)
@@ -70,8 +69,9 @@ function startup(paramsfile::AbstractString)
 	return thlenden0,params
 end
 # function getparams: Define the object of parameters.
-function getparams(paramvec::Vector, npts::Int, paramsfile::AbstractString)
+function getparams(paramsfile::AbstractString, npts::Int)
 	# Read the parameters and calculate needed quantities.
+	paramvec = readvec(paramsfile)
 	geofile,epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[1:8]
 	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
 	epsilon = epsfac/npts
