@@ -7,7 +7,7 @@ c     that Stokes paradox is avoided
       dimension xx(nninner*nnbodies),yy(nninner*nnbodies)
 c     x and y coordinates of obstacle
 
-      parameter (nmax = 2**15)
+      parameter (nmax = 2**17)
       parameter (maxbodies = 50)
       parameter (ntargets = 2500)
 c     max points on the boundary of the obstacle      
@@ -553,7 +553,7 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
+      parameter (nmax = 2**17)
       parameter (maxbodies = 50)
 
       dimension den(ntotal)
@@ -940,7 +940,7 @@ c     matrix vector multiplication routine for the double-layer
 c     potential
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
+      parameter (nmax = 2**17)
       parameter (maxbodies = 50)
 
       dimension den(ntotal)
@@ -1236,7 +1236,7 @@ c***********************************************************************
 c     Can put preconditioner in this routine.  For now, use the identity
       implicit real*8 (a-h,o-z)
 
-      parameter (nmax = 2**15)
+      parameter (nmax = 2**17)
 
       dimension r(nn),z(nn)
       dimension iwork(3)
