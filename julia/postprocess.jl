@@ -32,14 +32,14 @@ function postprocess(foldername::AbstractString)
 		rbods = resistivity(thlenden, nouter, 2.0)
 		rbodsrot = resistivity(thlenden, nouter, 2.0, rotation=true)
 		# Compute the drag on each body.
-		dragx, dragy, tauvec = drag(thlenden, nouter)
-		dragxrot, dragyrot, tauvecrot = drag(thlenden, nouter, rotation=true)
+		pdragx, pdragy, vdragx, vdragy, tauvec = drag(thlenden, params)
+		pdragxr, pdragyr, vdragxr, vdragyr, tauvecr = drag(thlenden, params, rotation=true)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
-		lab2 = string("# nbods, resistivity, rotated resistivity, total dragx and dragy, rotated dragx and dragy.")
+		lab2 = string("# nbods, resistivity, rotated resistivity, pdragx, pdragy, vdragx, vdragy, and all rotated values.")
 		resdragdata = [lab1; lab2; nbods; rbods; rbodsrot; 
-			dragx; dragy; dragxrot; dragyrot]
+			pdragx; pdragy; vdragx; vdragy; pdragxr; pdragyr; vdragxr; vdragyr]
 		writedata(resdragdata, resdragfile)
 
 		#--------------------------------------#
@@ -85,15 +85,14 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0;
 	return rbods
 end
 # drag: Compute the total drag on all of the bodies combined.
-function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
+function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note: the stress is not smoothed and absolute value is not taken.
-	tauvec = compute_stress(thlenden,nouter,fixpdrop=false,rotation=rotation)
-	pressvec = compute_pressure(thlenden,nouter,fixpdrop=false,rotation=rotation)
+	tauvec = compute_stress(thlenden,params.nouter,fixpdrop=params.fixpdrop,rotation=rotation)
+	pressvec = compute_pressure(thlenden,params.nouter,fixpdrop=params.fixpdrop,rotation=rotation)
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
-	dragx = 0.
-	dragy = 0.
+	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
 	for nn=1:nbods
 		# Get the pressure and stress on body nn.
 		n1,n2 = n1n2(npts,nn)
@@ -104,10 +103,17 @@ function drag(thlenden::ThLenDenType, nouter::Int; rotation::Bool=false)
 		ds = thlenvec[nn].len / npts
 		# Compute the drag force.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
-		dragx += sum(press.*nx + tau.*sx)*ds
-		dragy += sum(press.*ny + tau.*sy)*ds
+		#dragx += sum(press.*nx + tau.*sx)*ds
+		#dragy += sum(press.*ny + tau.*sy)*ds
+        # Compute the pressure and viscous drag separately.
+        pdragx += sum(press.*nx)*ds
+        pdragy += sum(press.*ny)*ds
+        vdragx += sum(tau.*sx)*ds
+        vdragy += sum(tau.*sy)*ds
 	end
-	return dragx, dragy, tauvec
+    #dragx = pdragx + vdragx
+    #dragy = pdragy + vdragy
+	return pdragx, pdragy, vdragx, vdragy, tauvec
 end
 
 #----------- TARGET POINTS -----------#
