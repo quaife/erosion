@@ -103,16 +103,12 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 		ds = thlenvec[nn].len / npts
 		# Compute the drag force.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
-		#dragx += sum(press.*nx + tau.*sx)*ds
-		#dragy += sum(press.*ny + tau.*sy)*ds
-        # Compute the pressure and viscous drag separately.
-        pdragx += sum(press.*nx)*ds
-        pdragy += sum(press.*ny)*ds
-        vdragx += sum(tau.*sx)*ds
-        vdragy += sum(tau.*sy)*ds
+		# Compute the pressure and viscous drag separately.
+		pdragx += sum(press.*nx)*ds
+		pdragy += sum(press.*ny)*ds
+		vdragx += sum(tau.*sx)*ds
+		vdragy += sum(tau.*sy)*ds
 	end
-    #dragx = pdragx + vdragx
-    #dragy = pdragy + vdragy
 	return pdragx, pdragy, vdragx, vdragy, tauvec
 end
 
