@@ -70,14 +70,13 @@ This is a methods paper
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.9 \textwidth]{./figs/20bod.pdf}
+\includegraphics[width = 0.9 \textwidth]{./figs/50bod.pdf}
 \caption{20 bodies with vorticity}
 \label{}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-% Figure generated using 20circ128.in with epsfac = 8, sigfac = 8, dt = 2e-4, fixpdrop = 1.
-% Figure was made after the code changes regarding scaling the smoothing on the average stress on each body.
+% Figure generated using 50circ128.in with epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -923,6 +922,26 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 \end{table}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
+%\begin{comment}
+% Table
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{table}%[htbp]
+\begin{center}
+\caption{Final aspect ratio and opening angle
+} 
+\vspace{0.3 pc}
+%\label{aaa}
+\begin{tabular}{l | c c c c}
+\hline
+{} & $\eps, \sigma = 20/1024$ & $\eps, \sigma = 10/1024$ & $\eps, \sigma = 5/1024$ & theoretical \\
+\hline
+final aspect ratio & 2.55 & 2.62 & 2.65 & -- \\
+final opening angle & $110^\circ \pm 6^\circ$ & $104^\circ \pm 4^\circ$ & $102^\circ \pm 2^\circ$ & $102^\circ$
+\end{tabular}
+\end{center}
+\end{table}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+%\end{comment}
 
 
 \subsubsection{The vanishing rate of area}
