@@ -321,7 +321,7 @@ Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
 \label{eqn:thetaevo1}
 \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
 \end{equation}
-Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the \thL method, and allows us to use very stable, implicit methods for this stiff term. 
+Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -789,11 +789,11 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 %% TIME-STEPPING %%
 \subsection{Time-stepping with the {\thL} method} 
 We will evolve $\theta$ in spectral space, and so introduce the transforms
-\todo[inline]{Check theta equation}
 \begin{align}
 & \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
 & \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
+Recall that $\alpha = 2 \pi s / L$ is a normalized arc length.
 Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
 \begin{equation}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{\NLterm}_k
@@ -848,7 +848,11 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
 
-\subsection{Single-body validation results}
+With the description of the numerical methods complete, we now present results on bodies eroding in Stokes flow. We first discuss simulations of a single eroding body, which can be compared with analytical results for validation, before discussing the erosion of many bodies.
+
+\subsection{The erosion of a single body}
+
+In the case of a single eroding body, certain analytical results can be derived regarding the limiting shape and vanishing rate. These results allow validation of our simulation.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
