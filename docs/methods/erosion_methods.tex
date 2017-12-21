@@ -854,6 +854,10 @@ With the description of the numerical methods complete, we now present results o
 
 In the case of a single eroding body, certain analytical results can be derived regarding the limiting shape and vanishing rate. These results allow validation of our simulation.
 
+\subsubsection{Shape evolution}
+
+We first show a single body eroding, with the surrounding vorticity field visualized in Fig.~4. The body develops a corner at its front and rear stagnation points. It maintains for-aft symmetry due to the time-reversibility of Stokes flow.
+
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -866,6 +870,8 @@ In the case of a single eroding body, certain analytical results can be derived 
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixpdrop = 0
 
+In Fig.~5a, we visualize the interfaces color coded in time. In Fig.~5b, we show the absolute shear stress, $\atau$, as it varies over the surface of the body. Initially, the shear stress is a hump shape. As time progresses, the stress becomes more evenly distributed, with the exception of the front/rear corner where the curvature is high.
+
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -877,6 +883,31 @@ In the case of a single eroding body, certain analytical results can be derived 
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
+
+\subsubsection{The vanishing rate of area}
+In three-dimensional Stokes flow, the shear stress vanishes as
+\begin{equation}
+\tauD{3} \sim \mu V/L
+\end{equation}
+However, this law must be modified for 2D flow, which represents 3D bodies of large extent. As the body vanishes, the walls have an ever decreasing influence. Thus, the stress must be consistent with free-space slender-body theory as it vanishes. The stress law consistent with slender body theory (a long cylinder held perpendicular to a flow) is
+\begin{equation}
+\tauD{2} \sim \frac{\mu V}{L \log(W/L)}
+\end{equation}
+% Could include 4 \pi factor, which is appropriate for a circular cylinder
+
+Then the rate of change of the body area is proportional to the shear stress times the total arc length exposed
+\begin{equation}
+\dot{A} = \int \atauD{2} \, ds = \mean{\atauD{2}} L
+\sim \frac{\mu V}{\log(W/L)}
+%\sim - \mean{\abs{\tauD{2}}} L
+\end{equation}
+Solving gives (redo this calculation)
+\begin{equation}
+A (1 - \log A) = C (t_f - t)
+\end{equation}
+where $C$ is a constant.
+
+In Fig.~6a, we show the body area vs time measured in the simulation against the above scaling law. In the scaling law, we chose, $C = 0.42$ (check this?)
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -960,15 +991,7 @@ final opening angle & $110^\circ \pm 6^\circ$ & $104^\circ \pm 4^\circ$ & $102^\
 %\end{comment}
 
 
-\subsubsection{The vanishing rate of area}
-In three-dimensional Stokes flow, the shear stress vanishes as
-\begin{equation}
-\tau_{3D} \sim \mu V/L
-\end{equation}
-However, this law must be modified for 2D flow, which represents 3D bodies of large extent. As the body vanishes, the walls have an ever decreasing influence. Thus, the stress must be consistent with free-space slender-body theory as it vanishes. The stress law consistent with slender body theory (a long cylinder held perpendicular to a flow) is
-\begin{equation}
-\tau_{2D} \sim \frac{4 \pi \mu V}{L \log(W/L)}
-\end{equation}
+
 
 \subsubsection{The uniform stress geometry}
 
