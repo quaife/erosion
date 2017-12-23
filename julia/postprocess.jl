@@ -28,10 +28,19 @@ function postprocess(foldername::AbstractString)
 		thlenden = new_thlenden(thlenvec,density,denrot)
 
 		#--------------------------------------#
+		# Compute the area of each body.
+		areavec = getareas(thlenden)
+		# Save the data to a file.
+		areasfile = string(datafolder,"areas",cntstr,".dat")
+		label = string("# Area of each individual body.")
+		areadata = [label; areavec]
+		writedata(areasfile, areadata)
+
+		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		rbods = resistivity(thlenden, nouter, 2.0)
 		rbodsrot = resistivity(thlenden, nouter, 2.0, rotation=true)
-		# Compute the drag on each body.
+		# Compute the total pressure and viscous drag on the collection of bodies.
 		pdragx, pdragy, vdragx, vdragy, tauvec = drag(thlenden, params)
 		pdragxr, pdragyr, vdragxr, vdragyr, tauvecr = drag(thlenden, params, rotation=true)
 		# Save the data to a file.
@@ -55,8 +64,8 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Save the stress on each body.
-        # atauvec has absolute value and smoothing applied; 
-        # tauvec is raw stress, with a + or - sign and no smoothing.
+		# atauvec has absolute value and smoothing applied; 
+		# tauvec is raw stress, with a + or - sign and no smoothing.
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
@@ -72,6 +81,25 @@ function postprocess(foldername::AbstractString)
 	return
 end
 
+# getareas: Compute the area of each body.
+function getareas(thlenden::ThLenDenType)
+	npts,nbods = getnvals(thlenden.thlenvec)
+	areavec = zeros(Float64,nbods)
+	for nn = 1:nbods
+		thlen = thlenden.thlenvec[nn]
+		xx,yy = thlen.xx,thlen.yy
+		len = thlen.len
+		sx,sy,nx,ny = getns(thlen.theta)
+		# Compute area in two ways to estimate error.
+		areax = vecmult(xx,nx)*len
+		areay = vecmult(yy,ny)*len
+		area = 0.5*(areax+areay)
+		reldiff = abs(areax-areay)/area
+		reldiff > 1e-3? warn("Relative error in area = ", signif(reldiff,2)) : 0.
+		areavec[nn] = area
+	end
+	return areavec
+end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; 
 		rotation::Bool=false)
@@ -80,7 +108,6 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0;
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
-	
 	# For testing.
 	#println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
 	#println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
