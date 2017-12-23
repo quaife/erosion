@@ -55,6 +55,8 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Save the stress on each body.
+        # atauvec has absolute value and smoothing applied; 
+        # tauvec is raw stress, with a + or - sign and no smoothing.
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
