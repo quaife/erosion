@@ -88,11 +88,11 @@ function getareas(thlenden::ThLenDenType)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
 		xx,yy = thlen.xx,thlen.yy
-		len = thlen.len
 		sx,sy,nx,ny = getns(thlen.theta)
+		ds = thlen.len / npts
 		# Compute area in two ways to estimate error.
-		areax = dot(xx,nx)*len
-		areay = dot(yy,ny)*len
+		areax = -dot(xx,nx)*ds
+		areay = -dot(yy,ny)*ds
 		area = 0.5*(areax+areay)
 		reldiff = abs(areax-areay)/area
 		reldiff > 1e-3? warn("Relative error in area = ", signif(reldiff,2)) : 0.
@@ -130,13 +130,12 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 		# Get the tangent/normal vectors and arc length increment.
 		sx,sy,nx,ny = getns(thlenvec[nn].theta,rotation)
 		ds = thlenvec[nn].len / npts
-		# Compute the drag force.
-		# Note: I believe both should be plus signs due to the conventions of s and n.
 		# Compute the pressure and viscous drag separately.
-		pdragx += sum(press.*nx)*ds
-		pdragy += sum(press.*ny)*ds
-		vdragx += sum(tau.*sx)*ds
-		vdragy += sum(tau.*sy)*ds
+		# Note: I believe both should be plus signs due to the conventions of s and n.
+		pdragx += dot(press,nx)*ds
+		pdragy += dot(press,ny)*ds
+		vdragx += dot(tau,sx)*ds
+		vdragy += dot(tau,sy)*ds
 	end
 	return pdragx, pdragy, vdragx, vdragy, tauvec
 end
