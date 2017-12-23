@@ -34,7 +34,7 @@ function postprocess(foldername::AbstractString)
 		areasfile = string(datafolder,"areas",cntstr,".dat")
 		label = string("# Area of each individual body.")
 		areadata = [label; areavec]
-		writedata(areasfile, areadata)
+		writedata(areadata, areasfile)
 
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
@@ -91,8 +91,8 @@ function getareas(thlenden::ThLenDenType)
 		len = thlen.len
 		sx,sy,nx,ny = getns(thlen.theta)
 		# Compute area in two ways to estimate error.
-		areax = vecmult(xx,nx)*len
-		areay = vecmult(yy,ny)*len
+		areax = dot(xx,nx)*len
+		areay = dot(yy,ny)*len
 		area = 0.5*(areax+areay)
 		reldiff = abs(areax-areay)/area
 		reldiff > 1e-3? warn("Relative error in area = ", signif(reldiff,2)) : 0.
