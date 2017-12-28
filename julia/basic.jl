@@ -242,8 +242,8 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int,
 	# Target points for plus/minus x0.
 	tarp = regulargridtargs([x0],ylocs)
 	tarm = regulargridtargs([-x0],ylocs)
-	compute_qoi_targets!(thlenden,tarp,nouter, rotation=rotation)
-	compute_qoi_targets!(thlenden,tarm,nouter, rotation=rotation)
+	compute_qoi_targets!(thlenden,tarp,nouter,rotation=rotation)
+	compute_qoi_targets!(thlenden,tarm,nouter,rotation=rotation)
 	# Compute the pressure drop.
 	pplus = mean(tarp.ptar)
 	pminus = mean(tarm.ptar)

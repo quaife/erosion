@@ -1,32 +1,14 @@
 # postporcess.jl
 # Post-processing routines.
 
+#----------- MAIN ROUTINES -----------#
 # postprocess: Use the saved data to compute stuff.
 function postprocess(foldername::AbstractString)
-	# Define the data folder and files.
-	datafolder = string("../datafiles/",foldername,"/")
-	paramsfile = string(datafolder,"aparams.in")
-	pinfofile = string(datafolder,"apinfo.out")
-	# Get extra information from apinfo.
-	pinfovec = readvec(pinfofile)
-	npts = Int(pinfovec[1])
-	ntimes = Int(pinfovec[3])
-	# Get the params object.
-	params = getparams(paramsfile,npts)
-	nouter = params.nouter
+	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
-		# Get the file name at each time.
-		cntstr = lpad(cnt,4,0)
-		geomfile = string(datafolder,"geom",cntstr,".dat")
-		densityfile = string(datafolder,"density",cntstr,".dat")
-		# Extract thlenvec, density, and denrot.
-		tt,thlenvec = read_geom_file(geomfile)
-		density,denrot = read_density_file(densityfile)
-		# Create variables.
-		npts,nbods = getnvals(thlenvec)
-		thlenden = new_thlenden(thlenvec,density,denrot)
-
+		thlenden, cntstr = get_thlenden(datafolder,cnt)
+		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
 		# Compute the area of each body.
 		areavec = getareas(thlenden)
@@ -38,11 +20,11 @@ function postprocess(foldername::AbstractString)
 
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
-		rbods = resistivity(thlenden, nouter, 2.0)
-		rbodsrot = resistivity(thlenden, nouter, 2.0, rotation=true)
+		rbods = resistivity(thlenden,params.nouter,2.0)
+		rbodsrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
 		# Compute the total pressure and viscous drag on the collection of bodies.
-		pdragx, pdragy, vdragx, vdragy, tauvec = drag(thlenden, params)
-		pdragxr, pdragyr, vdragxr, vdragyr, tauvecr = drag(thlenden, params, rotation=true)
+		pdragx, pdragy, vdragx, vdragy, tauvec = drag(thlenden,params)
+		pdragxr, pdragyr, vdragxr, vdragyr, tauvecr = drag(thlenden,params,rotation=true)
 		# Save the data to a file.
 		resdragfile = string(datafolder,"resdrag",cntstr,".dat")
 		lab1 = string("# Data on resistivity and drag: ")
@@ -52,20 +34,9 @@ function postprocess(foldername::AbstractString)
 		writedata(resdragdata, resdragfile)
 
 		#--------------------------------------#
-		# Compute velocity, pressure, vorticity at a set of target points.
-		targets = regbodtargs(thlenvec)
-		compute_qoi_targets!(thlenden,targets,nouter, fixpdrop = params.fixpdrop)
-		# Save the output to a data file.
-		targfile = string(datafolder,"targs",cntstr,".dat")
-		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
-		targdata = [label; targets.xtar; targets.ytar; 
-			targets.utar; targets.vtar; targets.ptar; targets.vortar]
-		writedata(targdata, targfile)
-
-		#--------------------------------------#
 		# Save the stress on each body.
 		# atauvec has absolute value and smoothing applied; 
-		# tauvec is raw stress, with a + or - sign and no smoothing.
+		# tauvec is raw stress, with nontrivial sign and no smoothing.
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
@@ -81,6 +52,57 @@ function postprocess(foldername::AbstractString)
 	return
 end
 
+# pptargets: Separate routine to postprocess the target points.
+function pptargets(foldername::AbstractString)
+	datafolder,ntimes,params = startpostprocess(foldername)
+	# Read the data at each time step.
+	for cnt=0:ntimes
+		thlenden, cntstr = get_thlenden(datafolder,cnt)
+		npts,nbods = getnvals(thlenden.thlenvec)
+		#--------------------------------------#
+		# Compute velocity, pressure, vorticity at a set of target points.
+		targets = regbodtargs(thlenden.thlenvec)
+		compute_qoi_targets!(thlenden,targets,nouter,fixpdrop=params.fixpdrop)
+		# Save the output to a data file.
+		targfile = string(datafolder,"targs",cntstr,".dat")
+		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
+		targdata = [label; targets.xtar; targets.ytar; 
+			targets.utar; targets.vtar; targets.ptar; targets.vortar]
+		writedata(targdata, targfile)
+	end
+end
+
+
+#----------- STARTUP AND ASSISTING ROUTINES -----------#
+# startpostprocess
+function startpostprocess(foldername::AbstractString)
+	# Define the data folder and files.
+	datafolder = string("../datafiles/",foldername,"/")
+	paramsfile = string(datafolder,"aparams.in")
+	pinfofile = string(datafolder,"apinfo.out")
+	# Get extra information from apinfo.
+	pinfovec = readvec(pinfofile)
+	npts = Int(pinfovec[1])
+	ntimes = Int(pinfovec[3])
+	# Get the params object.
+	params = getparams(paramsfile,npts)
+	return datafolder, ntimes, params
+end
+# get_thlenden
+function get_thlenden(datafolder::AbstractString,cnt::Int)
+	# Get the file name at each time.
+	cntstr = lpad(cnt,4,0)
+	geomfile = string(datafolder,"geom",cntstr,".dat")
+	densityfile = string(datafolder,"density",cntstr,".dat")
+	# Extract thlenvec, density, and denrot.
+	tt,thlenvec = read_geom_file(geomfile)
+	density,denrot = read_density_file(densityfile)
+	# Create variable thlenden
+	thlenden = new_thlenden(thlenvec,density,denrot)
+	return thlenden, cntstr
+end
+
+#----------- ROUTINES FOR AREA, RESISTIVITY, DRAG, ETC. -----------#
 # getareas: Compute the area of each body.
 function getareas(thlenden::ThLenDenType)
 	npts,nbods = getnvals(thlenden.thlenvec)
@@ -103,7 +125,7 @@ end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; 
 		rotation::Bool=false)
-	pdrop,qavg = getpdrop(thlenden,nouter,x0, rotation=rotation)
+	pdrop,qavg = getpdrop(thlenden,nouter,x0,rotation=rotation)
 	# Calculate the total resistivity
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
@@ -140,7 +162,7 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	return pdragx, pdragy, vdragx, vdragy, tauvec
 end
 
-#----------- TARGET POINTS -----------#
+#----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
 # regbodtargs: Set up target points on a regular and body fitted grid.
 function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Regular grid.
