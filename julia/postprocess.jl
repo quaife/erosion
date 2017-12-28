@@ -17,7 +17,6 @@ function postprocess(foldername::AbstractString)
 		label = string("# Area of each individual body.")
 		areadata = [label; areavec]
 		writedata(areadata, areasfile)
-
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		rbods = resistivity(thlenden,params.nouter,2.0)
@@ -32,7 +31,6 @@ function postprocess(foldername::AbstractString)
 		resdragdata = [lab1; lab2; nbods; rbods; rbodsrot; 
 			pdragx; pdragy; vdragx; vdragy; pdragxr; pdragyr; vdragxr; vdragyr]
 		writedata(resdragdata, resdragfile)
-
 		#--------------------------------------#
 		# Save the stress on each body.
 		# atauvec has absolute value and smoothing applied; 
@@ -51,7 +49,6 @@ function postprocess(foldername::AbstractString)
 	end
 	return
 end
-
 # pptargets: Separate routine to postprocess the target points.
 function pptargets(foldername::AbstractString)
 	datafolder,ntimes,params = startpostprocess(foldername)
@@ -62,16 +59,17 @@ function pptargets(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points.
 		targets = regbodtargs(thlenden.thlenvec)
-		compute_qoi_targets!(thlenden,targets,nouter,fixpdrop=params.fixpdrop)
+		compute_qoi_targets!(thlenden,targets,params.nouter,fixpdrop=params.fixpdrop)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar; targets.vortar]
 		writedata(targdata, targfile)
+		# Print progress.
+		println("Finished step ", cnt, " of ", ntimes, ".")
 	end
 end
-
 
 #----------- STARTUP AND ASSISTING ROUTINES -----------#
 # startpostprocess
