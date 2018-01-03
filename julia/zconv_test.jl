@@ -1,5 +1,8 @@
 # Test the 2nd order convergence in dt.
-# In params.dat, I use 01circ256.in; tfin = 0.01.
+# In typically use 01circ256, with tfin = 1e-2 and nits = 4 or higher.
+# Vanishing time for 01circ1024aa is 0.017938. So 1e-2 is 56% of vanishing time.
+# The runtime for nits = 4 is about 40 seconds.
+
 include("main.jl")
 
 #= Calculate the order of convergence given a vector of errors. =#
@@ -17,8 +20,12 @@ function convtest(tfin::Float64, nits::Int)
 	dt = 2e-3
 	for nn=1:nits
 		println("\n\nCONVERGENCE TEST: running number ", nn, " out of ", nits)
+		thld_old = thlenden ???
+		
 		thlenden,params,tt = erosion(paramsfile,dt,tfin)
-		dragv[nn] = drag(thlenden,params.nouter)[1]
+		dragv[nn] = drag(thlenden,params)[1]
+
+		#
 		dtv[nn] = dt
 		ttv[nn] = tt
 		dt = 0.5*dt
