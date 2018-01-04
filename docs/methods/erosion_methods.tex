@@ -26,8 +26,36 @@ We consider two dimensional eroding bodies in Stokes flow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
+Erosion by flowing fluid plays an essential role in diverse processes.
+Many of the flows are geophysical, such as the formation of sand dunes
+or erosion due to groundwater flow.  In both these examples, there is a
+feedback process between the flow and the erodible body.  In particular,
+the shape of the eroding body affects the flow, while the flow changes
+the shape of the eroding body.
 
-\paragraph{Contributions}
+
+
+\paragraph{Contributions} The present study will develop numerical
+methods to simulate viscous erosion of a multiply-connected
+two-dimensional geometry.  By assuming the flow is viscous, we are
+assuming the flow is very slow, such as in groundwater flow.  Moreover,
+by allowing for complex multiply-connected domains, the erosion caused
+by the non-local complex interactions between different bodies is
+modeled.
+
+Because of the low Reyonlds number assumption, the flow will be assumed
+to be Stokesian.  Then, to create high-fidelity and computationally
+efficient numerical methods, two fast and accurate methods will be
+employed:
+\begin{enumerate}
+  \item The fluid equations will be solved with spectral accuracy by
+  using an efficient boundary integral equation method. Moreover, the
+  rate of erosion will be computed and the rate of erosion will be
+  computed with spectral accuracy.
+  \item Given a rate of erosion, the shape will be integrated in time
+  with second-order accuracy.  All spatial derivatives will be computed
+  in Fourier space, resulting in spectral accuracy in space.
+\end{enumerate}
 
 
 \paragraph{Limitations} There are two main limitations of the current
