@@ -58,5 +58,5 @@ function convtest(tfin::Float64, nits::Int)
 	println("\nThe shape errors: ", round(err_shape,4))
 	println("The shape order: ", round(order_shape,2))
 	println()
-	return err_shape,order_shape
+	return dtv,err_shape,order_shape
 end
