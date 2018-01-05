@@ -1,5 +1,5 @@
 # Test the 2nd order convergence in dt.
-# In typically use 01circ256, with tfin = 1e-2 and nits = 4 or higher.
+# I typically use 01circ256, with tfin = 1e-2, dt0 = 1e-3, nits = 4 or higher.
 # Vanishing time for 01circ1024aa is 0.017938. So 1e-2 is 56% of vanishing time.
 # The runtime for nits = 4 is about 40 seconds.
 
@@ -19,7 +19,7 @@ function shape_error(thld1::ThLenDenType, thld0::ThLenDenType)
 end
 
 # Test the convergence wrt dt.
-function convtest(tfin::Float64, nits::Int)
+function convtest(tfin::Float64, dt0::Float64, nits::Int)
 	# Initialize simulation variables.
 	paramsfile = "params.in"
 	thld1,params = startup(paramsfile)
@@ -28,7 +28,7 @@ function convtest(tfin::Float64, nits::Int)
 	dragv,dtv,tv = [zeros(Float64,nits) for ii=1:3]
 	err_shape,err_drag = [zeros(Float64,nits-1) for ii=1:2]
 	# Loop over different dt values.
-	dt = 2e-3
+	dt = dt0
 	for nn=1:nits
 		println("\n\nCONVERGENCE TEST: running number ", nn, " out of ", nits)
 		thld0 = deepcopy(thld1)
