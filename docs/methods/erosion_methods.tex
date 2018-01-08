@@ -31,17 +31,28 @@ Many of the flows are geophysical, such as the formation of sand dunes
 or erosion due to groundwater flow.  In both these examples, there is a
 feedback process between the flow and the erodible body.  In particular,
 the shape of the eroding body affects the flow, while the flow changes
-the shape of the eroding body.
+the shape of the eroding body.  This fluid-mechanical feedback
+system has be simulated in idealized cases such as a single eroding body
+in a uniform flow~\cite{moo-ris-chi-zha-she2013}.  To further develop
+insight into the effect of two-dimensional erosion, we consider erosion
+of a multiply-connected domain (Figure~\ref{fig:50bodies}), such as a
+porous media that is typically used to model groundwater flow.
 
-
+Because of the scales involved with groundwater flow, we will restrict
+our attention to Stokesian dynamics.  That is, the fluid equations will
+be governed by the incompressible Stokes equations.  Because of the
+linearity of the underlying equations, a boundary integral equation is
+well-suited as it can resolve complex geometries, the interactions
+between bodies, all the while achieving high-order accuracy and
+computational efficiency.
 
 \paragraph{Contributions} The present study will develop numerical
 methods to simulate viscous erosion of a multiply-connected
 two-dimensional geometry.  By assuming the flow is viscous, we are
-assuming the flow is very slow, such as in groundwater flow.  Moreover,
-by allowing for complex multiply-connected domains, the erosion caused
-by the non-local complex interactions between different bodies is
-modeled.
+assuming the flow is very slow and in small length scales, as is the
+case in groundwater flow.  Moreover, by allowing for complex
+multiply-connected domains, the erosion caused by the non-local complex
+interactions between different bodies is modeled.
 
 Because of the low Reyonlds number assumption, the flow will be assumed
 to be Stokesian.  Then, to create high-fidelity and computationally
@@ -80,27 +91,37 @@ come into contact.  However, by including a small force and
 torque~\cite{lu-rah-zor2017}, contact can be avoided.
 
 \paragraph{Related work}
+Simulating eroding bodies has been studied analytically, experimentally,
+and numerically.  Because of the scales involves with geophysical flows,
+most of these works consider high Reynolds number flows.  For instance,
+the experimental work of Moore et al.~\cite{moo-ris-chi-zha-she2013}
+considers on the order of $10^4$.  For low Reynolds number flows,
+Mitchell and Spagnolie~\cite{Mitchell2016} simulate the erosion of a
+mobile body in three dimensions, but they only consider single body.  
+
+To simulate multiple bodies, it is essential to resolve the nonlocal
+effects between the different bodies.  In this work, these interactions
+are included with high-order accuracy by using an integral equation
+method.  Integral equations have been used extensively to simulate
+viscous fluids in complex geometries.  One particular application are
+particulate flows, such as bubbles or droplets, and the classic book of
+Pozrikidis~\cite{poz1992} describes boundary integral formulations for
+such problems.
 
 
 \paragraph{Outline of the paper}
-
-This is a methods paper
-\begin{itemize}
-  \item Boundary integral equation formulation
-  \item How we compute the shear stress and pressure
-  \item Multiple bodies
-  \item Avoiding stokes paradox
-  \item {\thL} formulation
-  \item Regularization
-\end{itemize}
-
+In Section~\ref{s:formulation}, we describe the governing equations for
+both the fluid and describe the erosion model using a \thL framework.
+In Section~\ref{s:method}, the numerical methods in both space and time
+are described.  Section~\ref{s:results} gives several numerical
+examples.  Finally, concluding remarks are made in
+Section~\ref{s:conclusions}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/50bod.pdf}
-\caption{50 bodies with vorticity}
-\label{}
+\caption{\label{fig:50bodies} 50 bodies with vorticity}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
