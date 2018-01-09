@@ -32,17 +32,21 @@ of which are geophysical.  For example, sand dunes are longer on the
 windward side because of the wind erosion.  Another applications is
 erosion caused by groundwater flow, where a slow moving fluid erodes
 channels, or conduits, in the earth which creates a heterogeneous media
-that has a large effect on the resulting flow.  In both these examples,
+that has a large effect on the resulting flow. Erosion is also important
+in the biophysical community. Plaque erosion in arteries is
+key to understanding heart disease~\cite{sha2002,
+gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can
+be explained by erosion~\cite{pic-van-hei2000}. In all these examples,
 there is a feedback process between the flow and the erodible
 bodies---the shape of the eroding body affects the flow, while the flow
-changes the shape of the eroding body.  This fluid-mechanical feedback
-system has been simulated in idealized cases such as a single eroding
-two-dimensional body in a uniform flow~\cite{moo-ris-chi-zha-she2013} or
-a single mobile eroding three-dimensional body~\cite{mit-spa2016}. To
-further develop insight into the effect of two-dimensional erosion, we
-consider erosion of a multiply-connected domain
-(Figure~\ref{fig:50bodies}), such as a porous media that is typically
-used to model groundwater flow.
+changes the shape by fluidizing the eroding body.  This fluid-mechanical
+feedback system has been simulated in idealized cases such as a single
+eroding two-dimensional body in a uniform
+flow~\cite{moo-ris-chi-zha-she2013} or a single mobile eroding
+three-dimensional body~\cite{mit-spa2016}. To further develop insight
+into the effect of two-dimensional erosion, we consider erosion of a
+multiply-connected domain (Figure~\ref{fig:50bodies}), such as a porous
+media that is typically used to model groundwater flow.
 
 Because of the scales involved with groundwater flow, we will restrict
 our attention to Stokesian dynamics.  For groundwater flow, Darcy's
@@ -53,13 +57,15 @@ individual pores will be be resolved, resulting in a complex
 multiply-connected geometry.  A boundary integral equation is
 well-suited as it can resolve complex geometries and the non-negligible
 interactions between bodies are resolved, all the while high-order
-accuracy and computational efficiency are achieved.  To simulate the
-erosion, each body will erode at a rate that is proportional to the
-shear stress.  To further visualize the effect of erosion, we compute
-the vorticity of the flow (Figure~\ref{fig:50bodies}) which is equal to
-the shear stress in the Stokesian limit.  Finally, to evolve the
-geometry, a second-order time stepping method that guarantees that the
-mesh does not become distorted will be employed.
+accuracy and computational efficiency are achieved. To link the body and
+fluid dynamics, the body is eroded in the normal direction at a rate
+that is proportional to the magnitude of the shear
+stress~\cite{ris-moo-chi-she-zha2012}.  To further visualize the effect
+of erosion, we compute the vorticity of the flow
+(Figure~\ref{fig:50bodies}) which is equal to the shear stress in the
+Stokesian limit.  Finally, to evolve the geometry, a second-order time
+stepping method that guarantees that the mesh does not become distorted
+will be employed.
 
 \paragraph{Contributions} The present study will develop numerical
 methods to simulate viscous erosion of multiply-connected
@@ -67,9 +73,14 @@ two-dimensional geometries.  By assuming the flow is viscous, we are
 assuming the flow is very slow and in small length scales, as is the
 case in groundwater flow.  Moreover, by allowing for complex
 multiply-connected domains, the effects due to interacting bodies on the
-erosion are captured.
+erosion are captured.  We start by authenticating our method on a single
+circular body placed symmetrically in a pipe flow.  By artificially
+fixing the area of the body as a function of time, we are able to
+characterize the long-time behavior of the shape and the resulting flow.
+Then, we compute the vorticity of erosion in multiply-connected
+geometries to better characterize erosion in porous media. 
 
-Because of the low Reyonlds number assumption, the flow will be assumed
+Because of the low Reynolds number assumption, the flow will be assumed
 to be Stokesian.  Then, to create high-fidelity and computationally
 efficient numerical methods, two fast and accurate methods will be
 employed:
@@ -82,6 +93,27 @@ employed:
   with second-order accuracy.  All spatial derivatives will be computed
   in Fourier space, resulting in spectral accuracy in space.
 \end{enumerate}
+We use a quasi-steady assumption so that these two steps can be iterated
+to simulate the dynamics.
+
+The effect of erosion on a geometry is quite rich.  For instance, it has
+been hypothesized and numerically observed that the erosion leads to a
+shear stress that is uniform on the body which results in a uniform
+erosion rate.  The shape that has a uniform shear stress is analyzed in
+three dimensions by Montenegro-Johnson and Lauga~\cite{mon-lau2015}
+which is an extension of the analysis done by Pironneau~\cite{pir1973}
+to find a Stokesian drag minimizing shape.  However, the effect of
+erosion on a porous media is less understood.  With the methods
+developed in this paper, quantities such as the total drag across a
+porous region as a function of time can be computed in future work.
+
+A challenge with erosion is that it creates corners at points on the
+body where the shear stress vanishes.  While recent work does allow for
+integral equation methods to resolve a corner, we employ a different
+method.  First, we add a regularization term to the shear stress to
+penalize regions of high curvature.  Second, we apply a Gaussian filter
+to smooth the absolute value of the shear stress before the body shape
+is updated.
 
 
 \paragraph{Limitations} There are two main limitations of the current
@@ -229,8 +261,16 @@ drag can all be readily computed.
 \label{sec:erosion}
 
 To model erosion, we the normal velocity is prescribed to be
-proportional to the absolute value of the shear stress.  The constant of
-proportionality sets the time scale, and we set its value to be 1
+proportional to the absolute value of the shear stress.  This choice is
+based on experimental work of Ristroph et
+al.~\cite{ris-moo-chi-she-zha2012}, but other models for erosion are
+possible.  For example, some models use an erosion rate that is
+proportional to a power of the magnitude of the shear
+stress~\cite{par-izu2000}, while others introduced a shear stress below
+which erosion does not occur~\cite{lag2000}.
+
+The constant of proportionality sets the time scale, and we set its
+value to be 1
 \begin{align}
   \dot{\xx}(t) = \abs{\tau} \nn.
   \label{eqn:bodyEvolution}
