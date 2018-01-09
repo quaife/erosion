@@ -6,7 +6,7 @@
 \input{preambles.tex}
 \begin{document}
 
-\title{Methods paper for erosion}
+\title{Viscous Erosion in Porous Media}
 
 \author[Bryan]{Bryan D.~Quaife}
 \author[Nick]{M.~Nicholas J.~Moore}
@@ -18,41 +18,56 @@ We consider two dimensional eroding bodies in Stokes flow
 \end{abstract}
 
 \begin{keyword}
-  Stokes flow \sep Erosion \sep Boundary integral method \sep
-  Fluid-structure interaction \sep Fast multipole methods 
+  Stokes flow \sep Erosion \sep Boundary integral method \sep Shear
+  stress \sep \thL~formulation
 \end{keyword}
 
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
-Erosion by flowing fluid plays an essential role in diverse processes.
-Many of the flows are geophysical, such as the formation of sand dunes
-or erosion due to groundwater flow.  In both these examples, there is a
-feedback process between the flow and the erodible body.  In particular,
-the shape of the eroding body affects the flow, while the flow changes
-the shape of the eroding body.  This fluid-mechanical feedback
-system has be simulated in idealized cases such as a single eroding body
-in a uniform flow~\cite{moo-ris-chi-zha-she2013}.  To further develop
-insight into the effect of two-dimensional erosion, we consider erosion
-of a multiply-connected domain (Figure~\ref{fig:50bodies}), such as a
-porous media that is typically used to model groundwater flow.
+Erosion is a fluid-mechanical process that occurs when a fluid alters
+the geometry.  Erosion is responsible for a variety of processes, many
+of which are geophysical.  For example, sand dunes are longer on the
+windward side because of the wind erosion.  Another applications is
+erosion caused by groundwater flow, where a slow moving fluid erodes
+channels, or conduits, in the earth which creates a heterogeneous media
+that has a large effect on the resulting flow.  In both these examples,
+there is a feedback process between the flow and the erodible
+bodies---the shape of the eroding body affects the flow, while the flow
+changes the shape of the eroding body.  This fluid-mechanical feedback
+system has been simulated in idealized cases such as a single eroding
+two-dimensional body in a uniform flow~\cite{moo-ris-chi-zha-she2013} or
+a single mobile eroding three-dimensional body~\cite{mit-spa2016}. To
+further develop insight into the effect of two-dimensional erosion, we
+consider erosion of a multiply-connected domain
+(Figure~\ref{fig:50bodies}), such as a porous media that is typically
+used to model groundwater flow.
 
 Because of the scales involved with groundwater flow, we will restrict
-our attention to Stokesian dynamics.  That is, the fluid equations will
-be governed by the incompressible Stokes equations.  Because of the
-linearity of the underlying equations, a boundary integral equation is
-well-suited as it can resolve complex geometries, the interactions
-between bodies, all the while achieving high-order accuracy and
-computational efficiency.
+our attention to Stokesian dynamics.  For groundwater flow, Darcy's
+equation are often used, but this assumes a homogeneous geometry which
+is not always a fair assumption.  Instead, we will use the
+incompressible Stokes equations to represent the flow, and the
+individual pores will be be resolved, resulting in a complex
+multiply-connected geometry.  A boundary integral equation is
+well-suited as it can resolve complex geometries and the non-negligible
+interactions between bodies are resolved, all the while high-order
+accuracy and computational efficiency are achieved.  To simulate the
+erosion, each body will erode at a rate that is proportional to the
+shear stress.  To further visualize the effect of erosion, we compute
+the vorticity of the flow (Figure~\ref{fig:50bodies}) which is equal to
+the shear stress in the Stokesian limit.  Finally, to evolve the
+geometry, a second-order time stepping method that guarantees that the
+mesh does not become distorted will be employed.
 
 \paragraph{Contributions} The present study will develop numerical
-methods to simulate viscous erosion of a multiply-connected
-two-dimensional geometry.  By assuming the flow is viscous, we are
+methods to simulate viscous erosion of multiply-connected
+two-dimensional geometries.  By assuming the flow is viscous, we are
 assuming the flow is very slow and in small length scales, as is the
 case in groundwater flow.  Moreover, by allowing for complex
-multiply-connected domains, the erosion caused by the non-local complex
-interactions between different bodies is modeled.
+multiply-connected domains, the effects due to interacting bodies on the
+erosion are captured.
 
 Because of the low Reyonlds number assumption, the flow will be assumed
 to be Stokesian.  Then, to create high-fidelity and computationally
@@ -72,7 +87,7 @@ employed:
 \paragraph{Limitations} There are two main limitations of the current
 work.  First, the flow is assumed to be two-dimensional.  Although
 several flows can be described to good accuracy under a two-dimensional
-approximation, certain phenomena occur only in three-dimensional.  The
+approximation, certain phenomena occur only in three dimensions.  The
 boundary integral equation formulation for the fluid solver exists, and
 the main challenges of a BIE solver have been addressed by other groups
 including surface representation~\cite{yin-bir-zor2006,
@@ -83,12 +98,16 @@ three dimensions is guaranteeing that the mesh does not become
 distorted, which can be done, for example, by using an extension of the
 two-dimensional {\thL} formulation~\cite{amb-sie-tlu2013}.
 
-The second limitation is that the eroding bodies are fixed.  While
-mobile eroding bodies have been considered~\cite{Mitchell2016}, only a
-single body is simulated.  When multiple bodies are present, especially
-in dense suspensions, numerical errors can cause bodies to unphysically
-come into contact.  However, by including a small force and
-torque~\cite{lu-rah-zor2017}, contact can be avoided.
+The second limitation is that the eroding bodies are fixed.  Mitchell
+and Spagnolie~\cite{mit-spa2016} simulate a single mobile eroding body
+in three dimensions have been considered~\cite{mit-spa2016}, but
+additional challenges are caused when there are multiple bodies. In
+particular, especially in dense suspensions, bodies can become extremely
+close to one another, and the interaction between the bodies is
+difficult to resolve unless the underlying mesh is refined to levels
+that are intractable. In future work we plan to consider mobile eroding
+bodies, but include a small force and torque so that unphysical contact
+is avoided~\cite{lu-rah-zor2017}.
 
 \paragraph{Related work}
 Simulating eroding bodies has been studied analytically, experimentally,
@@ -96,7 +115,7 @@ and numerically.  Because of the scales involves with geophysical flows,
 most of these works consider high Reynolds number flows.  For instance,
 the experimental work of Moore et al.~\cite{moo-ris-chi-zha-she2013}
 considers on the order of $10^4$.  For low Reynolds number flows,
-Mitchell and Spagnolie~\cite{Mitchell2016} simulate the erosion of a
+Mitchell and Spagnolie~\cite{mit-spa2016} simulate the erosion of a
 mobile body in three dimensions, but they only consider single body.  
 
 To simulate multiple bodies, it is essential to resolve the nonlocal
@@ -111,7 +130,7 @@ such problems.
 
 \paragraph{Outline of the paper}
 In Section~\ref{s:formulation}, we describe the governing equations for
-both the fluid and describe the erosion model using a \thL framework.
+both the fluid and describe the erosion model using a \thL~framework.
 In Section~\ref{s:method}, the numerical methods in both space and time
 are described.  Section~\ref{s:results} gives several numerical
 examples.  Finally, concluding remarks are made in
@@ -121,7 +140,13 @@ Section~\ref{s:conclusions}
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/50bod.pdf}
-\caption{\label{fig:50bodies} 50 bodies with vorticity}
+\caption{\label{fig:50bodies} A time lapse of 50 bodies eroding in a
+viscous flow.  The boundary conditions are a constant pressure drop that
+creates a flow from the left to right.  The rate of erosion is
+proportional to the shear stress which is equivalent to the vorticity
+evaluated on the bodies.  The colors represent the vorticity, so regions
+with large vorticity (in magnitude) are regions where the flow will
+erode the fastest.}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
