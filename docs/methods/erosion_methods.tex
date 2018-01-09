@@ -377,7 +377,7 @@ direction and the normal vector points into the bodies (our out of the
 fluid).
 
 In order to regularize boundary evolution, we modify the normal velocity
-in Eq.~\eqref{eqn:bodyEvolution} as follows
+in \eqref{eqn:bodyEvolution} as follows
 \begin{equation}
 \label{eqn:Vn}
 \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
@@ -392,7 +392,7 @@ where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2
 \begin{equation}
 \kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
 \end{equation}
-Substitution into Eq.~\eqref{eqn:Vn} gives
+Substitution into \eqref{eqn:Vn} gives
 \begin{equation}
 \label{eqn:Vn2}
 \Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
@@ -407,35 +407,20 @@ The interface evolution is then given by
 \begin{equation}
 \dot{\xx}(t) = \Vn \nn + \Vs \ss.
 \end{equation}
-Upon transforming to the variables $\theta(\alpha,t)$ and $L(t)$, we obtain the evolution equations
+This evolution equation can be recast in the variables $\theta$ and $L$ as
 \begin{align}
-\label{eqn:Levo0}
+\label{eqn:Levo1}
 & \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
 \label{eqn:thetaevo0}
 & \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
 \end{align}
-Inserting Eq.~\eqref{eqn:Vn2} for the normal velocity gives
+Inserting \eqref{eqn:Vn2} for the normal velocity gives
 \begin{equation}
+\label{eqn:thetaevo1}
 \pderiv{\theta}{t} = \frac{2\pi}{L} \left(
 \eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
 \end{equation}
-
-For simplicity, we introduce the variables
-\begin{align}
-\label{eq:M}
-& \Mterm = - 2 \pi \mean{\thalpha \Vn} \\
-\label{eq:N}
-& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
-\label{eq:elfun}
-& \elfun = \frac{2 \pi  \mean{\atau}}{L}
-%\frac{4\pi^2}{L^{2} \log \left(2\pi/L \right)}
-\end{align} 
-Then Eq.~\eqref{eqn:thetaevo0} can be rewritten as
-\begin{equation}
-\label{eqn:thetaevo1}
-\pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
-\end{equation}
-Note that the highest-order, i.e.~stiff, term in Eq.~\eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. 
+Note that the highest-order, i.e.~stiff, term in \eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -902,22 +887,40 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 
 %% TIME-STEPPING %%
 \subsection{Time-stepping with the {\thL} method} 
+
+With the shear stress computed, we are now ready to evolve the interface of each body. As described in Section \ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary. 
+
+First, we introduce the variables
+\begin{align}
+\label{eq:M}
+& \Mterm = - 2 \pi \mean{\thalpha \Vn} \\
+\label{eq:N}
+& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+\label{eq:elfun}
+& \elfun = \frac{2 \pi  \mean{\atau}}{L}
+\end{align} 
+so that evolution equations \eqref{eqn:Levo1} and \eqref{eqn:thetaevo1} can be compactly expressed as
+\begin{align}
+\label{eqn:Levo2}
+& \tderiv{L}{t} = \Mterm \\
+\label{eqn:thetaevo2}
+& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
+\end{align}
 We will evolve $\theta$ in spectral space, and so introduce the transforms
 \begin{align}
 & \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
 & \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
-Recall that $\alpha = 2 \pi s / L$ is a normalized arc length.
-Equation~\eqref{eqn:thetaevo1} gives a set of ODEs for the coefficients
+Recall that $\alpha = 2 \pi s / L$ is a normalized arc length. In spectral space, \eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{equation}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{\NLterm}_k
 \end{equation}
-We introduce the integrating factor
+Each ODE is first-order and linear (though variable-coefficient due to $\elfun$) and thus can be solved by the integrating factor
 \begin{equation}
 \label{eq:mu}
 \mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right)
 \end{equation}
-Then the evolution equations for $L$ and $\theta$ can be recast as the coupled system of ODEs
+We are therefore led to the coupled system of ODEs
 \begin{align}
 \label{eqn:Levo2}
 & \tderiv{L}{t} = \Mterm \\
@@ -1035,6 +1038,10 @@ In Fig.~6a, we show the body area vs time measured in the simulation against the
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
+
+
+
+
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -1048,10 +1055,10 @@ In Fig.~6a, we show the body area vs time measured in the simulation against the
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
+\begin{figure}[p]%[htbp]
 \begin{center}
 \includegraphics[width = 0.8 \textwidth]{./figs/arangle.pdf}
-\caption{Aspect ration and opening angle}
+\caption{Aspect ratio and opening angle}
 \label{}
 \end{center}
 \end{figure}
@@ -1062,7 +1069,7 @@ In Fig.~6a, we show the body area vs time measured in the simulation against the
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{table}%[htbp]
+\begin{table}[p]%[htbp]
 \begin{center}
 \caption{Final aspect ratio and opening angle
 } 
