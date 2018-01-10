@@ -275,6 +275,7 @@ value to be 1
   \dot{\xx}(t) = \abs{\tau} \nn.
   \label{eqn:bodyEvolution}
 \end{align}
+For the sake of numerical stability, we modify this law in Section \ref{sec:thetaL}.
 
 \todo[inline]{Describe the erosion model and its justification}
 \cite{moo-ris-chi-zha-she2013}
@@ -358,7 +359,6 @@ $\ff$.
 \subsection{Interface evolution in the {\thL} framework} 
 \label{sec:thetaL}
 
-% Quasi-steady comment
 %We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
 %\begin{enumerate}
 %\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
@@ -366,21 +366,17 @@ $\ff$.
 %\end{enumerate}
 
 To handle boundary evolution, we use the {\thL} framework, which offers
-certain advantages in the ability to stabilize fluid-structure
-interaction problems \cite{hou-low-she1994}. Throughout this section, we
-use the following conventions: the bodies are parametrized in the CCW
+certain advantages in the ability to stabilize fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW
 direction and the normal vector points into the bodies (our out of the
 fluid).
 
-For the sake of numerical stability, we will regularize the boundary evolution in two ways. First, we will smooth the absolute 
-
-In order to regularize boundary evolution, we modify the normal velocity
+For the sake of numerical stability, we will modify the erosion law \eqref{eqn:bodyEvolution} to include a term that depends on the local curvature $\kappa$. The idea is to prevent regions of very high curvature. The modified normal velocity is
 in \eqref{eqn:bodyEvolution} as follows
 \begin{equation}
 \label{eqn:Vn}
 \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
 \end{equation}
-Here, $\kappa$ is the curvature, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
+Here, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
 
 We now introduce the tangent angle, $\theta$, defined through the relation
 \begin{equation}
@@ -886,31 +882,50 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 %% TIME-STEPPING %%
 \subsection{Time-stepping with the {\thL} method} 
 
-With the shear stress computed, we are now ready to evolve the interface of each body. As described in Section \ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary. 
+With the shear stress computed, we are now ready to evolve the interface of each body. As described in Section \ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary, and with the boundaries parameterized by normalized arc length $\alpha = 2 \pi s / L$.
 
-First, we introduce the variables
+In addition to the curvature-dependent term in \eqref{eqn:Vn}, we regularize boundary evolution by applying a narrow Gaussian filter to absolute shear stress
+\begin{equation}
+\atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma} \exp \left(- \frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \, d\alpha'
+\end{equation}
+Here $\sigma$ is the small parameter that determines the width of the filter. The corresponding normal and tangential interface velocities are the given by
+\begin{align}
+& \Vnsig = \atausig +  \eps \mean{\atausig}   \left(\pderiv{\theta}{\alpha} - 1 \right) \\
+& \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}
+\end{align}
+
+%The interface evolution is then given by
+%\begin{equation}
+%\dot{\xx}(t) = \Vn \nn + \Vs \ss.
+%\end{equation}
+
+
+
+For simplicity, we introduce the variables
 \begin{align}
 \label{eq:M}
-& \Mterm = - 2 \pi \mean{\thalpha \Vn} \\
+& \Mterm = - 2 \pi \mean{\thalpha \Vnsig} \\
 \label{eq:N}
-& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atau}{\alpha} + \thalpha \Vs \right) \\
+& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atausig}{\alpha} + \thalpha \Vssig \right) \\
 \label{eq:elfun}
-& \elfun = \frac{2 \pi  \mean{\atau}}{L}
-\end{align} 
-so that evolution equations \eqref{eqn:Levo1} and \eqref{eqn:thetaevo1} can be compactly expressed as
+& \elfun = \frac{2 \pi  \mean{\atausig}}{L}
+\end{align}
+So that evolution equations \eqref{eqn:Levo1} and \eqref{eqn:thetaevo1} can be compactly expressed as
 \begin{align}
 \label{eqn:Levo2}
 & \tderiv{L}{t} = \Mterm \\
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
 \end{align}
+
 Here $\NLterm$ represents the nonlinear terms (and nonlocal etc) in the PDE for $\theta$.
-We will evolve $\theta$ in spectral space, and so introduce the transforms
+We will evolve $\theta$ in spectral space, and so introduce the Fourier series
 \begin{align}
 & \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
 & \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
-Recall that $\alpha = 2 \pi s / L$ is a normalized arc length. In spectral space, \eqref{eqn:thetaevo2} produces the system of ODEs
+The careful reader will notice that we have separated out the linear part of $\theta$, so that the remaining function is smooth and has a rapidly decaying Fourier series.
+In spectral space, \eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{equation}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{\NLterm}_k
 \end{equation}
@@ -958,7 +973,6 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 & \Dt \, \hat{\NLterm}_k^{(n+1/2)}
 \exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
 \end{align}
-\todo[inline]{Gaussian Filter} 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
