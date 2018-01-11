@@ -7,21 +7,31 @@ function postprocess(foldername::AbstractString)
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
+		println("Beggining step ", cnt, " of ", ntimes, ".\n")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
+
 		#--------------------------------------#
 		# Compute the area of each body.
+		println("Beginning the area computation.")
 		areavec = getareas(thlenden)
 		# Save the data to a file.
 		areasfile = string(datafolder,"areas",cntstr,".dat")
 		label = string("# Area of each individual body.")
 		areadata = [label; areavec]
 		writedata(areadata, areasfile)
+		println("Finnished the area computation.\n")
+
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
+		println("Beginning the resistivity computation.")
 		rbods = resistivity(thlenden,params.nouter,2.0)
 		rbodsrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
+		println("Finished the resistivity computation.\n")
+
+		#--------------------------------------#
 		# Compute the total pressure and viscous drag on the collection of bodies.
+		println("Beginning the drag computation.")
 		pdragx, pdragy, vdragx, vdragy, tauvec = drag(thlenden,params)
 		pdragxr, pdragyr, vdragxr, vdragyr, tauvecr = drag(thlenden,params,rotation=true)
 		# Save the data to a file.
@@ -31,10 +41,13 @@ function postprocess(foldername::AbstractString)
 		resdragdata = [lab1; lab2; nbods; rbods; rbodsrot; 
 			pdragx; pdragy; vdragx; vdragy; pdragxr; pdragyr; vdragxr; vdragyr]
 		writedata(resdragdata, resdragfile)
+		println("Finished the drag computation.\n")
+
 		#--------------------------------------#
 		# Save the stress on each body.
 		# atauvec has absolute value and smoothing applied; 
 		# tauvec is raw stress, with nontrivial sign and no smoothing.
+		println("Beginning the stress computation.")
 		getstress!(thlenden,params)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
@@ -44,7 +57,7 @@ function postprocess(foldername::AbstractString)
 			atauvec[n1:n2] = thlenden.thlenvec[nn].atau
 		end
 		writedata([label; atauvec; tauvec], stressfile)
-		# Print progress.
+		println("Finished the stress computation.")
 		println("Finished step ", cnt, " of ", ntimes, ".")
 	end
 	return
