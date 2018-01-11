@@ -356,81 +356,7 @@ $\ff$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Interface evolution in the {\thL} framework} 
-\label{sec:thetaL}
-
-%We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
-%\begin{enumerate}
-%\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
-%\item Given the shear stress, update the geometry according to the erosion model.
-%\end{enumerate}
-
-To handle boundary evolution, we use the {\thL} framework, which offers
-certain advantages in the ability to stabilize fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW
-direction and the normal vector points into the bodies (our out of the
-fluid).
-
-For the sake of numerical stability, we will modify the erosion law \eqref{eqn:bodyEvolution} to include a term that depends on the local curvature $\kappa$. The idea is to prevent regions of very high curvature. The modified normal velocity is
-in \eqref{eqn:bodyEvolution} as follows
-\begin{equation}
-\label{eqn:Vn}
-\Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
-\end{equation}
-Here, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
-
-We now introduce the tangent angle, $\theta$, defined through the relation
-\begin{equation}
-\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
-\end{equation}
-where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
-\begin{equation}
-\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
-\end{equation}
-Substitution into \eqref{eqn:Vn} gives
-\begin{equation}
-\label{eqn:Vn2}
-\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
-%\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
-\end{equation}
-
-The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
-\begin{equation}
-\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
-\end{equation}
-The interface evolution is then given by
-\begin{equation}
-\dot{\xx}(t) = \Vn \nn + \Vs \ss.
-\end{equation}
-This evolution equation can be recast in the variables $\theta$ and $L$ as
-\begin{align}
-\label{eqn:Levo1}
-& \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
-\label{eqn:thetaevo0}
-& \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
-\end{align}
-Inserting \eqref{eqn:Vn2} for the normal velocity gives
-\begin{equation}
-\label{eqn:thetaevo1}
-\pderiv{\theta}{t} = \frac{2\pi}{L} \left(
-\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
-\end{equation}
-Note that the highest-order, i.e.~stiff, term in \eqref{eqn:thetaevo1} is {\em quasi-linear}. This is the key to the {\thL} method, and allows us to use very stable, implicit methods for this stiff term. 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Layer Potentials for Quantities of Interest}
-\label{sec:qois}
-There are several quantities besides the velocity that need to be
-computed.  First, the governing equations~\eqref{eqn:erosionModel}
-require the shear stress along $\gamma_\ell$.  In addition, to study
-characteristics of the flow, the vorticity, pressure, and drag, and
-resistivity will also be computed.  Once
-equation~\eqref{eqn:completed_DLP} is solved for the density function,
-Stokeslets, and rotlets, all of these quantities can be computed by
-evaluating layer potentials that we now derive.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Shear Stress}
+\subsection{Computing the Shear Stress}
 The shear stress is
 \begin{align*}
   \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
@@ -497,85 +423,114 @@ computed, the shear stress at $\xx_0 \in \bd\Omega$ is
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
 \end{align*}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Vorticity}
-For the Stokes equations, on boundaries that have a no-slip boundary
-condition, the shear stress is equivalent to the vorticity $w = v_x -
-u_y$.  Therefore, to compute $w(\xx)$ for $\xx \in \overline{\Omega}$,
-we only need to compute $w(\xx)$ for $\xx \in \Omega$.  As we did for
-the shear stress, we compute the vorticity due to the double-layer
-potential, Stokeslets, and rotlets individually.  The vorticity of the
-double-layer potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
-\begin{align}
-  w^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
-    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4}
-    (\rr \cdot \eeta) ds_{\yy}.
-  \label{eqn:vorticityDLP}
-\end{align}
-The vorticity due to the Stokeslet is
+We have decomposed the deformation tensor into the contributions due to
+three different terms.  The contributions from the Stokeslets and the
+rotlets can be directly evaluated since $\rr \neq 0$ for all $\xx \in
+\gamma$.  However, the kernel of the deformation tensor due to the
+double-layer potential~\eqref{eqn:shearStressDLP} 
 \begin{align*}
-  w^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
-    \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2},
+  K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
+    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
+    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn)
+    \right. \\ & \hspace{25pt}+ \left.
+    \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
+    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
+  \right),
 \end{align*}
-and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
-\in \Omega$ is
+has a singularity that is asymptotic to $\bigO(\rho^{-2})$ when $\yy
+\rightarrow \xx$.  The singularity strength can be reduced since the
+velocity corresponding to a constant density function is
+constant~\cite{poz1992}.  Therefore, the deformation tensor of the
+double-layer potential is equivalent to
 \begin{align*}
-  w(\xx) = w^\DD(\xx) + w^S(\xx).
+  \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
+      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
 \end{align*}
+This expression for the deformation tensor has a singularity that is
+asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
+to achieve spectral accuracy, we apply odd-even
+integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
+the double-layer potential at a discretization point $\xx_i$ on body
+$\gamma_\ell$, with $i$ being odd, is approximated as
+\todo[inline]{fix up this section and move numerics to the next section}
+\begin{align}
+  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_\ell}
+    K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
+  \sum_{\substack{\xx_j \in \gamma_\ell \\ j \: \mathtt{even}}}
+    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
+  \label{eqn:stressOddEven}
+\end{align}
+and a similar approximation is used when $i$ is even.  The deformation
+tensor due to the Stokeslets and rotlets is given in
+equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
+deformation tensor~\eqref{eqn:shearStressJump} is added, and the
+required arclength derivative is computed in Fourier space.  Then, the
+shear stress can be computed by computing the deformation tensor in the
+normal vector, and taking the inner product with the tangent vector.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Pressure}
-To compute the pressure at $\xx \in \overline{\Omega}$, we follow the
-same procedure used for the shear stress.  We start by computing the
-pressure of the double-layer potential for $\xx \in \Omega$ and add the
-appropriate jump if $\xx \in \Gamma$. For $\xx \in \Omega$, the pressure
-is
-\begin{align}
-  p^{D}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
-    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot \eeta(\yy) \,ds_\yy.
-    \label{eqn:pressureDLP}
-\end{align}
-To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
-as $\xx$ tends to $\xx_0$.  The limiting value is given
-by~\cite{qua-bir2014a}
-\begin{align}
-  \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
-    \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
-  \label{eqn:pressureJump}
-\end{align}
-The pressure due to the Stokeslets is
-\begin{align}
-  p^S(\xx_0) = \sum_{\ell=1}^{M}\frac{\rr \cdot \llambda_\ell}{2\pi\rho^2},
-  \label{eqn:shearPressureSR}
-\end{align}
-and the pressure due to the rotlets is zero.  Therefore, the pressure is
-\begin{align*}
-  p(\xx) &= p^{\DD}(\xx) + p^{S}(\xx), \quad &&\xx \in \Omega,\\
-  p(\xx) &= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
-              p^{S}(\xx), && \xx \in \bd\Omega.
-\end{align*}
+\subsection{Interface evolution in the {\thL} framework} 
+\label{sec:thetaL}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Drag}
-\todo[inline]{check all signs in this section.  Fortran code assumes a
-normal pointing into the eroding body and a tangent vector that
-corresponds to a couterclockwise parameterization}
-With the pressure and shear stress, the drag on a single body with
-boundary $\gamma_\ell$ is
-\begin{align}
-  F_D = \int_{\gamma_\ell} (-p \nn + \tau \ss)\,ds.
-  \label{eqn:drag}
-\end{align}
+%We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
+%\begin{enumerate}
+%\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
+%\item Given the shear stress, update the geometry according to the erosion model.
+%\end{enumerate}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Resistivity}
-\begin{align}
-  some equation
-  \label{eqn:resistivity}
-\end{align}
+To handle boundary evolution, we use the {\thL} framework, which offers
+certain advantages in the ability to stabilize fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW
+direction and the normal vector points into the bodies (our out of the
+fluid).
 
+For the sake of numerical stability, we will modify the erosion law \eqref{eqn:bodyEvolution} to include a term that depends on the local curvature $\kappa$. The idea is to prevent regions of very high curvature. The modified normal velocity is
+in \eqref{eqn:bodyEvolution} as follows
+\begin{equation}
+\label{eqn:Vn}
+\Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
+\end{equation}
+Here, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
+
+We now introduce the tangent angle, $\theta$, defined through the relation
+\begin{equation}
+\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
+\end{equation}
+where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
+\begin{equation}
+\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
+\end{equation}
+Substitution into \eqref{eqn:Vn} gives
+\begin{equation}
+\label{eqn:Vn2}
+\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
+%\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
+\end{equation}
+
+The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
+\begin{equation}
+\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
+\end{equation}
+The interface evolution is then given by
+\begin{equation}
+\dot{\xx}(t) = \Vn \nn + \Vs \ss.
+\end{equation}
+This evolution equation can be recast in the variables $\theta$ and $L$ as
+\begin{align}
+\label{eqn:Levo1}
+& \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
+\label{eqn:thetaevo0}
+& \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
+\end{align}
+Inserting \eqref{eqn:Vn2} for the normal velocity gives
+\begin{equation}
+\label{eqn:thetaevo1}
+\pderiv{\theta}{t} = \frac{2\pi}{L} \left(
+\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\end{equation}
+Note that the highest-order, i.e.~stiff, term in \eqref{eqn:thetaevo1}
+is {\em quasi-linear}. This is the key to the {\thL} method, and allows
+us to use very stable, implicit methods for this stiff term. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -613,24 +568,11 @@ $N_\out$ points.  Derivatives of the shape are computed in Fourier space
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quadrature: On Boundary Calculations} 
-\label{sec:on_boundary}
 We start by discussing the quadrature methods that are used to compute
-the velocity~\eqref{eqn:DLP}, shear stress~\eqref{eqn:shearStressDLP},
-pressure~\eqref{eqn:pressureDLP}, and drag~\eqref{eqn:drag} at target
-points on the boundary of the domain.  The velocity on $\bd\Omega$ is
-required to solve the integral equation~\eqref{eqn:completed_BIE} for
-the density function, Stokeslets and rotlets.  Once these are computed,
-computing the shear stress, pressure, and drag is a post-processing
-step.  All these integrals involve integrands that are periodic.  For
-smooth integrands, the trapezoid rule guarantees spectral
-accuracy~\cite{tre-wei2014}.  However, some of the integrands contain a
-singularity whose strength will be reduced with singularity subtraction,
-and then spectral accuracy is achieved with odd-even
-integration~\cite{sid-isr1988} must be used.
+the velocity~\eqref{eqn:DLP} and shear stress~\eqref{eqn:shearStressDLP}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Velocity}
+\subsection{Solving the BIE}
 To numerically evaluate the completed double-layer
 potential~\eqref{eqn:completed_BIE}, we le $N = MN_\iin + N_\out$ be the
 total number of discretization points of $\bd\Omega$.  The double-layer
@@ -680,96 +622,12 @@ the numerical solutions converges to the true solution with spectral
 accuracy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Shear Stress}
-We have decomposed the deformation tensor into the contributions due to
-three different terms.  The contributions from the Stokeslets and the
-rotlets can be directly evaluated since $\rr \neq 0$ for all $\xx \in
-\gamma$.  However, the kernel of the deformation tensor due to the
-double-layer potential~\eqref{eqn:shearStressDLP} 
-\begin{align*}
-  K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
-    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
-    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn)
-    \right. \\ & \hspace{25pt}+ \left.
-    \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
-    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-  \right),
-\end{align*}
-has a singularity that is asymptotic to $\bigO(\rho^{-2})$ when $\yy
-\rightarrow \xx$.  The singularity strength can be reduced since the
-velocity corresponding to a constant density function is
-constant~\cite{poz1992}.  Therefore, the deformation tensor of the
-double-layer potential is equivalent to
-\begin{align*}
-  \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
-      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
-\end{align*}
-This expression for the deformation tensor has a singularity that is
-asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
-to achieve spectral accuracy, we apply odd-even
-integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
-the double-layer potential at a discretization point $\xx_i$ on body
-$\gamma_\ell$, with $i$ being odd, is approximated as
-\begin{align}
-  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_\ell}
-    K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
-  \sum_{\substack{\xx_j \in \gamma_\ell \\ j \: \mathtt{even}}}
-    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
-  \label{eqn:stressOddEven}
-\end{align}
-and a similar approximation is used when $i$ is even.  The deformation
-tensor due to the Stokeslets and rotlets is given in
-equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
-deformation tensor~\eqref{eqn:shearStressJump} is added, and the
-required arclength derivative is computed in Fourier space.  Then, the
-shear stress can be computed by computing the deformation tensor in the
-normal vector, and taking the inner product with the tangent vector.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Pressure}
-Similar to the shear stress, the singularity of the pressure
-corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is
-too strong for the trapezoid rule to be directly applied.  Therefore, we
-again subtract a constant density function and write the pressure as
-\begin{align*}
-  p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
-    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot (\eeta(\yy) - \eeta(\xx)) \,ds_\yy, 
-    \quad \xx \in \bd\Omega
-\end{align*}
-Then, identical to how the shear stress is
-computed~\eqref{eqn:stressOddEven}, odd-even integration is used to
-evaluate this layer potential for pressure.  The pressure due to the
-Stokeslets are given in equation~\eqref{eqn:shearPressureSR}.  Finally,
-to add the jump condition~\eqref{eqn:pressureJump}, Fourier
-differentiation is used to compute the arclength derivative. 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Drag}
+\subsection{Shear Stress}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quadrature: Off Boundary Calculations} 
-\label{sec:off_boundary}
-To analyze the flow, we compute quantities at target points that are in
-the interior of the domain.  In particular, we develop numerical methods
-to compute the velocity~\eqref{eqn:velocityDLP},
-pressure~\eqref{eqn:pressureDLP}, vorticity~\eqref{eqn:vorticityDLP} and
-resistivity~\eqref{eqn:resistivity}.  Since the target points are not on
-the boundary of the domain, all the integrals, except for the
-resistivity, involve integrands that are both periodic and smooth.
-However, when the target points are close to the boundary of the domain,
-the integrand becomes nearly-singular, and these large derivatives
-result in a loss of accuracy that needs to be rectified.  We will be
-adopting a near-singular integration scheme that allows us to compute
-all quantities of interest sufficiently close to $\bd\Omega$ for the
-quantities of interest.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Near-singular integration}
+\subsection{Near-singular integration}
 To accurately compute quantities such as the velocity at points $\xx \in
 \Omega$, we adopt a near-singular integration scheme entirely based on
 upsampling.  Since we are only interested in computing the velocity and
@@ -845,11 +703,6 @@ work of Lu et al.~\cite{lu-rah-zor2017}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Resistivity}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Accelerating the Layer Potential Evaluations}
 \label{sec:fmm}
 The bulk of the computational work is evaluating discretizations of
@@ -879,27 +732,29 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TIME-STEPPING %%
 \subsection{Time-stepping with the {\thL} method} 
 
-With the shear stress computed, we are now ready to evolve the interface of each body. As described in Section \ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary, and with the boundaries parameterized by normalized arc length $\alpha = 2 \pi s / L$.
+With the shear stress computed, we are now ready to evolve the interface
+of each body. As described in Section~\ref{sec:thetaL}, we use the
+{\thL} framework, with $\theta$ being the tangent angle and $L$ the
+total arc length of a given boundary, and with the boundaries
+parameterized by normalized arc length $\alpha = 2 \pi s / L$.
 
-In addition to the curvature-dependent term in \eqref{eqn:Vn}, we regularize boundary evolution by applying a narrow Gaussian filter to absolute shear stress
+In addition to the curvature-dependent term in~\eqref{eqn:Vn}, we
+regularize boundary evolution by applying a narrow Gaussian filter to
+absolute shear stress
 \begin{equation}
 \atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma} \exp \left(- \frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \, d\alpha'
 \end{equation}
-Here $\sigma$ is the small parameter that determines the width of the filter. The corresponding normal and tangential interface velocities are the given by
+Here $\sigma$ is the small parameter that determines the width of the
+filter. The corresponding normal and tangential interface velocities are
+the given by
 \begin{align}
 & \Vnsig = \atausig +  \eps \mean{\atausig}   \left(\pderiv{\theta}{\alpha} - 1 \right) \\
 & \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}
 \end{align}
-
-%The interface evolution is then given by
-%\begin{equation}
-%\dot{\xx}(t) = \Vn \nn + \Vs \ss.
-%\end{equation}
-
-
 
 For simplicity, we introduce the variables
 \begin{align}
@@ -910,7 +765,8 @@ For simplicity, we introduce the variables
 \label{eq:elfun}
 & \elfun = \frac{2 \pi  \mean{\atausig}}{L}
 \end{align}
-So that evolution equations \eqref{eqn:Levo1} and \eqref{eqn:thetaevo1} can be compactly expressed as
+So that evolution equations`\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1}
+can be compactly expressed as
 \begin{align}
 \label{eqn:Levo2}
 & \tderiv{L}{t} = \Mterm \\
@@ -918,18 +774,22 @@ So that evolution equations \eqref{eqn:Levo1} and \eqref{eqn:thetaevo1} can be c
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
 \end{align}
 
-Here $\NLterm$ represents the nonlinear terms (and nonlocal etc) in the PDE for $\theta$.
-We will evolve $\theta$ in spectral space, and so introduce the Fourier series
+Here $\NLterm$ represents the nonlinear terms (and nonlocal etc) in the
+PDE for $\theta$.  We will evolve $\theta$ in spectral space, and so
+introduce the Fourier series
 \begin{align}
 & \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
 & \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
 \end{align}
-The careful reader will notice that we have separated out the linear part of $\theta$, so that the remaining function is smooth and has a rapidly decaying Fourier series.
-In spectral space, \eqref{eqn:thetaevo2} produces the system of ODEs
+The careful reader will notice that we have separated out the linear
+part of $\theta$, so that the remaining function is smooth and has a
+rapidly decaying Fourier series.  In spectral
+space,~\eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{equation}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{\NLterm}_k
 \end{equation}
-Each ODE is first-order and linear (though variable-coefficient due to $\elfun$) and thus can be solved by using the integrating factor
+Each ODE is first-order and linear (though variable-coefficient due to
+$\elfun$) and thus can be solved by using the integrating factor
 \begin{equation}
 \label{eq:mu}
 \mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right)
@@ -941,15 +801,27 @@ We are therefore led to the coupled system of ODEs
 \label{eqn:thetaevo2}
 & \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \hat{\NLterm}_k
 \end{align}
-We solve system \eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} with an explicit, second-order Runge-Kutta method (RK2). In particular, we choose the {\em midpoint} RK2 method so as to maximize the smoothing effect of the curvature term.
+We solve system~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} with an
+explicit, second-order Runge-Kutta method (RK2). In particular, we
+choose the {\em midpoint} RK2 method so as to maximize the smoothing
+effect of the curvature term.
 
-At the first stage of RK2 (the half step), we discretize Eqs.~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} as
+At the first stage of RK2 (the half step), we discretize
+Eqs.~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} as
 \begin{align}
 \label{eq:L12}
 & \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = \Mterm^{(n)} \\
 & \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \thhat_k^{(n)}}{\Dt/2} = \hat{\NLterm}_k^{(n)}
 \end{align}
-where the superscript indicates the time step. For simplicity, we have chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute $\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$, which requires a call to the Stokes solver. Hence, we must compute $\mu_k^{(n+1/2})$, so that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the left-end-point rule (first order, consistent with first forward Euler step of RK2)
+where the superscript indicates the time step. For simplicity, we have
+chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu}
+so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute
+$\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$, which requires a
+call to the Stokes solver. Hence, we must compute $\mu_k^{(n+1/2})$, so
+that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the
+mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the
+left-end-point rule (first order, consistent with first forward Euler
+step of RK2)
 \begin{equation}
 \mu_k^{(n+1/2)} = \exp \left( \epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
 \end{equation}
@@ -958,14 +830,17 @@ It is instructive to recast as
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
 \exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
 \end{equation}
-so that the smoothing effect of the exponential is obvious. With $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute $\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$.
+so that the smoothing effect of the exponential is obvious. With
+$\thhat_k^{(n+1/2)}$ computed, it is now possible to compute
+$\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$.
 
 Next, at the second stage of RK2, we discretize as
 \begin{align}
 & \frac{L^{(n+1)} - L^{(n)}}{\Dt} = \Mterm^{(n+1/2)} \\
 & \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}
 \end{align}
-We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integration rule), giving
+We again compute the integrating factor, $\mu_k^{(n+1)}$ via the (
+insert integration rule), giving
 \begin{align}
 \thhat_k^{(n+1)} = 
 & \thhat_k^{(n)}
@@ -973,6 +848,148 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the ( insert integr
 & \Dt \, \hat{\NLterm}_k^{(n+1/2)}
 \exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
 \end{align}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Post Processing Quantities of Interest\label{s:qoi}} 
+
+There are several quantities besides the velocity that need to be
+computed.  First, the governing equations~\eqref{eqn:erosionModel}
+require the shear stress along $\gamma_\ell$.  In addition, to study
+characteristics of the flow, the vorticity, pressure, and drag, and
+resistivity will also be computed.  Once
+equation~\eqref{eqn:completed_DLP} is solved for the density function,
+Stokeslets, and rotlets, all of these quantities can be computed by
+evaluating layer potentials that we now derive.
+
+pressure~\eqref{eqn:pressureDLP}, and drag~\eqref{eqn:drag} at target
+points on the boundary of the domain.  The velocity on $\bd\Omega$ is
+required to solve the integral equation~\eqref{eqn:completed_BIE} for
+the density function, Stokeslets and rotlets.  Once these are computed,
+computing the shear stress, pressure, and drag is a post-processing
+step.  All these integrals involve integrands that are periodic.  For
+smooth integrands, the trapezoid rule guarantees spectral
+accuracy~\cite{tre-wei2014}.  However, some of the integrands contain a
+singularity whose strength will be reduced with singularity subtraction,
+and then spectral accuracy is achieved with odd-even
+integration~\cite{sid-isr1988} must be used.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Vorticity}
+For the Stokes equations, on boundaries that have a no-slip boundary
+condition, the shear stress is equivalent to the vorticity $w = v_x -
+u_y$.  Therefore, to compute $w(\xx)$ for $\xx \in \overline{\Omega}$,
+we only need to compute $w(\xx)$ for $\xx \in \Omega$.  As we did for
+the shear stress, we compute the vorticity due to the double-layer
+potential, Stokeslets, and rotlets individually.  The vorticity of the
+double-layer potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
+\begin{align}
+  w^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
+    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4}
+    (\rr \cdot \eeta) ds_{\yy}.
+  \label{eqn:vorticityDLP}
+\end{align}
+The vorticity due to the Stokeslet is
+\begin{align*}
+  w^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
+    \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2},
+\end{align*}
+and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
+\in \Omega$ is
+\begin{align*}
+  w(\xx) = w^\DD(\xx) + w^S(\xx).
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Pressure}
+To compute the pressure at $\xx \in \overline{\Omega}$, we follow the
+same procedure used for the shear stress.  We start by computing the
+pressure of the double-layer potential for $\xx \in \Omega$ and add the
+appropriate jump if $\xx \in \Gamma$. For $\xx \in \Omega$, the pressure
+is
+\begin{align}
+  p^{D}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
+    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
+    \nn \cdot \eeta(\yy) \,ds_\yy.
+    \label{eqn:pressureDLP}
+\end{align}
+To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
+as $\xx$ tends to $\xx_0$.  The limiting value is given
+by~\cite{qua-bir2014a}
+\begin{align}
+  \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
+    \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
+  \label{eqn:pressureJump}
+\end{align}
+The pressure due to the Stokeslets is
+\begin{align}
+  p^S(\xx_0) = \sum_{\ell=1}^{M}\frac{\rr \cdot \llambda_\ell}{2\pi\rho^2},
+  \label{eqn:shearPressureSR}
+\end{align}
+and the pressure due to the rotlets is zero.  Therefore, the pressure is
+\begin{align*}
+  p(\xx) &= p^{\DD}(\xx) + p^{S}(\xx), \quad &&\xx \in \Omega,\\
+  p(\xx) &= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
+              p^{S}(\xx), && \xx \in \bd\Omega.
+\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Drag}
+\todo[inline]{check all signs in this section.  Fortran code assumes a
+normal pointing into the eroding body and a tangent vector that
+corresponds to a couterclockwise parameterization}
+With the pressure and shear stress, the drag on a single body with
+boundary $\gamma_\ell$ is
+\begin{align}
+  F_D = \int_{\gamma_\ell} (-p \nn + \tau \ss)\,ds.
+  \label{eqn:drag}
+\end{align}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Pressure}
+Similar to the shear stress, the singularity of the pressure
+corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is
+too strong for the trapezoid rule to be directly applied.  Therefore, we
+again subtract a constant density function and write the pressure as
+\begin{align*}
+  p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
+    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
+    \nn \cdot (\eeta(\yy) - \eeta(\xx)) \,ds_\yy, 
+    \quad \xx \in \bd\Omega
+\end{align*}
+Then, identical to how the shear stress is
+computed~\eqref{eqn:stressOddEven}, odd-even integration is used to
+evaluate this layer potential for pressure.  The pressure due to the
+Stokeslets are given in equation~\eqref{eqn:shearPressureSR}.  Finally,
+to add the jump condition~\eqref{eqn:pressureJump}, Fourier
+differentiation is used to compute the arclength derivative. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Drag}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quadrature: Off Boundary Calculations} 
+\label{sec:off_boundary}
+To analyze the flow, we compute quantities at target points that are in
+the interior of the domain.  In particular, we develop numerical methods
+to compute the velocity~\eqref{eqn:velocityDLP},
+pressure~\eqref{eqn:pressureDLP}, vorticity~\eqref{eqn:vorticityDLP} and
+resistivity~\eqref{eqn:resistivity}.  Since the target points are not on
+the boundary of the domain, all the integrals, except for the
+resistivity, involve integrands that are both periodic and smooth.
+However, when the target points are close to the boundary of the domain,
+the integrand becomes nearly-singular, and these large derivatives
+result in a loss of accuracy that needs to be rectified.  We will be
+adopting a near-singular integration scheme that allows us to compute
+all quantities of interest sufficiently close to $\bd\Omega$ for the
+quantities of interest.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
