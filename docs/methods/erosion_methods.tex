@@ -418,55 +418,12 @@ where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is the point chosen inside body
 $\gamma_\ell$, and $\rho = \|\rr_\ell\|$.  Now that the deformation
 tensor of each component of the completed double-layer potential is
 computed, the shear stress at $\xx_0 \in \bd\Omega$ is
-\begin{align*}
+\begin{align}
   \tau = -2 \left(J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) + 
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
-\end{align*}
-
-We have decomposed the deformation tensor into the contributions due to
-three different terms.  The contributions from the Stokeslets and the
-rotlets can be directly evaluated since $\rr \neq 0$ for all $\xx \in
-\gamma$.  However, the kernel of the deformation tensor due to the
-double-layer potential~\eqref{eqn:shearStressDLP} 
-\begin{align*}
-  K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
-    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
-    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn)
-    \right. \\ & \hspace{25pt}+ \left.
-    \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
-    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-  \right),
-\end{align*}
-has a singularity that is asymptotic to $\bigO(\rho^{-2})$ when $\yy
-\rightarrow \xx$.  The singularity strength can be reduced since the
-velocity corresponding to a constant density function is
-constant~\cite{poz1992}.  Therefore, the deformation tensor of the
-double-layer potential is equivalent to
-\begin{align*}
-  \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
-      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
-\end{align*}
-This expression for the deformation tensor has a singularity that is
-asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
-to achieve spectral accuracy, we apply odd-even
-integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
-the double-layer potential at a discretization point $\xx_i$ on body
-$\gamma_\ell$, with $i$ being odd, is approximated as
-\todo[inline]{fix up this section and move numerics to the next section}
-\begin{align}
-  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_\ell}
-    K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
-  \sum_{\substack{\xx_j \in \gamma_\ell \\ j \: \mathtt{even}}}
-    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
-  \label{eqn:stressOddEven}
+  \label{eqn:shearStressLP}
 \end{align}
-and a similar approximation is used when $i$ is even.  The deformation
-tensor due to the Stokeslets and rotlets is given in
-equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
-deformation tensor~\eqref{eqn:shearStressJump} is added, and the
-required arclength derivative is computed in Fourier space.  Then, the
-shear stress can be computed by computing the deformation tensor in the
-normal vector, and taking the inner product with the tangent vector.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -537,21 +494,20 @@ us to use very stable, implicit methods for this stiff term.
 \section{Numerical Methods\label{s:method}} 
 There are three main numerical methods that need to be developed:~the
 boundary integral equation solver for
-equation~\eqref{eqn:completed_BIE}, computing the quantities of interest
-in Section~\ref{sec:qois}, and updating the shape of the eroding bodies
-with equation~\eqref{eqn:bodyEvolution}.  So that we can form stable
-simulations with long time horizons, we use numerical methods that
-achieve spectral accuracy in space, second-order accuracy in time, and
-maintain an equispaced discretization of the bodies.
+equation~\eqref{eqn:completed_BIE}, computing the layer potential for
+the shear stress~\eqref{eqn:shearStressLP}, and updating the shape of
+the eroding bodies with equation~\eqref{eqn:bodyEvolution}.  So that we
+can form stable simulations with long time horizons, we use numerical
+methods that achieve spectral accuracy in space, second-order accuracy
+in time, and maintain an equispaced discretization of the bodies.
 
 In Section~\ref{sec:spatial_discretization}, we describe how the
-geometry is represented.  Then, Sections~\ref{sec:on_boundary}
-and~\ref{sec:off_boundary} describe how the velocity and other
-quantities of interest are computed at points on and off the boundary,
-respectively.  Section~\ref{sec:fmm} describes how the layer potentials
-are computed efficiently.  Finally, in Section~\ref{sec:thetaL}, methods
-used to update the shape are described.
-
+geometry is represented.  Then, Section~\ref{sec:BIE}, we describe how
+the BIE~\eqref{eqn:completed_BIE} is solved.
+Once the density function is found, Section~\ref{sec:shearStress}
+describes how the shear stress is computed.  Then, in
+Section~\ref{timeStepping}, numerical methods for evolving the interface
+are described.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Spatial Discretization}
@@ -566,13 +522,9 @@ $N_\out$ points.  Derivatives of the shape are computed in Fourier space
   \frac{d\xx(\alpha)}{d\alpha} = \FourierSum ik\hat{x}_k e^{ik\alpha}.
 \end{align*}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We start by discussing the quadrature methods that are used to compute
-the velocity~\eqref{eqn:DLP} and shear stress~\eqref{eqn:shearStressDLP}.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Solving the BIE}
+\label{sec:BIE}
 To numerically evaluate the completed double-layer
 potential~\eqref{eqn:completed_BIE}, we le $N = MN_\iin + N_\out$ be the
 total number of discretization points of $\bd\Omega$.  The double-layer
@@ -621,113 +573,76 @@ smooth and periodic, by using the trapezoid rule, we are guaranteed that
 the numerical solutions converges to the true solution with spectral
 accuracy.
 
+The linear system~\eqref{eqn:completed_BIE_discretized} is solved
+iteratively with the generalized minimal residual method
+(GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, this
+guarantees that a mesh-independent number of GMRES iterations are
+required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost
+is determined by the cost of performing a matrix-vector multiplication,
+and the bulk of the most expensive part is evaluating the $N$-term sum
+in~\eqref{eqn:completed_BIE_discretized}.  Naively, evaluating this sum
+at all points $\xx_i$, $i=1,N$ requires $\bigO(N^2)$ operations.  To
+reduce the computational cost of this calculation, we use the Fast
+Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the
+complexity from $\bigO(N^2)$ to $\bigO(N)$.  Since the number of
+required GMRES iterations is mesh-independent, the overall complexity
+for solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shear Stress}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Near-singular integration}
-To accurately compute quantities such as the velocity at points $\xx \in
-\Omega$, we adopt a near-singular integration scheme entirely based on
-upsampling.  Since we are only interested in computing the velocity and
-vorticity for visualizing the flow, and the pressure is only required
-far away from any boundary, only a finite amount of upsampling is
-required to achieve an acceptable error.
-
-Computing the velocity, pressure, and vorticity at a point $\xx \in
-\Omega$ requires evaluating the layer potential
+\label{sec:shearStress}
+We have decomposed the deformation tensor into the contributions due to
+three different terms.  The contributions from the Stokeslets and the
+rotlets can be directly evaluated since $\rr \neq 0$ for all $\xx \in
+\gamma$.  However, the kernel of the deformation tensor due to the
+double-layer potential~\eqref{eqn:shearStressDLP} 
 \begin{align*}
-  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy,
+  K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
+    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
+    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn)
+    \right. \\ & \hspace{25pt}+ \left.
+    \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
+    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
+  \right),
 \end{align*}
-where $\phi$ is either the velocity, pressure, or vorticity, and the
-kernel $K$ is in
-equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
-or~\eqref{eqn:pressureDLP}.  This integral is approximated with a
-trapezoid rule, 
+has a singularity that is asymptotic to $\bigO(\rho^{-2})$ when $\yy
+\rightarrow \xx$.  The singularity strength can be reduced since the
+velocity corresponding to a constant density function is
+constant~\cite{poz1992}.  Therefore, the deformation tensor of the
+double-layer potential is equivalent to
+\begin{align*}
+  \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
+      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
+\end{align*}
+This expression for the deformation tensor has a singularity that is
+asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
+to achieve spectral accuracy, we apply odd-even
+integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
+the double-layer potential at a discretization point $\xx_i$ on body
+$\gamma_\ell$, with $i$ being odd, is approximated as
 \begin{align}
-  \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j),
-  \label{eqn:layerPotential}
+  \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_\ell}
+    K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
+  \sum_{\substack{\xx_j \in \gamma_\ell \\ j \: \mathtt{even}}}
+    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
+  \label{eqn:stressOddEven}
 \end{align}
-where $q$ contains the quadrature weights, Jacobian, and density
-function.  Note that this sum can only be computed once
-equation~\eqref{eqn:completed_BIE} has been solved for the density
-function $\eeta$.  Based on numerical experiments, the error of the
-$N$-point trapezoid rule is acceptable for points $\xx$ that are more
-than 5 arclength spacings from $\bd\Omega$.
+and a similar approximation is used when $i$ is even.  The deformation
+tensor due to the Stokeslets and rotlets is given in
+equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
+deformation tensor~\eqref{eqn:shearStressJump} is added, and the
+required arclength derivative is computed in Fourier space.  Then, the
+shear stress can be computed by computing the deformation tensor in the
+normal vector, and taking the inner product with the tangent vector.
 
-For points that are closer than 5 arclength spacings to $\bd\Omega$, we
-use an upsampled trapezoid rule.  The required upsampling of the
-geometry and the density function is done with a Fourier interpolant.
-To minimize the number of discretization points that are used to
-approximate the layer potential~\eqref{eqn:layerPotential}, we use the
-same upsampling rate for all target points that are in the same dyadic
-interval (Table~\ref{tbl:upsampling}).  For points that are closer than
-$5/16$ of an arclength from $\bd\Omega$, a value of 0 is simply assigned
-to $\phi$.
-\begin{table}[htpb]
-\centering
-\begin{tabular}{|c|ccccc|}
-  \hline
-  $d(\xx,\bd\Omega)$ &
-  $[5h,\infty]$ &
-  $[\frac{5}{2}h,5h]$ &
-  $[\frac{5}{4}h,\frac{5}{2}h]$ & 
-  $[\frac{5}{8}h,\frac{5}{4}h]$ &
-  $[\frac{5}{16}h,\frac{5}{8}h]$ \\ [2ex]
-  \hline
-  Upsample Rate & 1 & 2 & 4 & 8 & 16 \\
-  \hline
-\end{tabular}
-\caption{\label{tbl:upsampling}The upsampling rate used in our
-near-singular integration scheme.  $d(\xx,\bd\Omega)$ is the distance
-between a points $\xx \in \Omega$ and the boundary of the domain
-$\bd\Omega$, and $h$ is an arclength spacing.}
-\end{table}
-
-In future work, such as sedimenting eroding bodies, bodies will come too
-close to one another for upsampling to only used.  Therefore, we plan to
-implement a near-singular integration scheme that uses either
-near-singular interpolation~\cite{qua-bir2014a}, quadrature by
-expansion~\cite{klo-bar-gre-one2013}, Barycentric
-interpolation~\cite{bar-wu-vee2015}, or panel-based
-quadrature~\cite{hel-oja2008a}.  In addition, even with accurate
-quadrature, bodies can overlap because of discretization errors, and
-this can be avoided with contact algorithms such as, for example, recent
-work of Lu et al.~\cite{lu-rah-zor2017}.
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Accelerating the Layer Potential Evaluations}
-\label{sec:fmm}
-The bulk of the computational work is evaluating discretizations of
-layer potentials~\eqref{eqn:layerPotential} at a large number of points.
-If a direct summation method is used to evaluate these sums at $N_\tar$
-points, this requires $\bigO(NN_\tar)$ operations.  The layer potential
-that is evaluated most frequently is in the GMRES iteration where the
-layer potential $\DD$ is evaluated to compute the velocity at all points
-on the boundary must be evaluated~\eqref{eqn:DLP}.  To reduce the
-computational cost of this calculation, we use the Fast Multipole Method
-(FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the complexity from
-$\bigO(N^2)$ to $\bigO(N)$.  Since we are discretizing a second-kind
-integral equation, the number of GMRES iterations is bounded independent
-of $N$~\cite{cam-ips-kel-mey-xue1996}, and the overall complexity for
-solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
-
-In our implementation, the deformation tensor and vorticity are computed
-with a direct summation, and this requires $\bigO(N^2)$ and $\bigO(N
-N_\tar)$ operations, respectively.  Since this calculation is only
-computed once per time step, while the velocity is calculated at each
-GMRES iteration, the computational cost is manageable.  However, in
-future work, to simulate erosion in a dense packing of grains, a fast
-summation method, such as the kernel-independent
-FMM~\cite{yin-bir-zor2004}, will be incorporated. 
-
+We do not employ an FMM to evaluate the shear stress, so the cost of
+evaluating the shear stress is $\bigO(N^2)$.  However, this calculation
+is only performed once per time step as opposed to the velocity
+double-layer potential that must be evaluated at each GMRES iteration.
+In future work, we plan to use a kernel-independent
+FMM~\cite{yin-bir-zor2004} to evaluate the shear stress with $\bigO(N)$
+operations.
 
 
 
@@ -735,6 +650,7 @@ FMM~\cite{yin-bir-zor2004}, will be incorporated.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TIME-STEPPING %%
 \subsection{Time-stepping with the {\thL} method} 
+\label{sec:timeStepping}
 
 With the shear stress computed, we are now ready to evolve the interface
 of each body. As described in Section~\ref{sec:thetaL}, we use the
@@ -853,30 +769,21 @@ insert integration rule), giving
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post Processing Quantities of Interest\label{s:qoi}} 
 
-There are several quantities besides the velocity that need to be
-computed.  First, the governing equations~\eqref{eqn:erosionModel}
-require the shear stress along $\gamma_\ell$.  In addition, to study
-characteristics of the flow, the vorticity, pressure, and drag, and
-resistivity will also be computed.  Once
+To study characteristics of the flow, the vorticity
+(Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}),
+and drag (Section~\ref{sec:drag}) will be computed.  Once
 equation~\eqref{eqn:completed_DLP} is solved for the density function,
 Stokeslets, and rotlets, all of these quantities can be computed by
-evaluating layer potentials that we now derive.
-
-pressure~\eqref{eqn:pressureDLP}, and drag~\eqref{eqn:drag} at target
-points on the boundary of the domain.  The velocity on $\bd\Omega$ is
-required to solve the integral equation~\eqref{eqn:completed_BIE} for
-the density function, Stokeslets and rotlets.  Once these are computed,
-computing the shear stress, pressure, and drag is a post-processing
-step.  All these integrals involve integrands that are periodic.  For
-smooth integrands, the trapezoid rule guarantees spectral
-accuracy~\cite{tre-wei2014}.  However, some of the integrands contain a
-singularity whose strength will be reduced with singularity subtraction,
-and then spectral accuracy is achieved with odd-even
-integration~\cite{sid-isr1988} must be used.
-
+evaluating layer potentials that we now derive.  All layer potentials
+involve integrands that are periodic, so the trapezoid rule guarantees
+spectral accuracy if the integrand is smooth~\cite{tre-wei2014}.
+However, some of the integrands contain a singularity whose strength
+will be reduced with singularity subtraction, and then spectral accuracy
+is achieved with odd-even integration~\cite{sid-isr1988} must be used.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vorticity}
+\label{sec:vorticity}
 For the Stokes equations, on boundaries that have a no-slip boundary
 condition, the shear stress is equivalent to the vorticity $w = v_x -
 u_y$.  Therefore, to compute $w(\xx)$ for $\xx \in \overline{\Omega}$,
@@ -904,6 +811,7 @@ and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pressure}
+\label{sec:pressure}
 To compute the pressure at $\xx \in \overline{\Omega}$, we follow the
 same procedure used for the shear stress.  We start by computing the
 pressure of the double-layer potential for $\xx \in \Omega$ and add the
@@ -935,21 +843,6 @@ and the pressure due to the rotlets is zero.  Therefore, the pressure is
               p^{S}(\xx), && \xx \in \bd\Omega.
 \end{align*}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Drag}
-\todo[inline]{check all signs in this section.  Fortran code assumes a
-normal pointing into the eroding body and a tangent vector that
-corresponds to a couterclockwise parameterization}
-With the pressure and shear stress, the drag on a single body with
-boundary $\gamma_\ell$ is
-\begin{align}
-  F_D = \int_{\gamma_\ell} (-p \nn + \tau \ss)\,ds.
-  \label{eqn:drag}
-\end{align}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Pressure}
 Similar to the shear stress, the singularity of the pressure
 corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is
 too strong for the trapezoid rule to be directly applied.  Therefore, we
@@ -970,6 +863,16 @@ differentiation is used to compute the arclength derivative.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Drag}
+\label{sec:drag}
+\todo[inline]{check all signs in this section.  Fortran code assumes a
+normal pointing into the eroding body and a tangent vector that
+corresponds to a couterclockwise parameterization}
+With the pressure and shear stress, the drag on a single body with
+boundary $\gamma_\ell$ is
+\begin{align}
+  F_D = \int_{\gamma_\ell} (-p \nn + \tau \ss)\,ds.
+  \label{eqn:drag}
+\end{align}
 
 
 
@@ -990,20 +893,116 @@ adopting a near-singular integration scheme that allows us to compute
 all quantities of interest sufficiently close to $\bd\Omega$ for the
 quantities of interest.
 
+\todo[inline]{DUMP OF OLD TEXT}
+discretizations of
+layer potentials~\eqref{eqn:layerPotential} at a large number of points.
+If a direct summation method is used to evaluate these sums at $N_\tar$
+points, this requires $\bigO(NN_\tar)$ operations.  The layer potential
+that is evaluated most frequently is in the GMRES iteration where the
+layer potential $\DD$ is evaluated to compute the velocity at all points
+on the boundary must be evaluated~\eqref{eqn:DLP}.  
+
+In our implementation, the deformation tensor and vorticity are computed
+with a direct summation, and this requires $\bigO(N^2)$ and $\bigO(N
+N_\tar)$ operations, respectively.  Since this calculation is only
+computed once per time step, while the velocity is calculated at each
+GMRES iteration, the computational cost is manageable.  However, in
+future work, to simulate erosion in a dense packing of grains, a fast
+summation method, such as the kernel-independent
+FMM~\cite{yin-bir-zor2004}, will be incorporated. 
+
+\todo[inline]{DUMP OF OLD TEXT}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Near-singular integration}
+To accurately compute quantities such as the velocity at points $\xx \in
+\Omega$, we adopt a near-singular integration scheme entirely based on
+upsampling.  Since we are only interested in computing the velocity and
+vorticity for visualizing the flow, and the pressure is only required
+far away from any boundary, only a finite amount of upsampling is
+required to achieve an acceptable error.
+
+Computing the velocity, pressure, and vorticity at a point $\xx \in
+\Omega$ requires evaluating the layer potential
+\begin{align*}
+  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy,
+\end{align*}
+where $\phi$ is either the velocity, pressure, or vorticity, and the
+kernel $K$ is in
+equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
+or~\eqref{eqn:pressureDLP}.  This integral is approximated with a
+trapezoid rule, 
+\begin{align}
+  \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j),
+  \label{eqn:layerPotential}
+\end{align}
+where $q$ contains the quadrature weights, Jacobian, and density
+function.  Note that this sum can only be computed once
+equation~\eqref{eqn:completed_BIE} has been solved for the density
+function $\eeta$.  Based on numerical experiments, the error of the
+$N$-point trapezoid rule is acceptable for points $\xx$ that are more
+than 5 arclength spacings from $\bd\Omega$.
+
+For points that are closer than 5 arclength spacings to $\bd\Omega$, we
+use an upsampled trapezoid rule.  The required upsampling of the
+geometry and the density function is done with a Fourier interpolant.
+To minimize the number of discretization points that are used to
+approximate the layer potential~\eqref{eqn:layerPotential}, we use the
+same upsampling rate for all target points that are in the same dyadic
+interval (Table~\ref{tbl:upsampling}).  For points that are closer than
+$5/16$ of an arclength from $\bd\Omega$, a value of 0 is simply assigned
+to $\phi$.
+\begin{table}[htpb]
+\centering
+\begin{tabular}{|c|ccccc|}
+  \hline
+  $d(\xx,\bd\Omega)$ &
+  $[5h,\infty]$ &
+  $[\frac{5}{2}h,5h]$ &
+  $[\frac{5}{4}h,\frac{5}{2}h]$ & 
+  $[\frac{5}{8}h,\frac{5}{4}h]$ &
+  $[\frac{5}{16}h,\frac{5}{8}h]$ \\ [2ex]
+  \hline
+  Upsample Rate & 1 & 2 & 4 & 8 & 16 \\
+  \hline
+\end{tabular}
+\caption{\label{tbl:upsampling}The upsampling rate used in our
+near-singular integration scheme.  $d(\xx,\bd\Omega)$ is the distance
+between a points $\xx \in \Omega$ and the boundary of the domain
+$\bd\Omega$, and $h$ is an arclength spacing.}
+\end{table}
+
+In future work, such as sedimenting eroding bodies, bodies will come too
+close to one another for upsampling to only used.  Therefore, we plan to
+implement a near-singular integration scheme that uses either
+near-singular interpolation~\cite{qua-bir2014a}, quadrature by
+expansion~\cite{klo-bar-gre-one2013}, Barycentric
+interpolation~\cite{bar-wu-vee2015}, or panel-based
+quadrature~\cite{hel-oja2008a}.  In addition, even with accurate
+quadrature, bodies can overlap because of discretization errors, and
+this can be avoided with contact algorithms such as, for example, recent
+work of Lu et al.~\cite{lu-rah-zor2017}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
 
-With the description of the numerical methods complete, we now present results on bodies eroding in Stokes flow. We first discuss simulations of a single eroding body, which can be compared with analytical results for validation, before discussing the erosion of many bodies.
+With the description of the numerical methods complete, we now present
+results on bodies eroding in Stokes flow. We first discuss simulations
+of a single eroding body, which can be compared with analytical results
+for validation, before discussing the erosion of many bodies.
 
 \subsection{The erosion of a single body}
 
-In the case of a single eroding body, certain analytical results can be derived regarding the limiting shape and vanishing rate. These results allow validation of our simulation.
+In the case of a single eroding body, certain analytical results can be
+derived regarding the limiting shape and vanishing rate. These results
+allow validation of our simulation.
 
 \subsubsection{Shape evolution}
 
-We first show a single body eroding, with the surrounding vorticity field visualized in Fig.~4. The body develops a corner at its front and rear stagnation points. It maintains for-aft symmetry due to the time-reversibility of Stokes flow.
+We first show a single body eroding, with the surrounding vorticity
+field visualized in Fig.~4. The body develops a corner at its front and
+rear stagnation points. It maintains for-aft symmetry due to the
+time-reversibility of Stokes flow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1017,7 +1016,11 @@ We first show a single body eroding, with the surrounding vorticity field visual
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixpdrop = 0
 
-In Fig.~5a, we visualize the interfaces color coded in time. In Fig.~5b, we show the absolute shear stress, $\atau$, as it varies over the surface of the body. Initially, the shear stress is a hump shape. As time progresses, the stress becomes more evenly distributed, with the exception of the front/rear corner where the curvature is high.
+In Fig.~5a, we visualize the interfaces color coded in time. In Fig.~5b,
+we show the absolute shear stress, $\atau$, as it varies over the
+surface of the body. Initially, the shear stress is a hump shape. As
+time progresses, the stress becomes more evenly distributed, with the
+exception of the front/rear corner where the curvature is high.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1036,13 +1039,19 @@ In three-dimensional Stokes flow, the shear stress vanishes as
 \begin{equation}
 \tauD{3} \sim \mu V/L
 \end{equation}
-However, this law must be modified for 2D flow, which represents 3D bodies of large extent. As the body vanishes, the walls have an ever decreasing influence. Thus, the stress must be consistent with free-space slender-body theory as it vanishes. The stress law consistent with slender body theory (a long cylinder held perpendicular to a flow) is
+However, this law must be modified for 2D flow, which represents 3D
+bodies of large extent. As the body vanishes, the walls have an ever
+decreasing influence. Thus, the stress must be consistent with
+free-space slender-body theory as it vanishes. The stress law consistent
+with slender body theory (a long cylinder held perpendicular to a flow)
+is
 \begin{equation}
 \tauD{2} \sim \frac{\mu V}{L \log(W/L)}
 \end{equation}
 % Could include 4 \pi factor, which is appropriate for a circular cylinder
 
-Then the rate of change of the body area is proportional to the shear stress times the total arc length exposed
+Then the rate of change of the body area is proportional to the shear
+stress times the total arc length exposed
 \begin{equation}
 \dot{A} = \int \atauD{2} \, ds = \mean{\atauD{2}} L
 \sim \frac{\mu V}{\log(W/L)}
@@ -1054,7 +1063,9 @@ A (1 - \log A) = C (t_f - t)
 \end{equation}
 where $C$ is a constant.
 
-In Fig.~6a, we show the body area vs time measured in the simulation against the above scaling law. In the scaling law, we chose, $C = 0.42$ (check this?)
+In Fig.~6a, we show the body area vs time measured in the simulation
+against the above scaling law. In the scaling law, we chose, $C = 0.42$
+(check this?)
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1125,7 +1136,8 @@ In Fig.~6a, we show the body area vs time measured in the simulation against the
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is 56\% of the vanishing time.
+\caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is
+56\% of the vanishing time.
 } 
 \vspace{0.3 pc}
 \label{convtab}
