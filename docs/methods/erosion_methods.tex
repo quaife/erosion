@@ -213,7 +213,7 @@ velocity} \\
 &&\mbox{erosion model},
 \end{split}
 \end{equation}
-where $\nn$ is the outward unit normal vector which points away from the
+where $\nn$ is the unit normal vector pointing away from the
 fluid, and $\mu$ is the fluid viscosity.  The outer wall is formed by
 rounding off the corners of $[-3,3] \times [-1,1]$, and we enforce the
 Hagen-Poiseuille flow
@@ -986,16 +986,14 @@ work of Lu et al.~\cite{lu-rah-zor2017}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
 
-With the description of the numerical methods complete, we now present
-results on bodies eroding in Stokes flow. We first discuss simulations
-of a single eroding body, which can be compared with analytical results
-for validation, before discussing the erosion of many bodies.
+With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single eroding body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and, in particular, important differences that arise in comparison to the single-body case.
 
-\subsection{The erosion of a single body}
+\subsubsection{Shape evolution of a single eroding body}
 
-In the case of a single eroding body, certain analytical results can be
-derived regarding the limiting shape and vanishing rate. These results
-allow validation of our simulation.
+In Fig.~\ref{01bodseq}, we show the numerically-simulated erosion of a single body at three evenly spaced times. The color map shows the vorticity in the surrounding fluid, which, when evaluated on the boundary, indicates the shear stress and thus the local rate of erosion. As seen in the figure, the body is initially circular, with strongest vorticity above and below the body. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, and vorticity vanishes at the body's front and rear stagnation points. At the next time step, the body has lost material due to erosion, but remains for-aft symmetric as a result of the flow symmetry. The greatest material loss occurs at the top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points.
+
+
+
 
 \subsubsection{Shape evolution}
 
@@ -1009,7 +1007,7 @@ time-reversibility of Stokes flow.
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/01bodseq.pdf}
 \caption{One body}
-\label{}
+\label{01bodseq}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
