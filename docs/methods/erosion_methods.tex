@@ -986,15 +986,15 @@ work of Lu et al.~\cite{lu-rah-zor2017}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results\label{s:results}} 
 
-With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single eroding body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and, in particular, important differences that arise in comparison to the single-body case.
+With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single eroding body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and, in particular, important differences that arise as compared to the single-body case.
 
-\subsubsection{Shape evolution of a single eroding body}
+\subsection{Shape evolution of a single eroding body}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/01bodseq.pdf}
-\caption{One body}
+\caption{A single body eroding in Stokes flow. As the body erodes, it develops a corner at its front and rear stagnation points, while remaining for-aft symmetric due to time-reversibility. Color indicates the vorticity of the surrounding flow, which, when evaluated on the boundary, gives the local shear stress. In this simulation, we use $N_\iin = 1024$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt = 1E-6$, and smoothing parameters of $\eps = 10/1024$ and $\sigma = 10/1024$. FYI, the body vanishes at time $t_{f} = 1.79E-2$.}
 \label{01bodseq}
 \end{center}
 \end{figure}
@@ -1002,19 +1002,12 @@ With the description of the methods complete, we now present numerical results o
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixpdrop = 0
 
-In Fig.~\ref{01bodseq}, we show the numerically-simulated erosion of a single body at three evenly spaced times. The color map shows the vorticity in the surrounding fluid, which, when evaluated on the boundary, indicates the shear stress and thus the local rate of erosion. As seen in the figure, the body is initially circular, with strongest vorticity above and below the body. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, and vorticity vanishes at the body's front and rear stagnation points. At the next time step, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender while it vanishes.
+Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points. The figure shows the body at three evenly spaced times during the erosion process, with the color map to indicate the vorticity of the surrounding flow. When evaluated on the boundary, the vorticity indicates the shear stress and thus the local erosion rate. As seen in the figure, the body is initially circular, with strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, and vorticity vanishes at the body's front and rear stagnation points. At the next time step, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender while vanishing.
 
 
 
 
 \subsubsection{Shape evolution}
-
-We first show a single body eroding, with the surrounding vorticity
-field visualized in Fig.~4. The body develops a corner at its front and
-rear stagnation points. It maintains for-aft symmetry due to the
-time-reversibility of Stokes flow.
-
-
 
 In Fig.~5a, we visualize the interfaces color coded in time. In Fig.~5b,
 we show the absolute shear stress, $\atau$, as it varies over the
