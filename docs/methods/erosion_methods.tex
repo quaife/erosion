@@ -439,7 +439,7 @@ direction and the normal vector points into the bodies (or out of the
 fluid).
 
 For the sake of numerical stability, we modify the erosion law in
-equation~\eqref{eqn:erosionModel} to include a term that depends on the
+equation~\eqref{eqn:bodyEvolution} to include a term that depends on the
 local curvature $\kappa$. The idea is to prevent regions of very high
 curvature. The modified normal velocity is 
 \begin{align}
@@ -785,13 +785,18 @@ To study characteristics of the flow, the vorticity
 (Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}),
 and drag (Section~\ref{sec:drag}) will be computed.  Once
 equation~\eqref{eqn:completed_DLP} is solved for the density function,
-Stokeslets, and rotlets, all of these quantities can be computed by
-evaluating layer potentials that we now derive.  All layer potentials
+Stokeslets, and rotlets, all of these quantities can be computed.  For
+target points in the fluid domain, the resulting layer potentials
 involve integrands that are periodic, so the trapezoid rule guarantees
-spectral accuracy if the integrand is smooth~\cite{tre-wei2014}.
-However, some of the integrands contain a singularity whose strength
-will be reduced with singularity subtraction, and then spectral accuracy
-is achieved with odd-even integration~\cite{sid-isr1988} must be used.
+spectral accuracy since the integrand is smooth~\cite{tre-wei2014}.
+However, if the target point is close to a boundary, a nearly-singular
+integrand must be integrated, and this requires upsampling that is
+described in Section~\ref{sec:NSI}.  When the target points is on the
+boundary, the integrands involve singularities that are evaluated by
+combining singularity subtraction and odd-even
+integration~\cite{sid-isr1988}.  
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vorticity}
@@ -886,33 +891,16 @@ boundary $\gamma_\ell$ is
   \label{eqn:drag}
 \end{align}
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quadrature: Off Boundary Calculations} 
-\label{sec:off_boundary}
-To analyze the flow, we compute quantities at target points that are in
-the interior of the domain.  In particular, we develop numerical methods
-to compute the velocity~\eqref{eqn:velocityDLP},
-pressure~\eqref{eqn:pressureDLP}, vorticity~\eqref{eqn:vorticityDLP} and
-resistivity~\eqref{eqn:resistivity}.  Since the target points are not on
-the boundary of the domain, all the integrals, except for the
-resistivity, involve integrands that are both periodic and smooth.
-However, when the target points are close to the boundary of the domain,
-the integrand becomes nearly-singular, and these large derivatives
-result in a loss of accuracy that needs to be rectified.  We will be
-adopting a near-singular integration scheme that allows us to compute
-all quantities of interest sufficiently close to $\bd\Omega$ for the
-quantities of interest.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Near-singular integration}
-To accurately compute quantities such as the velocity at points $\xx \in
-\Omega$, we adopt a near-singular integration scheme entirely based on
-upsampling.  Since we are only interested in computing the velocity and
-vorticity for visualizing the flow, and the pressure is only required
-far away from any boundary, only a finite amount of upsampling is
-required to achieve an acceptable error.
+\label{sec:NSI}
+To accurately compute the velocity~\eqref{eqn:velocityDLP},
+vorticity~\eqref{eqn:vorticityDLP}, and pressure~\eqref{eqn:pressureDLP}
+at points $\xx \in \Omega$, we adopt a near-singular integration scheme
+entirely based on upsampling.  Since we are only interested in computing
+the velocity and vorticity for visualizing the flow, and the pressure is
+only required far away from any boundary, only a finite amount of
+upsampling is required to achieve an acceptable error.
 
 Computing the velocity, pressure, and vorticity at a point $\xx \in
 \Omega$ requires evaluating the layer potential
@@ -974,6 +962,9 @@ quadrature~\cite{hel-oja2008a}.  In addition, even with accurate
 quadrature, bodies can overlap because of discretization errors, and
 this can be avoided with contact algorithms such as, for example, recent
 work of Lu et al.~\cite{lu-rah-zor2017}.
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
