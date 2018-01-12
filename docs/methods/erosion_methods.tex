@@ -801,13 +801,11 @@ integration~\cite{sid-isr1988}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vorticity}
 \label{sec:vorticity}
-For the Stokes equations, on boundaries that have a no-slip boundary
-condition, the shear stress is equivalent to the vorticity $w = v_x -
-u_y$.  Therefore, to compute $w(\xx)$ for $\xx \in \overline{\Omega}$,
-we only need to compute $w(\xx)$ for $\xx \in \Omega$.  As we did for
-the shear stress, we compute the vorticity due to the double-layer
-potential, Stokeslets, and rotlets individually.  The vorticity of the
-double-layer potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
+We start by computing the vorticity $w(\xx) = v_x - u_y$ for $\xx \in
+\Omega$.  As we did for the shear stress, we compute the vorticity due
+to the double-layer potential, Stokeslets, and rotlets individually.
+The vorticity of the double-layer potential~\eqref{eqn:velocityDLP} at
+$\xx \in \Omega$ is
 \begin{align}
   w^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4}
@@ -824,12 +822,18 @@ and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
 \begin{align*}
   w(\xx) = w^\DD(\xx) + w^S(\xx).
 \end{align*}
+To compute~\eqref{eqn:vorticityDLP} numerically, we apply the trapezoid
+rule with an upsampling scheme described in Section~\ref{sec:NSI}.
 
+For the Stokes equations, on boundaries that have a no-slip boundary
+condition, the shear stress is equivalent to the vorticity $w = v_x -
+u_y$.  Therefore, we do not need to compute the vorticity for $\xx \in
+\bd\Omega$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pressure}
 \label{sec:pressure}
-To compute the pressure at $\xx \in \overline{\Omega}$, we follow the
+To compute the pressure at $\xx \in \Omega$, we follow the
 same procedure used for the shear stress.  We start by computing the
 pressure of the double-layer potential for $\xx \in \Omega$ and add the
 appropriate jump if $\xx \in \Gamma$. For $\xx \in \Omega$, the pressure
@@ -839,14 +843,6 @@ is
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
     \nn \cdot \eeta(\yy) \,ds_\yy.
     \label{eqn:pressureDLP}
-\end{align}
-To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
-as $\xx$ tends to $\xx_0$.  The limiting value is given
-by~\cite{qua-bir2014a}
-\begin{align}
-  \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
-    \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
-  \label{eqn:pressureJump}
 \end{align}
 The pressure due to the Stokeslets is
 \begin{align}
@@ -859,7 +855,17 @@ and the pressure due to the rotlets is zero.  Therefore, the pressure is
   p(\xx) &= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
               p^{S}(\xx), && \xx \in \bd\Omega.
 \end{align*}
+To compute~\eqref{eqn:pressureDLP} numerically, we apply the trapezoid
+rule with an upsampling scheme described in Section~\ref{sec:NSI}.
 
+To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
+as $\xx$ tends to $\xx_0$.  The limiting value is given
+by~\cite{qua-bir2014a}
+\begin{align}
+  \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
+    \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
+  \label{eqn:pressureJump}
+\end{align}
 Similar to the shear stress, the singularity of the pressure
 corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is
 too strong for the trapezoid rule to be directly applied.  Therefore, we
@@ -897,10 +903,9 @@ boundary $\gamma_\ell$ is
 To accurately compute the velocity~\eqref{eqn:velocityDLP},
 vorticity~\eqref{eqn:vorticityDLP}, and pressure~\eqref{eqn:pressureDLP}
 at points $\xx \in \Omega$, we adopt a near-singular integration scheme
-entirely based on upsampling.  Since we are only interested in computing
-the velocity and vorticity for visualizing the flow, and the pressure is
-only required far away from any boundary, only a finite amount of
-upsampling is required to achieve an acceptable error.
+based entirely on upsampling.  We are only interested in computing the
+velocity and vorticity for visualizing the flow, and it is not necessary
+that we resolve the integrands for arbitrarily close target points
 
 Computing the velocity, pressure, and vorticity at a point $\xx \in
 \Omega$ requires evaluating the layer potential
@@ -908,10 +913,10 @@ Computing the velocity, pressure, and vorticity at a point $\xx \in
   \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy,
 \end{align*}
 where $\phi$ is either the velocity, pressure, or vorticity, and the
-kernel $K$ is in
+kernel $K$ are defined in
 equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
 or~\eqref{eqn:pressureDLP}.  This integral is approximated with a
-trapezoid rule, 
+trapezoid rule,
 \begin{align}
   \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j),
   \label{eqn:layerPotential}
@@ -932,18 +937,21 @@ same upsampling rate for all target points that are in the same dyadic
 interval (Table~\ref{tbl:upsampling}).  For points that are closer than
 $5/16$ of an arclength from $\bd\Omega$, a value of 0 is simply assigned
 to $\phi$.
+\newcolumntype{V}{>{\centering\arraybackslash}m{4em}}
+\newcolumntype{N}{@{}m{0pt}@{}}
 \begin{table}[htpb]
 \centering
-\begin{tabular}{|c|ccccc|}
+%\begin{tabular}{|c|ccccc|}
+\begin{tabular}{|V|V|V|V|V|V|N}
   \hline
   $d(\xx,\bd\Omega)$ &
   $[5h,\infty]$ &
   $[\frac{5}{2}h,5h]$ &
   $[\frac{5}{4}h,\frac{5}{2}h]$ & 
   $[\frac{5}{8}h,\frac{5}{4}h]$ &
-  $[\frac{5}{16}h,\frac{5}{8}h]$ \\ [2ex]
+  $[\frac{5}{16}h,\frac{5}{8}h]$ & \\ [2ex] 
   \hline
-  Upsample Rate & 1 & 2 & 4 & 8 & 16 \\
+  Upsample Rate & 1 & 2 & 4 & 8 & 16 & \\
   \hline
 \end{tabular}
 \caption{\label{tbl:upsampling}The upsampling rate used in our
@@ -952,16 +960,14 @@ between a points $\xx \in \Omega$ and the boundary of the domain
 $\bd\Omega$, and $h$ is an arclength spacing.}
 \end{table}
 
-In future work, such as sedimenting eroding bodies, bodies will come too
-close to one another for upsampling to only used.  Therefore, we plan to
-implement a near-singular integration scheme that uses either
-near-singular interpolation~\cite{qua-bir2014a}, quadrature by
+In future work, upsampling will not be adequate.  For example, if
+eroding bodies are also sedimenting, bodies will come too close to one
+another for upsampling to only used.  Therefore, we plan to implement a
+near-singular integration scheme that uses either near-singular
+interpolation~\cite{qua-bir2014a}, quadrature by
 expansion~\cite{klo-bar-gre-one2013}, Barycentric
 interpolation~\cite{bar-wu-vee2015}, or panel-based
-quadrature~\cite{hel-oja2008a}.  In addition, even with accurate
-quadrature, bodies can overlap because of discretization errors, and
-this can be avoided with contact algorithms such as, for example, recent
-work of Lu et al.~\cite{lu-rah-zor2017}.
+quadrature~\cite{hel-oja2008a}.
 
 
 
@@ -1118,14 +1124,11 @@ against the above scaling law. In the scaling law, we chose, $C = 0.42$
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-<<<<<<< HEAD
 \caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is 56\% of the vanishing time.
 GOOD TERM: Cauchy-convergence.} 
-=======
 \caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is
 56\% of the vanishing time.
 } 
->>>>>>> 151fc2d8da3d522f1dee03fb6fddab12867b2b22
 \vspace{0.3 pc}
 \label{convtab}
 \begin{tabular}{c l l}
