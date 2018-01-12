@@ -26,15 +26,15 @@ We consider two dimensional eroding bodies in Stokes flow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
-Erosion is a fluid-mechanical process that occurs when a fluid alters
-the geometry.  Erosion is responsible for a variety of processes, many
-of which are geophysical.  For example, sand dunes are longer on the
-windward side because of the wind erosion.  Another applications is
-erosion caused by groundwater flow, where a slow moving fluid erodes
-channels, or conduits, in the earth which creates a heterogeneous media
-that has a large effect on the resulting flow. Erosion is also important
-in the biophysical community. Plaque erosion in arteries is
-key to understanding heart disease~\cite{sha2002,
+Erosion is one example of a fluid-mechanical process that occurs when a
+fluid alters the geometry.  Erosion is responsible for a variety of
+processes, many of which are geophysical.  For example, sand dunes are
+longer on the windward side because of the wind erosion.  Another
+applications is erosion caused by groundwater flow, where a slow moving
+fluid erodes channels, or conduits, in the earth which creates a
+heterogeneous media that has a large effect on the resulting flow.
+Erosion is also important in the biophysical community. Plaque erosion
+in arteries is key to understanding heart disease~\cite{sha2002,
 gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can
 be explained by erosion~\cite{pic-van-hei2000}. In all these examples,
 there is a feedback process between the flow and the erodible
@@ -115,20 +115,32 @@ penalize regions of high curvature.  Second, we apply a Gaussian filter
 to smooth the absolute value of the shear stress before the body shape
 is updated.
 
+\todo[inline]{DUMP OF TEXT}
+This choice is based on experimental work of Ristroph et
+al.~\cite{ris-moo-chi-she-zha2012}, but other models for erosion are
+possible.  For example, some models use an erosion rate that is
+proportional to a power of the magnitude of the shear
+stress~\cite{par-izu2000}, while others introduced a shear stress below
+which erosion does not occur~\cite{lag2000}.
+\todo[inline]{DUMP OF TEXT}
+
 
 \paragraph{Limitations} There are two main limitations of the current
-work.  First, the flow is assumed to be two-dimensional.  Although
-several flows can be described to good accuracy under a two-dimensional
-approximation, certain phenomena occur only in three dimensions.  The
-boundary integral equation formulation for the fluid solver exists, and
-the main challenges of a BIE solver have been addressed by other groups
-including surface representation~\cite{yin-bir-zor2006,
-vee-rah-bir-zor2011}, near-singular integration~\cite{yin-bir-zor2006,
-kli-tor2016b}, and fast summation methods~\cite{yin-bir-zor2004,
-ros-ols2015}.  The more significant challenge of extending our work to
-three dimensions is guaranteeing that the mesh does not become
-distorted, which can be done, for example, by using an extension of the
-two-dimensional {\thL} formulation~\cite{amb-sie-tlu2013}.
+work.  First, the flow is assumed to be two-dimensional.  However, by
+assuming that the flow is two-dimensional, we are able to simulate the
+erosion of more bodies and with higher resolution than would be
+available in three dimensions.  Moreover, Several flows can be described
+to good accuracy under a two-dimensional approximation, certain
+phenomena occur only in three dimensions.  The boundary integral
+equation formulation for the fluid solver exists, and the main
+challenges of a BIE solver have been addressed by other groups including
+surface representation~\cite{yin-bir-zor2006, vee-rah-bir-zor2011},
+near-singular integration~\cite{yin-bir-zor2006, kli-tor2016b}, and fast
+summation methods~\cite{yin-bir-zor2004, ros-ols2015}.  The more
+significant challenge of extending our work to three dimensions is
+guaranteeing that the mesh does not become distorted, which can be done,
+for example, by using an extension of the two-dimensional {\thL}
+formulation~\cite{amb-sie-tlu2013}.
 
 The second limitation is that the eroding bodies are fixed.  Mitchell
 and Spagnolie~\cite{mit-spa2016} simulate a single mobile eroding body
@@ -187,7 +199,7 @@ erode the fastest.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation\label{s:formulation}} 
-Let us first define the main variables used to model erosion.  We only
+We start by defining the main variables used to model erosion.  We only
 consider flows that are confined by a solid wall $\Gamma$ that encloses
 $M$ eroding bodies.  The bodies are denoted as $\gamma_\ell$,
 $\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup
@@ -209,14 +221,13 @@ of momentum}\\
 bodies} \\
 \uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{outer wall
 velocity} \\
-\dot{\xx}(t) = \abs{\tau} \nn, &\hspace{20pt} \xx \in \gamma,
+V_\nn = \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
 &&\mbox{erosion model},
 \end{split}
 \end{equation}
-where $\nn$ is the unit normal vector pointing away from the
-fluid, and $\mu$ is the fluid viscosity.  The outer wall is formed by
-rounding off the corners of $[-3,3] \times [-1,1]$, and we enforce the
-Hagen-Poiseuille flow
+where $V_\nn$ is the normal velocity of the interface and $\mu$ is the
+fluid viscosity.  The outer wall is formed by rounding off the corners
+of $[-3,3] \times [-1,1]$, and we enforce the Hagen-Poiseuille flow
 \begin{align*}
   \uu(\xx) = (1-y^2,0)
 \end{align*}
@@ -251,51 +262,41 @@ rectangle describes a time step in the quasi-static approximation
 Our erosion model is based on the shear stress, and this model is
 discussed in more detail in Section~\ref{sec:erosion}.  We then describe
 how the incompressible Stokes equations are solved in $\Omega$ using a
-boundary integral equation in Section~\ref{sec:bies}.  Then, in
-Section~\ref{sec:qois}, we discuss how the shear stress, pressure, and
-drag can all be readily computed.  
+boundary integral equation in Section~\ref{sec:bies}.  In
+Section~\ref{sec:shearStressLP}, we discuss how the shear stress is
+computed.  Finally, in Section~\ref{sec:thetaL}, we describe how corners
+in the geometry are avoided and perform a change of coordinates that
+linearizes a stiff term.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Erosion Model} 
 \label{sec:erosion}
 
-To model erosion, we the normal velocity is prescribed to be
-proportional to the absolute value of the shear stress.  This choice is
-based on experimental work of Ristroph et
-al.~\cite{ris-moo-chi-she-zha2012}, but other models for erosion are
-possible.  For example, some models use an erosion rate that is
-proportional to a power of the magnitude of the shear
-stress~\cite{par-izu2000}, while others introduced a shear stress below
-which erosion does not occur~\cite{lag2000}.
-
-The constant of proportionality sets the time scale, and we set its
-value to be 1
+To model erosion, the normal velocity is prescribed to be
+proportional to the absolute value of the shear stress.   Since the
+constant of proportionality only sets the time scale, we let $V_\nn =
+|\tau|$ as described in equation~\eqref{eqn:erosionModel}.
 \begin{align}
-  \dot{\xx}(t) = \abs{\tau} \nn.
+  V{\nn} = \abs{\tau} \nn.
   \label{eqn:bodyEvolution}
 \end{align}
-For the sake of numerical stability, we modify this law in Section \ref{sec:thetaL}.
-
-\todo[inline]{Describe the erosion model and its justification}
-\cite{moo-ris-chi-zha-she2013}
-
+For the sake of numerical stability, we modify this law in
+Section~\ref{sec:thetaL}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary Integral Equation Formulation} 
 \label{sec:bies}
-Here we describe a boundary integral equation for the governing
-equations.   This requires solving the incompressible Stokes equations
+Here we describe a boundary integral equation to solve the fluid
+equations. In particular, we solve the incompressible Stokes equations
 with Dirichlet boundary conditions 
 \begin{alignat*}{3}
   \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
   \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
-  \uu &= \ff,  && \xx \in \bd\Omega,
+  \uu &= \ff,  && \xx \in \bd\Omega.
 \end{alignat*}
-and also computing several quantities of interest, including the shear
-stress.  The viscosity $\mu$ sets the time scale, and we will assume
-that $\mu=1$.  We start by defining the double-layer potential, which is
-the convolution of the stresslet with a density function
+As the viscosity $\mu$ also sets the time scale, we take $\mu=1$.  We
+start by defining the double-layer potential
 $\eeta:\bd\Omega \rightarrow \RR^2$,
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
@@ -303,13 +304,13 @@ $\eeta:\bd\Omega \rightarrow \RR^2$,
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
     \label{eqn:velocityDLP}
 \end{align}
-where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the unit outward
-normal at $\yy$.  For any density function $\eeta$, the double-layer
-potential satisfies the incompressible Stokes equations, but it can not
-capture velocity fields corresponding to rigid body
-motions~\cite{pow-mir1987}.  A standard method to remove this rank
-deficiency is to complement the double-layer potential with a Stokeslets
-and rotlets centered inside each interior body
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
+normal at $\yy$, and $\eeta$ is an unknown density function.  The
+double-layer potential can not capture velocity fields corresponding to
+rigid body motions~\cite{pow-mir1987}, and this is rectified by
+introducing additional terms for each body.  The rank deficiency removed
+by complementing the double-layer potential with a Stokeslets and
+rotlets centered inside each interior body
 \begin{align}
   S[\llambda_\ell,\cc_\ell] = \frac{1}{4\pi} \left(-\log \rho \II + 
     \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_\ell
@@ -350,13 +351,13 @@ Here,
   \NN_0[\eeta](\xx) = \int_{\Gamma} 
     (\nn(\xx) \otimes \nn(\yy))\eeta(\yy) \, ds_\yy
 \end{align*}
-is being used to remove the rank one null space that results from the
-compatibility constraint that results from the flux-free requirement of
-$\ff$.
+removes the rank one null space that results from the compatibility
+constraint that results from the flux-free requirement of $\ff$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the Shear Stress}
+\label{sec:shearStressLP}
 The shear stress is
 \begin{align*}
   \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
@@ -364,8 +365,8 @@ The shear stress is
 where $\ss$ and $\nn$ are the unit tangent and normal vectors,
 respectively (Figure~\ref{fig:schematic}).  The velocity field of the
 completed double-layer potential~\eqref{eqn:completed_DLP} involves
-three terms: the double-layer potential $\DD$, the Stokeslets $S$, and
-the rotlets $R$.  We first compute the deformation tensor $\ssigma =
+three terms: the double-layer potential, the Stokeslets, and the
+rotlets.  We compute the deformation tensor $\ssigma =
 \frac{1}{2}(\nabla\uu + \nabla\uu^T)$ for each of these terms
 individually.
 
@@ -430,105 +431,109 @@ computed, the shear stress at $\xx_0 \in \bd\Omega$ is
 \subsection{Interface evolution in the {\thL} framework} 
 \label{sec:thetaL}
 
-%We use a quasi-static approximation so that the velocity field instantaneously changes with the changing geometry.  Therefore, we can alternate between the two main aspects of our simulation
-%\begin{enumerate}
-%\item Given a geometry, compute the shear stress of along the boundary of each of the bodies.
-%\item Given the shear stress, update the geometry according to the erosion model.
-%\end{enumerate}
-
 To handle boundary evolution, we use the {\thL} framework, which offers
-certain advantages in the ability to stabilize fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we use the following conventions: the bodies are parametrized in the CCW
-direction and the normal vector points into the bodies (our out of the
+certain advantages in the ability to stabilize fluid-structure
+interaction problems \cite{hou-low-she1994}. Throughout this section, we
+use the following conventions: the bodies are parametrized in the CCW
+direction and the normal vector points into the bodies (or out of the
 fluid).
 
-For the sake of numerical stability, we will modify the erosion law \eqref{eqn:bodyEvolution} to include a term that depends on the local curvature $\kappa$. The idea is to prevent regions of very high curvature. The modified normal velocity is
-in \eqref{eqn:bodyEvolution} as follows
-\begin{equation}
-\label{eqn:Vn}
-\Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
-\end{equation}
-Here, $\eps$ is a small parameter, and $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a surface mean. The second term on the right acts to smooth bodies with high-frequency oscillations by introducing a {\em curvature}-dependent component in the interface velocity. Since a closed body has a mean curvature of $\mean{\kappa} = 2\pi / L$, the term in parentheses has mean zero. Thus, this term is area-preserving, so that the only material loss is due to the shear stress itself. In addition, we have scaled this term on the $\mean{\atau}$, the average absolute stress, so that it is always proportional to the true source of erosion $\atau$, even as bodies vanish (reword).
+For the sake of numerical stability, we modify the erosion law in
+equation~\eqref{eqn:erosionModel} to include a term that depends on the
+local curvature $\kappa$. The idea is to prevent regions of very high
+curvature. The modified normal velocity is 
+\begin{align}
+  \label{eqn:Vn}
+  \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
+\end{align}
+Here, $\eps$ is a small parameter, $L$ is the total arc length of the
+body, and $\mean{\cdot}$ indicates a boundary mean. The second term on
+the right acts to smooth bodies with high-frequency oscillations by
+introducing a {\em curvature}-dependent component in the interface
+velocity. Since a closed body has a mean curvature of $\mean{\kappa} =
+2\pi / L$, the term in parentheses has mean zero. Thus, this term is
+area-preserving, so that the only material loss is due to the shear
+stress itself. In addition, we have scaled this term on the
+$\mean{\atau}$, the average absolute stress, so that it is always
+proportional to the true source of erosion $\atau$, even as bodies
+vanish \todo[inline]{reword}.
 
 We now introduce the tangent angle, $\theta$, defined through the relation
-\begin{equation}
-\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin \theta \right)
-\end{equation}
+\begin{align*}
+\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin
+\theta \right),
+\end{align*}
 where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
-\begin{equation}
-\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}
-\end{equation}
-Substitution into \eqref{eqn:Vn} gives
-\begin{equation}
+\begin{align*}
+\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}.
+\end{align*}
+Substitution into~\eqref{eqn:Vn} gives
+\begin{align}
 \label{eqn:Vn2}
 \Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
 %\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
-\end{equation}
+\end{align}
 
-The main idea is to introduce an artificial tangential velocity that keeps collocation points equally spaced with respect to arc length; i.e.~the grid of $\alpha$ should always remain equally spaced. The tangential velocity that does the trick is determined by \cite{hou-low-she1994}
-\begin{equation}
-\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}
-\end{equation}
+The main idea is to introduce an artificial tangential velocity that
+keeps collocation points equally spaced with respect to arc length;
+i.e.~the grid of $\alpha$ should always remain equally spaced. The
+tangential velocity that does the trick satisfies~\cite{hou-low-she1994}
+\begin{align*}
+\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}.
+\end{align*}
 The interface evolution is then given by
-\begin{equation}
+\begin{align*}
 \dot{\xx}(t) = \Vn \nn + \Vs \ss.
-\end{equation}
-This evolution equation can be recast in the variables $\theta$ and $L$ as
+\end{align*}
+This evolution equation can be recast in the variables $\theta$ and $L$
+as
+\begin{align*}
+\tderiv{L}{t} &= - 2 \pi \mean{\thalpha \Vn}, \\
+\pderiv{\theta}{t} &= \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} +
+\thalpha \Vs \right).
+\end{align*}
+Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \begin{align}
 \label{eqn:Levo1}
-& \tderiv{L}{t} = - 2 \pi \mean{\thalpha \Vn} \\
-\label{eqn:thetaevo0}
-& \pderiv{\theta}{t} = \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} + \thalpha \Vs \right)
-\end{align}
-Inserting \eqref{eqn:Vn2} for the normal velocity gives
-\begin{equation}
+\tderiv{L}{t} &= - 2 \pi \mean{\thalpha \Vn}, \\
 \label{eqn:thetaevo1}
-\pderiv{\theta}{t} = \frac{2\pi}{L} \left(
+\pderiv{\theta}{t} &= \frac{2\pi}{L} \left(
 \eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
-\end{equation}
-Note that the highest-order, i.e.~stiff, term in \eqref{eqn:thetaevo1}
-is {\em quasi-linear}. This is the key to the {\thL} method, and allows
-us to use very stable, implicit methods for this stiff term. 
+\end{align}
+Note that stiffest term in~\eqref{eqn:thetaevo1} involving the
+second-order derivative is {\em quasi-linear}. This is the key to the
+{\thL} method, and allows us to use very stable, implicit methods for
+this stiff term that are described in Section~\ref{sec:timeStepping}. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods\label{s:method}} 
-There are three main numerical methods that need to be developed:~the
-boundary integral equation solver for
-equation~\eqref{eqn:completed_BIE}, computing the layer potential for
-the shear stress~\eqref{eqn:shearStressLP}, and updating the shape of
-the eroding bodies with equation~\eqref{eqn:bodyEvolution}.  So that we
-can form stable simulations with long time horizons, we use numerical
-methods that achieve spectral accuracy in space, second-order accuracy
-in time, and maintain an equispaced discretization of the bodies.
+There are three main numerical methods that need to be developed.  In
+Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE}
+is solved.  Once the density function is found,
+Section~\ref{sec:shearStress} describes how the shear
+stress~\eqref{eqn:shearStressLP} is computed.  Then, in
+Section~\ref{sec:timeStepping}, a time stepping method for evolving the
+interface according to equations~\eqref{eqn:Levo1}
+and~\eqref{eqn:thetaevo1} are described.
 
-In Section~\ref{sec:spatial_discretization}, we describe how the
-geometry is represented.  Then, Section~\ref{sec:BIE}, we describe how
-the BIE~\eqref{eqn:completed_BIE} is solved.
-Once the density function is found, Section~\ref{sec:shearStress}
-describes how the shear stress is computed.  Then, in
-Section~\ref{timeStepping}, numerical methods for evolving the interface
-are described.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Spatial Discretization}
-\label{sec:spatial_discretization}
-Each body is represented with $N_\iin$ points as the Fourier series
-\begin{align*}
-  \xx^\ell(\alpha) = \FourierSum \hat{x}_k^\ell e^{ik\alpha}, \quad \ell=1,\ldots,M.
-\end{align*}
-The exterior geometry is represented with a Fourier series using
-$N_\out$ points.  Derivatives of the shape are computed in Fourier space
-\begin{align*}
-  \frac{d\xx(\alpha)}{d\alpha} = \FourierSum ik\hat{x}_k e^{ik\alpha}.
-\end{align*}
+So that we can form stable simulations with long time horizons, we use
+numerical methods that achieve spectral accuracy in space, second-order
+accuracy in time, and maintain an equispaced discretization of the
+bodies.  The boundaries are represented in Fourier space, and all
+derivatives are computed with spectral accuracy using Fourier
+differentiation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Solving the BIE}
 \label{sec:BIE}
+
 To numerically evaluate the completed double-layer
-potential~\eqref{eqn:completed_BIE}, we le $N = MN_\iin + N_\out$ be the
-total number of discretization points of $\bd\Omega$.  The double-layer
-potential in~\eqref{eqn:DLP} is discretized with the trapezoid rule as
+potential~\eqref{eqn:completed_BIE}, we let $N_\iin$ be the number of
+points on each of the $M$ bodies, and $N_\out$ be the number of points
+on the outer boundary.  Then, $N = MN_\iin + N_\out$ is the total number
+of discretization points of $\bd\Omega$.  The double-layer potential
+in~\eqref{eqn:DLP} is discretized with the trapezoid rule as
 \begin{align}
   \DD[\eeta](\xx_i) = \sum_{j=1}^{N} K(\xx_i,\xx_j) \eeta(\xx_j) 
       \Delta s_{j}, \quad i=1,\ldots,N,
@@ -547,7 +552,7 @@ replaced with the limiting value of the double-layer potential
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)),
 \end{align*}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent
-vector at $\xx \in \bd\Omega$.  The strengths of the
+vector at $\xx \in \bd\Omega$.  The equations for the
 Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are
 also discretized with the trapezoid rule.  Applying this discretization
 strategy to~\eqref{eqn:completed_BIE}, the dense linear system that
@@ -575,18 +580,18 @@ accuracy.
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved
 iteratively with the generalized minimal residual method
-(GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, this
-guarantees that a mesh-independent number of GMRES iterations are
+(GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a
+mesh-independent number of GMRES iterations are
 required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost
 is determined by the cost of performing a matrix-vector multiplication,
-and the bulk of the most expensive part is evaluating the $N$-term sum
+and the bulk of the cost is evaluating the $N$-term sum
 in~\eqref{eqn:completed_BIE_discretized}.  Naively, evaluating this sum
-at all points $\xx_i$, $i=1,N$ requires $\bigO(N^2)$ operations.  To
-reduce the computational cost of this calculation, we use the Fast
-Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the
-complexity from $\bigO(N^2)$ to $\bigO(N)$.  Since the number of
-required GMRES iterations is mesh-independent, the overall complexity
-for solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
+at all points $\xx_i$, $i=1,\ldots,N$ requires $\bigO(N^2)$ operations.
+To reduce the computational cost, we use the Fast Multipole Method
+(FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the complexity from
+$\bigO(N^2)$ to $\bigO(N)$.  Since the number of required GMRES
+iterations is mesh-independent, the overall complexity for
+solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -618,7 +623,7 @@ double-layer potential is equivalent to
 This expression for the deformation tensor has a singularity that is
 asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
 to achieve spectral accuracy, we apply odd-even
-integration~\cite{sid-isr1988}.  That is, the deformation tensor due to
+integration~\cite{sid-isr1988}.  Therefore, the deformation tensor of
 the double-layer potential at a discretization point $\xx_i$ on body
 $\gamma_\ell$, with $i$ being odd, is approximated as
 \begin{align}
@@ -631,21 +636,18 @@ $\gamma_\ell$, with $i$ being odd, is approximated as
 and a similar approximation is used when $i$ is even.  The deformation
 tensor due to the Stokeslets and rotlets is given in
 equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
-deformation tensor~\eqref{eqn:shearStressJump} is added, and the
-required arclength derivative is computed in Fourier space.  Then, the
-shear stress can be computed by computing the deformation tensor in the
-normal vector, and taking the inner product with the tangent vector.
+deformation tensor~\eqref{eqn:shearStressJump} is computed with Fourier
+differentiation.  Then, the shear stress is computed by multiplying the
+deformation tensor by the normal vector, and taking the inner product
+with the tangent vector.
 
-We do not employ an FMM to evaluate the shear stress, so the cost of
-evaluating the shear stress is $\bigO(N^2)$.  However, this calculation
-is only performed once per time step as opposed to the velocity
-double-layer potential that must be evaluated at each GMRES iteration.
-In future work, we plan to use a kernel-independent
-FMM~\cite{yin-bir-zor2004} to evaluate the shear stress with $\bigO(N)$
-operations.
-
-
-
+We do not employ an FMM to evaluate the shear stress at $\xx_i$,
+$i=1,\ldots,N$, so the cost of evaluating the shear stress is
+$\bigO(N^2)$.  However, this calculation is only performed once per time
+step as opposed to the velocity double-layer potential that must be
+evaluated at each GMRES iteration.  In future work, we plan to use a
+kernel-independent FMM~\cite{yin-bir-zor2004} to evaluate the shear
+stress with $\bigO(N)$ operations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TIME-STEPPING %%
@@ -653,118 +655,128 @@ operations.
 \label{sec:timeStepping}
 
 With the shear stress computed, we are now ready to evolve the interface
-of each body. As described in Section~\ref{sec:thetaL}, we use the
-{\thL} framework, with $\theta$ being the tangent angle and $L$ the
-total arc length of a given boundary, and with the boundaries
+of each body using equations~\eqref{eqn:Levo1}
+and~\eqref{eqn:thetaevo1}. As described in Section~\ref{sec:thetaL}, we
+use the {\thL} framework, with $\theta$ being the tangent angle and $L$
+the total arc length of a given boundary, and with the boundaries
 parameterized by normalized arc length $\alpha = 2 \pi s / L$.
 
 In addition to the curvature-dependent term in~\eqref{eqn:Vn}, we
 regularize boundary evolution by applying a narrow Gaussian filter to
 absolute shear stress
-\begin{equation}
-\atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma} \exp \left(- \frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \, d\alpha'
-\end{equation}
-Here $\sigma$ is the small parameter that determines the width of the
+\begin{align*}
+\atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma} \exp \left(-
+\frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \,
+d\alpha'.
+\end{align*}
+Here $\sigma$ is a small parameter that determines the width of the
 filter. The corresponding normal and tangential interface velocities are
 the given by
-\begin{align}
-& \Vnsig = \atausig +  \eps \mean{\atausig}   \left(\pderiv{\theta}{\alpha} - 1 \right) \\
-& \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}
-\end{align}
+\begin{align*}
+& \Vnsig = \atausig +  \eps \mean{\atausig}
+\left(\pderiv{\theta}{\alpha} - 1 \right), \\
+& \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}.
+\end{align*}
 
 For simplicity, we introduce the variables
-\begin{align}
-\label{eq:M}
-& \Mterm = - 2 \pi \mean{\thalpha \Vnsig} \\
-\label{eq:N}
-& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atausig}{\alpha} + \thalpha \Vssig \right) \\
-\label{eq:elfun}
-& \elfun = \frac{2 \pi  \mean{\atausig}}{L}
-\end{align}
-So that evolution equations`\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1}
-can be compactly expressed as
+\begin{align*}
+%\label{eq:M}
+& \Mterm = - 2 \pi \mean{\thalpha \Vnsig}, \\
+%\label{eq:N}
+& \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atausig}{\alpha} + \thalpha
+\Vssig \right), \\
+%\label{eq:elfun}
+& \elfun = \frac{2 \pi  \mean{\atausig}}{L}.
+\end{align*}
+Then, the evolution equations~\eqref{eqn:Levo1}
+and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \begin{align}
 \label{eqn:Levo2}
-& \tderiv{L}{t} = \Mterm \\
+& \tderiv{L}{t} = \Mterm, \\
 \label{eqn:thetaevo2}
-& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm
+& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
 \end{align}
+Here $\NLterm$ represents the nonlinear terms (and nonlocal terms) in
+the PDE for $\theta$.  
 
-Here $\NLterm$ represents the nonlinear terms (and nonlocal etc) in the
-PDE for $\theta$.  We will evolve $\theta$ in spectral space, and so
-introduce the Fourier series
+We can evolve $\theta$ in spectral space since $\theta(\alpha)$ is
+periodic up to a jump of $2\pi$ for $\alpha \in [0,2\pi]$.  Therefore,
+we introduce the Fourier series
 \begin{align}
-& \theta(\alpha,t) = \alpha + \FourierSum \thhat_k e^{ i k \alpha} \\
-& \NLterm(\alpha,t)  = \FourierSum \hat{\NLterm}_k e^{ i k \alpha}
+ \theta(\alpha,t) &= \alpha + \FourierSum \thhat_k e^{ i k \alpha}, \\
+ \NLterm(\alpha,t)  &= \FourierSum \widehat{\NLterm}_k e^{ i k \alpha}.
 \end{align}
 The careful reader will notice that we have separated out the linear
 part of $\theta$, so that the remaining function is smooth and has a
 rapidly decaying Fourier series.  In spectral
 space,~\eqref{eqn:thetaevo2} produces the system of ODEs
-\begin{equation}
-\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \hat{\NLterm}_k
-\end{equation}
+\begin{align*}
+\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k.
+\end{align*}
 Each ODE is first-order and linear (though variable-coefficient due to
 $\elfun$) and thus can be solved by using the integrating factor
-\begin{equation}
-\label{eq:mu}
-\mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right)
-\end{equation}
+\begin{align}
+  \label{eq:mu}
+  \mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right).
+\end{align}
 We are therefore led to the coupled system of ODEs
 \begin{align}
 \label{eqn:Levo2}
-& \tderiv{L}{t} = \Mterm \\
+& \tderiv{L}{t} = \Mterm, \\
 \label{eqn:thetaevo2}
-& \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \hat{\NLterm}_k
+& \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \widehat{\NLterm}_k.
 \end{align}
+\todo[inline]{multiply defined references here}
 We solve system~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} with an
 explicit, second-order Runge-Kutta method (RK2). In particular, we
 choose the {\em midpoint} RK2 method so as to maximize the smoothing
 effect of the curvature term.
 
 At the first stage of RK2 (the half step), we discretize
-Eqs.~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} as
+equations~\eqref{eqn:Levo2}--\eqref{eqn:thetaevo2} as
 \begin{align}
 \label{eq:L12}
 & \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = \Mterm^{(n)} \\
 & \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \thhat_k^{(n)}}{\Dt/2} = \hat{\NLterm}_k^{(n)}
 \end{align}
 where the superscript indicates the time step. For simplicity, we have
-chosen the constant of integration in the exponent of Eq.~\eqref{eq:mu}
-so that $\mu_k^{(n)} = 1$. At the next stage of RK2, we must compute
-$\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$, which requires a
-call to the Stokes solver. Hence, we must compute $\mu_k^{(n+1/2})$, so
-that $\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the
-mid-step can be computed. To compute $\mu_k^{(n+1/2)}$, we use the
-left-end-point rule (first order, consistent with first forward Euler
-step of RK2)
-\begin{equation}
-\mu_k^{(n+1/2)} = \exp \left( \epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
-\end{equation}
+chosen the constant of integration in the exponent of
+equation~\eqref{eq:mu} so that $\mu_k^{(n)} = 1$. At the next stage of
+RK2, we must compute $\Mterm^{(n+1/2)}$ and
+$\widehat{\NLterm}_k^{(n+1/2)}$, which requires a call to the Stokes
+solver. Hence, we must compute $\mu_k^{(n+1/2)}$, so that
+$\thhat_k^{(n+1/2)}$ can be recovered and the geometry at the mid-step
+can be computed. To compute $\mu_k^{(n+1/2)}$, we use the left-end-point
+rule (first order, consistent with first forward Euler step of RK2)
+\begin{align*}
+\mu_k^{(n+1/2)} = \exp \left( \epsilon k^2 \frac{\Dt}{2}
+\elfun^{(n)}\right).
+\end{align*}
 It is instructive to recast as
-\begin{equation}
+\begin{align*}
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
 \exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
-\end{equation}
+\end{align*}
 so that the smoothing effect of the exponential is obvious. With
 $\thhat_k^{(n+1/2)}$ computed, it is now possible to compute
-$\Mterm^{(n+1/2)}$ and $\hat{\NLterm}_k^{(n+1/2)}$.
+$\Mterm^{(n+1/2)}$ and $\widehat{\NLterm}_k^{(n+1/2)}$.
 
 Next, at the second stage of RK2, we discretize as
-\begin{align}
-& \frac{L^{(n+1)} - L^{(n)}}{\Dt} = \Mterm^{(n+1/2)} \\
-& \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} = \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}
-\end{align}
-We again compute the integrating factor, $\mu_k^{(n+1)}$ via the (
-insert integration rule), giving
-\begin{align}
+\begin{align*}
+\frac{L^{(n+1)} - L^{(n)}}{\Dt} &= \Mterm^{(n+1/2)}, \\
+\frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} &=
+\mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}.
+\end{align*}
+We again compute the integrating factor, $\mu_k^{(n+1)}$ via the
+\todo[inline]{insert integration rule}, giving
+\begin{align*}
 \thhat_k^{(n+1)} = 
 & \thhat_k^{(n)}
 \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) +  \\
 & \Dt \, \hat{\NLterm}_k^{(n+1/2)}
-\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right)
-\end{align}
-
+\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} -
+\elfun^{(n)} \right) \right).
+\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post Processing Quantities of Interest\label{s:qoi}} 
@@ -893,25 +905,6 @@ adopting a near-singular integration scheme that allows us to compute
 all quantities of interest sufficiently close to $\bd\Omega$ for the
 quantities of interest.
 
-\todo[inline]{DUMP OF OLD TEXT}
-discretizations of
-layer potentials~\eqref{eqn:layerPotential} at a large number of points.
-If a direct summation method is used to evaluate these sums at $N_\tar$
-points, this requires $\bigO(NN_\tar)$ operations.  The layer potential
-that is evaluated most frequently is in the GMRES iteration where the
-layer potential $\DD$ is evaluated to compute the velocity at all points
-on the boundary must be evaluated~\eqref{eqn:DLP}.  
-
-In our implementation, the deformation tensor and vorticity are computed
-with a direct summation, and this requires $\bigO(N^2)$ and $\bigO(N
-N_\tar)$ operations, respectively.  Since this calculation is only
-computed once per time step, while the velocity is calculated at each
-GMRES iteration, the computational cost is manageable.  However, in
-future work, to simulate erosion in a dense packing of grains, a fast
-summation method, such as the kernel-independent
-FMM~\cite{yin-bir-zor2004}, will be incorporated. 
-
-\todo[inline]{DUMP OF OLD TEXT}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Near-singular integration}
 To accurately compute quantities such as the velocity at points $\xx \in
