@@ -1,7 +1,8 @@
 # Test the 2nd order convergence in dt.
-# I typically use 01circ256, with tfin = 1e-2, dt0 = 1e-4, nits = 3 or higher.
+# I typically use 01circ256, with nits = 3 or higher, dt0 = 1e-4, tfin = 1e-2.
 # Vanishing time for 01circ1024aa is 0.017938. So 1e-2 is 56% of vanishing time.
 # The runtime for nits = 3 is about 16 minutes.
+# For the test in the paper, I used nits = 7.
 
 include("main.jl")
 
