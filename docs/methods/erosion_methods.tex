@@ -901,33 +901,33 @@ boundary $\gamma_\ell$ is
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Near-singular integration}
 \label{sec:NSI}
-To accurately compute the velocity~\eqref{eqn:velocityDLP},
+The layer potentials for the~\eqref{eqn:velocityDLP},
 vorticity~\eqref{eqn:vorticityDLP}, and pressure~\eqref{eqn:pressureDLP}
-at points $\xx \in \Omega$, we adopt a near-singular integration scheme
-based entirely on upsampling.  We are only interested in computing the
-velocity and vorticity for visualizing the flow, and it is not necessary
-that we resolve the integrands for arbitrarily close target points
+need to be evaluated at points $\xx \in \Omega$. We write the general
+layer potential as
+\begin{align}
+  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy.
+  \label{eqn:genericLP}
+\end{align}
+Since the integrand is periodic and smooth, the trapezoid rule
+guarantees spectral accuracy.  However, when the target point $\xx$ is
+close to $\bd\Omega$, the integrand is nearly-singular, and the accuracy
+of the trapezoid rule deteriorates unless a large number of
+discretization points are used.  We are only interested in computing the
+velocity, vorticity, and pressure to visualize the flow, so it is not
+necessary that we resolve the integrands for arbitrarily close target
+points
 
-Computing the velocity, pressure, and vorticity at a point $\xx \in
-\Omega$ requires evaluating the layer potential
-\begin{align*}
-  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy,
-\end{align*}
-where $\phi$ is either the velocity, pressure, or vorticity, and the
-kernel $K$ are defined in
-equations~\eqref{eqn:velocityDLP},~\eqref{eqn:vorticityDLP},
-or~\eqref{eqn:pressureDLP}.  This integral is approximated with a
-trapezoid rule,
+The layer potential~\eqn{eqn:genericLP} is approximated with the
+trapezoid rule 
 \begin{align}
   \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j),
   \label{eqn:layerPotential}
 \end{align}
 where $q$ contains the quadrature weights, Jacobian, and density
-function.  Note that this sum can only be computed once
-equation~\eqref{eqn:completed_BIE} has been solved for the density
-function $\eeta$.  Based on numerical experiments, the error of the
-$N$-point trapezoid rule is acceptable for points $\xx$ that are more
-than 5 arclength spacings from $\bd\Omega$.
+function.  Based on numerical experiments, the error of the $N$-point
+trapezoid rule is acceptable for points $\xx$ that are more than 5
+arclength spacings from $\bd\Omega$.
 
 For points that are closer than 5 arclength spacings to $\bd\Omega$, we
 use an upsampled trapezoid rule.  The required upsampling of the
