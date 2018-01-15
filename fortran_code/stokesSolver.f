@@ -1,4 +1,5 @@
-      subroutine stokesSolver(nninner,nnbodies,nnouter,ifmm,xx,yy,den)
+      subroutine stokesSolver(nninner,nnbodies,nnouter,
+     $     ifmm,xx,yy,den,iter)
 c     Input x and y coordinates and return the density function on the
 c     boundary.  Outer wall is used to enclose the inner boundary so
 c     that Stokes paradox is avoided
@@ -91,7 +92,7 @@ c      close(unit=4)
 c     load boundary condition
 
       call solveBIE(ninner,nbodies,nouter,den,rhs,
-     $      gmwork,lrwork,igwork,liwork,maxl,ifmm)
+     $      gmwork,lrwork,igwork,liwork,maxl,ifmm,iter)
 c     solve for the density function with GMRES
 
 c      call eval_velocity_targets(ninner,nbodies,
@@ -458,7 +459,7 @@ c       the y component of the position
 
 c***********************************************************************
       subroutine solveBIE(ninner,nbodies,nouter,den,rhs,
-     $    gmwork,lrwork,igwork,liwork,maxl,ifmm)
+     $    gmwork,lrwork,igwork,liwork,maxl,ifmm,iter)
 c     Solve the boundary integral equation with GMRES
       implicit real*8 (a-h,o-z)
 

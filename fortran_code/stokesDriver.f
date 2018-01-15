@@ -100,7 +100,7 @@ c      enddo
       enddo
 
       ifmm = 1
-      call stokesSolver(ninner,nbodies,nouter,ifmm,x,y,den)
+      call stokesSolver(ninner,nbodies,nouter,ifmm,x,y,den,iter)
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
 
