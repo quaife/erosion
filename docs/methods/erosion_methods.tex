@@ -60,13 +60,12 @@ interactions between bodies are resolved, all the while high-order
 accuracy and computational efficiency are achieved. To link the body and
 fluid dynamics, the body is eroded in the normal direction at a rate
 that is proportional to the magnitude of the shear
-stress~\cite{ris-moo-chi-she-zha2012}.  To further visualize the effect
-of erosion, we compute the vorticity of the flow
-(Figure~\ref{fig:50bodies}) which is equal to the shear stress in the
-Stokesian limit.  Finally, to evolve the geometry, a second-order time
-stepping method that guarantees that the mesh does not become distorted
-will be employed.
+stress~\cite{ris-moo-chi-she-zha2012}. Other models for erosion include
+ones that use an erosion rate that is proportional to a power of the
+magnitude of the shear stress~\cite{par-izu2000}, or ones that use a
+critical shear stress below which erosion does not occur~\cite{lag2000}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions} The present study will develop numerical
 methods to simulate viscous erosion of multiply-connected
 two-dimensional geometries.  By assuming the flow is viscous, we are
@@ -76,9 +75,10 @@ multiply-connected domains, the effects due to interacting bodies on the
 erosion are captured.  We start by authenticating our method on a single
 circular body placed symmetrically in a pipe flow.  By artificially
 fixing the area of the body as a function of time, we are able to
-characterize the long-time behavior of the shape and the resulting flow.
-Then, we compute the vorticity of erosion in multiply-connected
-geometries to better characterize erosion in porous media. 
+characterize the long-time behavior of the shape and the resulting flow
+and compare these results with analytical results.  Then, we compute the
+vorticity of erosion in multiply-connected geometries to better
+characterize erosion in porous media. 
 
 Because of the low Reynolds number assumption, the flow will be assumed
 to be Stokesian.  Then, to create high-fidelity and computationally
@@ -115,16 +115,13 @@ penalize regions of high curvature.  Second, we apply a Gaussian filter
 to smooth the absolute value of the shear stress before the body shape
 is updated.
 
-\todo[inline]{DUMP OF TEXT}
-This choice is based on experimental work of Ristroph et
-al.~\cite{ris-moo-chi-she-zha2012}, but other models for erosion are
-possible.  For example, some models use an erosion rate that is
-proportional to a power of the magnitude of the shear
-stress~\cite{par-izu2000}, while others introduced a shear stress below
-which erosion does not occur~\cite{lag2000}.
-\todo[inline]{DUMP OF TEXT}
+To further visualize the effect of erosion, we compute the vorticity of
+the flow (Figure~\ref{fig:50bodies}) which is equal to the shear stress
+in the Stokesian limit.  Finally, to evolve the geometry, a second-order
+time stepping method that guarantees that the mesh does not become
+distorted will be employed.
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations} There are two main limitations of the current
 work.  First, the flow is assumed to be two-dimensional.  However, by
 assuming that the flow is two-dimensional, we are able to simulate the
@@ -153,14 +150,15 @@ that are intractable. In future work we plan to consider mobile eroding
 bodies, but include a small force and torque so that unphysical contact
 is avoided~\cite{lu-rah-zor2017}.
 
-\paragraph{Related work}
-Simulating eroding bodies has been studied analytically, experimentally,
-and numerically.  Because of the scales involves with geophysical flows,
-most of these works consider high Reynolds number flows.  For instance,
-the experimental work of Moore et al.~\cite{moo-ris-chi-zha-she2013}
-considers on the order of $10^4$.  For low Reynolds number flows,
-Mitchell and Spagnolie~\cite{mit-spa2016} simulate the erosion of a
-mobile body in three dimensions, but they only consider single body.  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Related work} Simulating eroding bodies has been studied
+analytically, experimentally, and numerically.  Because of the scales
+involves with geophysical flows, most of these works consider high
+Reynolds number flows.  For instance, the experimental work of Moore et
+al.~\cite{moo-ris-chi-zha-she2013} considers on the order of $10^4$.
+For low Reynolds number flows, Mitchell and Spagnolie~\cite{mit-spa2016}
+simulate the erosion of a mobile body in three dimensions, but they only
+consider single body.  
 
 To simulate multiple bodies, it is essential to resolve the nonlocal
 effects between the different bodies.  In this work, these interactions
@@ -172,13 +170,13 @@ Pozrikidis~\cite{poz1992} describes boundary integral formulations for
 such problems.
 
 
-\paragraph{Outline of the paper}
-In Section~\ref{s:formulation}, we describe the governing equations for
-both the fluid and describe the erosion model using a \thL~framework.
-In Section~\ref{s:method}, the numerical methods in both space and time
-are described.  Section~\ref{s:results} gives several numerical
-examples.  Finally, concluding remarks are made in
-Section~\ref{s:conclusions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Outline of the paper} In Section~\ref{s:formulation}, we
+describe the governing equations for both the fluid and describe the
+erosion model using a \thL~framework.  In Section~\ref{s:method}, the
+numerical methods in both space and time are described.
+Section~\ref{s:results} gives several numerical examples.  Finally,
+concluding remarks are made in Section~\ref{s:conclusions}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -199,7 +197,8 @@ erode the fastest.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Formulation\label{s:formulation}} 
+\section{Formulation}
+\label{s:formulation}
 We start by defining the main variables used to model erosion.  We only
 consider flows that are confined by a solid wall $\Gamma$ that encloses
 $M$ eroding bodies.  The bodies are denoted as $\gamma_\ell$,
@@ -508,7 +507,8 @@ this stiff term that are described in Section~\ref{sec:timeStepping}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Numerical Methods\label{s:method}} 
+\section{Numerical Methods}
+\label{s:method}
 There are three main numerical methods that need to be developed.  In
 Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE}
 is solved.  Once the density function is found,
@@ -779,8 +779,8 @@ We again compute the integrating factor, $\mu_k^{(n+1)}$ via the
 \end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Post Processing Quantities of Interest\label{s:qoi}} 
-
+\section{Post Processing Quantities of Interest}
+\label{s:qoi}
 To study characteristics of the flow, the vorticity
 (Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}),
 and drag (Section~\ref{sec:drag}) will be computed.  Once
@@ -974,8 +974,8 @@ quadrature~\cite{hel-oja2008a}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results\label{s:results}} 
-
+\section{Results}
+\label{s:results}
 With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single eroding body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and highlight important differences that arise as compared to the single-body case.
 
 \subsection{Shape evolution of a single eroding body}
@@ -1190,8 +1190,8 @@ Runs to do
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{\bf Acknowledgments} The authors would like to thank Manas Rachh
-for supplying the FMM for the Stokes double-layer potential.
+\paragraph{\bf Acknowledgments} The authors would like to thank Manas
+Rachh for supplying the FMM for the Stokes double-layer potential.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
