@@ -93,10 +93,13 @@ end
 function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, 
 		npts::Int, nbods::Int, nouter::Int, ifmm::Int)
 	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
+	nits = zeros(Int,1)
 	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Void, 
-		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Float64},Ptr{Float64},Ptr{Float64}), 
-		&npts, &nbods, &nouter, &ifmm, xx, yy, density)
+		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},
+		Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Int}), 
+		&npts, &nbods, &nouter, &ifmm, xx, yy, density, nits)
+	println("The total number of GMRES iterations is ", nits[1],"\n\n")
 	return density
 end
 
