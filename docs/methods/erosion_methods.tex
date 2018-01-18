@@ -231,7 +231,7 @@ of $[-3,3] \times [-1,1]$, and we enforce the Hagen-Poiseuille flow
 \begin{align*}
   \UU(\xx) = \umax (1-y^2,0)
 \end{align*}
-on $\Gamma$.  H
+on $\Gamma$.  Here, $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply set $U=1$, but in some instances we will change $U$ dynamically to enforce that the pressure drop across the computational cell is constant as bodies erode within it.
 The boundary of the fluid domain is $\bd\Omega = \gamma_1
 \cup \cdots \cup \gamma_M \cup \Gamma$.  To minimize the boundary
 effects of the inflow and outflow, we only place bodies in the center
@@ -1012,14 +1012,12 @@ To better understand the body's shape evolution in this simulation, Fig.~\ref{sh
 
 \subsection{Scaling law for the vanishing rate}
 
-\todo[inline]{I am not sure if $V$ has been defined previously. If not, need to define it.}
-
-Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu V / L$, since stress is inversely proportional to body scale $L$. This law must be modified in 2D, though. The modification is made non-trivial by subtleties associated with the Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to $\mu V W/ \log(W/L)$. This relationship implies that, for a 2D cross-section perpendicular to the long axis, the stress can be estimated by
+Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in 2D, though. The modification is made non-trivial by subtleties associated with the Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D cross-section perpendicular to the long axis, the stress (per unit $W$) can be estimated by
 \begin{equation}
 \label{eq:stresslaw}
-\tau \sim \frac{\mu V}{L \log(W/L)}
+\tau \sim \frac{\mu \umax}{L \log(W/L)}
 \end{equation}
-In interpreting our 2D simulations, we will treat $W$ as fixed (and must remember the requirement $W \gg L$).
+In interpreting our 2D simulations, we will treat $W$ as fixed and must remember the requirement $W \gg L$.
 
 Now, the body's rate of area reduction is given by integrating the absolute shear stress around the boundary
 \begin{equation}
@@ -1031,7 +1029,7 @@ which gives the exact relationship
 \end{equation}
 Thus, the area-loss rate is given by the product of the mean shear $\mean{\atau}$ and the total perimeter $L$. Inserting the scaling law \eqref{eq:stresslaw} gives
  \begin{equation}
-\dot{A} \sim \frac{\mu V}{\log(W/L)} \, .
+\dot{A} \sim \frac{\mu \umax}{\log(W/L)} \, .
 \end{equation}
 Noting that $A \sim L^2$ allows one to solve this ODE to get
 \begin{equation}
