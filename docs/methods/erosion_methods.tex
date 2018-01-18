@@ -1011,37 +1011,26 @@ To better understand the body's shape evolution in this simulation, Fig.~\ref{sh
 
 \subsection{Scaling law for the vanishing rate}
 
-Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu V / L$, since stress is inversely proportional to body size. In two dimensions, though, this law is modified. The correct modification can be inferred
+\todo[inline]{I am not sure if $V$ has been defined previously. If not, need to define it.}
+
+Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu V / L$, since stress is inversely proportional to body scale $L$. This law must be modified in 2D, though. The modification is made non-trivial by subtleties associated with the Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to $\mu V W/ \log(W/L)$. This relationship implies that, for a 2D cross-section perpendicular to the long axis, the stress can be estimated by
+\begin{equation}
+\tau \sim \frac{\mu V}{L \log(W/L)}
+\end{equation}
+In interpreting our 2D simulations, we will treat $W$ as fixed (and must remember the requirement $W \gg L$).
+
 
  
 
-Interestingly, the spacing between successive interfaces in Fig.~\ref{shrink_intface}(a) becomes larger as time progresses
 
 
 
-
-
+\vsp{30}
 
 \subsection{The limiting shape}
 
-\vsp{30}
-Later, as a segue to discuss the vanishing of area, I can point out that the interface spacing becomes greater at later times in Fig. 5a.
 
 \subsubsection{The vanishing rate of area}
-In three-dimensional Stokes flow, the shear stress vanishes as
-\begin{equation}
-\tauD{3} \sim \mu V/L
-\end{equation}
-However, this law must be modified for 2D flow, which represents 3D
-bodies of large extent. As the body vanishes, the walls have an ever
-decreasing influence. Thus, the stress must be consistent with
-free-space slender-body theory as it vanishes. The stress law consistent
-with slender body theory (a long cylinder held perpendicular to a flow)
-is
-\begin{equation}
-\tauD{2} \sim \frac{\mu V}{L \log(W/L)}
-\end{equation}
-% Could include 4 \pi factor, which is appropriate for a circular cylinder
 
 Then the rate of change of the body area is proportional to the shear
 stress times the total arc length exposed
