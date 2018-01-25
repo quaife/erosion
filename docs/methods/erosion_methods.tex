@@ -1062,23 +1062,20 @@ against the above scaling law. In the scaling law, we chose, $C = 0.42$
 
 With the vanishing rate understood, we now seek to quantify the limiting shape formed by a single eroding body.
 
-Certain features of this shape can be predicted analytically by appealing to the principal of uniform stress distribution. In particular, consider the angle formed at the front and rear stagnation points. In long time, the stress becomes uniform, in particular in a small vicinity of this front angle in which body curvature can be ignored. Zooming in on the front angle, we can consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. Exact solutions can be obtained to this problem via separation of variables in polar coordinates \cite{poz1997}. The corresponding stream function is $\psi = r^{\lambda}f(\theta)$, where $f$ satisfies the 4th order ODE
+% Pozrikidis page 239: symmetric flow.
+Certain features of this shape can be predicted analytically by appealing to the principal of uniform stress distribution. In particular, consider the angle formed at the front and rear stagnation points. In long time, the stress becomes uniform, in particular in a small vicinity of this front angle in which body curvature can be ignored. Zooming in on the front angle, we can consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$ \cite{poz1997}. In this section alone, $\theta$ denotes the polar angle and not the tangent angle of the body.
+The corresponding stream function is $\psi = r^{\lambda}f(\theta)$, where $f$ satisfies the 4th order ODE
 \begin{equation}
 f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0
 \end{equation}
-subject to boundary conditions $f(\alpha) = f'(\alpha) = 0$ and $f(0) = f''(0) = 0$.
-The corresponding shear stress evaluated on the surface of the wedge is $\tau = \mu r^{\lambda-2} f''(\alpha)$. Thus, the wedge of uniform stress corresponds to $\lambda = 2$. For this value, the solution for $f$ that satisfies the appropriate symmetry across $\theta = 0$ is 
+This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$, where $\thb = \pi - \oangle/2$, along with the condition of odd-symmetry $f(0) = f''(0) = 0$ (corresponding to up-down symmetry of the flow).
+The corresponding shear stress evaluated on the surface of the wedge is $\tau = \mu r^{\lambda-2} f''(\thb)$. Thus, the wedge of uniform stress corresponds to $\lambda = 2$. For this value, the solution for $f$ satisfying odd symmetry is
 \begin{equation}
 f(\theta) = B \sin (2 \theta) + C \theta
 \end{equation}
-
-%\begin{equation}
-%f(\theta) = B \sin(2\theta - \beta) + C \theta + D
-%\end{equation}
-%where $B, C$ are complex constants and $\beta$ is a real constant.
+Then the eigenvalue problem
 
 
-% Pozrikidis page 239: symmetric flow.
 
 
 
