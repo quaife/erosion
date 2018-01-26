@@ -203,7 +203,7 @@ end
 # regbodtargs: Set up target points on a regular and body fitted grid.
 function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Regular grid.
-	hh = 0.10
+	hh = 0.05
 	xlocs = collect(-2.: hh: 2.)
 	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
 	xreg,yreg = regulargrid(xlocs,ylocs)
