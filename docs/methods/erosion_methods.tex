@@ -1060,14 +1060,10 @@ Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body a
 \begin{equation}
 A (1 - \log A) = \areaconst (t_f - t)
 \end{equation}
+where $c_A$ is a constant.
 This is an {\em implicit} relationship for how the area scales down in time during erosion.
-
-\todo[inline]{Define $\areaconst$; also maybe need to use a different letter.}
-
-
-In Fig.~6a, we show the body area vs time measured in the simulation
-against the above scaling law. In the scaling law, we chose, $\areaconst = 0.42$
-(check this?)
+In Fig.~6a, we show the body area as a function of time measured in the simulation
+against the above scaling law with $\areaconst = 0.42$.
 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1103,7 +1099,7 @@ Imposing the no-slip boundary conditions gives the condition
 \end{equation}
 which has solution $\thb \approx 129$ degrees. This gives an opening angle of $\oangle = 2(\pi - \thb) \approx 102$ degrees.
 
-
+We aim to measure the opening angle in our simulation, but, curiously, the body vanishes before a steady-state is definitively reached. To obtain the true terminal shape, we could restart our simulation with the final eroded body scaled up and iterate this process until reaching steady state. A simpler solution, though, is to remove the effect of shrinking during the erosion process by simply modifying the normal velocity $\Vn$ to have zero mean
 
 
 
