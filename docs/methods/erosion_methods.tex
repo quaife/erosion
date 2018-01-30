@@ -1100,26 +1100,33 @@ Imposing the no-slip boundary conditions gives the condition
 which has solution $\thb \approx 129$ degrees. This gives an opening angle of $\oangle = 2(\pi - \thb) \approx 102$ degrees.
 
 We aim to measure the opening angle in our simulation, but, curiously, the body vanishes before a steady-state is definitively reached. To obtain the true terminal shape, we could restart our simulation with the final eroded body scaled up and iterate this process until reaching steady state. A simpler solution, though, is to remove the effect of shrinking during the erosion process by simply modifying the normal velocity $\Vn$ to have zero mean
+\begin{equation}
+\Vn \leftarrow \Vn - \mean{\Vn}
+\end{equation}
+This modification allows erosion to modify the body shape as it would normally, but artificially keeps the area of the body fixed. We show in Fig.~\ref{fixed_intface}a several interfaces at equally spaced times. Notice the body obtains the slender, football shape seen previously, but here more precision is available. We also show in Fig.~\ref{fixed_intface}b the stress, showing that the stress becomes much more evenly distributed as time proceeds. In this figure, time is normalized by the same vanishing time $t_f = 1.79E-2$ as the simulation shown in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach a visually satisfying stead-state. This is very much in contrast to previous studies of erosion in high-Reynold's number flows, in which a reasonable steady-state was reached before the body vanished.
 
-
-
-
-
-
-
-\vsp{30}
+\todo{Cite previous erosion papers}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.8 \textwidth]{./figs/fixed_intface.pdf}
 \caption{One body fixed area}
-\label{}
+\label{fixed_intface}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
+
+The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio.
+
+
+
+
+\vsp{30}
+
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}[p]%[htbp]
