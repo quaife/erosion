@@ -1002,7 +1002,7 @@ quadrature~\cite{hel-oja2008a}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 \label{s:results}
-With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and highlight important differences that arise as compared to the single-body case.
+With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and highlight important differences that arise compared to the single-body case.
 
 \subsection{Shape evolution of a single eroding body}
 
@@ -1018,9 +1018,9 @@ With the description of the methods complete, we now present numerical results o
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points, and shown at three evenly spaced times. Here, color represents the vorticity of the surrounding flow, which, when evaluated on the boundary, indicates the shear stress and thus the local erosion rate. As seen in the left-most snapshot, the body is initially circular and has the strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations and vorticity vanishes at the body's front and rear stagnation points. At the next instance, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender while wasting away. In this simulation, the body completely vanishes at a final time of $t_f = 1.79E-2$.
+Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points and shown at three evenly spaced times. Here, color represents the vorticity of the surrounding flow, which, when evaluated on the boundary, indicates the shear stress and thus the local erosion rate. As seen in the left-most snapshot, the body is initially circular and has the strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, with vorticity vanishing at the body's front and rear stagnation points. At the next instance, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender while wasting away. In this simulation, the body completely vanishes at a final time of $t_f = 1.79E-2$.
 
-To better understand the body's shape evolution in this simulation, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$. The body seems to converge to a shape that resembles an American football -- a fairly slender, for-aft symmetric shape with corners at the front and back. Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$ corresponding to the rear stagnation point and $s/L = 0.5$ the front stagnation point. At early times (yellow to orange), the stress is distributed non-uniformly, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that {\em at} the stagnation points, the stress always vanishes, though in a region that becomes increasingly narrow.
+To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$. The body seems to converge to a shape that resembles an American football -- a fairly slender, for-aft symmetric shape with corners at the front and back. Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$ corresponding to the rear stagnation point and $s/L = 0.5$ the front stagnation point. At early times (yellow to orange), the stress is distributed non-uniformly, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that {\em at} the stagnation points, the stress always vanishes, though in a region that becomes increasingly narrow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1037,18 +1037,18 @@ To better understand the body's shape evolution in this simulation, Fig.~\ref{sh
 
 \subsection{Scaling law for the vanishing rate}
 
-Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in 2D, though. The modification is made non-trivial by subtleties associated with the Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D cross-section perpendicular to the long axis, the stress (per unit $W$) can be estimated by
+Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in two dimensions, though. The modification (made non-trivial by subtleties of the Stokes paradox) can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D cross-section perpendicular to the long axis, the stress (per unit $W$) can be estimated by
 \begin{equation}
 \label{eq:stresslaw}
 \tau \sim \frac{\mu \umax}{L \log(W/L)}
 \end{equation}
-In interpreting our 2D simulations, we will treat $W$ as fixed and must remember the requirement $W \gg L$.
+In interpreting our 2D simulations, we will treat $W$ as fixed with the requirement $W \gg L$.
 
 Now, the body's rate of area reduction is given by integrating the absolute shear stress around the boundary
 \begin{equation}
 \dot{A} = \int_{\gamma} \atau \, ds \, ,
 \end{equation}
-which gives the exact relationship
+giving the exact relationship
 \begin{equation}
 \dot{A} = \mean{\atau} L \, .
 \end{equation}
@@ -1056,18 +1056,17 @@ Thus, the area-loss rate is given by the product of the mean shear $\mean{\atau}
  \begin{equation}
 \dot{A} \sim \frac{\mu \umax}{\log(W/L)} \, .
 \end{equation}
-Noting that $A \sim L^2$ allows one to solve this ODE to get
+Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body area changes with time
 \begin{equation}
-A (1 - \log A) = C (t_f - t)
+A (1 - \log A) = \areaconst (t_f - t)
 \end{equation}
 This is an {\em implicit} relationship for how the area scales down in time during erosion.
 
-\todo[inline]{Define $C$; also maybe need to use a different letter.}
-
+\todo[inline]{Define $\areaconst$; also maybe need to use a different letter.}
 
 
 In Fig.~6a, we show the body area vs time measured in the simulation
-against the above scaling law. In the scaling law, we chose, $C = 0.42$
+against the above scaling law. In the scaling law, we chose, $\areaconst = 0.42$
 (check this?)
 
 
@@ -1085,11 +1084,11 @@ against the above scaling law. In the scaling law, we chose, $C = 0.42$
 
 \subsection{The limiting shape}
 
-With the vanishing rate understood, we now seek to quantify the limiting shape formed by a single eroding body.
+With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}a.
 
 % Pozrikidis page 239: symmetric flow.
 Certain features of this shape can be predicted analytically by appealing to the principal of uniform stress distribution. In particular, consider the angle formed at the front and rear stagnation points. In long time, the stress becomes uniform, in particular in a small vicinity of this front angle in which body curvature can be ignored. Zooming in on the front angle, we can consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$ \cite{poz1997}. In this section alone, $\theta$ denotes the polar angle and not the tangent angle of the body.
-The corresponding stream function is $\psi = r^{\lambda}f(\theta)$, where $f$ satisfies the 4th order ODE
+The corresponding stream function is assumed to take the form $\psi = r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th order ODE \cite{poz1997}
 \begin{equation}
 f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0
 \end{equation}
