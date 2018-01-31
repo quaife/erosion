@@ -1127,27 +1127,21 @@ This modification allows erosion to modify the body shape as it would normally, 
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio as displayed in Fig.~\ref{arangle}. Figure \ref{arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.65$ in long time. Figure \ref{arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where there is high curvature that approximates an angle). The polynomial fit is then extrapolated to the stagnation point to get an angle estimate (subject to some uncertainty, which we quantify below). As seen in Fig.~\ref{arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the predicted value of $102^\circ$ in long time.
+The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio as displayed in Fig.~\ref{fig:arangle}. Figure \ref{fig:arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.7$ in long time. Figure \ref{fig:arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where there is high curvature that approximates an angle). The polynomial fit is then extrapolated to the stagnation point to get an angle estimate (subject to some uncertainty, which we estimate below). As seen in Fig.~\ref{arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the value $102^\circ$ in long time. This coincides exactly with the valued predicted by our local solutions.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}[p]%[htbp]
 \begin{center}
 \includegraphics[width = 0.8 \textwidth]{./figs/arangle.pdf}
 \caption{Aspect ratio and opening angle}
-\label{arangle}
+\label{fig:arangle}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-
-\vsp{30}
-
-
-
-
-
+To examine the influence of the smoothing parameters, $\eps$ and $\sigma$, we show in Table~\ref{table:arangle} the measurements of aspect ratio and opening angle for different simulations. We fix the total number of discretization points at $N_\iin = 1024$ and sequently reduce the smoothing with $\eps$ and $\sigma$ always equal. We choose the values $20/1024$, $10/1024$, and $5/1024$. Roughly, this corresponds to smoothing over the nearest 20, 10, and 5 grid points respectively. As seen in the table, the aspect ratio converges to a values of $2.65$ and the opening angle converges to $102^{\circ}$. We also estimate the uncertainty in the angle measurements by varying the region of the polynomial fit and the degree of the fit. As shown in the table, as the smoothing parameters are reduced, the angle measurements become more precise.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1156,7 +1150,7 @@ The fixed-area simulations allow us to make precise measurements of the body's o
 \caption{Final aspect ratio and opening angle
 } 
 \vspace{0.3 pc}
-%\label{aaa}
+\label{table:arangle}
 \begin{tabular}{c c c}
 \hline
 \hspace{0.5pc} smoothing parameters: $\eps$ and $\sigma$
@@ -1172,6 +1166,18 @@ The fixed-area simulations allow us to make precise measurements of the body's o
 \end{table}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % npts = 1024
+
+
+
+
+\vsp{30}
+
+
+
+
+
+
+
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
