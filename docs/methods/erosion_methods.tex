@@ -1111,9 +1111,7 @@ We aim to measure the opening angle in our simulation, but, curiously, the body 
 \begin{equation}
 \Vn \leftarrow \Vn - \mean{\Vn}
 \end{equation}
-This modification allows erosion to modify the body shape as it would normally, but artificially keeps the area of the body fixed. We show in Fig.~\ref{fixed_intface}a several interfaces at equally spaced times. Notice the body obtains the slender, football shape seen previously, but here more precision is available. We also show in Fig.~\ref{fixed_intface}b the stress, showing that the stress becomes much more evenly distributed as time proceeds. In this figure, time is normalized by the same vanishing time $t_f = 1.79E-2$ as the simulation shown in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach a visually satisfying stead-state. This is very much in contrast to previous studies of erosion in high-Reynold's number flows, in which a reasonable steady-state was reached before the body vanished.
-
-\todo{Cite previous erosion papers}
+This modification allows erosion to modify the body shape as it would normally, but artificially keeps the area of the body fixed. We show in Fig.~\ref{fixed_intface}a several interfaces at equally spaced times. Notice the body obtains the slender, football shape seen previously, but here more precision is available. We also show in Fig.~\ref{fixed_intface}b the stress, showing that the stress becomes much more evenly distributed as time proceeds. In this figure, time is normalized by the same vanishing time $t_f = 1.79E-2$ as the simulation shown in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach a visually satisfying stead-state. This is very much in contrast to previous studies of erosion in high-Reynold's number flows, in which a reasonable steady-state was reached before the body vanished \cite{moo-ris-chi-zha-she2013}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1130,7 +1128,7 @@ This modification allows erosion to modify the body shape as it would normally, 
 The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio as displayed in Fig.~\ref{fig:arangle}. Figure \ref{fig:arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.7$ in long time. Figure \ref{fig:arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where there is high curvature that approximates an angle). The polynomial fit is then extrapolated to the stagnation point to get an angle estimate (subject to some uncertainty, which we estimate below). As seen in Fig.~\ref{arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the value $102^\circ$ in long time. This coincides exactly with the valued predicted by our local solutions.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}[p]%[htbp]
+\begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.8 \textwidth]{./figs/arangle.pdf}
 \caption{Aspect ratio and opening angle}
@@ -1145,7 +1143,7 @@ To examine the influence of the smoothing parameters, $\eps$ and $\sigma$, we sh
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{table}[p]%[htbp]
+\begin{table}%[htbp]
 \begin{center}
 \caption{Final aspect ratio and opening angle
 } 
