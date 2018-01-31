@@ -1072,6 +1072,7 @@ This is an {\em implicit} relationship for how the area scales down in time duri
 In Fig.~6a, we show the body area as a function of time measured in the simulation
 against the above scaling law with $\areaconst = 0.42$.
 
+\todo[inline]{Explain the drag here too}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1126,7 +1127,7 @@ This modification allows erosion to modify the body shape as it would normally, 
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio as displayed in Fig.~\ref{arangle}. Figure \ref{arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.6$ in long time. 
+The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio as displayed in Fig.~\ref{arangle}. Figure \ref{arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.65$ in long time. Figure \ref{arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where there is high curvature that approximates an angle). The polynomial fit is then extrapolated to the stagnation point to get an angle estimate (subject to some uncertainty, which we quantify below). As seen in Fig.~\ref{arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the predicted value of $102^\circ$ in long time.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}[p]%[htbp]
