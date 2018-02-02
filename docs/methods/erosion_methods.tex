@@ -50,11 +50,11 @@ multiply-connected domain such as the porous geometry of many
 groundwater flows (Figure~\ref{fig:50bodies}).
 
 Because of the length and velocity scales of groundwater flow, we
-restrict our attention to small Reynolds number flows.  For groundwater flow,
-Darcy's law is often used, but this does not resolve the pore structure
-and assumes a homogeneous geometry which is often not valid.  Instead,
-we use the incompressible Stokes equations to represent the flow, and
-the individual pores are resolved which results in a complex
+restrict our attention to small Reynolds number flows.  For groundwater
+flow, Darcy's law is often used, but this does not resolve the pore
+structure and assumes a homogeneous geometry which is often not valid.
+Instead, we use the incompressible Stokes equations to represent the
+flow, and the individual pores are resolved which results in a complex
 multiply-connected geometry.  A boundary integral equation is
 well-suited for solving the incompressible Stokes equations in a complex
 geometry since it can resolve individual grains and the non-negligible
@@ -121,7 +121,7 @@ work.  First, the flow is assumed to be two-dimensional.  However, by
 assuming that the flow is two-dimensional, we are able to simulate the
 erosion of more bodies and with higher resolution than would be
 available in three dimensions.  Moreover, several flows can be described
-to good accuracy under a two-dimensional approximation, certain
+to good accuracy under a two-dimensional approximation, but certain
 phenomena occur only in three dimensions.  Extending the current work to
 three dimensions is possible with a boundary integral equation
 formulation.  In particular, the fluid solvers exist~\cite{mal-bir2015},
@@ -240,7 +240,7 @@ fully characterized by the position of the bodies $\xx_\ell(s,t) \in
 \gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given
 $\xx_\ell(s,t)$, $\ell=1,\ldots,M$, derived variables include the fluid
 velocity $\uu$, the pressure $p$, and the shear stress $\tau$.   On the
-bounding wall, we prescribed a velocity $\UU(\xx,t)$.  Then, the
+bounding wall, we prescribe a velocity $\UU(\xx,t)$.  Then, the
 governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
@@ -248,49 +248,52 @@ governing equations are
   \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{conservation
 of momentum}\\
 \grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap
-&&\mbox{conservation of mass} \\
-\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{no slip on the
+&&\mbox{\em conservation of mass} \\
+\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{\em no slip on the
 bodies} \\
-\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{outer wall
+\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{\em outer wall
 velocity} \\
 \Vn = \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
-&&\mbox{erosion model},
+&&\mbox{\em erosion model},
 \end{split}
 \end{equation}
 where $\Vn$ is the normal velocity of the interface and $\mu$ is the
 fluid viscosity.  The outer wall is formed by rounding off the corners
 of $[-3,3] \times [-1,1]$, and we enforce the Hagen-Poiseuille flow
 \begin{align*}
-  \UU(\xx) = \umax (1-y^2,0)
+  \UU(\xx) = \umax (1-y^2,0), \quad \xx \in \Gamma,
 \end{align*}
-on $\Gamma$.  Here, $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply set $U=1$, but in some instances we will change $U$ dynamically to enforce that the pressure drop across the computational cell is constant as bodies erode within it.
-The boundary of the fluid domain is $\bd\Omega = \gamma_1
-\cup \cdots \cup \gamma_M \cup \Gamma$.  To minimize the boundary
-effects of the inflow and outflow, we only place bodies in the center
-third, $[-1,1] \times [-1,1]$, of the fluid domain.
+where $U$ sets the maximum of the imposed Poiseuille flow. Often, we
+will simply set $U=1$, but in some instances we change $U$ dynamically
+to enforce that the pressure drop across the computational cell is
+constant as bodies erode within it.  The boundary of the fluid domain is
+$\bd\Omega = \gamma_1 \cup \cdots \cup \gamma_M \cup \Gamma$.  To
+minimize the boundary effects of the inflow and outflow, we only place
+bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.
 \begin{figure}[htpb]
   \centering
   \input{figs/schematic.tikz}
   \caption{\label{fig:schematic} A schematic for the governing
     equations.  A no-slip boundary condition is imposed on each body
     $\gamma_\ell$ whose unit normal points outward relative to the
-    geometry.  On the outer geometry $\Gamma$, a pipe flow is imposed.
-    The bodies are eroded at a rate that is proportional to the
-    magnitude of the shear stress applied by the Stokesian fluid.  The
-    bodies are constrained to the middle third of the channel that is
-    located between the dashed lines.}
+    geometry.  On the outer geometry $\Gamma$, a Hagen-Poiseuille flow
+    is imposed.  The bodies are eroded at a rate that is proportional to
+    the magnitude of the shear stress applied by the Stokesian fluid.
+    The bodies are constrained to the middle third of the channel that
+    is located between the dashed lines.}
 \end{figure}
 
 We use a quasi-static approximation.  That is, at each time step, we
 freeze the geometry, solve the incompressible Stokes equations, and then
-update the geometry according to the erosion model.  A flow diagram is
-illustrated in Figure~\ref{fig:workflow}.  The two steps inside the red
-rectangle describes a time step in the quasi-static approximation
-\begin{figure}[htpb]
-  \centering
-  \input{figs/workflow.tikz}
-  \caption{\label{fig:workflow}A caption.}
-\end{figure}
+update the geometry according to the erosion model.  The two steps
+inside the red rectangle describes a time step in the quasi-static
+approximation.
+%A flow diagram is illustrated in Figure~\ref{fig:workflow}.  
+%\begin{figure}[htpb]
+%  \centering
+%  \input{figs/workflow.tikz}
+%  \caption{\label{fig:workflow}A caption.}
+%\end{figure}
 
 Our erosion model is based on the shear stress, and this model is
 discussed in more detail in Section~\ref{sec:erosion}.  We then describe
@@ -306,16 +309,11 @@ linearizes a stiff term.
 \subsection{Erosion Model} 
 \label{sec:erosion}
 
-To model erosion, the normal velocity is prescribed to be
-proportional to the absolute value of the shear stress.   Since the
-constant of proportionality only sets the time scale, we let $\Vn =
-|\tau|$ as described in equation~\eqref{eqn:erosionModel}.
-\begin{align}
-  \Vn = \abs{\tau} \nn.
-  \label{eqn:bodyEvolution}
-\end{align}
-For the sake of numerical stability, we modify this law in
-Section~\ref{sec:thetaL}.
+To model erosion, the normal velocity is  proportional to the absolute
+value of the shear stress.   Since the constant of proportionality only
+sets the time scale, we let $\Vn = |\tau|$ as described in
+equation~\eqref{eqn:erosionModel}. For the sake of numerical stability,
+we modify this law in Section~\ref{sec:thetaL}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary Integral Equation Formulation} 
@@ -328,9 +326,10 @@ with Dirichlet boundary conditions
   \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
   \uu &= \ff,  && \xx \in \bd\Omega.
 \end{alignat*}
-As the viscosity $\mu$ also sets the time scale, we take $\mu=1$.  We
-start by defining the double-layer potential
-$\eeta:\bd\Omega \rightarrow \RR^2$,
+The boundary condition $\ff$ is the prescribed velocity $\UU$ on
+$\Gamma$, and it is zero on the grains $\gamma$.  As the viscosity $\mu$
+also sets the time scale, we take $\mu=1$.  We start by defining the
+double-layer potential
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
@@ -340,8 +339,7 @@ $\eeta:\bd\Omega \rightarrow \RR^2$,
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
 normal at $\yy$, and $\eeta$ is an unknown density function.  The
 double-layer potential can not capture velocity fields corresponding to
-rigid body motions~\cite{pow-mir1987}, and this is rectified by
-introducing additional terms for each body.  The rank deficiency removed
+rigid body motions~\cite{pow-mir1987}.  The rank deficiency is removed
 by complementing the double-layer potential with a Stokeslets and
 rotlets centered inside each interior body
 \begin{align}
@@ -472,7 +470,7 @@ direction and the normal vector points into the bodies (or out of the
 fluid).
 
 For the sake of numerical stability, we modify the erosion law in
-equation~\eqref{eqn:bodyEvolution} to include a term that depends on the
+equation~\eqref{eqn:erosionModel} to include a term that depends on the
 local curvature $\kappa$. The idea is to prevent regions of very high
 curvature. The modified normal velocity is 
 \begin{align}
