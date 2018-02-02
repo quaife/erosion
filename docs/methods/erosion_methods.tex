@@ -47,7 +47,7 @@ three-dimensional body~\cite{mit-spa2016}. However, to better understand
 the effect of erosion on groundwater flow, multiply-connected domains
 must be considered.  Here we simulate two-dimensional erosion, in
 multiply-connected domain such as the porous geometry of many
-groundwater flows (Figure~\ref{fig:50bodies}).
+groundwater flows (Fig.~\ref{fig:50bodies}).
 
 Because of the length and velocity scales of groundwater flow, we
 restrict our attention to small Reynolds number flows.  For groundwater
@@ -104,7 +104,7 @@ equation method.  Given the rate of erosion, the shape is integrated in
 time with second-order accuracy.  All spatial derivatives are be
 computed in Fourier space, resulting in spectral accuracy in space.
 Then, to further visualize the effect of erosion, we compute the
-vorticity of the flow (Figure~\ref{fig:50bodies}) to visualize regions
+vorticity of the flow (Fig.~\ref{fig:50bodies}) to visualize regions
 of high and low erosion.
 
 A challenge with erosion is that it creates corners at points on the
@@ -389,12 +389,22 @@ constraint that results from the flux-free requirement of $\ff$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the Shear Stress}
 \label{sec:shearStressLP}
+To compute the shear stress, there are two options.  First, instead of
+solving the BIE~\eqref{eqn:completed_BIE} for an arbitrary density
+function, a similar BIE can be solved for the
+traction~\cite{mit-spa2016}.  Alternatively, the traction corresponding
+to the double-layer potential of the velocity~\eqref{eqn:velocityDLP}
+can be computed using appropriate layer potentials.  While the first
+method bypasses a step by not forming a density function, this method
+does not allow us to compute other quantities such as the vorticity.
+Therefore, we use the second method.
+
 The shear stress is
 \begin{align*}
   \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
 \end{align*}
 where $\ss$ and $\nn$ are the unit tangent and normal vectors,
-respectively (Figure~\ref{fig:schematic}).  The velocity field of the
+respectively (Fig.~\ref{fig:schematic}).  The velocity field of the
 completed double-layer potential~\eqref{eqn:completed_DLP} involves
 three terms: the double-layer potential, the Stokeslets, and the
 rotlets.  We compute the deformation tensor $\ssigma =
@@ -402,7 +412,8 @@ rotlets.  We compute the deformation tensor $\ssigma =
 individually.
 
 The deformation tensor of the double-layer
-potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
+potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$
+is~\cite{qua-bir2014a}
 \begin{equation}
   \label{eqn:shearStressDLP}
   \begin{aligned}
@@ -418,8 +429,7 @@ potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
 \end{equation}
 We require the deformation tensor on $\bd\Omega$, and this requires
 taking the limit of equation~\eqref{eqn:shearStressDLP} when $\xx$ tends
-to $\xx_0 \in \bd\Omega$.  The limiting value is given
-by~\cite{qua-bir2014a}
+to $\xx_0 \in \bd\Omega$.  The limiting value is given by
 \begin{align*}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}\sigma_\DD(\xx) =
   J[\eeta](\xx_0) + \ssigma^\DD(\xx_0), \quad \xx_0 \in \bd\Omega,
@@ -443,13 +453,12 @@ rotlets~\eqref{eqn:stokeslet_rotlet} are
     \II - \frac{2}{\rho^2} \rr \otimes \rr \right),  \\
   \ssigma^R(\xx_0) &= -\sum_{\ell=1}^M
     \frac{\xi_\ell}{\rho^4} \left(\rr \otimes \rr^\perp + 
-    \rr^\perp \otimes \rr \right),
+    \rr^\perp \otimes \rr \right).
   \end{aligned}
 \end{equation}
-where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is the point chosen inside body
-$\gamma_\ell$, and $\rho = \|\rr_\ell\|$.  Now that the deformation
-tensor of each component of the completed double-layer potential is
-computed, the shear stress at $\xx_0 \in \bd\Omega$ is
+Now that the deformation tensor of each component of the completed
+double-layer potential is computed, the shear stress at $\xx_0 \in
+\bd\Omega$ is
 \begin{align}
   \tau = -2 \left(J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) + 
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
@@ -465,9 +474,9 @@ computed, the shear stress at $\xx_0 \in \bd\Omega$ is
 To handle boundary evolution, we use the {\thL} framework, which offers
 certain advantages in the ability to stabilize fluid-structure
 interaction problems \cite{hou-low-she1994}. Throughout this section, we
-use the following conventions: the bodies are parametrized in the CCW
-direction and the normal vector points into the bodies (or out of the
-fluid).
+use the following conventions: the bodies are parametrized in the
+counterclockwise direction and the normal vector points into the bodies
+(Fig.~\ref{fig:schematic}).
 
 For the sake of numerical stability, we modify the erosion law in
 equation~\eqref{eqn:erosionModel} to include a term that depends on the
@@ -475,7 +484,8 @@ local curvature $\kappa$. The idea is to prevent regions of very high
 curvature. The modified normal velocity is 
 \begin{align}
   \label{eqn:Vn}
-  \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right)
+  \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1
+  \right).
 \end{align}
 Here, $\eps$ is a small parameter, $L$ is the total arc length of the
 body, and $\mean{\cdot}$ indicates a boundary mean. The second term on
@@ -501,7 +511,8 @@ where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2
 Substitution into~\eqref{eqn:Vn} gives
 \begin{align}
 \label{eqn:Vn2}
-\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right)
+\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1
+\right).
 %\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
 \end{align}
 
@@ -529,7 +540,8 @@ Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \tderiv{L}{t} &= - 2 \pi \mean{\thalpha \Vn}, \\
 \label{eqn:thetaevo1}
 \pderiv{\theta}{t} &= \frac{2\pi}{L} \left(
-\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} + \thalpha \Vs \right)
+\eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} +
+\thalpha \Vs \right).
 \end{align}
 Note that stiffest term in~\eqref{eqn:thetaevo1} involving the
 second-order derivative is {\em quasi-linear}. This is the key to the
@@ -547,21 +559,21 @@ Section~\ref{sec:shearStress} describes how the shear
 stress~\eqref{eqn:shearStressLP} is computed.  Then, in
 Section~\ref{sec:timeStepping}, a time stepping method for evolving the
 interface according to equations~\eqref{eqn:Levo1}
-and~\eqref{eqn:thetaevo1} are described.
-
-So that we can form stable simulations with long time horizons, we use
-numerical methods that achieve spectral accuracy in space, second-order
-accuracy in time, and maintain an equispaced discretization of the
-bodies.  The boundaries are represented in Fourier space, and all
-derivatives are computed with spectral accuracy using Fourier
-differentiation.
+and~\eqref{eqn:thetaevo1} are described. So that we can form stable
+simulations with long time horizons, we use numerical methods that
+achieve spectral accuracy in space, second-order accuracy in time, and
+maintain an equispaced discretization of the bodies.  The boundaries are
+represented in Fourier space, giving us a set of discretization points
+$\xx_i$ of each body, and all derivatives and integrals (the arclength,
+curvature, and mean values) are computed with spectral accuracy using
+the Fourier representation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Solving the BIE}
 \label{sec:BIE}
 
 To numerically evaluate the completed double-layer
-potential~\eqref{eqn:completed_BIE}, we let $N_\iin$ be the number of
+potential~\eqref{eqn:completed_BIE}, let $N_\iin$ be the number of
 points on each of the $M$ bodies, and $N_\out$ be the number of points
 on the outer boundary.  Then, $N = MN_\iin + N_\out$ is the total number
 of discretization points of $\bd\Omega$.  The double-layer potential
@@ -595,14 +607,14 @@ needs to be solved is
     \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
       K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
       \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) \\
-      &\hspace{40pt}
+      &\hspace{53pt}
       +\sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) 
       +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
       \nn(\xx_j))\eeta(\xx_j), \\
-    \llambda_\ell &= \sum_{\xx_i \in \gamma_\ell} \eeta(\xx_i) 
-      \Delta s_i, \\ 
-    \mu_\ell &= \sum_{\xx_i \in \gamma_\ell}
-      {(\xx_i - \cc_\ell)}^\perp \cdot \eeta(\xx_i) \Delta s_i,
+    \llambda_\ell &= \sum_{\xx_j \in \gamma_\ell} \eeta(\xx_j) 
+      \Delta s_j, \\ 
+    \mu_\ell &= \sum_{\xx_j \in \gamma_\ell}
+      {(\xx_j - \cc_\ell)}^\perp \cdot \eeta(\xx_j) \Delta s_j,
   \end{aligned}
 \end{equation}
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  Since all the integrands are
@@ -618,8 +630,8 @@ required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost
 is determined by the cost of performing a matrix-vector multiplication,
 and the bulk of the cost is evaluating the $N$-term sum
 in~\eqref{eqn:completed_BIE_discretized}.  Naively, evaluating this sum
-at all points $\xx_i$, $i=1,\ldots,N$ requires $\bigO(N^2)$ operations.
-To reduce the computational cost, we use the Fast Multipole Method
+at all points requires $\bigO(N^2)$ operations.  To reduce the
+computational cost, we use the Fast Multipole Method
 (FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the complexity from
 $\bigO(N^2)$ to $\bigO(N)$.  Since the number of required GMRES
 iterations is mesh-independent, the overall complexity for
@@ -632,7 +644,8 @@ solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
 We have decomposed the deformation tensor into the contributions due to
 three different terms.  The contributions from the Stokeslets and the
 rotlets can be directly evaluated since $\rr \neq 0$ for all $\xx \in
-\gamma$.  However, the kernel of the deformation tensor due to the
+\gamma$.  For the layer potential term, we would like to use the
+trapezoid rule, but the kernel of the deformation tensor due to the
 double-layer potential~\eqref{eqn:shearStressDLP} 
 \begin{align*}
   K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
@@ -666,7 +679,7 @@ $\gamma_\ell$, with $i$ being odd, is approximated as
   \label{eqn:stressOddEven}
 \end{align}
 and a similar approximation is used when $i$ is even.  The deformation
-tensor due to the Stokeslets and rotlets is given in
+tensor due to the Stokeslets and rotlets are given in
 equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
 deformation tensor~\eqref{eqn:shearStressJump} is computed with Fourier
 differentiation.  Then, the shear stress is computed by multiplying the
@@ -1007,7 +1020,12 @@ quadrature~\cite{hel-oja2008a}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 \label{s:results}
-With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single body, as certain features can be predicted analytically and thus used for validation. We then discuss the erosion of multiple bodies and highlight important differences that arise compared to the single-body case.
+With the description of the methods complete, we now present numerical
+results on bodies eroding in Stokes flow. We first discuss the case of a
+single body, as certain features can be predicted analytically and thus
+used for validation. We then discuss the erosion of multiple bodies and
+highlight important differences that arise compared to the single-body
+case.
 
 \subsection{Shape evolution of a single eroding body}
 
@@ -1015,25 +1033,71 @@ With the description of the methods complete, we now present numerical results o
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.80 \textwidth]{./figs/01bodseq.pdf}
-\caption{A single body eroding in Stokes flow. As the body erodes, it develops a corner at its front and rear stagnation points, while remaining for-aft symmetric due to time-reversibility. Color indicates the vorticity of the surrounding flow, which, when evaluated on the boundary, gives the local shear stress. In this simulation, we use $N_\iin = 1024$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt = 1E-6$, and smoothing parameters of $\eps = 10/1024$ and $\sigma = 10/1024$.}
-\label{01bodseq}
+\caption{\label{01bodseq} A single body eroding in Stokes flow. As the
+body erodes, it develops a corner at its front and rear stagnation
+points, while remaining for-aft symmetric due to time-reversibility.
+Color indicates the vorticity of the surrounding flow, which, when
+evaluated on the boundary, gives the local shear stress. In this
+simulation, we use $N_\iin = 1024$ discretization points on the body,
+$N_\out = 1024$ points on the outer boundary, a time-step of $\Dt =
+1E-6$, and smoothing parameters of $\eps = 10/1024$ and $\sigma =
+10/1024$.}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points and shown at three evenly spaced times. Here, color represents the vorticity of the surrounding flow, which, when evaluated on the boundary, indicates the shear stress and thus the local erosion rate. As seen in the left-most snapshot, the body is initially circular and has the strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, with vorticity vanishing at the body's front and rear stagnation points. At the next instance, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender while wasting away. In this simulation, the body completely vanishes at a final time of $t_f = 1.79E-2$.
+Fig.~\ref{01bodseq} shows the erosion of a single body, numerically
+simulated with $N_\iin = 1024$ discretization points and shown at three
+evenly spaced times. Here, color represents the vorticity of the
+surrounding flow, which, when evaluated on the boundary, indicates the
+shear stress and thus the local erosion rate. As seen in the left-most
+snapshot, the body is initially circular and has the strongest vorticity
+above and below it. The flow is for-aft symmetric as a result of the
+time-reversibility of the Stokes equations, with vorticity vanishing at
+the body's front and rear stagnation points. At the next instance, the
+body has lost material due to erosion, but remains for-aft symmetric due
+to the flow symmetry. The greatest material loss has occurred at the
+body's top and bottom, where shear is strongest. Interestingly, the body
+has developed well-defined corners at its front and rear stagnation
+points. This geometric feature is a consequence of the erosion law,
+which depends on the {\em absolute} shear stress: wherever the stress
+vanishes, $\atau$ exhibits a corner, which manifests as a corner in the
+geometry. As shown in the third snapshot, this corner persists as the
+bodies becomes even more slender while wasting away. In this simulation,
+the body completely vanishes at a final time of $t_f = 1.79E-2$.
 
-To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$. The body seems to converge to a shape that resembles an American football -- a fairly slender, for-aft symmetric shape with corners at the front and back. Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$ corresponding to the rear stagnation point and $s/L = 0.5$ the front stagnation point. At early times (yellow to orange), the stress is distributed non-uniformly, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that {\em at} the stagnation points, the stress always vanishes, though in a region that becomes increasingly narrow.
+To better understand the shape evolution, Fig.~\ref{shrink_intface}(a)
+shows several superimposed interfaces at evenly spaced times. The
+interfaces are color-coded by normalized time $t/t_f$. The body seems to
+converge to a shape that resembles an American football---a fairly
+slender, for-aft symmetric shape with corners at the front and back.
+Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress,
+$\atau$, is distributed along each of these interfaces. The normalized
+arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$
+corresponding to the rear stagnation point and $s/L = 0.5$ the front
+stagnation point. At early times (yellow to orange), the stress is
+distributed non-uniformly, with highest values at the top and bottom of
+the body. As time proceeds, though, the stress becomes more evenly
+distributed along the body's surface (red). As the body nears the final
+stages of erosion (dark red), the stress actually becomes slightly
+higher near the stagnation points. A close look reveals that {\em at}
+the stagnation points, the stress always vanishes, though in a region
+that becomes increasingly narrow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.75 \textwidth]{./figs/shrink_intface.pdf}
-\caption{Shape and stress evolution. (a) Interfaces of the eroding body from Fig.~\ref{01bodseq} at evenly-spaced time intervals. Color indicates normalized time, $t/t_f$, where $t_f = 1.79E-2$ is the time at which the body completely vanishes. (b) The distribution of absolute shear stress, $\atau$, along each of these interfaces. Normalized arc length, $s/L$, runs counterclockwise from the rear stagnation point. The stress initially varies over the body's surface, but becomes more uniform over time.
-}
-\label{shrink_intface}
+\caption{\label{shrink_intface} Shape and stress evolution. (a)
+Interfaces of the eroding body from Fig.~\ref{01bodseq} at evenly-spaced
+time intervals. Color indicates normalized time, $t/t_f$, where $t_f =
+1.79E-2$ is the time at which the body completely vanishes. (b) The
+distribution of absolute shear stress, $\atau$, along each of these
+interfaces. Normalized arc length, $s/L$, runs counterclockwise from the
+rear stagnation point. The stress initially varies over the body's
+surface, but becomes more uniform over time.}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1042,29 +1106,45 @@ To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows sev
 
 \subsection{Scaling law for the vanishing rate}
 
-Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. Of course, such a relationship is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in two dimensions, though. The modification (made non-trivial by subtleties of the Stokes paradox) can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D cross-section perpendicular to the long axis, the stress (per unit $W$) can be estimated by
-\begin{equation}
-\label{eq:stresslaw}
-\tau \sim \frac{\mu \umax}{L \log(W/L)}
-\end{equation}
-In interpreting our 2D simulations, we will treat $W$ as fixed with the requirement $W \gg L$.
+Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that
+the spacing between successive interfaces becomes larger as the body
+shrinks, suggesting that the overall shear stress is growing. Of course,
+such a relationship is consistent with the well-known 3D Stokes drag
+law, $\tau \sim \mu \umax / L$, since stress is inversely proportional
+to body scale $L$. This law must be modified in two dimensions, though.
+The modification (made non-trivial by subtleties of the Stokes paradox)
+can be correctly deduced by noting that, as the body vanishes, its drag
+must be consistent with slender-body theory. For a slender body in flow
+perpendicular to its long-axis $W \gg L$, the drag is proportional to
+$\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D
+cross-section perpendicular to the long axis, the stress (per unit $W$)
+can be estimated by
+\begin{align}
+  \label{eqn:stresslaw}
+  \tau \sim \frac{\mu \umax}{L \log(W/L)}.
+\end{align}
+In interpreting our 2D simulations, we will treat $W$ as fixed with the
+requirement $W \gg L$.
 
-Now, the body's rate of area reduction is given by integrating the absolute shear stress around the boundary
-\begin{equation}
-\dot{A} = \int_{\gamma} \atau \, ds \, ,
-\end{equation}
+Now, the body's rate of area reduction is given by integrating the
+absolute shear stress around the boundary
+\begin{align*}
+  \dot{A} = \int_{\gamma} \atau \, ds \, ,
+\end{align*}
 giving the exact relationship
-\begin{equation}
-\dot{A} = \mean{\atau} L \, .
-\end{equation}
-Thus, the area-loss rate is given by the product of the mean shear $\mean{\atau}$ and the total perimeter $L$. Inserting the scaling law \eqref{eq:stresslaw} gives
- \begin{equation}
-\dot{A} \sim \frac{\mu \umax}{\log(W/L)} \, .
-\end{equation}
+\begin{align*}
+  \dot{A} = \mean{\atau} L \, .
+\end{align*}
+Thus, the area-loss rate is given by the product of the mean shear
+$\mean{\atau}$ and the total perimeter $L$. Inserting the scaling
+law~\eqref{eqn:stresslaw} gives
+\begin{align*}
+  \dot{A} \sim \frac{\mu \umax}{\log(W/L)} \, .
+\end{align*}
 Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body area changes with time
-\begin{equation}
-A (1 - \log A) = \areaconst (t_f - t)
-\end{equation}
+\begin{align*}
+  A (1 - \log A) = \areaconst (t_f - t)
+\end{align*}
 where $c_A$ is a constant.
 This is an {\em implicit} relationship for how the area scales down in time during erosion.
 In Fig.~6a, we show the body area as a function of time measured in the simulation
@@ -1086,30 +1166,66 @@ against the above scaling law with $\areaconst = 0.42$.
 
 \subsection{The limiting shape}
 
-With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}a.
+With the vanishing rate understood, we now seek to quantify the limiting
+shape observed in Fig.~\ref{shrink_intface}a.
 
 % Pozrikidis page 239: symmetric flow.
-Certain features of this shape can be predicted analytically by appealing to the principal of uniform stress distribution. In particular, consider the angle formed at the front and rear stagnation points. In long time, the stress becomes uniform, in particular in a small vicinity of this front angle in which body curvature can be ignored. Zooming in on the front angle, we can consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$ \cite{poz1997}. In this section alone, $\theta$ denotes the polar angle and not the tangent angle of the body.
-The corresponding stream function is assumed to take the form $\psi = r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th order ODE \cite{poz1997}
-\begin{equation}
-f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0
-\end{equation}
-This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$, where $\thb = \pi - \oangle/2$, along with the condition of odd-symmetry $f(0) = f''(0) = 0$ (corresponding to up-down symmetry of the flow).
-The corresponding shear stress evaluated on the surface of the wedge is $\tau = \mu r^{\lambda-2} f''(\thb)$. Thus, the wedge of uniform stress corresponds to $\lambda = 2$. For this value, the solution for $f$ satisfying odd symmetry is
-\begin{equation}
-f(\theta) = B \sin (2 \theta) + C \theta
-\end{equation}
+Certain features of this shape can be predicted analytically by
+appealing to the principal of uniform stress distribution. In
+particular, consider the angle formed at the front and rear stagnation
+points. In long time, the stress becomes uniform, in particular in a
+small vicinity of this front angle in which body curvature can be
+ignored. Zooming in on the front angle, we can consider the problem of
+Stokes flow around an infinite wedge of opening angle $\oangle$. Exact
+solutions can be obtained to this problem via separation of variables in
+polar coordinates $(r, \theta)$~\cite{poz1997}. In this section alone,
+$\theta$ denotes the polar angle and not the tangent angle of the body.
+The corresponding stream function is assumed to take the form $\psi =
+r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th
+order ODE~\cite{poz1997}
+\begin{align*}
+  f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0
+\end{align*}
+This ODE is subject to no-slip boundary conditions along the wedge
+$f(\thb) = f'(\thb) = 0$, where $\thb = \pi - \oangle/2$, along with the
+condition of odd-symmetry $f(0) = f''(0) = 0$ (corresponding to up-down
+symmetry of the flow).  The corresponding shear stress evaluated on the
+surface of the wedge is $\tau = \mu r^{\lambda-2} f''(\thb)$. Thus, the
+wedge of uniform stress corresponds to $\lambda = 2$. For this value,
+the solution for $f$ satisfying odd symmetry is
+\begin{align*}
+  f(\theta) = B \sin (2 \theta) + C \theta
+\end{align*}
 Imposing the no-slip boundary conditions gives the condition
-\begin{equation}
-\sin(2 \thb) - 2 \thb \cos(2 \thb) = 0
-\end{equation}
-which has solution $\thb \approx 129$ degrees. This gives an opening angle of $\oangle = 2(\pi - \thb) \approx 102$ degrees.
+\begin{align*}
+  \sin(2 \thb) - 2 \thb \cos(2 \thb) = 0
+\end{align*}
+which has a solution $\thb \approx 129$ degrees. This gives an opening
+angle of $\oangle = 2(\pi - \thb) \approx 102$ degrees.
 
-We aim to measure the opening angle in our simulation, but, curiously, the body vanishes before a steady-state is definitively reached. To obtain the true terminal shape, we could restart our simulation with the final eroded body scaled up and iterate this process until reaching steady state. A simpler solution, though, is to remove the effect of shrinking during the erosion process by simply modifying the normal velocity $\Vn$ to have zero mean
-\begin{equation}
-\Vn \leftarrow \Vn - \mean{\Vn}
-\end{equation}
-This modification allows erosion to modify the body shape as it would normally, but artificially keeps the area of the body fixed. We show in Fig.~\ref{fixed_intface}a several interfaces at equally spaced times. Notice the body obtains the slender, football shape seen previously, but here more precision is available. We also show in Fig.~\ref{fixed_intface}b the stress, showing that the stress becomes much more evenly distributed as time proceeds. In this figure, time is normalized by the same vanishing time $t_f = 1.79E-2$ as the simulation shown in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach a visually satisfying stead-state. This is very much in contrast to previous studies of erosion in high-Reynold's number flows, in which a reasonable steady-state was reached before the body vanished \cite{moo-ris-chi-zha-she2013}.
+We aim to measure the opening angle in our simulation, but, curiously,
+the body vanishes before a steady-state is definitively reached. To
+obtain the true terminal shape, we could restart our simulation with the
+final eroded body scaled up and iterate this process until reaching
+steady state. A simpler solution, though, is to remove the effect of
+shrinking during the erosion process by simply modifying the normal
+velocity $\Vn$ to have zero mean
+\begin{align*}
+  \Vn \leftarrow \Vn - \mean{\Vn}
+\end{align*}
+This modification allows erosion to modify the body shape as it would
+normally, but artificially keeps the area of the body fixed. We show in
+Fig.~\ref{fixed_intface}a several interfaces at equally spaced times.
+Notice the body obtains the slender, football shape seen previously, but
+here more precision is available. We also show in
+Fig.~\ref{fixed_intface}b the stress, showing that the stress becomes
+much more evenly distributed as time proceeds. In this figure, time is
+normalized by the same vanishing time $t_f = 1.79E-2$ as the simulation
+shown in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of
+$t_f$ are required to reach a visually satisfying stead-state. This is
+very much in contrast to previous studies of erosion in high-Reynold's
+number flows, in which a reasonable steady-state was reached before the
+body vanished~\cite{moo-ris-chi-zha-she2013}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1123,7 +1239,24 @@ This modification allows erosion to modify the body shape as it would normally, 
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-The fixed-area simulations allow us to make precise measurements of the body's opening angle and aspect ratio as displayed in Fig.~\ref{fig:arangle}. Figure \ref{fig:arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.7$ in long time. Figure \ref{fig:arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where there is high curvature that approximates an angle). The polynomial fit is then extrapolated to the stagnation point to get an angle estimate (subject to some uncertainty, which we estimate below). As seen in Fig.~\ref{fig:arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the value $102^\circ$ in long time. This coincides exactly with the valued predicted by our local solutions.
+The fixed-area simulations allow us to make precise measurements of the
+body's opening angle and aspect ratio as displayed in
+Fig.~\ref{fig:arangle}. Fig.~\ref{fig:arangle}a shows the aspect
+ratio, defined as the body's horizontal compared to its vertical width.
+The initial circular geometry has an aspect ratio of unity. As erosion
+causes the body to become more slender, the aspect ratio increases and
+tends to a value of $2.7$ in long time. Fig.~\ref{fig:arangle}b shows
+the body's opening angle, which we measure by fitting the tangent angle
+$\theta(\alpha)$ with a 7th degree polynomial over a region excluding
+the front/rear stagnation point (where there is high curvature that
+approximates an angle). The polynomial fit is then extrapolated to the
+stagnation point to get an angle estimate (subject to some uncertainty,
+which we estimate below). As seen in Fig.~\ref{fig:arangle}a, the
+opening angle is initially $180^\circ$, corresponding to the initially
+circular geometry. Erosion causes the angle to form after a short time,
+and the angle becomes increasingly sharp as it converges to the value
+$102^\circ$ in long time. This coincides exactly with the valued
+predicted by our local solutions.
 
 \todo[inline]{Also point to figure 7a, with the smoothed out corner}
 
@@ -1139,7 +1272,20 @@ The fixed-area simulations allow us to make precise measurements of the body's o
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-To examine the influence of the smoothing parameters, $\eps$ and $\sigma$, we show in Table~\ref{table:arangle} the measurements of aspect ratio and opening angle for different simulations. We fix the total number of discretization points at $N_\iin = 1024$ and sequently reduce the smoothing with $\eps$ and $\sigma$ always equal. We choose the values $20/1024$, $10/1024$, and $5/1024$. Roughly, this corresponds to smoothing over the nearest 20, 10, and 5 grid points respectively. As seen in the table, the aspect ratio converges to a values of $2.65$ and the opening angle converges to $102^{\circ}$. We also estimate the uncertainty in the angle measurements by varying the region of the polynomial fit and the degree of the fit. As shown in the table, as the smoothing parameters are reduced, the angle measurements become more precise.
+To examine the influence of the smoothing parameters, $\eps$ and
+$\sigma$, we show in Table~\ref{table:arangle} the measurements of
+aspect ratio and opening angle for different simulations. We fix the
+total number of discretization points at $N_\iin = 1024$ and
+sequentially reduce the smoothing with $\eps$ and $\sigma$ always equal.
+We choose the values $20/1024$, $10/1024$, and $5/1024$. Roughly, this
+corresponds to smoothing over the nearest 20, 10, and 5 grid points
+respectively. As seen in the table, the aspect ratio converges to a
+values of $2.65$ and the opening angle converges to $102^{\circ}$. We
+also estimate the uncertainty in the angle measurements by varying the
+region of the polynomial fit and the degree of the fit. As shown in the
+table, as the smoothing parameters are reduced, the angle measurements
+become more
+precise.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1181,8 +1327,8 @@ To examine the influence of the smoothing parameters, $\eps$ and $\sigma$, we sh
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is 56\% of the vanishing time.
-GOOD TERM: Cauchy-convergence.} 
+\caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is
+56\% of the vanishing time.  GOOD TERM: Cauchy-convergence.} 
 \caption{Convergence test: the stopping time is $t_s =$ 1E-2, which is
 56\% of the vanishing time.
 } 
