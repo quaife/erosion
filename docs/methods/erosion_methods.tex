@@ -811,16 +811,19 @@ Next, at the second stage of RK2, we discretize as
 \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \thhat_k^{(n)}}{\Dt} &=
 \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}.
 \end{align*}
-We again compute the integrating factor, $\mu_k^{(n+1)}$ via the
-\todo[inline]{insert integration rule}, giving
-\begin{align*}
-\thhat_k^{(n+1)} = 
-& \thhat_k^{(n)}
-\exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) +  \\
-& \Dt \, \hat{\NLterm}_k^{(n+1/2)}
-\exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} -
-\elfun^{(n)} \right) \right).
-\end{align*}
+
+We compute the integrating factor with RK2 to get
+\begin{align}
+\thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) +  \\
+& \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
+\end{align}
+
+%We again compute the integrating factor, $\mu_k^{(n+1)}$ via the
+%\todo[inline]{insert integration rule}, giving
+%\begin{align*}
+%\thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) +  \\
+%& \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{4} \eps k^2 \Dt \left( 3 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
+%\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post Processing Quantities of Interest}
