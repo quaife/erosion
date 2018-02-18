@@ -69,9 +69,10 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		# To advance theta, need zeta.
 		zeta0 = zetafun(len0,matau0)
 		zetad = zetafun(lend,mataud)
-		# The factors in the exponential smoothing.
+		# The first factor in the exponential smoothing.
 		fac1 = epsilon*dt1*zetad
 		
+		# The second factor, for which there are two possible approaches.
 		#fac2 = epsilon*dt2*0.5*(3*zetad-zeta0)	# Old Rule: uses trapezoid and midpoint combination.
 		fac2 = epsilon*dt2*(2*zetad-zeta0)		# New Rule: uses RK2 for everything.
 		
