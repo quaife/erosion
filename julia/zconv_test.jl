@@ -20,7 +20,7 @@ function shape_error(thld1::ThLenDenType, thld0::ThLenDenType)
 end
 
 # Test the convergence wrt dt.
-function convtest(nits::Int=3, dt0::Float64=1e-4, tfin::Float64=1e-2)
+function convtest(nits::Int=4, dt0::Float64=2e-4, tfin::Float64=1e-2)
 	# Initialize simulation variables.
 	paramsfile = "params.in"
 	thld1,params = startup(paramsfile)

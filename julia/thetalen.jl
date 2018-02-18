@@ -71,7 +71,10 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		zetad = zetafun(lend,mataud)
 		# The factors in the exponential smoothing.
 		fac1 = epsilon*dt1*zetad
-		fac2 = epsilon*dt2*0.5*(3*zetad-zeta0)
+		
+		#fac2 = epsilon*dt2*0.5*(3*zetad-zeta0)	# Old Rule: uses trapezoid and midpoint combination.
+		fac2 = epsilon*dt2*(2*zetad-zeta0)		# New Rule: uses RK2 for everything.
+		
 		# Advance to get the next theta.
 		th1 = expsmooth(th0-alpha,fac1) + alpha
 		th1 += dt1*expsmooth(nterm,fac2)
