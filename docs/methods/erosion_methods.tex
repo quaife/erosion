@@ -800,7 +800,8 @@ Once again, we must eventually compute the geometry at step $n+1$, and so we use
 \begin{align}
 \thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
-Again, both exponential terms act to reduce high-frequency oscillations in shape.
+Again, both exponential terms act to reduce high-frequency oscillations in shape. We note that the above approach would generalize to higher-order Runge-Kutta methods, such as RK4.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post Processing Quantities of Interest}
