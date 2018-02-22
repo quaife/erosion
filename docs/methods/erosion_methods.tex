@@ -80,7 +80,6 @@ no-slip boundaries.  Therefore, by computing the
 vorticity, we are able to locate regions where the erosion rates will be
 fastest or slowest.
 
-\todo[inline]{Note: I took out 'in the Stokesian limit' because the vorticity matches the shear stress on the boundary no matter what the Reynolds number is.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions} The present study develops numerical methods
@@ -684,12 +683,7 @@ stress with $\bigO(N)$ operations.
 \subsection{Time-stepping with the {\thL} method} 
 \label{sec:timeStepping}
 
-With the shear stress computed, we are now ready to evolve the interface
-of each body using equations~\eqref{eqn:Levo1}
-and~\eqref{eqn:thetaevo1}. As described in Section~\ref{sec:thetaL}, we
-use the {\thL} framework, with $\theta$ being the tangent angle and $L$
-the total arc length of a given boundary. Each boundary is
-parameterized by normalized arc length $\alpha = 2 \pi s / L$.
+With the shear stress computed, we are now ready to evolve the boundary of each body using equations~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1}.  As described in Section~\ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary. Each boundary is parameterized by normalized arc length $\alpha = 2 \pi s / L$.
 
 In addition to the curvature-dependent term in~\eqref{eqn:Vn}, we regularize boundary evolution by applying a narrow Gaussian filter to absolute shear stress
 \begin{align*}
@@ -722,8 +716,9 @@ and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
 \end{align}
-Here $\NLterm$ represents the nonlinear terms (and nonlocal terms) in
-the PDE for $\theta$.  
+Here $\NLterm$ represents the nonlinear terms (and nonlocal terms) in the PDE for $\theta$.  
+
+\todo[inline]{Need to remind reader that the diffusive term comes from smoothing and that this is the stiff term that could potential cause numerical problems.}
 
 We will evolve $\theta(\alpha)$ spectrally and so introduce the Fourier series
 \begin{align}
@@ -736,8 +731,7 @@ In spectral space,~\eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{align*}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k.
 \end{align*}
-Each ODE is first-order and linear (though variable-coefficient due to
-$\elfun$) and thus can be solved by using the integrating factor
+These ODEs can be solved by using the integrating factor
 \begin{align}
 \label{eq:mu}
 \mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right).
@@ -763,13 +757,13 @@ At the first stage of RK2 (the half step) we discretize \eqref{eq:mu}--\eqref{eq
 & \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \mu_k^{(n)} \thhat_k^{(n)}}{\Dt/2} 
 = \mu_k^{(n)} \hat{\NLterm}_k^{(n)}
 \end{align}
-where the superscript indicates the time step. At the next stage of RK2 it will be necessary to evaluate derivates at the half step $n+1/2$, thus requiring a call to the Stokes solver for which the shape of the bodies must be known through $\theta^{(n+1/2)}$. We therefore use \eqref{eq:mu12d} to solve \eqref{eq:th12d} for $\theta^{(n+1/2)}$, giving
+where the superscript indicates the time step. At the next stage of RK2 it will be necessary to evaluate derivates at the half step $n+1/2$, thus requiring a call to the Stokes solver for which the body shapes must be known. We therefore insert \eqref{eq:mu12d} into \eqref{eq:th12d} and solve for $\theta^{(n+1/2)}$, giving
 \begin{align}
 \label{eq:th12}
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
-\exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right)
+\exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right) \, .
 \end{align}
-Since $\zeta >0$, the exponential term always acts to smooth the geometry and thus mitigate numerical instabilities. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows one to compute the terms $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
+Since $\zeta >0$, the exponential term always acts to smooth the geometry and thus mitigate numerical instabilities. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
 
 At the second stage of RK2, we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} as 
 \begin{align}
@@ -781,11 +775,11 @@ At the second stage of RK2, we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} a
 & \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \mu_k^{(n)} \thhat_k^{(n)}}{\Dt} =
 \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}.
 \end{align}
-Once again, we must eventually compute the geometry at step $n+1$, and so we use \eqref{eq:mu1d} to solve \eqref{eq:th1d} for $\theta^{(n+1)}$, giving
+Once again, we must eventually compute the geometry at step $n+1$, and so we insert \eqref{eq:mu1d} into \eqref{eq:th1d} and solve for $\theta^{(n+1)}$, giving
 \begin{align}
 \thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
-Again, both exponential terms act to reduce high-frequency oscillations in shape. We note that the above approach would generalize to higher-order Runge-Kutta methods, such as RK4.
+Again, both exponential terms act to smooth high-frequency oscillations in shape. We note that the above approach would generalize to higher-order Runge-Kutta methods, such as RK4.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -812,7 +806,9 @@ integration~\cite{sid-isr1988}.
 \subsection{Vorticity}
 \label{sec:vorticity}
 We start by computing the vorticity $w(\xx) = v_x - u_y$ for $\xx \in
-\Omega$.  As we did for the shear stress, we compute the vorticity due
+\Omega$.  
+\todo[inline]{Shouldn't we use $\omega$ (lower-case omega) for vorticity?}
+As we did for the shear stress, we compute the vorticity due
 to the double-layer potential, Stokeslets, and rotlets individually.
 The vorticity of the double-layer potential~\eqref{eqn:velocityDLP} at
 $\xx \in \Omega$ is
@@ -897,15 +893,13 @@ differentiation is used to compute the arclength derivative.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Drag}
 \label{sec:drag}
-\todo[inline]{check all signs in this section.  Fortran code assumes a
-normal pointing into the eroding body and a tangent vector that
-corresponds to a couterclockwise parameterization}
 With the pressure and shear stress, the drag on a single body with
 boundary $\gamma_\ell$ is
 \begin{align}
-  F_D = \int_{\gamma_\ell} (-p \nn + \tau \ss)\,ds.
+  F_D = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
   \label{eqn:drag}
 \end{align}
+The reader may notice an unusual sign convention for pressure in this formula, which is simply due to the normal direction pointing {\em into} the bodies.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Near-singular integration}
@@ -1014,10 +1008,10 @@ $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt =
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-Fig.~\ref{01bodseq} shows the erosion of a single body, numerically
+Figure \ref{01bodseq} shows the erosion of a single body, numerically
 simulated with $N_\iin = 1024$ discretization points and shown at three
 evenly spaced times. Here, color represents the vorticity of the
-surrounding flow, which, when evaluated on the boundary, indicates the
+surrounding flow, which, when evaluated on the boundary, corresponds to the
 shear stress and thus the local erosion rate. As seen in the left-most
 snapshot, the body is initially circular and has the strongest vorticity
 above and below it. The flow is for-aft symmetric as a result of the
@@ -1031,13 +1025,13 @@ points. This geometric feature is a consequence of the erosion law,
 which depends on the {\em absolute} shear stress: wherever the stress
 vanishes, $\atau$ exhibits a corner, which manifests as a corner in the
 geometry. As shown in the third snapshot, this corner persists as the
-bodies becomes even more slender while wasting away. In this simulation,
+bodies becomes even more slender and continues to shrink. In this simulation,
 the body completely vanishes at a final time of $t_f = 1.79E-2$.
 
 To better understand the shape evolution, Fig.~\ref{shrink_intface}(a)
 shows several superimposed interfaces at evenly spaced times. The
 interfaces are color-coded by normalized time $t/t_f$. The body seems to
-converge to a shape that resembles an American football---a fairly
+converge to a shape that resembles an American football --- a fairly
 slender, for-aft symmetric shape with corners at the front and back.
 Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress,
 $\atau$, is distributed along each of these interfaces. The normalized
@@ -1072,32 +1066,30 @@ surface, but becomes more uniform over time.}
 
 \subsection{Scaling law for the vanishing rate}
 
-Interestingly, a brief look at Fig.~\ref{shrink_intface}(a) reveals that
+A brief look at Fig.~\ref{shrink_intface}(a) reveals that
 the spacing between successive interfaces becomes larger as the body
 shrinks, suggesting that the overall shear stress is growing. Of course,
 such a relationship is consistent with the well-known 3D Stokes drag
 law, $\tau \sim \mu \umax / L$, since stress is inversely proportional
 to body scale $L$. This law must be modified in two dimensions, though.
-The modification (made non-trivial by subtleties of the Stokes paradox)
-can be correctly deduced by noting that, as the body vanishes, its drag
-must be consistent with slender-body theory. For a slender body in flow
-perpendicular to its long-axis $W \gg L$, the drag is proportional to
+The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. 
+\todo[inline]{Here: add slender citations}
+For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to
 $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D
-cross-section perpendicular to the long axis, the stress (per unit $W$)
-can be estimated by
+cross-section, the stress per unit span can be estimated by
 \begin{align}
   \label{eqn:stresslaw}
   \tau \sim \frac{\mu \umax}{L \log(W/L)}.
 \end{align}
-In interpreting our 2D simulations, we will treat $W$ as fixed with the
+In interpreting our 2D simulations, we will treat the span, $W$, as fixed with the
 requirement $W \gg L$.
 
-Now, the body's rate of area reduction is given by integrating the
+The body's rate of area reduction is given by integrating the
 absolute shear stress around the boundary
 \begin{align*}
   \dot{A} = \int_{\gamma} \atau \, ds \, ,
 \end{align*}
-giving the exact relationship
+which gives the exact relationship
 \begin{align*}
   \dot{A} = \mean{\atau} L \, .
 \end{align*}
