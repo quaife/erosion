@@ -233,9 +233,8 @@ erode the fastest.}
 \label{s:formulation}
 We start by defining the main variables used to model erosion.  We only
 consider flows that are confined by a solid wall $\Gamma$ that encloses
-$M$ eroding bodies.  The bodies are denoted as $\gamma_\ell$,
-$\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup
-\gamma_M$.  Neglecting inertial forces, the dynamics of the fluid is
+$M$ eroding bodies as diagrammed in Fig.~\ref{fig:schematic}.  The bodies are denoted as $\gamma_\ell$, $\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup \gamma_M$.
+On each body, $\nn$ and $\ss$ denote the unit normal and unit tangent vectors respectively. Throughout the paper, we adopt the convention that $\ss$ points in the counterclockwise direction and $\nn$ points out of the fluid domain (i.e.~into the bodies). Neglecting inertial forces, the dynamics of the fluid is
 fully characterized by the position of the bodies $\xx_\ell(s,t) \in
 \gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given
 $\xx_\ell(s,t)$, $\ell=1,\ldots,M$, derived variables include the fluid
@@ -338,8 +337,7 @@ double-layer potential
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
     \label{eqn:velocityDLP}
 \end{align}
-where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
-normal at $\yy$, and $\eeta$ is an unknown density function.  The
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown density function.  The
 double-layer potential cannot capture velocity fields corresponding to
 rigid body motions~\cite{pow-mir1987}.  The rank deficiency is removed
 by complementing the double-layer potential with a Stokeslets and
@@ -405,6 +403,7 @@ The shear stress is
 \begin{align*}
   \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
 \end{align*}
+\todo[inline]{Check the sign with the Fortran code.}
 where $\ss$ and $\nn$ are the unit tangent and normal vectors,
 respectively (Fig.~\ref{fig:schematic}).  The velocity field of the
 completed double-layer potential~\eqref{eqn:completed_DLP} involves
@@ -473,9 +472,7 @@ double-layer potential is computed, the shear stress at $\xx_0 \in
 \subsection{Boundary evolution in the {\thL} framework} 
 \label{sec:thetaL}
 
-To evolve the boundaries, we use the {\thL} framework, which offers certain advantages in stabilizing fluid-structure interaction problems \cite{hou-low-she1994}. Throughout this section, we
-use the following conventions: the bodies are parametrized in the counterclockwise direction and the normal vector points into the bodies (Fig.~\ref{fig:schematic}).
-\todo[inline]{These conventions are probably already stated, right?}
+To evolve the boundaries, we use the {\thL} framework, which offers certain advantages in stabilizing fluid-structure interaction problems \cite{hou-low-she1994}.
 
 For numerical stability, we modify the erosion law \eqref{eqn:erosionModel} to include a term that depends on the local curvature $\kappa$. The idea is to prevent regions of very high
 curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus modify the normal velocity of each interface as follows
