@@ -401,11 +401,10 @@ Therefore, we use the second method.
 
 The shear stress is
 \begin{align*}
-  \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss,
+  \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss \, .
 \end{align*}
-\todo[inline]{Check the sign with the Fortran code.}
-where $\ss$ and $\nn$ are the unit tangent and normal vectors,
-respectively (Fig.~\ref{fig:schematic}).  The velocity field of the
+The reader may notice an unusual sign convention above, but this is simply a consequence of our conventions for $\nn$ and $\ss$ (see Fig.~\ref{fig:schematic}). 
+The velocity field of the
 completed double-layer potential~\eqref{eqn:completed_DLP} involves
 three terms: the double-layer potential, the Stokeslets, and the
 rotlets.  We compute the deformation tensor $\ssigma =
@@ -802,34 +801,32 @@ integration~\cite{sid-isr1988}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vorticity}
 \label{sec:vorticity}
-We start by computing the vorticity $w(\xx) = v_x - u_y$ for $\xx \in
-\Omega$.  
-\todo[inline]{Shouldn't we use $\omega$ (lower-case omega) for vorticity?}
-As we did for the shear stress, we compute the vorticity due
+We start by computing the vorticity $\omega(\xx) = v_x - u_y$ for $\xx \in
+\Omega$.  As we did for the shear stress, we compute the vorticity due
 to the double-layer potential, Stokeslets, and rotlets individually.
 The vorticity of the double-layer potential~\eqref{eqn:velocityDLP} at
 $\xx \in \Omega$ is
 \begin{align}
-  w^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
+  \omega^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4}
     (\rr \cdot \eeta) ds_{\yy}.
   \label{eqn:vorticityDLP}
 \end{align}
 The vorticity due to the Stokeslet is
 \begin{align*}
-  w^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
+  \omega^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
     \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2},
 \end{align*}
 and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
 \in \Omega$ is
 \begin{align*}
-  w(\xx) = w^\DD(\xx) + w^S(\xx).
+  \omega(\xx) = \omega^\DD(\xx) + \omega^S(\xx).
 \end{align*}
 To compute~\eqref{eqn:vorticityDLP} numerically, we apply the trapezoid
 rule with an upsampling scheme described in Section~\ref{sec:NSI}.
 
 For the Stokes equations, on boundaries that have a no-slip boundary
-condition, the shear stress is equivalent to the vorticity $w = v_x -
+condition, the shear stress is equivalent to the vorticity $\omega = v_x -
 u_y$.  Therefore, we do not need to compute the vorticity for $\xx \in
 \bd\Omega$.
 
@@ -893,7 +890,7 @@ differentiation is used to compute the arclength derivative.
 With the pressure and shear stress, the drag on a single body with
 boundary $\gamma_\ell$ is
 \begin{align}
-  F_D = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
+  \FD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
   \label{eqn:drag}
 \end{align}
 The reader may notice an unusual sign convention for pressure in this formula, which is simply due to the normal direction pointing {\em into} the bodies.
