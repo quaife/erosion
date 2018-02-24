@@ -36,7 +36,7 @@ also important in biophysical applications, for example plaque erosion in arteri
 is key to understanding heart disease~\cite{sha2002,
 gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can
 be explained by erosion~\cite{pic-van-hei2000}. 
-Much recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}. These processes can be linked conceptually as `sculpting with flow' \cite{ristroph2018sculpting}.
+Much recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}. All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow' \cite{ristroph2018sculpting}.
 
 Another application,
 which motivates the current work, is erosion caused by groundwater flow.
@@ -323,8 +323,11 @@ we modify this law in Section~\ref{sec:thetaL}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary Integral Equation Formulation} 
 \label{sec:bies}
-Here we describe a boundary integral equation to solve the fluid
-equations. In particular, we solve the incompressible Stokes equations
+
+In this section, we describe the boundary integral equations employed for the fluid
+equations \cite{Moore2007}
+\todo[inline]{Bryan do you want to add a bunch of references to your boundary integral papers here (or somewhere else)?}
+In particular, we solve the incompressible Stokes equations
 with Dirichlet boundary conditions 
 \begin{alignat*}{3}
   \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
@@ -1072,7 +1075,7 @@ surface, but becomes more uniform over time.}
 \subsection{Scaling law for the vanishing rate}
 
 Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in two dimensions, though.
-The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012}. 
+The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
 \todo[inline]{Here: add slender citations}
 For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to
 $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D
