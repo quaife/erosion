@@ -26,6 +26,7 @@ We consider two dimensional eroding bodies in Stokes flow
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
+
 Erosion is a fluid-mechanical process responsible for a variety
 of phenomena in geophysical and other settings.  For example,
 wind erosion causes sand dunes to be  longer on the windward
@@ -34,7 +35,10 @@ of rivers~\cite{coh-dev-sey-yi-szy-rot2015}.  Erosion is
 also important in biophysical applications, for example plaque erosion in arteries
 is key to understanding heart disease~\cite{sha2002,
 gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can
-be explained by erosion~\cite{pic-van-hei2000}.  Another application,
+be explained by erosion~\cite{pic-van-hei2000}. 
+Much recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}. These processes can be linked conceptually as `sculpting with flow' \cite{ristroph2018sculpting}.
+
+Another application,
 which motivates the current work, is erosion caused by groundwater flow.
 Here, a slow moving fluid erodes channels in the ground, and this
 affects the fluid transport.  In all these examples, there is a feedback
@@ -526,8 +530,11 @@ Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} +
 \thalpha \Vs \right).
 \end{align}
-System \eqref{eqn:Levo1}--\eqref{eqn:thetaevo1} comprise the main evolution equations that we will solve numerically in Section~\ref{sec:timeStepping}. In addition, it is necessary to track a reference point for each body, so that the variables $\theta$ and $L$ can be converted back into a cartesian grid. We choose to track the coordinates of the surface mean $\mean{\xx}$, which moves according to
+System \eqref{eqn:Levo1}--\eqref{eqn:thetaevo1} comprise the main evolution equations that we will solve numerically in Section~\ref{sec:timeStepping}. 
+
+In addition, it is necessary to track a reference point for each body, so that the variables $\theta$ and $L$ can be converted back into a cartesian grid. We choose to track the coordinates of the surface mean $\mean{\xx}$, which moves according to
 \begin{align}
+\label{eq:xsurf}
 \frac{d}{dt} \mean{\xx} = \mean{ V_s \ss + V_n \nn }
 \end{align}
 Tracking the surface mean is somewhat simpler than tracking the center of mass, but either choice would be valid.
@@ -779,7 +786,7 @@ Once again, we must eventually compute the geometry at step $n+1$, and so we ins
 \begin{align}
 \thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
-Again, both exponential terms act to smooth high-frequency oscillations in shape. We note that the above approach would generalize to higher-order Runge-Kutta methods, such as RK4.
+Again, both exponential terms act to smooth high-frequency oscillations in shape. We note that the above approach would generalize to higher-order Runge-Kutta methods, such as RK4. Finally, we track the reference point $\mean{x}$ of each body by simply discretizing \eqref{eq:xsurf} with the same RK2 method.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1064,13 +1071,8 @@ surface, but becomes more uniform over time.}
 
 \subsection{Scaling law for the vanishing rate}
 
-A brief look at Fig.~\ref{shrink_intface}(a) reveals that
-the spacing between successive interfaces becomes larger as the body
-shrinks, suggesting that the overall shear stress is growing. Of course,
-such a relationship is consistent with the well-known 3D Stokes drag
-law, $\tau \sim \mu \umax / L$, since stress is inversely proportional
-to body scale $L$. This law must be modified in two dimensions, though.
-The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory. 
+Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger as the body shrinks, suggesting that the overall shear stress is growing. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in two dimensions, though.
+The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012}. 
 \todo[inline]{Here: add slender citations}
 For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to
 $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D
