@@ -1158,7 +1158,7 @@ Loosely, this corresponds to smoothing over the nearest 20, 10, and 5 grid point
 
 \subsection{Convergence tests}
 
-As a final validation, we now aim to verify the second-order temporal convergence rate of our method. To this end, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with $N_\iin=128$) to a stopping time of $t_s = 1E-2$. This stopping time is 56\% of the time it takes for the body to vanish completely, so that the body has eroded substantially, but is not so small that accuracy is lost. We assess error by measuring the difference between simulations of successive temporal resolution (i.e.~we verify Cauchy convergence). In particular, we measure the $L^2$-difference of the body shapes obtained at the stopping time, $t_s$, while successively halving the timestep $\Delta t$. Table \ref{convtab} shows the $L^2$-errors between successive simulations, along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method to converges with second-order accuracy.
+As a final validation, we now aim to verify that our method converges with the predicted second order rate in time. To this end, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with a coarser $N_\iin=128$) to a stopping time of $t_s = 1E-2$. This stopping time is 56\% of the vanishing time and was chosen so that the body will have eroded substantially, but is not so small that accuracy is lost. We assess error by measuring the difference between simulations of successive temporal resolution (i.e.~we verify Cauchy convergence). In particular, we measure the $L^2$-difference of the body shapes obtained at the stopping time, $t_s$, while successively halving the timestep $\Delta t$. Table \ref{convtab} shows the $L^2$-errors between successive simulations, along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method to converges with second-order accuracy. In the table, we also show the CPU time of the simulation run on a single processor (though the algorithm is easily parallelized).
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1178,12 +1178,12 @@ As a final validation, we now aim to verify the second-order temporal convergenc
 %
 1/50		& 1.68E-5		& --		& 55 secs		\\
 1/100	& 4.84E-6		& 1.79	& 1.8 mins		\\
-1/200	& 1.30E-6		& 1.90	&	\\
-1/400	& 3.36E-7		& 1.95	&	\\
-1/800	& 8.54E-8		& 1.98	&	\\
-1/1600	& 2.15E-8		& 1.99	&	\\
-1/3200	& 5.40E-9		& 1.99	&	\\
-1/6400	& --			& --		&	\\
+1/200	& 1.30E-6		& 1.90	& 3.5 mins		\\
+1/400	& 3.36E-7		& 1.95	& 7.2 mins		\\
+1/800	& 8.54E-8		& 1.98	& 14 mins (?)	\\
+1/1600	& 2.15E-8		& 1.99	& 28 mins (?)	\\
+1/3200	& 5.40E-9		& 1.99	& 56 mins (?)	\\
+1/6400	& --			& --		& 1.9 hours(?)	\\
 %
 \hline
 \end{tabular}
@@ -1192,9 +1192,6 @@ As a final validation, we now aim to verify the second-order temporal convergenc
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Parameters in this test are: 01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0
-
-
-\todo[inline]{Could put CPU time in table too}
 
 
 \vsp{30}
