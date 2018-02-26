@@ -37,9 +37,10 @@ is key to understanding heart disease~\cite{sha2002,
 gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can
 be explained by erosion~\cite{pic-van-hei2000}. 
 Much recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}. All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow' \cite{ristroph2018sculpting}.
+% Later, we can take out a lot of these references, especially ones that are cited elsewhere in the paper. For example, Mitchell and Spagnolie and several of my papers are cited elsewhere.
 
-Another application,
-which motivates the current work, is erosion caused by groundwater flow.
+
+Another application, which motivates the current work, is erosion caused by groundwater flow.
 Here, a slow moving fluid erodes channels in the ground, and this
 affects the fluid transport.  In all these examples, there is a feedback
 process between the flow and the eroding bodies---the shape of the
@@ -474,7 +475,7 @@ double-layer potential is computed, the shear stress at $\xx_0 \in
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Boundary evolution in the {\thL} framework} 
+\subsection{Boundary evolution in the {\thL} framework and regularization} 
 \label{sec:thetaL}
 
 To evolve the boundaries, we use the {\thL} framework, which offers certain advantages in stabilizing fluid-structure interaction problems \cite{hou-low-she1994}.
@@ -984,7 +985,9 @@ quadrature~\cite{hel-oja2008a}.
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%-----------------------------------------------------------------%%
+% RESULTS SECTION
+%%-----------------------------------------------------------------%%
 \section{Results}
 \label{s:results}
 With the description of the methods complete, we now present numerical
@@ -994,7 +997,7 @@ used for validation. We then discuss the erosion of multiple bodies and
 highlight important differences that arise compared to the single-body
 case.
 
-\subsection{Shape evolution of a single eroding body}
+\subsection{A single body eroding in Stokes flow}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1073,7 +1076,7 @@ This is an {\em implicit} relationship for how the area scales down in time duri
 \todo[inline]{Explain the drag here too}
 
 
-\subsection{The limiting shape}
+\subsection{Local analysis for the limiting shape}
 
 With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge. We aim to determine the wedge's opening angle, $\oangle$, through the principle of uniform stress. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$~\cite{poz1997}. In this section alone, $\theta$ denotes the polar coordinate (not the local tangent angle along the body). The corresponding stream function is assumed to take the form $\psi = r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th order ODE~\cite{poz1997}
 \begin{align*}
@@ -1156,9 +1159,9 @@ Loosely, this corresponds to smoothing over the nearest 20, 10, and 5 grid point
 % npts = 1024
 
 
-\subsection{Convergence tests}
+\subsection{Convergence test}
 
-As a final validation, we now aim to verify that our method converges with the predicted second order rate in time. To this end, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with a coarser $N_\iin=128$) to a stopping time of $t_s = 1E-2$. This stopping time is 56\% of the vanishing time and was chosen so that the body will have eroded substantially, but is not so small that accuracy is lost. We assess error by measuring the difference between simulations of successive temporal resolution (i.e.~we verify Cauchy convergence). In particular, we measure the $L^2$-difference of the body shapes obtained at the stopping time, $t_s$, while successively halving the timestep $\Delta t$. Table \ref{convtab} shows the $L^2$-errors between successive simulations, along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method to converges with second-order accuracy. In the table, we also show the CPU time of the simulation run on a single processor (though the algorithm is easily parallelized).
+As a final validation, we now aim to verify that our method converges with second-order accuracy in time. To this end, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 1E-2$. This stopping time is 56\% of the time it takes the body to vanish, and was chosen so that the body will have eroded substantially but is not so small that accuracy is lost. We assess error by measuring the difference between simulations of successive resolutions (i.e.~we verify Cauchy convergence). In particular, we measure the $L^2$-difference of the body shapes obtained at the stopping time. At each stage we halve the timestep $\Delta t$. Table \ref{convtab} shows the $L^2$-errors between successive simulations, along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method to converges with second-order accuracy. In the table, we also show the CPU time of the simulation run on a single processor (though the algorithm is easily parallelized), showing a linear increase in computational time.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1180,10 +1183,10 @@ As a final validation, we now aim to verify that our method converges with the p
 1/100	& 4.84E-6		& 1.79	& 1.8 mins		\\
 1/200	& 1.30E-6		& 1.90	& 3.5 mins		\\
 1/400	& 3.36E-7		& 1.95	& 7.2 mins		\\
-1/800	& 8.54E-8		& 1.98	& 14 mins (?)	\\
-1/1600	& 2.15E-8		& 1.99	& 28 mins (?)	\\
-1/3200	& 5.40E-9		& 1.99	& 56 mins (?)	\\
-1/6400	& --			& --		& 1.9 hours(?)	\\
+1/800	& 8.54E-8		& 1.98	& 15 mins		\\
+1/1600	& 2.15E-8		& 1.99	& 30 mins (?)	\\
+1/3200	& 5.40E-9		& 1.99	& 60 mins (?)	\\
+1/6400	& --			& --		& 2.0 hours(?)	\\
 %
 \hline
 \end{tabular}
@@ -1193,6 +1196,15 @@ As a final validation, we now aim to verify that our method converges with the p
 % Parameters in this test are: 01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0
 
+
+\subsection{Multiple-body simulations}
+With the numerical method validated, we are now ready to simulate the erosion of multiple bodies.
+
+Possible list:
+\begin{itemize}
+\item Show multiple body simulation with fixed flow rate
+\item Then simulation with fixed pressure drop
+\end{itemize}
 
 \vsp{30}
 
@@ -1205,10 +1217,7 @@ Runs to do
 \begin{itemize}
   \item Single body
   \begin{itemize}
-    \item Aspect ratio and opening angle
     \item Drag and resistivity
-    \item Anisotropy
-    \item Vorticity
   \end{itemize}
   \item $\bigO(5)$ bodies
   \begin{itemize}
