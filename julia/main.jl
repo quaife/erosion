@@ -46,7 +46,7 @@ function erosion(thlenden::ThLenDenType, params::ParamType)
 	cputime = round( (time()-params.cput0)/60. , 2)
 	println("\n\n\nCOMPLETED SIMULATION")
 	println("cpu time = ", cputime, " minutes.\n\n")
-	return thlenden,params,tt
+	return thlenden,params,tt,cputime
 end
 
 # startup: Read params and geoinfile; setup stuff.

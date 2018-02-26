@@ -20,20 +20,20 @@ function shape_error(thld1::ThLenDenType, thld0::ThLenDenType)
 end
 
 # Test the convergence wrt dt.
-function convtest(nits::Int=4, dt0::Float64=2e-4, tfin::Float64=1e-2)
+function convtest(nits::Int=4, dt0::Float64=2e-4, tfin::Float64=1e-2; 
+		paramsfile::AbstractString="params_conv.in")
 	# Initialize simulation variables.
-	paramsfile = "params.in"
 	thld1,params = startup(paramsfile)
 	dtrat = 2.
 	# Initialize output arrays.
-	dragv,dtv,tv = [zeros(Float64,nits) for ii=1:3]
+	dragv,dtv,tv,cputime = [zeros(Float64,nits) for ii=1:4]
 	err_shape,err_drag = [zeros(Float64,nits-1) for ii=1:2]
 	# Loop over different dt values.
 	dt = dt0
 	for nn=1:nits
 		println("\n\nCONVERGENCE TEST: running number ", nn, " out of ", nits)
 		thld0 = deepcopy(thld1)
-		thld1,params,tv[nn] = erosion(paramsfile,dt,tfin)
+		thld1,params,tv[nn],cputime[nn] = erosion(paramsfile,dt,tfin)
 		dragv[nn] = drag(thld1,params)[1]
 		# Compute various errors.
 		if nn>1
@@ -59,5 +59,5 @@ function convtest(nits::Int=4, dt0::Float64=2e-4, tfin::Float64=1e-2)
 	println("\nThe shape errors: ", round(err_shape,4))
 	println("The shape order: ", round(order_shape,2))
 	println()
-	return dtv,err_shape,order_shape
+	return dtv,err_shape,order_shape,cputime
 end
