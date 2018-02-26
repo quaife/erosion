@@ -8,6 +8,9 @@
 
 \title{Viscous Erosion in Porous Media}
 
+% OTHER TITLE POSSIBILITIES
+% A fast and accurate method for viscous erosion in a 2D porous medium
+
 \author[Bryan]{Bryan D.~Quaife}
 \author[Nick]{M.~Nicholas J.~Moore}
 \address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
@@ -102,6 +105,23 @@ results.  Then, we compute the vorticity of erosion in
 multiply-connected geometries to better characterize erosion in porous
 media. 
 
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.9 \textwidth]{./figs/50bod.pdf}
+\caption{\label{fig:50bodies} A time lapse of 50 bodies eroding in a
+viscous flow.  The boundary conditions are a constant pressure drop that
+creates a flow from the left to right.  The rate of erosion is
+proportional to the shear stress which is equivalent to the vorticity
+evaluated on the bodies.  The colors represent the vorticity, so regions
+with large vorticity (in magnitude) are regions where the flow will
+erode the fastest.}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Figure generated from data file 50circ512p5, 
+%which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+
 To create high-fidelity and computationally efficient numerical methods,
 two fast and accurate methods are employed.  First, the fluid equations
 and the erosion rate (shear stress) are efficiently solved with spectral
@@ -176,8 +196,6 @@ erosion on a porous media is less understood.  With the methods
 developed in this paper, quantities such as the total drag across a
 porous region as a function of time can be computed in future work.
 
-
-
 To simulate multiple bodies, it is essential to resolve the nonlocal
 effects between the different bodies.  In this work, these interactions
 are included with high-order accuracy by using an integral equation
@@ -198,13 +216,13 @@ surface area is computed.  We include a similar calculation for the
 two-dimensional Stokes equations, and the resulting shape agrees with
 our numerical solution. 
 
+
 \todo[inline]{Dump of text}
 Other models for erosion include ones that use an erosion rate that is
 proportional to a power of the magnitude of the shear
 stress~\cite{par-izu2000}, or ones that use a critical shear stress
 below which erosion does not occur~\cite{lag2000}.
 \todo[inline]{Dump of text}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,22 +233,7 @@ numerical methods in both space and time are described.
 Section~\ref{s:results} gives several numerical examples.  Finally,
 concluding remarks are made in Section~\ref{s:conclusions}
 
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
-\begin{center}
-\includegraphics[width = 0.9 \textwidth]{./figs/50bod.pdf}
-\caption{\label{fig:50bodies} A time lapse of 50 bodies eroding in a
-viscous flow.  The boundary conditions are a constant pressure drop that
-creates a flow from the left to right.  The rate of erosion is
-proportional to the shear stress which is equivalent to the vorticity
-evaluated on the bodies.  The colors represent the vorticity, so regions
-with large vorticity (in magnitude) are regions where the flow will
-erode the fastest.}
-\end{center}
-\end{figure}
- %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-% Figure generated from data file 50circ512p5, 
-%which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,6 +277,7 @@ constant as bodies erode within it.  The boundary of the fluid domain is
 $\bd\Omega = \gamma_1 \cup \cdots \cup \gamma_M \cup \Gamma$.  To
 minimize the boundary effects of the inflow and outflow, we only place
 bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.
+
 \begin{figure}[htpb]
   \centering
   \input{figs/schematic.tikz}
@@ -1048,7 +1052,7 @@ requirement $W \gg L$.
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.9 \textwidth]{./figs/area_drag.pdf}
+\includegraphics[width = 0.85 \textwidth]{./figs/area_drag.pdf}
 \caption{The area and drag of an eroding body: (a) The body area measured in the simulations (black) shown against the scaling-law prediction \eqref{area_predict} (dotted red). The two are nearly indistinguishable. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate \eqref{viscdrag} for the viscous drag (dotted red).}
 \label{area_drag}
 \end{center}
@@ -1137,7 +1141,7 @@ Here, time is normalized by the same vanishing time $t_f = 1.79E-2$ as in Fig.~\
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.85 \textwidth]{./figs/arangle.pdf}
-\caption{Shape characteristics of an eroding body: (a) The aspect ratio, defined as the width to height, versus time. (b) The measured opening angle versus time. For both measurements, we show three cases of the smoothing parameters: $\eps = \sigma = 20/1024$, $\eps = \sigma = 10/1024$, and $\eps = \sigma = 5/1024$. In the most resolved simulation (the case 5/1024) the aspect ratio converges to 2.7 and the opening angle converges to the predicted value of $102^{\circ}$.}
+\caption{Shape characteristics of an eroding body: (a) The aspect ratio, defined as the width to height, versus time. (b) The measured opening angle versus time. For both measurements, we show three cases of the smoothing parameters: $\eps = \sigma = 20/1024, 10/1024,$ and 5/1024. In the most resolved simulation (5/1024) the aspect ratio converges to 2.7 and the opening angle converges to the predicted value of $102^{\circ}$ in long time.}
 \label{fig:arangle}
 \end{center}
 \end{figure}
