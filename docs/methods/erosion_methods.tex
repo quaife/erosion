@@ -1020,7 +1020,7 @@ Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is di
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.75 \textwidth]{./figs/shrink_intface.pdf}
+\includegraphics[width = 0.8 \textwidth]{./figs/shrink_intface.pdf}
 \caption{
 Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01bodseq} at evenly-spaced time intervals. Color indicates normalized time, $t/t_f$, where $t_f = 1.79E-2$ is the time at which the body completely vanishes. (b) The distribution of absolute shear stress, $\atau$, along each of these interfaces. Normalized arc length, $s/L$, runs counterclockwise from the rear stagnation point. The stress initially varies over the body's surface, but becomes more uniform over time.}
 \label{shrink_intface}
@@ -1087,6 +1087,17 @@ With the vanishing rate understood, we now seek to quantify the limiting shape o
 \begin{align*}
   f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0
 \end{align*}
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.4 \textwidth]{./figs/corner.pdf}
+\caption{2D Stokes flow near a corner: The flow around an infinite wedge of opening angle $\oangle$ is described by a stream-function $\psi(r,\theta)$ for $\theta \in [-\theta_0, \theta_0]$}.
+\label{corner}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+ 
 This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$, where $\thb = \pi - \oangle/2$, along with the condition of odd-symmetry $f(0) = f''(0) = 0$ (corresponding to up-down symmetry of the flow).  The corresponding shear stress evaluated on the surface of the wedge is $\tau = \mu r^{\lambda-2} f''(\thb)$. Thus, the wedge of uniform stress corresponds to $\lambda = 2$. For this value, the solution for $f$ satisfying odd symmetry is
 \begin{align*}
   f(\theta) = B \sin (2 \theta) + C \theta
@@ -1098,6 +1109,8 @@ Imposing the no-slip boundary conditions gives the condition
 which has a solution $\thb \approx 129$ degrees. This gives an opening angle of $\oangle = 2(180^{\circ} - \thb) \approx 102$ degrees. 
 % Pozrikidis page 239: symmetric flow.
 
+
+ 
 We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
