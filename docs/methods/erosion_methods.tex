@@ -1048,9 +1048,9 @@ requirement $W \gg L$.
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.8 \textwidth]{./figs/area_drag.pdf}
-\caption{One body}
-\label{}
+\includegraphics[width = 0.9 \textwidth]{./figs/area_drag.pdf}
+\caption{The area and drag of an eroding body: (a) The body area measured in the simulations (black) shown against the scaling-law prediction \eqref{area_predict} (dotted red). The two are nearly indistinguishable. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate \eqref{viscdrag} for the viscous drag (dotted red).}
+\label{area_drag}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1058,23 +1058,28 @@ requirement $W \gg L$.
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
 The body's rate of area reduction is given by integrating the absolute shear stress around the boundary
-\begin{align*}
-  \dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, .
-\end{align*}
+\begin{align}
+\dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, .
+\end{align}
 Thus, the area-loss rate is given by the product of the mean shear
 $\mean{\atau}$ and the total perimeter $L$. Inserting scaling law~\eqref{eqn:stresslaw} gives
-\begin{align*}
-  \dot{A} \sim \frac{\mu \umax}{\log(W/L)} \, .
-\end{align*}
+\begin{align}
+\dot{A} \sim \frac{ - \mu \umax}{\log(W/L)} \quad \text{as } L \to 0 \, . 
+\end{align}
 Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body area changes with time
-\begin{align*}
-  A (1 - \log A) = \areaconst (t_f - t)
-\end{align*}
-where $c_A$ is a constant.
-This is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~6a, we show the body area as a function of time measured in the simulation against the above scaling law with $\areaconst = 0.42$.
+\begin{align}
+\label{area_predict}
+A (c_1 - \log A) \sim c_2 (t_f - t) \qquad \text{as } t \to t_f \, .
+\end{align}
+where $c_1$ and $c_2$ are constants.
+This is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 =2.2$ and $c_2 = 30$. The comparison shows close agreement between the two (they are indistinguishable).
 
-\todo[inline]{Explain the drag here too}
-
+In Fig.~\ref{area_drag}(b), we show the drag $F_D$ measured on the body as it erodes. The drag decreases gradually, then takes a nose dive in the final moments when the body vanishes, as is consistent with the logarithmic dependence on lengthscale $L$ in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. As a final check, are scaling estimates for area change can be rearranged to estimate the viscous drag component
+\begin{align}
+\label{viscdrag}
+F_{\mu} \approx \mean{\atau} L \sim \frac{c_2}{-\log A + c_1 -1}
+\end{align}
+This scaling law is shown in the figure (red, dotted curve) and shows good agreement with the viscous drag. Of course, \eqref{viscdrag} is less accurate than the previous estimates since it does not take into account the normal direction of the surface, only the mean shear stress.
 
 \subsection{Local analysis for the limiting shape}
 

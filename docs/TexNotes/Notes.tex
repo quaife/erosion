@@ -154,6 +154,32 @@ where $W$ is the width in the third dimension. In the following, we will take $W
 
 
 \subsection{The vanishing rate of the area}
+
+The area loss rate is given by
+\begin{align}
+\dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, .
+\end{align}
+The above is an exact relation. Substitution of the scaling law gives
+\begin{align}
+\dot{A} \sim \frac{ - \mu V}{\log(W/L)} \, .
+\end{align}
+Inserting $A \sim L^2$ and rearranging gives
+\begin{align}
+\log (C_2 A/W^2) dA = C_1 \mu V dt
+\end{align}
+Integrating gives
+\begin{align}
+A \left(1 - \log(C_2 A/W^2) \right) = C_1 \mu U (t_f - t)
+\end{align}
+In the limit of $A \to 0$, the log-term on the left-hand-side will win, giving
+\begin{align}
+A(1 - \log(A) ) \sim c_A (t_f - t)
+\end{align}
+I have kept the one above, just so the graph of the scaling law doesn't look funny for bigger $A$.
+
+\vsp{5}
+TO KILL:
+
 The rate of area loss is given by
 \begin{equation}
 \dot{A} = - \abs{\tau} L
