@@ -1008,50 +1008,18 @@ case.
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-Figure \ref{01bodseq} shows the erosion of a single body, numerically
-simulated with $N_\iin = 1024$ discretization points and shown at three
-evenly spaced times. Here, color represents the vorticity of the
-surrounding flow, which, when evaluated on the boundary, corresponds to the
-shear stress and thus the local erosion rate. As seen in the left-most
-snapshot, the body is initially circular and has the strongest vorticity
-above and below it. The flow is for-aft symmetric as a result of the
-time-reversibility of the Stokes equations, with vorticity vanishing at
-the body's front and rear stagnation points. At the next instance, the
-body has lost material due to erosion, but remains for-aft symmetric due
-to the flow symmetry. The greatest material loss has occurred at the
-body's top and bottom, where shear is strongest. Interestingly, the body
-has developed well-defined corners at its front and rear stagnation
-points. This geometric feature is a consequence of the erosion law,
-which depends on the {\em absolute} shear stress: wherever the stress
-vanishes, $\atau$ exhibits a corner, which manifests as a corner in the
-geometry. As shown in the third snapshot, this corner persists as the
-bodies becomes even more slender and continues to shrink. In this simulation,
-the body completely vanishes at a final time of $t_f = 1.79E-2$.
+Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points and shown at three evenly spaced times. Here, color represents the vorticity of the surrounding flow, which, when evaluated on the boundary, corresponds to the shear stress and thus the local erosion rate. As seen in the left-most snapshot, the body is initially circular and has the strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, with vorticity vanishing at the body's front and rear stagnation points. 
+At the next instance, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender and continues to shrink. In this simulation, the body completely vanishes at a final time of $t_f = 1.79E-2$.
 
-To better understand the shape evolution, Fig.~\ref{shrink_intface}(a)
-shows several superimposed interfaces at evenly spaced times. The
-interfaces are color-coded by normalized time $t/t_f$. The body seems to
-converge to a shape that resembles an American football --- a fairly
-slender, for-aft symmetric shape with corners at the front and back.
-Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress,
-$\atau$, is distributed along each of these interfaces. The normalized
-arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$
-corresponding to the rear stagnation point and $s/L = 0.5$ the front
-stagnation point. At early times (yellow to orange), the stress is
-distributed non-uniformly, with highest values at the top and bottom of
-the body. As time proceeds, though, the stress becomes more evenly
-distributed along the body's surface (red). As the body nears the final
-stages of erosion (dark red), the stress actually becomes slightly
-higher near the stagnation points. A close look reveals that {\em at}
-the stagnation points, the stress always vanishes, though in a region
-that becomes increasingly narrow.
+To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$. The body seems to converge to a shape that resembles an American football --- a fairly slender, for-aft symmetric shape with corners at the front and back.
+Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$ corresponding to the rear stagnation point and $s/L = 0.5$ the front stagnation point. At early times (yellow to orange), the stress is distributed non-uniformly, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that {\em at} the stagnation points, the stress always vanishes, though in a region that becomes increasingly narrow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.75 \textwidth]{./figs/shrink_intface.pdf}
 \caption{
-Shape and stress evolution. (a) Interfaces of the eroding body from Fig.~\ref{01bodseq} at evenly-spaced time intervals. Color indicates normalized time, $t/t_f$, where $t_f = 1.79E-2$ is the time at which the body completely vanishes. (b) The distribution of absolute shear stress, $\atau$, along each of these interfaces. Normalized arc length, $s/L$, runs counterclockwise from the rear stagnation point. The stress initially varies over the body's surface, but becomes more uniform over time.}
+Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01bodseq} at evenly-spaced time intervals. Color indicates normalized time, $t/t_f$, where $t_f = 1.79E-2$ is the time at which the body completely vanishes. (b) The distribution of absolute shear stress, $\atau$, along each of these interfaces. Normalized arc length, $s/L$, runs counterclockwise from the rear stagnation point. The stress initially varies over the body's surface, but becomes more uniform over time.}
 \label{shrink_intface}
 \end{center}
 \end{figure}
@@ -1137,7 +1105,7 @@ Here, time is normalized by the same vanishing time $t_f = 1.79E-2$ as in Fig.~\
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.8 \textwidth]{./figs/fixed_intface.pdf}
-\caption{One body fixed area}
+\caption{Fixed-area simulations: (a) Interfaces of a body eroding under shear stress but with the area artifically kept constant. Inset: zoom near the rear stagnation point, showing that the corner is actually smooth on a fine scale. (b) The stress distribution on the surface of the body. Over time, the stress becomes more uniform.}
 \label{fixed_intface}
 \end{center}
 \end{figure}
@@ -1190,31 +1158,32 @@ Loosely, this corresponds to smoothing over the nearest 20, 10, and 5 grid point
 
 \subsection{Convergence tests}
 
-As a final validation, we now aim to verify the second-order temporal convergence rate of our method. To this end, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} to a stopping time of $t_s = 1E-2$, which is 56\% of the time it takes for the body to vanish completely. By this time, the body has eroded substantially, but is not so small that accuracy is lost. We assess error by measuring the difference between simulations of successive temporal resolution (i.e.~we verify Cauchy convergence). In particular, we measure the $L^2$-difference of the body shapes obtained at the stopping time, $t_s$, while successively halving the timestep $\Delta t$. Table \ref{convtab} shows the $L^2$-errors between successive simulations, along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method to converges with second-order accuracy.
+As a final validation, we now aim to verify the second-order temporal convergence rate of our method. To this end, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with $N_\iin=128$) to a stopping time of $t_s = 1E-2$. This stopping time is 56\% of the time it takes for the body to vanish completely, so that the body has eroded substantially, but is not so small that accuracy is lost. We assess error by measuring the difference between simulations of successive temporal resolution (i.e.~we verify Cauchy convergence). In particular, we measure the $L^2$-difference of the body shapes obtained at the stopping time, $t_s$, while successively halving the timestep $\Delta t$. Table \ref{convtab} shows the $L^2$-errors between successive simulations, along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method to converges with second-order accuracy.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{Convergence test: we run erosion simulations to a stopping time of $t_s =$ 1E-2 (56\% of the vanishing time) and measure the $L^2$ difference in shapes obtained with successive temporal resolution. The tests confirm the method to be second-order accurate in time.
+\caption{Convergence test: We run erosion simulations to a stopping time of $t_s =$ 1E-2 (56\% of the vanishing time) and measure the $L^2$ difference in shapes obtained with successive temporal resolution. The tests confirm the method to be second-order accurate in time.
 }
 \vspace{0.3 pc}
 \label{convtab}
-\begin{tabular}{c l l}
+\begin{tabular}{l l l l}
 \hline
-\hspace{0.5pc} $\Delta t/t_s$
+\hspace{0.0pc} $\Delta t/t_s$
 \hspace{0.5pc} & error 
-\hspace{0.5pc} & order \\
+\hspace{0.5pc} & order
+\hspace{0.5pc} & CPU time \\
 \hline
 %
-1/50		& 1.68E-5		& --		\\
-1/100	& 4.84E-6		& 1.79	\\
-1/200	& 1.30E-6		& 1.90	\\
-1/400	& 3.36E-7		& 1.95	\\
-1/800	& 8.54E-8		& 1.98	\\
-1/1600	& 2.15E-8		& 1.99	\\
-1/3200	& 5.40E-9		& 1.99	\\
-1/6400	& --			& --		\\
+1/50		& 1.68E-5		& --		& 55 secs		\\
+1/100	& 4.84E-6		& 1.79	& 1.8 mins		\\
+1/200	& 1.30E-6		& 1.90	&	\\
+1/400	& 3.36E-7		& 1.95	&	\\
+1/800	& 8.54E-8		& 1.98	&	\\
+1/1600	& 2.15E-8		& 1.99	&	\\
+1/3200	& 5.40E-9		& 1.99	&	\\
+1/6400	& --			& --		&	\\
 %
 \hline
 \end{tabular}
