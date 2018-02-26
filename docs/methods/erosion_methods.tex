@@ -1040,7 +1040,7 @@ $\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D
 cross-section, the stress per unit span can be estimated by
 \begin{align}
   \label{eqn:stresslaw}
-  \tau \sim \frac{\mu \umax}{L \log(W/L)}.
+  \tau \sim \frac{\mu \umax}{L \log(W/L)} \qquad \text{as } L \to 0 \, .
 \end{align}
 In interpreting our 2D simulations, we will treat the span, $W$, as fixed with the
 requirement $W \gg L$.
@@ -1059,7 +1059,7 @@ requirement $W \gg L$.
 
 The body's rate of area reduction is given by integrating the absolute shear stress around the boundary
 \begin{align*}
-  \dot{A} = \int_{\gamma} \atau \, ds \,  = \mean{\atau} L \, .
+  \dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, .
 \end{align*}
 Thus, the area-loss rate is given by the product of the mean shear
 $\mean{\atau}$ and the total perimeter $L$. Inserting scaling law~\eqref{eqn:stresslaw} gives
@@ -1095,19 +1095,10 @@ which has a solution $\thb \approx 129$ degrees. This gives an opening angle of 
 
 We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
 
-To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. However, our simulations lose accuracy just at the final moments before the body vanishes as a result of the shear stress blowing up (in accordance with the scaling laws discussed in Section \ref{sec:scaling}). To circumvent this problem, we could restart our simulation with a scaled-up version of the the near-final  body as the initial condition, and iterate this process until convergence. A simpler solution, though, is to remove the effect of shrinking by modifying the normal velocity $\Vn$ to have zero mean,
-\begin{align*}
-  \Vn \leftarrow \Vn - \mean{\Vn} \, .
-\end{align*}
-This modification allows erosion sculpt the body as it would normally, but artificially keeps the area fixed. We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process at equally-spaced times. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) shows a zoom of the body's rear stagnation point, demonstrating that the near-corner is actually smooth on a fine scale, in accordance with our numerical smoothing. 
-
-Figure~\ref{fixed_intface}(b) shows the stress distribution on the evolving body, revealing that stress becomes more uniform as time proceeds. Interestingly, the slight rise in shear near the front/rear corners that was seen in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that the effect was due to loss of accuracy.
-Here, time is normalized by the same vanishing time $t_f = 1.79E-2$ as in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state, which contrasts with previous studies of high-Reynold's-number erosion, where a satisfactory steady-state was usually reached before the body vanished~\cite{moo-ris-chi-zha-she2013}.
-
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.8 \textwidth]{./figs/fixed_intface.pdf}
+\includegraphics[width = 0.85 \textwidth]{./figs/fixed_intface.pdf}
 \caption{Fixed-area simulations: (a) Interfaces of a body eroding under shear stress but with the area artifically kept constant. Inset: zoom near the rear stagnation point, showing that the corner is actually smooth on a fine scale. (b) The stress distribution on the surface of the body. Over time, the stress becomes more uniform.}
 \label{fixed_intface}
 \end{center}
@@ -1116,13 +1107,19 @@ Here, time is normalized by the same vanishing time $t_f = 1.79E-2$ as in Fig.~\
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-The fixed-area simulations allow us to precisely measure the body's opening angle and aspect ratio as displayed in Fig.~\ref{fig:arangle}. Fig.~\ref{fig:arangle}a shows the aspect ratio, defined as the body's horizontal compared to its vertical width. The initial circular geometry has an aspect ratio of unity. As erosion causes the body to become more slender, the aspect ratio increases and tends to a value of $2.7$ in long time. Fig.~\ref{fig:arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where a near-corner is approximated by a smooth curve of very high curvature). The polynomial fit is then extrapolated to the stagnation point to get an angle estimate (subject to some uncertainty, which we estimate below). As seen in Fig.~\ref{fig:arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the value $102^\circ$ in long time. This coincides exactly with the valued predicted by our local solutions.
+To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. However, our simulations lose accuracy just in the final moments as the body is vanishing due to the shear stress blowing up (in accordance with the scaling laws discussed in Section \ref{sec:scaling}). To circumvent this problem, we could restart our simulation with a scaled-up version of the the near-final  body as the initial condition and iterate the process until convergence. A simpler solution, though, is to remove the effect of shrinking by modifying the normal velocity $\Vn$ to have zero mean,
+\begin{align*}
+  \Vn \leftarrow \Vn - \mean{\Vn} \, .
+\end{align*}
+This modification allows erosion sculpt the body as it normally would but artificially keeps the area fixed. We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process at equally-spaced times. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) shows a zoom of the body's rear stagnation point, demonstrating that the near-corner is actually smooth on a fine scale, in accordance with our numerical smoothing. 
+Likewise, Fig.~\ref{fixed_intface}(b) shows the stress distribution on the evolving body, revealing that stress becomes more uniform as time proceeds. Interestingly, the slight rise in shear near the front/rear corners that was seen in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that the effect was due to loss of accuracy.
+Here, time is normalized by the same vanishing time $t_f = 1.79E-2$ as in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state, which contrasts with previous studies of high-Reynold's-number erosion, in which a satisfactory steady-state was usually reached before the body vanished~\cite{moo-ris-chi-zha-she2013}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.8 \textwidth]{./figs/arangle.pdf}
-\caption{Aspect ratio and opening angle}
+\includegraphics[width = 0.85 \textwidth]{./figs/arangle.pdf}
+\caption{Shape characteristics of an eroding body: (a) The aspect ratio, defined as the width to height, versus time. (b) The measured opening angle versus time. For both measurements, we show three cases of the smoothing parameters: $\eps = \sigma = 20/1024$, $\eps = \sigma = 10/1024$, and $\eps = \sigma = 5/1024$. In the most resolved simulation (the case 5/1024) the aspect ratio converges to 2.7 and the opening angle converges to the predicted value of $102^{\circ}$.}
 \label{fig:arangle}
 \end{center}
 \end{figure}
@@ -1130,9 +1127,10 @@ The fixed-area simulations allow us to precisely measure the body's opening angl
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
+The fixed-area simulations allow for us to precisely measure characteristics of the shape. In particular, Fig.~\ref{fig:arangle} shows measurements of the body's aspect ratio (its width to height) and the front opening angle as they vary in time. We show these measurements for three simulations in which the smoothing parameters, $\eps$ and $\sigma$, are sequentially reduced, allowing us to assess convergence in these parameters. As shown in Fig.~\ref{fig:arangle}(a), the aspect ratio begins at one for the initial circular geometry and increases in time as erosion sculpts a more slender shape. The aspect ratio reaches a long time limit of about 2.7 in the most resolved simulation. Fig.~\ref{fig:arangle}b shows the body's opening angle, which we measure by fitting the tangent angle $\theta(\alpha)$ with a 7th degree polynomial over a region excluding the front/rear stagnation point (where a near-corner is approximated by a smooth curve of very high curvature). The polynomial fit is then extrapolated to the stagnation point to obtain an angle estimate (subject to some uncertainty, which we estimate below). As seen in Fig.~\ref{fig:arangle}a, the opening angle is initially $180^\circ$, corresponding to the initially circular geometry. Erosion causes the angle to form after a short time, and the angle becomes increasingly sharp as it converges to the value $102^\circ$ in the most resolved simulation. This coincides exactly with the valued predicted by our local solutions.
+
 To examine the influence of the smoothing parameters, $\eps$ and $\sigma$, we show in Table~\ref{table:arangle} the measurements of aspect ratio and opening angle for different simulations. We fix the total number of discretization points at $N_\iin = 1024$ and sequentially reduce the smoothing with $\eps$ and $\sigma$ always equal. We choose the values $20/1024$, $10/1024$, and $5/1024$. 
 Loosely, this corresponds to smoothing over the nearest 20, 10, and 5 grid points respectively. As seen in the table, the aspect ratio converges to a values of $2.65$ and the opening angle converges to $102^{\circ}$. We also estimate the uncertainty in the angle measurements by varying the region of the polynomial fit and the degree of the fit. As shown in the table, as the smoothing parameters are reduced, the angle measurements become more precise.
-
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%

@@ -261,40 +261,8 @@ so that our system becomes
 \label{theq}
 & \tderiv{}{t}\left( \mu_k \theta_k \right) = \mu_k \hat{N}_k
 \end{align}
-We discretize Eqs.~(\ref{Leq})--(\ref{theq}) with a second-order Runge-Kutta method (the midpoint RK2). In the first step, we go from time $t_n$ and take a half-step to $t_{n+1/2}$
-\begin{align}
-& L^{(n+1/2)}  = L^{(n)} + \frac{1}{2}\dt \, M^{(n)} \\
-& \theta_k^{(n+1/2)} = \nu \left( \theta_k^{(n)} + \frac{1}{2} \dt \,  \hat{N}_k^{(n)} \right)
-\end{align}
-Here, we have introduced
-\begin{equation}
-\nu = \frac{\mu_k^{(n)}}{\mu_k^{(n+1/2)}} = \exp \left( -4 \eps \pi^2 k^2 \int_{t_n}^{t_{n+1/2}} \zeta \, dt \right)
-\end{equation}
-Discretizing with trapezoid rule (and using the fact that $L$ can be solved for first to get $L^{(n+1/2)}$) gives
-\begin{equation}
-\nu = \exp \left(-\eps \pi^2 k^2 \dt \left( \elfun^{(n+1/2)} + \elfun^{n}\right)\right)
-\end{equation}
-Then we take the second step to $t_{n+1}$ as follows
-\begin{align}
-& L^{(n+1)}  = L^{(n)} + \dt \, M^{(n+1/2)} \\
-& \theta_k^{(n+1)} = \nu \left( \theta_k^{(n)} + \dt \,  \hat{N}_k^{(n+1/2)} \right)
-\end{align}
-where now we have
-\begin{equation}
-\nu = \frac{\mu_k^{(n)}}{\mu_k^{(n+1)}} = \exp \left( -4 \eps \pi^2 k^2 \int_{t_n}^{t_{n+1}} \zeta \, dt \right)
-\end{equation}
-which when discretized becomes
-\begin{equation}
-\nu = \exp \left(-2 \eps \pi^2 k^2 \dt \left( \elfun^{(n+1)} + \elfun^{n}\right)\right)
-\end{equation}
+We discretize Eqs.~(\ref{Leq})--(\ref{theq}) with a second-order Runge-Kutta method (the midpoint RK2). See the methods paper for details.
 
-
-
-
-\subsection{How to scale smoothing parameters?}
-We have two smoothing parameters: $\eps$ and $\sigma$. How should they scale with the simulation resolution parameters? The most important resolution parameter is $N$, the total number of points on each body, but there is also $\Delta t$ and maybe some others. Figuring out $\sigma$ is the easier part: $\sigma$ is a lengthscale and should go like $1/N$. On the other hand, $\eps$ is a diffusivity in dimensions. I did a calculation and found that $\eps$ should scale like $2/(\pi^2 N^2)$.
-
-The calculation is based on looking at Eq.~?, where $\sigma_1 \sim 2 \pi \sqrt{\eps \Delta t}$. For the largest wavenumbers, $k_{max} \sim N/2$, we want the smoothing to beat the nonlinear term (so that overall, these modes decay). So we need $e^{-\pi^2 \eps \Delta t N^2 / 2} < 1 - C\Delta t$, which gives $\eps > 2C/(\pi^2 N^2)$, independent of $\Delta t$. If $C=1$, this gives roughly $\eps > 0.2/ N^2$. However, this analysis did not take into account how the spectrum of the nonlinear term decays (or maybe it even grows???)
 
 
 \subsection{Tracking a reference point: the surface-averaged coordinates}
@@ -344,9 +312,6 @@ A = \int x n_x ds = \int y n_y ds
 \end{equation}
 \end{comment}
 % END CENTER OF MASS
-
-\subsection{Benchmark the interface evolution}
-It would be good to test the interface evolution, in particular verify that the curvature-driven-flow (CDF) is 2nd order accurate in time. Initially, I thought I would be able to get exact solutions for CDF, but it turns out that the PDE (\ref{thetaEvolve}) does not reduce to simply a diffusion equation, but instead still has nonlinear terms, thus making exact solutions impractical. I also tried to recast CDF in polar coordinates for star-shapes, but still the governing PDE is not simple enough to get exact solutions. Also, in the $\theta$-$L$ formulation I tried to determine the normal velocity to make the nonlinear terms vanish, but this does not appear possible either. Instead, I can do a completely numerical convergence test.
 
 
 \section{Permeability, conductivity, drag, resistance, and all that}
