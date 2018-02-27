@@ -1227,8 +1227,8 @@ With the numerical method validated, we are now ready to simulate the erosion of
 \caption{GMRES Iterations
 }
 \vspace{0.3 pc}
-\label{convtab}
-\begin{tabular}{c c c c}
+\label{itertab}
+\begin{tabular}{c c | c c}
 \hline
 \hspace{0.0pc} Number of bodies
 \hspace{0.5pc} & GMRES iterations 
@@ -1248,8 +1248,7 @@ With the numerical method validated, we are now ready to simulate the erosion of
 \end{center}
 \end{table}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-% Parameters in this test are: 01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2
-% epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0
+% In these tests I always use 128 points per body.
 
 \vsp{10}
 Possible list:
@@ -1258,7 +1257,7 @@ Possible list:
 \item Then simulation with fixed pressure drop
 \item GMRES counts
 %
-\item $\bigO(5)$ bodies
+\item $\bigO(5-10)$ bodies
 	\begin{itemize}
 	\item Area and Drag
 	\item Long channels between flat faces
