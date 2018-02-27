@@ -1223,12 +1223,12 @@ With the numerical method validated, we are now ready to simulate the erosion of
 
 We therefore impose the condition of a fixed pressure difference by controlling the incoming flow-rate $\umax$ at each time-step. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed, then measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. These upstream and downstream pressures are given by
 \begin{align}
-& p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \\
-& p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
+p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
+p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
 \end{align}
 We then rescale the computed density function by the pressure difference
 \begin{align}
-\eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, ,
+\eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, .
 \end{align}
 This rescaling maintains a {\em fixed} pressure difference. Because the Stokes equations are linear, such a rescaling is permissible and does not alter the accuracy of our method. Furthermore, rescaling by a different factor at each time-step is also permissible because the Stokes equations are memoryless (i.e.~there is no time derivative present in the PDEs).
 
