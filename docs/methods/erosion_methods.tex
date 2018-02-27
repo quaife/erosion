@@ -1187,7 +1187,7 @@ As a final validation, we now aim to verify that our method converges with secon
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{Convergence test: We run single-body erosion simulations to a stopping time of $t_s =$ 1E-2 (56\% of the vanishing time) and measure the $L^2$-difference in shapes obtained with successive temporal resolutions. The tests confirm the method to be second-order accurate in time.
+\caption{Convergence test: We run single-body erosion simulations to a stopping time of $t_s =$ 1E-2 (56\% of the vanishing time) and measure the $L^2$-difference in shapes obtained with successive temporal resolutions. The tests confirm the method to be second-order accurate in time. The last column shows the measured CPU time which increases linearly as the time-step is refined.
 }
 \vspace{0.3 pc}
 \label{convtab}
@@ -1220,6 +1220,38 @@ As a final validation, we now aim to verify that our method converges with secon
 \subsection{Multiple-body simulations}
 With the numerical method validated, we are now ready to simulate the erosion of multiple bodies.
 
+% Table
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{table}%[htbp]
+\begin{center}
+\caption{GMRES Iterations
+}
+\vspace{0.3 pc}
+\label{convtab}
+\begin{tabular}{c c c c}
+\hline
+\hspace{0.0pc} Number of bodies
+\hspace{0.5pc} & GMRES iterations 
+\hspace{0.5pc} & aaa
+\hspace{0.5pc} & bbb \\
+\hline
+%
+10	& 223	& a	& b	\\
+15	& 292	& a	& b	\\
+20	& 363	& a	& b	\\
+30	& 496	& a	& b	\\
+40	& 676	& a	& b	\\
+50	& 991	& a	& b	\\
+%
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Parameters in this test are: 01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2
+% epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0
+
+\vsp{10}
 Possible list:
 \begin{itemize}
 \item Show multiple body simulation with fixed flow rate
@@ -1236,8 +1268,6 @@ Possible list:
 	\item Area and Drag
 	\end{itemize}
 \end{itemize}
-
-\vsp{30}
 
 
 
