@@ -1234,12 +1234,45 @@ This rescaling maintains a {\em fixed} pressure difference. Because the Stokes e
 
 Briefly, to confirm that the rescaling does not alter accuracy, we show HERE a convergence test for 20 bodies with the condition of a fixed pressure drop.
 
+% Table
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{table}%[htbp]
+\begin{center}
+\caption{Convergence test for multiple-body erosion with fixed pressure drop.
+}
+\vspace{0.3 pc}
+\label{convtab}
+\begin{tabular}{l l l l}
+\hline
+\hspace{0.0pc} $\Delta t/t_s$
+\hspace{0.5pc} & error 
+\hspace{0.5pc} & order
+\hspace{0.5pc} & CPU time \\
+\hline
+%
+1/10     	& 2.67E-5  	& --        	& 14 mins  	\\
+1/20     	& 7.23E-6  	& 1.88 	& 27 mins  	\\
+1/40     	& 1.95E-6  	& 1.89 	& 52 mins  	\\
+1/80     	& 4.90E-7  	& 1.99 	& 1.7 hours	\\
+1/160     	& 1.25E-7  	& 1.97  	& 3.4 hours	\\
+%
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
+% epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
+
+
+\vsp{10}
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/06bod.pdf}
-\caption{\label{fig:50bodies} 6 bodies
+\caption{\label{fig:50bodies} 6 bodies. TO DO HERE: Number the bodies so that I can describe them.
 }
 %A time lapse of 50 bodies eroding in a viscous flow.  The boundary conditions are a constant pressure drop that creates a flow from the left to right.  The rate of erosion is proportional to the shear stress which is equivalent to the vorticity evaluated on the bodies.  The colors represent the vorticity, so regions with large vorticity (in magnitude) are regions where the flow will erode the fastest.
 \end{center}
@@ -1249,7 +1282,6 @@ Briefly, to confirm that the rescaling does not alter accuracy, we show HERE a c
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
 
-\vsp{10}
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
