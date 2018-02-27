@@ -1131,7 +1131,7 @@ We note that this uniform-stress shape is closely related to the so-called `opti
 
 To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. However, our simulations lose accuracy just in the final moments as the body is vanishing due to the shear stress blowing up (in accordance with the scaling laws discussed in Section \ref{sec:scaling}). To circumvent this problem, we could restart our simulation with a scaled-up version of the the near-final  body as the initial condition and iterate the process until convergence. A simpler solution, though, is to remove the effect of shrinking by modifying the normal velocity $\Vn$ to have zero mean,
 \begin{align*}
-  \Vn \leftarrow \Vn - \mean{\Vn} \, .
+\Vn \leftarrow \Vn - \mean{\Vn} \, .
 \end{align*}
 This modification allows erosion sculpt the body as it normally would but artificially keeps the area fixed. We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process at equally-spaced times. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) shows a zoom of the body's rear stagnation point, demonstrating that the near-corner is actually smooth on a fine scale, in accordance with our numerical smoothing. 
 Likewise, Fig.~\ref{fixed_intface}(b) shows the stress distribution on the evolving body, revealing that stress becomes more uniform as time proceeds. Interestingly, the slight rise in shear near the front/rear corners that was seen in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that the effect was due to loss of accuracy.
@@ -1218,7 +1218,38 @@ As a final validation, we now aim to verify that our method converges with secon
 
 
 \subsection{Multiple-body simulations}
-With the numerical method validated, we are now ready to simulate the erosion of multiple bodies.
+
+With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We make one important conceptual change to our model. For a realistic porous medium composed of many solid bodies, the condition of a fixed incoming flow rate $\umax$ is somewhat artificial. A more realistic condition is that the pressure difference from one end to another is held fixed. For example, in groundwater flow, this condition would correspond to a recharge region of given hydraulic head connecting to a discharge region of another hydraulic head. 
+
+We therefore impose the condition of a fixed pressure difference by controlling the incoming flow-rate $\umax$ at each time-step. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed, then measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. These upstream and downstream pressures are given by
+\begin{align}
+& p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \\
+& p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
+\end{align}
+We then rescale the computed density function by the pressure difference
+\begin{align}
+\eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, ,
+\end{align}
+This rescaling maintains a {\em fixed} pressure difference. Because the Stokes equations are linear, such a rescaling is permissible and does not alter the accuracy of our method. Furthermore, rescaling by a different factor at each time-step is also permissible because the Stokes equations are memoryless (i.e.~there is no time derivative present in the PDEs).
+
+Briefly, to confirm that the rescaling does not alter accuracy, we show HERE a convergence test for 20 bodies with the condition of a fixed pressure drop.
+
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.9 \textwidth]{./figs/06bod.pdf}
+\caption{\label{fig:50bodies} 6 bodies
+}
+%A time lapse of 50 bodies eroding in a viscous flow.  The boundary conditions are a constant pressure drop that creates a flow from the left to right.  The rate of erosion is proportional to the shear stress which is equivalent to the vorticity evaluated on the bodies.  The colors represent the vorticity, so regions with large vorticity (in magnitude) are regions where the flow will erode the fastest.
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Figure generated from data file 50circ512p5, 
+%which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+
+
+\vsp{10}
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
