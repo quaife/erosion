@@ -1219,9 +1219,9 @@ As a final validation, we now aim to verify that our method converges with secon
 
 \subsection{Multiple-body simulations}
 
-With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We make one important conceptual change to our model. For a realistic porous medium composed of many solid bodies, the condition of a fixed incoming flow rate $\umax$ is somewhat artificial. A more realistic condition is that the pressure difference from one end to another is held fixed. For example, in groundwater flow, this condition would correspond to a recharge region of given hydraulic head connecting to a discharge region of another hydraulic head. 
+With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We make one important conceptual change to our model. For a realistic porous medium composed of many solid bodies, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. A more realistic condition is that the pressure difference from one end to another is held fixed. For example, in groundwater flow, this condition would correspond to a recharge region of given hydraulic head connecting to a discharge region of another hydraulic head. 
 
-We therefore impose the condition of a fixed pressure difference by controlling the incoming flow-rate $\umax$ at each time-step. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed, then measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. These upstream and downstream pressures are given by
+We therefore impose the condition of a fixed pressure difference by controlling the incoming flow-rate, $\umax$, at each time-step. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed, then measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. The vertically-averaged upstream and downstream pressures are given by
 \begin{align}
 p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
 p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
@@ -1232,13 +1232,10 @@ We then rescale the computed density function by the pressure difference
 \end{align}
 This rescaling maintains a {\em fixed} pressure difference. Because the Stokes equations are linear, such a rescaling is permissible and does not alter the accuracy of our method. Furthermore, rescaling by a different factor at each time-step is also permissible because the Stokes equations are memoryless (i.e.~there is no time derivative present in the PDEs).
 
-Briefly, to confirm that the rescaling does not alter accuracy, we show HERE a convergence test for 20 bodies with the condition of a fixed pressure drop.
-
-% Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{Convergence test for multiple-body erosion with fixed pressure drop.
+\caption{Convergence test for multiple-body erosion with fixed-pressure drop condition. In this test, we use 20 bodies with $N_{\iin} = 128$ grid points on each. We run the simulations to a stopping time of $t_s = 4E-3$, which is 24\% of the time it takes for {\em all} bodies to vanish. We measure the {\em combined} $L^2$-difference in the shapes of {\em all} bodies. The table confirms that the method maintains second-order accuracy in time, even with multiple bodies and a time-varying inflow rate $\umax$.
 }
 \vspace{0.3 pc}
 \label{convtab}
@@ -1264,9 +1261,43 @@ Briefly, to confirm that the rescaling does not alter accuracy, we show HERE a c
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
 
+Briefly, to confirm that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table shows the method to retain second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table \ref{itertab} the GMRES count for various cases ...
 
-\vsp{10}
+% Table: GMRES iterations
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{table}%[htbp]
+\begin{center}
+\caption{GMRES Iterations
+}
+\vspace{0.3 pc}
+\label{itertab}
+\begin{tabular}{c c | c c}
+\hline
+\hspace{0.5pc} Number of bodies
+\hspace{0.5pc} & GMRES iterations 
+\hspace{0.5pc} & Resolution, $N_{\iin}$
+\hspace{0.5pc} & GMRES iterations  \\
+\hspace{0.0pc} ($N_\iin = 128$ in each) & 
+\hspace{0.5pc} &(10 bodies in each) & \\
+\hline
+%
+10	& 223	& 32	    	& ?	\\
+15	& 292	& 64    	& ?	\\
+20	& 363	& 128	& ?	\\
+30	& 496	& 256	& ?	\\
+40	& 676	& 512	& ?	\\
+50	& 991	& 1024	& ?	\\
+%
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% In these tests I always use 128 points per body.
 
+
+
+\vsp{20}
 6 body simulations. Point out that this arrangement was designed to have some near contacts (e.g. between bodies 1 and 2) and the simulation handles this fine.
 Point out that the bodies tend to develop flat faces wherever there is a nearby body (now that the bodies are numbered, can refer to specific bodies). Point out high vorticity in this channels between bodies. Spontaneous channelization. Point out that our algorithm allows bodies to vanish seamlessly, for example body 4. Point out that the vorticity levels increases as the flow rate increases (due to fixing the pressure drop).
 
@@ -1285,35 +1316,8 @@ Point out that the bodies tend to develop flat faces wherever there is a nearby 
 
 
 
-% Table
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{table}%[htbp]
-\begin{center}
-\caption{GMRES Iterations
-}
-\vspace{0.3 pc}
-\label{itertab}
-\begin{tabular}{c c | c c}
-\hline
-\hspace{0.0pc} Number of bodies
-\hspace{0.5pc} & GMRES iterations 
-\hspace{0.5pc} & aaa
-\hspace{0.5pc} & bbb \\
-\hline
-%
-10	& 223	& a	& b	\\
-15	& 292	& a	& b	\\
-20	& 363	& a	& b	\\
-30	& 496	& a	& b	\\
-40	& 676	& a	& b	\\
-50	& 991	& a	& b	\\
-%
-\hline
-\end{tabular}
-\end{center}
-\end{table}
- %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-% In these tests I always use 128 points per body.
+\newpage
+
 
 \vsp{10}
 Possible list:
