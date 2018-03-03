@@ -78,8 +78,8 @@ by, first, introducing a tangential velocity field to maintain a grid
 that is equispaced in arc length, but that does not affect the dynamics,
 and, second, a curvature penalization term.  Furthermore, the frame of
 reference is changed to \thL~variables so that the curvature term
-appears as a diffusive term that can easily be treated implicitly
-to avoid stiffness.
+appears as a diffusive term that can easily be handled in a 
+numerically stable fashion, e.g.~via an exponential integrator or an implicit method.
 
 In addition to simulating the eroding grains, the flow is further
 characterized by computing the vorticity in the flow.  The vorticity is
@@ -97,7 +97,7 @@ assume the flow is viscous (ie.~zero Reynolds number).  By allowing for
 complex multiply-connected domains, we capture the effect that
 interacting bodies have on erosion, and the grains in the flow are
 individually resolved rather than homogenized.  We start by validating
-our method on a single circular body placed symmetrically in a pipe
+our method on a single circular body placed symmetrically in a CHANNEL
 flow.  By artificially fixing the area of the body as a function of
 time, we are able to characterize the long-time behavior of the shape
 and the resulting flow and compare these results with analytical
@@ -136,13 +136,22 @@ of high and low erosion.
 A challenge with erosion is that it creates corners at points on the
 body where the shear stress vanishes.  While recent work does allow for
 integral equation methods to resolve corners, we employ a different
-method.  First, we add a regularization term to the shear stress to
+method.  
+\todo[inline]{Maybe point out some drawbacks of using one of these BIE methods that allows corners. For example, are these methods more conceptually complex and/or more expensive? Maybe they are not quite at a mature stage for application? Another point: in the simulations we cannot predict where corners will form and so would have to identify them on the fly. Would this cause a problem if we tried to use a corner-resolving BIE?}
+\todo[inline]{Could say our approach is simpler because  by smoothing corners, we can use the bare-bones BIE methods that are more well established compared to these newer, corner-resolving methods. Just some thoughts.}
+First, we add a regularization term to the shear stress to
 penalize regions of high curvature.  Second, we apply a Gaussian filter
 to smooth the absolute value of the shear stress before the body shape
 is updated.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Limitations} There are two main limitations of the current
+\paragraph{Limitations} 
+
+\todo[inline]{These are some of my thoughts on reworking this first paragraph. See if you like it.}
+We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to 2D allows us to simulate the erosion of many bodies (order 50-100) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIE methods are available in 3D, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
+
+\todo[inline]{This is the original below:}
+There are two main limitations of the current
 work.  First, the flow is assumed to be two-dimensional.  However, by
 assuming that the flow is two-dimensional, we are able to simulate the
 erosion of more bodies and with higher resolution than would be
@@ -342,6 +351,7 @@ The boundary condition $\ff$ is the prescribed velocity $\UU$ on
 $\Gamma$, and it is zero on the grains $\gamma$.  As the viscosity $\mu$
 also sets the time scale, we take $\mu=1$.  We start by defining the
 double-layer potential
+\todo[inline]{Do you think we should flesh out this time-scale stuff more precisely? i.e.~By setting $\mu = 1$ and $C = 1$ (the erosion constant), what exactly is the timescale that defines our dimensionless time.}
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
@@ -491,7 +501,7 @@ curvature from developing, as these regions would compromise the accuracy and st
   \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1
   \right).
 \end{align}
-The second term on the right is the curvature-dependent modification, the strength of which is controlled by the parameter $\eps \ll 1$. Here, $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a boundary mean. This term causes regions of high curvature to recede more rapidly, thus smoothing any high-frequency oscillations that my exist. Since a closed body has mean curvature $\mean{\kappa} = 2\pi / L$, this smoothing term has mean zero and and thus preserves area. Therefore, the only source of material loss is the shear-stress itself. In addition, we have scaled the smoothing term on the mean absolute shear, $\mean{\atau}$, so that the ratio of smoothing-to-erosion always remains fixed, even as bodies vanish.
+The second term on the right is the curvature-dependent modification, the strength of which is controlled by the parameter $\eps \ll 1$. Here, $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a boundary mean. This term causes regions of high curvature to recede more rapidly, thus smoothing any high-frequency oscillations that may exist. Since a closed body has mean curvature $\mean{\kappa} = 2\pi / L$, this smoothing term has mean zero and and thus preserves area. Therefore, the only source of material loss is the shear-stress itself. In addition, we have scaled the smoothing term on the mean absolute shear, $\mean{\atau}$, so that the ratio of smoothing-to-erosion always remains fixed, even as bodies vanish.
 
 We now introduce the tangent angle, $\theta$, defined through the relation
 \begin{align*}
@@ -698,6 +708,8 @@ stress with $\bigO(N)$ operations.
 \label{sec:timeStepping}
 
 With the shear stress computed, we are now ready to evolve the boundary of each body using equations~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1}.  As described in Section~\ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary. Each boundary is parameterized by normalized arc length $\alpha = 2 \pi s / L$.
+
+\todo[inline]{Mention key term exponential integrator for stiff term.}
 
 In addition to the curvature-dependent term in~\eqref{eqn:Vn}, we regularize boundary evolution by applying a narrow Gaussian filter to absolute shear stress
 \begin{align*}
