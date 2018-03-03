@@ -520,7 +520,7 @@ The evolution of the interface is then given by the combination of the normal an
 \begin{align}
 \dot{\xx}(t) = \Vn \nn + \Vs \ss \, .
 \end{align}
-Since $\Vs$ is tangential, it does not modify the erosion law \eqref{eqn:Vn}, only the underlying grid.
+Since $\Vs$ is tangential, it does not modify the physics of erosion, only the grid spacing.
 
 When recast in the variables $\theta$ and $L$, the interface evolution becomes
 \begin{align}
@@ -537,14 +537,13 @@ Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} +
 \thalpha \Vs \right).
 \end{align}
-System \eqref{eqn:Levo1}--\eqref{eqn:thetaevo1} comprise the main evolution equations to be solved numerically in Section~\ref{sec:timeStepping}. 
-
-In addition, it is necessary to track a reference point for each body, so that the variables $\theta$ and $L$ can be converted back to cartesian coordinates. We track the coordinates of the surface mean $\mean{\xx}$, which moves according to
+These are the main evolution equations for $\theta(\alpha,t)$ and $L(t)$.
+In addition, it is necessary to track a reference point for each body, so that the {\thL} variables can be converted back to cartesian coordinates. We track the coordinates of the surface mean $\mean{\xx}$, which moves according to
 \begin{align}
 \label{eq:xsurf}
 \frac{d}{dt} \mean{\xx} = \mean{ V_s \ss + V_n \nn }
 \end{align}
-We note that tracking the center of mass is also a valid choice, but the surface mean gives a somewhat simpler formula.
+We note that tracking the center of mass is also a valid choice, but the surface mean gives a somewhat simpler formula. Equations \eqref{eqn:Levo1}--\eqref{eq:xsurf} comprise the main system of equations to be solve numerically in Section~\ref{sec:timeStepping}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -696,25 +695,22 @@ stress with $\bigO(N)$ operations.
 \subsection{Time-stepping with the {\thL} method} 
 \label{sec:timeStepping}
 
-With the shear stress computed, we are now ready to evolve the boundary of each body using equations~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1}.  As described in Section~\ref{sec:thetaL}, we use the {\thL} framework, with $\theta$ being the tangent angle and $L$ the total arc length of a given boundary. Each boundary is parameterized by normalized arc length $\alpha = 2 \pi s / L$.
+With the shear stress computed, we are now ready to numerically evolve the boundaries using the {\thL} framework. The main equations to be solved are \eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalization term into the erosion law \eqref{eqn:Vn}. This term smooths out high-frequency oscillations, but also introduces {\em stiffness} into evolution equation \eqref{eqn:thetaevo1} for $\theta(\alpha,t)$. For numerical stability, we will treat the stiff term with an exponential integrator, while handling all other terms in \eqref{eqn:Levo1}--\eqref{eq:xsurf} with an explicit Runge-Kutta method. Ultimately, we will arrive at a method that is second-order in time.
 
-\todo[inline]{Mention key term exponential integrator for stiff term.}
-
-In addition to the curvature-dependent term in~\eqref{eqn:Vn}, we regularize boundary evolution by applying a narrow Gaussian filter to absolute shear stress
-\begin{align*}
-\atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma} \exp \left(-
-\frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \,
-d\alpha'.
-\end{align*}
-Here $\sigma$ sets the width of the filter. The corresponding normal and tangential interface velocities are then given by
-\begin{align*}
+First, we must address a second potential source of numerical instability. The erosion law \eqref{eqn:Vn} depends on the {\em absolute value} of shear stress, $\atau$, which exhibits a corner anywhere $\tau$ changes sign (a stagnation point). This corner in $\atau$ introduces high frequencies into \eqref{eqn:thetaevo1} which could result in either numerical instability or an extremely stringent step-size restriction. To avoid these difficulties, we smooth $\atau$ via a narrow Gaussian filter of width $\sigma$
+\begin{align}
+\atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma}
+ \exp \left(- \frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \, d\alpha' \, ,
+\end{align}
+with corresponding normal and tangential interface velocities
+\begin{align}
 & \Vnsig = \atausig +  \eps \mean{\atausig}
 \left(\pderiv{\theta}{\alpha} - 1 \right), \\
 & \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}.
-\end{align*}
+\end{align}
 
-For convenience, we introduce the variables
-\begin{align*}
+We now consider the system of evolution equations given by \eqref{eqn:Levo1}--\eqref{eq:xsurf}. For convenience, we introduce the following variables
+\begin{align}
 %\label{eq:M}
 & \Mterm = - 2 \pi \mean{\thalpha \Vnsig}, \\
 %\label{eq:N}
@@ -722,36 +718,32 @@ For convenience, we introduce the variables
 \Vssig \right), \\
 %\label{eq:elfun}
 & \elfun = \frac{2 \pi}{L}  \mean{\atausig} \, .
-\end{align*}
-Then, the evolution equations~\eqref{eqn:Levo1}
-and~\eqref{eqn:thetaevo1} can be compactly expressed as
+\end{align}
+Then, ~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \begin{align}
 \label{eqn:Levo2}
 & \tderiv{L}{t} = \Mterm, \\
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
 \end{align}
-Here $\NLterm$ represents the nonlinear terms (and nonlocal terms) in the PDE for $\theta$.  
+The first term on the right-hand-side of \eqref{eqn:thetaevo2} is the stiff term that results from the curvature penalization. This term is multiplied by $\zeta$, which is spatially constant but time dependent (due to $L$ and $\mean{\atau}$). The second term, $\NLterm$, represents the rest of the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
 
-\todo[inline]{Need to remind reader that the diffusive term comes from smoothing and that this is the stiff term that could potential cause numerical problems.}
-
-We will evolve $\theta(\alpha)$ spectrally and so introduce the Fourier series
+We will evolve $\theta(\alpha,t)$ spectrally and so introduce the Fourier series
 \begin{align}
 \label{thetaSeries}
- \theta(\alpha,t) &= \alpha + \FourierSum \thhat_k e^{ i k \alpha}, \\
- \NLterm(\alpha,t)  &= \FourierSum \widehat{\NLterm}_k e^{ i k \alpha}.
+ \theta(\alpha,t) &= \alpha + \FourierSum \thhat_k e^{ i k \alpha} \, , \\
+ \NLterm(\alpha,t)  &= \FourierSum \widehat{\NLterm}_k e^{ i k \alpha} \, .
 \end{align}
-The careful reader will notice that in \eqref{thetaSeries}, we have decomposed $\theta(\alpha)$ into a linear component and a periodic component.
-In spectral space,~\eqref{eqn:thetaevo2} produces the system of ODEs
+The careful reader will notice that in \eqref{thetaSeries}, we have decomposed $\theta(\alpha)$ into a linear component and a periodic component. In spectral space,~\eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{align*}
-\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k.
+\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k \, .
 \end{align*}
-These ODEs can be solved by using the integrating factor
+These ODEs can be solved by applying the integrating factor
 \begin{align}
 \label{eq:mu}
-\mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right).
+\mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right) \, ,
 \end{align}
-We are therefore led to the coupled system of ODEs
+which leads to the coupled system of ODEs
 \begin{align}
 \label{eqn:Levo3}
 & \tderiv{L}{t} = \Mterm, \\
