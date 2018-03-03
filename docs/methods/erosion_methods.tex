@@ -72,7 +72,7 @@ fluid dynamics, the body is eroded in the normal direction at a rate
 that is proportional to the magnitude of the shear
 stress~\cite{ris-moo-chi-she-zha2012}.  Tracking the interface of
 fluid-structure interaction problems with a long time horizon is
-particularly---the mesh is often distorted and tangled by the dynamics
+particularly (???) ---the mesh is often distorted and tangled by the dynamics
 and regions of high curvature develop.  These two issues are resolved
 by, first, introducing a tangential velocity field to maintain a grid
 that is equispaced in arc length, but that does not affect the dynamics,
@@ -489,55 +489,45 @@ double-layer potential is computed, the shear stress at $\xx_0 \in
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Boundary evolution in the {\thL} framework and regularization} 
+\subsection{Boundary evolution in the {\thL} framework} 
 \label{sec:thetaL}
 
-To evolve the boundaries, we use the {\thL} framework, which offers certain advantages in stabilizing fluid-structure interaction problems \cite{hou-low-she1994}.
+To evolve the boundaries of eroding bodies, we will use the {\thL} framework which offers certain advantages in numerically stabilizing moving-interface problems \cite{hou-low-she1994}. Here, $\theta$ is the local tangent angle and $L$ the total perimeter of a given boundary. For a boundary parametrized by arc length $(x(s),y(s))$, the local tangent angle is defined through the relation $\left( \pdi{x}{s}, \pdi{y}{s} \right) = \left(\cos \theta, \sin
+\theta \right)$.
 
-For numerical stability, we modify the erosion law \eqref{eqn:erosionModel} to include a term that depends on the local curvature $\kappa$. The idea is to prevent regions of very high
-curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus modify the normal velocity of each interface as follows
+For numerical stability, we modify the erosion law \eqref{eqn:erosionModel} to include a term that penalizes curvature $\kappa$. The idea is to prevent regions of extremely high curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus modify \eqref{eqn:erosionModel} follows
 \begin{align}
-  \label{eqn:Vn}
-  \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1
-  \right).
+\label{eqn:Vn}
+\Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right).
 \end{align}
-The second term on the right is the curvature-dependent modification, the strength of which is controlled by the parameter $\eps \ll 1$. Here, $L$ is the total arc length of the body, and $\mean{\cdot}$ indicates a boundary mean. This term causes regions of high curvature to recede more rapidly, thus smoothing any high-frequency oscillations that may exist. Since a closed body has mean curvature $\mean{\kappa} = 2\pi / L$, this smoothing term has mean zero and and thus preserves area. Therefore, the only source of material loss is the shear-stress itself. In addition, we have scaled the smoothing term on the mean absolute shear, $\mean{\atau}$, so that the ratio of smoothing-to-erosion always remains fixed, even as bodies vanish.
+The parameter $\eps \ll 1$ controls the strength of the curvature-penalization. This term causes regions of high curvature to recede more rapidly and thus smooths out any high-frequency oscillations that may exist. Above, $\mean{\cdot}$ indicates a boundary mean. Since a closed body has mean curvature $\mean{\kappa} = 2\pi / L$, the penalty term has mean zero and and thus preserves area. The only source of material loss is therefore the shear-stress itself. In addition, we have scaled the penalty term on the mean absolute shear, $\mean{\atau}$, so that the ratio of smoothing-to-erosion always remains fixed, even as bodies vanish.
 
-We now introduce the tangent angle, $\theta$, defined through the relation
-\begin{align*}
-\left( \pderiv{x}{s}, \pderiv{y}{s} \right) = \left(\cos \theta, \sin
-\theta \right),
-\end{align*}
-where $s$ is arc length. We also introduce the normalized arc length $\alpha = 2 \pi s / L$. In terms of these new variables, the curvature can be expressed as
-\begin{align*}
-\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha}.
-\end{align*}
-Substitution into~\eqref{eqn:Vn} gives
+In the following, we parameterize each boundary by normalized arc length, $\alpha = 2 \pi s / L$. In terms of $\alpha$, the curvature is given by
+\begin{align}
+\kappa = \frac{2 \pi}{L} \pderiv{\theta}{\alpha} \, ,
+\end{align}
+and substitution into~\eqref{eqn:Vn} gives
 \begin{align}
 \label{eqn:Vn2}
-\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1
-\right).
-%\Vn = \atau + \frac{2 \pi \eps}{L \log \left(2\pi/L \right)}  \left(\pderiv{\theta}{\alpha} - 1 \right)
+\Vn = \atau +  \eps \mean{\atau}   \left(\pderiv{\theta}{\alpha} - 1 \right) \, .
 \end{align}
 
-The main idea is to introduce an artificial tangential velocity that
-keeps collocation points equally spaced with respect to arc length;
-i.e.~the grid of $\alpha$ should always remain equally spaced. The
-tangential velocity that does the trick satisfies~\cite{hou-low-she1994}
-\begin{align*}
-\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn}.
-\end{align*}
-The interface evolution is then given by
-\begin{align*}
-\dot{\xx}(t) = \Vn \nn + \Vs \ss.
-\end{align*}
-This evolution equation can be recast in the variables $\theta$ and $L$
-as
-\begin{align*}
+The boundary of each body will be represented by a grid of collocation points. If we were to simply evolve the interfaces under \eqref{eqn:Vn2}, this grid would become distorted, which, if unchecked, could lead to severe tangling and numerical instability. We therefore introduce an artificial tangential velocity $\Vs$ that always keeps the grid points equally spaced in arclength \cite{hou-low-she1994}. The appropriate tangential velocity satisfies 
+\begin{align}
+\pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn} \, ,
+\end{align}
+The evolution of the interface is then given by the combination of the normal and tangential velocity
+\begin{align}
+\dot{\xx}(t) = \Vn \nn + \Vs \ss \, .
+\end{align}
+Since $\Vs$ is tangential, it does not modify the erosion law \eqref{eqn:Vn}, only the collocation grid.
+
+When recast in the variables $\theta$ and $L$, the interface evolution becomes
+\begin{align}
 \tderiv{L}{t} &= - 2 \pi \mean{\thalpha \Vn}, \\
 \pderiv{\theta}{t} &= \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} +
 \thalpha \Vs \right).
-\end{align*}
+\end{align}
 Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \begin{align}
 \label{eqn:Levo1}
@@ -547,15 +537,14 @@ Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \eps \mean{\atau} \ppd{\theta}{\alpha} + \pderiv{\atau}{\alpha} +
 \thalpha \Vs \right).
 \end{align}
-System \eqref{eqn:Levo1}--\eqref{eqn:thetaevo1} comprise the main evolution equations that we will solve numerically in Section~\ref{sec:timeStepping}. 
+System \eqref{eqn:Levo1}--\eqref{eqn:thetaevo1} comprise the main evolution equations to be solved numerically in Section~\ref{sec:timeStepping}. 
 
-In addition, it is necessary to track a reference point for each body, so that the variables $\theta$ and $L$ can be converted back into a cartesian grid. We choose to track the coordinates of the surface mean $\mean{\xx}$, which moves according to
+In addition, it is necessary to track a reference point for each body, so that the variables $\theta$ and $L$ can be converted back to cartesian coordinates. We track the coordinates of the surface mean $\mean{\xx}$, which moves according to
 \begin{align}
 \label{eq:xsurf}
 \frac{d}{dt} \mean{\xx} = \mean{ V_s \ss + V_n \nn }
 \end{align}
-Tracking the surface mean is somewhat simpler than tracking the center of mass, but either choice would be valid.
-
+We note that tracking the center of mass is also a valid choice, but the surface mean gives a somewhat simpler formula.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
