@@ -495,7 +495,7 @@ double-layer potential is computed, the shear stress at $\xx_0 \in
 To evolve the boundaries of eroding bodies, we will use the {\thL} framework which offers certain advantages in numerically stabilizing moving-interface problems \cite{hou-low-she1994}. Here, $\theta$ is the local tangent angle and $L$ the total perimeter of a given boundary. For a boundary parametrized by arc length $(x(s),y(s))$, the local tangent angle is defined through the relation $\left( \pdi{x}{s}, \pdi{y}{s} \right) = \left(\cos \theta, \sin
 \theta \right)$.
 
-For numerical stability, we modify the erosion law \eqref{eqn:erosionModel} to include a term that penalizes curvature $\kappa$. The idea is to prevent regions of extremely high curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus modify \eqref{eqn:erosionModel} follows
+For numerical stability, we modify the erosion law \eqref{eqn:erosionModel} to include a term that penalizes curvature $\kappa$. The idea is to prevent regions of extremely high curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus modify \eqref{eqn:erosionModel} as follows
 \begin{align}
 \label{eqn:Vn}
 \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right).
@@ -543,7 +543,7 @@ In addition, it is necessary to track a reference point for each body, so that t
 \label{eq:xsurf}
 \frac{d}{dt} \mean{\xx} = \mean{ V_s \ss + V_n \nn }
 \end{align}
-We note that tracking the center of mass is also a valid choice, but the surface mean gives a somewhat simpler formula. Equations \eqref{eqn:Levo1}--\eqref{eq:xsurf} comprise the main system of equations to be solve numerically in Section~\ref{sec:timeStepping}. 
+We note that tracking the center of mass is also a valid choice, but the surface mean gives a somewhat simpler formula. Equations \eqref{eqn:Levo1}--\eqref{eq:xsurf} comprise the main system of equations to be solved numerically in Section~\ref{sec:timeStepping}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -695,7 +695,7 @@ stress with $\bigO(N)$ operations.
 \subsection{Time-stepping with the {\thL} method} 
 \label{sec:timeStepping}
 
-With the shear stress computed, we are now ready to numerically evolve the boundaries using the {\thL} framework. The main equations to be solved are \eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalizing term into the erosion law \eqref{eqn:Vn}. This term suppresses high-frequency oscillations, but also introduces {\em stiffness} into evolution equation \eqref{eqn:thetaevo1}. We will therefore use a combined exponential-integrator/Runge-Kutta method to solve system \eqref{eqn:Levo1}--\eqref{eq:xsurf}. The exponential integrator will handle the stiff term in a numerically stable fashion, while the Runge-Kutta method will treat nonlinear terms explicitly. Our overall time-stepping method will be second order.
+With the shear stress computed, we are now ready to numerically evolve the boundary of each body using the {\thL} framework. The main equations to be solved are \eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalizing term into the erosion law \eqref{eqn:Vn}. This term suppresses high-frequency oscillations, but also introduces {\em stiffness} into evolution equation \eqref{eqn:thetaevo1}. We will therefore use a combined exponential-integrator/Runge-Kutta method to solve system \eqref{eqn:Levo1}--\eqref{eq:xsurf}. The exponential integrator will handle the stiff term in a numerically stable fashion, while the Runge-Kutta method will treat nonlinear terms explicitly. Our overall time-stepping method will be second order.
 
 First, we must address a second potential source of numerical instability. The erosion law \eqref{eqn:Vn} depends on the {\em absolute value} of shear stress, $\atau$, which exhibits a corner anywhere $\tau$ changes sign (i.e.~at a stagnation point). The corner in $\atau$ introduces high frequencies into \eqref{eqn:thetaevo1} which could result in either numerical instability or an extremely stringent step-size restriction. To avoid these difficulties, we smooth $\atau$ via a narrow Gaussian filter of width $\sigma$
 \begin{align}
@@ -708,7 +708,7 @@ with corresponding normal and tangential interface velocities
 \left(\pderiv{\theta}{\alpha} - 1 \right), \\
 & \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}.
 \end{align}
-This smoothing further suppresses feedback between high frequencies in $\atau$ and body geometry.
+This smoothing further suppresses the feedback of high frequencies betweeen $\atau$ and body shape.
 
 We now consider the system of evolution equations given by \eqref{eqn:Levo1}--\eqref{eq:xsurf}. For convenience, we introduce the following variables
 \begin{align}
@@ -727,7 +727,7 @@ Then, ~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
 \end{align}
-The first term on the right-hand-side of \eqref{eqn:thetaevo2} is the stiff term resulting from the curvature penalization; i.e.~a curvature-driven interface velocity gives rise to a diffusive term for the tangent angle $\theta$. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$ being time dependent). Meanwhile, $\NLterm$, represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
+The first term on the right-hand-side of \eqref{eqn:thetaevo2} is the stiff term resulting from the curvature penalization; i.e.~a curvature-driven interface velocity gives rise to a diffusive term in the tangent angle $\theta$. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$). Meanwhile, $\NLterm$, represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
 
 We will evolve $\theta(\alpha,t)$ in spectral space and so introduce the Fourier series for $\theta$ and $\NLterm$
 \begin{align}
