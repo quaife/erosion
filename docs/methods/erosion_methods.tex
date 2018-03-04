@@ -1292,18 +1292,13 @@ Briefly, to confirm that the rescaling does not alter accuracy, we show in Table
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % In these tests I always use 128 points per body.
 
-With the multiple-body simulations validated, we now discuss the emergent physics of viscous erosion with multiple bodies...
-
-
-\vsp{20}
-6 body simulations. Point out that this arrangement was designed to have some near contacts (e.g. between bodies 1 and 2) and the simulation handles this fine.
-Point out that the bodies tend to develop flat faces wherever there is a nearby body (now that the bodies are numbered, can refer to specific bodies). Point out high vorticity in this channels between bodies. Spontaneous channelization. Point out that our algorithm allows bodies to vanish seamlessly, for example body 4. Point out that the vorticity levels increases as the flow rate increases (due to fixing the pressure drop).
+We now discuss some physical aspects of multi-body erosion revealed by our simulations. In Fig.~\ref{fig:06bodies} we show a simulation of 6 eroding bodies, each initially circles of various sizes and positions. Over time, erosion not only diminishes the size of the bodies, but also alters their shapes considerable. As in the single-body simulations, corner-like features develop, but not in locations that are easily predictable (such as the foremost and aft-most points on the body). Rather, when and where these sharp features develop depends on inter-body feedback as mediated by the Stokes flow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/06bod.pdf}
-\caption{\label{fig:50bodies} 6 bodies. TO DO HERE: Number the bodies so that I can describe them.
+\caption{\label{fig:06bodies} 6 bodies.
 }
 %A time lapse of 50 bodies eroding in a viscous flow.  The boundary conditions are a constant pressure drop that creates a flow from the left to right.  The rate of erosion is proportional to the shear stress which is equivalent to the vorticity evaluated on the bodies.  The colors represent the vorticity, so regions with large vorticity (in magnitude) are regions where the flow will erode the fastest.
 \end{center}
@@ -1311,6 +1306,17 @@ Point out that the bodies tend to develop flat faces wherever there is a nearby 
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+
+The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several near contacts between bodies, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Our method handles these near contacts without difficulty. Interestingly, erosion appears to preferentially remove material from these regions of near contact, as the narrow spacing between bodies expands rather rapidly. For example, the spacing between bodies 1 \& 2 was initially very small but is already comparable to the spacing between bodies 3 \& 4 by the second frame. Even more interesting, the bodies tend to develop flat faces wherever near contact occurs, which leads to the appearance of straight channels in between bodies. Such channels are apparent between bodies 1 \& 2, 3 \& 5, and 5 \& 6, and they {\em persist} for the duration of the simulation.
+
+
+
+
+
+
+\vsp{20}
+Point out high vorticity in this channels between bodies. Spontaneous channelization. Point out that our algorithm allows bodies to vanish seamlessly, for example body 4. Point out that the vorticity levels increases as the flow rate increases (due to fixing the pressure drop).
+
 
 
 
