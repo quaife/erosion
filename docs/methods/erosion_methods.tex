@@ -771,7 +771,7 @@ where the superscript indicates the time step. At the next stage of RK2 it will 
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
 \exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right) \, .
 \end{align}
-Since $\zeta >0$, the exponential term always {\em suppresses} high-frequencies, i.e.~it is a smoothing term. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
+Since $\zeta >0$, the exponential term always {\em suppresses} high-frequencies in proportion to $k^2$. In other words, this is a smoothing term. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
 
 At the second stage of RK2, we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} as 
 \begin{align}
@@ -785,9 +785,9 @@ At the second stage of RK2, we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} a
 \end{align}
 Once again, we must eventually compute the geometry at step $n+1$, and so we insert \eqref{eq:mu1d} into \eqref{eq:th1d} and solve for $\theta^{(n+1)}$, giving
 \begin{align}
-\thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
+\thhat_k^{(n+1)} =  \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
-Once again, both exponential terms are smoothing. To track the reference point, $\mean{x}$, we simply apply the same RK2 method to \eqref{eq:xsurf}.
+Once again, both exponential terms act to smooth geometry in proportion to $k^2$. Finally, to track the reference point, $\mean{x}$, we simply apply the same RK2 method to \eqref{eq:xsurf}.
 
 We point out that most exponential integrators use some form of quadrature to treat \eqref{eq:mu}, but, here, we have simply applied the same RK2 method that is used for the rest of the system. We believe this to be a simple, systematic approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's, etc.) and can be easily generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
 
