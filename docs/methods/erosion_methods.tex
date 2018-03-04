@@ -789,7 +789,7 @@ Once again, we must eventually compute the geometry at step $n+1$, and so we ins
 \end{align}
 Once again, both exponential terms are smoothing. To track the reference point, $\mean{x}$, we simply apply the same RK2 method to \eqref{eq:xsurf}.
 
-We point out that most exponential-integrator methods use some form of quadrature to treat \eqref{eq:mu}, but, here, we have simply applied the same RK2 method that is used for the rest of the system. We believe this to be a simple approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's etc.) and can be generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
+We point out that most exponential integrators use some form of quadrature to treat \eqref{eq:mu}, but, here, we have simply applied the same RK2 method that is used for the rest of the system. We believe this to be a simple, systematic approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's, etc.) and can be easily generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
