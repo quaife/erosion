@@ -695,9 +695,9 @@ stress with $\bigO(N)$ operations.
 \subsection{Time-stepping with the {\thL} method} 
 \label{sec:timeStepping}
 
-With the shear stress computed, we are now ready to numerically evolve the boundaries using the {\thL} framework. The main equations to be solved are \eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalizing term into the erosion law \eqref{eqn:Vn}. This term suppresses high-frequency oscillations, but also introduces {\em stiffness} into evolution equation \eqref{eqn:thetaevo1}. We will therefore use a combined exponential-integrator/Runge-Kutta method to solve system \eqref{eqn:Levo1}--\eqref{eq:xsurf}. The exponential integrator will handle the stiff term in a numerically stable fashion, while the Runge-Kutta method will treat the nonlinear terms explicitly. Our overall time-stepping method will be second order.
+With the shear stress computed, we are now ready to numerically evolve the boundaries using the {\thL} framework. The main equations to be solved are \eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalizing term into the erosion law \eqref{eqn:Vn}. This term suppresses high-frequency oscillations, but also introduces {\em stiffness} into evolution equation \eqref{eqn:thetaevo1}. We will therefore use a combined exponential-integrator/Runge-Kutta method to solve system \eqref{eqn:Levo1}--\eqref{eq:xsurf}. The exponential integrator will handle the stiff term in a numerically stable fashion, while the Runge-Kutta method will treat nonlinear terms explicitly. Our overall time-stepping method will be second order.
 
-First, we must address a second potential source of numerical instability. The erosion law \eqref{eqn:Vn} depends on the {\em absolute value} of shear stress, $\atau$, which exhibits a corner anywhere $\tau$ changes sign (a stagnation point). This corner in $\atau$ introduces high frequencies into \eqref{eqn:thetaevo1} which could result in either numerical instability or an extremely stringent step-size restriction. To avoid these difficulties, we smooth $\atau$ via a narrow Gaussian filter of width $\sigma$
+First, we must address a second potential source of numerical instability. The erosion law \eqref{eqn:Vn} depends on the {\em absolute value} of shear stress, $\atau$, which exhibits a corner anywhere $\tau$ changes sign (i.e.~at a stagnation point). The corner in $\atau$ introduces high frequencies into \eqref{eqn:thetaevo1} which could result in either numerical instability or an extremely stringent step-size restriction. To avoid these difficulties, we smooth $\atau$ via a narrow Gaussian filter of width $\sigma$
 \begin{align}
 \atausig = \int_{\gamma} \frac{1}{\sqrt{2\pi} \sigma}
  \exp \left(- \frac{\alpha'^2}{2 \sigma^2}\right) \abs{ \tau(\alpha - \alpha') } \, d\alpha' \, ,
@@ -708,6 +708,7 @@ with corresponding normal and tangential interface velocities
 \left(\pderiv{\theta}{\alpha} - 1 \right), \\
 & \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}.
 \end{align}
+This smoothing further suppresses feedback between high frequencies in $\atau$ and body geometry.
 
 We now consider the system of evolution equations given by \eqref{eqn:Levo1}--\eqref{eq:xsurf}. For convenience, we introduce the following variables
 \begin{align}
@@ -726,9 +727,9 @@ Then, ~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
 \end{align}
-The first term on the right-hand-side of \eqref{eqn:thetaevo2} is the stiff term that results from the curvature penalization. This term is multiplied by $\zeta$, which is spatially constant but time dependent (due to $L$ and $\mean{\atau}$). The second term, $\NLterm$, represents the rest of the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
+The first term on the right-hand-side of \eqref{eqn:thetaevo2} is the stiff term resulting from the curvature penalization; i.e.~a curvature-driven interface velocity gives rise to a diffusive term for the tangent angle $\theta$. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$ being time dependent). Meanwhile, $\NLterm$, represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
 
-We will evolve $\theta(\alpha,t)$ spectrally and so introduce the Fourier series
+We will evolve $\theta(\alpha,t)$ in spectral space and so introduce the Fourier series for $\theta$ and $\NLterm$
 \begin{align}
 \label{thetaSeries}
  \theta(\alpha,t) &= \alpha + \FourierSum \thhat_k e^{ i k \alpha} \, , \\
@@ -738,12 +739,12 @@ The careful reader will notice that in \eqref{thetaSeries}, we have decomposed $
 \begin{align*}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k \, .
 \end{align*}
-These ODEs can be solved by applying the integrating factor
+These ODEs can be simplified by applying the integrating factor
 \begin{align}
 \label{eq:mu}
 \mu_k = \exp \left( \eps k^2 \int \elfun \, dt \right) \, ,
 \end{align}
-which leads to the coupled system of ODEs
+which leads to the coupled system
 \begin{align}
 \label{eqn:Levo3}
 & \tderiv{L}{t} = \Mterm, \\
@@ -751,8 +752,8 @@ which leads to the coupled system of ODEs
 & \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \widehat{\NLterm}_k \, ,
 \qquad k = -N_\iin/2, \ldots, N_\iin/2 -1
 \end{align}
-We solve system~\eqref{eq:mu}--\eqref{eqn:thetaevo3} with an
-explicit, second-order Runge-Kutta method (RK2). In particular, we choose the {\em midpoint} RK2 method so as to maximize the smoothing effect of the curvature term.
+Note that the diffusive term from \eqref{eqn:thetaevo2} does not appear explicitly in \eqref{eqn:thetaevo3}, but rather is implied by the integrating factor \eqref{eq:mu}; i.e.~we have applied an exponential integrator. We solve the resulting system~\eqref{eq:mu}--\eqref{eqn:thetaevo3} with an
+explicit, second-order Runge-Kutta method (RK2). In particular, we use the {\em midpoint} RK2 method so as to maximize the smoothing effect of the curvature penalization.
 
 At the first stage of RK2 (the half step) we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} as
 \begin{align}
@@ -770,7 +771,7 @@ where the superscript indicates the time step. At the next stage of RK2 it will 
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
 \exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right) \, .
 \end{align}
-Since $\zeta >0$, the exponential term always acts to smooth the geometry and thus mitigate numerical instabilities. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
+Since $\zeta >0$, the exponential term always {\em suppresses} high-frequencies, i.e.~it is a smoothing term. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
 
 At the second stage of RK2, we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} as 
 \begin{align}
@@ -786,7 +787,9 @@ Once again, we must eventually compute the geometry at step $n+1$, and so we ins
 \begin{align}
 \thhat_k^{(n+1)} = & \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
-Again, both exponential terms act to smooth high-frequency oscillations in shape. We note that the above approach would generalize to higher-order Runge-Kutta methods, such as RK4. Finally, we track the reference point $\mean{x}$ of each body by simply discretizing \eqref{eq:xsurf} with the same RK2 method.
+Once again, both exponential terms are smoothing. To track the reference point, $\mean{x}$, we simply apply the same RK2 method to \eqref{eq:xsurf}.
+
+We point out that most exponential-integrator methods use some form of quadrature to treat \eqref{eq:mu}, but, here, we have simply applied the same RK2 method that is used for the rest of the system. We believe this to be a simple approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's etc.) and can be generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
