@@ -1307,7 +1307,9 @@ We now discuss some physical aspects of multi-body erosion revealed by our simul
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
-The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several near contacts between bodies, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Our method handles these near contacts without difficulty. Interestingly, erosion appears to preferentially remove material from these regions of near contact, as the narrow spacing between bodies expands rather rapidly. For example, the spacing between bodies 1 \& 2 was initially very small but is already comparable to the spacing between bodies 3 \& 4 by the second frame. Even more interesting, the bodies tend to develop flat faces wherever near contact occurs, which leads to the appearance of straight channels in between bodies. Such channels are apparent between bodies 1 \& 2, 3 \& 5, and 5 \& 6, and they {\em persist} for the duration of the simulation.
+The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several near contacts between bodies, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Our method handles these near contacts without difficulty. Interestingly, erosion appears to preferentially remove material from these regions of near contact, as the narrow spacing between bodies expands rather rapidly. For example, the spacing between bodies 1 \& 2 was initially very small but is already comparable to the spacing between bodies 3 \& 4 by the second frame. Even more interesting, the bodies tend to develop flat faces wherever near contact occurs, which leads to the appearance of straight channels in between bodies. Such channels are apparent between bodies 1 \& 2, 3 \& 5, and 5 \& 6, and they {persist} for the duration of the simulation.
+
+The vorticity field (color) is useful to infer both the regions of highest shear and the regions of most intense flow. Figure~\ref{fig:06bodies} shows that the flow is concentrated primarily in a single channel running horizontally, below bodies 1 \& 2 and above bodies 3 \& 6. This main channel widens the fastest as the high-flow rate leads to greater shearing on the boundaries. As discussed above, the pressure drop across the cell is fixed in these simulations, and so as the bodies diminish the flow rate increases, which can be seen by the increase in the vorticity magnitude. By the final frame shown, body 4 has vanished completely and our method handles this event seamlessly.
 
 
 
@@ -1315,9 +1317,7 @@ The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have sever
 
 
 \vsp{20}
-Point out high vorticity in this channels between bodies. Spontaneous channelization. Point out that our algorithm allows bodies to vanish seamlessly, for example body 4. Point out that the vorticity levels increases as the flow rate increases (due to fixing the pressure drop).
-
-
+Good word: Spontaneous channelization
 
 
 \newpage
