@@ -904,7 +904,7 @@ differentiation is used to compute the arclength derivative.
 With the pressure and shear stress, the drag on a single body with
 boundary $\gamma_\ell$ is
 \begin{align}
-  \FD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
+  \FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
   \label{eqn:drag}
 \end{align}
 The reader may notice an unusual sign convention for pressure in this formula, which is simply due to the normal direction pointing {\em into} the bodies.
@@ -1074,7 +1074,9 @@ A (c_1 - \log A) \sim c_2 (t_f - t) \qquad \text{as } t \to t_f \, .
 where $c_1$ and $c_2$ are constants.
 This is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 =2.2$ and $c_2 = 30$. The comparison shows close agreement between the two (they are indistinguishable).
 
-In Fig.~\ref{area_drag}(b), we show the drag $F_D$ measured on the body as it erodes. The drag decreases gradually, then takes a nose dive in the final moments when the body vanishes, as is consistent with the logarithmic dependence on lengthscale $L$ in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. As a final check, are scaling estimates for area change can be rearranged to estimate the viscous drag component
+In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, $F_D$ is drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments of the body vanishing. This behavior is consistent with fact that drag vanishes {\em logarithmically} with $L$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag vanishes much more rapidly than viscous drag.
+
+As a final check, are scaling estimates for area change can be rearranged to estimate the viscous drag component
 \begin{align}
 \label{viscdrag}
 F_{\mu} \approx \mean{\atau} L \sim \frac{c_2}{-\log A + c_1 -1}
