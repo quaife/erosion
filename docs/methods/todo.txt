@@ -1,10 +1,3 @@
-compute vorticity in fortran code so that it can be called like the
-pressure and plotted as a color plot
-
-check if the equations involving tangent vector change with this new
-tangential vector definition.  Same for curvature.
-
-Run some of the geometry examples that Bryan put in the repo.
 
 First example is single body
    - plots of length and opening angle when area kept fixed as a
@@ -18,7 +11,6 @@ First example is single body
 Example 1.5
     - two bodies with one very large and one small close by
 
-
 Second example is 8-10 bodies
   - vorticity
   - streamlines ie. tracers
@@ -26,8 +18,6 @@ Second example is 8-10 bodies
   - volume fraction as a function of time.  Is it similar to multiple
     bodies
 
-
 Thrid example is 30 bodies
   - Show snapshots
   - Show resistivity and drag versus time
-
