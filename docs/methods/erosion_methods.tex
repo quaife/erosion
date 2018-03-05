@@ -1048,13 +1048,13 @@ requirement $W \gg L$.
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.85 \textwidth]{./figs/area_drag.pdf}
+\includegraphics[width = 0.9 \textwidth]{./figs/area_drag.pdf}
 \caption{The area and drag of an eroding body: (a) The body area measured in the simulations (black) shown against the scaling-law prediction \eqref{area_predict} (dotted red). The two are nearly indistinguishable. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate \eqref{viscdrag} for the viscous drag (dotted red).}
 \label{area_drag}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-% Figure from datafile 01circ1024aa;
+% Figure from datafile 01circ1024aaa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
 The body's rate of area reduction is given by integrating the absolute shear stress around the boundary
@@ -1069,17 +1069,20 @@ $\mean{\atau}$ and the total perimeter $L$. Inserting scaling law~\eqref{eqn:str
 Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body area changes with time
 \begin{align}
 \label{area_predict}
-A (c_1 - \log A) \sim c_2 (t_f - t) \qquad \text{as } t \to t_f \, .
+\frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) = \frac{t_f - t}{t_f}
+%A (c_1 - \log A) \sim c_2 (t_f - t) \qquad \text{as } t \to t_f \, .
 \end{align}
-where $c_1$ and $c_2$ are constants.
-This is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 =2.2$ and $c_2 = 30$. The comparison shows close agreement between the two (they are indistinguishable).
+where $c_1$ is a constant.
+This is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 = 0.24$. The comparison shows close agreement between the two (they are indistinguishable).
 
-In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, $F_D$ is drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments of the body vanishing. This behavior is consistent with fact that drag vanishes {\em logarithmically} with $L$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag vanishes much more rapidly than viscous drag.
+In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. This drag is normalized by a characteristic value $F_c = A_0/t_f$.
+Note that, in the context of 3D slender-body theory, $F_D$ is drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments of the body vanishing. This behavior is consistent with fact that drag vanishes {\em logarithmically} with $L$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag vanishes much more rapidly than viscous drag.
 
-As a final check, are scaling estimates for area change can be rearranged to estimate the viscous drag component
+As a final check, are scaling estimates for area change can be rearranged to estimate the viscous drag component, $F_{\mu} \approx \mean{\atau} L$, which gives
 \begin{align}
 \label{viscdrag}
-F_{\mu} \approx \mean{\atau} L \sim \frac{c_2}{-\log A + c_1 -1}
+\frac{F_{\mu}}{F_c} \sim \frac{1}{1 - c_1 (1 + \log{A/A_0})}
+%F_{\mu} \approx \mean{\atau} L \sim \frac{c_2}{-\log A + c_1 -1}
 \end{align}
 This scaling law is shown in the figure (red, dotted curve) and shows good agreement with the viscous drag. Of course, \eqref{viscdrag} is less exact than the previous estimates since it does not take into account the normal direction of the surface, only the mean shear stress.
 
