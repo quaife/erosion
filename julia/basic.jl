@@ -223,7 +223,7 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation
 	end
 	return npts,nbods,xv,yv,density
 end
-# getumax: Get umax to rescael the density function.
+# getumax: Get umax to rescale the density function.
 function getumax(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
 	umax = 1.
@@ -235,7 +235,8 @@ function getumax(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
 	return umax
 end
 #= getpdrop: Calculate the pressure drop from -x0 to x0. 
-Also get the average flux while at it. =#
+Also get the average flux while at it. 
+Note: this routine assumes that umax = 1; If different, need to apply rescaling. =#
 function getpdrop(thlenden::ThLenDenType, nouter::Int, 
 		x0::Float64 = 2.0; rotation::Bool=false)
 	# Set up targets points on two vertical slices.

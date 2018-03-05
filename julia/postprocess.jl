@@ -31,13 +31,19 @@ function pp1(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		println("Beginning the resistivity computation.")
-		rbods = resistivity(thlenden,params.nouter,2.0)
-		rbodsrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
-		# Save the data to a file.
+		rbods, pdrop, qavg = resistivity(thlenden,params.nouter,2.0)
+		rbodsrot, pdrot, qrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
+		# Save the resistivity data to a file.
 		resfile = string(datafolder,"resistivity",cntstr,".dat")
 		label = string("# Data on resistivity: nbods, resistivity, rotated resistivity.")
 		resdata = [label; nbods; rbods; rbodsrot;]
 		writedata(resdata, resfile)
+		# Save the flux and pressure drop data to a file.
+		qfile = string(datafolder,"flux",cntstr,".dat")
+		label = string("# Data on flux: nobds, qavg, pdrop, qrot, pdrot.")
+		qdata = [label; nbods; qavg; pdrop; qrot; pdrot;]
+		writedata(qdata, qfile)
+		# Print progress.
 		println("Finished the resistivity computation.\n")
 		println("Finished step ", cnt, " of ", ntimes, ".\n\n")
 	end
@@ -160,17 +166,18 @@ function getareas(thlenden::ThLenDenType)
 	return areavec
 end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; 
-		rotation::Bool=false)
+function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; rotation::Bool=false)
+	# Retrieve the pressure drop and flux (assuming umax = 1)
 	pdrop,qavg = getpdrop(thlenden,nouter,x0,rotation=rotation)
 	# Calculate the total resistivity
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
-	# For testing.
-	#println("At x0 = ", x0, " the total resistivity is: ", signif(rtot,3))
-	#println("At x0 = ", x0, " the matrix resistivity is: ", signif(rbods,3))
-	return rbods
+	# Also calculate umax, and rescale prop and qavg based on this value.
+	umax = getumax(thlenden, nouter, true)
+	pdrop *= umax
+	qavg *= umax
+	return rbods, pdrop, qavg
 end
 # drag: Compute the total drag on all of the bodies combined.
 function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
