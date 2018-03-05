@@ -27,7 +27,7 @@ function pp1(foldername::AbstractString)
 		label = string("# Area of each individual body.")
 		areadata = [label; areavec]
 		writedata(areadata, areasfile)
-		println("Finnished the area computation.\n")
+		println("Finished the area computation.\n")
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		println("Beginning the resistivity computation.")
