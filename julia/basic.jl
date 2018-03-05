@@ -237,8 +237,7 @@ end
 #= getpdrop: Calculate the pressure drop from -x0 to x0. 
 Also get the average flux while at it. 
 Note: this routine assumes that umax = 1; If different, need to apply rescaling. =#
-function getpdrop(thlenden::ThLenDenType, nouter::Int, 
-		x0::Float64 = 2.0; rotation::Bool=false)
+function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0; rotation::Bool=false)
 	# Set up targets points on two vertical slices.
 	nypts = 13
 	dy = 2./nypts
