@@ -1046,7 +1046,7 @@ In interpreting our 2D simulations, we will treat the span, $\ell$, as fixed. Re
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/area_drag.pdf}
-\caption{The area and drag of an eroding body: (a) The body area measured in the simulations (black) shown against the scaling-law prediction \eqref{area_predict} (dotted red). The two are nearly indistinguishable. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate \eqref{viscdrag} for the viscous drag (dotted red).}
+\caption{The area and drag of an eroding body: (a) The body area measured in the simulations (black) shown against the scaling-law prediction \eqref{area_predict} (dotted red). The two are nearly indistinguishable. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate \eqref{dragscaling} for the viscous drag (dotted red).}
 \label{area_drag}
 \end{center}
 \end{figure}
@@ -1074,9 +1074,10 @@ In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the bo
 
 As a final check, we can estimate the drag (per unit span) using slender-body theory via the formula
 \begin{align}
-F_D \sim \frac{4 \pi \mu U}{\log(\ell/a)}
+\label{dragscaling}
+\frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}
 \end{align}
-For a circular cylinder, $a$ is the radius and the prefactor $4 \pi$ above gives an exact result within the slender-body framework. To generalize to other shapes, we define $a = \sqrt{A/\pi}$ and fit $\ell$ to get $\ell = 2.3 a_0$.
+For a {\em circular} cylinder, $a$ is the radius and the normalization factor $4 \pi$ is exact within the slender-body framework. To generalize to other shapes, we define $a = \sqrt{A/\pi}$ and fit $\ell$ to get $\ell = 2.3 a_0$.
 
 \todo[inline]{Clean up this section}
 
