@@ -40,7 +40,7 @@ function pp1(foldername::AbstractString)
 		writedata(resdata, resfile)
 		# Save the flux and pressure drop data to a file.
 		qfile = string(datafolder,"flux",cntstr,".dat")
-		label = string("# Data on flux: nobds, qavg, pdrop, qrot, pdrot.")
+		label = string("# Data on flux: nbods, qavg, pdrop, qrot, pdrot.")
 		qdata = [label; nbods; qavg; pdrop; qrot; pdrot;]
 		writedata(qdata, qfile)
 		# Print progress.
