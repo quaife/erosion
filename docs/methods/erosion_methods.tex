@@ -1062,14 +1062,14 @@ The body's rate of area reduction is given by integrating the absolute shear str
 \dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, .
 \end{align}
 Thus, the area-loss rate is given by the product of the mean shear
-$\mean{\atau}$ and the total perimeter $L$. Inserting scaling law~\eqref{eqn:stresslaw} gives
+$\mean{\atau}$ and the total perimeter $L$, which is an exact relationship. Inserting scaling law~\eqref{eqn:stresslaw} gives
 \begin{align}
 \dot{A} \sim \frac{ - \mu \umax}{\log(W/L)} \quad \text{as } L \to 0 \, . 
 \end{align}
 Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body area changes with time
 \begin{align}
 \label{area_predict}
-\frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) = \frac{t_f - t}{t_f}
+\frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f}
 %A (c_1 - \log A) \sim c_2 (t_f - t) \qquad \text{as } t \to t_f \, .
 \end{align}
 where $c_1$ is a constant.
