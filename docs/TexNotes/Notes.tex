@@ -143,13 +143,14 @@ The drag on a body is given by integrating the traction on the surface. If my ab
 \section{Scaling law and interface smoothing}
 For 3D Stokes flow, the shear stress scales like
 \begin{equation}
-\tau \sim \mu V/L
+\tau \sim \mu U/a
 \end{equation}
-where $V$ and $L$ are a characteristic velocity and length scale respectively.  However, for 2D Stokes flow we have Stokes paradox and slender body effects. The analogous scaling of the stress is
+where $U$ and $a$ are a characteristic velocity and length scale respectively.  However, for 2D Stokes flow we have Stokes paradox and slender body effects. The analogous scaling of the stress is
 \begin{equation}
-\tau \sim \frac{\mu V}{L \log(W/L)}
+\tau \sim \frac{\mu U}{a \log(\ell/a)}
 \end{equation}
-where $W$ is the width in the third dimension. In the following, we will take $W = 2\pi$, since a body cannot have a length greater than $2\pi$ and still fit inside the domain.
+where $\ell$ is the width in the third dimension. 
+%For example, we can take $\ell = 2\pi$, since a body cannot have a length greater than $2\pi$ and still fit inside the domain.
 
 
 
@@ -161,40 +162,50 @@ The area loss rate is given by
 \end{align}
 The above is an exact relation. Substitution of the scaling law gives
 \begin{align}
-\dot{A} \sim \frac{ - \mu V}{\log(W/L)} \, .
+\dot{A} \sim \frac{ - \mu U}{\log(\ell/a)} \, .
 \end{align}
-Inserting $A \sim L^2$ and rearranging gives
+Inserting $A \sim a^2$ and rearranging gives
 \begin{align}
-\log (C_2 A/W^2) dA = C_1 \mu V dt
+\log (c_2 A/\ell^2) dA = c_3 \mu U dt
 \end{align}
 Integrating gives
 \begin{align}
-A \left(1 - \log(C_2 A/W^2) \right) = C_1 \mu U (t_f - t)
+A \left(1 - \log(c_2 A/\ell^2) \right) = c_3 \mu U (t_f - t)
 \end{align}
-In the limit of $A \to 0$, the log-term on the left-hand-side will win, giving
+Rearranging and setting some constants based on knowing $A(t=0) = A_0$ gives
 \begin{align}
-A(1 - \log(A) ) \sim c_A (t_f - t)
+\label{area_predict}
+\frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f} \quad \text{as } t \to t_f \, .
 \end{align}
-I have kept the one above, just so the graph of the scaling law doesn't look funny for bigger $A$.
+where $c_1$ is a constant, and I find $c_1 = 0.24$ gives an excellent fit to the data.
 
-\vsp{5}
-TO KILL:
+Now differentiation the result with respect to time gives
+\begin{align}
+\dot{A} = \frac{A_0/t_f}{1 - c_1 (1 + \log(A/A_0))} \sim - \frac{\mu U}{\log(\ell / a)}
+\end{align}
+Now, doing some manipulations, using that $A = c_3 a^2$ and $A_0 = c_3 a_0^2$, gives the nice relationship
+\begin{align}
+\ell = a_0 e^{\frac{1-c_1}{2 c_1}} = 4.87 a_0 
+\end{align}
 
-The rate of area loss is given by
+Now, to estimate the drag, use the slender-body formula for drag per unit span, $\ell$, which is
+\begin{align}
+F_D \sim \frac{4 \pi \mu U}{\log(\ell/a)}
+\end{align}
+The $4 \pi$ coefficient is exact (in the slender-body framework) for a circular cylinder. Substituting the value we found $\ell = 4.87 a_0$, gives
+\begin{align}
+F_D \sim \frac{4 \pi \mu U}{\log(4.87 a_0/a)}
+\end{align}
+For non-circular bodies, we can define $a = \sqrt{A/\pi}$ since this is the value that would be consistent with a circle. This gives
+\begin{align}
+F_D \sim \frac{4 \pi \mu U}{\log(4.87 \sqrt{A_0/A})}
+\end{align}
+or
 \begin{equation}
-\dot{A} = - \abs{\tau} L
+F_D \sim \frac{8 \pi \mu U}{\log(23.7 A_0/A)}
 \end{equation}
-We then insert the scaling $\abs{\tau} \sim -1/(L \log L)$ and simplify to get
-\begin{equation}
-\dot{A} = C/\log{A}
-\end{equation}
-which we solve to get
-\begin{equation}
-A (1 - \log A) = C (t_f - t)
-\end{equation}
-In particular, I believe the signs are correct here.
-BUT, I am not so sure of this calculation anymore, now that $W$ is included.
 
+Alternatively we can just treat $\ell$ as a fit parameter.
 
 \section{Numerical interface evolution}
 

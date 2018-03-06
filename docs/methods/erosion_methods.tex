@@ -1033,17 +1033,14 @@ Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01
 \subsection{Scaling law for the vanishing rate}
 \label{sec:scaling}
 
-Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress is growing as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / L$, since stress is inversely proportional to body scale $L$. This law must be modified in two dimensions, though.
-The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
-For a slender body in flow perpendicular to its long-axis $W \gg L$, the drag is proportional to
-$\mu \umax W/ \log(W/L)$. This relationship implies that, for a 2D
-cross-section, the stress per unit span can be estimated by
+Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress is growing as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / a$, in which drag is inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
+For a slender body in flow perpendicular to its long-axis $\ell$, the drag is proportional to
+$\mu \umax \ell/ \log(\ell/a)$, where $a$ is a lengthscale of the cross-section and $a \ll \ell$. This relationship implies that the stress per unit span on a 2D cross-section can be estimated by
 \begin{align}
   \label{eqn:stresslaw}
-  \tau \sim \frac{\mu \umax}{L \log(W/L)} \qquad \text{as } L \to 0 \, .
+  \tau \sim \frac{\mu \umax}{a \log(\ell/a)} \qquad \text{for } a \ll \ell \, .
 \end{align}
-In interpreting our 2D simulations, we will treat the span, $W$, as fixed with the
-requirement $W \gg L$.
+In interpreting our 2D simulations, we will treat the span, $\ell$, as fixed. Recall that $L$ denotes the total perimeter of the cross-section, and therefore $a$ and $L$ can often be used interchangeable in scaling analysis, since they each represent a lengthscale of the cross-section.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1064,27 +1061,24 @@ The body's rate of area reduction is given by integrating the absolute shear str
 Thus, the area-loss rate is given by the product of the mean shear
 $\mean{\atau}$ and the total perimeter $L$, which is an exact relationship. Inserting scaling law~\eqref{eqn:stresslaw} gives
 \begin{align}
-\dot{A} \sim \frac{ - \mu \umax}{\log(W/L)} \quad \text{as } L \to 0 \, . 
+\dot{A} \sim \frac{ - \mu \umax}{\log(\ell/a)} \qquad \text{as } a \to 0 \, . 
 \end{align}
-Noting that $A \sim L^2$ allows one to solve the ODE to determine how the body area changes with time
+Noting that $A \sim a^2$ allows one to solve the ODE to determine how the body area changes with time
 \begin{align}
 \label{area_predict}
-\frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f}
-%A (c_1 - \log A) \sim c_2 (t_f - t) \qquad \text{as } t \to t_f \, .
+\frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f} \quad \text{as } t \to t_f \, .
 \end{align}
-where $c_1$ is a constant.
-This is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 = 0.24$. The comparison shows close agreement between the two (they are indistinguishable).
+Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 = 0.24$ a fit parameter. The comparison shows close agreement between the two (they are indistinguishable).
 
-In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. This drag is normalized by a characteristic value $F_c = A_0/t_f$.
-Note that, in the context of 3D slender-body theory, $F_D$ is drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments of the body vanishing. This behavior is consistent with fact that drag vanishes {\em logarithmically} with $L$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag vanishes much more rapidly than viscous drag.
+In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, $F_D$ is drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments of the body vanishing. This behavior is consistent with fact that drag vanishes {\em logarithmically} with body-size $a$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag vanishes much more rapidly than viscous drag.
 
-As a final check, are scaling estimates for area change can be rearranged to estimate the viscous drag component, $F_{\mu} \approx \mean{\atau} L$, which gives
+As a final check, we can estimate the drag (per unit span) using slender-body theory via the formula
 \begin{align}
-\label{viscdrag}
-\frac{F_{\mu}}{F_c} \sim \frac{1}{1 - c_1 (1 + \log{A/A_0})}
-%F_{\mu} \approx \mean{\atau} L \sim \frac{c_2}{-\log A + c_1 -1}
+F_D \sim \frac{4 \pi \mu U}{\log(\ell/a)}
 \end{align}
-This scaling law is shown in the figure (red, dotted curve) and shows good agreement with the viscous drag. Of course, \eqref{viscdrag} is less exact than the previous estimates since it does not take into account the normal direction of the surface, only the mean shear stress.
+For a circular cylinder, $a$ is the radius and the prefactor $4 \pi$ above gives an exact result within the slender-body framework. To generalize to other shapes, we define $a = \sqrt{A/\pi}$ and fit $\ell$ to get $\ell = 2.3 a_0$.
+
+\todo[inline]{Clean up this section}
 
 \subsection{Local analysis for the limiting shape}
 
