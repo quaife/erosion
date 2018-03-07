@@ -134,12 +134,15 @@ vorticity of the flow (Fig.~\ref{fig:50bodies}) to visualize regions
 of high and low erosion.
 
 A challenge with erosion is that it creates corners at points on the
-body where the shear stress vanishes.  While recent work does allow for
-integral equation methods to resolve corners, we employ a different
-method.  
-\todo[inline]{Maybe point out some drawbacks of using one of these BIE methods that allows corners. For example, are these methods more conceptually complex and/or more expensive? Maybe they are not quite at a mature stage for application? Another point: in the simulations we cannot predict where corners will form and so would have to identify them on the fly. Would this cause a problem if we tried to use a corner-resolving BIE?}
-\todo[inline]{Could say our approach is simpler because  by smoothing corners, we can use the bare-bones BIE methods that are more well established compared to these newer, corner-resolving methods. Just some thoughts.}
-First, we add a regularization term to the shear stress to
+body where the shear stress vanishes.  There is recent work for solving
+boundary integral equations in geometries with corners by using
+carefully chosen local expansions around each corner~\cite{rac-ser2017,
+ser-rok2016} or panel-based graded meshes~\cite{hel2011,
+gil-hao-mar2014, bre2012}.  The limitation of these methods is that they
+require the corner's location, a non-uniform spaced mesh, and some of
+the methods have a large condition number.  So that we can use a uniform
+grid, we instead slightly modify the geometry to maintain sufficient
+regularity.  First, we add a regularization term to the shear stress to
 penalize regions of high curvature.  Second, we apply a Gaussian filter
 to smooth the absolute value of the shear stress before the body shape
 is updated.
@@ -147,37 +150,37 @@ is updated.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations} 
 
-\todo[inline]{These are some of my thoughts on reworking this first paragraph. See if you like it.}
+%\todo[inline]{These are some of my thoughts on reworking this first paragraph. See if you like it.}
 We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to 2D allows us to simulate the erosion of many bodies (order 50-100) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIE methods are available in 3D, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
 
-\todo[inline]{This is the original below:}
-There are two main limitations of the current
-work.  First, the flow is assumed to be two-dimensional.  However, by
-assuming that the flow is two-dimensional, we are able to simulate the
-erosion of more bodies and with higher resolution than would be
-available in three dimensions.  Moreover, several flows can be described
-to good accuracy under a two-dimensional approximation, but certain
-phenomena occur only in three dimensions.  Extending the current work to
-three dimensions is possible with a boundary integral equation
-formulation.  In particular, the fluid solvers exist~\cite{mal-bir2015},
-and the main challenges of a BIE solver have been addressed by other
-groups including surface representation~\cite{yin-bir-zor2006,
-vee-rah-bir-zor2011}, near-singular integration~\cite{yin-bir-zor2006,
-kli-tor2016b}, and fast summation methods~\cite{yin-bir-zor2004,
-ros-ols2015}.  The more significant challenge of extending our work to
-three dimensions is guaranteeing that the mesh does not become
-distorted, which can be done, for example, by using an extension of the
-two-dimensional {\thL} formulation~\cite{amb-sie-tlu2013}.
-
-The second limitation is that the eroding bodies are fixed.  Mitchell
-and Spagnolie~\cite{mit-spa2016} simulate a single mobile eroding body
-in three dimensions~\cite{mit-spa2016}, but additional challenges are
-caused when there are multiple bodies. In particular, especially in
-dense suspensions, bodies can become extremely close to one another, and
-the interaction between the bodies is difficult to resolve unless the
-underlying mesh is refined to levels that are intractable. In future
-work we plan to consider mobile eroding bodies by including a small
-force and torque to prevent unphysical contact~\cite{lu-rah-zor2017}.
+%\todo[inline]{This is the original below:}
+%There are two main limitations of the current
+%work.  First, the flow is assumed to be two-dimensional.  However, by
+%assuming that the flow is two-dimensional, we are able to simulate the
+%erosion of more bodies and with higher resolution than would be
+%available in three dimensions.  Moreover, several flows can be described
+%to good accuracy under a two-dimensional approximation, but certain
+%phenomena occur only in three dimensions.  Extending the current work to
+%three dimensions is possible with a boundary integral equation
+%formulation.  In particular, the fluid solvers exist~\cite{mal-bir2015},
+%and the main challenges of a BIE solver have been addressed by other
+%groups including surface representation~\cite{yin-bir-zor2006,
+%vee-rah-bir-zor2011}, near-singular integration~\cite{yin-bir-zor2006,
+%kli-tor2016b}, and fast summation methods~\cite{yin-bir-zor2004,
+%ros-ols2015}.  The more significant challenge of extending our work to
+%three dimensions is guaranteeing that the mesh does not become
+%distorted, which can be done, for example, by using an extension of the
+%two-dimensional {\thL} formulation~\cite{amb-sie-tlu2013}.
+%
+%The second limitation is that the eroding bodies are fixed.  Mitchell
+%and Spagnolie~\cite{mit-spa2016} simulate a single mobile eroding body
+%in three dimensions~\cite{mit-spa2016}, but additional challenges are
+%caused when there are multiple bodies. In particular, especially in
+%dense suspensions, bodies can become extremely close to one another, and
+%the interaction between the bodies is difficult to resolve unless the
+%underlying mesh is refined to levels that are intractable. In future
+%work we plan to consider mobile eroding bodies by including a small
+%force and torque to prevent unphysical contact~\cite{lu-rah-zor2017}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Related work} Simulating eroding bodies has been studied
@@ -225,13 +228,6 @@ surface area is computed.  We include a similar calculation for the
 two-dimensional Stokes equations, and the resulting shape agrees with
 our numerical solution. 
 
-
-\todo[inline]{Dump of text}
-Other models for erosion include ones that use an erosion rate that is
-proportional to a power of the magnitude of the shear
-stress~\cite{par-izu2000}, or ones that use a critical shear stress
-below which erosion does not occur~\cite{lag2000}.
-\todo[inline]{Dump of text}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,19 +296,18 @@ bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.
     is located between the dashed lines.}
 \end{figure}
 
-We use a quasi-static approximation.  That is, at each time step, we
-freeze the geometry, solve the incompressible Stokes equations, and then
-update the geometry according to the erosion model.  The two steps
-inside the red rectangle describes a time step in the quasi-static
-approximation.
-\todo[inline]{Appeal to separation of scales to justify this quasi-static approximation; i.e.~the timescale of erosion is much longer than that of the flow.}
+To perform the simulations, we freeze the geometry at each time step,
+solve the incompressible Stokes equations, and then update the geometry
+according to the erosion model.  The separation between these two
+processes is justified since the time scale of erosion is much longer
+than that of the flow.
 
-%A flow diagram is illustrated in Figure~\ref{fig:workflow}.  
-%\begin{figure}[htpb]
-%  \centering
-%  \input{figs/workflow.tikz}
-%  \caption{\label{fig:workflow}A caption.}
-%\end{figure}
+%We use a quasi-static approximation.  That is, at each time step, we
+%freeze the geometry, solve the incompressible Stokes equations, and then
+%update the geometry according to the erosion model.  The two steps
+%inside the red rectangle describes a time step in the quasi-static
+%approximation.
+%\todo[inline]{Appeal to separation of scales to justify this quasi-static approximation; i.e.~the timescale of erosion is much longer than that of the flow.}
 
 Our erosion model is based on the shear stress, and this model is
 discussed in more detail in Section~\ref{sec:erosion}.  We then describe
@@ -327,6 +322,12 @@ in the geometry are avoided and perform a change of coordinates to treat a stiff
 \subsection{Erosion Model} 
 \label{sec:erosion}
 
+Other models for erosion include ones that use an erosion rate that is
+proportional to a power of the magnitude of the shear
+stress~\cite{par-izu2000}, or ones that use a critical shear stress
+below which erosion does not occur~\cite{lag2000}.
+
+
 To model erosion, the normal velocity is  proportional to the absolute
 value of the shear stress.   Since the constant of proportionality only
 sets the time scale, we let $\Vn = |\tau|$ as described in
@@ -337,8 +338,8 @@ we modify this law in Section~\ref{sec:thetaL}.
 \subsection{Boundary Integral Equation Formulation} 
 \label{sec:bies}
 
-In this section, we describe the boundary integral equations employed for the fluid
-equations \cite{Moore2007}
+In this section, we describe the boundary integral equations employed
+for the fluid equations \cite{Moore2007}
 \todo[inline]{Bryan do you want to add a bunch of references to your boundary integral papers here (or somewhere else)?}
 In particular, we solve the incompressible Stokes equations
 with Dirichlet boundary conditions 
