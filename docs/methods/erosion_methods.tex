@@ -736,7 +736,7 @@ We will evolve $\theta(\alpha,t)$ in spectral space and so introduce the Fourier
  \theta(\alpha,t) &= \alpha + \FourierSum \thhat_k e^{ i k \alpha} \, , \\
  \NLterm(\alpha,t)  &= \FourierSum \widehat{\NLterm}_k e^{ i k \alpha} \, .
 \end{align}
-The careful reader will notice that in \eqref{thetaSeries}, we have decomposed $\theta(\alpha)$ into a linear component and a periodic component. In spectral space,~\eqref{eqn:thetaevo2} produces the system of ODEs
+The careful reader will notice that in \eqref{thetaSeries} we have decomposed $\theta(\alpha)$ into a linear component and a periodic component. In spectral space,~\eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{align*}
 \tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k \, .
 \end{align*}
@@ -772,7 +772,7 @@ where the superscript indicates the time step. At the next stage of RK2 it will 
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
 \exp \left( -\epsilon k^2 \frac{\Dt}{2} \elfun^{(n)}\right) \, .
 \end{align}
-Since $\zeta >0$, the exponential term always {\em suppresses} high-frequencies in proportion to $k^2$. In other words, this is a smoothing term. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
+Since $\zeta >0$, the exponential term always {\em suppresses} high-frequencies (exponentially with $k^2$). In other words, this is a smoothing term. With the geometry at step $n+1/2$ known, a call to the Stokes solver allows the computation of $\Mterm^{(n+1/2)}$, $\widehat{\NLterm}_k^{(n+1/2)}$, and $\zeta^{(n+1/2)}$.
 
 At the second stage of RK2, we discretize \eqref{eq:mu}--\eqref{eqn:thetaevo3} as 
 \begin{align}
@@ -788,9 +788,9 @@ Once again, we must eventually compute the geometry at step $n+1$, and so we ins
 \begin{align}
 \thhat_k^{(n+1)} =  \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
-Once again, both exponential terms act to smooth geometry in proportion to $k^2$. Finally, to track the reference point, $\mean{x}$, we simply apply the same RK2 method to \eqref{eq:xsurf}.
+Once again, both exponential terms act to smooth geometry. Finally, to track the reference point, $\mean{x}$, we simply apply the same RK2 method to \eqref{eq:xsurf}.
 
-We point out that most exponential integrators use some form of quadrature to treat \eqref{eq:mu}, but, here, we have simply applied the same RK2 method that is used for the rest of the system. We believe this to be a simple, systematic approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's, etc.) and can be easily generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
+We point out that most exponential integrators use some form of quadrature to treat \eqref{eq:mu}, but, here, we have simply applied the same RK2 method used for the rest of the system. We believe this to be a simple, systematic approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's, etc.) and can be easily generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1012,11 +1012,11 @@ case.
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points and shown at three evenly spaced times. Here, color represents the vorticity of the surrounding flow, which, when evaluated on the boundary, corresponds to the shear stress and thus the local erosion rate. As seen in the left-most snapshot, the body is initially circular and has the strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, with vorticity vanishing at the body's front and rear stagnation points. 
+Figure \ref{01bodseq} shows the erosion of a single body, numerically simulated with $N_\iin = 1024$ discretization points and shown at three evenly spaced times. Here, color represents the vorticity of the surrounding flow. When evaluated on the boundary, vorticity corresponds to the shear stress and thus the local erosion rate. As seen in the left-most snapshot, the body is initially circular and has the strongest vorticity above and below it. The flow is for-aft symmetric as a result of the time-reversibility of the Stokes equations, with vorticity vanishing at the body's front and rear stagnation points. 
 At the next instance, the body has lost material due to erosion, but remains for-aft symmetric due to the flow symmetry. The greatest material loss has occurred at the body's top and bottom, where shear is strongest. Interestingly, the body has developed well-defined corners at its front and rear stagnation points. This geometric feature is a consequence of the erosion law, which depends on the {\em absolute} shear stress: wherever the stress vanishes, $\atau$ exhibits a corner, which manifests as a corner in the geometry. As shown in the third snapshot, this corner persists as the bodies becomes even more slender and continues to shrink. In this simulation, the body completely vanishes at a final time of $t_f = 1.79E-2$.
 
 To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$. The body seems to converge to a shape that resembles an American football --- a fairly slender, for-aft symmetric shape with corners at the front and back.
-Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$ corresponding to the rear stagnation point and $s/L = 0.5$ the front stagnation point. At early times (yellow to orange), the stress is distributed non-uniformly, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that {\em at} the stagnation points, the stress always vanishes, though in a region that becomes increasingly narrow.
+Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arc length $s/L$ runs counterclockwise around the body, with $s/L = 0$ corresponding to the rear stagnation point and $s/L = 0.5$ the front stagnation point. At early times (yellow to orange), the stress is distributed non-uniformly, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that the stress always vanishes {\em at} the stagnation points, but in a region that becomes increasingly narrow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1034,7 +1034,7 @@ Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01
 \subsection{Scaling law for the vanishing rate}
 \label{sec:scaling}
 
-Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress is growing as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / a$, in which drag is inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
+Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress is increasing as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / a$, in which drag is inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
 For a slender body in flow perpendicular to its long-axis $\ell$, the drag is proportional to
 $\mu \umax \ell/ \log(\ell/a)$, where $a$ is a lengthscale of the cross-section and $a \ll \ell$. This relationship implies that the stress per unit span on a 2D cross-section can be estimated by
 \begin{align}
@@ -1071,7 +1071,7 @@ Noting that $A \sim a^2$ allows one to solve the ODE to determine how the body a
 \end{align}
 Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how the area scales down in time during erosion. In Fig.~\ref{area_drag}a, we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 = 0.24$ a fit parameter. The comparison shows close agreement between the two (they are indistinguishable).
 
-In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, $F_D$ is drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments of the body vanishing. This behavior is consistent with fact that drag vanishes {\em logarithmically} with body-size $a$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag vanishes much more rapidly than viscous drag.
+In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, this $F_D$ should be interpreted as the drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments as the body vanishes. This behavior is consistent with fact that drag vanishes {\em logarithmically} with body-size $a$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag decays more rapidly and viscous drag dominates.
 
 As a final check, we can estimate the drag (per unit span) using slender-body theory via the formula
 \begin{align}
