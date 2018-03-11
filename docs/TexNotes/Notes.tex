@@ -374,6 +374,11 @@ q = \frac{1}{2w} \int_{-w}^{w} u(z) dz = - \frac{ p_x w^2}{3 \mu}
 \end{equation}
 so that the permeability due to the channel walls is $k_w = w^2/3$ and the resistivity is $r_w = 3/w^2$.
 
+If we define $u(z) = U(w^2 - z^2)$, then $U = -p_x / (2 \mu)$, so that we get
+\begin{align}
+q = \frac{2}{3} U w^2
+\end{align}
+
 Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensionalization). Measure the pressure and velocity along two vertical lines, one at $x = x_0$ and another at $x = -x_0$, and average to get $p^+ = \left< p(x_0) \right>$, $p^- = \left<p(-x_0) \right>$ and the same for $q$. Then the {\em total} resistivity (that of the porous matrix and the channel walls together) is 
 \begin{equation}
 r_{tot} = \frac{p^- - p^+}{2 x_0 q_{avg}}
