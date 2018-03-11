@@ -140,18 +140,27 @@ carefully chosen local expansions around each corner~\cite{rac-ser2017,
 ser-rok2016} or panel-based graded meshes~\cite{hel2011,
 gil-hao-mar2014, bre2012}.  The limitation of these methods is that they
 require the corner's location, a non-uniform spaced mesh, and some of
-the methods have a large condition number.  So that we can use a uniform
-grid, we instead slightly modify the geometry to maintain sufficient
-regularity.  First, we add a regularization term to the shear stress to
-penalize regions of high curvature.  Second, we apply a Gaussian filter
-to smooth the absolute value of the shear stress before the body shape
-is updated.
+the methods have a large condition number.  One solution is to use two
+meshes---one for the quadrature the other for the interface tracking.
+Then, interpolation between the two grids is required, and this is the
+approach taken by Ojala and Tornberg~\cite{oja-tor2015}.  Instead of
+using two grids and interpolation operators, we only require the uniform
+grid by slightly modify the geometry to maintain sufficient regularity.
+First, we add a regularization term to the shear stress to penalize
+regions of high curvature.  Second, we apply a Gaussian filter to smooth
+the absolute value of the shear stress before the body shape is updated.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations} 
 
 %\todo[inline]{These are some of my thoughts on reworking this first paragraph. See if you like it.}
-We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to 2D allows us to simulate the erosion of many bodies (order 50-100) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIE methods are available in 3D, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
+We begin by making two fundamental design choices: first, we restrict
+ourselves to two spatial dimensions, and second the bodies are
+considered immobile (i.e.~fixed to their initial locations). The
+restriction to 2D allows us to simulate the erosion of many bodies
+(up to $50$ in this manuscript) with high resolution, giving us the
+ability to accurately characterize the erosion of a porous medium. While
+boundary integral equation (BIE) methods are available in 3D, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
 
 %\todo[inline]{This is the original below:}
 %There are two main limitations of the current
@@ -339,7 +348,19 @@ we modify this law in Section~\ref{sec:thetaL}.
 \label{sec:bies}
 
 In this section, we describe the boundary integral equations employed
-for the fluid equations \cite{Moore2007}
+for the fluid equations.  We will start by writing the velocity field in
+terms of the standard double-layer potential~\cite{laz1963,poz1992}.
+Since the double-layer potential representation is only able to
+represent force-free and torque-free velocity fields, Power and
+Miranda~\cite{pow-mir1987} completed the BIE formulation by introducing
+a Stokeslet and Rotlet.  This methodology was extended by Power for
+multiply-connected domains~\cite{pow1993}.  In two-dimensions, a stream
+function formulation can be used in which case the biharmonic equation
+must be solved, and this can be done using BIEs by using analytic
+function theory~\cite{gre-kro-may1996}.
+  
+  
+  \cite{Moore2007}
 \todo[inline]{Bryan do you want to add a bunch of references to your boundary integral papers here (or somewhere else)?}
 In particular, we solve the incompressible Stokes equations
 with Dirichlet boundary conditions 
