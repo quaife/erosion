@@ -235,7 +235,7 @@ our numerical solution.
 describe the governing equations for both the fluid and describe the
 erosion model using a \thL~framework.  In Section~\ref{s:method}, the
 numerical methods in both space and time are described.
-Section~\ref{s:results} gives several numerical examples.  Finally,
+Section~\ref{SingleResults} gives several numerical examples.  Finally,
 concluding remarks are made in Section~\ref{s:conclusions}
 
 
@@ -989,14 +989,9 @@ quadrature~\cite{hel-oja2008a}.
 %%-----------------------------------------------------------------%%
 % RESULTS SECTION
 %%-----------------------------------------------------------------%%
-\section{Results}
-\label{s:results}
-With the description of the methods complete, we now present numerical
-results on bodies eroding in Stokes flow. We first discuss the case of a
-single body, as certain features can be predicted analytically and thus
-used for validation. We then discuss the erosion of multiple bodies and
-highlight important differences that arise compared to the single-body
-case.
+\section{Results: single-body erosion}
+\label{SingleResults}
+With the description of the methods complete, we now present numerical results on bodies eroding in Stokes flow. We first discuss the case of a single body, as certain features can be predicted analytically and thus used for validation. In Section \ref{MultiResults} we will discuss the erosion of multiple bodies and highlight important differences that arise compared to the single-body case.
 
 \subsection{A single body eroding in Stokes flow}
 
@@ -1031,7 +1026,7 @@ Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-\subsection{Scaling law for the vanishing rate}
+\subsection{Scaling laws for area and drag}
 \label{sec:scaling}
 
 Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress is increasing as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / a$, in which drag is inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
@@ -1126,6 +1121,8 @@ We note that this uniform-stress shape is closely related to the so-called `opti
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
+\subsection{Fixed-area simulations}
+
 To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. However, our simulations lose accuracy just in the final moments as the body is vanishing due to the shear stress blowing up (in accordance with the scaling laws discussed in Section \ref{sec:scaling}). To circumvent this problem, we could restart our simulation with a scaled-up version of the the near-final  body as the initial condition and iterate the process until convergence. A simpler solution, though, is to remove the effect of shrinking by modifying the normal velocity $\Vn$ to have zero mean,
 \begin{align*}
 \Vn \leftarrow \Vn - \mean{\Vn} \, .
@@ -1214,7 +1211,10 @@ As a final validation, we now aim to verify that our method converges with secon
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0
 
 
-\subsection{Multiple-body simulations}
+\section{Results: multi-body erosion}
+\label{MultiResults}
+
+\subsection{Fixed pressure drop condition and validation}
 
 With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We make one important conceptual change to our model. For a realistic porous medium composed of many solid bodies, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. A more realistic condition is that the pressure difference from one end to another is held fixed. For example, in groundwater flow, this condition would correspond to a recharge region of given hydraulic head connecting to a discharge region of another hydraulic head. 
 
@@ -1259,7 +1259,7 @@ This rescaling maintains a {\em fixed} pressure difference between the upstream 
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
 
-Briefly, to confirm that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table shows the method to retain second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table \ref{itertab} the GMRES count for various cases ...
+Briefly, to verity that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table confirms that the method retains second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table \ref{itertab} the GMRES count for various cases ...
 
 % Table: GMRES iterations
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1292,6 +1292,8 @@ Briefly, to confirm that the rescaling does not alter accuracy, we show in Table
 \end{table}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % In these tests I always use 128 points per body.
+
+\subsection{Multi-body erosion}
 
 We now discuss some physical aspects of multi-body erosion revealed by our simulations. In Fig.~\ref{fig:06bodies} we show a simulation of 6 eroding bodies, each initially circles of various sizes and positions. Over time, erosion not only diminishes the size of the bodies, but also alters their shapes considerable. As in the single-body simulations, corner-like features develop, but not in locations that are easily predictable (such as the foremost and aft-most points on the body). Rather, when and where these sharp features develop depends on inter-body feedback as mediated by the Stokes flow.
 
