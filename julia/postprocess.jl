@@ -31,18 +31,13 @@ function pp1(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		println("Beginning the resistivity computation.")
-		rbods, pdrop, qavg = resistivity(thlenden,params.nouter,2.0)
-		rbodsrot, pdrot, qrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
+		rbods = resistivity(thlenden,params.nouter,2.0)
+		rbodsrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
 		# Save the resistivity data to a file.
 		resfile = string(datafolder,"resistivity",cntstr,".dat")
 		label = string("# Data on resistivity: nbods, resistivity, rotated resistivity.")
 		resdata = [label; nbods; rbods; rbodsrot;]
 		writedata(resdata, resfile)
-		# Save the flux and pressure drop data to a file.
-		qfile = string(datafolder,"flux",cntstr,".dat")
-		label = string("# Data on flux: nbods, qavg, pdrop, qrot, pdrot.")
-		qdata = [label; nbods; qavg; pdrop; qrot; pdrot;]
-		writedata(qdata, qfile)
 		# Print progress.
 		println("Finished the resistivity computation.\n")
 		println("Finished step ", cnt, " of ", ntimes, ".\n\n")
@@ -62,14 +57,15 @@ function pp2(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the total pressure and viscous drag on the collection of bodies.
 		println("Beginning the drag computation.")
-		pdragx, pdragy, vdragx, vdragy, tauvec = drag(thlenden,params)
-		pdragxr, pdragyr, vdragxr, vdragyr, tauvecr = drag(thlenden,params,rotation=true)
+		pdragx, pdragy, vdragx, vdragy, umax, tauvec = drag(thlenden,params)
+		pdragxr, pdragyr, vdragxr, vdragyr, umaxr, tauvecr = drag(thlenden,params,rotation=true)
 		# Save the data to a file.
 		dragfile = string(datafolder,"drag",cntstr,".dat")
 		lab1 = string("# Data on drag: ")
-		lab2 = string("# nbods, pdragx, pdragy, vdragx, vdragy, and all rotated values.")
+		lab2 = string("# nbods, pdragx, pdragy, vdragx, vdragy, umax and all rotated values.")
 		dragdata = [lab1; lab2; nbods; 
-			pdragx; pdragy; vdragx; vdragy; pdragxr; pdragyr; vdragxr; vdragyr]
+			pdragx; pdragy; vdragx; vdragy; umax;
+			pdragxr; pdragyr; vdragxr; vdragyr]
 		writedata(dragdata, dragfile)
 		println("Finished the drag computation.\n")
 		#--------------------------------------#
@@ -77,7 +73,9 @@ function pp2(foldername::AbstractString)
 		# atauvec has absolute value and smoothing applied; 
 		# tauvec is raw stress, with nontrivial sign and no smoothing.
 		println("Beginning the stress computation.")
+
 		getstress!(thlenden,params)
+
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
 		atauvec = zeros(Float64, npts*nbods)
@@ -174,17 +172,19 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; rotat
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
 	# Also calculate umax, and rescale prop and qavg based on this value.
-	umax = getumax(thlenden, nouter, true)
-	pdrop *= umax
-	qavg *= umax
-	return rbods, pdrop, qavg
+	#umax = getumax(thlenden, nouter, true)
+	#pdrop *= umax
+	#qavg *= umax
+	return rbods
 end
+
 # drag: Compute the total drag on all of the bodies combined.
 function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
-	# Note: the stress is not smoothed and absolute value is not taken.
-	tauvec = compute_stress(thlenden,params.nouter,fixpdrop=params.fixpdrop,rotation=rotation)
-	pressvec = compute_pressure(thlenden,params.nouter,fixpdrop=params.fixpdrop,rotation=rotation)
+	# Note 1: the stress is not smoothed and absolute value is not taken.
+	# Note 2: these are the values with umax = 1.
+	tauvec = compute_stress(thlenden,params.nouter,fixpdrop=false,rotation=rotation)
+	pressvec = compute_pressure(thlenden,params.nouter,fixpdrop=false,rotation=rotation)
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
 	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
@@ -203,7 +203,8 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 		vdragx += dot(tau,sx)*ds
 		vdragy += dot(tau,sy)*ds
 	end
-	return pdragx, pdragy, vdragx, vdragy, tauvec
+	umax = getumax(thlenden, params.nouter, params.fixpdrop)
+	return pdragx, pdragy, vdragx, vdragy, umax, tauvec
 end
 
 #----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
