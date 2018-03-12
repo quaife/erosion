@@ -57,34 +57,23 @@ function pp2(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the total pressure and viscous drag on the collection of bodies.
 		println("Beginning the drag computation.")
-		pdragx, pdragy, vdragx, vdragy, umax, tauvec = drag(thlenden,params)
-		pdragxr, pdragyr, vdragxr, vdragyr, umaxr, tauvecr = drag(thlenden,params,rotation=true)
+		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden,params)
+		pdrxr,pdryr,vdrxr,vdryr,umaxr,tauvr,atauvr = drag(thlenden,params,rotation=true)
+		println("Finished the drag computation.\n")
 		# Save the data to a file.
 		dragfile = string(datafolder,"drag",cntstr,".dat")
 		lab1 = string("# Data on drag: ")
 		lab2 = string("# nbods, pdragx, pdragy, vdragx, vdragy, umax and all rotated values.")
 		dragdata = [lab1; lab2; nbods; 
-			pdragx; pdragy; vdragx; vdragy; umax;
-			pdragxr; pdragyr; vdragxr; vdragyr]
+			pdrx; pdry; vdrx; vdry; umax; pdrxr; pdryr; vdrxr; vdryr]
 		writedata(dragdata, dragfile)
-		println("Finished the drag computation.\n")
 		#--------------------------------------#
 		# Save the stress on each body.
-		# atauvec has absolute value and smoothing applied; 
-		# tauvec is raw stress, with nontrivial sign and no smoothing.
-		println("Beginning the stress computation.")
-
-		getstress!(thlenden,params)
-
+		# tauv is raw stress, with nontrivial sign and no smoothing.
+		# atauv has absolute value and smoothing applied; 
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
-		atauvec = zeros(Float64, npts*nbods)
-		for nn=1:nbods
-			n1,n2 = n1n2(npts,nbods)
-			atauvec[n1:n2] = thlenden.thlenvec[nn].atau
-		end
-		writedata([label; atauvec; tauvec], stressfile)
-		println("Finished the stress computation.")
+		writedata([label; atauv; tauv], stressfile)
 		println("Finished step ", cnt, " of ", ntimes, ".\n\n")
 	end
 	println("Finished pp2.")
@@ -171,10 +160,6 @@ function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; rotat
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
 	rbods = x0*(rtot - 3)
-	# Also calculate umax, and rescale prop and qavg based on this value.
-	#umax = getumax(thlenden, nouter, true)
-	#pdrop *= umax
-	#qavg *= umax
 	return rbods
 end
 
@@ -188,11 +173,14 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
 	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
+	atauvec = zeros(Float64,npts*nbods)
 	for nn=1:nbods
 		# Get the pressure and stress on body nn.
 		n1,n2 = n1n2(npts,nn)
 		press = pressvec[n1:n2]
 		tau = tauvec[n1:n2]
+		# Go ahead and compute the absolute smoothed stress.
+		atauvec[n1:n2] = gaussfilter(abs(tau), params.sigma)
 		# Get the tangent/normal vectors and arc length increment.
 		sx,sy,nx,ny = getns(thlenvec[nn].theta,rotation)
 		ds = thlenvec[nn].len / npts
@@ -204,7 +192,7 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 		vdragy += dot(tau,sy)*ds
 	end
 	umax = getumax(thlenden, params.nouter, params.fixpdrop)
-	return pdragx, pdragy, vdragx, vdragy, umax, tauvec
+	return pdragx, pdragy, vdragx, vdragy, umax, tauvec, atauvec
 end
 
 #----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
