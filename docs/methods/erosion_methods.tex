@@ -348,39 +348,36 @@ we modify this law in Section~\ref{sec:thetaL}.
 \label{sec:bies}
 
 In this section, we describe the boundary integral equations employed
-for the fluid equations.  We will start by writing the velocity field in
-terms of the standard double-layer potential~\cite{laz1963,poz1992}.
-Since the double-layer potential representation is only able to
-represent force-free and torque-free velocity fields, Power and
-Miranda~\cite{pow-mir1987} completed the BIE formulation by introducing
-a Stokeslet and Rotlet.  This methodology was extended by Power for
-multiply-connected domains~\cite{pow1993}.  In two-dimensions, a stream
-function formulation can be used in which case the biharmonic equation
-must be solved, and this can be done using BIEs by using analytic
-function theory~\cite{gre-kro-may1996}.
-  
-  
-  \cite{Moore2007}
-\todo[inline]{Bryan do you want to add a bunch of references to your boundary integral papers here (or somewhere else)?}
-In particular, we solve the incompressible Stokes equations
-with Dirichlet boundary conditions 
+for the fluid equations.  In particular, we solve the incompressible
+Stokes equations with Dirichlet boundary conditions 
 \begin{alignat*}{3}
   \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
   \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
   \uu &= \ff,  && \xx \in \bd\Omega.
 \end{alignat*}
 The boundary condition $\ff$ is the prescribed velocity $\UU$ on
-$\Gamma$, and it is zero on the grains $\gamma$.  As the viscosity $\mu$
-also sets the time scale, we take $\mu=1$.  We start by defining the
-double-layer potential
-\todo[inline]{Do you think we should flesh out this time-scale stuff more precisely? i.e.~By setting $\mu = 1$ and $C = 1$ (the erosion constant), what exactly is the timescale that defines our dimensionless time.}
+$\Gamma$, and it is zero on the grains $\gamma$.  Since we are
+interested in two dimensions, a stream function formulation can be used
+by recasting the governing equations as a problem in analytic function
+theory~\cite{gre-kro-may1996}.  We instead work with the primitive
+variables by writing the velocity in terms of the standard double-layer
+potential~\cite{lad1963,poz1992}
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
     \label{eqn:velocityDLP}
 \end{align}
-where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown density function.  The
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown density function.  The double-layer potential representation is only able to
+represent force- and torque-free velocity fields, so we complete the
+velocity representation with Stokeslets and
+Rotlets~\cite{pow-mir1987,pow1993}.  
+
+  \cite{Moore2007}
+As the viscosity $\mu$ also sets the time scale, we take $\mu=1$.  We
+start by defining the double-layer potential
+\todo[inline]{Do you think we should flesh out this time-scale stuff more precisely? i.e.~By setting $\mu = 1$ and $C = 1$ (the erosion constant), what exactly is the timescale that defines our dimensionless time.}
+The
 double-layer potential cannot capture velocity fields corresponding to
 rigid body motions~\cite{pow-mir1987}.  The rank deficiency is removed
 by complementing the double-layer potential with a Stokeslets and
