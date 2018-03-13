@@ -711,7 +711,7 @@ stress with $\bigO(N)$ operations.
 \subsection{Time-stepping with the {\thL} method} 
 \label{sec:timeStepping}
 
-With the shear stress computed, we are now ready to numerically evolve the boundary of each body using the {\thL} framework. The main equations to be solved are~\eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalizing term into the erosion law~\eqref{eqn:Vn}. This term suppresses high-frequency oscillations, but also introduces {\em stiffness} into evolution equation~\eqref{eqn:thetaevo1}. We will therefore use a combined exponential-integrator/Runge-Kutta method to solve system~\eqref{eqn:Levo1}--\eqref{eq:xsurf}. The exponential integrator will handle the stiff term in a numerically stable fashion, while the Runge-Kutta method will treat nonlinear terms explicitly. Our overall time-stepping method will be second order.
+With the shear stress computed, we are now ready to numerically evolve the boundary of each body using the {\thL} framework. The main equations to be solved are~\eqref{eqn:Levo1}--\eqref{eq:xsurf}.  In Section~\ref{sec:thetaL} we introduced a curvature-penalizing term into the erosion law~\eqref{eqn:Vn}. This term suppresses high-frequency oscillations, but also introduces {\em stiffness} into evolution equation~\eqref{eqn:thetaevo1}. We will therefore use a combined exponential-integrator/Runge-Kutta method to solve system~\eqref{eqn:Levo1}--\eqref{eq:xsurf}. The exponential integrator will handle the stiff term in a numerically stable fashion, while the Runge-Kutta method will treat nonlinear terms explicitly. Our overall time-stepping method will be second-order accurate.
 
 First, we must address a second potential source of numerical
 instability. The erosion law~\eqref{eqn:Vn} depends on the {\em absolute
@@ -747,7 +747,7 @@ Then,~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
 \end{align}
-The first term on the right-hand-side of~\eqref{eqn:thetaevo2} is the stiff term resulting from the curvature penalization; i.e.~a curvature-driven interface velocity is associated with diffusion of the tangent angle $\theta$. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$). Meanwhile, $\NLterm$ represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
+The diffusive term on the right of~\eqref{eqn:thetaevo2} results from the curvature penalization and is the stiffest term present. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$). Meanwhile, $\NLterm$, represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both a nonlinear and nonlocal.
 
 We will evolve $\theta(\alpha,t)$ in spectral space and so introduce the Fourier series for $\theta$ and $\NLterm$
 \begin{align}
@@ -773,8 +773,8 @@ which leads to the coupled system
 & \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \widehat{\NLterm}_k \, ,
 \qquad k = -N_\iin/2, \ldots, N_\iin/2 -1.
 \end{align}
-Note that the diffusive term from~\eqref{eqn:thetaevo2} does not appear explicitly in~\eqref{eqn:thetaevo3}, but rather is implied by the integrating factor~\eqref{eq:mu}; i.e.~we have applied an exponential integrator. We solve the resulting system~\eqref{eq:mu}--\eqref{eqn:thetaevo3} with an
-explicit, second-order Runge-Kutta method (RK2). In particular, we use the {\em midpoint} RK2 method so as to maximize the smoothing effect of the curvature penalization.
+Note that the diffusive term from~\eqref{eqn:thetaevo2} does not appear explicitly in~\eqref{eqn:thetaevo3}, but rather is implied by the integrating factor~\eqref{eq:mu}. This is the idea of an exponential integrator. We solve the resulting system~\eqref{eq:mu}--\eqref{eqn:thetaevo3} with an
+explicit, second-order Runge-Kutta method (RK2). In particular, we use the {\em midpoint} RK2 method so as to maximize the smoothing effect of the diffusive term.
 \todo[inline]{Last sentence might need to be clarified.  Not sure about
 using `so as to'}
 
@@ -808,7 +808,7 @@ At the second stage of RK2, we discretize~\eqref{eq:mu}--\eqref{eqn:thetaevo3} a
 & \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \mu_k^{(n)} \thhat_k^{(n)}}{\Dt} =
 \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}.
 \end{align}
-Once again, we must eventually compute the geometry at step $n+1$, and so we insert~\eqref{eq:mu1d} into~\eqref{eq:th1d} and solve for $\theta^{(n+1)}$, giving
+We must eventually compute the geometry at step $n+1$, and so we insert~\eqref{eq:mu1d} into~\eqref{eq:th1d} and solve for $\theta^{(n+1)}$, giving
 \begin{align}
 \thhat_k^{(n+1)} =  \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
 \end{align}
