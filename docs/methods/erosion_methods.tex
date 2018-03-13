@@ -1348,7 +1348,6 @@ The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have sever
 
 The vorticity field not only allows us to visualize regions of high shear, but also allows us to identify preferred channels with most intense flow. Figure~\ref{fig:06bodies} shows that the flow is concentrated primarily in a single channel that runs horizontally below bodies 1 \& 2 and above bodies 3, 5, \& 6. This main channel widens the fastest, and secondary channels follow (e.g.~between bodies 1 \&2 or 3 \& 5 or 5 \& 6). Since the pressure drop across the cell is fixed, the overall flow rate increases as the bodies erode. This can be seen by the overall vorticity magnitude growing in time. By the final frame shown, body 4 has vanished completely and our method handles this event seamlessly.
 
-
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -1361,6 +1360,7 @@ The vorticity field not only allows us to visualize regions of high shear, but a
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
+We further quantify many of these observations in Fig.~\ref{fig:mbodyplots}. First, Fig.~\ref{fig:mbodyplots}(a) shows area fraction versus time. The area fraction is the total area of all bodies as compared to the domain area, i.e.~the 2D counterpart of volume fraction. The initial configuration of 6 circles comprises about 40\% of the domain area, and this percentage steadily decreases as the bodies erode. Figure \ref{fig:mbodyplots}(b) shows the inlet/outlet flow-rate, $\umax$, over time.
 
 
 \newpage
