@@ -17,7 +17,11 @@
 \address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-We consider two dimensional eroding bodies in Stokes flow
+We develop numerical methods to simulate the fluid-mechanical erosion of many bodies (order 50) in 2D Stokes flow. The broad aim is to simulate the erosion of a porous medium (e.g.~ground water flow) with resolution at the grain scale. Our fluid solver is based on a boundary-integral formulation of the Stokes equations. We solve the associated linear system iteratively with GMRES and use the fast-multipole method (FMM) to accelerate the matrix-vector products. 
+
+To evolve individual grains according to shear-driven erosion in a numerically stable manner, we regularize interface motion through curvature-penalization.
+
+%{\thL} method, which allows us to regularize 
 \end{abstract}
 
 \begin{keyword}
