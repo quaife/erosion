@@ -1036,8 +1036,9 @@ At the next instance, the body has lost material due to erosion, but remains for
 notation? Could instead use $1.79 \times 10^{-2}$? \\
 Fine by me (Nick). What about for tables (e.g. table 4)? For tables, I am more used to seeing the 1.79E-2 notation. How about you?}
 
-To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$, where $t_f = 1.79 \times 10^{-2}$ is the time at which the body vanishes in the simulation. The body converges to a fairly slender, for-aft symmetric shape with corners at its front and back --- somewhat reminiscent of an American football.
-Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arclength $s/L$ runs counterclockwise around the body, with $s/L = $ 0 and 0.5 corresponding to the rear and front stagnation points respectively. At early times (yellow curves), the stress varies significantly, with more stress concentrated at the top and bottom of the body. As erosion alters the body's shape, though, the stress becomes more uniformly distributed over the entire surface (red curves). As the body nears the final stages of erosion (dark red), $\atau$ shows slight peaks near the stagnation points. Upon close inspection, the stress always vanishes {\em at} the stagnation points, but in a region that becomes increasingly narrow.
+To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$, where $t_f = 1.79 \times 10^{-2}$ is the time at which the body vanishes in the simulation. As seen in Fig.~\ref{shrink_intface}(a), the body converges to a fairly slender, for-aft symmetric shape with corners at its front and back --- somewhat reminiscent of an American football.
+Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arclength $s/L$ runs counterclockwise around the body, with $s/L = $ 0 and 0.5 corresponding to the rear and front stagnation points respectively. At early times (yellow curves), the stress varies significantly, with more stress concentrated at the top and bottom of the body. However, as erosion alters the body's shape, the stress becomes more uniformly distributed over the entire surface (red curves). The absolute stress $\atau$ shows slight peaks near the stagnation points as the bodies nears the final stages of erosion (dark red). Closer inspection reveals that the stress actually vanishes {\em at} the stagnation points, but in a region that becomes increasingly narrow with time.
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1092,28 +1093,19 @@ Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \end{align}
 Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time. We can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
 
-The drag exerted by the body offers
+	The drag exerted by the eroding body offers a second check on the simulation. Figure~\ref{area_drag}(b) shows the horizontal drag, $F_D$, calculated in the simulations (black curve) using Eq.~\eqref{eqn:drag}. In the context of slender-body theory, $F_D$ should be interpreted as drag-per-unit-span. As seen in Fig.~\ref{area_drag}(b), the drag decreases gradually at first and then abruptly tends to zero in the very final moments. This behavior, though perhaps surprising, is consistent with the fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. Equation \eqref{eqn:drag} also allows us to calculate the separate contributions of pressure and viscous drag, and we show these with the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. However,  as the body erodes and assumes a more slender form, the pressure drag decreases much more rapidly, leaving viscous drag to dominate. This behavior is associated with the tendency towards a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
 
-The drag exerted by the eroding body
-
-The drag on the eroding body offers a second check on our simulation. This quantity will also be of great interest in its own right for characterizing a porous-medium.
-
-
-
-%\ref{eqn:drag}
-
-In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, this $F_D$ should be interpreted as the drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments as the body vanishes. This behavior is consistent with fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag decays more rapidly and viscous drag dominates.
-
-As a final check, we can estimate the drag (per unit span) using slender-body theory via the formula
+As a check on these results, we can use slender-body theory to estimate the drag-per-unit-span
 \begin{align}
 \label{dragscaling}
-\frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}.
+\frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}	\qquad \text{for } a \ll \ell \, .
 \end{align}
-The normalization factor of $4 \pi$ produces an {\em exact} relationship (under the assumptions of slender-body theory) for the case of a {\em circular} cylinder, where $a$ is taken to be the radius. To generalize to other shapes, we define $a = \sqrt{A/\pi}$ and fit $\ell$ to get $\ell = 2.3 a_0$.
-
-\todo[inline]{Clean up this section}
+For the case of a {\em circular} cylinder, the normalization factor of $4 \pi$ produces an {\em exact} relationship (under the slender-body assumptions), where $a$ is taken to be the radius. For other shapes the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale (since it generalizes the case of a circle). In Fig.~\ref{area_drag}(b) we show this scaling prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ the radius of the initially circular body. The scaling law agrees closely with the simulated drag as the body vanishes, thus providing validation.
 
 \subsection{Local analysis for the limiting shape}
+\label{LimitingShape}
+
+\todo[inline]{Here in revising}
 
 With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge. We aim to determine the wedge's opening angle, $\oangle$, through the principle of uniform stress. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$~\cite{poz1997}. In this section alone, $\theta$ denotes the polar coordinate (not the local tangent angle along the body). The corresponding stream function is assumed to take the form $\psi = r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th order ODE~\cite{poz1997}
 \begin{align*}
