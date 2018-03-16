@@ -1036,8 +1036,8 @@ At the next instance, the body has lost material due to erosion, but remains for
 notation? Could instead use $1.79 \times 10^{-2}$? \\
 Fine by me (Nick). What about for tables (e.g. table 4)? For tables, I am more used to seeing the 1.79E-2 notation. How about you?}
 
-To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$, where $t_f = 1.79 \times 10^{-2}$ is the time at which the body vanishes. The body converges to a fairly slender, for-aft symmetric shape with corners at its front and back --- somewhat reminiscent of an American football.
-Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arclength $s/L$ runs counterclockwise around the body, with $s/L = $ 0 and 0.5 corresponding to the rear and front stagnation points respectively. At early times (yellow to orange), the stress is highly variables, with highest values at the top and bottom of the body. As time proceeds, though, the stress becomes more evenly distributed along the body's surface (red). As the body nears the final stages of erosion (dark red), the stress actually becomes slightly higher near the stagnation points. A close look reveals that the stress always vanishes {\em at} the stagnation points, but in a region that becomes increasingly narrow.
+To better understand the shape evolution, Fig.~\ref{shrink_intface}(a) shows several superimposed interfaces at evenly spaced times. The interfaces are color-coded by normalized time $t/t_f$, where $t_f = 1.79 \times 10^{-2}$ is the time at which the body vanishes in the simulation. The body converges to a fairly slender, for-aft symmetric shape with corners at its front and back --- somewhat reminiscent of an American football.
+Fig.~\ref{shrink_intface}(b) shows how the absolute shear stress, $\atau$, is distributed along each of these interfaces. The normalized arclength $s/L$ runs counterclockwise around the body, with $s/L = $ 0 and 0.5 corresponding to the rear and front stagnation points respectively. At early times (yellow curves), the stress varies significantly, with more stress concentrated at the top and bottom of the body. As erosion alters the body's shape, though, the stress becomes more uniformly distributed over the entire surface (red curves). As the body nears the final stages of erosion (dark red), $\atau$ shows slight peaks near the stagnation points. Upon close inspection, the stress always vanishes {\em at} the stagnation points, but in a region that becomes increasingly narrow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1081,7 +1081,7 @@ The body's rate of area reduction is given by integrating the absolute shear str
 \begin{align}
 \dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, ,
 \end{align}
-which is an {\em exact} relationship. Inserting scaling law~\eqref{eqn:stresslaw} gives
+Thus, the rate of area reduction is given by the product of the mean shear stress $\mean{\atau}$ and the perimeter $L$, which is an {\em exact} relation. Inserting scaling law~\eqref{eqn:stresslaw} gives the estimate
 \begin{align}
 \dot{A} \sim \frac{ - \mu \umax}{\log(\ell/a)} \qquad \text{as } a \to 0 \, . 
 \end{align}
@@ -1090,10 +1090,11 @@ Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \label{area_predict}
 \frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f} \quad \text{as } t \to t_f \, .
 \end{align}
-Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how the area of an eroding body scales down in time, which we can use to test our numerical simulation. In Fig.~\ref{area_drag}(a) compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
+Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time. We can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
+
+The drag exerted by the body offers
 
 The drag exerted by the eroding body
-
 
 The drag on the eroding body offers a second check on our simulation. This quantity will also be of great interest in its own right for characterizing a porous-medium.
 
