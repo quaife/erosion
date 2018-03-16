@@ -17,7 +17,7 @@
 \address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-We develop numerical methods to simulate the fluid-mechanical erosion of many bodies (order 50) in 2D Stokes flow. The broad aim is to simulate the erosion of a porous medium (e.g.~ground water flow) with resolution at the grain scale. Our fluid solver is based on a boundary-integral formulation of the Stokes equations with a double-layer potential. We solve the associated linear system iteratively using GMRES and the fast-multipole method (FMM) for acceleration. Since the underlying integral equation is second-kind, GMRES achieves a bounded iteration count (independent of the number of unknowns). To evolve the individual grains under shear-driven erosion, we regularize via curvature-penalization and solve the associated system using the {\thL} formulation. This framework allows numerically stable treatment of stiff terms and thus permits large time steps. The overall accuracy of our method is exponential in space and second-order in time. The method is computationally efficient, with the main part of the solver having an $O(N)$ cost, and a one-time $O(N^2)$ computation. We benchmark single-body results against analytical predictions. In our multi-body simulations, we find that erosion leads to spontaneous channelization between bodies in near contact. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
+We develop numerical methods to simulate the fluid-mechanical erosion of many bodies (order 50) in 2D Stokes flow. The broad aim is to simulate the erosion of a porous medium (e.g.~ground water flow) with resolution at the grain scale. Our fluid solver is based on a boundary-integral formulation of the Stokes equations with a double-layer potential. We solve the associated linear system iteratively using GMRES and the fast-multipole method (FMM) for acceleration. Since the underlying integral equation is second-kind, GMRES achieves a bounded iteration count (independent of the number of unknowns). To evolve the individual grains under shear-driven erosion, we regularize via curvature-penalization and solve the associated system using the {\thL} formulation. This framework allows numerically stable treatment of stiff terms, thus permitting large time steps. The overall accuracy of our method is exponential in space and second-order in time. The method is computationally efficient, with the main part of the solver having an $O(N)$ cost, and a one-time $O(N^2)$ computation. We benchmark single-body results against analytical predictions. In our multi-body simulations, we find that erosion leads to spontaneous channelization between bodies in near contact. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
 \end{abstract}
 
 \begin{keyword}
@@ -933,8 +933,8 @@ differentiation is used to compute the arclength derivative.
 With the pressure and shear stress, the drag on a single body with
 boundary $\gamma_\ell$ is
 \begin{align}
-  \FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
-  \label{eqn:drag}
+\FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
+\label{eqn:drag}
 \end{align}
 The reader may notice an unusual sign convention for pressure in this formula, which is simply due to the normal direction pointing {\em into} the bodies.
 
@@ -1055,23 +1055,21 @@ Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01
 \subsection{Scaling laws for area and drag}
 \label{sec:scaling}
 
-Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress is increasing as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / a$, in which drag is inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
+Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress grows as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, $\tau \sim \mu \umax / a$, in which drag is inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
 For a slender body in flow perpendicular to its long-axis $\ell$, the drag is proportional to
-$\mu \umax \ell/ \log(\ell/a)$, where $a$ is a length scale of the cross-section and $a \ll \ell$. This relationship implies that the stress per unit span on a 2D cross-section can be estimated by
+$\mu \umax \ell/ \log(\ell/a)$, where $a$ is a length scale of the cross-section and $a \ll \ell$. This relationship implies that the stress-per-unit-span on a 2D cross-section can be estimated as
 \begin{align}
   \label{eqn:stresslaw}
   \tau \sim \frac{\mu \umax}{a \log(\ell/a)} \qquad \text{for } a \ll \ell \, .
 \end{align}
 In interpreting our 2D simulations, we will treat the span, $\ell$, as
-fixed. Recall that $L$ denotes the total perimeter of the cross-section,
-and therefore $a$ and $L$ can often be used interchangeable in scaling
-analysis, since they each represent a length scale of the cross-section.
+fixed. Recall that $L$ denotes the total perimeter of the 2D cross-section. Since $L$ and $a$ each represent a characteristic scale of the cross-section, they can often be interchanged in scaling analysis.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.9 \textwidth]{./figs/area_drag.pdf}
-\caption{The area and drag of an eroding body: (a) The body area measured in the simulations (black) shown against the scaling-law prediction~\eqref{area_predict} (dotted red). The two are nearly indistinguishable. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate~\eqref{dragscaling} for the viscous drag (dotted red).}
+\caption{Area and drag: (a) The body area measured in the simulations (black) shown against the scaling-law prediction~\eqref{area_predict} (dotted red), the two of which agree closely. (b) The horizontal drag (black) on the body as it erodes, along with the viscous (green) and pressure (blue) contributions. The scaling prediction can be rearranged to give estimate~\eqref{dragscaling} for the viscous drag (dotted red).}
 \label{area_drag}
 \end{center}
 \end{figure}
@@ -1081,31 +1079,36 @@ analysis, since they each represent a length scale of the cross-section.
 
 The body's rate of area reduction is given by integrating the absolute shear stress around the boundary
 \begin{align}
-\dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, .
+\dot{A} = - \int_{\gamma} \atau \, ds \,  = - \mean{\atau} L \, ,
 \end{align}
-Thus, the area-loss rate is given by the product of the mean shear
-$\mean{\atau}$ and the total perimeter $L$, which is an exact relationship. Inserting scaling law~\eqref{eqn:stresslaw} gives
+which is an {\em exact} relationship. Inserting scaling law~\eqref{eqn:stresslaw} gives
 \begin{align}
 \dot{A} \sim \frac{ - \mu \umax}{\log(\ell/a)} \qquad \text{as } a \to 0 \, . 
 \end{align}
-Noting that $A \sim a^2$ allows one to solve the ODE to determine how the body area changes with time
+Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \begin{align}
 \label{area_predict}
 \frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f} \quad \text{as } t \to t_f \, .
 \end{align}
-Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area,
-and $c_1$ is a free constant. The above is an {\em implicit}
-relationship for how the area scales down in time during erosion. In
-Fig.~\ref{area_drag}(a), we show the body area as a function of time measured in the simulation against the above scaling law with $c_1 = 0.24$ a fit parameter. The comparison shows close agreement between the two (they are indistinguishable).
+Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how the area of an eroding body scales down in time, which we can use to test our numerical simulation. In Fig.~\ref{area_drag}(a) compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
 
-In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, this $F_D$ should be interpreted as the drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments as the body vanishes. This behavior is consistent with fact that drag vanishes {\em logarithmically} with body-size $a$  in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag decays more rapidly and viscous drag dominates.
+The drag exerted by the eroding body
+
+
+The drag on the eroding body offers a second check on our simulation. This quantity will also be of great interest in its own right for characterizing a porous-medium.
+
+
+
+%\ref{eqn:drag}
+
+In Fig.~\ref{area_drag}(b), we show the horizontal drag $F_D$ measured on the body as it erodes. Note that, in the context of 3D slender-body theory, this $F_D$ should be interpreted as the drag per unit span. The figure shows the drag to decrease  gradually at first, then abruptly tend to zero in the final moments as the body vanishes. This behavior is consistent with fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. We also show in the figure the separate contributions of the viscous and the pressure drag. Initially, these two contributions are comparable, with a slightly greater level of pressure drag. However, as the body erodes and assumes a more slender form, the pressure drag decays more rapidly and viscous drag dominates.
 
 As a final check, we can estimate the drag (per unit span) using slender-body theory via the formula
 \begin{align}
 \label{dragscaling}
 \frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}.
 \end{align}
-For a {\em circular} cylinder, $a$ is the radius and the normalization factor $4 \pi$ is exact within the slender-body framework. To generalize to other shapes, we define $a = \sqrt{A/\pi}$ and fit $\ell$ to get $\ell = 2.3 a_0$.
+The normalization factor of $4 \pi$ produces an {\em exact} relationship (under the assumptions of slender-body theory) for the case of a {\em circular} cylinder, where $a$ is taken to be the radius. To generalize to other shapes, we define $a = \sqrt{A/\pi}$ and fit $\ell$ to get $\ell = 2.3 a_0$.
 
 \todo[inline]{Clean up this section}
 
