@@ -780,8 +780,6 @@ which leads to the coupled system
 \end{align}
 Note that the diffusive term from~\eqref{eqn:thetaevo2} does not appear explicitly in~\eqref{eqn:thetaevo3}, but rather is implied by the integrating factor~\eqref{eq:mu}. This is the idea of an exponential integrator. We solve the resulting system~\eqref{eq:mu}--\eqref{eqn:thetaevo3} with an
 explicit, second-order Runge-Kutta method (RK2). In particular, we use the {\em midpoint} RK2 method because it maximizes the smoothing effect of the diffusive term.
-\todo[inline]{Last sentence might need to be clarified.  Not sure about
-using `so as to'}
 
 At the first stage of RK2 (the half step) we discretize~\eqref{eq:mu}--\eqref{eqn:thetaevo3} as
 \begin{align}
