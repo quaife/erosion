@@ -18,25 +18,25 @@
 
 \begin{abstract} 
 We develop numerical methods to simulate the fluid-mechanical erosion of
-many bodies (order 50) in a two-dimensional Stokes flow. The broad aim
+many bodies in a two-dimensional Stokes flow. The broad aim
 is to simulate the erosion of a porous medium (e.g.~ground water flow)
-with grain scale resolution. Our fluid solver is based on a
-boundary integral formulation of the Stokes equations. We solve the
-associated linear system with a fast-multipole-accelerated GMRES iteration. We use a second-kind integral equation so
-that GMRES requires a bounded iteration count (independent of the number
-of unknowns). To evolve the individual grains under shear-driven
+with grain-scale resolution. Our fluid solver is based on a
+second-kind boundary integral formulation of the Stokes equations that is
+discretized with a spectrally-accurate Nystr\"om method and solved
+with a fast-multipole-accelerated GMRES iteration. To evolve the individual grains under shear-driven
 erosion, we regularize via curvature-penalization and solve the
 associated system using the {\thL} formulation. This framework allows
 numerically stable treatment of stiff terms, thus permitting large time
 steps. The overall accuracy of our method is exponential in space and
 second-order in time. The method is computationally efficient, with the
-fluid solver requiring $\mathcal{O}(N)$ operations per GMRES iteration, and a one-time
+fluid solver requiring $\mathcal{O}(N)$ operations per GMRES iteration,
+a mesh-independent number of GMRES iterations, and a one-time
 $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-body results against analytical predictions. In our multi-body simulations, we find that erosion leads to spontaneous channelization between bodies in near contact. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
 \end{abstract}
 
 \begin{keyword}
-  Stokes flow \sep Erosion \sep Boundary integral method \sep Shear
-  stress \sep {\thL} formulation
+  Porous medium \sep Stokes flow \sep Erosion \sep Boundary integral
+  equations \sep Shear stress \sep {\thL} formulation
 \end{keyword}
 
 \maketitle
@@ -1380,28 +1380,7 @@ We further quantify many of these observations in Fig.~\ref{fig:mbodyplots}. Fir
 In Fig.~\ref{fig:mbodyplots} we also plot the same quantities for the 50-body simulation that was shown in Fig.~\ref{fig:50bodies} of the introduction. Overall, these plots support the same trends seen in the 6-body simulation. The initial area-fraction of the 50-body simulation is only slightly higher, about 45\%, and this fraction decreases steadily as bodies erode. The flow rate $\umax$ again increases very rapidly with time, though with a significantly smaller initial value due to the higher resistance provided by 50 bodies. As before, the total drag remains relatively constant throughout most of the simulation and then abruptly decreases to zero in the final moments. Our measure of resistance, $F_D/(4 \pi \umax)$, again decreases very rapidly in the early moments when channels are initially formed. Though the area fractions of the two simulations are nearly the same, the 50-body configuration provides about 5 times more resistance.
 
 
-\newpage
-
-Good word: Spontaneous channelization
-
-\vsp{3}
-Possible list:
-\begin{itemize}
-\item Show multiple body simulation with fixed flow rate
-\item Then simulation with fixed pressure drop
-\item GMRES counts
-%
-\item $\bigO(5-10)$ bodies
-	\begin{itemize}
-	\item Area and Drag
-	\item Long channels between flat faces
-	\end{itemize}
-\item $\bigO(50)$ bodies
-	\begin{itemize}
-	\item Area and Drag
-	\end{itemize}
-\end{itemize}
-
+{\bf Good word: Spontaneous channelization}
 
 
 
@@ -1414,11 +1393,8 @@ Possible list:
 Rachh for supplying the FMM for the Stokes double-layer potential.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{appendices}
-\section{Error estimates for near-singular integration \label{A:AppendixA}} 
-\end{appendices}
-
+\todo[inline]{paper of Bryan, Eric, and Pieter and one with Pietro,
+George, and Ruben}
 
 \bibliographystyle{plainnat} 
 \bibliography{refs}
