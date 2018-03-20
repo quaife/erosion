@@ -1122,7 +1122,8 @@ For the case of a {\em circular} cylinder, the normalization factor of $4 \pi$ p
 
 \subsection{Local analysis for the limiting shape}
 \label{LimitingShape}
-
+ 
+With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. See Fig.~\ref{corner} for a schematic. This problem can be solved exactly in polar coordinates $(r, \theta)$ where $\theta \in [-\thb,\thb]$ and $\thb = \pi - \oangle/2$. (In this section alone, $\theta$ denotes the polar coordinate and not the local tangent angle). 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1134,8 +1135,6 @@ For the case of a {\em circular} cylinder, the normalization factor of $4 \pi$ p
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
-With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. See Fig.~\ref{corner} for a schematic. This problem can be solved exactly in polar coordinates $(r, \theta)$ where $\theta \in [-\thb,\thb]$ and $\thb = \pi - \oangle/2$. (In this section alone, $\theta$ denotes the polar coordinate and not the local tangent angle). 
-
 The corresponding stream function is biharmonic, $\Delta^2 \psi = 0$, and the ansatz $\psi = r^{\lambda}f(\theta)$ gives the 4th-order ODE~\cite{poz1997}
 \begin{align}
 \label{fODE}
@@ -1156,6 +1155,9 @@ This nonlinear equation has solution $\thb \approx 129^\circ$, which gives the u
 
 We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
 
+
+\subsection{Fixed-area simulations}
+
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -1168,10 +1170,7 @@ We note that this uniform-stress shape is closely related to the so-called `opti
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-
-\subsection{Fixed-area simulations}
-
-To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. Section \ref{sec:scaling}, however, shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations lose accuracy just in the final critical moments when the body is expected to approach its limiting form. To circumvent this problem, we modify the normal velocity $\Vn$ to have zero mean,
+To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. Section \ref{sec:scaling}, however, shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations lose accuracy just in the final critical moments when the body is expected to approach its limiting shape. To circumvent this problem, we remove the effect of shrinking by forcing $\Vn$ to have zero mean,
 \begin{align}
 \Vn \leftarrow \Vn - \mean{\Vn} \, .
 \end{align}
