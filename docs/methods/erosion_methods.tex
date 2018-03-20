@@ -1073,7 +1073,7 @@ Shape and stress evolution: (a) Interfaces of the eroding body from Fig.~\ref{01
 \subsection{Scaling laws for area and drag}
 \label{sec:scaling}
 
-Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress grows as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, in which stress, $\tau \sim \mu \umax / a$, scales inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is taken to be the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
+Figure~\ref{shrink_intface}(a) shows that the spacing between successive interfaces becomes larger with time, suggesting that the overall shear stress grows as the body vanishes. This observation is consistent with the well-known 3D Stokes drag law, in which stress, $\tau \sim \mu \umax / a$, scales inversely proportional to body-scale $a$ (e.g.~for a sphere, $a$ is the radius). This law must be modified in two dimensions, though. The modification is made non-trivial by subtleties of the 2D Stokes paradox, but can be correctly deduced by noting that, as the body vanishes, its drag must be consistent with slender-body theory \cite{poz1997, bouzarth2007epicyclic, camassa2008trajectory, MooreJFM2012, zhao2015transportation}. 
 For a slender body in flow perpendicular to its long-axis $\ell$, the drag is proportional to
 $\mu \umax \ell/ \log(\ell/a)$, where $a$ is a length scale of the cross-section and $a \ll \ell$. This relationship implies that the stress-per-unit-span on a 2D cross-section can be estimated as
 \begin{align}
@@ -1108,22 +1108,20 @@ Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \label{area_predict}
 \frac{A}{A_0} \left( 1 - c_1 \log{\frac{A}{A_0}} \right) \sim \frac{t_f - t}{t_f} \quad \text{as } t \to t_f \, .
 \end{align}
-Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time. We can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
+Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time, and we can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
 
-	The drag exerted by the eroding body offers a second check on the simulation. Figure~\ref{area_drag}(b) shows the horizontal drag, $F_D$, calculated in the simulations (black curve) using Eq.~\eqref{eqn:drag}. In the context of slender-body theory, $F_D$ should be interpreted as drag-per-unit-span. As seen in Fig.~\ref{area_drag}(b), the drag decreases gradually at first and then abruptly tends to zero in the very final moments. This behavior, though perhaps surprising, is consistent with the fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. Equation \eqref{eqn:drag} also allows us to calculate the separate contributions of pressure and viscous drag, and we show these with the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases much more rapidly, leaving viscous drag to dominate. This behavior is associated with the tendency towards a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
+	Another important quantity that can be used to test our simulations is the drag exerted by the body as it erodes. Figure~\ref{area_drag}(b) shows the horizontal drag, $F_D$, calculated in the simulations (black curve) using Eq.~\eqref{eqn:drag}. In the context of slender-body theory, $F_D$ should be interpreted as drag-per-unit-span. As seen in Fig.~\ref{area_drag}(b), the drag decreases gradually at first and then abruptly tends to zero in the very final moments. This behavior, though perhaps surprising, is consistent with the fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. Equation \eqref{eqn:drag} also allows us to calculate the separate contributions of pressure and viscous drag, and we show these with the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases much more rapidly, leaving viscous drag to dominate. This behavior is associated with the tendency towards a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
 
 As a check on these results, we can use slender-body theory to estimate the drag-per-unit-span
 \begin{align}
 \label{dragscaling}
 \frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}	\qquad \text{for } a \ll \ell \, .
 \end{align}
-For the case of a {\em circular} cylinder, the normalization factor of $4 \pi$ produces an {\em exact} relationship (under the slender-body assumptions), with $a$ taken to be the radius. For other shapes the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale (since it generalizes the case of a circle). In Fig.~\ref{area_drag}(b) we show this scaling prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as the body vanishes.
+For the case of a {\em circular} cylinder, the normalization factor of $4 \pi$ produces an {\em exact} relationship (under the slender-body assumptions), where $a$ is taken to be the radius. For other shapes the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale since it generalizes the case of a circle. In Fig.~\ref{area_drag}(b) we show this scaling prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as $t \to t_f$, thus confirming that our simulation accurately captures the slender-body limit as the shape disappears.
 
 
 \subsection{Local analysis for the limiting shape}
 \label{LimitingShape}
-
-\todo[inline]{Here in revising}
 
 With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge. We aim to determine the wedge's opening angle, $\oangle$, through the principle of uniform stress. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$~\cite{poz1997}. In this section alone, $\theta$ denotes the polar coordinate (not the local tangent angle along the body). The corresponding stream function is assumed to take the form $\psi = r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th order ODE~\cite{poz1997}
 \begin{align*}
@@ -1167,6 +1165,8 @@ We note that this uniform-stress shape is closely related to the so-called `opti
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
+
+\todo[inline]{Here in revising}
 
 \subsection{Fixed-area simulations}
 
