@@ -56,68 +56,67 @@ be explained by erosion~\cite{pic-van-hei2000}.
 Recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting~\cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}. All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow'~\cite{ristroph2018sculpting}.
 % Later, we can take out a lot of these references, especially ones that are cited elsewhere in the paper. For example, Mitchell and Spagnolie and several of my papers are cited elsewhere.
 
-
 Another application, which motivates the current work, is erosion caused by groundwater flow.
 Here, a slow moving fluid erodes channels in the ground, and this
-affects the fluid transport.  In all these examples, there is a feedback
-process between the flow and the eroding bodies---the shape of the
-bodies affect the flow, while the flow changes the shape by fluidizing
-each body.  This fluid-mechanical feedback system has been simulated in
-idealized cases such as a single eroding two-dimensional body in a
-uniform flow~\cite{moo-ris-chi-zha-she2013} or a single mobile eroding
-three-dimensional body~\cite{mit-spa2016}. However, to better understand
+affects the fluid transport.  To better understand
 the effect of erosion on groundwater flow, multiply-connected domains
 must be considered.  Here we simulate two-dimensional erosion, in
 multiply-connected domain such as the porous geometry of many
 groundwater flows (Fig.~\ref{fig:50bodies}).
 
 Because of the length and velocity scales of groundwater flow, we
-restrict our attention to small Reynolds number flows.  For groundwater
+restrict our attention to zero Reynolds number flows.  For groundwater
 flow, Darcy's law is often used, but this does not resolve the pore
 structure and assumes a homogeneous geometry which is often not valid.
-Instead, we use the incompressible Stokes equations to represent the
-flow, and the individual pores are resolved which results in a complex
-multiply-connected geometry.  A boundary integral equation (BIE) is
-well-suited for solving the incompressible Stokes equations in a complex
-geometry since it can resolve individual grains and the non-negligible
-interactions between bodies are resolved. Moreover, high-order accuracy
-and computational efficiency are obtained. To link the eroding body and
-fluid dynamics, the body is eroded in the normal direction at a rate
-that is proportional to the magnitude of the shear
-stress~\cite{ris-moo-chi-she-zha2012}.  However, tracking the interface of
-fluid-structure interaction problems with a long time horizon is
-particularly difficult---the mesh is often distorted and tangled by the dynamics
-and regions of high curvature develop.  These two issues are resolved
-by, first, introducing a tangential velocity field to maintain a grid
-that is equispaced in arclength, but that does not affect the dynamics,
-and, second, a curvature penalization term.  Furthermore, the frame of
-reference is changed to \thL~variables so that the curvature term
-appears as a diffusive term that can easily be handled in a 
-numerically stable fashion, e.g.~via an exponential integrator or an implicit method.
-
-In addition to simulating the eroding grains, the flow is further
-characterized by computing the vorticity in the flow.  The vorticity is
-particularly insightful since it is identical to the shear stress on
-no-slip boundaries.  Therefore, by computing the
-vorticity, we are able to locate regions where the erosion rates will be
-fastest or slowest.
+Instead, we use the incompressible Stokes equations as the governing
+fluid equations, and the individual pores are resolved which results in
+a complex multiply-connected geometry.  The dynamics of the individual
+pores are modelled with an erosion model that where the erosion rate is
+proportional to the magnitude of the shear stress. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions} The present study develops numerical methods
 to simulate erosion of multiply-connected two-dimensional geometries.
-Since groundwater flow occurs at small spatial and velocity scales, we
-assume the flow is viscous (ie.~zero Reynolds number).  By allowing for
-complex multiply-connected domains, we capture the effect that
-interacting bodies have on erosion, and the grains in the flow are
-individually resolved rather than homogenized.  We start by validating
-our method on a single circular body placed symmetrically in a pipe
-flow.  By artificially fixing the area of the body as a function of
-time, we are able to characterize the long-time behavior of the shape
-and the resulting flow and compare these results with analytical
-results.  Then, we compute the vorticity of erosion in
-multiply-connected geometries to better characterize erosion in porous
-media. 
+In this fashion, individual pores are resolved rather than
+homogenized.  A boundary integral equation (BIE) is used to solve the
+incompressible Stokes equations in the complex geometry.  We resolve
+individual grains and the non-negligible interactions between bodies.
+To link the eroding body and fluid dynamics, the body is eroded in the
+normal direction at a rate that is proportional to the magnitude of the
+shear stress.
+
+To create high-fidelity and computationally efficient numerical methods,
+two fast and accurate methods are employed.  First, the fluid velocity
+and the erosion rate (shear stress) are efficiently computed with
+spectral accuracy by using a fast-multipole-accelerated BIE method.  The
+required spatial derivatives are computed with spectral accuracy in
+Fourier space.  In addition to compute the shear stress, we also compute
+the vorticity in the fluid bulk.  The vorticity is
+particularly insightful since it is identical to the shear stress on
+no-slip boundaries.  Therefore, by computing the vorticity, we are able
+to locate regions where the erosion rates will be fastest or slowest
+(Fig.~\ref{fig:50bodies}).
+
+Once the erosion rate is computed, the shape is integrated in time with
+second-order accuracy.  Tracking the interface of fluid-structure
+interaction problems with a long time horizon is particularly
+difficult---the mesh is often distorted and tangled by the dynamics and
+regions of high curvature develop.  These two issues are resolved by,
+first, introducing a tangential velocity field to maintain a grid that
+is equispaced in arclength, but that does not affect the dynamics, and,
+second, a curvature penalization term.  Furthermore, the frame of
+reference is changed to \thL~variables so that the curvature term
+appears as a diffusive term that can easily be handled in a numerically
+stable fashion, e.g.~via an exponential integrator or an implicit
+method.
+
+We validate our method on a single circular body placed symmetrically in
+a pipe flow.  By artificially fixing the area of the body as a function
+of time, we are able to characterize the long-time behavior of the shape
+and the resulting flow and these results agree with analytical results.
+Then, we compute the vorticity of erosion in multiply-connected
+geometries to better characterize erosion in porous media. 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -136,21 +135,12 @@ erode the fastest.}
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
-To create high-fidelity and computationally efficient numerical methods,
-two fast and accurate methods are employed.  First, the fluid equations
-and the erosion rate (shear stress) are efficiently solved with spectral
-accuracy by using a fast-multipole-accelerated BIE method.  Given the
-rate of erosion, the shape is integrated in time with second-order
-accuracy.  All spatial derivatives are computed in Fourier space,
-resulting in spectral accuracy in space.  To further visualize the
-effect of erosion, we compute the vorticity of the flow
-(Fig.~\ref{fig:50bodies}) to visualize regions of high and low erosion.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations} 
 
-%\todo[inline]{These are some of my thoughts on reworking this first paragraph. See if you like it.}
 We begin by making two fundamental design choices: first, we restrict
 ourselves to two spatial dimensions, and second the bodies are
 considered immobile (i.e.~fixed to their initial locations). The
@@ -159,44 +149,19 @@ restriction to two dimensions allows us to simulate the erosion of many bodies
 ability to accurately characterize the erosion of a porous medium. While
 BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
 
-%\todo[inline]{This is the original below:}
-%There are two main limitations of the current
-%work.  First, the flow is assumed to be two-dimensional.  However, by
-%assuming that the flow is two-dimensional, we are able to simulate the
-%erosion of more bodies and with higher resolution than would be
-%available in three dimensions.  Moreover, several flows can be described
-%to good accuracy under a two-dimensional approximation, but certain
-%phenomena occur only in three dimensions.  Extending the current work to
-%three dimensions is possible with a boundary integral equation
-%formulation.  In particular, the fluid solvers exist~\cite{mal-bir2015},
-%and the main challenges of a BIE solver have been addressed by other
-%groups including surface representation~\cite{yin-bir-zor2006,
-%vee-rah-bir-zor2011}, near-singular integration~\cite{yin-bir-zor2006,
-%kli-tor2016b}, and fast summation methods~\cite{yin-bir-zor2004,
-%ros-ols2015}.  The more significant challenge of extending our work to
-%three dimensions is guaranteeing that the mesh does not become
-%distorted, which can be done, for example, by using an extension of the
-%two-dimensional {\thL} formulation~\cite{amb-sie-tlu2013}.
-%
-%The second limitation is that the eroding bodies are fixed.  Mitchell
-%and Spagnolie~\cite{mit-spa2016} simulate a single mobile eroding body
-%in three dimensions~\cite{mit-spa2016}, but additional challenges are
-%caused when there are multiple bodies. In particular, especially in
-%dense suspensions, bodies can become extremely close to one another, and
-%the interaction between the bodies is difficult to resolve unless the
-%underlying mesh is refined to levels that are intractable. In future
-%work we plan to consider mobile eroding bodies by including a small
-%force and torque to prevent unphysical contact~\cite{lu-rah-zor2017}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Related work} Simulating eroding bodies has been studied
-analytically, experimentally, and numerically.  Because of the scales
-involves with geophysical flows, most of these works consider high
-Reynolds number flows.  For instance, the experimental work of Moore et
-al.~\cite{moo-ris-chi-zha-she2013} considers on the order of $10^4$.
-For low Reynolds number flows, Mitchell and Spagnolie~\cite{mit-spa2016}
-use a BIE for the traction jump to simulate the erosion of a mobile body
-in three dimensions, but they only consider single body.  
+analytically, experimentally, and numerically.  Many of these works are
+motivated by high Reynolds number geophysical applications, such as the
+work of the second author~\cite{moo-ris-chi-zha-she2013,
+ris-moo-chi-she-zha2012, moore2017riemann} and others~\cite{par-izu2000,
+lag2000, coh-dev-sey-yi-szy-rot2015, han1969, Rothman2012,
+hewett2017evolution, ristroph2018sculpting, lopez2018cfd,
+lachaussee2018competitive, cohen2016erosion}.  The work most closely
+related to ours simulates erosion in a three-dimensional incompressible
+Stokesian fluid~\cite{mit-spa2016}, but they only consider single
+eroding body.  
 
 The effect of erosion on a geometry is quite rich.  For instance, it has
 been hypothesized and numerically observed that the erosion leads to a
@@ -204,10 +169,9 @@ shear stress that is uniform on the body which results in a uniform
 erosion rate.  The shape that has a uniform shear stress is analyzed in
 three dimensions by Montenegro-Johnson and Lauga~\cite{mon-lau2015}
 which is an extension of the analysis done by Pironneau~\cite{pir1973}
-to find a Stokesian drag minimizing shape.  However, the effect of
-erosion on a porous media is less understood.  With the methods
-developed in this paper, quantities such as the total drag across a
-porous region as a function of time can be computed.
+to find a Stokesian drag minimizing shape.  In this idealized case,
+analytical axisymmetric shapes that minimize the drag can be found.
+However, the effect of erosion on a porous media is less understood.
 
 To simulate multiple bodies, it is essential to resolve the nonlocal
 effects between the different bodies.  In this work, these interactions
@@ -221,37 +185,6 @@ lead to instabilities of specialized quadrature is not applied.  Since
 our bodies do not move, we are able to use upsampling, but future work
 will require a near-singular integration scheme~\cite{qua-bir2014a,
 klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
-
-Another numerical challenge with simulating erosion is that
-corners develop at points where the shear stress vanishes.  There is recent work for solving
-BIEs in geometries with corners by using
-carefully chosen local expansions around each corner~\cite{rac-ser2017,
-ser-rok2016} or panel-based graded meshes~\cite{hel2011,
-gil-hao-mar2014, bre2012}.  The limitation of these methods is that they
-require the corner's location, a non-uniform spaced mesh, and some of
-the methods have a large condition number.  One solution is to use two
-meshes---one for the quadrature the other for the interface tracking.
-Then, interpolation between the two grids is required, and this is the
-approach taken by Ojala and Tornberg~\cite{oja-tor2015}.  Instead of
-using two grids and interpolation operators, we only require the uniform
-grid by slightly modify the geometry to maintain sufficient regularity.
-First, we add a regularization term to the shear stress to penalize
-regions of high curvature.  Second, we apply a Gaussian filter to smooth
-the absolute value of the shear stress before the body shape is updated.
-
-
-
-Several groups consider the optimal body in a Stokes fluid that
-optimizes some quantity.  For example, Pironneau~\cite{pir1973} found
-the axisymmetric shape of a fixed volume body that minimizes drag is
-similar to an American football with an opening angle of 60 degrees, and
-this shape corresponds to a body with constant surface vorticity.  This
-analysis is taken further by Montenegro-Johnson and
-Lauga~\cite{mon-lau2015} where the optimal axisymmetric shape of fixed
-surface area is computed.  We include a similar calculation for the
-two-dimensional Stokes equations, and the resulting shape agrees with
-our numerical solution. 
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,12 +203,17 @@ for a single body, and Section~\ref{s:MultiResults} presents numerical
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation}
 \label{s:formulation}
-We start by defining the main variables used to model erosion.  We only
+We start by defining the main variables used to model erosion.  We
 consider flows that are confined by a solid wall $\Gamma$ that encloses
-$M$ eroding bodies as diagrammed in Fig.~\ref{fig:schematic}.  The bodies are denoted as $\gamma_\ell$, $\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup \gamma_M$.
-On each body, $\nn$ and $\ss$ denote the unit normal and unit tangent vectors respectively. Throughout the paper, we adopt the convention that $\ss$ points in the counterclockwise direction and $\nn$ points out of the fluid domain (i.e.~into the bodies). Neglecting inertial forces, the dynamics of the fluid is
-fully characterized by the position of the bodies $\xx_\ell(s,t) \in
-\gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given
+$M$ eroding bodies as diagrammed in Fig.~\ref{fig:schematic}.  The
+bodies are denoted as $\gamma_\ell$, $\ell=1,\ldots,M$, and we write
+$\gamma = \gamma_1 \cup \cdots \cup \gamma_M$.  On each body, $\nn$ and
+$\ss$ denote the unit normal and unit tangent vectors respectively.
+Throughout the paper, we adopt the convention that $\ss$ points in the
+counterclockwise direction and $\nn$ points out of the fluid domain
+(i.e.~into the bodies). Neglecting inertial forces, the dynamics of the
+fluid is fully determined by the position of the bodies $\xx_\ell(s,t)
+\in \gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given
 $\xx_\ell(s,t)$, $\ell=1,\ldots,M$, derived variables include the fluid
 velocity $\uu$, the pressure $p$, and the shear stress $\tau$.   On the
 bounding wall, we prescribe a velocity $\UU(\xx,t)$.  Then, the
@@ -322,43 +260,27 @@ bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.
     is located between the dashed lines.}
 \end{figure}
 
-To perform the simulations, we freeze the geometry at each time step,
-solve the incompressible Stokes equations, and then update the geometry
-according to the erosion model.  The separation between these two
-processes is justified since the time scale of erosion is much longer
-than that of the flow.
+There are several models for erosion that involve the shear
+stress~\cite{par-izu2000,lag2000}.  The erosion model we adopt
+prescribes that erosion occurs in the normal direction at a rate that is
+proportional to the magnitude of the shear
+stress~\cite{moo-ris-chi-zha-she2013}.  The constant of proportionality
+only sets the time scale, so we let $\Vn = |\tau|$ as described in
+equation~\eqref{eqn:erosionModel}.  For the sake of numerical stability,
+we modify this law in Section~\ref{sec:thetaL}. To perform the
+simulations, we freeze the geometry at each time step, solve the
+incompressible Stokes equations, and then update the geometry according
+to the erosion model.  The separation between these two processes is
+justified since the time scale of erosion is much longer than that of
+the flow.
 
-%We use a quasi-static approximation.  That is, at each time step, we
-%freeze the geometry, solve the incompressible Stokes equations, and then
-%update the geometry according to the erosion model.  The two steps
-%inside the red rectangle describes a time step in the quasi-static
-%approximation.
-%\todo[inline]{Appeal to separation of scales to justify this quasi-static approximation; i.e.~the timescale of erosion is much longer than that of the flow.}
-
-Our erosion model is based on the shear stress, and this model is
-discussed in more detail in Section~\ref{sec:erosion}.  We then describe
-how the incompressible Stokes equations are solved in $\Omega$ using a
-boundary integral equation in Section~\ref{sec:bies}.  In
-Section~\ref{sec:shearStressLP}, we discuss how the shear stress is
+We describe how the incompressible Stokes equations are solved in
+$\Omega$ using a boundary integral equation in Section~\ref{sec:bies}.
+In Section~\ref{sec:shearStressLP}, we discuss how the shear stress is
 computed.  Finally, in Section~\ref{sec:thetaL}, we describe how corners
-in the geometry are avoided and perform a change of coordinates to treat a stiff term.
+in the geometry are avoided and perform a change of coordinates to treat
+a stiff term.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Erosion model} 
-\label{sec:erosion}
-
-Other models for erosion include ones that use an erosion rate that is
-proportional to a power of the magnitude of the shear
-stress~\cite{par-izu2000}, or ones that use a critical shear stress
-below which erosion does not occur~\cite{lag2000}.
-
-
-To model erosion, the normal velocity is  proportional to the absolute
-value of the shear stress.   Since the constant of proportionality only
-sets the time scale, we let $\Vn = |\tau|$ as described in
-equation~\eqref{eqn:erosionModel}. For the sake of numerical stability,
-we modify this law in Section~\ref{sec:thetaL}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary integral equation formulation} 
@@ -373,12 +295,11 @@ Stokes equations with Dirichlet boundary conditions
   \uu &= \ff,  && \xx \in \bd\Omega,
 \end{alignat*}
 into an equivalent BIE.  The boundary condition $\ff$ is the prescribed
-velocity $\UU$ on $\Gamma$, and it is zero on the grains $\gamma$.
-Since we are interested in two dimensions, a stream function formulation
-can be used by recasting the governing equations as a problem in
-analytic function theory~\cite{gre-kro-may1996}.  So that our work can
-extended to three dimensions, we instead use primitive variables by
-writing the velocity in terms of the standard double-layer
+velocity $\UU$ on $\Gamma$, and it is zero on the grains $\gamma$.  In
+two dimensions, a BIE for a stream function formulation is
+possible~\cite{gre-kro-may1996}, but this does not extend to three
+dimensions.  Therefore, we adopt a primitive variable formulation where
+the velocity is written in terms of the standard double-layer
 potential~\cite{lad1963,poz1992}
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
@@ -521,7 +442,22 @@ double-layer potential is computed, the shear stress at $\xx_0 \in
   \label{eqn:shearStressLP}
 \end{align}
 
-
+One challenge with simulating erosion is that corners develop at points
+where the shear stress vanishes.  There is recent work for solving BIEs
+in geometries with corners by using carefully chosen local expansions
+around each corner~\cite{rac-ser2017, ser-rok2016} or panel-based graded
+meshes~\cite{hel2011, gil-hao-mar2014, bre2012}.  The limitation of
+these methods is that they require the corner's location, a non-uniform
+spaced mesh, and some of the methods have a large condition number.  One
+solution is to use two meshes---one for the quadrature the other for the
+interface tracking.  Then, interpolation between the two grids is
+required, and this is the approach taken by Ojala and
+Tornberg~\cite{oja-tor2015}.  Instead of using two grids and
+interpolation operators, we only require the uniform grid by slightly
+modify the geometry to maintain sufficient regularity.  First, we add a
+regularization term to the shear stress to penalize regions of high
+curvature.  Second, we apply a Gaussian filter to smooth the absolute
+value of the shear stress before the body shape is updated.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary evolution in the {\thL} framework} 
