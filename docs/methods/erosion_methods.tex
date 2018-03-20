@@ -1152,15 +1152,15 @@ and imposing the no-slip boundary conditions gives the condition
 This nonlinear equation has solution $\thb \approx 129^\circ$, which gives the uniform-stress opening angle as $\oangle \approx 102^\circ$ degrees. 
 % Pozrikidis page 239: symmetric flow.
 
+\todo[inline]{Here in revising}
 
- 
 We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.85 \textwidth]{./figs/fixed_intface.pdf}
-\caption{Fixed-area simulations: (a) Interfaces of a body eroding under shear stress but with the area artifically kept constant. Inset: zoom near the rear stagnation point, showing that the corner is actually smooth on a fine scale. (b) The stress distribution on the surface of the body. Over time, the stress becomes more uniform.}
+\caption{Fixed-area simulations: (a) Interfaces of a body eroding under shear stress but with the area artificially kept constant. Inset: zoom near the rear stagnation point, showing that the corner is actually smooth on a fine scale. (b) The shear-stress distribution on each of these interfaces. As the body erodes and converges to a terminal form, the stress becomes more uniformly distributed over the entire surface.}
 \label{fixed_intface}
 \end{center}
 \end{figure}
@@ -1168,17 +1168,17 @@ We note that this uniform-stress shape is closely related to the so-called `opti
 % Figure from datafile 01circ1024c5
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
-\todo[inline]{Here in revising}
 
 \subsection{Fixed-area simulations}
 
-To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. However, our simulations lose accuracy just in the final moments as the body is vanishing due to the shear stress blowing up (in accordance with the scaling laws discussed in Section \ref{sec:scaling}). To circumvent this problem, we could restart our simulation with a scaled-up version of the the near-final  body as the initial condition and iterate the process until convergence. A simpler solution, though, is to remove the effect of shrinking by modifying the normal velocity $\Vn$ to have zero mean,
-\begin{align*}
+To compare with this analytical prediction, we aim to measure the opening angles formed in our numerical simulations. Section \ref{sec:scaling}, however, shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations lose accuracy just in the final critical moments when the body is expected to approach its limiting form. To circumvent this problem, we modify the normal velocity $\Vn$ to have zero mean,
+\begin{align}
 \Vn \leftarrow \Vn - \mean{\Vn} \, .
-\end{align*}
-This modification allows erosion to sculpt the body as it normally would but artificially keeps the area fixed. We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process at equally-spaced times. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) shows a zoom of the body's rear stagnation point, demonstrating that the near-corner is actually smooth on a fine scale, in accordance with our numerical smoothing. 
-Likewise, Fig.~\ref{fixed_intface}(b) shows the stress distribution on the evolving body, revealing that stress becomes more uniform as time proceeds. Interestingly, the slight rise in shear near the front/rear corners that was seen in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that the effect was due to loss of accuracy.
-Here, time is normalized by the same vanishing time $t_f = 1.79 \times 10^{-2}$ as in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state, which contrasts with previous studies of high-Reynolds-number erosion, in which a satisfactory steady-state was usually reached before the body vanished~\cite{moo-ris-chi-zha-she2013}.
+\end{align}
+This modification allows erosion to sculpt the shape as it would normally, but with the area artificially held fixed.
+
+	We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) shows a zoom of the body's rear stagnation point, demonstrating that the near-corner is actually smooth on a fine scale, in accordance with our numerical smoothing. 
+Likewise, Fig.~\ref{fixed_intface}(b) shows the stress distribution on the evolving body, revealing that stress becomes more uniform as time proceeds. Interestingly, the slight rise in shear near the front/rear corners that was seen in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that the effect was due to loss of accuracy. Here, time is normalized by the same vanishing time $t_f = 1.79 \times 10^{-2}$ as in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state. This contrasts with previous studies of high-Reynolds-number erosion, in which a satisfactory steady-state was usually reached before the body vanished~\cite{moo-ris-chi-zha-she2013}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
