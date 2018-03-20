@@ -1123,11 +1123,6 @@ For the case of a {\em circular} cylinder, the normalization factor of $4 \pi$ p
 \subsection{Local analysis for the limiting shape}
 \label{LimitingShape}
 
-With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge. We aim to determine the wedge's opening angle, $\oangle$, through the principle of uniform stress. Exact solutions can be obtained to this problem via separation of variables in polar coordinates $(r, \theta)$~\cite{poz1997}. In this section alone, $\theta$ denotes the polar coordinate (not the local tangent angle along the body). The corresponding stream function is assumed to take the form $\psi = r^{\lambda}f(\theta)$, with $\Delta^2 \psi = 0$, which gives the 4th order ODE~\cite{poz1997}
-\begin{align*}
-  f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f =
-  0.
-\end{align*}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1139,15 +1134,22 @@ With the vanishing rate understood, we now seek to quantify the limiting shape o
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
-This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$, where $\thb = \pi - \oangle/2$, along with the condition of odd-symmetry $f(0) = f''(0) = 0$ (corresponding to up-down symmetry of the flow).  The corresponding shear stress evaluated on the surface of the wedge is $\tau = \mu r^{\lambda-2} f''(\thb)$. Thus, the wedge of uniform stress corresponds to $\lambda = 2$. For this value, the solution for $f$ satisfying odd symmetry is
-\begin{align*}
-  f(\theta) = B \sin (2 \theta) + C \theta.
-\end{align*}
-Imposing the no-slip boundary conditions gives the condition
-\begin{align*}
-  \sin(2 \thb) - 2 \thb \cos(2 \thb) = 0,
-\end{align*}
-which has a solution $\thb \approx 129$ degrees. This gives an opening angle of $\oangle = 2(180^{\circ} - \thb) \approx 102$ degrees. 
+With the vanishing rate understood, we now seek to quantify the limiting shape observed in Fig.~\ref{shrink_intface}(a). Certain features of this shape can be predicted analytically by appealing to the principal that, in long time, the shear stress becomes uniformly distributed along the body. In particular, consider the angle formed at the front and rear stagnation points. In a small region around this point, we can neglect body curvature and consider the problem of Stokes flow around an infinite wedge of opening angle $\oangle$. See Fig.~\ref{corner} for a schematic. This problem can be solved exactly in polar coordinates $(r, \theta)$ where $\theta \in [-\thb,\thb]$ and $\thb = \pi - \oangle/2$. (In this section alone, $\theta$ denotes the polar coordinate and not the local tangent angle). 
+
+The corresponding stream function is biharmonic, $\Delta^2 \psi = 0$, and the ansatz $\psi = r^{\lambda}f(\theta)$ gives the 4th-order ODE~\cite{poz1997}
+\begin{align}
+\label{fODE}
+f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0.
+\end{align}
+This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$ and odd symmetry about the horizontal axis, $f(0) = f''(0) = 0$. For arbitrary opening angle $\beta$, ODE \eqref{fODE} and its boundary conditions constitute an eigenvalue problem for $\lambda$, whose solution furnishes the stream function and the corresponding shear stress on the wedge surface $\tau = \mu r^{\lambda-2} f''(\thb)$. We, however, seek to determine the particular opening angle that produces {\em uniform} shear stress and thus set $\lambda = 2$. The corresponding solution to \eqref{fODE} that satisfies odd symmetry is given by
+\begin{align}
+  f(\theta) = B \sin (2 \theta) + C \theta \, ,
+\end{align}
+and imposing the no-slip boundary conditions gives the condition
+\begin{align}
+  \sin(2 \thb) - 2 \thb \cos(2 \thb) = 0 \, .
+\end{align}
+This nonlinear equation has solution $\thb \approx 129^\circ$, which gives the uniform-stress opening angle as $\oangle \approx 102^\circ$ degrees. 
 % Pozrikidis page 239: symmetric flow.
 
 
