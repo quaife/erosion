@@ -234,8 +234,17 @@ velocity} \\
 \end{split}
 \end{equation}
 where $\Vn$ is the normal velocity of the interface and $\mu$ is the
-fluid viscosity.  The outer wall is formed by rounding off the corners
-of $[-3,3] \times [-1,1]$, and we enforce the Hagen-Poiseuille flow
+fluid viscosity.  There are several models for
+erosion~\cite{par-izu2000,lag2000}, but we have adopted the model that
+erosion occurs in the normal direction at a rate that is proportional to
+the magnitude of the shear stress~\cite{moo-ris-chi-zha-she2013}.  The
+constant of proportionality only sets the time scale, so we have set
+$\Vn = |\tau|$ as described in equation~\eqref{eqn:erosionModel}.  For
+the sake of numerical stability, we modify this law in
+Section~\ref{sec:thetaL}. 
+
+The outer wall is formed by rounding off the corners
+of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align*}
   \UU(\xx) = \umax (1-y^2,0), \quad \xx \in \Gamma,
 \end{align*}
@@ -260,20 +269,6 @@ bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.
     is located between the dashed lines.}
 \end{figure}
 
-There are several models for erosion that involve the shear
-stress~\cite{par-izu2000,lag2000}.  The erosion model we adopt
-prescribes that erosion occurs in the normal direction at a rate that is
-proportional to the magnitude of the shear
-stress~\cite{moo-ris-chi-zha-she2013}.  The constant of proportionality
-only sets the time scale, so we let $\Vn = |\tau|$ as described in
-equation~\eqref{eqn:erosionModel}.  For the sake of numerical stability,
-we modify this law in Section~\ref{sec:thetaL}. To perform the
-simulations, we freeze the geometry at each time step, solve the
-incompressible Stokes equations, and then update the geometry according
-to the erosion model.  The separation between these two processes is
-justified since the time scale of erosion is much longer than that of
-the flow.
-
 We describe how the incompressible Stokes equations are solved in
 $\Omega$ using a boundary integral equation in Section~\ref{sec:bies}.
 In Section~\ref{sec:shearStressLP}, we discuss how the shear stress is
@@ -286,17 +281,19 @@ a stiff term.
 \subsection{Boundary integral equation formulation} 
 \label{sec:bies}
 
-In this section, we describe the boundary integral equations employed
-for the fluid equations.  In particular, we recast the incompressible
-Stokes equations with Dirichlet boundary conditions 
-\begin{alignat*}{3}
+In this section, we describe an equivalent BIE formulation of the
+incompressible Stokes equations with Dirichlet boundary conditions
+\begin{equation}
+  \begin{split}
   \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
   \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
-  \uu &= \ff,  && \xx \in \bd\Omega,
-\end{alignat*}
-into an equivalent BIE.  The boundary condition $\ff$ is the prescribed
-velocity $\UU$ on $\Gamma$, and it is zero on the grains $\gamma$.  In
-two dimensions, a BIE for a stream function formulation is
+  \uu &= \ff,  && \xx \in \bd\Omega.
+  \end{split}
+  \label{eqn:stokes}
+\end{equation}
+The boundary condition $\ff$ is the prescribed velocity $\UU$ on
+$\Gamma$, and it is zero on the eroding grains $\gamma$.  In two
+dimensions, a BIE for a stream function formulation is
 possible~\cite{gre-kro-may1996}, but this does not extend to three
 dimensions.  Therefore, we adopt a primitive variable formulation where
 the velocity is written in terms of the standard double-layer
@@ -315,11 +312,9 @@ time-scale stuff more precisely? i.e.~By setting $\mu = 1$ and $C = 1$
 dimensionless time.} \todo[inline]{This might be worth doing.  Is it
 something you can do quickly or do you want me to take a crack at it?}
 
-The double-layer potential representation is only able to represent
-force- and torque-free velocity fields, so we complete the velocity
-representation with Stokeslets and Rotlets~\cite{pow-mir1987,pow1993}.
-This is done by complementing the double-layer potential with Stokeslets
-and rotlets centered inside each interior body
+Since the double-layer potential is not able to represent force- and
+torque-free velocity fields,  we complete the double-layer potential
+with Stokeslets and rotlets~\cite{pow-mir1987, pow1993}
 \begin{align}
   S[\llambda_\ell,\cc_\ell] = \frac{1}{4\pi} \left(-\log \rho \II + 
     \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_\ell
@@ -329,9 +324,8 @@ and rotlets centered inside each interior body
   \label{eqn:stokeslet_rotlet}
 \end{align}
 where  $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
-$\ell^{th}$ body, $\rr^\perp = (r_2,-r_1)$, and $\rho = \|\rr\|$.  Then,
-any solution of the Stokes equations with a Dirichlet boundary condition
-$\ff$ can be written in terms of the completed double-layer potential
+$\ell^{th}$ grainy, $\rr^\perp = (r_2,-r_1)$, and $\rho = \|\rr\|$.
+Then, the solution of~\eqref{eqn:stokes} is
 \begin{align}
   \label{eqn:completed_DLP}
   \uu(\xx) = \DD[\eeta](\xx) + 
@@ -363,33 +357,36 @@ Here,
 removes the rank one null space resulting from the flux-free requirement
 of $\ff$.
 
+This BIE formulation requires that $\bd\Omega$ is smooth.
+Unfortunately, smoothness is not guaranteed erosion since corners
+develop at locations where the shear stress vanishes.  One option is to
+modify our BIE to handle corners~\cite{rac-ser2017,
+ser-rok2016, hel2011, gil-hao-mar2014, bre2012}, but these methods
+require the corner's location, or a non-uniform spaced mesh, or are
+ill-conditioned.  Instead, make a slight modification to the erosion
+model in Section~\ref{sec:thetaL} which allows us to control the
+smoothness of the grains.  In this manner, the BIE as described above
+can be applied.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the shear stress}
 \label{sec:shearStressLP}
-To compute the shear stress, there are two options.  First, instead of
-solving the BIE~\eqref{eqn:completed_BIE} for an arbitrary density
-function, a similar BIE can be solved for the
-traction~\cite{mit-spa2016}.  Alternatively, the traction corresponding
-to the double-layer potential of the velocity~\eqref{eqn:velocityDLP}
-can be computed using appropriate layer potentials.  While the first
-method bypasses a step by forming the traction jump directly, it does
-not allow us to directly compute other quantities such as the vorticity,
-so we use the second method.
-
-The shear stress is
+Once the density function, Stokeslets, and rotlets are computed, any
+desired quantity, including the shear stress, can be computed.  The
+shear stress is
 \begin{align*}
   \tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss \, .
 \end{align*}
-The reader may notice an unusual sign convention above, but this is simply a consequence of our conventions for $\nn$ and $\ss$ (see Fig.~\ref{fig:schematic}). 
-The velocity field of the
-completed double-layer potential~\eqref{eqn:completed_DLP} involves
-three terms: the double-layer potential, the Stokeslets, and the
+The reader may notice an unusual sign convention above, but this is
+simply a consequence of our conventions for $\nn$ and $\ss$ (see
+Fig.~\ref{fig:schematic}).  The velocity field of the completed
+double-layer potential~\eqref{eqn:completed_DLP} includes velocities
+from three terms: the double-layer potential, the Stokeslets, and the
 rotlets.  We compute the deformation tensor $\ssigma =
-\frac{1}{2}(\nabla\uu + \nabla\uu^T)$ for each of these terms
-individually.
+\frac{1}{2}(\nabla\uu + \nabla\uu^T)$ of these terms individually.
 
 The deformation tensor of the double-layer
-potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$
+potential~\eqref{eqn:velocityDLP} at an interior point $\xx \in \Omega$
 is~\cite{qua-bir2014a}
 \begin{equation}
   \label{eqn:shearStressDLP}
@@ -406,7 +403,7 @@ is~\cite{qua-bir2014a}
 \end{equation}
 We require the deformation tensor on $\bd\Omega$, and this requires
 taking the limit of equation~\eqref{eqn:shearStressDLP} when $\xx$ tends
-to $\xx_0 \in \bd\Omega$.  The limiting value is given by
+to $\xx_0 \in \bd\Omega$.  The limiting value is
 \begin{align*}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}\sigma_\DD(\xx) =
   J[\eeta](\xx_0) + \ssigma^\DD(\xx_0), \quad \xx_0 \in \bd\Omega,
@@ -420,7 +417,7 @@ where
   \end{array}\right].
   \label{eqn:shearStressJump}
 \end{align}
-The deformation tensor of the Stokeslets and
+Next, the deformation tensor of the Stokeslets and
 rotlets~\eqref{eqn:stokeslet_rotlet} are
 \begin{equation}
   \label{eqn:shearStressSR}
@@ -433,31 +430,13 @@ rotlets~\eqref{eqn:stokeslet_rotlet} are
     \rr^\perp \otimes \rr \right).
   \end{aligned}
 \end{equation}
-Now that the deformation tensor of each component of the completed
-double-layer potential is computed, the shear stress at $\xx_0 \in
+Combining these deformation tensors, the shear stress at $\xx_0 \in
 \bd\Omega$ is
 \begin{align}
   \tau = -2 \left(J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) + 
     \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
   \label{eqn:shearStressLP}
 \end{align}
-
-One challenge with simulating erosion is that corners develop at points
-where the shear stress vanishes.  There is recent work for solving BIEs
-in geometries with corners by using carefully chosen local expansions
-around each corner~\cite{rac-ser2017, ser-rok2016} or panel-based graded
-meshes~\cite{hel2011, gil-hao-mar2014, bre2012}.  The limitation of
-these methods is that they require the corner's location, a non-uniform
-spaced mesh, and some of the methods have a large condition number.  One
-solution is to use two meshes---one for the quadrature the other for the
-interface tracking.  Then, interpolation between the two grids is
-required, and this is the approach taken by Ojala and
-Tornberg~\cite{oja-tor2015}.  Instead of using two grids and
-interpolation operators, we only require the uniform grid by slightly
-modify the geometry to maintain sufficient regularity.  First, we add a
-regularization term to the shear stress to penalize regions of high
-curvature.  Second, we apply a Gaussian filter to smooth the absolute
-value of the shear stress before the body shape is updated.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary evolution in the {\thL} framework} 
@@ -513,7 +492,7 @@ Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \thalpha \Vs \right)\,.
 \end{align}
 These are the main evolution equations for $\theta(\alpha,t)$ and $L(t)$.
-In addition, it is necessary to track a reference point for each body, so that the {\thL} variables can be converted back to cartesian coordinates. We track the coordinates of the surface mean $\mean{\xx}$, which moves according to
+In addition, it is necessary to track a reference point for each body, so that the {\thL} variables can be converted back to Cartesian coordinates. We track the coordinates of the surface mean $\mean{\xx}$, which moves according to
 \begin{align}
 \label{eq:xsurf}
 \frac{d}{dt} \mean{\xx} = \mean{ V_s \ss + V_n \nn } \, .
@@ -523,11 +502,18 @@ We note that tracking the center of mass is also a valid choice, but the surface
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
 \label{s:method}
-There are three main numerical methods that need to be developed.  In
-Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE}
-is solved.  Once the density function is found,
-Section~\ref{sec:shearStress} describes how the shear
-stress~\eqref{eqn:shearStressLP} is computed.  Then, in
+\todo[inline]{Here on Bryan's sections of editing}
+To perform the simulations, we freeze the geometry at each time step,
+solve the incompressible Stokes equations, and then update the geometry
+according to the erosion model.  The separation between these two
+processes is justified since the time scale of erosion is much longer
+than that of the flow.
+
+Given this separation of time scales, there are three main numerical
+methods that need to be developed.  In Section~\ref{sec:BIE}, we
+describe how the BIE~\eqref{eqn:completed_BIE} is solved.  Once the
+density function is found, Section~\ref{sec:shearStress} describes how
+the shear stress~\eqref{eqn:shearStressLP} is computed.  Then, in
 Section~\ref{sec:timeStepping}, a time stepping method for evolving the
 interface according to equations~\eqref{eqn:Levo1}
 and~\eqref{eqn:thetaevo1} is described. So that we can form stable
@@ -1245,7 +1231,9 @@ This rescaling maintains a {\em fixed} pressure difference between the upstream 
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
 
-Briefly, to verity that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table confirms that the method retains second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table \ref{itertab} the GMRES count for various cases ...
+Briefly, to verity that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table confirms that the method retains second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table~\ref{itertab} the GMRES count for various cases ...
+\todo[inline]{preconditioning papers are~\cite{qua-cou-dar2018}
+and~\cite{qua-bir2015a}}
 
 % Table: GMRES iterations
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
