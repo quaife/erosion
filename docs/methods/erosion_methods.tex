@@ -502,38 +502,37 @@ We note that tracking the center of mass is also a valid choice, but the surface
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
 \label{s:method}
-\todo[inline]{Here on Bryan's sections of editing}
-To perform the simulations, we freeze the geometry at each time step,
-solve the incompressible Stokes equations, and then update the geometry
-according to the erosion model.  The separation between these two
-processes is justified since the time scale of erosion is much longer
-than that of the flow.
-
-Given this separation of time scales, there are three main numerical
-methods that need to be developed.  In Section~\ref{sec:BIE}, we
-describe how the BIE~\eqref{eqn:completed_BIE} is solved.  Once the
-density function is found, Section~\ref{sec:shearStress} describes how
-the shear stress~\eqref{eqn:shearStressLP} is computed.  Then, in
+To perform numerical simulations, we exploit the difference
+between the erosion and fluid time scales.  Since erosion occurs
+much slower, we freeze the geometry at each time
+step, solve the incompressible Stokes equations, and then update the
+geometry according to the erosion model.  Therefore, there are three
+main numerical methods that need to be developed.  In
+Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE}
+is solved.  Once the density function is found,
+Section~\ref{sec:shearStress} describes how the shear
+stress~\eqref{eqn:shearStressLP} is computed.  Then, in
 Section~\ref{sec:timeStepping}, a time stepping method for evolving the
 interface according to equations~\eqref{eqn:Levo1}
-and~\eqref{eqn:thetaevo1} is described. So that we can form stable
-simulations with long time horizons, we use numerical methods that
-achieve spectral accuracy in space, second-order accuracy in time, and
-maintain an equispaced discretization of the bodies.  The boundaries are
-represented in Fourier space, giving us a set of discretization points
-$\xx_i$ of each body, and all derivatives and integrals (the arclength,
-curvature, and mean values) are computed with spectral accuracy using
-the Fourier representation.
+and~\eqref{eqn:thetaevo1} is described. 
+
+To form stable simulations with long time horizons, we use numerical
+methods that achieve spectral accuracy in space, second-order accuracy
+in time, and maintain an equispaced discretization of the bodies.  The
+boundaries are represented in Fourier space, giving us a set of
+discretization points $\xx_i$ of each body, and all derivatives and
+integrals (the arclength, curvature, and mean values) are computed with
+spectral accuracy using the Fourier representation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Solving the BIE}
 \label{sec:BIE}
 
-To numerically evaluate the completed double-layer
-potential~\eqref{eqn:completed_BIE}, let $N_\iin$ be the number of
-points on each of the $M$ bodies, and $N_\out$ be the number of points
-on the outer boundary.  Then, $N = MN_\iin + N_\out$ is the total number
-of discretization points of $\bd\Omega$.  The double-layer potential
+To numerically compute the completed double-layer
+potential~\eqref{eqn:completed_BIE}, we discretize each of the $M$
+bodies with  $N_\iin$ points, and the outer boundary with $N_\out$
+points.  Then, $N = MN_\iin + N_\out$ is the total number of
+discretization points of $\bd\Omega$.  The double-layer potential
 in~\eqref{eqn:DLP} is discretized with the trapezoid rule as
 \begin{align}
   \DD[\eeta](\xx_i) = \sum_{j=1}^{N} K(\xx_i,\xx_j) \eeta(\xx_j) 
@@ -574,10 +573,10 @@ needs to be solved is
       {(\xx_j - \cc_\ell)}^\perp \cdot \eeta(\xx_j) \Delta s_j,
   \end{aligned}
 \end{equation}
-for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  Since all the integrands are
-smooth and periodic, by using the trapezoid rule, we are guaranteed that
-the numerical solutions converges to the true solution with spectral
-accuracy.
+for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  We have applied the trapezoid
+rule since all the integrands are smooth and periodic, and this
+guarantees that the numerical solutions converges to the true solution
+with spectral accuracy.
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved
 iteratively with the generalized minimal residual method
@@ -586,18 +585,15 @@ mesh-independent number of GMRES iterations are
 required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost
 is determined by the cost of performing a matrix-vector multiplication,
 and the bulk of the cost is evaluating the $N$-term sum
-in~\eqref{eqn:completed_BIE_discretized}.  Naively, evaluating this sum
-at all points requires $\bigO(N^2)$ operations.  To reduce the
-computational cost, we use the Fast Multipole Method
-(FMM)~\cite{gre-rok1987, gre-gre-may1992} to reduce the complexity from
-$\bigO(N^2)$ to $\bigO(N)$.  Since the number of required GMRES
-iterations is mesh-independent, the overall complexity for
-solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$.
+in~\eqref{eqn:completed_BIE_discretized}. We use the Fast Multipole
+Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of
+solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shear stress}
 \label{sec:shearStress}
+\todo[inline]{Bryan is here on editing}
 We have decomposed the deformation tensor into contributions from three
 different terms.  The contributions from the Stokeslets and the rotlets
 can be directly evaluated since $\rr \neq 0$ for all $\xx \in \gamma$.
