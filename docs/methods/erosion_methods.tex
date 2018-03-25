@@ -1058,20 +1058,24 @@ The corresponding stream function is biharmonic, $\Delta^2 \psi = 0$, and the an
 \label{fODE}
 f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0.
 \end{align}
-This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$ and odd symmetry about the horizontal axis, $f(0) = f''(0) = 0$. For arbitrary opening angle $\beta$, ODE \eqref{fODE} and its boundary conditions constitute an eigenvalue problem for $\lambda$, whose solution furnishes the stream function and the corresponding shear stress on the wedge surface $\tau = \mu r^{\lambda-2} f''(\thb)$. We, however, seek to determine the particular opening angle that produces {\em uniform} shear stress and thus set $\lambda = 2$. The corresponding solution to \eqref{fODE} that satisfies odd symmetry is given by
+This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$ and odd symmetry about the horizontal axis, $f(0) = f''(0) = 0$. For arbitrary opening angle, ODE \eqref{fODE} and the boundary conditions comprise an eigenvalue problem for $\lambda$, whose solution furnishes the stream function and the corresponding shear stress on the wedge surface $\tau = \mu r^{\lambda-2} f''(\thb)$. We, however, seek to determine the particular opening angle that produces {\em uniform} shear stress and therefore set $\lambda = 2$.
+The odd-symmetric solution to \eqref{fODE} that corresponds to $\lambda=2$ is given by
 \begin{align}
-  f(\theta) = B \sin (2 \theta) + C \theta \, ,
+  f(\theta) = B \sin (2 \theta) + C \theta \, .
 \end{align}
-and imposing the no-slip boundary conditions gives the condition
+Imposing the no-slip boundary conditions gives the condition
 \begin{align}
   \sin(2 \thb) - 2 \thb \cos(2 \thb) = 0 \, .
 \end{align}
-This nonlinear equation has solution $\thb \approx 129^\circ$, which gives the uniform-stress opening angle as $\oangle \approx 102^\circ$ degrees. 
+This nonlinear equation has solution $\thb \approx 129^\circ$, which implies that the the uniform-stress wedge has an opening angle of $\oangle \approx 102^\circ$.
 % Pozrikidis page 239: symmetric flow.
 
-\todo[inline]{Here in revising}
+We comment
 
 We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
+
+
+\todo[inline]{Here in revising}
 
 
 \subsection{Fixed-area simulations}
