@@ -297,6 +297,130 @@ pages = {808--830},
 year = {2015}
 }
 
+@article{ser-rok2016,
+author = {K.~Serkh and V.~Rokhlin},
+title = {On the solution of elliptic partial differential equations on
+  regions with corners},
+journal = {Journal of Computational Physics},
+volume = {305},
+pages = {150--171},
+year = {2016}
+}
+
+@article{rac-ser2017,
+title = {{On the solution of Stokes equation on regions with corners}},
+author = {M.~Rachh and K.~Serkh},
+journal = {arxiv},
+volume = {1711.04072},
+year = {2017}
+}
+
+
+@article{gil-hao-mar2014,
+title = {{A simplified technique for the efficient and highly accurate
+discretization of boundary integral equations in 2D on domains with
+corners}},
+author = {A.~Gillman and S.~Hao and P.G.~Martinsson},
+journal = {Journal of Computational Physics},
+volume = {256},
+pages = {214--219},
+year = {2014}
+}
+
+@article{hel2011,
+title = {{A Fast and Stable Solver for Singular Integral Equations and
+  Piecewise Smooth Curves}},
+author = {J.~Helsing},
+journal = {SIAM Journal on Scientific Comuting},
+volume = {33},
+pages = {153--174},
+year = {2011}
+}
+
+@article{bre2012,
+title = {{On the Nystr\"om discretization of integral equations on
+planar curves with corners}},
+author = {James Bremer},
+journal = {Applied and Computational Harmonic Analysis},
+volume = {32},
+pages = {45--64},
+year = {2012}
+}
+
+@article{oja-tor2015,
+title = {{An accurate integral equation method for simulating
+  multi-phase Stokes flow}},
+author = {Rikard Ojala and Anna-Karin Tornberg},
+journal = {Journal of Computational Physics},
+volume = {298},
+pages = {145--160},
+year = {2015},
+publisher = {Elsevier}
+}
+
+@article{pow1993,
+title = {{The completed double layer boundary integral equation method
+  for two-dimensional Stokes flow}},
+author = {H.~Power},
+journal = {IMA Journal of Applied Mathematics},
+volume = {51},
+number = {2},
+pages = {123--145},
+year = {1993},
+}
+
+@book{lad1963,
+title = {{The Mathematical Theory of Viscous Incompressible Flow}},
+author = {O.~A.~Ladyzhenskaya},
+publisher = {Gordon and Breach Science},
+year = {1963}
+}
+
+@article{gre-kro-may1996,
+title = {{Integral Equation Methods for Stokes Flow and Isotropic
+  Elasticity in the Plane}},
+author = {L.~Greengard and M.C.~Kropinski and A.~Mayo},
+journal = {Journal of Computational Physics},
+volume = {125},
+number = {2},
+pages = {403--414},
+year = {1996}
+}
+
+@article{bea-lai2001,
+title = {{A Method for Computing Nearly Singular Integrals}},
+author = {J.T.~Beale and M.-C.~Lai},
+journal = {SIAM Journal on Numerical Analysis},
+volume = {38},
+number = {6},
+pages = {1902--1925},
+year = {2001}
+}
+
+@article{qua-bir2015a,
+title = {{On preconditioners for the Laplace double-layer potential in
+  2D}},
+author = {Bryan Quaife and George Biros},
+journal = {Numerical Linear Algebra with Applications},
+volume = {22},
+pages = {101--122},
+year = {2015}
+}
+
+@article{qua-cou-dar2018,
+title = {{An efficient preconditioner for the fast simulation of a 2D
+    Stokes flow in porous media}},
+author = {Bryan Quaife and Pieter Coulier and Eric Darve},
+journal = {International Journal for Numerical Methods in
+  Engineering},
+volume = {113},
+pages = {561--580},
+year = {2018},
+}
+
+
+
+
 
 %---------------------------------------------------------------------------%
 %--- Nick's reference
@@ -322,7 +446,7 @@ volume = {114},
 pages = {312--338},
 year = {1994}
 }
-% Rothman (Not included yet)
+% Rothman (NOT INCLUDED YET)
 @article{Rothman2012,
   title={Ramification of stream networks},
   author={Devauchelle, O. and Petroff, A.P. and Seybold, H.F. and Rothman, D.H.},
@@ -332,20 +456,6 @@ year = {1994}
   pages={20832--20836},
   year={2012},
   publisher={National Acad Sciences}
-}
-
-%%% BOUNDARY INTEGRAL PAPERS %%%
-% Moore Boundary integrals 2007
-@article{Moore2007,
-  title={{Evaluation of supersingular integrals: Second-order boundary
-    derivatives}},
-  author={M.N.J. Moore and Gray, L.J. and Kaplan, T.},
-  journal={Int. J. Numer. Meth. Eng.},
-  volume={69},
-  number={9},
-  pages={1930--1947},
-  year={2007},
-  publisher={Wiley Online Library}
 }
 
 %%% MY PAPERS %%%
@@ -527,6 +637,17 @@ year = {2015}
 }
 
 %%% SLENDER BODY REFS %%%
+% Batchelor
+@article{batchelor1970slender,
+  title={Slender-body theory for particles of arbitrary cross-section in Stokes flow},
+  author={Batchelor, GK},
+  journal={Journal of Fluid Mechanics},
+  volume={44},
+  number={3},
+  pages={419--440},
+  year={1970},
+  publisher={Cambridge University Press}
+}
 % Moore JFM 2012
 @article{MooreJFM2012,
   title={Stratified flows with vertical layering of density:
@@ -539,159 +660,17 @@ experimental and theoretical study of flow configurations and their stability},
   year={2012},
   publisher={}
 }
-% Bouzarth McLaughlin 2007
-@article{bouzarth2007epicyclic,
-  title={Epicyclic orbits in a viscous fluid about a precessing rod: theory and experiments at the micro-and macro-scales},
-  author={Bouzarth, Elizabeth L and Brooks, Adam and Camassa, Roberto and Jing, Hao and Leiterman, Terry Jo and McLaughlin, Richard M and Superfine, Richard and Toledo, Jonathan and Vicci, Leandra},
-  journal={Physical Review E},
-  volume={76},
-  number={1},
-  pages={016313},
+
+%%--- NOT USED RIGHT NOW ---%%
+% Moore Boundary integrals 2007
+@article{Moore2007,
+  title={{Evaluation of supersingular integrals: Second-order boundary
+    derivatives}},
+  author={M.N.J. Moore and Gray, L.J. and Kaplan, T.},
+  journal={Int. J. Numer. Meth. Eng.},
+  volume={69},
+  number={9},
+  pages={1930--1947},
   year={2007},
-  publisher={APS}
+  publisher={Wiley Online Library}
 }
-% Terry Jo 2008
-@article{camassa2008trajectory,
-  title={Trajectory and flow properties for a rod spinning in a viscous fluid. Part 1. An exact solution},
-  author={Camassa, Roberto and Leiterman, Terry Jo and McLaughlin, Richard M},
-  journal={Journal of Fluid Mechanics},
-  volume={612},
-  pages={153--200},
-  year={2008},
-  publisher={Cambridge University Press}
-}
-% Longhua 2015
-@article{zhao2015transportation,
-  title={Transportation particles in flows driven by nodal cilia processing D-shaped cones},
-  author={Zhao, Longhua},
-  journal={Journal of Coupled Systems and Multiscale Dynamics},
-  volume={3},
-  number={3},
-  pages={244--252},
-  year={2015},
-  publisher={American Scientific Publishers}
-}
-
-@article{ser-rok2016,
-author = {K.~Serkh and V.~Rokhlin},
-title = {On the solution of elliptic partial differential equations on
-  regions with corners},
-journal = {Journal of Computational Physics},
-volume = {305},
-pages = {150--171},
-year = {2016}
-}
-
-@article{rac-ser2017,
-title = {{On the solution of Stokes equation on regions with corners}},
-author = {M.~Rachh and K.~Serkh},
-journal = {arxiv},
-volume = {1711.04072},
-year = {2017}
-}
-
-
-@article{gil-hao-mar2014,
-title = {{A simplified technique for the efficient and highly accurate
-discretization of boundary integral equations in 2D on domains with
-corners}},
-author = {A.~Gillman and S.~Hao and P.G.~Martinsson},
-journal = {Journal of Computational Physics},
-volume = {256},
-pages = {214--219},
-year = {2014}
-}
-
-@article{hel2011,
-title = {{A Fast and Stable Solver for Singular Integral Equations and
-  Piecewise Smooth Curves}},
-author = {J.~Helsing},
-journal = {SIAM Journal on Scientific Comuting},
-volume = {33},
-pages = {153--174},
-year = {2011}
-}
-
-@article{bre2012,
-title = {{On the Nystr\"om discretization of integral equations on
-planar curves with corners}},
-author = {James Bremer},
-journal = {Applied and Computational Harmonic Analysis},
-volume = {32},
-pages = {45--64},
-year = {2012}
-}
-
-@article{oja-tor2015,
-title = {{An accurate integral equation method for simulating
-  multi-phase Stokes flow}},
-author = {Rikard Ojala and Anna-Karin Tornberg},
-journal = {Journal of Computational Physics},
-volume = {298},
-pages = {145--160},
-year = {2015},
-publisher = {Elsevier}
-}
-
-@article{pow1993,
-title = {{The completed double layer boundary integral equation method
-  for two-dimensional Stokes flow}},
-author = {H.~Power},
-journal = {IMA Journal of Applied Mathematics},
-volume = {51},
-number = {2},
-pages = {123--145},
-year = {1993},
-}
-
-@book{lad1963,
-title = {{The Mathematical Theory of Viscous Incompressible Flow}},
-author = {O.~A.~Ladyzhenskaya},
-publisher = {Gordon and Breach Science},
-year = {1963}
-}
-
-@article{gre-kro-may1996,
-title = {{Integral Equation Methods for Stokes Flow and Isotropic
-  Elasticity in the Plane}},
-author = {L.~Greengard and M.C.~Kropinski and A.~Mayo},
-journal = {Journal of Computational Physics},
-volume = {125},
-number = {2},
-pages = {403--414},
-year = {1996}
-}
-
-@article{bea-lai2001,
-title = {{A Method for Computing Nearly Singular Integrals}},
-author = {J.T.~Beale and M.-C.~Lai},
-journal = {SIAM Journal on Numerical Analysis},
-volume = {38},
-number = {6},
-pages = {1902--1925},
-year = {2001}
-}
-
-@article{qua-bir2015a,
-title = {{On preconditioners for the Laplace double-layer potential in
-  2D}},
-author = {Bryan Quaife and George Biros},
-journal = {Numerical Linear Algebra with Applications},
-volume = {22},
-pages = {101--122},
-year = {2015}
-}
-
-@article{qua-cou-dar2018,
-title = {{An efficient preconditioner for the fast simulation of a 2D
-    Stokes flow in porous media}},
-author = {Bryan Quaife and Pieter Coulier and Eric Darve},
-journal = {International Journal for Numerical Methods in
-  Engineering},
-volume = {113},
-pages = {561--580},
-year = {2018},
-}
-
-
-
