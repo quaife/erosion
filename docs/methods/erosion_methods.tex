@@ -593,13 +593,14 @@ solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shear stress}
 \label{sec:shearStress}
-\todo[inline]{Bryan is here on editing}
 We have decomposed the deformation tensor into contributions from three
-different terms.  The contributions from the Stokeslets and the rotlets
-can be directly evaluated since $\rr \neq 0$ for all $\xx \in \gamma$.
-For the shear stress of the double-layer potential, we would like to use
-the trapezoid rule. The kernel of the deformation tensor due to
-the double-layer potential~\eqref{eqn:shearStressDLP} is 
+different terms.  The contributions from the Stokeslets and the
+rotlets~\eqref{eqn:shearStressSR} can be immediately evaluated since
+they do not involve any integration that needs to be approximated.  For
+the shear stress of the double-layer potential, we use a slight variant
+of the trapezoid rule. The kernel of the deformation tensor due to the
+double-layer
+potential~\eqref{eqn:shearStressDLP} is 
 \begin{align*}
   K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
     2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
@@ -609,19 +610,19 @@ the double-layer potential~\eqref{eqn:shearStressDLP} is
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
   \right).
 \end{align*}
-Unfortunately, this kernel has a singularity that is asymptotic to
-$\bigO(\rho^{-2})$ when $\yy \rightarrow \xx$, and this is too strong
-for the trapezoid rule.  The singularity strength can be reduced since
-the velocity corresponding to a constant density function is
+This kernel has a singularity that is asymptotic to $\bigO(\rho^{-2})$
+when $\yy \rightarrow \xx$, and this is too strong for the unmodified
+trapezoid rule.  The singularity strength can be reduced since the
+velocity corresponding to a constant density function is
 constant~\cite{poz1992}.  Therefore, the deformation tensor of the
 double-layer potential is equivalent to
 \begin{align*}
   \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
       (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
 \end{align*}
-This expression for the deformation tensor has a singularity that is
-asymptotic to $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Finally,
-to achieve spectral accuracy, we apply odd-even
+This expression has a singularity that is asymptotic to
+$\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Then, to achieve
+spectral accuracy, we apply the trapezoid rule with odd-even
 integration~\cite{sid-isr1988}.  Therefore, the deformation tensor of
 the double-layer potential at a discretization point $\xx_i$ on body
 $\gamma_\ell$, with $i$ being odd, is approximated as
@@ -632,21 +633,21 @@ $\gamma_\ell$, with $i$ being odd, is approximated as
     K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
   \label{eqn:stressOddEven}
 \end{align}
-and a similar approximation is used when $i$ is even.  The deformation
-tensor due to the Stokeslets and rotlets are given in
-equation~\eqref{eqn:shearStressSR}.  Finally, the jump in the
-deformation tensor~\eqref{eqn:shearStressJump} is computed with Fourier
-differentiation.  Finally, the shear stress is computed by multiplying the
-deformation tensor by the normal vector, and taking the inner product
-with the tangent vector.
+and a similar approximation is used when $i$ is even.  We also need to
+approximate the jump in the deformation
+tensor~\eqref{eqn:shearStressJump}, and this is done with Fourier
+differentiation.  Finally, the shear stress is computed by multiplying
+the deformation tensor by the normal vector, and taking the inner
+product with the tangent vector.
 
 We do not employ an FMM to evaluate the shear stress at $\xx_i$,
 $i=1,\ldots,N$, so the cost of evaluating the shear stress is
 $\bigO(N^2)$.  However, this calculation is only performed once per time
-step as opposed to the velocity double-layer potential that must be
-evaluated at each GMRES iteration.  In future work, we plan to use a
-kernel-independent FMM~\cite{yin-bir-zor2004} to evaluate the shear
-stress with $\bigO(N)$ operations.
+step as opposed to the velocity double-layer potential, where we do
+employ the FMM, that must be evaluated at each GMRES iteration.  In
+future work, we plan to use a kernel-independent
+FMM~\cite{yin-bir-zor2004} to evaluate the shear stress with $\bigO(N)$
+operations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TIME-STEPPING %%
@@ -760,6 +761,7 @@ We point out that most exponential integrators use some form of quadrature to tr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post processing quantities of interest}
 \label{s:qoi}
+\todo[inline]{Bryan is here}
 To study characteristics of the flow, the vorticity
 (Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}),
 and drag (Section~\ref{sec:drag}) will be computed.  Once
