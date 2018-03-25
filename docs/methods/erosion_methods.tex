@@ -195,10 +195,8 @@ numerical methods in both space and time are described and
 Section~\ref{s:qoi} describes how to compute the vorticity, pressure,
 and drag. Section~\ref{s:SingleResults} gives several numerical examples
 for a single body, and Section~\ref{s:MultiResults} presents numerical
-  examples for multiply-connected domains.  Finally, concluding remarks are made in Section~\ref{s:conclusions}
-
-
-
+examples for multiply-connected domains.  Finally, concluding remarks
+are made in Section~\ref{s:conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation}
@@ -596,11 +594,10 @@ solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
 We have decomposed the deformation tensor into contributions from three
 different terms.  The contributions from the Stokeslets and the
 rotlets~\eqref{eqn:shearStressSR} can be immediately evaluated since
-they do not involve any integration that needs to be approximated.  For
-the shear stress of the double-layer potential, we use a slight variant
-of the trapezoid rule. The kernel of the deformation tensor due to the
-double-layer
-potential~\eqref{eqn:shearStressDLP} is 
+they do not involve any integration to approximate.  For the shear
+stress of the double-layer potential, we use a slight variant of the
+trapezoid rule. The kernel of the deformation tensor due to the
+double-layer potential~\eqref{eqn:shearStressDLP} is 
 \begin{align*}
   K_\ssigma(\xx,\yy)\eeta(\yy) &= \frac{1}{2\pi} \left(
     2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
@@ -761,30 +758,27 @@ We point out that most exponential integrators use some form of quadrature to tr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post processing quantities of interest}
 \label{s:qoi}
-\todo[inline]{Bryan is here}
-To study characteristics of the flow, the vorticity
+We further characterize the flow by computing the vorticity
 (Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}),
-and drag (Section~\ref{sec:drag}) will be computed.  Once
-equation~\eqref{eqn:completed_DLP} is solved for the density function,
-Stokeslets, and rotlets, all of these quantities can be computed.  For
-target points in the fluid domain, the resulting layer potentials
-involve integrands that are periodic and smooth, so the trapezoid rule
-guarantees spectral accuracy~\cite{tre-wei2014}.  However, if the target
-point is close to $\bd \Omega$, a nearly-singular integrand must be
-integrated, and this requires upsampling that is described in
-Section~\ref{sec:NSI}.  When the target points is on the boundary, the
-integrands involve singularities that are evaluated by combining
-singularity subtraction and odd-even integration~\cite{sid-isr1988}.  
-
-
+and drag (Section~\ref{sec:drag}).  Once
+equation~\eqref{eqn:completed_DLP} is solved, the vorticity, pressure,
+and drag can be computed at arbitrary target points.  For target points
+in the fluid domain, the integrands of the layer potentials are periodic
+and smooth, and the trapezoid rule guarantees spectral
+accuracy~\cite{tre-wei2014}.  However, if the target point is close to
+$\bd \Omega$, a nearly-singular integrand must be integrated, and this
+requires upsampling that is described in Section~\ref{sec:NSI}.  When
+the target points is on the boundary, the integrands involve
+singularities that are evaluated by combining singularity subtraction
+and odd-even integration~\cite{sid-isr1988}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vorticity}
 \label{sec:vorticity}
-We start by computing the vorticity $\omega(\xx) = v_x - u_y$ for $\xx \in
-\Omega$.  As we did for the shear stress, we compute the vorticity due
-to the double-layer potential, Stokeslets, and rotlets individually.
-The vorticity of the double-layer potential~\eqref{eqn:velocityDLP} at
+We start by computing the vorticity $\omega(\xx) = v_x - u_y$ for $\xx
+\in \Omega$ which we decompose into contributions from the double-layer
+potential, Stokeslets, and rotlets.  The vorticity of the double-layer
+potential~\eqref{eqn:velocityDLP} at
 $\xx \in \Omega$ is
 \begin{align}
   \omega^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
@@ -792,7 +786,9 @@ $\xx \in \Omega$ is
     (\rr \cdot \eeta) ds_{\yy}.
   \label{eqn:vorticityDLP}
 \end{align}
-The vorticity due to the Stokeslet is
+To compute~\eqref{eqn:vorticityDLP} numerically, we apply the trapezoid
+rule with an upsampling scheme described in Section~\ref{sec:NSI}.
+Next, the vorticity due to the Stokeslet is
 \begin{align*}
   \omega^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
     \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2},
@@ -802,22 +798,21 @@ and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
 \begin{align*}
   \omega(\xx) = \omega^\DD(\xx) + \omega^S(\xx).
 \end{align*}
-To compute~\eqref{eqn:vorticityDLP} numerically, we apply the trapezoid
-rule with an upsampling scheme described in Section~\ref{sec:NSI}.
 
 For the Stokes equations, on boundaries that have a no-slip boundary
-condition, the shear stress is equivalent to the vorticity $\omega = v_x -
-u_y$.  Therefore, we do not need to compute the vorticity for $\xx \in
-\bd\Omega$.
+condition, the shear stress is equivalent to the vorticity.  Therefore,
+the vorticity is computed on the grains $\gamma_\ell$ by numerically
+compute the shear stress as described in Section~\ref{sec:shearStress}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pressure}
 \label{sec:pressure}
-To compute the pressure at $\xx \in \Omega$, we follow the
-same procedure used for the shear stress.  We start by computing the
-pressure of the double-layer potential for $\xx \in \Omega$ and add the
-appropriate jump if $\xx \in \Gamma$. For $\xx \in \Omega$, the pressure
-is
+To compute the pressure at $\xx \in \Omega$, we follow the same
+procedure used for the shear stress.  We first compute the pressure of
+the double-layer potential for $\xx \in \Omega$ and add the appropriate
+jump if $\xx \in \Gamma$. By taking the Laplacian of the Stokes
+double-layer potential~\eqref{eqn:velocityDLP}, the pressure at $\xx \in
+\Omega$ is
 \begin{align}
   p^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
@@ -825,31 +820,29 @@ is
     \label{eqn:pressureDLP}
 \end{align}
 The pressure due to the Stokeslets is
-\begin{align}
+\begin{align*}
   p^S(\xx_0) = \sum_{\ell=1}^{M}\frac{\rr \cdot \llambda_\ell}{2\pi\rho^2},
-  \label{eqn:shearPressureSR}
-\end{align}
+\end{align*}
 and the pressure due to the rotlets is zero.  Therefore, the pressure is
-\begin{alignat*}{3}
-  p(\xx) &= p^{\DD}(\xx) + p^{S}(\xx), &&\xx \in \Omega,\\
-  p(\xx) &= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
-              p^{S}(\xx), \quad && \xx \in \bd\Omega.
-\end{alignat*}
+\begin{align*}
+  p(\xx) = p^{\DD}(\xx) + p^{S}(\xx), \quad \xx \in \Omega,
+\end{align*}
 To compute~\eqref{eqn:pressureDLP} numerically, we apply the trapezoid
 rule with an upsampling scheme described in Section~\ref{sec:NSI}.
 
-To compute the pressure at $\xx_0 \in \bd\Omega$, we consider the limit
-as $\xx$ tends to $\xx_0$.  The limiting value is given
-by~\cite{qua-bir2014a}
+For target points on the boundary of the geometry, $\xx \in \bd \Omega$,
+there is an additional term resulting from a jump in the pressure
+double-layer potential~\cite{poz1992}
 \begin{align}
-  \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}p^\DD(\xx) =  
-    \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx_0).
+  p(\xx)= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
+              p^{S}(\xx), \quad \xx \in \bd\Omega.
   \label{eqn:pressureJump}
 \end{align}
 Similar to the shear stress, the singularity of the pressure
 corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is
-too strong for the trapezoid rule to be directly applied.  Therefore, we
-again subtract a constant density function and write the pressure as
+too strong when $\xx \in \bd\Omega$ for the trapezoid rule to be
+directly applied.  Therefore, we again subtract a constant density
+function and write the pressure as
 \begin{align*}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
@@ -858,17 +851,15 @@ again subtract a constant density function and write the pressure as
 \end{align*}
 Then, identical to how the shear stress is
 computed~\eqref{eqn:stressOddEven}, odd-even integration is used to
-evaluate this layer potential for pressure.  The pressure due to the
-Stokeslets are given in equation~\eqref{eqn:shearPressureSR}.  Finally,
-to add the jump condition~\eqref{eqn:pressureJump}, Fourier
-differentiation is used to compute the arclength derivative. 
+evaluate this layer potential for pressure, and the jump condition
+in~\eqref{eqn:pressureJump} is computed with Fourier differentiation. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Drag}
 \label{sec:drag}
-With the pressure and shear stress, the drag on a single body with
-boundary $\gamma_\ell$ is
+Once the pressure and shear stress is computed, the drag on a single
+body with boundary $\gamma_\ell$ is
 \begin{align}
 \FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
 \label{eqn:drag}
@@ -903,12 +894,12 @@ trapezoid rule
 \end{align}
 where $q$ contains the quadrature weights, Jacobian, and density
 function.  Based on numerical experiments, the error of the $N$-point
-trapezoid rule is acceptable for points $\xx$ that are more than 5
-arclength spacings from $\bd\Omega$. For points that are closer than 5
-arclength spacings to $\bd\Omega$, we use an upsampled trapezoid rule.
-The required upsampling of the geometry and the density function is done
-with a Fourier interpolant.  To minimize the number of discretization
-points that are used to approximate the layer
+trapezoid rule is acceptable for points $\xx$ that are more than five 
+arclength spacings from $\bd\Omega$. For points that are closer than
+five arclength spacings to $\bd\Omega$, we use an upsampled trapezoid
+rule.  The required upsampling of the geometry and the density function
+is done with a Fourier interpolant.  To minimize the number of
+discretization points that are used to approximate the layer
 potential~\eqref{eqn:layerPotential}, we use the same upsampling rate
 for all target points that are in the same dyadic interval
 (Table~\ref{tbl:upsampling}).  For points that are closer than $5/16$ of
@@ -940,11 +931,9 @@ an arclength spacing.}
 In future work, upsampling will not be adequate.  For example, if
 eroding bodies are also sedimenting, bodies will come too close to one
 another for upsampling to be sufficient.  Therefore, we plan to
-implement a near-singular integration scheme that uses either
-near-singular interpolation~\cite{qua-bir2014a}, quadrature by
-expansion~\cite{klo-bar-gre-one2013}, Barycentric
-interpolation~\cite{bar-wu-vee2015}, or panel-based
-quadrature~\cite{hel-oja2008a}.
+implement one of several near-singular integration schemes available in
+the literature~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015,
+hel-oja2008a}.
 
 %%-----------------------------------------------------------------%%
 % RESULTS SECTION
@@ -1030,7 +1019,7 @@ Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \end{align}
 Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time, and we can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
 
-	As the body shrinks in accordance with \eqref{area_predict}, the drag that it exerts decreases at a related rate, which offers a second check on our numerics. In Fig.~\ref{area_drag}(b), we show the horizontal drag on the simulated body as it erodes (black curve). The drag, $F_D$, is calculated using \eqref{eqn:drag} and, in the context of slender-body theory, should be interpreted as the drag-per-unit-span on a 2D cross-section. As seen in the figure, $F_D$ decreases gradually at first, then abruptly tends to zero in the final moments as the vanishes. This behavior, though perhaps surprising, is consistent with the fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. Equation \eqref{eqn:drag} also allows us to calculate the separate contributions of pressure and viscous drag, and we show these with the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases much more rapidly, leaving viscous drag to dominate. This behavior is associated with the tendency towards a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
+As the body shrinks in accordance with \eqref{area_predict}, the drag that it exerts decreases at a related rate, which offers a second check on our numerics. In Fig.~\ref{area_drag}(b), we show the horizontal drag on the simulated body as it erodes (black curve). The drag, $F_D$, is calculated using \eqref{eqn:drag} and, in the context of slender-body theory, should be interpreted as the drag-per-unit-span on a 2D cross-section. As seen in the figure, $F_D$ decreases gradually at first, then abruptly tends to zero in the final moments as the vanishes. This behavior, though perhaps surprising, is consistent with the fact that drag vanishes {\em logarithmically} with body-size in 2D Stokes flow. Equation \eqref{eqn:drag} also allows us to calculate the separate contributions of pressure and viscous drag, and we show these with the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases much more rapidly, leaving viscous drag to dominate. This behavior is associated with the tendency towards a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
 
 As a check on these results, we can use slender-body theory to estimate the drag-per-unit-span
 \begin{align}
