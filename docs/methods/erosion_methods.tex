@@ -1019,14 +1019,14 @@ Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \end{align}
 Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time, and we can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkable well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
 
-	As the body shrinks in accordance with \eqref{area_predict}, the drag that it exerts decreases at a related rate, offering a second check on our numerics. In Fig.~\ref{area_drag}(b), we show the horizontal drag, $F_D$, on the simulated body as it erodes (black curve). The drag is calculated using \eqref{eqn:drag} and, in the context of slender-body theory, this should be interpreted as the drag-per-unit-span. As seen in the figure, $F_D$ decreases gradually at first, then abruptly tends to zero in the final moments as the body vanishes. Though it may seem peculiar, the sudden drop to zero  is consistent with the fact that drag vanishes {\em logarithmically} with body size in 2D Stokes flow. Equation \eqref{eqn:drag} also permits us to calculate the contributions of pressure and viscous drag separately, which are shown by the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases more rapidly, leaving viscous drag to dominate. This behavior is associated with convergence towards a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
+	As the body shrinks in accordance with \eqref{area_predict}, the drag that it exerts decreases at a related rate, offering a second check on our numerics. In Fig.~\ref{area_drag}(b), we show the horizontal drag, $F_D$, on the simulated body as it changes in time (black curve). The drag is calculated using \eqref{eqn:drag} and, in the context of slender-body theory, this should be interpreted as the drag-per-unit-span. As seen in the figure, $F_D$ decreases gradually at first, then abruptly tends to zero in the final moments as the body vanishes. Though it may seem peculiar, the sudden drop to zero  is consistent with the 2D Stokes law in which drag vanishes {\em logarithmically} with body size. Additionally, \eqref{eqn:drag} permits us to calculate the separate contributions of pressure and viscous drag, shown by the blue and green curves in Fig.~\ref{area_drag}(b). Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases more rapidly, leaving viscous drag to dominate. This behavior is associated with convergence to a drag-minimizing profile, which will be discussed in Section \ref{LimitingShape}.
 
 As a check on these results, we can use slender-body theory to estimate the drag-per-unit-span
 \begin{align}
 \label{dragscaling}
 \frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}	\qquad \text{for } a \ll \ell \, .
 \end{align}
-For a {\em circular} cylinder, the normalization factor $4 \pi$ produces an {\em exact} relationship (within the context of slender-body theory), where $a$ is taken to be the radius. For other shapes the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale since it generalizes the case of a circle. In Fig.~\ref{area_drag}(b) we show the drag scaling prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as $t \to t_f$, confirming that our simulation accurately captures the slender-body limit as the shape disappears.
+For a {\em circular} cylinder, the normalization factor $4 \pi$ produces an {\em exact} relationship (within the context of slender-body theory), where $a$ is taken to be the radius. For other shapes the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale since it generalizes the case of a circle. In Fig.~\ref{area_drag}(b) we show this prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as $t \to t_f$, confirming that the simulation accurately captures the slender-body limit as the solid disappears.
 
 
 \subsection{Local analysis for the limiting shape}
@@ -1061,15 +1061,15 @@ Imposing the no-slip boundary conditions gives the condition
 This nonlinear equation has solution $\thb \approx 129^\circ$, which implies that the the uniform-stress wedge has an opening angle of $\oangle \approx 102^\circ$.
 % Pozrikidis page 239: symmetric flow.
 
-We comment
-
-We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
 
 
-\todo[inline]{Here in revising}
+
 
 
 \subsection{Fixed-area simulations}
+
+\todo[inline]{Here in revising}
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -1134,6 +1134,18 @@ Loosely, this corresponds to smoothing over the nearest 20, 10, and 5 grid point
 \end{table}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % npts = 1024
+
+
+
+
+\todo[inline]{Here in revising}
+%We comment
+ %A comment on how these results compare to erosion in 3D Stokes flow is in order.
+
+We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
+
+
+
 
 
 \subsection{Convergence test}
