@@ -1063,7 +1063,7 @@ This nonlinear equation has solution $\thb \approx 129^\circ$, which implies tha
 
 \subsection{Fixed-area simulations}
 
-We now aim to measure the opening angle formed in our simulations for comparison with the above prediction. However, Section \ref{sec:scaling} shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations lose accuracy in the critical moments when the body is expected to approach its limiting shape. To circumvent this problem, we remove the effect of shrinking by forcing $\Vn$ to have zero mean,
+We now aim to measure the opening angles formed in our simulations for comparison with this prediction. However, Section \ref{sec:scaling} shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations to lose accuracy in the final, critical moments when the body is expected to approach its limiting shape. To circumvent this problem, we remove the effect of shrinking by forcing $\Vn$ to have zero mean,
 \begin{align}
 \Vn \leftarrow \Vn - \mean{\Vn} \, .
 \end{align}
@@ -1082,8 +1082,9 @@ This modification allows erosion to sculpt the shape as it would normally, but w
 % Uses 01circ1024.in with epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0
 
 
-	We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) shows a zoom of the body's rear stagnation point, demonstrating that the near-corner is actually smooth on a fine scale, in accordance with our numerical smoothing. 
-Figure~\ref{fixed_intface}(b) shows the stress distribution on the evolving body, revealing that stress becomes more uniform as time proceeds. Interestingly, the slight rise in shear near the front/rear corners that was seen in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that the effect was due to loss of accuracy. Here, time is normalized by the same vanishing time $t_f = 1.79 \times 10^{-2}$ as in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state, which contrasts with previous studies of high-Reynolds-number erosion in which a satisfactory steady-state was usually reached before the body vanished~\cite{moo-ris-chi-zha-she2013}.
+	We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process. Notice the body obtains a similar profile as observed previously, but with fixed area. Importantly, more numerical accuracy is now available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) is a zoom demonstrating that, due to our numerical regularization, the near corner at the body's rear is actually smooth on a fine scale. We show in Fig.~\ref{fixed_intface}(b) the stress distributions on the same interfaces. As observed before, the stress becomes more evenly distributed as erosion reshapes the body. The slight rise in shear near the front/rear corners that was observed in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that this effect was due to loss of accuracy. Rather, the late-time stress distributions in Fig.~\ref{fixed_intface}(b) decrease monotonically to zero near the stagnation points. In this figure, time is normalized by the same value $t_f = 1.79 \times 10^{-2}$ as in Fig.~\ref{shrink_intface}. Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state
+
+%Curiously, about 3 multiples of $t_f$ are required to reach an approximate steady-state, which contrasts with previous studies of high-Reynolds-number erosion in which a satisfactory steady-state was usually reached before the body vanished~\cite{moo-ris-chi-zha-she2013}.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
