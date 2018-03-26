@@ -80,36 +80,39 @@ proportional to the magnitude of the shear stress.
 to simulate erosion of multiply-connected two-dimensional geometries.
 In this fashion, individual pores are resolved rather than
 homogenized.  A boundary integral equation (BIE) is used to solve the
-incompressible Stokes equations in the complex geometry.  We resolve
-individual grains and the non-negligible interactions between bodies.
-To link the eroding body and fluid dynamics, the body is eroded in the
-normal direction at a rate that is proportional to the magnitude of the
-shear stress.
+incompressible Stokes equations in the complex geometry.  The resulting
+method resolves individual grains and the non-negligible interactions
+between bodies.  To link the eroding body and fluid dynamics, the body
+is eroded in the normal direction at a rate that is proportional to the
+magnitude of the shear stress.
 
 To create high-fidelity and computationally efficient numerical methods,
 two fast and accurate methods are employed.  First, the fluid velocity
-and the erosion rate (shear stress) are efficiently computed with
-spectral accuracy by using a fast-multipole-accelerated BIE method.  The
-required spatial derivatives are computed with spectral accuracy in
-Fourier space.  In addition to compute the shear stress, we also compute
-the vorticity in the fluid bulk.  The vorticity is
-particularly insightful since it is identical to the shear stress on
-no-slip boundaries.  Therefore, by computing the vorticity, we are able
-to locate regions where the erosion rates will be fastest or slowest
-(Fig.~\ref{fig:50bodies}).
+and the erosion rate (shear stress) are computed with a
+fast-multipole-accelerated Kryolv method applied to a spectrally
+accurate discretization of the governing equations.  In particular,
+GMRES~\cite{saa-sch1986} is applied to a spectrally-accurate Nystr\"om
+discretization of the BIE~\cite{tre-wei2014}, a spectrally accurate
+quadrature rule is used to compute the shear stress~\cite{sid-isr1988},
+and all arclength derivatives are computed with Fourier differentiation.
+In addition to compute the shear stress, we also compute the vorticity
+in the fluid bulk.  The vorticity is particularly insightful since it is
+identical to the shear stress on no-slip boundaries.  Therefore, by
+computing the vorticity, we are able to identify regions where the
+erosion rate will be fast or slow (Fig.~\ref{fig:50bodies}).
 
 Once the erosion rate is computed, the shape is integrated in time with
 second-order accuracy.  Tracking the interface of fluid-structure
 interaction problems with a long time horizon is particularly
-difficult---the mesh is often distorted and tangled by the dynamics and
-regions of high curvature develop.  These two issues are resolved by,
-first, introducing a tangential velocity field to maintain a grid that
-is equispaced in arclength, but that does not affect the dynamics, and,
-second, a curvature penalization term.  Furthermore, the frame of
-reference is changed to \thL~variables so that the curvature term
+difficult---the mesh is often distorted and tangled.  Moreover, erosion
+naturally leads to regions of high or infinite (i.e.~corners) curvature.
+These interface tracking issues are resolved by, first, introducing a
+tangential velocity field to maintain a grid that is equispaced in
+arclength, but that does not affect the dynamics, and, second, a tunable
+term that penalizes regions of high curvature.  Furthermore, the frame
+of reference is changed to \thL~variables so that the curvature term
 appears as a diffusive term that can easily be handled in a numerically
-stable fashion, e.g.~via an exponential integrator or an implicit
-method.
+stable fashion with an exponential integrator.
 
 We validate our method on a single circular body placed symmetrically in
 a pipe flow.  By artificially fixing the area of the body as a function
@@ -117,6 +120,7 @@ of time, we are able to characterize the long-time behavior of the shape
 and the resulting flow and these results agree with analytical results.
 Then, we compute the vorticity of erosion in multiply-connected
 geometries to better characterize erosion in porous media. 
+\todo[inline]{Bryan is here in editing}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
