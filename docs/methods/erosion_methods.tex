@@ -176,10 +176,9 @@ However, the effect of erosion on a porous media is less understood.
 To simulate multiple bodies, it is essential to resolve the nonlocal
 effects between the different bodies.  In this work, these interactions
 are included with high-order accuracy by using an integral equation
-method.  Integral equations have been used extensively to simulate
-viscous fluids in complex geometries.  One particular application are
-particulate flows, such as bubbles or droplets, and the classic book of
-Pozrikidis~\cite{poz1992} describes BIEs for such problems.  For nearly
+method~\cite{poz1992}.  Integral equations have been used extensively to
+simulate viscous fluids in complex geometries, including porous media
+flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2016}.  For nearly
 touching bodies, the quadrature associated with discretizing a BIE can
 lead to instabilities of specialized quadrature is not applied.  Since
 our bodies do not move, we are able to use upsampling, but future work
@@ -1318,10 +1317,6 @@ In Fig.~\ref{fig:mbodyplots} we also plot the same quantities for the 50-body si
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{\bf Acknowledgments} The authors would like to thank Manas
 Rachh for supplying the FMM for the Stokes double-layer potential.
-
-
-\todo[inline]{paper of Bryan, Eric, and Pieter and one with Pietro,
-George, and Ruben}
 
 \bibliographystyle{plainnat} 
 \bibliography{refs}
