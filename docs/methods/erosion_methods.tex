@@ -1091,15 +1091,9 @@ This modification allows erosion to sculpt the shape as it would normally, but w
 
 	These fixed-area simulations enable us to precisely characterize the changing geometry as it approaches the terminal state. In particular, we measure the aspect ratio of the body (the width to height) and the opening angle of the front/rear corners. In these tests, we keep the spatial resolution fixed, $N_\iin = 1024$, and show three different cases of the smoothing parameters, $\eps$ and $\sigma$, to assess how the numerical regularization influences shape. In the three cases, we keep $\eps = \sigma$ and set them to the values 20/1024, 10/1024, and 5/1024 respectively. Figure~\ref{fig:arangle}(a) shows the aspect ratio as it varies in time. The initially circular geometry has an aspect ratio of unity, and, as erosion carves a more slender form, the aspect ratio increases monotonically. The three simulations are all very close to one another, demonstrating convergence as $\eps, \sigma \to 0$. In the simulation with these least smoothing ($\eps = \sigma = 5/1024$), the aspect ratio tends to a value of 2.7 in long time.
 
-	Next, we aim to measure the opening angle of the front/rear corner. Since these simulated bodies are actually smooth on a fine scale, we must have a procedure to estimate the apparent angle that results from the high (but finite) curvature at the stagnation points. To this end, we fit the tangent angle $\theta(\alpha)$ with a 7th-degree polynomial over a region excluding the stagnation points ($\alpha = 0$ and 0.5). We then extrapolate the polynomial to the stagnation points, which gives an estimate of the angle there. Although this procedure is subject to some uncertainty (to be examined below), we have found it to give robust angle measurements. Figure \ref{fig:arangle}(b) shows the opening angle, $\beta$, as it varies in time for the three cases of smoothing parameters. For the initially circular geometry, our procedure yields the correct opening angle of $180^{\circ}$, i.e.~a flat front face. As time proceeds, erosion carves a sharper corner and $\beta$ decreases monotonically. Here, the three simulation curves are more easily distinguished, implying that the opening angle is more sensitive to the level of numerical smoothing. The curves nevertheless show convergence as $\eps, \sigma \to 0$. In the finest simulation ($\eps = \sigma = 5/1024$), $\beta$ converges to the value $102^{\circ}$, which agrees precisely with the analytical prediction from Section \ref{LimitingShape}. 
+	Next, we aim to measure the opening angle of the front/rear corner. Since these simulated bodies are actually smooth on a fine scale, we must have a procedure to estimate the apparent angle that results from the high (but finite) curvature at the stagnation points. To this end, we fit the tangent angle $\theta(\alpha)$ with a 7th-degree polynomial over a region excluding the stagnation points ($\alpha = 0$ and 0.5). We then extrapolate the polynomial to the stagnation points, which gives an estimate of the angle there. Although this procedure is subject to some uncertainty (to be examined below), we have found it to give robust angle measurements. Figure \ref{fig:arangle}(b) shows the opening angle, $\beta$, as it varies in time for the three cases of smoothing parameters. For the initially circular geometry, our procedure yields the correct opening angle of $180^{\circ}$, i.e.~a flat front face. As time proceeds, erosion carves a sharper corner and $\beta$ decreases monotonically. Here, the three simulation curves are more easily distinguished, implying that the opening angle is more sensitive to the level of numerical smoothing than is the aspect ratio. The curves nevertheless show convergence as $\eps, \sigma \to 0$. In the finest simulation ($\eps = \sigma = 5/1024$), $\beta$ converges to the value $102^{\circ}$, which agrees precisely with the analytical prediction from Section \ref{LimitingShape}. 
 
-	To more thoroughly examine the influence of the smoothing parameters, we report in Table~\ref{table:arangle} the long-time values of the aspect ratio and opening angle for each of the three simulations. Loosely speaking, since $N_\iin = 1024$ is fixed, the values $\eps = \sigma = $ 20/1024, 10/1024, and 5/1024 correspond to smoothing over the nearest 20, 10, and 5 grid points respectively. The table shows that both the aspect ratio and opening angle converge with roughly first-order as $\eps, \sigma \to 0$. In addition, we show an estimate of the uncertainty involved in our angle measurement, which is obtained by varying the degree of the fitting polynomial and the size of the excluded region around the stagnation points. The estimates show that as $\eps, \sigma \to 0$ the angle-measurements become more precise and converge to the predicted value of $102^{\circ}$.
-
-
-
-
-\todo[inline]{Here in revising}
-
+	To more thoroughly examine the influence of the smoothing parameters, we report in Table~\ref{table:arangle} the long-time values of the aspect ratio and opening angle for each of the three simulations. Loosely speaking, since $N_\iin = 1024$ is fixed, the values $\eps = \sigma = $ 20/1024, 10/1024, and 5/1024 correspond to smoothing over the nearest 20, 10, and 5 grid points respectively. The table shows that both the aspect ratio and opening angle converge with roughly first-order as $\eps, \sigma \to 0$. In addition, we show an estimate of the uncertainty involved in our angle measurement, which we obtain by varying the degree of the fitting polynomial and the size of the excluded region around the stagnation points. The estimates show that as $\eps, \sigma \to 0$ the angle-measurements become more precise and converge to the predicted value of $102^{\circ}$.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1125,15 +1119,7 @@ This modification allows erosion to sculpt the shape as it would normally, but w
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % npts = 1024
 
-
-
-
- %A comment on how these results compare to erosion in 3D Stokes flow is in order.
-
-We note that this uniform-stress shape is closely related to the so-called `optimal profile in Stokes flow' found by Pironneau (1973) \cite{pir1973}, who determined the shape that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume (see also \cite{mon-lau2015} for an interesting related shape). Pironneau's 3D shape has an opening angle of $120^{\circ}$ and ours is simply the 2D counterpart with its slightly different $102^{\circ}$ opening angle. Previous numerical simulations on erosion in 3D Stokes flow revealed that, in long time, an eroding body tends to a shape that is approximately (though not precisely) Pironneau's optimal profile \cite{mit-spa2016}.
-
-
-
+	In summary, we have found that a single-body eroding in 2D Stokes flow converges to a terminal form characterized by nearly uniform shear stress along its surface. The final shape is fairly slender, with an aspect ratio of 2.7, and distinguished by  corners of opening angle $102^{\circ}$ at the front and rear. This shape is closely related to the drag-minimizing profile found by Pironneau (1973) --- the geometry that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume \cite{pir1973}. Using variational principles, Pironneau showed that the drag-minimizing form has constant shear (or vorticity) along its surface. The resulting axisymmetric shape has an aspect ratio of 2.1 and opening-angles of $120^{\circ}$ \cite{pir1973, mit-spa2016}. Interestingly, simulations of 3D viscous erosion showed close resemblance between the shape formed by a single eroding body and this Pironneau form \cite{mit-spa2016}. It was shown that the eroding body does not converge {\em precisely} to the Pironneau shape because the long-time surface-stress distribution created by erosion is only {\em approximately} uniform. Rather than strict uniformity, variations in body curvature must be offset by slight variations in $\Vn$ \cite{pir1973, mit-spa2016}. Pironneau's argument that the drag-minimizing form has constant surface stress easily generalizes to 2D. Therefore, the final shape observed in our simulations is very nearly the form that minimizes drag in 2D Stokes flow subject to fixed area, with the only deviation being how much the surface stress fails to be precisely uniform.
 
 
 \subsection{Convergence test}
@@ -1173,6 +1159,9 @@ As a final validation, we now aim to verify that our method converges with secon
 % Parameters in this test are: 01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0
 
+
+
+\todo[inline]{Here in revising}
 
 \section{Results: Multi-body erosion}
 \label{s:MultiResults}
