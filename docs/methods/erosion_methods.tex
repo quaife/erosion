@@ -1167,16 +1167,15 @@ We assess error by measuring the $L^2$-difference in the body shape obtained fro
 
 \subsection{Fixed pressure drop condition and validation}
 
-\todo[inline]{Here in revising}
 
 With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We make one important conceptual change to our model. For a realistic porous medium composed of many solid bodies, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. A more realistic condition is that the pressure difference from one end to another is held fixed. For example, in groundwater flow, this condition would correspond to a recharge region of given hydraulic head connecting to a discharge region of another hydraulic head. 
 
-We therefore impose the condition of a fixed pressure difference by dynamically controlling the incoming flow-rate, $\umax$. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed, then measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. The vertically-averaged upstream and downstream pressures are given by
+We therefore impose the condition of a fixed pressure difference by dynamically controlling the incoming flow-rate, $\umax$. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed and measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. The vertically-averaged upstream and downstream pressures are given by
 \begin{align}
 p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
 p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
 \end{align}
-We then rescale the computed density function by the pressure difference
+Next, we rescale the computed density function by the pressure difference
 \begin{align}
 \eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, .
 \end{align}
@@ -1211,6 +1210,8 @@ This rescaling maintains a {\em fixed} pressure difference between the upstream 
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
+
+\todo[inline]{Here in revising}
 
 Briefly, to verity that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table confirms that the method retains second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table~\ref{itertab} the GMRES count for various cases ...
 \todo[inline]{preconditioning papers are~\cite{qua-cou-dar2018}
