@@ -1215,8 +1215,6 @@ Briefly, to validate the multi-body simulations with this new fixed-pressure-dro
 
 Lastly, we want to briefly assess the number of GMRES iterations required by our simulations since this is the most  expensive part of the computation. Due to our {\em second-kind} boundary integral formulation, we expect the number of GMRES iterations to be independent of the spatial resolution, $N_{\iin}$. The iteration count, however, may depend on the number of bodies, as well as other factors such as the shapes of the bodies, their configuration, etc. To examine a few of these factors, we show in Table~\ref{itertab} the number of GMRES iterations required to reach a specified tolerance of 1E-8 in several different simulations. The left side of the table shows the results for a 10-body simulation, in which we vary the spatial resolution $N_{\iin}$. As seen in the table, the iteration count remains essentially fixed as the resolution increases. In the right side of the table, we show the results for simulations in which we vary the number of bodies and keep the spatial resolution fixed. The bodies are all circular with randomly assigned positions and radii (overlapping bodies are avoided). The table shows that the GMRES count increases with the number of bodies at a rate that is close to linear.
 
-\todo[inline]{preconditioning papers are~\cite{qua-cou-dar2018} and~\cite{qua-bir2015a}}
-
 % Table: GMRES iterations
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
