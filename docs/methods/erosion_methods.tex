@@ -1166,9 +1166,9 @@ We assess error by measuring the $L^2$-difference in the body shape obtained fro
 
 \subsection{Fixed pressure drop condition and validation}
 
-With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. First, though, we will make one important conceptual change to the model. For a realistic porous medium, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. In groundwater flow, for example, it is more realistic to have an upstream (recharge) region of given hydraulic head that connects to a downstream (discharge) region of another head. In our simulations, we will therefore impose the condition that the pressure difference across the domain remains fixed.
+With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We will first make one conceptual change to the model though. For a realistic porous medium, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. In groundwater flow, for example, the more common situation would be an upstream (recharge) region of given hydraulic head that connects to a downstream (discharge) region of another head. Motivated by this example, we will impose the condition that the pressure difference across our computational domain remains fixed in time. As a consequence, we expect the flow rate, $\umax$, to increase over time as the bodies erode inside the cell and thus provide less resistance.
 
-To impose the condition of a fixed pressure difference, we will dynamically control the incoming flow rate, $\umax$. To this end, we first compute the Stokes flow with $\umax = 1$ prescribed and measure the corresponding pressure at an upstream ($x = -2$) and downstream ($x=2$) location. We define the vertically-averaged upstream and downstream pressures as
+We impose the fixed-pressure-drop condition by dynamically controlling the incoming flow rate, $\umax$. We first compute the Stokes flow with $\umax = 1$ prescribed and measure the corresponding pressure at an upstream ($x = -2$) and downstream ($x=2$) location. We define the vertically-averaged upstream and downstream pressures as
 \begin{align}
 p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
 p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
@@ -1177,7 +1177,7 @@ Next, we rescale the computed density function by the pressure difference
 \begin{align}
 \eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, .
 \end{align}
-The velocity and pressure fields depend linearly on $\eeta$ and so this rescaling maintains a {\em fixed} pressure difference between the upstream and downstream locations. Since the Stokes equations are linear, the rescaled flow remains a solution to the PDE system (valid to the same numerical accuracy). Furthermore, since the Stokes equations are time-independent, rescaling $U$ by a different value at each time step does not introduce any additional error.
+The velocity and pressure fields depend linearly on $\eeta$ and so this rescaling maintains a {\em fixed} pressure difference across the subdomain $-2 \le x \le 2$. Since the Stokes equations are linear, the rescaled flow remains a solution to the PDE system (valid to the same numerical accuracy). Furthermore, since the Stokes equations are time-independent, rescaling $U$ by a different value at each time step does not introduce any additional error.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
@@ -1209,11 +1209,14 @@ The velocity and pressure fields depend linearly on $\eeta$ and so this rescalin
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
 
-Briefly, to verity that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table confirms that the method retains second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table~\ref{itertab} the GMRES count for various cases ...
+Briefly, to validate the multi-body simulations with this new fixed-pressure-drop condition, we report a convergence test in Table \ref{convtab}. In this test, we simulate the erosion of 20 bodies to a stopping time of $t_s = 4 \times 10^{-3}$. This stopping time is 24\% of the time required for {\em all} bodies to vanish, and, in fact, a few of the bodies will have already vanished by $t_s$. To assess error, we measure the aggregate $L_2$ difference in the shape of {\em all} of the bodies, comparing simulations of successive time-resolution. Note that this error metric is sensitive to numerical errors in any of the simulated bodies. The table confirms that our method retains second-order accuracy in time, thus validating our rescaling procedure for imposing the fixed-pressure-drop conditions and confirming that multi-body interactions are handled correctly by the Stokes solver. The last column of the table shows the computational time of each simulation. The CPU time still scales linearly with temporal resolution and, naturally, the 20-body simulations require significantly more time than do the single-body simulations.
+
+Lastly, we want to briefly assess the number of GMRES iterations required by our simulations, since this is the most computationally expensive part. Due to our {\em second-kind} boundary integral formulation, we expect the number of GMRES iterations to be independent of the spatial resolution, $N_{\iin}$. The iteration count, however, may depend on the number of bodies, as well as other factors such as the shapes of the bodies, their configuration, etc. To examine a few of these factors, we show in Table~\ref{itertab} the GMRES iterations required in several different simulations. First, the left 
+
+
+Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table~\ref{itertab} the GMRES count for various cases ...
 \todo[inline]{preconditioning papers are~\cite{qua-cou-dar2018}
 and~\cite{qua-bir2015a}}
-
-%Briefly, to verify that these rescaled solutions achieve the same order of accuracy, we report a convergence test in Table \ref{convtab}. In 
 
 % Table: GMRES iterations
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
