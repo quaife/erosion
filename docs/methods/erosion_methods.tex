@@ -1093,7 +1093,7 @@ This modification allows erosion to sculpt the shape as it would normally, but w
 
 	Next, we aim to measure the opening angle of the front/rear corner. Since these simulated bodies are actually smooth on a fine scale, we must have a procedure to estimate the apparent angle that results from the high (but finite) curvature at the stagnation points. To this end, we fit the tangent angle $\theta(\alpha)$ with a 7th-degree polynomial over a region excluding the stagnation points ($\alpha = 0$ and 0.5). We then extrapolate the polynomial to the stagnation points, which gives an estimate of the angle there. Although this procedure is subject to some uncertainty (to be examined below), we have found it to give robust angle measurements. Figure \ref{fig:arangle}(b) shows the opening angle, $\beta$, as it varies in time for the three cases of smoothing parameters. For the initially circular geometry, our procedure yields the correct opening angle of $180^{\circ}$, i.e.~a flat front face. As time proceeds, erosion carves a sharper corner and $\beta$ decreases monotonically. Here, the three simulation curves are more easily distinguished, implying that the opening angle is more sensitive to the level of numerical smoothing than is the aspect ratio. The curves nevertheless show convergence as $\eps, \sigma \to 0$. In the finest simulation ($\eps = \sigma = 5/1024$), $\beta$ converges to the value $102^{\circ}$, which agrees precisely with the analytical prediction from Section \ref{LimitingShape}. 
 
-	To more thoroughly examine the influence of the smoothing parameters, we report in Table~\ref{table:arangle} the long-time values of the aspect ratio and opening angle for each of the three simulations. Loosely speaking, since $N_\iin = 1024$ is fixed, the values $\eps = \sigma = $ 20/1024, 10/1024, and 5/1024 correspond to smoothing over the nearest 20, 10, and 5 grid points respectively. The table shows that both the aspect ratio and opening angle converge with roughly first-order as $\eps, \sigma \to 0$. In addition, we show an estimate of the uncertainty involved in our angle measurement, obtained by varying the degree of the fitting polynomial and the size of the excluded region around the stagnation points. The estimates show that as $\eps, \sigma \to 0$ the angle-measurements become more precise and converge to the predicted value of $102^{\circ}$.
+	To more thoroughly examine the influence of the smoothing parameters, we report in Table~\ref{table:arangle} the long-time values of the aspect ratio and opening angle for each of the three simulations. Since $N_\iin = 1024$ is fixed, the values $\eps = \sigma = $ 20/1024, 10/1024, and 5/1024 roughly correspond to smoothing over the nearest 20, 10, and 5 grid points respectively. The table shows that both the aspect ratio and opening angle converge with first-order as $\eps, \sigma \to 0$. In addition, we show an estimate of the uncertainty involved in our angle measurement, obtained by varying the degree of the fitting polynomial and the size of the excluded region around the stagnation points. The estimates show that as $\eps, \sigma \to 0$ the angle-measurements become more precise and converge to the predicted value of $102^{\circ}$.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1119,12 +1119,12 @@ This modification allows erosion to sculpt the shape as it would normally, but w
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % npts = 1024
 
-	In summary, we have found that a single-body eroding in 2D Stokes flow converges to a terminal form characterized by nearly uniform shear stress along its surface. The final shape is fairly slender, with an aspect ratio of 2.7, and distinguished by  corners of opening angle $102^{\circ}$ at the front and rear. This shape is closely related to the drag-minimizing profile found by Pironneau (1973) --- the geometry that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume \cite{pir1973}. Using variational principles, Pironneau showed that the drag-minimizing form has constant shear (or vorticity) along its surface. The resulting {\em axisymmetric} shape has an aspect ratio of 2.1 and front/rear opening-angles of $120^{\circ}$ \cite{pir1973, mit-spa2016}. Interestingly, 3D simulations of viscous erosion showed close resemblance between the shape formed by a single eroding body and this Pironneau form \cite{mit-spa2016}. It was shown that the eroding body does not converge {\em precisely} to the Pironneau shape because the long-time surface-stress distribution created by erosion is only {\em approximately} uniform. Rather than strict uniformity, variations in body curvature must be offset by slight variations in $\Vn$ for self-similar reduction \cite{pir1973, mit-spa2016}. Pironneau's argument that the drag-minimizing form has constant surface stress applies to 2D as well, and, therefore, the shape that develops in our simulations is approximately the form that minimizes drag subject to fixed area. How close this shape is to the true drag-minimizer is related to how close the stress distributions are to uniform, as can be seen in Fig.~\ref{shrink_intface}(b).
+	In summary, we have found that a single-body eroding in 2D Stokes flow converges to a terminal form characterized by nearly uniform shear stress along its surface. The final shape is fairly slender, with an aspect ratio of 2.7, and distinguished by  corners of opening angle $102^{\circ}$ at the front and rear. This shape is closely related to the drag-minimizing profile found by Pironneau (1973) --- the geometry that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume \cite{pir1973}. Using variational principles, Pironneau showed that the drag-minimizing form has constant shear (or vorticity) along its surface. The resulting {\em axisymmetric} shape has an aspect ratio of 2.1 and front/rear opening-angles of $120^{\circ}$ \cite{pir1973, mit-spa2016}. Interestingly, 3D simulations of viscous erosion showed close resemblance between the shape formed by a single eroding body and this Pironneau form \cite{mit-spa2016}. It was found that the eroding body does not converge {\em precisely} to the Pironneau shape because the long-time surface-stress distribution created by erosion is only {\em approximately} uniform. Rather than strict uniformity, variations in body curvature must be offset by slight variations in $\Vn$ for self-similar reduction \cite{pir1973, mit-spa2016}. Pironneau's argument that the drag-minimizing form has constant surface stress applies to 2D as well. Therefore, the shape observed to develop in our simulations is approximately the form that minimizes drag subject to fixed area. How close this shape is to the true drag-minimizer is related to how close the stress distributions are to uniform, which can be seen in Fig.~\ref{shrink_intface}(b).
 
 \subsection{Convergence test}
 
 As a final validation, we now verify that our method converges with the expected second-order accuracy in time. For this, we run the same single-body simulation from Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 10^{-2}$. This stopping time is 56\% of the vanishing time, and was selected so that the body will have eroded substantially but is not small enough to compromise accuracy (due to the stress diverging).
-We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table \ref{convtab}, we report these errors along with the order of accuracy as obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine, demonstrating a nearly linear increase in computational time. Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of method's complexity.
+We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table \ref{convtab}, we report these errors along with the order of accuracy, obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine, demonstrating a nearly linear increase in computational time. Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of method's complexity.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1166,10 +1166,9 @@ We assess error by measuring the $L^2$-difference in the body shape obtained fro
 
 \subsection{Fixed pressure drop condition and validation}
 
+With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. First, though, we will make one important conceptual change to the model. For a realistic porous medium, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. In groundwater flow, for example, it is more realistic to have an upstream (recharge) region of given hydraulic head that connects to a downstream (discharge) region of another head. In our simulations, we will therefore impose the condition that the pressure difference across the domain remains fixed.
 
-With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We make one important conceptual change to our model. For a realistic porous medium composed of many solid bodies, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. A more realistic condition is that the pressure difference from one end to another is held fixed. For example, in groundwater flow, this condition would correspond to a recharge region of given hydraulic head connecting to a discharge region of another hydraulic head. 
-
-We therefore impose the condition of a fixed pressure difference by dynamically controlling the incoming flow-rate, $\umax$. This is achieved by first computing the Stokes flow with $\umax = 1$ prescribed and measuring the pressure at a location upstream ($x = -2$) and downstream ($x=2$) of the eroding bodies. The vertically-averaged upstream and downstream pressures are given by
+To impose the condition of a fixed pressure difference, we will dynamically control the incoming flow rate, $\umax$. To this end, we first compute the Stokes flow with $\umax = 1$ prescribed and measure the corresponding pressure at an upstream ($x = -2$) and downstream ($x=2$) location. We define the vertically-averaged upstream and downstream pressures as
 \begin{align}
 p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
 p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
@@ -1178,7 +1177,7 @@ Next, we rescale the computed density function by the pressure difference
 \begin{align}
 \eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, .
 \end{align}
-This rescaling maintains a {\em fixed} pressure difference between the upstream ($x=-2$) and downstream ($x=2$) positions. Because the Stokes equations are linear, such a rescaling is permissible and does not alter the accuracy of our method. Furthermore, {\em dynamic} rescaling is also permissible because the Stokes equations are memoryless (i.e.~there is no time derivative present in the PDEs).
+The velocity and pressure fields depend linearly on $\eeta$ and so this rescaling maintains a {\em fixed} pressure difference between the upstream and downstream locations. Since the Stokes equations are linear, the rescaled flow remains a solution to the PDE system (valid to the same numerical accuracy). Furthermore, since the Stokes equations are time-independent, rescaling $U$ by a different value at each time step does not introduce any additional error.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
@@ -1210,11 +1209,11 @@ This rescaling maintains a {\em fixed} pressure difference between the upstream 
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
 
-\todo[inline]{Here in revising}
-
 Briefly, to verity that the rescaling does not alter accuracy, we show in Table \ref{convtab} a convergence test for a 20-body simulation with the condition of fixed pressure drop imposed. The table confirms that the method retains second-order accuracy in time. In the last column, we show the computational times, indicating that the 20-body simulations require more runtime than the single-body case. Although the GMRES-iteration count is independent of the spatial resolution, $N_{\iin}$, it can depend on the number of bodies and/or their configuration. To illustrate this point, we show in Table~\ref{itertab} the GMRES count for various cases ...
 \todo[inline]{preconditioning papers are~\cite{qua-cou-dar2018}
 and~\cite{qua-bir2015a}}
+
+%Briefly, to verify that these rescaled solutions achieve the same order of accuracy, we report a convergence test in Table \ref{convtab}. In 
 
 % Table: GMRES iterations
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1247,6 +1246,9 @@ and~\cite{qua-bir2015a}}
 \end{table}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % In these tests I always use 128 points per body.
+
+
+\todo[inline]{Here in revising}
 
 \subsection{Multi-body erosion}
 
