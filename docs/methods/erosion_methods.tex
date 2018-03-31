@@ -95,7 +95,7 @@ GMRES~\cite{saa-sch1986} is applied to a spectrally-accurate Nystr\"om
 discretization of the BIE~\cite{tre-wei2014}, a spectrally accurate
 quadrature rule is used to compute the shear stress~\cite{sid-isr1988},
 and all arclength derivatives are computed with Fourier differentiation.
-In addition to compute the shear stress, we also compute the vorticity
+In addition to computing the shear stress, we also compute the vorticity
 in the fluid bulk.  The vorticity is particularly insightful since it is
 identical to the shear stress on no-slip boundaries.  Therefore, by
 computing the vorticity, we are able to identify regions where the
@@ -106,11 +106,11 @@ second-order accuracy.  Tracking the interface of fluid-structure
 interaction problems with a long time horizon is particularly
 difficult---the mesh is often distorted and tangled.  Moreover, erosion
 naturally leads to regions of high or infinite (i.e.~corners) curvature.
-These interface tracking issues are resolved by, first, introducing a
+The interface tracking issues are resolved by, first, introducing a
 tangential velocity field to maintain a grid that is equispaced in
-arclength, but that does not affect the dynamics, and, second, a tunable
-term that penalizes regions of high curvature.  Furthermore, the frame
-of reference is changed to \thL~variables so that the curvature term
+arclength, but does not affect the dynamics, and, second, a tunable term
+that penalizes regions of high curvature.  Furthermore, the frame of
+reference is changed to \thL~variables so that the curvature term
 appears as a diffusive term that can easily be handled in a numerically
 stable fashion with an exponential integrator.
 
@@ -146,17 +146,19 @@ erode the fastest.}
 We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Related work} Simulating eroding bodies has been studied analytically, experimentally, and numerically.  Many of these works are motivated by high Reynolds number geophysical applications, such as the work of the second author~\cite{moo-ris-chi-zha-she2013, ris-moo-chi-she-zha2012, moore2017riemann} and others~\cite{par-izu2000, lag2000, coh-dev-sey-yi-szy-rot2015, han1969, Rothman2012, hewett2017evolution, ristroph2018sculpting, lopez2018cfd, lachaussee2018competitive, cohen2016erosion}.  The work most closely related to ours simulates erosion in a three-dimensional incompressible Stokesian fluid~\cite{mit-spa2016}, but they only consider single eroding body. 
+\paragraph{Related work} The effect of erosion on a geometry is quite
+rich.  For instance, it has been hypothesized and numerically observed
+that the erosion leads to a shear stress that is uniform on the body
+which results in a uniform erosion rate.  The shape that has a uniform
+shear stress is analyzed in three dimensions by Montenegro-Johnson and
+Lauga~\cite{mon-lau2015} which is an extension of the analysis done by
+Pironneau~\cite{pir1973} to find a Stokesian drag minimizing shape.  In
+this idealized case, analytical axisymmetric shapes that minimize the
+drag can be found.  However, the effect of erosion on a porous media is
+less understood.
 
-The effect of erosion on a geometry is quite rich.  For instance, it has
-been hypothesized and numerically observed that the erosion leads to a
-shear stress that is uniform on the body which results in a uniform
-erosion rate.  The shape that has a uniform shear stress is analyzed in
-three dimensions by Montenegro-Johnson and Lauga~\cite{mon-lau2015}
-which is an extension of the analysis done by Pironneau~\cite{pir1973}
-to find a Stokesian drag minimizing shape.  In this idealized case,
-analytical axisymmetric shapes that minimize the drag can be found.
-However, the effect of erosion on a porous media is less understood.
+Simulating eroding bodies has been studied analytically, experimentally, and numerically.  Many of these works are motivated by high Reynolds number geophysical applications, such as the work of the second author~\cite{moo-ris-chi-zha-she2013, ris-moo-chi-she-zha2012, moore2017riemann} and others~\cite{par-izu2000, lag2000, coh-dev-sey-yi-szy-rot2015, han1969, Rothman2012, hewett2017evolution, ristroph2018sculpting, lopez2018cfd, lachaussee2018competitive, cohen2016erosion}.  The work most closely related to ours simulates erosion in a three-dimensional incompressible Stokesian fluid~\cite{mit-spa2016}, but they only consider single eroding body. 
+
 
 To simulate multiple bodies, it is essential to resolve the nonlocal
 effects between the different bodies.  In this work, these interactions
@@ -172,24 +174,24 @@ method~\cite{qua-cou-dar2018}, but the results presented in this work
 require no more than $\mathcal{O}(100)$ GMRES iterations which is too
 small to make preconditioners for BIEs effective; preconditioners will
 be considered further in future work when there are many more grains
-that are also dynamic.  To address the nearly-singular integrands, we
-take advantage of the fact that the grains are eroding and not moving,
-so their separation increases with time.  Therefore, in this work, we
-apply an upsampling scheme, but in future work, we will require a
-near-singular integration scheme~\cite{qua-bir2014a,
+that are also being transported by the flow.  To address the
+nearly-singular integrands, we use the fact that the grains are eroding
+and not moving, so their separation increases with time.  Therefore, in
+this work, we apply an upsampling scheme, but in future work, we will
+require a near-singular integration scheme~\cite{qua-bir2014a,
 klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the paper} In Section~\ref{s:formulation}, we
-describe the governing equations for both the fluid and describe the
-erosion model using a \thL~framework.  In Section~\ref{s:method}, the
-numerical methods in both space and time are described and
-Section~\ref{s:qoi} describes how to compute the vorticity, pressure,
-and drag. Section~\ref{s:SingleResults} gives several numerical examples
-for a single body, and Section~\ref{s:MultiResults} presents numerical
+describe the governing equations for both the fluid and the erosion
+model in a \thL~framework.  In Section~\ref{s:method}, the numerical
+methods in both space and time are described and Section~\ref{s:qoi}
+describes how to compute the vorticity, pressure, and drag.
+Section~\ref{s:SingleResults} gives several numerical examples for a
+single body, and Section~\ref{s:MultiResults} presents numerical
 examples for multiply-connected domains.  Finally, concluding remarks
-are made in Section~\ref{s:conclusions}
+are made in Section~\ref{s:conclusions}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation}
