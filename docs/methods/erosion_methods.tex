@@ -31,7 +31,7 @@ steps. The overall accuracy of our method is exponential in space and
 second-order in time. The method is computationally efficient, with the
 fluid solver requiring $\mathcal{O}(N)$ operations per GMRES iteration,
 a mesh-independent number of GMRES iterations, and a one-time
-$\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-body results against analytical predictions. In our multi-body simulations, we find that erosion leads to spontaneous channelization between bodies in near contact. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
+$\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-body results against analytical predictions. In our multibody simulations, we find that erosion leads to spontaneous channelization between bodies in near contact. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
 \end{abstract}
 
 \begin{keyword}
@@ -124,7 +124,7 @@ geometries to better characterize erosion in porous media.
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.9 \textwidth]{./figs/50bod.pdf}
+\includegraphics[width = 0.80 \textwidth]{./figs/50bod.pdf}
 \caption{\label{fig:50bodies} A time lapse of 50 bodies eroding in a
 viscous flow.  The boundary conditions are a constant pressure drop that
 creates a flow from the left to right.  The rate of erosion is
@@ -1162,7 +1162,7 @@ We assess error by measuring the $L^2$-difference in the body shape obtained fro
 
 
 
-\section{Results: Multi-body erosion}
+\section{Results: Multibody erosion}
 \label{s:MultiResults}
 
 \subsection{Fixed pressure-drop condition}
@@ -1182,7 +1182,7 @@ The velocity and pressure fields depend linearly on $\eeta$ and so this rescalin
 
 \subsection{Validation}
 
-Briefly, to validate the multi-body simulations with this new fixed-pressure-drop condition, we report a convergence test in Table \ref{convtab}. In this test, we simulate the erosion of 20 bodies to a stopping time of $t_s = 4 \times 10^{-3}$. This stopping time is 24\% of the time required for {\em all} bodies to vanish, and, in fact, a few of the bodies will have already vanished by $t_s$. To assess error, we measure the aggregate $L^2$-difference in the shape of {\em all} of the bodies, comparing simulations of successive temporal resolution. Note that this metric is sensitive to numerical errors in any of the simulated bodies. The table confirms that our method retains second-order accuracy in time, thus validating our rescaling procedure and confirming that multi-body interactions are handled correctly by the Stokes solver. The last column of the table shows the computational time of each simulation, demonstrating a linear increase with temporal resolution. Naturally, these 20-body simulations require significantly more CPU time than do the single-body simulations.
+Briefly, to validate the multibody simulations with this new fixed-pressure-drop condition, we report a convergence test in Table \ref{convtab}. In this test, we simulate the erosion of 20 bodies to a stopping time of $t_s = 4 \times 10^{-3}$. This stopping time is 24\% of the time required for {\em all} bodies to vanish, and, in fact, a few of the bodies will have already vanished by $t_s$. To assess error, we measure the aggregate $L^2$-difference in the shape of {\em all} of the bodies, comparing simulations of successive temporal resolution. Note that this metric is sensitive to numerical errors in any of the simulated bodies. The table confirms that our method retains second-order accuracy in time, thus validating our rescaling procedure and confirming that multibody interactions are handled correctly by the Stokes solver. The last column of the table shows the computational time of each simulation, demonstrating a linear increase with temporal resolution. Naturally, these 20-body simulations require significantly more CPU time than do the single-body simulations.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
@@ -1248,14 +1248,14 @@ Lastly, we want to briefly examine the number of GMRES iterations required by ou
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
 
-\subsection{Multi-body results}
+\subsection{Multibody results}
 
-With the validation complete, we now discuss the emergent physics of multi-body erosion revealed by our simulations. We begin with a relatively simple case of 6 eroding bodies, as this will allow us to identify key principles at work in more complex cases (e.g.~the 50-body simulation in Fig.~\ref{fig:50bodies}). Figure~\ref{fig:06bodies} shows the simulated erosion of 6 bodies, each initial circles of various sizes and positions. Over time, erosion not only diminishes the size of the bodies, but also alters their shapes considerable. As in the single-body simulations, corner-like features develop, but not in locations that are easily predictable. Rather, when and where these corners form depends on how neighboring bodies interact with one another as mediated by the Stokes flow.
+With the validation complete, we now discuss the emergent physics of multibody erosion revealed by our simulations. We begin with a relatively simple case of 6 eroding bodies, as this will allow us to identify key principles at work in more complex cases (e.g.~the 50-body simulation in Fig.~\ref{fig:50bodies}). Figure~\ref{fig:06bodies} shows the simulated erosion of 6 bodies, each initial circles of various sizes and positions. Over time, erosion not only diminishes the size of the bodies, but also alters their shapes considerable. As in the single-body simulations, corner-like features develop, but not in locations that are easily predictable. Rather, when and where these corners form depends on how neighboring bodies interact with one another as mediated by the Stokes flow.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
-\includegraphics[width = 0.85 \textwidth]{./figs/06bod.pdf}
+\includegraphics[width = 0.80 \textwidth]{./figs/06bod.pdf}
 \caption{\label{fig:06bodies} The simulated erosion of 6 bodies with the fixed-pressure drop condition. Erosion causes flat faces to develop wherever bodies were initially very close to one another. This effect leads to the appearance of straight channels between bodies, and causes the bodies themselves to appear distinctly polygonal. The vorticity field (color-bar at right) shows that the flow is concentrated primarily in a single channel that runs horizontally across the domain. }
 \end{center}
 \end{figure}
@@ -1263,16 +1263,17 @@ With the validation complete, we now discuss the emergent physics of multi-body 
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
-The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several points at which the bodies nearly contact one another, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Intriguingly, erosion appears to remove material preferentially from these near-contact regions, as the narrow spacing between neighboring bodies expands rather quickly. For example, the spacing between bodies 1 \& 2 is initially quite small, but by the second frame, is comparable to the spacing between bodies 3 \& 4. Moreover, the bodies tend to develop flat faces at the locations of near contact, leading to the appearance of straight channels between bodies. Straight channels can be seen, for example, between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Once formed, these channels persist until the bodies have nearly vanished. Notice that by the final frame, body 4 has vanished completely, and the simulation handles this event without difficulty.
+The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several points at which the bodies nearly contact one another, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Intriguingly, erosion appears to remove material preferentially from these sights, as the narrow spacing between neighboring bodies expands rather quickly. For example, the spacing between bodies 1 \& 2 is initially quite small, but by the second frame, is comparable to the spacing between bodies 3 \& 4. Moreover, the bodies tend to develop flat faces at the points of near contact, leading to the appearance of straight channels between bodies. Straight channels can be seen, for example, between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Once formed, these channels persist until the bodies have nearly vanished. Notice that by the final frame, body 4 has vanished completely, and the simulation handles this event without difficulty.
 
-The vorticity field helps not only in visualizing regions of high shear, but also in identifying certain preferred channels in which the flow is most intense. Figure~\ref{fig:06bodies} shows the flow to be concentrated primarily within a single channel that runs horizontally below bodies 1 \& 2 and above bodies 3, 5, \& 6. This main channel widens the fastest, and secondary channels (e.g.~between bodies 1 \& 2 or 3 \& 5 or 5 \& 6) follow. Notice that, in these simulations, the overall vorticity magnitude increases in time as a result of fixing the pressure-drop across the cell.
+In Fig.~\ref{fig:06bodies}, we also show the vorticity field of the surrounding flow. Not only does this field help visualize regions of high shear, but it also allows us to identify certain preferred channels in which the flow is most intense.
+As seen in the figure, the flow appears to be concentrated primarily within a single channel that runs horizontally below bodies 1 \& 2 and above bodies 3, 5, \& 6. This main channel widens the fastest, and secondary channels (e.g.~between bodies 1 \& 2 or 3 \& 5 or 5 \& 6) follow. Notice that, in these simulations, the overall vorticity magnitude increases in time due to $\umax$ increasing from keeping the pressure drop fixed.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.90 \textwidth]{./figs/mbodyplots.pdf}
 \caption{\label{fig:mbodyplots} 
-Multi-body simulation results: black curves correspond to the 6-body simulation and gray to the 50-body simulation. (a) The area fraction of the eroding bodies as it changes in time. (b) The incoming flow rate $\umax$ versus time. The fixed-pressure-drop condition causes $\umax$ to increase as the bodies erode. (c) The total drag exerted by all bodies. Due to the fact that $\umax$ increases as the bodies erode, the total drag remains nearly constant and then drops suddenly as the bodies vanish. (d) Normalizing the total drag by the flow rate provides a measurement of the resistance provided by the porous matrix. The resistance decreases rapidly as the bodies erode.
+Multibody simulation results: black curves correspond to the 6-body simulation and gray to the 50-body simulation. (a) The area fraction of the eroding bodies versus time. (b) The incoming flow rate $\umax$ versus time. The fixed-pressure-drop condition causes $\umax$ to increase as bodies erode. (c) The total drag exerted by all bodies. Because $\umax$ increases as the bodies erode, the drag remains nearly constant throughout much of the simulation. In the very last moments, the drag drops suddenly to zero. (d) Normalizing the drag by $\umax$ provides gives an estimate of how much resistance the porous matrix provides. The resistance decreases rapidly as the bodies erode.
 }
 \end{center}
 \end{figure}
@@ -1280,11 +1281,15 @@ Multi-body simulation results: black curves correspond to the 6-body simulation 
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
+To further quantify these observations, Fig.~\ref{fig:mbodyplots} shows several measurements taken from the multibody simulations. In all cases, the black curves correspond to the 6-body simulation and gray curves correspond to the 50-body simulation that was shown in Fig.~\ref{fig:50bodies}. First, Fig.~\ref{fig:mbodyplots}(a) shows the area fraction of the solid bodies versus time (i.e.~the 2D counterpart of the volume fraction).
+
+
+
+\todo[inline]{Here in revising}
 
 
 We further quantify many of these observations in Fig.~\ref{fig:mbodyplots}. First, Fig.~\ref{fig:mbodyplots}(a) shows area fraction versus time. The area fraction is the total area of all bodies as compared to the domain area, i.e.~the 2D counterpart of volume fraction. The initial configuration of 6 circles comprises about 40\% of the domain area, and this percentage steadily decreases as the bodies erode. Figure \ref{fig:mbodyplots}(b) shows the inlet/outlet flow-rate, $\umax$, over time. Since we have fixed the pressure drop across the cell in these simulations, $\umax$ steadily increases as the bodies diminish and provide less resistance. Here, the vertical axis is logarithmic, and so the plot suggests exponential increase of $\umax$ at early times. This rapid increase in flow is likely due to the erosion-induced channelization observed above. In Fig.~\ref{fig:mbodyplots}(c) we show the total drag, summed over all bodies, versus time. Though the bodies diminish due to erosion, the steady increase of $\umax$ causes the total drag to remain relatively constant. Only near the end of the simulation does the drag decrease rapidly to zero. To remove the effect of increasing flow rate, we show in Fig.~\ref{fig:mbodyplots}(d) the total drag scaled on $\umax$. This value is a measure for the aggregate {\em resistance} of all bodies. Due to linearity of the Stokes equations, this measure does not depend on the flow-rate $\umax$, only on the bodies and their configuration. As seen here, the resistance decreases rapidly as the bodies erode. Since the vertical axis is logarithmic, the plot suggests an exponential decrease in resistance at early times, which is likely connected to the channelization process.
 
-\todo[inline]{Here in revising}
 
 In Fig.~\ref{fig:mbodyplots} we also plot the same quantities for the 50-body simulation that was shown in Fig.~\ref{fig:50bodies} of the introduction. Overall, these plots support the same trends seen in the 6-body simulation. The initial area-fraction of the 50-body simulation is only slightly higher, about 45\%, and this fraction decreases steadily as bodies erode. The flow rate $\umax$ again increases very rapidly with time, though with a significantly smaller initial value due to the higher resistance provided by 50 bodies. As before, the total drag remains relatively constant throughout most of the simulation and then abruptly decreases to zero in the final moments. Our measure of resistance, $F_D/(4 \pi \umax)$, again decreases very rapidly in the early moments when channels are initially formed. Though the area fractions of the two simulations are nearly the same, the 50-body configuration provides about 5 times more resistance.
 
