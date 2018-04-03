@@ -143,7 +143,7 @@ erode the fastest.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations} 
-We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. 
+We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We defer a study of these complex effects for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Related work} The effect of erosion on a geometry is quite
@@ -435,7 +435,7 @@ Combining these deformation tensors, the shear stress at $\xx_0 \in
 \subsection{Boundary evolution in the {\thL} framework} 
 \label{sec:thetaL}
 
-To evolve the boundaries of eroding bodies, we use the {\thL} framework which offers certain advantages in numerically stabilizing moving-interface problems \cite{hou-low-she1994}. Here, $\theta$ is the local tangent angle and $L$ is the total perimeter of a given boundary. For a boundary parametrized by arclength $(x(s),y(s))$, the local tangent angle is defined through the relation $\left( \pdi{x}{s}, \pdi{y}{s} \right) = \left(\cos \theta, \sin \theta \right)$.
+To evolve the boundaries of eroding bodies, we use the {\thL} framework which offers certain advantages in the ability to numerically stabilize moving-interface problems \cite{hou-low-she1994}. Here, $\theta$ is the local tangent angle and $L$ is the total perimeter of a given boundary. For a boundary parametrized by arclength $(x(s),y(s))$, the local tangent angle is defined through the relation $\left( \pdi{x}{s}, \pdi{y}{s} \right) = \left(\cos \theta, \sin \theta \right)$.
 
 For numerical stability, we modify the erosion law~\eqref{eqn:erosionModel} to include a term that penalizes curvature $\kappa$. The idea is to prevent regions of extremely high curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus replace~\eqref{eqn:erosionModel} with
 \begin{align}
@@ -1166,20 +1166,24 @@ We assess error by measuring the $L^2$-difference in the body shape obtained fro
 \section{Results: Multi-body erosion}
 \label{s:MultiResults}
 
-\subsection{Fixed pressure-drop condition and validation}
+\subsection{Fixed pressure-drop condition}
 
-With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We will first make one conceptual change to the model. For a realistic porous medium, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. In groundwater flow, for example, the more common situation is an upstream (recharge) region of given hydraulic head that connects to a downstream (discharge) region of another head. Motivated by this example, we will impose the condition that the pressure difference across the computational domain remains fixed in time. As a consequence, the flow rate, $\umax$, will increase over time as the bodies erode inside the cell and thus provide less resistance.
+With the numerical method validated, we are now ready to simulate the erosion of multiple bodies. We will first make one conceptual change to the model. For a realistic porous medium, the condition of a fixed incoming flow rate, $\umax$, is somewhat artificial. In groundwater flow, for example, it is more common to encounter an upstream (recharge) region of given hydraulic head that connects to a downstream (discharge) region of another head. Motivated by this example, we will impose the condition that the pressure drop across the computational domain remains fixed in time. Consequently, we would expect the flow rate, $\umax$, to increase over time as the bodies erode inside the cell and thus provide less resistance.
 
-We impose the fixed-pressure-drop condition by dynamically controlling the incoming flow rate, $\umax$. We first compute the Stokes flow with $\umax = 1$ prescribed and measure the corresponding pressure at an upstream ($x = -2$) and downstream ($x=2$) location. We define the vertically-averaged upstream and downstream pressures as
+We will impose the fixed-pressure-drop condition by dynamically controlling the incoming flow rate, $\umax$. We first compute the Stokes flow with $\umax = 1$ prescribed and measure the corresponding pressure at an upstream ($x = -2$) and downstream ($x=2$) location. We next calculate the vertically-averaged upstream and downstream pressures, defined as
 \begin{align}
 p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
 p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
 \end{align}
-Next, we rescale the computed density function by the pressure difference
+We then rescale the computed density function by the pressure difference
 \begin{align}
 \eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})} \, .
 \end{align}
 The velocity and pressure fields depend linearly on $\eeta$ and so this rescaling maintains a {\em fixed} pressure difference across the subdomain $-2 \le x \le 2$. Since the Stokes equations are linear, the rescaled flow remains a solution to the PDE system (valid to the same order of accuracy). Furthermore, since the Stokes equations are time-independent, rescaling $U$ by a different value at each time step does not introduce any additional error.
+
+\subsection{Validation}
+
+Briefly, to validate the multi-body simulations with this new fixed-pressure-drop condition, we report a convergence test in Table \ref{convtab}. In this test, we simulate the erosion of 20 bodies to a stopping time of $t_s = 4 \times 10^{-3}$. This stopping time is 24\% of the time required for {\em all} bodies to vanish, and, in fact, a few of the bodies will have already vanished by $t_s$. To assess error, we measure the aggregate $L_2$ difference in the shape of {\em all} of the bodies, comparing simulations of successive temporal resolution. Note that this metric is sensitive to numerical errors in any of the simulated bodies. The table confirms that our method retains second-order accuracy in time, thus validating our rescaling procedure and confirming that multi-body interactions are handled correctly by the Stokes solver. The last column of the table shows the computational time of each simulation, demonstrating a linear increase with temporal resolution. Naturally, these 20-body simulations require significantly more CPU time than do the single-body simulations.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
@@ -1211,15 +1215,13 @@ The velocity and pressure fields depend linearly on $\eeta$ and so this rescalin
 % Parameters in this test are: 20circ128, nits = 5, dt0 = 4e-4, tfin = 4e-3
 % epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1
 
-Briefly, to validate the multi-body simulations with this new fixed-pressure-drop condition, we report a convergence test in Table \ref{convtab}. In this test, we simulate the erosion of 20 bodies to a stopping time of $t_s = 4 \times 10^{-3}$. This stopping time is 24\% of the time required for {\em all} bodies to vanish, and, in fact, a few of the bodies will have already vanished by $t_s$. To assess error, we measure the aggregate $L_2$ difference in the shape of {\em all} of the bodies, comparing simulations of successive temporal resolution. Note that this metric is sensitive to numerical errors in any of the simulated bodies. The table confirms that our method retains second-order accuracy in time, thus validating our rescaling procedure and confirming that multi-body interactions are handled correctly by the Stokes solver. The last column of the table shows the computational time of each simulation, demonstrating a linear increase with temporal resolution. Naturally, these 20-body simulations require significantly more time than do the single-body simulations.
-
-Lastly, we want to briefly examine the number of GMRES iterations required by our simulations since it is the most  expensive part of the computation. Due to our {\em second-kind} boundary integral formulation, we expect the number of GMRES iterations to be independent of the spatial resolution, $N_{\iin}$. The iteration count, however, may depend on the number of bodies, as well as other factors such as the shapes of the bodies, their configuration, etc. To examine a few of these factors, we show in Table~\ref{itertab} the number of GMRES iterations required to reach a specified tolerance of 1E-8 in several different simulations. The left side of the table shows the results for a 10-body simulation, in which we keep the geometry fixed and vary the spatial resolution $N_{\iin}$. As seen in the table, the iteration count remains essentially fixed as the resolution increases. In the right side of the table, we keep the spatial resolution fixed and vary the number of simulated bodies from 10 to 50. These bodies are all circular with randomly assigned positions and radii (with overlap avoided). The table shows that the GMRES count is indeed sensitive to the number of bodies, increasing at a rate close to linear.
+Lastly, we want to briefly examine the number of GMRES iterations required by our simulations since this is typically the most expensive step of the computation. Due to our {\em second-kind} boundary integral formulation, we expect the number of GMRES iterations to be independent of the spatial resolution, $N_{\iin}$. The iteration count, however, may depend on the number of bodies, as well as other factors such as the shapes of the bodies, their configuration, etc. To examine a few of these factors, we show in Table~\ref{itertab} the number of GMRES iterations required to reach a specified tolerance of 1E-8 in several different simulations. The left side of the table shows the results for a 10-body simulation, in which we keep the geometry fixed and vary the spatial resolution $N_{\iin}$. As seen in the table, the iteration count remains essentially fixed as the resolution increases. In the right side of the table, we keep the spatial resolution fixed and vary the number of simulated bodies from 10 to 50. The bodies are all circular with randomly assigned positions and radii (overlapping bodies are avoided). The table shows that the GMRES count, and therefore the computational time, increases roughly linearly with the number of bodies. Thus, with everything else equal, the 50-body simulation from Fig.~\ref{fig:50bodies} is about 50 times more expensive than the single-body simulations.
 
 % Table: GMRES iterations
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{The number of GMRES iterations required to reach a fixed tolerance of 1E-8 in our simulations. The left side shows a case of fixed geometry, 10 circular bodies, with increasing spatial resolution, $N_\iin$, demonstrating that the iteration count is independent of resolution. In the right side, we fix the resolution and sequentially increase the number of bodies (all circular) from 10 to 50. The iteration count increases with the number of bodies.
+\caption{The number of GMRES iterations required to reach a fixed tolerance of 1E-8 in our simulations. The left side shows a case of fixed geometry, 10 circular bodies, with increasing spatial resolution, $N_\iin$, demonstrating that the iteration count is independent of resolution. In the right side, we fix the resolution and sequentially increase the number of bodies (all circular) from 10 to 50. The iteration count increases roughly linearly with the number of bodies.
 }
 \vspace{0.3 pc}
 \label{itertab}
@@ -1247,7 +1249,7 @@ Lastly, we want to briefly examine the number of GMRES iterations required by ou
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
 
-\subsection{Multi-body erosion}
+\subsection{Multi-body results}
 
 We now discuss some physical aspects of multi-body erosion revealed by our simulations. Figure~\ref{fig:06bodies} shows a simulation of 6 eroding bodies, each initially circles of various sizes and positions. Over time, erosion not only diminishes the size of the bodies, but also alters their shapes considerable. As in the single-body simulations, corner-like features develop, but not in locations that are easily predictable. Rather, when and where these sharp features develop depends on inter-body feedback as mediated by the Stokes flow.
 
