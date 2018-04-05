@@ -48,11 +48,12 @@ $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
-Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015} down to human-scale structures and patterns \cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms \cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most relevant regime for groundwater flow and the aforementioned biological examples.
+Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015} down to human-scale structures and patterns \cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms \cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most relevant regime for groundwater and bio-fluid applications.
 
 Recent work on in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann} and during related processes such as dissolution and melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}. In such cases, the flow alters the shape of the structure, which in turn modifies the surrounding flow, and so on --- a reciprocal process that can be summarized as `sculpting with flow'~\cite{ristroph2018sculpting}.
 The example of an eroding porous medium presents new challenges and opportunities in that multiply connected domains must be considered. Furthermore, the long-range effects of Stokes flow facilitates even stronger coupling between bodies.
 
+\vsp{2}
 The example of an eroding porous medium presents new and interesting opportunities in a few ways. First of all, the medium is composed of many bodies and so multiply-connected domains most be considered. These bodies can interact via the surrounding flow. In particular, Stokes flow enables long-range interactions, which strongly couples the shape evolution of difference bodies.
 
 
@@ -159,8 +160,9 @@ that the erosion leads to a shear stress that is uniform on the body
 which results in a uniform erosion rate.  The shape that has a uniform
 shear stress is analyzed in three dimensions by Montenegro-Johnson and
 Lauga~\cite{mon-lau2015} which is an extension of the analysis done by
-Pironneau~\cite{pir1973} to find a Stokesian drag minimizing shape.  In
-this idealized case, analytical axisymmetric shapes that minimize the
+Pironneau~\cite{pir1973} to find a Stokesian drag minimizing shape. 
+\todo[inline]{Double check this statement. I am not sure that the shape found by Lauga has uniform shear stress. The shape found by Pironneau does.}
+In this idealized case, analytical axisymmetric shapes that minimize the
 drag can be found.  However, the effect of erosion on a porous media is
 less understood.
 
