@@ -6,10 +6,14 @@
 \input{preambles.tex}
 \begin{document}
 
-\title{Viscous Erosion in Porous Media}
+\title{A boundary-integral framework to simulate \\ the viscous erosion of a porous medium}
+
 
 % OTHER TITLE POSSIBILITIES
-% A fast and accurate method for viscous erosion in a 2D porous medium
+% Viscous Erosion in Porous Media (change 'in' to 'of'?)
+% A fast and accurate method for viscous erosion of a 2D porous medium
+% A boundary-integral method for viscous erosion of a porous medium
+% A computational framework to simulate the viscous erosion of a porous medium
 
 \author[Bryan]{Bryan D.~Quaife}
 \author[Nick]{M.~Nicholas J.~Moore}
@@ -44,7 +48,7 @@ $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
-Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{} down to human-scale structures and patterns \cite{}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay), as well as biological structures like plaque and biofilms. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most appropriate regime for groundwater flow and the aforementioned biological examples.
+Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{} down to human-scale structures and patterns \cite{}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most appropriate regime for groundwater flow and the aforementioned biological examples.
 
 Recent work on in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{}, as well as related processes such as dissolution \cite{} and melting \cite{}. In such cases, the flow alters the shape of the structure, which in turn modifies the surrounding flow, and so on --- a reciprocal process that can be summarized as `sculpting with flow'~\cite{ristroph2018sculpting}.
 The example of an eroding porous medium presents new challenges and opportunities in that multiply connected domains must be considered. Furthermore, the long-range effects of Stokes flow facilitates even stronger coupling between bodies.
@@ -53,7 +57,7 @@ The example of an eroding porous medium presents new and interesting opportuniti
 
 
 
-
+% a class of problems (processes) collectively referred to as sculpting with flow.
 
 
 %% ORIGINAL %%%
