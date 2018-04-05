@@ -44,7 +44,13 @@ $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
+Flow-induced erosion deteriorates and reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{} down to smaller-scale structures and patterns \cite{}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay), along with small-scale biological structures such as biofilms. Motivated by these small-scale applications, this work focuses on developing numerical methods to simulate the erosion of solid material in Stokes flow.
 
+Recent work on high-Reynolds number erosion has recognized the importance of shape-flow feedback
+
+
+
+%% ORIGINAL %%%
 
 Erosion is a fluid-mechanical process responsible for a variety
 of phenomena in geophysical and other settings.  For example,
@@ -1265,7 +1271,7 @@ With the validation complete, we now discuss the emergent physics of multibody e
 % Figure generated from data file 50circ512p5, 
 %which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
 
-The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several points at which the bodies nearly contact one another, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Intriguingly, erosion appears to remove material preferentially from these sights, as the narrow spacing between neighboring bodies expands rather quickly. For example, the spacing between bodies 1 \& 2 is initially quite small, but by the second frame, is comparable to the spacing between bodies 3 \& 4. Moreover, the bodies tend to develop flat faces at the points of near contact, leading to the appearance of straight channels between bodies. Straight channels can be seen, for example, between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Once formed, these channels persist until the bodies have nearly vanished. Notice that by the final frame, body 4 has vanished completely, and the simulation handles this event without difficulty.
+The initial configuration in  Fig.~\ref{fig:06bodies} was selected to have several points at which the bodies nearly contact one another, for example between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Intriguingly, erosion appears to remove material preferentially from these sights, as the narrow spacing between neighboring bodies expands rather quickly. For example, the spacing between bodies 1 \& 2 is initially quite small, but by the second frame, is comparable to the spacing between bodies 3 \& 4. Moreover, the bodies tend to develop flat faces at these points of near contact, leading to the appearance of straight channels between bodies. Straight channels can be seen, for example, between bodies 1 \& 2, 3 \& 5, and 5 \& 6. Once formed, these channels persist until the bodies have nearly vanished. Notice that by the final frame, body 4 has vanished completely, and the simulation handles this event without difficulty.
 
 In Fig.~\ref{fig:06bodies}, we also show the vorticity field of the surrounding flow. This field helps not only to visualize regions of high shear, but also to identify certain preferred channels in which the flow is most intense.
 As seen in the figure, the flow appears to be concentrated primarily within a single channel that runs horizontally below bodies 1 \& 2 and above bodies 3, 5, \& 6. This main channel widens the fastest, and secondary channels (e.g.~between bodies 1 \& 2 or 3 \& 5 or 5 \& 6) follow. Notice that the overall vorticity magnitude increases in time as the flow rate $\umax$ increases due to keeping the pressure drop fixed.
