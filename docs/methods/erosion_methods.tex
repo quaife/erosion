@@ -44,33 +44,30 @@ $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
-Flow-induced erosion deteriorates and reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{} down to smaller-scale structures and patterns \cite{}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay), along with small-scale biological structures such as biofilms. Motivated by these small-scale applications, this work focuses on developing numerical methods to simulate the erosion of solid material in Stokes flow.
+Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{} down to human-scale structures and patterns \cite{}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay), as well as biological structures like plaque and biofilms. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most appropriate regime for groundwater flow and the aforementioned biological examples.
 
-Recent work on high-Reynolds number erosion has recognized the importance of shape-flow feedback
+Recent work on in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{}, as well as related processes such as dissolution \cite{} and melting \cite{}. In such cases, the flow alters the shape of the structure, which in turn modifies the surrounding flow, and so on --- a reciprocal process that can be summarized as `sculpting with flow'~\cite{ristroph2018sculpting}.
+The example of an eroding porous medium presents new challenges and opportunities in that multiply connected domains must be considered. Furthermore, the long-range effects of Stokes flow facilitates even stronger coupling between bodies.
+
+The example of an eroding porous medium presents new and interesting opportunities in a few ways. First of all, the medium is composed of many bodies and so multiply-connected domains most be considered. These bodies can interact via the surrounding flow. In particular, Stokes flow enables long-range interactions, which strongly couples the shape evolution of difference bodies.
+
+
+
 
 
 
 %% ORIGINAL %%%
+\vsp{5}
+%sand dunes to be  longer on the windward side~\cite{han1969}, 
+%stream-bed erosion is responsible for branching structures of rivers~\cite{coh-dev-sey-yi-szy-rot2015}.  
+%Erosion is also important in biophysical applications---plaque erosion in arteries is key to understanding heart disease~\cite{sha2002, gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can be explained by erosion~\cite{pic-van-hei2000}. 
 
-Erosion is a fluid-mechanical process responsible for a variety
-of phenomena in geophysical and other settings.  For example,
-wind erosion causes sand dunes to be  longer on the windward
-side~\cite{han1969}, while stream-bed erosion is responsible for branching structures
-of rivers~\cite{coh-dev-sey-yi-szy-rot2015}.  Erosion is
-also important in biophysical applications---plaque erosion in arteries
-is key to understanding heart disease~\cite{sha2002,
-gro-gij-van-fer-hat-van-yua-wen2007}, and the separation of biofilms can
-be explained by erosion~\cite{pic-van-hei2000}. 
-Recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting~\cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}. All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow'~\cite{ristroph2018sculpting}.
+Recent work has been devoted to understanding fundamental aspects of the fluid-structure interaction that occurs during the erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd}, and related processes like dissolution or melting~\cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, yuan2017dynamics, claudin2017dissolution, hewett2017pear}.
+
+All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow'~\cite{ristroph2018sculpting}.
 % Later, we can take out a lot of these references, especially ones that are cited elsewhere in the paper. For example, Mitchell and Spagnolie and several of my papers are cited elsewhere.
 
-Another application, which motivates the current work, is erosion caused by groundwater flow.
-Here, a slow moving fluid erodes channels in the ground, and this
-affects the fluid transport.  To better understand
-the effect of erosion on groundwater flow, multiply-connected domains
-must be considered.  Here we simulate two-dimensional erosion, in
-multiply-connected domain such as the porous geometry of many
-groundwater flows (Fig.~\ref{fig:50bodies}).
+Another application, which motivates the current work, is erosion caused by groundwater flow. Here, a slow moving fluid erodes channels in the ground, and this affects the fluid transport.  To better understand the effect of erosion on groundwater flow, multiply-connected domains must be considered.  Here we simulate two-dimensional erosion, in multiply-connected domain such as the porous geometry of many groundwater flows (Fig.~\ref{fig:50bodies}).
 
 Because of the length and velocity scales of groundwater flow, we
 restrict our attention to zero Reynolds number flows.  For groundwater
@@ -83,6 +80,7 @@ pores are modelled with an erosion model that where the erosion rate is
 proportional to the magnitude of the shear stress. 
 
 
+\vsp{5}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions} The present study develops numerical methods
 to simulate erosion of multiply-connected two-dimensional geometries.
