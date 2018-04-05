@@ -48,41 +48,47 @@ $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
-Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015} down to human-scale structures and patterns \cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms \cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most relevant regime for groundwater and bio-fluid applications.
+Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015} down to human-scale features and patterns \cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms \cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by such small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most relevant regime for groundwater and bio-fluid applications.
 
-Recent work on in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann} and during related processes such as dissolution and melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}. In such cases, the flow alters the shape of the structure, which in turn modifies the surrounding flow, and so on --- a reciprocal process that can be summarized as `sculpting with flow'~\cite{ristroph2018sculpting}.
-The example of an eroding porous medium presents new challenges and opportunities in that multiply connected domains must be considered. Furthermore, the long-range effects of Stokes flow facilitates even stronger coupling between bodies.
-
-\vsp{2}
-The example of an eroding porous medium presents new and interesting opportunities in a few ways. First of all, the medium is composed of many bodies and so multiply-connected domains most be considered. These bodies can interact via the surrounding flow. In particular, Stokes flow enables long-range interactions, which strongly couples the shape evolution of difference bodies.
+Recent work in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann}, as well as during related processes such as dissolution and melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}. In such cases, the flow alters the shape of the immersed structures, which in turn modifies the surrounding flow, and so on. This class of processes has been collectively referred to as `sculpting with flow'~\cite{ristroph2018sculpting}. From this viewpoint, the example of an eroding porous medium presents a new opportunities and challenges. First, the medium itself is composed of many solid constituents, and so multi-body interactions, especially close interactions, are key. Second, the long-range interactions facilitated by Stokes flow even more strongly couples the shape evolution of different bodies.
 
 
-% a class of problems (processes) collectively referred to as sculpting with flow.
+The methods developed here will allow us to simulate the erosion of many bodies, as demonstrated in Fig.~\ref{fig:50bodies} in the case of 50 bodies of randomly assigned sizes and positions. In this work, mechanical erosion arises from the shear-stress induced by the flow, as has been experimentally confirmed \cite{ris-moo-chi-she-zha2012}. In Fig., color shows the vorticity of the surrounding flow. When evaluated on the solid boundaries, vorticity is equivalent to shear, and thus provides a convenient tool for visualizing local erosion rates. As shown in the figure, our simulations allows solid bodies to diminish in size and vanish in finite time, while other larger bodies persist.
+
+% Point out complex shapes with sharp features, maybe polygonal.
+% Point out channel structures develop.
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.80 \textwidth]{./figs/50bod.pdf}
+\caption{\label{fig:50bodies} A time lapse of 50 bodies eroding in a
+viscous flow.  The boundary conditions are a constant pressure drop that
+creates a flow from the left to right.  The rate of erosion is
+proportional to the shear stress which is equivalent to the vorticity
+evaluated on the bodies.  The colors represent the vorticity, so regions
+with large vorticity (in magnitude) are regions where the flow will
+erode the fastest.}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Figure generated from data file 50circ512p5, 
+%which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+
 
 % Other possible refs for erosion: mit-spa2016, lachaussee2018competitive, lopez2018cfd
 % Other possible refs for dissolution/melting: yuan2017dynamics, 
 % Later, we can take out a lot of these references, especially ones that are cited elsewhere in the paper. For example, Mitchell and Spagnolie and several of my papers are cited elsewhere.
-% formations, features
+% Land formations, geophysical features, structures, patterns
 
 
-%% ORIGINAL %%%
-\vsp{5}
-All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow'~\cite{ristroph2018sculpting}.
-
-Another application, which motivates the current work, is erosion caused by groundwater flow. Here, a slow moving fluid erodes channels in the ground, and this affects the fluid transport.  To better understand the effect of erosion on groundwater flow, multiply-connected domains must be considered.  Here we simulate two-dimensional erosion, in multiply-connected domain such as the porous geometry of many groundwater flows (Fig.~\ref{fig:50bodies}).
-
-Because of the length and velocity scales of groundwater flow, we
-restrict our attention to zero Reynolds number flows.  For groundwater
-flow, Darcy's law is often used, but this does not resolve the pore
-structure and assumes a homogeneous geometry which is often not valid.
-Instead, we use the incompressible Stokes equations as the governing
-fluid equations, and the individual pores are resolved which results in
-a complex multiply-connected geometry.  The dynamics of the individual
-pores are modelled with an erosion model that where the erosion rate is
-proportional to the magnitude of the shear stress. 
 
 
-\vsp{5}
+% For groundwater flow, Darcy's law is often used, but this does not resolve the pore structure and assumes a homogeneous geometry which is often not valid. Instead, we use the incompressible Stokes equations as the governing fluid equations, and the individual pores are resolved which results in a complex multiply-connected geometry.  
+
+
+
+\vsp{2}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions} The present study develops numerical methods
 to simulate erosion of multiply-connected two-dimensional geometries.
@@ -93,6 +99,8 @@ method resolves individual grains and the non-negligible interactions
 between bodies.  To link the eroding body and fluid dynamics, the body
 is eroded in the normal direction at a rate that is proportional to the
 magnitude of the shear stress.
+
+% Redundant statement: individual pores are resolved; individual grains are resolved.
 
 To create high-fidelity and computationally efficient numerical methods,
 two fast and accurate methods are employed.  First, the fluid velocity
@@ -129,22 +137,7 @@ and the resulting flow and these results agree with analytical results.
 Then, we compute the vorticity of erosion in multiply-connected
 geometries to better characterize erosion in porous media. 
 
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
-\begin{center}
-\includegraphics[width = 0.80 \textwidth]{./figs/50bod.pdf}
-\caption{\label{fig:50bodies} A time lapse of 50 bodies eroding in a
-viscous flow.  The boundary conditions are a constant pressure drop that
-creates a flow from the left to right.  The rate of erosion is
-proportional to the shear stress which is equivalent to the vorticity
-evaluated on the bodies.  The colors represent the vorticity, so regions
-with large vorticity (in magnitude) are regions where the flow will
-erode the fastest.}
-\end{center}
-\end{figure}
- %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-% Figure generated from data file 50circ512p5, 
-%which uses 50circ512.in with epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+
 
 
 
