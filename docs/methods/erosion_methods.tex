@@ -237,8 +237,10 @@ where $\Vn$ is the normal velocity of the interface and $\mu$ is the
 fluid viscosity.  There are several models for
 erosion~\cite{par-izu2000,lag2000}, but we have adopted the model that
 erosion occurs in the normal direction at a rate that is proportional to
-the magnitude of the shear stress~\cite{moo-ris-chi-zha-she2013}.  The
-constant of proportionality only sets the time scale, so we have set
+the magnitude of the shear stress~\cite{moo-ris-chi-zha-she2013}.  
+\todo[inline]{This makes it sound the erosion law sound too will-nilly; like anyone can come up with their own erosion law tomorrow and it would be equally valid. This is not the case. We use the law in which erosion is proportional to shear stress because {\em that is what the laboratory experiments show is true} (Ristoph 2012).}
+
+The constant of proportionality only sets the time scale, so we have set
 $\Vn = |\tau|$ as described in equation~\eqref{eqn:erosionModel}.  For
 the sake of numerical stability, we modify this law in
 Section~\ref{sec:thetaL}. 
