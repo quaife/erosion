@@ -48,9 +48,9 @@ $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
 
-Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{han1969, coh-dev-sey-yi-szy-rot2015} down to human-scale structures and patterns \cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms \cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most relevant regime for groundwater flow and the aforementioned biological examples.
+Flow-induced erosion reshapes solid material over a range of scales found in nature, from large-scale land formations \cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015} down to human-scale structures and patterns \cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest of scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms \cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by these small-scale applications, we develop here numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow --- the most relevant regime for groundwater flow and the aforementioned biological examples.
 
-Recent work on in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, moore2017riemann}, as well as during related processes such as dissolution and melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion}. In such cases, the flow alters the shape of the structure, which in turn modifies the surrounding flow, and so on --- a reciprocal process that can be summarized as `sculpting with flow'~\cite{ristroph2018sculpting}.
+Recent work on in the high-Reynolds regime has highlighted the importance of the feedback between flow and morphology that occurs during erosion \cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann} and during related processes such as dissolution and melting \cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}. In such cases, the flow alters the shape of the structure, which in turn modifies the surrounding flow, and so on --- a reciprocal process that can be summarized as `sculpting with flow'~\cite{ristroph2018sculpting}.
 The example of an eroding porous medium presents new challenges and opportunities in that multiply connected domains must be considered. Furthermore, the long-range effects of Stokes flow facilitates even stronger coupling between bodies.
 
 The example of an eroding porous medium presents new and interesting opportunities in a few ways. First of all, the medium is composed of many bodies and so multiply-connected domains most be considered. These bodies can interact via the surrounding flow. In particular, Stokes flow enables long-range interactions, which strongly couples the shape evolution of difference bodies.
@@ -58,16 +58,15 @@ The example of an eroding porous medium presents new and interesting opportuniti
 
 % a class of problems (processes) collectively referred to as sculpting with flow.
 
-% Other possible refs for erosion: mit-spa2016, hewett2017evolution, moore2017riemann, lachaussee2018competitive, lopez2018cfd
+% Other possible refs for erosion: mit-spa2016, lachaussee2018competitive, lopez2018cfd
+% Other possible refs for dissolution/melting: yuan2017dynamics, 
+% Later, we can take out a lot of these references, especially ones that are cited elsewhere in the paper. For example, Mitchell and Spagnolie and several of my papers are cited elsewhere.
+% formations, features
 
-% Other possible refs for dissolution/melting: yuan2017dynamics, claudin2017dissolution, hewett2017pear
 
 %% ORIGINAL %%%
 \vsp{5}
-
-
 All of these processes involve a feedback process between how boundaries move and how flow evolves and thus can be conceptually linked  as `sculpting with flow'~\cite{ristroph2018sculpting}.
-% Later, we can take out a lot of these references, especially ones that are cited elsewhere in the paper. For example, Mitchell and Spagnolie and several of my papers are cited elsewhere.
 
 Another application, which motivates the current work, is erosion caused by groundwater flow. Here, a slow moving fluid erodes channels in the ground, and this affects the fluid transport.  To better understand the effect of erosion on groundwater flow, multiply-connected domains must be considered.  Here we simulate two-dimensional erosion, in multiply-connected domain such as the porous geometry of many groundwater flows (Fig.~\ref{fig:50bodies}).
 
