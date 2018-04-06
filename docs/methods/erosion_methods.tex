@@ -140,15 +140,10 @@ Furthermore, the process of erosion naturally leads to regions of high curvature
 The interface tracking issues are addressed in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arc length but that does not affect the interface dynamics; second, we introduce a curvature-penalizing term into the normal interface velocity to suppress high-frequency oscillations associated with nearly singular curvature.
 Furthermore, the interface is parametrized in the so-called {\thL} coordinate system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
 
-We validate our method on a single circular body placed symmetrically in
-a pipe flow.  By artificially fixing the area of the body as a function
-of time, we are able to characterize the long-time behavior of the shape
-and the resulting flow and these results agree with analytical results.
-Then, we compute the vorticity of erosion in multiply-connected
-geometries to better characterize erosion in porous media. 
+We supplement our primarily computational study with a few analytical results. In particular, we find a single body eroding in Stokes flow tends to a slender, for-aft symmetric form with sharp corners at its front and rear. By appealing to the principle that erosion more evenly distributes the shear stress along the surface, we can analytically predict the opening angle formed at the front and rear. In addition, drag laws from slender-body theory allows us to derive scaling laws for the rate of the body's area and drag reduction. These analytical results, in addition to having value in their own right, allow us to conclusively validate our simulation. 
 
 \paragraph{Limitations}
-We make two fundamental design choices: first, we restrict ourselves to
+We make two fundamental design choices in our simulation: first, we restrict ourselves to
 two spatial dimensions, and second the bodies are considered immobile
 (i.e.~fixed to their initial locations). The restriction to two
 dimensions allows us to simulate the erosion of many bodies (up to $50$
@@ -165,33 +160,21 @@ numerically. We therefore defer the study of these effects to future
 work.
 
 \paragraph{Related Work}
-The effect of erosion on a geometry is quite rich.  For instance, it has
-been hypothesized and numerically observed that the erosion leads to a
-shear stress that is uniform on the body which results in a uniform
-erosion rate.  The shape that has a uniform shear stress is analyzed in
-three dimensions by Montenegro-Johnson and Lauga~\cite{mon-lau2015}
-which is an extension of the analysis done by Pironneau~\cite{pir1973}
-to find a Stokesian drag minimizing shape. 
-%\todo[inline]{Double check this statement. I am not sure that the shape found by Lauga has uniform shear stress. The shape found by Pironneau does.}
-In this idealized case, analytical axisymmetric shapes that minimize the
-drag can be found.  However, the effect of erosion on a porous media is
-less understood.  The work most closely related to ours simulates erosion in a three-dimensional incompressible Stokesian fluid~\cite{mit-spa2016}, but they only consider single eroding body. 
 
-To simulate Stokesian erosion, it is essential to resolve the nonlocal
-effects between the different bodies.  BIEs naturally resolve these
-interactions, and they have been used extensively to simulate viscous
-fluids in complex geometries, including porous media
-flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2016}. Challenges of a
-BIE formulation include resolving the interactions between nearly
-touching bodies and developing efficient preconditioners for the
-discretized system.  Possible preconditioners include
+The most closely related work to ours is Mitchell \& Spagnolie \cite{mit-spa2016}, who developed methods to simulate viscous erosion in three dimensions. That work employed a traction integral equation to solve for the surrounding Stokes flow. The advantage to this formulation is that it immediately provides the shear stress required to evolve boundaries. However, the standard double-layer potential used here will allow us to compute certain quantities in the fluid bulk, such as vorticity and pressure, that will facilitate our understanding of the erosion process. Furthermore, our primary aim is to simulate the erosion of multiple bodies held fixed within a porous network, whereas Mitchell \& Spagnolie simulated a single eroding body that is mobile.
+
+For these porous network simulations, it is essential to resolve the nonlocal effects between the different bodies.  BIEs naturally resolve these interactions, and they have been used extensively to simulate viscous fluids in complex geometries, including porous media flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2016}.  Common challenges of a BIE formulation include developing efficient preconditioners for the discretized system and numerical difficulties associated with nearly touching bodies. In this work, we consider geometries requiring $\mathcal{O}(100)$ GMRES iterations, so that preconditioners are not necessary. In future work, we will address mobile bodies for which near contacts may necessitate the preconditoners. Similarly, near-singular schemes will not be necessary due to the fact that the spacing between receding bodies of fixed position always grows in time. Again, the future consideration of mobile bodies may necessitate these near-singular schemes.
+
+
+
+Possible preconditioners include
 multigrid~\cite{qua-bir2015a} and the inverse fast multipole
 method~\cite{qua-cou-dar2018, cou-pou-dar2017}, but the results
 presented in this work require no more than $\mathcal{O}(100)$ GMRES
 iterations which is too small to make preconditioners for BIEs
 effective; preconditioners will be considered in future work when many
-more grains are eroding and being transported by the flow.  To address
-the nearly-singular integrands, we use the fact that the grains are
+more grains are eroding and being transported by the flow.  
+To address the nearly-singular integrands, we use the fact that the grains are
 eroding and not moving, so their separation increases with time.
 Therefore, in this work, we apply an upsampling scheme, but in future
 work, we will require a near-singular integration
@@ -245,12 +228,7 @@ velocity} \\
 \end{split}
 \end{equation}
 where $\Vn$ is the normal velocity of the interface and $\mu$ is the
-fluid viscosity.  There are several models for
-erosion~\cite{par-izu2000,lag2000}, but we have adopted the model that
-erosion occurs in the normal direction at a rate that is proportional to
-the magnitude of the shear stress~\cite{moo-ris-chi-zha-she2013}.  
-\todo[inline]{This makes it sound the erosion law sound too will-nilly; like anyone can come up with their own erosion law tomorrow and it would be equally valid. This is not the case. We use the law in which erosion is proportional to shear stress because {\em that is what the laboratory experiments show is true} (Ristoph 2012).}
-
+fluid viscosity.   
 The constant of proportionality only sets the time scale, so we have set
 $\Vn = |\tau|$ as described in equation~\eqref{eqn:erosionModel}.  For
 the sake of numerical stability, we modify this law in
@@ -319,11 +297,7 @@ potential~\cite{lad1963,poz1992}
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown
 density function.  As the viscosity $\mu$ also sets the time scale, we
-take $\mu=1$.  \todo[inline]{Do you think we should flesh out this
-time-scale stuff more precisely? i.e.~By setting $\mu = 1$ and $C = 1$
-(the erosion constant), what exactly is the timescale that defines our
-dimensionless time.} \todo[inline]{This might be worth doing.  Is it
-something you can do quickly or do you want me to take a crack at it?}
+take $\mu=1$.
 
 Since the double-layer potential is not able to represent force- and
 torque-free velocity fields,  we complete the double-layer potential
