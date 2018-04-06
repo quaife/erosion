@@ -132,18 +132,12 @@ visualizing the effect of erosion in porous media.
 %computing the vorticity, we are able to identify regions where the
 %erosion rate will be fast or slow (Fig.~\ref{fig:50bodies}).
 
-Once the erosion rate is computed, the grains are integrated in time with
-second-order accuracy.  Tracking the interface of fluid-structure
-interaction problems with a long time horizon is particularly
-difficult---the mesh is often distorted and tangled.  Moreover, erosion
-naturally leads to regions of high or infinite (i.e.~corners) curvature.
-The interface tracking issues are resolved by, first, introducing a
-tangential velocity field to maintain a grid that is equispaced in
-arclength, but does not affect the dynamics, and, second, a tunable term
-that penalizes regions of high curvature.  Furthermore, the frame of
-reference is changed to \thL~variables so that the curvature term
-appears as a diffusive term that can easily be handled in a numerically
-stable fashion with an exponential integrator.
+Next, the computed shear stress is used to evolve the solid boundaries.
+Tracking the interface of fluid-structure interaction problems with a long time horizon is particularly
+difficult as the mesh can become distorted and tangled. 
+Furthermore, the process of erosion naturally leads to regions of high curvature and even corners.
+The interface tracking issues are addressed in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arc length but that does not affect the interface dynamics; second, we introduce a curvature-penalizing term into the normal interface velocity to suppress high-frequency oscillations associated with nearly singular curvature.
+Furthermore, the interface is parametrized in the so-called {\thL} coordinate-system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
 
 We validate our method on a single circular body placed symmetrically in
 a pipe flow.  By artificially fixing the area of the body as a function
