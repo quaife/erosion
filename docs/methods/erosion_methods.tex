@@ -136,9 +136,7 @@ Tracking the interface of fluid-structure interaction problems with a long time 
 difficult as the mesh can become distorted and tangled. 
 Furthermore, the process of erosion naturally leads to regions of high curvature and even corners.
 The interface tracking issues are addressed in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arc length but that does not affect the interface dynamics; second, we introduce a curvature-penalizing term into the normal interface velocity to suppress high-frequency oscillations associated with nearly singular curvature.
-Furthermore, the frame of reference is changed to \thL~variables so that the curvature term
-appears as a diffusive term that can easily be handled in a numerically
-stable fashion with an exponential integrator.
+Furthermore, the interface is parametrized in the so-called {\thL} coordinate-system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
 
 We validate our method on a single circular body placed symmetrically in
 a pipe flow.  By artificially fixing the area of the body as a function
