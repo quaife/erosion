@@ -219,7 +219,7 @@ Section~\ref{sec:thetaL}.
 The outer wall is formed by rounding off the corners
 of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align}
-  \UU(\xx) = \umax (1-y^2,0), \quad \xx \in \Gamma,
+  \UU(\xx) = \umax (1-y^2,0)\, , \quad \xx \in \Gamma\, ,
 \end{align}
 where $U$ sets the maximum of the imposed Poiseuille flow. Often, we
 will simply set $U=1$, but in some instances we change $U$ dynamically
@@ -258,7 +258,7 @@ In this section, we describe an equivalent BIE formulation of the
 incompressible Stokes equations with Dirichlet boundary conditions
 \begin{equation}
   \begin{split}
-  \mu\Delta \uu &= \grad p, \qquad && \xx \in \Omega, \\
+  \mu\Delta \uu &= \grad p\, , \qquad && \xx \in \Omega, \\
   \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
   \uu &= \ff,  && \xx \in \bd\Omega.
   \end{split}
@@ -274,7 +274,7 @@ potential~\cite{lad1963,poz1992}
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2} 
-    \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
+    \eeta(\yy) \, ds_\yy\, , \quad \xx \in \Omega \, ,
     \label{eqn:velocityDLP}
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown
@@ -288,8 +288,8 @@ with Stokeslets and rotlets~\cite{pow-mir1987, pow1993}
   S[\llambda_\ell,\cc_\ell] = \frac{1}{4\pi} \left(-\log \rho \II + 
     \frac{\rr \otimes \rr}{\rho^2} \right)\llambda_\ell
   \quad \text{and} \quad
-  R[\xi_\ell,\cc_\ell] = \frac{\rr^\perp}{\rho^2}\xi_\ell, 
-  \quad \ell=1,\ldots,M,
+  R[\xi_\ell,\cc_\ell] = \frac{\rr^\perp}{\rho^2}\xi_\ell\, , 
+  \quad \ell=1,\ldots,M \, ,
   \label{eqn:stokeslet_rotlet}
 \end{align}
 where  $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
@@ -299,7 +299,7 @@ Then, the solution of~\eqref{eqn:stokes} is
   \label{eqn:completed_DLP}
   \uu(\xx) = \DD[\eeta](\xx) + 
     \sum_{\ell=1}^{M} S[\llambda_\ell,\cc_\ell](\xx) +
-    \sum_{\ell=1}^{M} R[\xi_\ell,\cc_\ell](\xx), \quad \xx \in \Omega,
+    \sum_{\ell=1}^{M} R[\xi_\ell,\cc_\ell](\xx)\, , \quad \xx \in \Omega \, ,
 \end{align}
 where the density function, Stokeslets, and rotlets satisfy
 \begin{subequations}
@@ -307,14 +307,15 @@ where the density function, Stokeslets, and rotlets satisfy
 \begin{align}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DD[\eeta](\xx) + 
       \sum_{\ell=1}^{M} S[\llambda_\ell,\cc_\ell](\xx) +
-      \sum_{\ell=1}^{M} R[\xi_\ell,\cc_\ell](\xx) + \NN_0[\eeta](\xx),
-      \quad \xx \in \bd\Omega, 
+      \sum_{\ell=1}^{M} R[\xi_\ell,\cc_\ell](\xx) + \NN_0[\eeta](\xx)\, ,
+      \quad \xx \in \bd\Omega \, , 
       \label{eqn:DLP}\\
-  \llambda_\ell &= \frac{1}{2\pi}\int_{\gamma_\ell} \eeta(\yy) \, ds_\yy,
-  \quad \ell=1,\ldots,M,
+  \llambda_\ell &= \frac{1}{2\pi}\int_{\gamma_\ell} \eeta(\yy) \,
+  ds_\yy\, ,
+  \quad \ell=1,\ldots,M \, ,
   \label{eqn:stokeslet} \\
   \xi_\ell &= \frac{1}{2\pi}\int_{\gamma_\ell} \yy^\perp \cdot \eeta(\yy)
-  \, ds_\yy, \quad \ell=1,\ldots,M.
+  \, ds_\yy\, , \quad \ell=1,\ldots,M \, .
   \label{eqn:rotlet}
 \end{align}
 \end{subequations}
@@ -367,7 +368,7 @@ is~\cite{qua-bir2014a}
     &\left.
     +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-  \right) \eeta(\yy) ds_\yy.
+  \right) \eeta(\yy) \, ds_\yy \, .
   \end{aligned}
 \end{equation}
 We require the deformation tensor on $\bd\Omega$, and this requires
@@ -375,7 +376,7 @@ taking the limit of equation~\eqref{eqn:shearStressDLP} when $\xx$ tends
 to $\xx_0 \in \bd\Omega$.  The limiting value is
 \begin{align}
   \lim_{\substack{\xx \rightarrow \xx_0 \\ \xx \in \Omega}}\sigma_\DD(\xx) =
-  J[\eeta](\xx_0) + \ssigma^\DD(\xx_0), \quad \xx_0 \in \bd\Omega,
+  J[\eeta](\xx_0) + \ssigma^\DD(\xx_0)\, , \quad \xx_0 \in \bd\Omega \, ,
 \end{align} 
 where
 \begin{align}
@@ -383,7 +384,7 @@ where
     \cdot \ss\right) \left[ 
   \begin{array}{cc}
     s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
-  \end{array}\right].
+  \end{array}\right] \, .
   \label{eqn:shearStressJump}
 \end{align}
 Next, the deformation tensor of the Stokeslets and
@@ -396,14 +397,14 @@ rotlets~\eqref{eqn:stokeslet_rotlet} are
     \II - \frac{2}{\rho^2} \rr \otimes \rr \right),  \\
   \ssigma^R(\xx_0) &= -\sum_{\ell=1}^M
     \frac{\xi_\ell}{\rho^4} \left(\rr \otimes \rr^\perp + 
-    \rr^\perp \otimes \rr \right).
+    \rr^\perp \otimes \rr \right) \, .
   \end{aligned}
 \end{equation}
 Combining these deformation tensors, the shear stress at $\xx_0 \in
 \bd\Omega$ is
 \begin{align}
   \tau = -2 \left(J[\eeta](\xx_0) + \ssigma^\DD(\xx_0) + 
-    \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss.
+    \ssigma^S(\xx_0) + \ssigma^R(\xx_0)\right) \nn \cdot \ss \, .
   \label{eqn:shearStressLP}
 \end{align}
 
@@ -416,7 +417,8 @@ To evolve the boundaries of eroding bodies, we use the {\thL} framework which of
 For numerical stability, we modify the erosion law~\eqref{eqn:erosionModel} to include a term that penalizes curvature $\kappa$. The idea is to prevent regions of extremely high curvature from developing, as these regions would compromise the accuracy and stability of our fluid solver. We thus replace~\eqref{eqn:erosionModel} with
 \begin{align}
   \label{eqn:Vn}
-  \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1 \right).
+  \Vn = \atau + \eps \mean{\atau} \left( \frac{L }{2\pi} \kappa - 1
+  \right) \, .
 \end{align}
 The parameter $\eps \ll 1$ controls the strength of the curvature-penalization. This term causes regions of high curvature to recede more rapidly and thus suppresses any high-frequency oscillations that may exist. Above, $\mean{\cdot}$ indicates a boundary mean. Since a closed body has mean curvature $\mean{\kappa} = 2\pi / L$, the penalty term has mean zero and thus preserves area. The only source of material loss is therefore the shear-stress itself. In addition, we have scaled the penalty term on the mean absolute shear, $\mean{\atau}$, so that the ratio of smoothing-to-erosion always remains fixed, even as bodies vanish.
 
@@ -448,7 +450,7 @@ When recast in the variables $\theta$ and $L$, the interface evolution becomes
 \begin{align}
 \tderiv{L}{t} &= - 2 \pi \mean{\thalpha \Vn}, \\
 \pderiv{\theta}{t} &= \frac{2 \pi}{L} \left( \pderiv{\Vn}{\alpha} +
-\thalpha \Vs \right).
+\thalpha \Vs \right) \, .
 \end{align}
 Inserting~\eqref{eqn:Vn2} for the normal velocity gives
 \begin{align}
@@ -504,20 +506,20 @@ discretization points of $\bd\Omega$.  The double-layer potential
 in~\eqref{eqn:DLP} is discretized with the trapezoid rule as
 \begin{align}
   \DD[\eeta](\xx_i) = \sum_{j=1}^{N} K(\xx_i,\xx_j) \eeta(\xx_j) 
-      \Delta s_{j}, \quad i=1,\ldots,N,
+      \Delta s_{j}\, , \quad i=1,\ldots,N \, ,
   \label{eqn:trapDLP}
 \end{align}
 where $\Delta s_j$ is the arclength term of $\bd\Omega$ at
 $\xx_j$, and
 \begin{align}
   K(\xx,\yy) = \frac{1}{\pi} \frac{\rr \cdot \nn}{\rho^2} 
-      \frac{\rr \otimes \rr}{\rho^2},
+      \frac{\rr \otimes \rr}{\rho^2} \, ,
 \end{align}
 where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the
 double-layer potential.  The diagonal term of~\eqref{eqn:trapDLP} is
 replaced with the limiting value of the double-layer potential
 \begin{align}
-  D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)),
+  D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)) \, ,
 \end{align}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent
 vector at $\xx \in \bd\Omega$.  The equations for the
@@ -533,11 +535,11 @@ strategy to~\eqref{eqn:completed_BIE}, the dense linear system is solved is
       &\hspace{53pt}
       +\sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) 
       +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
-      \nn(\xx_j))\eeta(\xx_j), \\
+      \nn(\xx_j))\eeta(\xx_j) \, , \\
     \llambda_\ell &= \sum_{\xx_j \in \gamma_\ell} \eeta(\xx_j) 
-      \Delta s_j, \\ 
+      \Delta s_j \, , \\ 
     \mu_\ell &= \sum_{\xx_j \in \gamma_\ell}
-      {(\xx_j - \cc_\ell)}^\perp \cdot \eeta(\xx_j) \Delta s_j,
+      {(\xx_j - \cc_\ell)}^\perp \cdot \eeta(\xx_j) \Delta s_j \, ,
   \end{aligned}
 \end{equation}
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  We have applied the trapezoid
@@ -575,7 +577,7 @@ double-layer potential~\eqref{eqn:shearStressDLP} is
     \right. \\ & \hspace{25pt}+ \left.
     \frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-  \right).
+  \right) \, .
 \end{aligned}
 \end{equation}
 This kernel has a singularity that is asymptotic to $\bigO(\rho^{-2})$
@@ -586,7 +588,7 @@ constant~\cite{poz1992}.  Therefore, the deformation tensor of the
 double-layer potential is equivalent to
 \begin{align}
   \ssigma^{\DD}(\xx) = \int_{\bd\Omega}K_\ssigma(\xx,\yy)
-      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}, \quad \xx \in \bd\Omega.
+      (\eeta(\yy) - \eeta(\xx)) \, ds_{\yy}\, , \quad \xx \in \bd\Omega \, .
 \end{align}
 This expression has a singularity that is asymptotic to
 $\bigO(\rho^{-1})$ when $\yy \rightarrow \xx$.  Then, to achieve
@@ -598,7 +600,7 @@ $\gamma_\ell$, with $i$ being odd, is approximated as
   \ssigma^{\DD}(\xx_i) = \sum_{\xx_j \notin \gamma_\ell}
     K_\ssigma(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_j + 
   \sum_{\substack{\xx_j \in \gamma_\ell \\ j \: \mathtt{even}}}
-    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j,
+    K_\ssigma(\xx_i,\xx_j) (\eeta(\xx_j) - \eeta(\xx_i)) \Delta s_j \, ,
   \label{eqn:stressOddEven}
 \end{align}
 and a similar approximation is used when $i$ is even.  We also need to
@@ -637,26 +639,26 @@ with corresponding normal and tangential interface velocities
 \begin{align}
 & \Vnsig = \atausig +  \eps \mean{\atausig}
 \left(\pderiv{\theta}{\alpha} - 1 \right), \\
-& \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig}.
+& \pderiv{\Vssig}{\alpha} = \thalpha \Vnsig - \mean{\thalpha \Vnsig} \, .
 \end{align}
 This smoothing further suppresses the feedback of high frequencies between $\atau$ and the body shape.
 
 We now consider the system of evolution equations given by~\eqref{eqn:Levo1}--\eqref{eq:xsurf}. For convenience, we introduce the following variables
 \begin{align}
 %\label{eq:M}
-& \Mterm = - 2 \pi \mean{\thalpha \Vnsig}, \\
+& \Mterm = - 2 \pi \mean{\thalpha \Vnsig} \, , \\
 %\label{eq:N}
 & \NLterm = \frac{2 \pi}{L} \left( \pderiv{\atausig}{\alpha} + \thalpha
-\Vssig \right), \\
+\Vssig \right) \, , \\
 %\label{eq:elfun}
 & \elfun = \frac{2 \pi}{L}  \mean{\atausig} \, .
 \end{align}
 Then,~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \begin{align}
 \label{eqn:Levo2}
-& \tderiv{L}{t} = \Mterm, \\
+& \tderiv{L}{t} = \Mterm \, , \\
 \label{eqn:thetaevo2}
-& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm.
+& \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm \,.
 \end{align}
 The diffusive term on the right of~\eqref{eqn:thetaevo2} results from the curvature penalization and is the stiffest term present. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$). Meanwhile, $\NLterm$, represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both nonlinear and nonlocal.
 
@@ -668,7 +670,8 @@ We will evolve $\theta(\alpha,t)$ in spectral space and so introduce the Fourier
 \end{align}
 The careful reader will notice that in~\eqref{thetaSeries} we have decomposed $\theta(\alpha)$ into a linear component and a periodic component. In spectral space,~\eqref{eqn:thetaevo2} produces the system of ODEs
 \begin{align}
-\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k = \widehat{\NLterm}_k,
+\tderiv{\thhat_k}{t} +  \eps k^2  \elfun \thhat_k =
+\widehat{\NLterm}_k\, ,
 \qquad k=-N_\iin/2,\ldots,N_\iin/2-1\, .
 \end{align}
 These ODEs can be simplified by applying the integrating factor
@@ -679,10 +682,10 @@ These ODEs can be simplified by applying the integrating factor
 which leads to the coupled system
 \begin{align}
 \label{eqn:Levo3}
-& \tderiv{L}{t} = \Mterm, \\
+& \tderiv{L}{t} = \Mterm \, , \\
 \label{eqn:thetaevo3}
 & \tderiv{}{t}\left( \mu_k \thhat_k \right) = \mu_k \widehat{\NLterm}_k \, ,
-\qquad k = -N_\iin/2, \ldots, N_\iin/2 -1.
+\qquad k = -N_\iin/2, \ldots, N_\iin/2 -1 \, .
 \end{align}
 Note that the diffusive term from~\eqref{eqn:thetaevo2} does not appear explicitly in~\eqref{eqn:thetaevo3}, but rather is implied by the integrating factor~\eqref{eq:mu}. This is the idea of an exponential integrator. We solve the resulting system~\eqref{eq:mu}--\eqref{eqn:thetaevo3} with an
 explicit, second-order Runge-Kutta method (RK2). In particular, we use the {\em midpoint} RK2 method because it maximizes the smoothing effect of the diffusive term.
@@ -691,14 +694,15 @@ At the first stage of RK2 (the half step) we discretize~\eqref{eq:mu}--\eqref{eq
 \begin{align}
 \label{eq:mu12d}
 & \mu_k^{(n+1/2)} = \mu_k^{(n)} \exp \left( \eps k^2 \frac{\Dt}{2}
-\zeta^{(n)} \right), \\
+\zeta^{(n)} \right) \, , \\
 \label{eq:L12d}
-& \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = \Mterm^{(n)}, \\
+& \frac{L^{(n+1/2)} - L^{(n)}}{\Dt/2} = \Mterm^{(n)} \, , \\
 \label{eq:th12d}
 & \frac{ \mu_k^{(n+1/2)} \thhat_k^{(n+1/2)} - \mu_k^{(n)} \thhat_k^{(n)}}{\Dt/2} 
-= \mu_k^{(n)} \hat{\NLterm}_k^{(n)},
+= \mu_k^{(n)} \hat{\NLterm}_k^{(n)} \, ,
 \end{align}
-where the superscript indicates the time step. At the next stage of RK2 it will be necessary to evaluate derivates at the half step $n+1/2$, thus requiring a call to the Stokes solver for which the body shapes must be known. We therefore insert~\eqref{eq:mu12d} into~\eqref{eq:th12d} and solve for $\theta^{(n+1/2)}$, giving
+where the superscript indicates the time step. At the next stage of RK2
+it will be necessary to evaluate derivatives at the half step $n+1/2$, thus requiring a call to the Stokes solver for which the body shapes must be known. We therefore insert~\eqref{eq:mu12d} into~\eqref{eq:th12d} and solve for $\theta^{(n+1/2)}$, giving
 \todo[inline]{are we solving for $\theta$ or $\hat{\theta}_k?$.}
 \begin{align}
 \label{eq:th12}
@@ -711,17 +715,20 @@ At the second stage of RK2, we discretize~\eqref{eq:mu}--\eqref{eqn:thetaevo3} a
 \begin{align}
 \label{eq:mu1d}
 & \mu_k^{(n+1)} = \mu_k^{(n)} \exp \left( \eps k^2 {\Dt} \,
-\zeta^{(n+1/2)} \right), \\
+\zeta^{(n+1/2)} \right) \, , \\
 \label{eq:L1d}
-& \frac{L^{(n+1)} - L^{(n)}}{\Dt} = \Mterm^{(n+1/2)}, \\
+& \frac{L^{(n+1)} - L^{(n)}}{\Dt} = \Mterm^{(n+1/2)} \, , \\
 \label{eq:th1d}
 & \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \mu_k^{(n)} \thhat_k^{(n)}}{\Dt} =
-\mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)}.
+\mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)} \, .
 \end{align}
 We must eventually compute the geometry at step $n+1$, and so we insert~\eqref{eq:mu1d} into~\eqref{eq:th1d} and solve for $\theta^{(n+1)}$, giving
 \todo[inline]{are we solving for $\theta$ or $\hat{\theta}_k?$.}
 \begin{align}
-\thhat_k^{(n+1)} =  \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left( - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)} \right) \right).
+\thhat_k^{(n+1)} =  \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt
+\elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left(
+- \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)}
+\right) \right) \, .
 \end{align}
 Once again, both exponential terms act to smooth the geometry. Finally, to track the reference point, $\mean{x}$, we simply apply the same RK2 method to~\eqref{eq:xsurf}.
 
@@ -757,7 +764,7 @@ $\xx \in \Omega$ is
 \begin{align}
   \omega^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} 
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4}
-    (\rr \cdot \eeta) ds_{\yy}.
+    (\rr \cdot \eeta) \, ds_{\yy}\, .
   \label{eqn:vorticityDLP}
 \end{align}
 To compute~\eqref{eqn:vorticityDLP} numerically, we apply the trapezoid
@@ -765,12 +772,12 @@ rule with an upsampling scheme described in Section~\ref{sec:NSI}.
 Next, the vorticity due to the Stokeslet is
 \begin{align}
   \omega^S(\xx) = -\frac{1}{\pi} \sum_{\ell=1}^{M} 
-    \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2},
+    \frac{\rr \cdot \llambda_\ell^\perp}{\rho^2}\, ,
 \end{align}
 and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
 \in \Omega$ is
 \begin{align}
-  \omega(\xx) = \omega^\DD(\xx) + \omega^S(\xx).
+  \omega(\xx) = \omega^\DD(\xx) + \omega^S(\xx)\, .
 \end{align}
 
 For the Stokes equations, on boundaries that have a no-slip boundary
@@ -789,18 +796,19 @@ potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
 \begin{align}
   p^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot \eeta(\yy) \,ds_\yy.
+    \nn \cdot \eeta(\yy) \,ds_\yy \, .
     \label{eqn:pressureDLP}
 \end{align}
 To compute~\eqref{eqn:pressureDLP} numerically, we apply the trapezoid
 rule with an upsampling scheme described in Section~\ref{sec:NSI}.  The
 pressure due to the Stokeslets is
 \begin{align}
-  p^S(\xx) = \sum_{\ell=1}^{M}\frac{\rr \cdot \llambda_\ell}{2\pi\rho^2},
+  p^S(\xx) = \sum_{\ell=1}^{M}\frac{\rr \cdot
+  \llambda_\ell}{2\pi\rho^2}\, ,
 \end{align}
 and the pressure due to the rotlets is zero.  Therefore, the pressure is
 \begin{align}
-  p(\xx) = p^{\DD}(\xx) + p^{S}(\xx), \quad \xx \in \Omega,
+  p(\xx) = p^{\DD}(\xx) + p^{S}(\xx)\, , \quad \xx \in \Omega \, ,
 \end{align}
 
 For target points on the boundary of the geometry, $\xx \in \bd \Omega$,
@@ -808,7 +816,7 @@ there is an additional term resulting from a jump in the pressure
 double-layer potential~\cite{poz1992}
 \begin{align}
   p(\xx)= \pderiv{\eeta}{\ss} \cdot \ss + p^{\DD}(\xx) + 
-              p^{S}(\xx), \quad \xx \in \bd\Omega.
+              p^{S}(\xx)\, , \quad \xx \in \bd\Omega \, .
   \label{eqn:pressureJump}
 \end{align}
 Similar to the shear stress, the singularity of the pressure
@@ -820,8 +828,8 @@ function and write the pressure as
 \begin{aligned}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
-    \nn \cdot (\eeta(\yy) - \eeta(\xx)) \,ds_\yy, 
-    \quad \xx \in \bd\Omega.
+    \nn \cdot (\eeta(\yy) - \eeta(\xx)) \,ds_\yy\, , 
+    \quad \xx \in \bd\Omega\, .
 \end{aligned}
 \end{equation}
 Then, identical to how the shear stress is
@@ -836,7 +844,7 @@ in~\eqref{eqn:pressureJump} is computed with Fourier differentiation.
 Once the pressure and shear stress is computed, the drag on a single
 body with boundary $\gamma_\ell$ is
 \begin{align}
-\FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds.
+\FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds\, .
 \label{eqn:drag}
 \end{align}
 The reader may notice an unusual sign convention for pressure in this formula, which is simply due to the normal direction pointing {\em into} the bodies.
@@ -849,7 +857,7 @@ vorticity~\eqref{eqn:vorticityDLP}, and pressure~\eqref{eqn:pressureDLP}
 need to be evaluated at points $\xx \in \Omega$. We write the general
 layer potential as
 \begin{align}
-  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) ds_\yy.
+  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) \, ds_\yy\, .
   \label{eqn:genericLP}
 \end{align}
 Since the integrand is periodic and smooth, the trapezoid rule
@@ -864,7 +872,7 @@ arbitrarily close target points.
 The layer potential~\eqref{eqn:genericLP} is approximated with the
 trapezoid rule 
 \begin{align}
-  \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j),
+  \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j)\, ,
   \label{eqn:layerPotential}
 \end{align}
 where $q$ contains the quadrature weights, Jacobian, and density
@@ -932,7 +940,7 @@ used for validation. In Section~\ref{s:MultiResults} we will discuss the erosion
 % Figure from datafile 01circ1024aa;
 % Uses 01circ1024.in with epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0
 
-Figure \ref{01bodseq} shows the erosion of a single body, numerically
+Figure~\ref{01bodseq} shows the erosion of a single body, numerically
 simulated with $N_\iin = 1024$ discretization points and shown at three
 evenly spaced times. Here, color represents the vorticity of the
 surrounding flow. When evaluated on the boundary, vorticity corresponds
@@ -974,7 +982,7 @@ For a slender body in flow perpendicular to its long-axis $\ell$, the drag is pr
 $\mu \umax \ell/ \log(\ell/a)$, where $a \ll \ell $ is a length scale of the cross-section. This law implies that the stress-per-unit-span on a 2D cross-section is approximately
 \begin{align}
   \label{eqn:stresslaw}
-  \tau \sim \frac{\mu \umax}{a \log(\ell/a)}, \qquad \text{for } a \ll \ell \, .
+  \tau \sim \frac{\mu \umax}{a \log(\ell/a)}\, , \qquad \text{for } a \ll \ell \, .
 \end{align}
 In interpreting our 2D simulations, we will treat the span, $\ell$, as
 fixed. Recall that $L$ denotes the total perimeter of the 2D cross-section. Since $L$ and $a$ each represent a characteristic scale of the cross-section, they can often be interchanged in scaling analysis.
@@ -1006,12 +1014,12 @@ Noting that $A \sim a^2$ allows one to solve the ODE, giving
 \end{align}
 Here, $t_f$ is the time of vanishing, $A_0$ is the body's initial area, and $c_1$ is a free constant. The above is an {\em implicit} relationship for how area scales down in time, and we can use this prediction to test our numerical simulation. In Fig.~\ref{area_drag}(a) we compare the area measured in our numerical simulation (black curve) against the above scaling law (red dotted curve) with $c_1 = 0.24$ a fit parameter. The two agree remarkably well throughout the entire simulation, thus co-validating the simulation and asymptotic results.
 
-	As the body shrinks in accordance with \eqref{area_predict}, the drag that it exerts decreases at a related rate, offering a second check on our numerics. In Fig.~\ref{area_drag}(b), we show the horizontal drag, $F_D$, on the simulated body as it changes in time (black curve). The drag is calculated using \eqref{eqn:drag} and, in the context of slender-body theory, this should be interpreted as the drag-per-unit-span. As seen in the figure, $F_D$ decreases gradually at first, then abruptly drops to zero in the final moments of the body's existence. Though it may seem peculiar, the sudden drop is consistent with the 2D Stokes law in which drag vanishes {\em logarithmically} with body size. Additionally, \eqref{eqn:drag} permits us to calculate the separate contributions of pressure and viscous drag, which we show by the blue and green curves in Fig.~\ref{area_drag}(b) respectively. Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases more rapidly, leaving viscous drag to dominate. This behavior is associated with convergence to a drag-minimizing profile, which is discussed in Section \ref{LimitingShape}.
+	As the body shrinks in accordance with~\eqref{area_predict}, the drag that it exerts decreases at a related rate, offering a second check on our numerics. In Fig.~\ref{area_drag}(b), we show the horizontal drag, $F_D$, on the simulated body as it changes in time (black curve). The drag is calculated using~\eqref{eqn:drag} and, in the context of slender-body theory, this should be interpreted as the drag-per-unit-span. As seen in the figure, $F_D$ decreases gradually at first, then abruptly drops to zero in the final moments of the body's existence. Though it may seem peculiar, the sudden drop is consistent with the 2D Stokes law in which drag vanishes {\em logarithmically} with body size. Additionally,~\eqref{eqn:drag} permits us to calculate the separate contributions of pressure and viscous drag, which we show by the blue and green curves in Fig.~\ref{area_drag}(b) respectively. Initially, pressure and viscous drag are comparable, with the circular geometry having a slightly higher level of pressure drag. As the body erodes and assumes a more slender form, though, the pressure drag decreases more rapidly, leaving viscous drag to dominate. This behavior is associated with convergence to a drag-minimizing profile, which is discussed in Section~\ref{LimitingShape}.
 
 As a check on these results, we can use slender-body theory to estimate the drag-per-unit-span
 \begin{align}
 \label{dragscaling}
-\frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)},	\qquad \text{for } a \ll \ell \, .
+\frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}\, ,	\qquad \text{for } a \ll \ell \, .
 \end{align}
 For a {\em circular} cylinder, the normalization factor $4 \pi$ produces an {\em exact} relationship (within the context of slender-body theory), where $a$ is taken to be the radius. For other shapes, the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale since it generalizes the case of a circle. In Fig.~\ref{area_drag}(b) we show this prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as $t \to t_f$, confirming that the simulation accurately captures the slender limit as the body disappears.
 
@@ -1036,8 +1044,8 @@ The corresponding stream function is biharmonic, $\Delta^2 \psi = 0$, and the an
 \label{fODE}
 f'''' + 2(\lambda^2 - 2 \lambda + 2)f'' + \lambda^2(\lambda-2)^2 f = 0 \, .
 \end{align}
-This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$ and odd symmetry about the horizontal axis, $f(0) = f''(0) = 0$. For arbitrary opening angle, ODE \eqref{fODE} and the boundary conditions comprise an eigenvalue problem for $\lambda$, whose solution furnishes the stream function and the corresponding shear stress on the wedge surface $\tau = \mu r^{\lambda-2} f''(\thb)$. We, however, seek to determine the particular opening angle that produces {\em uniform} shear stress and therefore set $\lambda = 2$.
-The odd-symmetric solution to \eqref{fODE} corresponding to $\lambda=2$ is
+This ODE is subject to no-slip boundary conditions along the wedge $f(\thb) = f'(\thb) = 0$ and odd symmetry about the horizontal axis, $f(0) = f''(0) = 0$. For arbitrary opening angle, ODE~\eqref{fODE} and the boundary conditions comprise an eigenvalue problem for $\lambda$, whose solution furnishes the stream function and the corresponding shear stress on the wedge surface $\tau = \mu r^{\lambda-2} f''(\thb)$. We, however, seek to determine the particular opening angle that produces {\em uniform} shear stress and therefore set $\lambda = 2$.
+The odd-symmetric solution to~\eqref{fODE} corresponding to $\lambda=2$ is
 \begin{align}
   f(\theta) = B \sin (2 \theta) + C \theta \, .
 \end{align}
@@ -1045,13 +1053,14 @@ Imposing no slip along the wedge surface gives the condition
 \begin{align}
   \sin(2 \thb) - 2 \thb \cos(2 \thb) = 0 \, .
 \end{align}
-This nonlinear equation has solution $\thb \approx 129^\circ$, which implies that the the uniform-stress wedge has an opening angle of $\oangle \approx 102^\circ$.
+This nonlinear equation has solution $\thb \approx 129^\circ$, which implies that the uniform-stress wedge has an opening angle of $\oangle \approx 102^\circ$.
 % Pozrikidis page 239: symmetric flow.
 
 
 \subsection{Fixed-area simulations}
 
-We now aim to measure the opening angles formed in the numerical simulations to compare against the above prediction. However, Section \ref{sec:scaling} shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations to lose accuracy in the final, critical moments when the body is expected to approach its limiting shape. To circumvent this problem, we remove the effect of shrinking by forcing $\Vn$ to have zero mean,
+We now aim to measure the opening angles formed in the numerical
+simulations to compare against the above prediction. However, Section~\ref{sec:scaling} shows that the magnitude of the shear stress diverges as the body vanishes, which causes our simulations to lose accuracy in the final, critical moments when the body is expected to approach its limiting shape. To circumvent this problem, we remove the effect of shrinking by forcing $\Vn$ to have zero mean,
 \begin{align}
 \Vn \leftarrow \Vn - \mean{\Vn} \, .
 \end{align}
@@ -1095,7 +1104,30 @@ This modification allows erosion to sculpt the shape as it would normally, but w
         5/1024 respectively. Loosely, these values correspond to
         smoothing over the nearest 20, 10, and 5 grid points, respectively. Figure~\ref{fig:arangle}(a) shows the aspect ratio as it varies in time. The initially circular geometry has an aspect ratio of unity, and, as erosion carves a more slender form, the aspect ratio increases monotonically. The three simulations are all very close to one another, demonstrating convergence as $\eps, \sigma \to 0$. In the simulation with these least smoothing ($\eps = \sigma = 5/1024$), the aspect ratio tends to a value of 2.7 in long time.
 
-	Next, we aim to measure the opening angle of the front/rear corner. Since these simulated bodies are actually smooth on a fine scale, we must have a procedure to estimate the apparent angle that results from the high (but finite) curvature at the stagnation points. To this end, we fit the tangent angle $\theta(\alpha)$ with a 7th-degree polynomial over a region excluding the stagnation points ($\alpha = 0$ and 0.5). We then extrapolate the polynomial to the stagnation points, which gives an estimate of the angle there. Although this procedure is subject to some uncertainty (to be examined below), we have found it to give robust angle measurements. Figure \ref{fig:arangle}(b) shows the opening angle, $\beta$, as it varies in time for the three cases of smoothing parameters. For the initially circular geometry, our procedure yields the correct opening angle of $180^{\circ}$, i.e.~a flat front face. As time proceeds, erosion carves a sharper corner and $\beta$ decreases monotonically. Here, the three cases of smoothing parameters are more easily distinguished, implying that the opening angle is more sensitive to the level of numerical smoothing than is the aspect ratio. The curves nevertheless show convergence as $\eps, \sigma \to 0$. In the finest simulation ($\eps = \sigma = 5/1024$), $\beta$ converges to the value $102^{\circ}$, which agrees precisely with the analytical prediction from Section \ref{LimitingShape}. 
+	Next, we aim to measure the opening angle of the front/rear
+        corner. Since these simulated bodies are actually smooth on a
+        fine scale, we must have a procedure to estimate the apparent
+        angle that results from the high (but finite) curvature at the
+        stagnation points. To this end, we fit the tangent angle
+        $\theta(\alpha)$ with a 7th-degree polynomial over a region
+        excluding the stagnation points ($\alpha = 0$ and 0.5). We then
+        extrapolate the polynomial to the stagnation points, which gives
+        an estimate of the angle there. Although this procedure is
+        subject to some uncertainty (to be examined below), we have
+        found it to give robust angle measurements.
+        Figure~\ref{fig:arangle}(b) shows the opening angle, $\beta$, as
+        it varies in time for the three cases of smoothing parameters.
+        For the initially circular geometry, our procedure yields the
+        correct opening angle of $180^{\circ}$, i.e.~a flat front face.
+        As time proceeds, erosion carves a sharper corner and $\beta$
+        decreases monotonically. Here, the three cases of smoothing
+        parameters are more easily distinguished, implying that the
+        opening angle is more sensitive to the level of numerical
+        smoothing than is the aspect ratio. The curves nevertheless show
+        convergence as $\eps, \sigma \to 0$. In the finest simulation
+        ($\eps = \sigma = 5/1024$), $\beta$ converges to the value
+        $102^{\circ}$, which agrees precisely with the analytical
+        prediction from Section~\ref{LimitingShape}. 
 
 	To more thoroughly examine the influence of the smoothing parameters, we report in Table~\ref{table:arangle} the long-time values of the aspect ratio and opening angle for each of the three cases. The table shows that both the aspect ratio and opening angle converge with roughly first-order as $\eps, \sigma \to 0$. In addition, we show an estimate of the uncertainty involved in our angle measurement, obtained by varying the degree of the fitting polynomial and the size of the excluded region around the stagnation points. The estimates show that as $\eps, \sigma \to 0$ the angle-measurements become more precise and converge to the predicted value of $102^{\circ}$.
 
@@ -1144,12 +1176,21 @@ This modification allows erosion to sculpt the shape as it would normally, but w
         distribution created by erosion is only {\em approximately}
         uniform. Rather than strict uniformity, variations in body
         curvature must be offset by slight variations in $\Vn$ for
-        self-similar reduction~\cite{pir1973, mit-spa2016}. Pironneau's argument that the drag-minimizing form has constant surface stress applies to 2D as well. Therefore, the shape observed in our simulation is approximately the form that minimizes drag subject to fixed area, i.e.~the 2D counterpart to Pironneau's shape. How close this shape is to the true drag-minimizer is related to how close the stress distributions are to uniform, as can be seen in Fig.~\ref{shrink_intface}(b).
+        self-similar reduction~\cite{pir1973, mit-spa2016}. Pironneau's
+        argument that the drag-minimizing form has constant surface
+        stress applies to 2D as well. Therefore, the shape observed in
+        our simulation is approximately the form that minimizes drag
+        subject to fixed area, i.e.~the 2D counterpart to Pironneau's
+        shape. How close this shape is to the true drag-minimizer is
+        related to how close the stress distributions are to uniform, as
+        can be seen in Fig.~\ref{shrink_intface}(b).
 
 \subsection{Convergence test}
 
-As a final validation, we now verify that our method converges with the expected second-order accuracy in time. For this, we run the same single-body simulation shown in Figs.~\ref{01bodseq} and \ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 10^{-2}$. This stopping time is 56\% of the vanishing time, and was selected so that the body will have eroded substantially but is not small enough to compromise accuracy (due to the stress diverging).
-We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table \ref{convtab}, we report these errors along with the order of accuracy, obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine, demonstrating a nearly linear increase in computational time. Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of method's complexity.
+As a final validation, we now verify that our method converges with the
+expected second-order accuracy in time. For this, we run the same
+single-body simulation shown in Figs.~\ref{01bodseq} and~\ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 10^{-2}$. This stopping time is 56\% of the vanishing time, and was selected so that the body will have eroded substantially but is not small enough to compromise accuracy (due to the stress diverging).
+We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table~\ref{convtab}, we report these errors along with the order of accuracy, obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine, demonstrating a nearly linear increase in computational time. Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of method's complexity.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -1200,8 +1241,8 @@ p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
 \end{align}
 We then rescale the computed density function by the pressure difference
 \begin{align}
-\eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})}, \quad 
-\llambda \leftarrow \frac{\llambda}{(p_{-} - p_{+})}, \quad 
+\eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})}\, , \quad 
+\llambda \leftarrow \frac{\llambda}{(p_{-} - p_{+})}\, , \quad 
 \xi \leftarrow \frac{\xi}{(p_{-} - p_{+})}\, .
 \end{align}
 The velocity and pressure fields depend linearly on $\eeta$,
@@ -1210,8 +1251,8 @@ $\llambda$, and $\xi$, so this rescaling maintains a {\em fixed} pressure differ
 \subsection{Validation}
 
 To validate the multi-body simulations with this new
-fixed-pressure-drop condition, we report a convergence test in Table
-\ref{convtab}. In this test, we simulate the erosion of 20 bodies to a
+fixed-pressure-drop condition, we report a convergence test in
+Table~\ref{convtab2}. In this test, we simulate the erosion of 20 bodies to a
 stopping time of $t_s = 4 \times 10^{-3}$. This stopping time is 24\% of
 the time required for {\em all} bodies to vanish, and, in fact, a few of
 the bodies will have already vanished by $t_s$. To assess error, we
@@ -1229,7 +1270,7 @@ and confirming that multi-body interactions are handled correctly by the Stokes 
 %We compare the shapes of {\em all} bodies from simulations of successive resolution using {\combined} $L^2$-norm
 }
 \vspace{0.3 pc}
-\label{convtab}
+\label{convtab2}
 \begin{tabular}{l l l l}
 \hline
 \hspace{0.0pc} $\Delta t/t_s$
@@ -1343,7 +1384,7 @@ Multi-body simulation results: black curves correspond to the 6-body simulation 
 To further quantify these observations, Fig.~\ref{fig:mbodyplots} shows
 several measurements taken from the multi-body simulations. In all cases, the black curves correspond to the above 6-body simulation and gray curves to the 50-body simulation from Fig.~\ref{fig:50bodies}. First, Fig.~\ref{fig:mbodyplots}(a) shows the fraction of area occupied by the solid bodies as it varies in time. In the 6-body simulation, the initial configuration comprises about 40\% of the domain area, and this percentage steadily decreases as the bodies erode. The 50-body simulation shows a similar trend. 
 
-Next, Figure \ref{fig:mbodyplots}(b) shows how the flow rate, $\umax$, changes in time as a result of fixing the pressure drop across the cell. Notice that, in this figure, the vertical axis is logarithmic. Both simulations show the flow rate to increase rapidly, even during the early stages of erosion when the area fraction has not changed that significantly. Due to the logarithmic axis, the nearly linear trend seen in the figure corresponds to exponential growth of $\umax$. The change in area-fraction alone cannot account for this rapid growth, suggesting the reshaping process to be vital. In particular, the formation of channels observed in Fig.~\ref{fig:06bodies} may account for these higher flow rates.
+Next, Figure~\ref{fig:mbodyplots}(b) shows how the flow rate, $\umax$, changes in time as a result of fixing the pressure drop across the cell. Notice that, in this figure, the vertical axis is logarithmic. Both simulations show the flow rate to increase rapidly, even during the early stages of erosion when the area fraction has not changed that significantly. Due to the logarithmic axis, the nearly linear trend seen in the figure corresponds to exponential growth of $\umax$. The change in area-fraction alone cannot account for this rapid growth, suggesting the reshaping process to be vital. In particular, the formation of channels observed in Fig.~\ref{fig:06bodies} may account for these higher flow rates.
 
 Naturally, the flow allowed by the medium is connected to the amount of drag the bodies exert. We therefore show in Fig.~\ref{fig:mbodyplots}(c) the total drag exerted by all bodies as it varies in time. In both cases, the drag remains nearly constant throughout much of the simulation and then drops to zero in the final moments. Although all bodies are diminishing in size, the associated increase in $\umax$ leads to the nearly constant drag that is observed here.
 
