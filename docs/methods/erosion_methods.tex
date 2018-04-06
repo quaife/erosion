@@ -138,7 +138,7 @@ Tracking the interface of fluid-structure interaction problems with a long time 
 difficult as the mesh can become distorted and tangled. 
 Furthermore, the process of erosion naturally leads to regions of high curvature and even corners.
 The interface tracking issues are addressed in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arc length but that does not affect the interface dynamics; second, we introduce a curvature-penalizing term into the normal interface velocity to suppress high-frequency oscillations associated with nearly singular curvature.
-Furthermore, the interface is parametrized in the so-called {\thL} coordinate-system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
+Furthermore, the interface is parametrized in the so-called {\thL} coordinate system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
 
 We validate our method on a single circular body placed symmetrically in
 a pipe flow.  By artificially fixing the area of the body as a function
@@ -146,6 +146,23 @@ of time, we are able to characterize the long-time behavior of the shape
 and the resulting flow and these results agree with analytical results.
 Then, we compute the vorticity of erosion in multiply-connected
 geometries to better characterize erosion in porous media. 
+
+\paragraph{Limitations}
+We make two fundamental design choices: first, we restrict ourselves to
+two spatial dimensions, and second the bodies are considered immobile
+(i.e.~fixed to their initial locations). The restriction to two
+dimensions allows us to simulate the erosion of many bodies (up to $50$
+in this manuscript) with high resolution, giving us the ability to
+accurately characterize the erosion of a porous medium. While BIEs are
+available in three dimensions, the extra computational cost limits the
+number of bodies that could be practically simulated, making
+porous-medium simulations less feasible. The second assumption of
+immobile bodies affords a simple framework to study the effects of
+erosion in isolation. While other effects, such as sedimentation or
+transport, undoubtedly play a role in real applications, these effects
+would introduce additional complexity, both conceptually and
+numerically. We therefore defer the study of these effects to future
+work.
 
 \paragraph{Related Work}
 The effect of erosion on a geometry is quite rich.  For instance, it has
@@ -181,22 +198,6 @@ work, we will require a near-singular integration
 scheme~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015,
 hel-oja2008a, bea-lai2001}.
 
-\paragraph{Limitations}
-We make two fundamental design choices: first, we restrict ourselves to
-two spatial dimensions, and second the bodies are considered immobile
-(i.e.~fixed to their initial locations). The restriction to two
-dimensions allows us to simulate the erosion of many bodies (up to $50$
-in this manuscript) with high resolution, giving us the ability to
-accurately characterize the erosion of a porous medium. While BIEs are
-available in three dimensions, the extra computational cost limits the
-number of bodies that could be practically simulated, making
-porous-medium simulations less feasible. The second assumption of
-immobile bodies affords a simple framework to study the effects of
-erosion in isolation. While other effects, such as sedimentation or
-transport, undoubtedly play a role in real applications, these effects
-would introduce additional complexity, both conceptually and
-numerically. We therefore defer the study of these effects to future
-work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
@@ -1350,7 +1351,9 @@ To remove the effect of increasing flow rate, we show in Fig.~\ref{fig:mbodyplot
 \section{Conclusions\label{s:conclusions}}
 We have developed a numerical framework for simulating two-dimensional
 Stokesian erosion in a porous media.  By using a BIE formulation of the
-fluid equations and a {\thL}, we achieve spectral accuracy
+fluid equations and a {\thL}, we achieve spectral accuracy in space and
+second-order accuracy in time.  In addition, the non-negligible
+interactions between different bodies are accurately resolved.
 
 \todo[inline]{Here in revising}
 
