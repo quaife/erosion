@@ -1323,31 +1323,27 @@ Multi-body simulation results: black curves correspond to the 6-body simulation 
 To further quantify these observations, Fig.~\ref{fig:mbodyplots} shows
 several measurements taken from the multi-body simulations. In all cases, the black curves correspond to the above 6-body simulation and gray curves to the 50-body simulation from Fig.~\ref{fig:50bodies}. First, Fig.~\ref{fig:mbodyplots}(a) shows the fraction of area occupied by the solid bodies as it varies in time. In the 6-body simulation, the initial configuration comprises about 40\% of the domain area, and this percentage steadily decreases as the bodies erode. The 50-body simulation shows a similar trend. 
 
-Next, Figure \ref{fig:mbodyplots}(b) shows how the flow rate, $\umax$, changes in time as a result of fixing the pressure drop across the cell. Notice that, in this figure, the vertical axis is logarithmic. Both simulations show the flow rate to increase rapidly, even during the early stages of erosion when the area fraction has not changed that significantly. Due to the logarithmic axis, the nearly linear trend seen in the figures corresponds to exponential growth of $\umax$. The change in area-fraction alone cannot account for this rapid growth, suggesting the reshaping process to be vital. In particular, the formations of channels observed in Fig.~\ref{fig:06bodies} is most likely the key feature that enables the higher flow rates.
+Next, Figure \ref{fig:mbodyplots}(b) shows how the flow rate, $\umax$, changes in time as a result of fixing the pressure drop across the cell. Notice that, in this figure, the vertical axis is logarithmic. Both simulations show the flow rate to increase rapidly, even during the early stages of erosion when the area fraction has not changed that significantly. Due to the logarithmic axis, the nearly linear trend seen in the figure corresponds to exponential growth of $\umax$. The change in area-fraction alone cannot account for this rapid growth, suggesting the reshaping process to be vital. In particular, the formation of channels observed in Fig.~\ref{fig:06bodies} may account for these higher flow rates.
 
-Naturally, the flow rate allowed by the bodies is connected to the amount of drag that they exert. We therefore show in Fig.~\ref{fig:mbodyplots}(c) the total drag exerted by all bodies as it varies in time. In both cases, the drag remains nearly constant throughout much of the simulation and then drops to zero in the final moments. Here, the rapid increase of $\umax$ offsets the reduction in body size to create the nearly constant drag. 
+Naturally, the flow allowed by the medium is connected to the amount of drag the bodies exert. We therefore show in Fig.~\ref{fig:mbodyplots}(c) the total drag exerted by all bodies as it varies in time. In both cases, the drag remains nearly constant throughout much of the simulation and then drops to zero in the final moments. Although all bodies are diminishing in size, the associated increase in $\umax$ leads to the nearly constant drag that is observed here.
 
-To remove this effect of increasing flow rate, we show in Fig.~\ref{fig:mbodyplots}(d) the drag by $\umax$. Since both the pressure and viscous drag depend linearly on $\umax$, this normalized quantity, $F_D / (4 \pi \umax)$, is {\em independent} of $\umax$ and therefore isolates how drag depends on the configuration of bodies. In this way, we can interpret $F_D / (4 \pi \umax)$ as the {\em resistance} associated with the porous network.
-%
-The figure shows the resistance to decrease rapidly as the bodies erode. Once again the vertical axis is logarithmic, and so the linear trend corresponds to exponential decay of $F_D / (4 \pi \umax)$. We propose that the channelization is responsible for creating such a rapid decline in the network resistance.
+To remove the effect of increasing flow rate, we show in Fig.~\ref{fig:mbodyplots}(d) the drag normalized by $\umax$. Since both the pressure and viscous drag depend linearly on $\umax$, this normalized quantity, $F_D / (4 \pi \umax)$, is {\em independent} of $\umax$ and therefore isolates how drag depends on the configuration of bodies. In this way, we can interpret $F_D / (4 \pi \umax)$ as the {\em resistance} associated with the porous network. As seen in the figure, the medium's resistance decreases rapidly as its constituents erode. Since the vertical axis is logarithmic, the rate is roughly exponential at early times. As before, the reduction in area-fraction is not sufficient to explain this rapid decline, leaving the channelization process as the most likely mechanism.
+
+%Comparing the 50 and 6-body simualtions... Though the area fractions of the two simulations are nearly the same, the 50-body configuration provides about 5 times more resistance.
+
+% Good word: Spontaneous channelization
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions\label{s:conclusions}}
 
 
 \todo[inline]{Here in revising}
 
-% corresponds, pertains, is connected to, involves, is related to, concerns
-
-Comparing the 50 and 6-body simualtions...
-Though the area fractions of the two simulations are nearly the same, the 50-body configuration provides about 5 times more resistance.
-
-Look back at Fig. 1 and notice similar features: channelization, sort-of polygonal bodies, etc.
-
-
-{\bf Good word: Spontaneous channelization}
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusions\label{s:conclusions}}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
