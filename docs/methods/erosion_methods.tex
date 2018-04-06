@@ -34,10 +34,32 @@ steps. The overall accuracy of our method is spectral in space and second-order 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
-Flow-induced erosion deteriorates and reshapes solid material over a range of scales found in nature, from large geological formations~\cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015}, down to human-scale features and patterns~\cite{daerr2003erosion}. Though less visible, these same forces are at work at the very smallest scales, slowly deteriorating the individual constituents of porous media (e.g.~solid, sand, or clay) or biological structures like plaque and biofilms~\cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by such applications, we develop numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow---the most relevant regime for groundwater and bio-fluid applications.
+Flow-induced erosion deteriorates and reshapes solid material over a
+range of scales found in nature, from large geological
+formations~\cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015}, down
+to human-scale features and patterns~\cite{daerr2003erosion}. Though
+less visible, these same forces are at work at the very smallest scales,
+slowly deteriorating the individual constituents of porous media
+(e.g.~solid, sand, or clay) or biological structures like plaque and
+biofilms~\cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by such applications, we
+develop numerical methods to simulate fluid-mechanical erosion of
+multiple solid bodies in a Stokes flow---the most relevant regime for groundwater and bio-fluid applications.
 
-Recent work in the high-Reynolds number regime has highlighted the importance
-of the feedback between flow and morphology that occurs during erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann}, and a similar feedback occurs in the related processes of dissolution and melting~\cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}. In such cases, the flow alters the shape of the immersed structures, which in turn modifies the surrounding flow, and so on. Collectively, such processes have been referred to as `sculpting with flow'~\cite{ristroph2018sculpting}. From this viewpoint, the example of an eroding porous medium presents new opportunities and challenges. First, the medium itself is composed of many solid constituents, so multi-body interactions, especially close interactions, must be considered. Second, the long-range interactions facilitated by Stokes flow even more strongly couples the shape evolution of neighboring bodies, making their interactions even more important.
+Recent work in the high-Reynolds number regime has highlighted the
+importance of the feedback between flow and morphology that occurs
+during erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013,
+hewett2017evolution, moore2017riemann}, and a similar feedback occurs in
+the related processes of dissolution and melting~\cite{Huang2015,
+kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion,
+hewett2017pear, claudin2017dissolution}. In such cases, the flow alters
+the shape of the immersed structures, which in turn modifies the
+surrounding flow, and so on. Collectively, such processes have been
+referred to as `sculpting with flow'~\cite{ristroph2018sculpting}. From
+this viewpoint, the example of an eroding porous medium presents new
+opportunities and challenges. First, the medium itself is composed of
+many solid constituents, so multi-body interactions, especially close
+interactions, must be considered. Second, the long-range interactions
+facilitated by Stokes flow makes all the interactions between bodies important.
 
 The methods developed here will allow us to simulate the erosion of many
 bodies, as demonstrated in Fig.~\ref{fig:50bodies} for the case of 50
@@ -52,10 +74,7 @@ particular, that many bodies develop corner-like features and nearly
 flat faces, with straight channels intervening between them. In the
 figure, color represents the vorticity of the surrounding flow, which
 reduces to shear on solid boundaries and thus provides a convenient tool
-for visualizing local erosion rates. To perform this simulation of
-Stokesian erosion of a porous media, two fast and accurate methods are
-employed---one to solve the fluid equations and the other to integrate
-the eroding grains.  
+for visualizing local erosion rates.  
 
 % Point out complex shapes with sharp features, maybe polygonal.
 % Point out channel structures develop.
@@ -79,8 +98,11 @@ the eroding grains.
 % For groundwater flow, Darcy's law is often used, but this does not resolve the pore structure and assumes a homogeneous geometry which is often not valid. Instead, we use the incompressible Stokes equations as the governing fluid equations, and the individual pores are resolved which results in a complex multiply-connected geometry.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The fluid equations are reformulated in terms of a boundary integral
-equation (BIE).  Since the boundary conditions are Dirichlet, we use a
+To perform this simulation of Stokesian erosion of a porous media, two
+fast and accurate methods are employed---one to solve the fluid
+equations and the other to integrate the eroding grains.  The fluid
+equations are reformulated in terms of a boundary integral equation
+(BIE).  Since the boundary conditions are Dirichlet, we use a
 double-layer potential formulation so that the resulting BIE is
 second-kind.  This second-kind BIE is discretized with the spectrally
 accurate trapezoid rule~\cite{tre-wei2014} which results in a
@@ -161,7 +183,6 @@ and not moving, so their separation increases with time.  Therefore, in
 this work, we apply an upsampling scheme, but in future work, we will
 require a near-singular integration scheme~\cite{qua-bir2014a,
 klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
-
 
 We make two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We therefore defer the study of these effects to future work.
 
