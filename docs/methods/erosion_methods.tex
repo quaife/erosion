@@ -39,7 +39,23 @@ Flow-induced erosion deteriorates and reshapes solid material over a range of sc
 Recent work in the high-Reynolds number regime has highlighted the importance
 of the feedback between flow and morphology that occurs during erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann}, and a similar feedback occurs in the related processes of dissolution and melting~\cite{Huang2015, kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}. In such cases, the flow alters the shape of the immersed structures, which in turn modifies the surrounding flow, and so on. Collectively, such processes have been referred to as `sculpting with flow'~\cite{ristroph2018sculpting}. From this viewpoint, the example of an eroding porous medium presents new opportunities and challenges. First, the medium itself is composed of many solid constituents, so multi-body interactions, especially close interactions, must be considered. Second, the long-range interactions facilitated by Stokes flow even more strongly couples the shape evolution of neighboring bodies, making their interactions even more important.
 
-The methods developed here will allow us to simulate the erosion of many bodies, as demonstrated in Fig.~\ref{fig:50bodies} for the case of 50 bodies (of randomly assigned initial sizes and positions). Here, the erosion of solid material arises from the mechanical stress induced by the surrounding flow. In particular, we take the local rate of erosion to be proportional to the magnitude of the shear stress---a law that has been verified by laboratory experiments~\cite{ris-moo-chi-she-zha2012}. As seen in Fig.~\ref{fig:50bodies}, erosion not only diminishes the size of the bodies, but also alters their shapes considerably. Notice, in particular, that many bodies develop corner-like features and nearly flat faces, with straight channels intervening between them. In the figure, color represents the vorticity of the surrounding flow, which reduces to shear on solid boundaries and thus provides a convenient tool for visualizing local erosion rates.
+The methods developed here will allow us to simulate the erosion of many
+bodies, as demonstrated in Fig.~\ref{fig:50bodies} for the case of 50
+bodies (of randomly assigned initial sizes and positions). Here, the
+erosion of solid material arises from the mechanical stress induced by
+the surrounding flow. In particular, we take the local rate of erosion
+to be proportional to the magnitude of the shear stress---a law that has
+been verified by laboratory experiments~\cite{ris-moo-chi-she-zha2012}.
+As seen in Fig.~\ref{fig:50bodies}, erosion not only diminishes the size
+of the bodies, but also alters their shapes considerably. Notice, in
+particular, that many bodies develop corner-like features and nearly
+flat faces, with straight channels intervening between them. In the
+figure, color represents the vorticity of the surrounding flow, which
+reduces to shear on solid boundaries and thus provides a convenient tool
+for visualizing local erosion rates. To perform this simulation of
+Stokesian erosion of a porous media, two fast and accurate methods are
+employed---one to solve the fluid equations and the other to integrate
+the eroding grains.  
 
 % Point out complex shapes with sharp features, maybe polygonal.
 % Point out channel structures develop.
@@ -63,28 +79,37 @@ The methods developed here will allow us to simulate the erosion of many bodies,
 % For groundwater flow, Darcy's law is often used, but this does not resolve the pore structure and assumes a homogeneous geometry which is often not valid. Instead, we use the incompressible Stokes equations as the governing fluid equations, and the individual pores are resolved which results in a complex multiply-connected geometry.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-To solve the incompressible Stokes equations in the complex geometry, we
-employ a boundary integral equation (BIE) method.
-The present study develops numerical methods to simulate erosion of multiply-connected two-dimensional geometries. In this fashion, individual pores are resolved rather than homogenized.  A boundary integral equation (BIE) is used to solve the incompressible Stokes equations in the complex geometry.  The resulting method resolves individual grains and the non-negligible interactions between bodies.  To link the eroding body and fluid dynamics, the body is eroded in the normal direction at a rate that is proportional to the magnitude of the shear stress.
+The fluid equations are reformulated in terms of a boundary integral
+equation (BIE).  Since the boundary conditions are Dirichlet, we use a
+double-layer potential formulation so that the resulting BIE is
+second-kind.  This second-kind BIE is discretized with the spectrally
+accurate trapezoid rule~\cite{tre-wei2014} which results in a
+well-conditioned dense linear system for an unknown density function.
+This linear system is solved using fast-multipole-accelerated
+GMRES~\cite{saa-sch1986}.  Once the density function is computed, the
+erosion rate (shear stress) is computed with a spectrally accurate
+odd-even quadrature rule~\cite{sid-isr1988}.  In addition, the pressure
+and vorticity are computed in the fluid bulk (Fig.~\ref{fig:50bodies})
+with an upsampled trapezoid rule in the fluid bulk to assist with
+visualizing the effect of erosion in porous media.
 
-% Redundant statement: individual pores are resolved; individual grains are resolved.
+%
+%To create high-fidelity and computationally efficient numerical methods,
+%two fast and accurate methods are employed.  First, the fluid velocity
+%and the erosion rate (shear stress) are computed with a
+%fast-multipole-accelerated Kryolv method applied to a spectrally
+%accurate discretization of the governing equations.  In particular,
+%GMRES~\cite{saa-sch1986} is applied to a spectrally-accurate Nystr\"om
+%discretization of the BIE~\cite{tre-wei2014}, a spectrally accurate
+%quadrature rule is used to compute the shear stress~\cite{sid-isr1988},
+%and all arclength derivatives are computed with Fourier differentiation.
+%In addition to computing the shear stress, we also compute the vorticity
+%in the fluid bulk.  The vorticity is particularly insightful since it is
+%identical to the shear stress on no-slip boundaries.  Therefore, by
+%computing the vorticity, we are able to identify regions where the
+%erosion rate will be fast or slow (Fig.~\ref{fig:50bodies}).
 
-To create high-fidelity and computationally efficient numerical methods,
-two fast and accurate methods are employed.  First, the fluid velocity
-and the erosion rate (shear stress) are computed with a
-fast-multipole-accelerated Kryolv method applied to a spectrally
-accurate discretization of the governing equations.  In particular,
-GMRES~\cite{saa-sch1986} is applied to a spectrally-accurate Nystr\"om
-discretization of the BIE~\cite{tre-wei2014}, a spectrally accurate
-quadrature rule is used to compute the shear stress~\cite{sid-isr1988},
-and all arclength derivatives are computed with Fourier differentiation.
-In addition to computing the shear stress, we also compute the vorticity
-in the fluid bulk.  The vorticity is particularly insightful since it is
-identical to the shear stress on no-slip boundaries.  Therefore, by
-computing the vorticity, we are able to identify regions where the
-erosion rate will be fast or slow (Fig.~\ref{fig:50bodies}).
-
-Once the erosion rate is computed, the shape is integrated in time with
+Once the erosion rate is computed, the grains are integrated in time with
 second-order accuracy.  Tracking the interface of fluid-structure
 interaction problems with a long time horizon is particularly
 difficult---the mesh is often distorted and tangled.  Moreover, erosion
@@ -104,30 +129,17 @@ and the resulting flow and these results agree with analytical results.
 Then, we compute the vorticity of erosion in multiply-connected
 geometries to better characterize erosion in porous media. 
 
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Limitations} 
-We begin by making two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We therefore defer the study of these effects to future work.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Related work} The effect of erosion on a geometry is quite
-rich.  For instance, it has been hypothesized and numerically observed
-that the erosion leads to a shear stress that is uniform on the body
-which results in a uniform erosion rate.  The shape that has a uniform
-shear stress is analyzed in three dimensions by Montenegro-Johnson and
-Lauga~\cite{mon-lau2015} which is an extension of the analysis done by
-Pironneau~\cite{pir1973} to find a Stokesian drag minimizing shape. 
+The effect of erosion on a geometry is quite rich.  For instance, it has
+been hypothesized and numerically observed that the erosion leads to a
+shear stress that is uniform on the body which results in a uniform
+erosion rate.  The shape that has a uniform shear stress is analyzed in
+three dimensions by Montenegro-Johnson and Lauga~\cite{mon-lau2015}
+which is an extension of the analysis done by Pironneau~\cite{pir1973}
+to find a Stokesian drag minimizing shape. 
 %\todo[inline]{Double check this statement. I am not sure that the shape found by Lauga has uniform shear stress. The shape found by Pironneau does.}
 In this idealized case, analytical axisymmetric shapes that minimize the
 drag can be found.  However, the effect of erosion on a porous media is
-less understood.
-
-Simulating eroding bodies has been studied analytically, experimentally, and numerically.  Many of these works are motivated by high Reynolds number geophysical applications, such as the work of the second author~\cite{moo-ris-chi-zha-she2013, ris-moo-chi-she-zha2012, moore2017riemann} and others~\cite{par-izu2000, lag2000, coh-dev-sey-yi-szy-rot2015, han1969, Rothman2012, hewett2017evolution, ristroph2018sculpting, lopez2018cfd, lachaussee2018competitive, cohen2016erosion}.  The work most closely related to ours simulates erosion in a three-dimensional incompressible Stokesian fluid~\cite{mit-spa2016}, but they only consider single eroding body. 
-
+less understood.  The work most closely related to ours simulates erosion in a three-dimensional incompressible Stokesian fluid~\cite{mit-spa2016}, but they only consider single eroding body. 
 
 To simulate multiple bodies, it is essential to resolve the nonlocal
 effects between the different bodies.  In this work, these interactions
@@ -151,16 +163,18 @@ require a near-singular integration scheme~\cite{qua-bir2014a,
 klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
 
 
+We make two fundamental design choices: first, we restrict ourselves to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We therefore defer the study of these effects to future work.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Outline of the paper} In Section~\ref{s:formulation}, we
-describe the governing equations for both the fluid and the erosion
-model in a \thL~framework.  In Section~\ref{s:method}, the numerical
-methods in both space and time are described and Section~\ref{s:qoi}
-describes how to compute the vorticity, pressure, and drag.
-Section~\ref{s:SingleResults} gives several numerical examples for a
-single body, and Section~\ref{s:MultiResults} presents numerical
-examples for multiply-connected domains.  Finally, concluding remarks
-are made in Section~\ref{s:conclusions}.
+In Section~\ref{s:formulation}, we describe the governing equations for
+both the fluid and the erosion model in a \thL~framework.  In
+Section~\ref{s:method}, the numerical methods in both space and time are
+described and Section~\ref{s:qoi} describes how to compute the
+vorticity, pressure, and drag.  Section~\ref{s:SingleResults} gives
+several numerical examples for a single body, and
+Section~\ref{s:MultiResults} presents numerical examples for
+multiply-connected domains.  Finally, concluding remarks are made in
+Section~\ref{s:conclusions}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation}
