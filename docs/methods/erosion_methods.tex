@@ -1396,23 +1396,25 @@ To remove the effect of increasing flow rate, we show in Fig.~\ref{fig:mbodyplot
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions\label{s:conclusions}}
-We have developed a numerical framework for simulating two-dimensional
-Stokesian erosion in a porous media.  By using a BIE formulation of the
-fluid equations and a {\thL} change of variables, we achieve spectral
-accuracy in space and second-order accuracy in time.  In addition, the
-non-negligible interactions between different bodies are accurately
-resolved.  Using slender body theory and flow past a wedge, the method
-is verified against analytical results for the area, opening angle, and
-total drag of a single eroding body.  Then, for multi-body erosion, a
-more realistic pressure drop boundary condition, and we compute the area
-fraction, flow rate, and total drag in the channel.
+We have combined two accurate and stable numerical methods to simulate
+two-dimensional viscous erosion in a porous medium.  First, a BIE
+formulation of the incompressible Stokes equations discretizes only the
+boundary of the bodies and resolves their non-negligible interactions.
+Second, the bodies are evolved with the so-called {\thL} variables to
+avoid tangling and distortion of the mesh.  The resulting numerical
+method is spectral in space, second-order in time, and is accelerated
+with the fast multipole method.
 
-\todo[inline]{Here in revising}
-
-
-
-
-
+Using slender body theory and flow past a wedge, the method is verified
+against analytical results for the area, opening angle, and total drag
+of a single eroding body.  Then, for multi-body erosion with a realistic
+pressure drop boundary condition, we compute the area fraction, flow
+rate, and total drag across a channel.  We observe that erosion leads to
+channelization, and this reduces the resistance more than would be
+expected if the area fraction were reduced by simply scaling down the
+size of the bodies.  This indicates that the area fraction can not fully
+characterize flow in eroding porous media since the interactions between
+the bodies plays a role in the resistance.
 
 
 
