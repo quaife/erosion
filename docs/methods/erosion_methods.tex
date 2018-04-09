@@ -644,8 +644,7 @@ At the first stage of RK2 (the half step) we discretize~\eqref{eq:mu}--\eqref{eq
 = \mu_k^{(n)} \hat{\NLterm}_k^{(n)} \, ,
 \end{align}
 where the superscript indicates the time step. At the next stage of RK2
-it will be necessary to evaluate derivatives at the half step $n+1/2$, thus requiring a call to the Stokes solver for which the body shapes must be known. We therefore insert~\eqref{eq:mu12d} into~\eqref{eq:th12d} and solve for $\theta^{(n+1/2)}$, giving
-\todo[inline]{are we solving for $\theta$ or $\hat{\theta}_k?$.}
+it will be necessary to evaluate derivatives at the half step $n+1/2$, thus requiring a call to the Stokes solver for which the body shapes must be known. We therefore insert~\eqref{eq:mu12d} into~\eqref{eq:th12d} and solve for $\thhat_k^{(n+1/2)}$, giving
 \begin{align}
 \label{eq:th12}
 \thhat_k^{(n+1/2)} = \left( \thhat_k^{(n)} + \frac{1}{2} \Dt \, \hat{\NLterm}_k^{(n)} \right)
@@ -664,8 +663,7 @@ At the second stage of RK2, we discretize~\eqref{eq:mu}--\eqref{eqn:thetaevo3} a
 & \frac{ \mu_k^{(n+1)} \thhat_k^{(n+1)} - \mu_k^{(n)} \thhat_k^{(n)}}{\Dt} =
 \mu_k^{(n+1/2)} \hat{\NLterm}_k^{(n+1/2)} \, .
 \end{align}
-We must eventually compute the geometry at step $n+1$, and so we insert~\eqref{eq:mu1d} into~\eqref{eq:th1d} and solve for $\theta^{(n+1)}$, giving
-\todo[inline]{are we solving for $\theta$ or $\hat{\theta}_k?$.}
+We must eventually compute the geometry at step $n+1$, and so we insert~\eqref{eq:mu1d} into~\eqref{eq:th1d} and solve for $\thhat_k^{(n+1)}$, giving
 \begin{align}
 \thhat_k^{(n+1)} =  \thhat_k^{(n)} \exp \left( - \epsilon k^2 \Dt
 \elfun^{(n+1/2)} \right) + \Dt \, \hat{\NLterm}_k^{(n+1/2)} \exp \left(
