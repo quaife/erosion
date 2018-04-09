@@ -81,25 +81,16 @@ The interface is parametrized in the so-called {\thL} coordinate system so that 
 We supplement our primarily computational study with a few analytical results. In particular, we find a single body eroding in Stokes flow tends to a slender, for-aft symmetric form with sharp corners at its front and rear. By appealing to the principle that erosion more evenly distributes the shear stress along the surface, we can analytically predict the opening angle formed at the front and rear. In addition, drag laws from slender-body theory allows us to derive scaling laws for the rate of the body's area and drag reduction. These analytical results, in addition to having value in their own right, allow us to conclusively validate our simulation. 
 
 \paragraph{Limitations}
-We make two fundamental design choices in our simulation: first, we restrict attention to
-two spatial dimensions, and second the bodies are considered immobile
-(i.e.~fixed to their initial locations). The restriction to two
-dimensions allows us to simulate the erosion of many bodies (up to $50$
-in this manuscript) with high resolution, giving us the ability to
-accurately characterize the erosion of a porous medium. While BIEs are
-available in three dimensions, the extra computational cost limits the
-number of bodies that could be practically simulated, making
-porous-medium simulations less feasible. The second assumption of
-immobile bodies affords a simple framework to study the effects of
-erosion in isolation. While other effects, such as sedimentation or
-transport, undoubtedly play a role in real applications, these effects
-would introduce additional complexity, both conceptually and
-numerically. We therefore defer the study of these effects to future
-work.
+We make two fundamental design choices in our simulation: first, we restrict attention to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). The restriction to two dimensions allows us to simulate the erosion of many bodies (up to $50$ in this manuscript) with high resolution, giving us the ability to accurately characterize the erosion of a porous medium. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated, making porous-medium simulations less feasible. The second assumption of immobile bodies affords a simple framework to study the effects of erosion in isolation. While other effects, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We therefore defer the study of these effects to future work.
 
 \paragraph{Related Work}
 
-In closely related work, Mitchell \& Spagnolie developed methods to simulate viscous erosion in three dimensions  \cite{mit-spa2016}. That work employed a traction integral equation to solve for the surrounding Stokes flow. The advantage to this formulation is that it immediately provides the shear stress required to evolve boundaries. However, the standard double-layer potential used here will allow us to compute certain quantities in the fluid bulk, such as vorticity and pressure, that will facilitate our understanding of the erosion process. Furthermore, our primary aim is to simulate the erosion of multiple bodies held fixed within a porous network, whereas Mitchell \& Spagnolie simulated a single eroding body that is mobile.
+In closely related work, Mitchell \& Spagnolie used a traction integral equation formulation to simulate viscous erosion of a single body in three dimensions \cite{mit-spa2016}. Their formulation was flexible enough to simulate a {\em mobile} body that erodes in various background flows (uniform flow, shear flow, etc.). An advantage of the traction formulation is that is directly provides the shear stress that is needed to evolve surfaces. 
+
+Since our aim is to simulate porous-medium erosion, we will consider {\em many} bodies and, further,  we choose to fix these bodies to their initial locations. Thus, instead of a single, mobile body, we will consider multiple, immobile bodies.
+Rather than the traction-formulation, we will employ a standard double-layer formulation which will easily allow us to compute bulk quantities such as pressure and vorticity as a post-processing step.
+
+%That work employed a traction integral equation to solve for the surrounding Stokes flow. The advantage to this formulation is that it immediately provides the shear stress required to evolve boundaries. However, the standard double-layer potential used here will allow us to compute certain quantities in the fluid bulk, such as vorticity and pressure, that will facilitate our understanding of the erosion process. Furthermore, our primary aim is to simulate the erosion of multiple bodies held fixed within a porous network, whereas Mitchell \& Spagnolie simulated a single eroding body that is mobile.
 
 For these porous network simulations, it is essential to resolve the
 nonlocal effects between the different bodies.  BIEs naturally resolve
