@@ -38,17 +38,17 @@ Flow-induced erosion deteriorates and reshapes solid material over a
 range of scales found in nature, from large geological
 formations~\cite{han1969, Rothman2012, coh-dev-sey-yi-szy-rot2015}, down
 to human-scale features and patterns~\cite{daerr2003erosion}. Though
-less visible, these same forces are at work at the very smallest scales,
+less visible, these same forces are working at the very smallest scales,
 slowly deteriorating the individual constituents of porous media
 (e.g.~solid, sand, or clay) or biological structures like plaque and
 biofilms~\cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by such applications, we
 develop numerical methods to simulate fluid-mechanical erosion of
-multiple solid bodies in a Stokes flow---the most relevant regime for groundwater and bio-fluid applications.
+multiple solid bodies in a Stokes flow---the most relevant regime for groundwater and the aforementioned bio-fluid applications.
 
 Recent work in the high-Reynolds number regime has highlighted the
 importance of the feedback between flow and morphology that occurs
 during erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013,
-hewett2017evolution, moore2017riemann}, and a similar feedback occurs in
+hewett2017evolution, moore2017riemann}; a similar feedback occurs in
 the related processes of dissolution and melting~\cite{Huang2015,
 kondratiuk2015steadily, rycroft2016asymmetric, cohen2016erosion,
 hewett2017pear, claudin2017dissolution}. In such cases, the flow alters
@@ -121,7 +121,7 @@ Tracking the interface of fluid-structure interaction problems with a long time 
 difficult as the mesh can become distorted and tangled. 
 Furthermore, the process of erosion naturally leads to regions of high curvature and even corners.
 The interface tracking issues are addressed in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arc length but that does not affect the interface dynamics; second, we introduce a curvature-penalizing term into the normal interface velocity to suppress high-frequency oscillations associated with nearly singular curvature.
-Furthermore, the interface is parametrized in the so-called {\thL} coordinate system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
+The interface is parametrized in the so-called {\thL} coordinate system so that the curvature penalization appears as a diffusive term that can easily be handled in a numerically stable fashion with an exponential integrator.
 
 We supplement our primarily computational study with a few analytical results. In particular, we find a single body eroding in Stokes flow tends to a slender, for-aft symmetric form with sharp corners at its front and rear. By appealing to the principle that erosion more evenly distributes the shear stress along the surface, we can analytically predict the opening angle formed at the front and rear. In addition, drag laws from slender-body theory allows us to derive scaling laws for the rate of the body's area and drag reduction. These analytical results, in addition to having value in their own right, allow us to conclusively validate our simulation. 
 
@@ -144,7 +144,7 @@ work.
 
 \paragraph{Related Work}
 
-The most closely related work to ours is Mitchell \& Spagnolie \cite{mit-spa2016}, who developed methods to simulate viscous erosion in three dimensions. That work employed a traction integral equation to solve for the surrounding Stokes flow. The advantage to this formulation is that it immediately provides the shear stress required to evolve boundaries. However, the standard double-layer potential used here will allow us to compute certain quantities in the fluid bulk, such as vorticity and pressure, that will facilitate our understanding of the erosion process. Furthermore, our primary aim is to simulate the erosion of multiple bodies held fixed within a porous network, whereas Mitchell \& Spagnolie simulated a single eroding body that is mobile.
+In closely related work, Mitchell \& Spagnolie developed methods to simulate viscous erosion in three dimensions  \cite{mit-spa2016}. That work employed a traction integral equation to solve for the surrounding Stokes flow. The advantage to this formulation is that it immediately provides the shear stress required to evolve boundaries. However, the standard double-layer potential used here will allow us to compute certain quantities in the fluid bulk, such as vorticity and pressure, that will facilitate our understanding of the erosion process. Furthermore, our primary aim is to simulate the erosion of multiple bodies held fixed within a porous network, whereas Mitchell \& Spagnolie simulated a single eroding body that is mobile.
 
 For these porous network simulations, it is essential to resolve the
 nonlocal effects between the different bodies.  BIEs naturally resolve
