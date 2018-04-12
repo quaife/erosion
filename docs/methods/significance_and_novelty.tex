@@ -8,23 +8,27 @@
   Bryan D.~Quaife and M.~Nicholas J.~Moore
 \end{center}
 In this paper we describe a numerical method to simulate viscous erosion
-of a two-dimensional porous medium with a long-term goal of simulating
-groundwater erosion.  Based on previous experimental results, the
-erosion rate is assumed to be proportional to the magnitude of the shear
-stress.  To increase the numerical stability, this law is supplemented
-with a regularization term that penalizes high curvature regions.  We
-avert stiffness with a change of variables that results in a system of
-differential equations with a stiff linear, and these are solved with a
-second-order exponential time stepping method.  
+of a two-dimensional porous medium.  This is a step towards a long-term
+goal of developing stable, accurate, and fast numerical methods to
+simulate and understand groundwater erosion.
 
-To compute the shear stress, we assume the fluid is viscous---a
-standard model for groundwater flow.  Then, the governing equations
-(incompressible Stokes) are formulated as a well-conditioned boundary
-integral equation formulation.  The integral equation resolves
-inter-body interactions and is discretized with spectral accuracy and
-solved with fast-multipole-accelerated GMRES.  Then, to further
-characterize the flow, we compute the drag of the bodies and the
-vorticity in the bulk which is used to characterize the erosion rate.
+Based on previous experimental results, the erosion rate is assumed to
+be proportional to the magnitude of the shear stress.  To increase the
+numerical stability, this law is supplemented with a regularization term
+that penalizes high curvature regions and smooths the erosion rate at
+regions where the shear stress changes sign.  We use a change of
+variables to linearize stiffness, and the resulting system of
+differential equations is solved with a second-order exponential time
+stepping method.
+
+To compute the shear stress, we assume the fluid is viscous---a standard
+model for groundwater flow.  The governing equations (incompressible
+Stokes) are formulated as a well-conditioned boundary integral equation.
+The integral equation discretion resolves the non-negligible inter-body
+interactions with spectral accuracy and is solved with
+fast-multipole-accelerated GMRES.  To further characterize the flow, we
+compute the drag of the bodies and the vorticity in the bulk which is
+used to characterize the erosion rate.
 
 The numerical simulation of a single eroding body is compared with
 analytical solutions.  We show good agreement between the eroding body's
