@@ -35,11 +35,11 @@ The overall accuracy of our method is spectral in space and second-order in time
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{s:intro}}
-Flow-induced erosion deteriorates and reshapes solid material over a range of scales found in nature, from massive land formations~\cite{han1969, perron2009formation, abrams2009growth, petroff2011geometry, jerolmack2012internal, Rothman2012, coh-dev-sey-yi-szy-rot2015, perkins2015amplification}, to centimeter-scale features and patterns~\cite{daerr2003erosion, berhanu2012shape, nienhuis2014wavelength, domokos2014river}. Though less visible, these same forces are working at the very smallest scales, slowly deteriorating the individual constituents of porous media (e.g.~soil, sand, or clay) or biological structures like plaque and biofilms~\cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by such examples, this paper develops numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in a Stokes flow---the most relevant regime for groundwater \cite{bear2013dynamics, cao2010coupled} and the aforementioned bio-fluid applications.
+Flow-induced erosion deteriorates and reshapes solid material over a range of scales found in nature, from massive land formations~\cite{han1969, perron2009formation, abrams2009growth, petroff2011geometry, jerolmack2012internal, Rothman2012, coh-dev-sey-yi-szy-rot2015, perkins2015amplification}, to centimeter-scale features and patterns~\cite{daerr2003erosion, berhanu2012shape, nienhuis2014wavelength, domokos2014river}. Though less visible, these same forces are working at the very smallest scales, slowly deteriorating the individual constituents of porous media (e.g.~soil, sand, or clay) or biological structures like plaque and biofilms~\cite{pic-van-hei2000, sha2002, gro-gij-van-fer-hat-van-yua-wen2007}. Motivated by such examples, this paper develops numerical methods to simulate fluid-mechanical erosion of multiple solid bodies in Stokes flow---the most relevant regime for groundwater \cite{bear2013dynamics, cao2010coupled} and the aforementioned bio-fluid applications.
 
 Recent work in the high-Reynolds-number regime has highlighted the importance of a shape-flow feedback that occurs during erosion~\cite{ris-moo-chi-she-zha2012, moo-ris-chi-zha-she2013, hewett2017evolution, moore2017riemann, lopez2018cfd} and the related processes of dissolution and melting~\cite{Huang2015, kondratiuk2015steadily, dallaston2015channelization, rycroft2016asymmetric, cohen2016erosion, hewett2017pear, claudin2017dissolution}.  In these cases, the fluid alters the morphology of immersed structures, which in turn modifies the surrounding flow field, and so on. Such examples of `sculpting with flow'~\cite{ristroph2018sculpting} have been examined in the context of a single body~\cite{ris-moo-chi-she-zha2012, moore2017riemann} and, more recently, multiple bodies whose shape evolution is intertwined~\cite{hewett2017evolution}. From this viewpoint, the example of an eroding porous medium presents new opportunities and challenges. First, since the medium is composed of many individual constituents, multiple bodies must be considered. Second, the dense packing present in typical porous-media applications requires close-range interactions to be resolved. Finally, long-range effects inherent to the Stokes limit couples the shape evolution of {\em all} bodies to a greater degree than any other regime.
 
-Ultimately, the methods developed here will lead to high-fidelity simulations of multibody Stokes erosion as illustrated in Fig.~\ref{fig:50bodies} for the case of 50 bodies (of randomly assigned initial sizes and positions). Here, the erosion of solid material arises from the mechanical stress induced by the surrounding flow. In particular, we take the local rate of erosion to be proportional to the magnitude of the shear stress---a law that has been verified by laboratory experiments~\cite{ris-moo-chi-she-zha2012}. As seen in Fig.~\ref{fig:50bodies}, erosion not only diminishes the size of the bodies, but also alters their shapes considerably. In particular, several bodies develop corner-like features and nearly flat faces, with straight channels intervening between them. In the figure, color represents the vorticity of the surrounding flow, which reduces to shear on solid boundaries and thus provides a convenient way to visualize local erosion rates. Several bodies vanish in finite time and the simulation continues without interruption.
+Ultimately, the methods developed here will lead to high-fidelity simulations of multibody Stokes erosion as illustrated in Fig.~\ref{fig:50bodies} for the case of 50 bodies (of randomly assigned initial sizes and positions). Here, the erosion of solid material arises from the mechanical stress induced by the surrounding flow. In particular, we take the local erosion rate to be proportional to the magnitude of the shear stress---a law that has been verified by laboratory experiments~\cite{ris-moo-chi-she-zha2012}. As seen in Fig.~\ref{fig:50bodies}, erosion not only diminishes the size of the bodies, but also alters their shapes considerably. In particular, several bodies develop corner-like features and nearly flat faces, with straight channels intervening between them. In the figure, color represents the vorticity of the surrounding flow, which reduces to shear on solid boundaries and thus provides a convenient way to visualize local erosion rates. Several bodies vanish in finite time and the simulation continues without interruption.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -93,7 +93,9 @@ velocity} \\
 &&\mbox{\em erosion model},
 \end{split}
 \end{equation}
-where $\Vn$ is the normal velocity of the interface and $\mu$ is the fluid viscosity.  The constant of proportionality of the erosion law only sets the time scale, so we have set $\Vn = |\tau|$ as described in equation~\eqref{eqn:erosionModel}.  For the sake of numerical stability, we modify this law in Section~\ref{sec:thetaL}. 
+where $\Vn$ is the normal velocity of the interface and $\mu$ is the fluid viscosity.  The constant of proportionality of the erosion law only sets the time scale, so we have set $\Vn = |\tau|$ as described in equation~\eqref{eqn:erosionModel}.  
+\todo[inline]{The above sentence is awkard. Could it be rephrased? First, the reader probably does not know what constant of proportionality you are referring to because we do not have one in the equation. Second, there are too many 'ofs' in a row.}
+For the sake of numerical stability, we will modify this law in Section~\ref{sec:thetaL}. 
 
 The outer wall is formed by rounding off the corners of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align}
@@ -106,6 +108,7 @@ where $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply
   \input{figs/schematic.tikz}
   \caption{\label{fig:schematic} A schematic for the governing equations.  A no-slip boundary condition is imposed on each body $\gamma_\ell$ whose unit normal points outward relative to the geometry.  On the outer geometry $\Gamma$, a Hagen-Poiseuille flow is imposed.  The bodies are eroded at a rate that is proportional to the magnitude of the shear stress applied by the Stokesian fluid.  The bodies are constrained to the middle third of the channel that is located between the dashed lines.}
 \end{figure}
+\todo[inline]{Here is an example where you can avoid the passive voice because it is totally unnecessary. Instead of saying 'the bodies are eroded', simply say 'the bodies erode'. Also, a fluid cannot be Stokesian, since the Reynolds number depends on the length scale and velocity scale. It is the flow that is Stokes.}
 
 We describe how the incompressible Stokes equations are solved in $\Omega$ using a boundary integral equation in Section~\ref{sec:bies}.  In Section~\ref{sec:shearStressLP}, we discuss how the shear stress is computed.  Finally, in Section~\ref{sec:thetaL}, we describe how corners in the bodies are avoided and perform a change of coordinates to treat a stiff term.
 
@@ -173,7 +176,9 @@ Here,
 \end{align}
 removes the rank one null space resulting from the flux-free requirement of $\ff$.
 
-This BIE formulation requires that $\bd\Omega$ is smooth.  Unfortunately, smoothness is not guaranteed by erosion since corners develop at locations where the shear stress vanishes.  One option is to modify our BIE to handle corners~\cite{rac-ser2017, ser-rok2016, hel2011, gil-hao-mar2014, bre2012}, but these methods require the corner's location, a non-uniform spaced mesh, or are ill-conditioned.  Instead, make a slight modification to the erosion model in Section~\ref{sec:thetaL} which allows us to control the smoothness of the grains.  In this manner, the BIE as described above can be applied.
+This BIE formulation requires that $\bd\Omega$ is smooth.  Unfortunately, smoothness is not guaranteed by erosion since corners develop at locations where the shear stress vanishes.  One option is to modify our BIE to handle corners~\cite{rac-ser2017, ser-rok2016, hel2011, gil-hao-mar2014, bre2012}, but these methods require the corner's location, a non-uniform spaced mesh, or are ill-conditioned.  Instead, make a slight modification to the erosion model in Section~\ref{sec:thetaL} which allows us to control the smoothness of the grains.  
+\todo[inline]{There is a typo in the above sentence (missing 'we'?). Also, technically there is  a dangling participle here; i.e.~is it the erosion model which is in Section 2.3 or the modification? A slight rephrasing might clarify.}
+In this manner, the BIE as described above can be applied.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the shear stress}
@@ -289,9 +294,9 @@ We note that tracking the center of mass is also a valid choice, but the surface
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
 \label{s:method}
-To perform numerical simulations, we exploit the difference between the erosion and fluid time scales.  Since erosion occurs much slower, we freeze the geometry at each time step, solve the incompressible Stokes equations, and then update the geometry according to the erosion model.  Therefore, there are three main numerical methods that need to be developed.  In Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE} is solved.  Once the density function is found, Section~\ref{sec:shearStress} describes how the shear stress~\eqref{eqn:shearStressLP} is computed.  Then, in Section~\ref{sec:timeStepping}, a time stepping method for evolving the interface according to equations~\eqref{eqn:Levo1}--\eqref{eq:xsurf} are described. 
+To perform numerical simulations, we exploit the difference between the erosion and fluid time scales.  Since erosion occurs much slower, we freeze the geometry at each time step, solve the incompressible Stokes equations, and then update the geometry according to the erosion model.  Therefore, there are three main numerical methods that need to be developed.  In Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE} is solved.  Once the density function is found, Section~\ref{sec:shearStress} describes how the shear stress~\eqref{eqn:shearStressLP} is computed.  Then, Section~\ref{sec:timeStepping} describes a time stepping method for advancing the interface according to equations~\eqref{eqn:Levo1}--\eqref{eq:xsurf}. 
 
-To form stable simulations with long time horizons, we use numerical methods that achieve spectral accuracy in space, second-order accuracy in time, and maintain an equispaced discretization of the bodies.  The boundaries are represented in Fourier space, giving us a set of discretization points $\xx_i$ of each body, and all derivatives and integrals (the arclength, curvature, and mean values) are computed with spectral accuracy using the Fourier representation.
+To create stable simulations with long time horizons, we use numerical methods that achieve spectral accuracy in space, second-order accuracy in time, and maintain an equispaced discretization of the bodies.  The boundaries are represented in Fourier space, giving us a set of discretization points $\xx_i$ of each body, and all derivatives and integrals (the arclength, curvature, and mean values) are computed with spectral accuracy using the Fourier representation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Solving the BIE}
@@ -314,6 +319,7 @@ where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the double-layer 
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)) \, ,
 \end{align}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector at $\xx \in \bd\Omega$.  The equations for the Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are also discretized with the trapezoid rule.  Applying this discretization strategy to~\eqref{eqn:completed_BIE}, the dense linear system that solved is
+\todo[inline]{Typo above}
 \begin{equation}
   \label{eqn:completed_BIE_discretized}
   \begin{aligned}
@@ -331,6 +337,8 @@ where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector a
   \end{aligned}
 \end{equation}
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  We have applied the trapezoid rule since all the integrands are smooth and periodic, and this guarantees that the numerical solutions converges to the true solution with spectral accuracy~\cite{tre-wei2014}.
+\todo[inline]{The above sentence strikes me as awkward and verbose. Rephrase? \\
+How about this: Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy.}
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:completed_BIE_discretized}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
 
