@@ -97,9 +97,6 @@ velocity} \\
 \end{equation}
 where $\Vn$ is the normal velocity of the interface and $\mu$ is the fluid viscosity.  A scaling constant often appears in the erosion model in~\eqref{eqn:erosionModel}, but in the Stokes limit, the constant only sets the time scale, so we have taken it to be one.  For the sake of numerical stability, we will modify the erosion model in Section~\ref{sec:thetaL}. 
 
-%The constant of proportionality of the erosion law only sets the time scale, so we have set $\Vn = |\tau|$ as described in equation~\eqref{eqn:erosionModel}.  
-%\todo[inline]{The above sentence is awkard. Could it be rephrased? First, the reader probably does not know what constant of proportionality you are referring to because we do not have one in the equation. Second, there are too many 'ofs' in a row.}
-
 The outer wall is formed by rounding off the corners of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx) = \umax (1-y^2,0)\, , \quad \xx \in \Gamma\, ,
@@ -111,7 +108,6 @@ where $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply
   \input{figs/schematic.tikz}
   \caption{\label{fig:schematic} A schematic for the governing equations.  A no-slip boundary condition is imposed on each body $\gamma_\ell$ whose unit normal points outward relative to the geometry.  On the outer geometry $\Gamma$, a Hagen-Poiseuille flow is imposed.  The bodies erode at a rate that is proportional to the magnitude of the shear stress applied by the fluid.  The bodies are constrained to the middle third of the channel that is located between the dashed lines.}
 \end{figure}
-%\todo[inline]{Here is an example where you can avoid the passive voice because it is totally unnecessary. Instead of saying 'the bodies are eroded', simply say 'the bodies erode'. Also, a fluid cannot be Stokesian, since the Reynolds number depends on the length scale and velocity scale. It is the flow that is Stokes.}
 
 We describe how the incompressible Stokes equations are solved in $\Omega$ using a boundary integral equation in Section~\ref{sec:bies}.  In Section~\ref{sec:shearStressLP}, we discuss how the shear stress is computed.  Finally, in Section~\ref{sec:thetaL}, we describe how corners in the bodies are avoided and perform a change of coordinates to treat a stiff term.
 
@@ -182,7 +178,6 @@ removes the rank one null space resulting from the flux-free requirement of $\ff
 
 This BIE formulation requires that $\bd\Omega$ is smooth.  Unfortunately, smoothness is not guaranteed by erosion since corners develop at locations where the shear stress vanishes.  One option is to modify our BIE to handle corners~\cite{rac-ser2017, ser-rok2016, hel2011, gil-hao-mar2014, bre2012}, but these methods require the corner's location, a non-uniform spaced mesh, or are ill-conditioned.  Instead, we slightly modify the erosion model in Section~\ref{sec:thetaL} so that we can control the smoothness of the bodies.  In this manner, the BIE as described above can be applied.
 
-%\todo[inline]{There is a typo in the above sentence (missing 'we'?). Also, technically there is  a dangling participle; i.e.~is it the erosion model which is in Section 2.3 or the modification? A slight rephrasing might clarify.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Computing the shear stress}
@@ -323,7 +318,6 @@ where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the double-layer 
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)) \, ,
 \end{align}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector at $\xx \in \bd\Omega$.  The equations for the Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are also discretized with the trapezoid rule.  Applying this discretization strategy to~\eqref{eqn:completed_BIE}, the dense linear system to be solved is
-%\todo[inline]{Typo above}
 \begin{equation}
   \label{eqn:completed_BIE_discretized}
   \begin{aligned}
@@ -341,10 +335,6 @@ where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector a
   \end{aligned}
 \end{equation}
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.
-
-%We have applied the trapezoid rule since all the integrands are smooth and periodic, and this guarantees that the numerical solutions converges to the true solution with spectral accuracy~\cite{tre-wei2014}.
-%\todo[inline]{The above sentence strikes me as awkward and verbose. Rephrase? \\
-%How about this: Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy.}
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:completed_BIE_discretized}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
 
@@ -380,8 +370,6 @@ and a similar approximation is used when $i$ is even.  We also need to approxima
 
 We do not employ an FMM to evaluate the shear stress at $\xx_i$, $i=1,\ldots,N$, so the cost of evaluating the shear stress is $\bigO(N^2)$.  However, unlike the velocity double-layer potential that is evaluated at each GMRES iteration, the shear stress is only computed once per time step. In future work, we plan to use a kernel-independent FMM~\cite{yin-bir-zor2004} to evaluate the shear stress with $\bigO(N)$ operations.  
 
-%However, this calculation is only performed once per time step as opposed to the velocity double-layer potential, where we do employ the FMM, that must be evaluated at each GMRES iteration. 
-%\todo[inline]{The above sentence is confusing. Try to rephrase and shorten it.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TIME-STEPPING %%
