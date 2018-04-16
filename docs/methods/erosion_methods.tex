@@ -66,9 +66,19 @@ We supplement our primarily computational study with a few analytical results. I
 We make two fundamental design choices in the simulations described here: first, we restrict attention to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). By restricting to two dimensions, we can simulate many bodies (up to $50$ in this manuscript) with high resolution, enabling accurate characterization of porous-medium erosion. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated and makes porous-medium simulations less feasible. Meanwhile, the second assumption of immobile bodies affords a simple framework to explore the effects of erosion in isolation. While other mechanisms, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We therefore defer their study to future work.
 
 \paragraph{Related Work}
-In a closely related study, Mitchell \& Spagnolie used a traction integral equation formulation to simulate the viscous erosion of a single body in three dimensions~\cite{mit-spa2016}. The flexibility of this formulation enabled simulations of a {\em mobile} body eroding in an {\em aribtrary} background flow (e.g.~uniform flow, shear flow, etc.).  An advantage of the traction formulation is that it directly provides the shear stress needed to evolve surfaces.  In the present work, we aim to simulate the erosion of a porous medium and, further, choose to fix the bodies to their initial locations. Thus, rather than a {\em single, mobile} body as considered in~\cite{mit-spa2016}, we aim to simulate the erosion of {\em many, immobile} bodies. Although the traction formulation has several attractive features, we instead employ a standard double-layer formulation since it allows us to easily calculate bulk quantities (e.g.~vorticity, pressure, and velocity) that will assist our understanding of the erosion process.
+In a closely related study, Mitchell \& Spagnolie used a traction integral equation formulation to simulate the viscous erosion of a single body in three dimensions~\cite{mit-spa2016}. The flexibility of this formulation enabled simulations of a {\em mobile} body eroding in an {\em arbitrary} background flow (e.g.~uniform flow, shear flow, etc.).  An advantage of the traction formulation is that it directly provides the shear stress needed to evolve surfaces.  In the present work, we aim to simulate the erosion of a porous medium and, further, choose to fix the bodies to their initial locations. Thus, rather than a {\em single, mobile} body as considered in~\cite{mit-spa2016}, we aim to simulate the erosion of {\em many, immobile} bodies. Although the traction formulation has several attractive features, we instead employ a standard double-layer formulation since it allows us to easily calculate bulk quantities (e.g.~vorticity, pressure, and velocity) that will assist our understanding of the erosion process.
 
-For the porous network simulations considered here, it is essential to resolve nonlocal effects between the different bodies.  BIEs naturally resolve these interactions, and they have been used extensively to simulate viscous fluids in complex geometries, including porous media flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2018}.  Common challenges of a BIE formulation include developing efficient preconditioners for the discretized system and numerical difficulties associated with nearly touching bodies. In this work, we consider geometries requiring $\mathcal{O}(100)$ GMRES iterations, so preconditioners are currently unnecessary. In future work, we will address mobile bodies for which near contacts may necessitate preconditoners~\cite{qua-bir2015a, qua-cou-dar2018, cou-pou-dar2017}. Similarly, near-singular schemes will not be necessary due to the fact that the spacing between receding bodies of fixed position always grows in time. Again, the future consideration of mobile bodies may necessitate near-singular schemes~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
+For the porous network simulations considered here, it is essential to
+resolve nonlocal effects between the different bodies.  BIEs naturally
+resolve these interactions, and they have been used extensively to
+simulate viscous fluids in complex geometries, including porous media
+flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2018}.  Common challenges
+of a BIE formulation include developing efficient preconditioners for
+the discretized system and numerical difficulties associated with nearly
+touching bodies. In this work, we consider geometries requiring
+$\mathcal{O}(100)$ GMRES iterations, so preconditioners are currently
+unnecessary. In future work, we will address mobile bodies for which
+near contacts may necessitate preconditioners~\cite{qua-bir2015a, qua-cou-dar2018, cou-pou-dar2017}. Similarly, near-singular schemes will not be necessary due to the fact that the spacing between receding bodies of fixed position always grows in time. Again, the future consideration of mobile bodies may necessitate near-singular schemes~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
@@ -334,7 +344,7 @@ for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  When $\xx_i \in \Gamma$, the term
   \sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
       \nn(\xx_j))\eeta(\xx_j) \, ,
 \end{align}
-is added to~\eqref{eqn:discretized_DLP}.  Since we discetize integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
+is added to~\eqref{eqn:discretized_DLP}.  Since we discretize integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:discretized_DLP}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
  
@@ -961,11 +971,494 @@ As a longer term goal, we would like to include the effect of sedimentation to m
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{\bf Acknowledgments} We would like to thank Manas Rachh for supplying the FMM for the Stokes double-layer potential. 
-%We would like to thank Saverio Spagnolie, William Mitchell, Daniel Rothman, Michael Shelley, ....
 
 \bibliographystyle{plainnat} 
-\bibliography{refs}
 \biboptions{sort&compress}
+
+\begin{thebibliography}{72}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abrams et~al.(2009)Abrams, Lobkovsky, Petroff, Straub, McElroy,
+  Mohrig, Kudrolli, and Rothman]{abrams2009growth}
+Daniel~M Abrams, Alexander~E Lobkovsky, Alexander~P Petroff, Kyle~M Straub,
+  Brandon McElroy, David~C Mohrig, Arshad Kudrolli, and Daniel~H Rothman.
+\newblock Growth laws for channel networks incised by groundwater flow.
+\newblock \emph{Nature Geoscience}, 2\penalty0 (3):\penalty0 193, 2009.
+
+\bibitem[af~Klinteberg and Tornberg(2016)]{kli-tor2016b}
+Ludvig af~Klinteberg and Anna-Karin Tornberg.
+\newblock A fast integral equation method for solid particles in viscous flow
+  using quadrature by expansion.
+\newblock \emph{Journal of Computational Physics}, 326:\penalty0 420--445,
+  2016.
+
+\bibitem[Barnett et~al.(2015)Barnett, Wu, and Veerapaneni]{bar-wu-vee2015}
+Alex Barnett, Bowei Wu, and Shravan Veerapaneni.
+\newblock {Spectrally-Accurate Quadratures for Evaluation of Layer Potentials
+  Close to the Boundary for the 2D Stokes and Laplace Equations}.
+\newblock \emph{SIAM Journal on Scientific Computing}, 37\penalty0
+  (4):\penalty0 B519--B542, 2015.
+
+\bibitem[Barnett et~al.(2018)Barnett, Marple, Veerapaneni, and
+  Zhao]{bar-mar-vee-zha2018}
+Alex Barnett, Gary Marple, Shravan Veerapaneni, and Lin Zhao.
+\newblock {A unified integral equation scheme for doubly-periodic Laplace and
+  Stokes boundary value problems in two dimensions}.
+\newblock \emph{Communications on Pure and Applied Mathematic}, 2018.
+\newblock In press.
+
+\bibitem[Barnett(2014)]{bar2014}
+Alex~H. Barnett.
+\newblock {Evaluation of layer potentials close to the boundary for Laplace and
+  Helmholtz problems on analytic planar domains}.
+\newblock \emph{SIAM Journal on Scientific Computing}, 36\penalty0
+  (2):\penalty0 A427--A451, 2014.
+
+\bibitem[Batchelor(1970)]{batchelor1970slender}
+GK~Batchelor.
+\newblock {Slender-body theory for particles of arbitrary cross-section in
+  Stokes flow}.
+\newblock \emph{Journal of Fluid Mechanics}, 44\penalty0 (3):\penalty0
+  419--440, 1970.
+
+\bibitem[Beale and Lai(2001)]{bea-lai2001}
+J.T. Beale and M.-C. Lai.
+\newblock {A Method for Computing Nearly Singular Integrals}.
+\newblock \emph{SIAM Journal on Numerical Analysis}, 38\penalty0 (6):\penalty0
+  1902--1925, 2001.
+
+\bibitem[Bear(2013)]{bear2013dynamics}
+Jacob Bear.
+\newblock \emph{Dynamics of fluids in porous media}.
+\newblock Courier Corporation, 2013.
+
+\bibitem[Berhanu et~al.(2012)Berhanu, Petroff, Devauchelle, Kudrolli, and
+  Rothman]{berhanu2012shape}
+Michael Berhanu, Alexander Petroff, Olivier Devauchelle, Arshad Kudrolli, and
+  Daniel~H Rothman.
+\newblock Shape and dynamics of seepage erosion in a horizontal granular bed.
+\newblock \emph{Physical Review E}, 86\penalty0 (4):\penalty0 041304, 2012.
+
+\bibitem[Bremer(2012)]{bre2012}
+James Bremer.
+\newblock {On the Nystr\"om discretization of integral equations on planar
+  curves with corners}.
+\newblock \emph{Applied and Computational Harmonic Analysis}, 32:\penalty0
+  45--64, 2012.
+
+\bibitem[Camassa et~al.(2012)Camassa, McLaughlin, Moore, and Yu]{MooreJFM2012}
+R.~Camassa, R.M. McLaughlin, M.N.J. Moore, and K.~Yu.
+\newblock Stratified flows with vertical layering of density: experimental and
+  theoretical study of flow configurations and their stability.
+\newblock \emph{Journal of Fluid Mechanics}, 690:\penalty0 571--606, 2012.
+
+\bibitem[Campbell et~al.(1996)Campbell, Ipsen, Kelley, Meyer, and
+  Xue]{cam-ips-kel-mey-xue1996}
+S.~L. Campbell, I.~C.~F. Ipsen, C.~T. Kelley, C.~D. Meyer, and Z.~Q. Xue.
+\newblock {Convergence estimates for solution of integral equations with
+  GMRES}.
+\newblock \emph{Journal of Integral Equations and Applications}, 8\penalty0
+  (1):\penalty0 19--34, 1996.
+
+\bibitem[Cao et~al.(2010)Cao, Gunzburger, Hua, Wang, et~al.]{cao2010coupled}
+Yanzhao Cao, Max Gunzburger, Fei Hua, Xiaoming Wang, et~al.
+\newblock Coupled stokes-darcy model with beavers-joseph interface boundary
+  condition.
+\newblock \emph{Communications in Mathematical Sciences}, 8\penalty0
+  (1):\penalty0 1--25, 2010.
+
+\bibitem[Claudin et~al.(2017)Claudin, Dur{\'a}n, and
+  Andreotti]{claudin2017dissolution}
+Philippe Claudin, Orencio Dur{\'a}n, and Bruno Andreotti.
+\newblock Dissolution instability and roughening transition.
+\newblock \emph{Journal of Fluid Mechanics}, 832, 2017.
+
+\bibitem[Cohen et~al.(2016)Cohen, Berhanu, Derr, and du~Pont]{cohen2016erosion}
+Caroline Cohen, Michael Berhanu, Julien Derr, and Sylvain~Courrech du~Pont.
+\newblock Erosion patterns on dissolving and melting bodies.
+\newblock \emph{Physical Review Fluids}, 1\penalty0 (5):\penalty0 050508, 2016.
+
+\bibitem[Cohen et~al.(2015)Cohen, Devauchelle, Seybold, Yi, Szymczak, and
+  Rothman]{coh-dev-sey-yi-szy-rot2015}
+Yossi Cohen, Olivier Devauchelle, Hansj{\"o}rg~F. Seybold, Robert~S. Yi, Piotr
+  Szymczak, and Daniel~H. Rothman.
+\newblock Path selection in the growth of rivers.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 112\penalty0
+  (46):\penalty0 14132--14137, 2015.
+
+\bibitem[Corona and Veerapaneni(2017)]{cor-vee2017}
+Eduardo Corona and Shravan Veerapaneni.
+\newblock {Boundary integral equation analysis for suspension of spheres in
+  Stokes flow}.
+\newblock \emph{arxiv}, 1707.06551, 2017.
+
+\bibitem[Corona et~al.(2017)Corona, Greengard, Rachh, and
+  Veerapaneni]{cor-gre-rac-vee2017}
+Eduardo Corona, Leslie Greengard, Manas Rachh, and Shravan Veerapaneni.
+\newblock {An integral equation formulation for rigid bodies in Stokes flow in
+  three dimensions}.
+\newblock \emph{Journal of Computational Physics}, 332:\penalty0 504--519,
+  2017.
+
+\bibitem[Coulier et~al.(2017)Coulier, Pouransari, and Darve]{cou-pou-dar2017}
+Pieter Coulier, Hadi Pouransari, and Eric Darve.
+\newblock {The Inverse Fast Multipole Method: Using a Fast Approximate Diret
+  Solver as a Preconditioner for Dense Linear Systems}.
+\newblock \emph{SIAM Journal on Scientific Computing}, 39\penalty0
+  (3):\penalty0 A761--A796, 2017.
+
+\bibitem[Daerr et~al.(2003)Daerr, Lee, Lanuza, and
+  Cl{\'e}ment]{daerr2003erosion}
+Adrian Daerr, Peter Lee, Jos{\'e} Lanuza, and {\'E}ric Cl{\'e}ment.
+\newblock Erosion patterns in a sediment layer.
+\newblock \emph{Physical Review E}, 67\penalty0 (6):\penalty0 065201, 2003.
+
+\bibitem[Dallaston et~al.(2015)Dallaston, Hewitt, and
+  Wells]{dallaston2015channelization}
+MC~Dallaston, IJ~Hewitt, and AJ~Wells.
+\newblock Channelization of plumes beneath ice shelves.
+\newblock \emph{Journal of Fluid Mechanics}, 785:\penalty0 109--134, 2015.
+
+\bibitem[de~Anna et~al.(2018)de~Anna, Quaife, Biros, and
+  Juanes]{dea-qua-bir-jua2018}
+Pietro de~Anna, Bryan Quaife, George Biros, and Ruben Juanes.
+\newblock {Prediction of velocity distribution from pore structure in simple
+  porous media}.
+\newblock \emph{Physical Review Fluids}, 2\penalty0 (12):\penalty0 124103,
+  2018.
+
+\bibitem[Devauchelle et~al.(2012)Devauchelle, Petroff, Seybold, and
+  Rothman]{Rothman2012}
+O.~Devauchelle, A.P. Petroff, H.F. Seybold, and D.H. Rothman.
+\newblock Ramification of stream networks.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 109\penalty0
+  (51):\penalty0 20832--20836, 2012.
+
+\bibitem[Domokos et~al.(2014)Domokos, Jerolmack, Sipos, and
+  T{\"o}r{\"o}k]{domokos2014river}
+Gabor Domokos, Douglas~J Jerolmack, Andras~{\'A} Sipos, and {\'A}kos
+  T{\"o}r{\"o}k.
+\newblock How river rocks round: resolving the shape-size paradox.
+\newblock \emph{PloS One}, 9\penalty0 (2):\penalty0 e88657, 2014.
+
+\bibitem[Gillman et~al.(2014)Gillman, Hao, and Martinsson]{gil-hao-mar2014}
+A.~Gillman, S.~Hao, and P.G. Martinsson.
+\newblock {A simplified technique for the efficient and highly accurate
+  discretization of boundary integral equations in 2D on domains with corners}.
+\newblock \emph{Journal of Computational Physics}, 256:\penalty0 214--219,
+  2014.
+
+\bibitem[Greenbaum et~al.(1992)Greenbaum, Greengard, and Mayo]{gre-gre-may1992}
+Anne Greenbaum, Leslie Greengard, and Anita Mayo.
+\newblock On the numerical solution of the biharmonic equation in the plane.
+\newblock \emph{Physica D: Nonlinear Phenomena}, 60:\penalty0 216--225, 1992.
+
+\bibitem[Greengard and Rokhlin(1987)]{gre-rok1987}
+L.~Greengard and V.~Rokhlin.
+\newblock {A Fast Algorithm for Particle Simulations}.
+\newblock \emph{Journal of Computational Physics}, 73:\penalty0 325--348, 1987.
+
+\bibitem[Greengard et~al.(1996)Greengard, Kropinski, and Mayo]{gre-kro-may1996}
+L.~Greengard, M.C. Kropinski, and A.~Mayo.
+\newblock {Integral Equation Methods for Stokes Flow and Isotropic Elasticity
+  in the Plane}.
+\newblock \emph{Journal of Computational Physics}, 125\penalty0 (2):\penalty0
+  403--414, 1996.
+
+\bibitem[Groen et~al.(2007)Groen, Gijsen, van~der Lugt, Ferguson, Hatsukami,
+  van~der Steen, Yuan, and Wentzel]{gro-gij-van-fer-hat-van-yua-wen2007}
+Harald~C. Groen, Frank~J.H. Gijsen, Aad van~der Lugt, Marina~S. Ferguson,
+  Thomas~S. Hatsukami, Anton~F.W. van~der Steen, Chun Yuan, and Jolanda~J.
+  Wentzel.
+\newblock {Plaque Rupture in the Carotid Artery Is Localized at the High Shear
+  Stress Region: A Case Report}.
+\newblock \emph{Stroke}, 38:\penalty0 2379--2381, 2007.
+
+\bibitem[Hanna(1969)]{han1969}
+Steven~R. Hanna.
+\newblock {The Formation of Longitudinal Sand Dunes by Large Helical Eddies in
+  the Atmosphere}.
+\newblock \emph{Journal of Applied Meteorology}, 8\penalty0 (6):\penalty0
+  874--883, 1969.
+
+\bibitem[Helsing(2011)]{hel2011}
+J.~Helsing.
+\newblock {A Fast and Stable Solver for Singular Integral Equations and
+  Piecewise Smooth Curves}.
+\newblock \emph{SIAM Journal on Scientific Comuting}, 33:\penalty0 153--174,
+  2011.
+
+\bibitem[Helsing and Ojala(2008)]{hel-oja2008a}
+Johan Helsing and Rikard Ojala.
+\newblock On the evaluation of layer potentials close to their sources.
+\newblock \emph{Journal of Computational Physics}, 227:\penalty0 2899--2921,
+  2008.
+
+\bibitem[Hewett and Sellier(2017{\natexlab{a}})]{hewett2017evolution}
+James~N Hewett and Mathieu Sellier.
+\newblock Evolution of an eroding cylinder in single and lattice arrangements.
+\newblock \emph{Journal of Fluids and Structures}, 70:\penalty0 295--313,
+  2017{\natexlab{a}}.
+
+\bibitem[Hewett and Sellier(2017{\natexlab{b}})]{hewett2017pear}
+James~N Hewett and Mathieu Sellier.
+\newblock The pear-shaped fate of an ice melting front.
+\newblock \emph{arXiv preprint arXiv:1705.02536}, 2017{\natexlab{b}}.
+
+\bibitem[Hou et~al.(1994)Hou, Lowengrub, and Shelley]{hou-low-she1994}
+Thomas~Y. Hou, John~S. Lowengrub, and Michael~J. Shelley.
+\newblock {Removing the Stiffness for Interfacial Flows with Surface Tension}.
+\newblock \emph{Journal of Computational Physics}, 114:\penalty0 312--338,
+  1994.
+
+\bibitem[Huang et~al.(2015)Huang, Moore, and Ristroph]{Huang2015}
+J.~M. Huang, M.N.J. Moore, and L.~Ristroph.
+\newblock Shape dynamics and scaling laws for a body dissolving in fluid flow.
+\newblock \emph{Journal of Fluid Mechanics}, 765, 2 2015.
+\newblock ISSN 1469-7645.
+
+\bibitem[Jerolmack et~al.(2012)Jerolmack, Ewing, Falcini, Martin, Masteller,
+  Phillips, Reitz, and Buynevich]{jerolmack2012internal}
+Douglas~J Jerolmack, Ryan~C Ewing, Federico Falcini, Raleigh~L Martin, Claire
+  Masteller, Colin Phillips, Meredith~D Reitz, and Ilya Buynevich.
+\newblock Internal boundary layer model for the evolution of desert dune
+  fields.
+\newblock \emph{Nature Geoscience}, 5\penalty0 (3):\penalty0 206, 2012.
+
+\bibitem[Kabacao\u{g}lu et~al.(2018)Kabacao\u{g}lu, Quaife, and
+  Biros]{kab-qua-bir2018}
+Gokberk Kabacao\u{g}lu, Bryan Quaife, and George Biros.
+\newblock {Low-resolution simulations of vesicle suspensions in 2D}.
+\newblock \emph{Journal of Computational Physics}, 357:\penalty0 43--77, 2018.
+
+\bibitem[Kl\"{o}ckner et~al.(2013)Kl\"{o}ckner, Barnett, Greengard, and
+  O'Neil]{klo-bar-gre-one2013}
+Andreas Kl\"{o}ckner, Alexander Barnett, Leslie Greengard, and Michael O'Neil.
+\newblock {Quadrature by expansion: A new method for the evaluation of layer
+  potentials}.
+\newblock \emph{Journal of Computational Physics}, 252:\penalty0 332--349,
+  2013.
+
+\bibitem[Kondratiuk and Szymczak(2015)]{kondratiuk2015steadily}
+Pawe{\l} Kondratiuk and Piotr Szymczak.
+\newblock {Steadily Translating Parabolic Dissolution Fingers}.
+\newblock \emph{SIAM Journal on Applied Mathematics}, 75\penalty0 (5):\penalty0
+  2193--2213, 2015.
+
+\bibitem[Ladyzhenskaya(1963)]{lad1963}
+O.~A. Ladyzhenskaya.
+\newblock \emph{{The Mathematical Theory of Viscous Incompressible Flow}}.
+\newblock Gordon and Breach Science, 1963.
+
+\bibitem[L{\'o}pez et~al.(2018)L{\'o}pez, Stickland, and
+  Dempster]{lopez2018cfd}
+Alejandro L{\'o}pez, Matthew~T Stickland, and William~M Dempster.
+\newblock Cfd study of fluid flow changes with erosion.
+\newblock \emph{Computer Physics Communications}, 2018.
+
+\bibitem[Lu et~al.(2017)Lu, Rahimian, and Zorin]{lu-rah-zor2017}
+Libin Lu, Abtin Rahimian, and Denis Zorin.
+\newblock {Contact-aware simulations of particulate Stokesian suspensions}.
+\newblock \emph{Journal of Computational Physics}, 347:\penalty0 160--182,
+  2017.
+
+\bibitem[Mitchell and Spagnolie(2016)]{mit-spa2016}
+W.H. Mitchell and S.E. Spagnolie.
+\newblock A generalized traction integral equation for {S}tokes flow, with
+  applications to near-wall particle mobility and viscous erosion.
+\newblock \emph{Journal of Computational Physics}, 2016.
+
+\bibitem[Moore(2017)]{moore2017riemann}
+M~Nicholas~J Moore.
+\newblock {Riemann-Hilbert Problems for the Shapes Formed by Bodies Dissolving,
+  Melting, and Eroding in Fluid Flows}.
+\newblock \emph{Communications on Pure and Applied Mathematics}, 70\penalty0
+  (9):\penalty0 1810--1831, 2017.
+
+\bibitem[Moore et~al.(2013)Moore, Ristroph, Childress, Zhang, and
+  Shelley]{moo-ris-chi-zha-she2013}
+Matthew N.~J. Moore, Leif Ristroph, Stephen Childress, Jun Zhang, and
+  Michael~J. Shelley.
+\newblock Self-similar evolution of a body eroding in a fluid flow.
+\newblock \emph{Physics of Fluids}, 25:\penalty0 116602, 2013.
+
+\bibitem[Nienhuis et~al.(2014)Nienhuis, Perron, Kao, and
+  Myrow]{nienhuis2014wavelength}
+Jaap~H Nienhuis, J~Taylor Perron, Justin~CT Kao, and Paul~M Myrow.
+\newblock Wavelength selection and symmetry breaking in orbital wave ripples.
+\newblock \emph{Journal of Geophysical Research: Earth Surface}, 119\penalty0
+  (10):\penalty0 2239--2257, 2014.
+
+\bibitem[O.Pironneau(1973)]{pir1973}
+O.Pironneau.
+\newblock {On optimum profiles in Stokes flow}.
+\newblock \emph{Journal of Fluid Mehanics}, 59\penalty0 (1):\penalty0 117--128,
+  1973.
+
+\bibitem[Perkins et~al.(2015)Perkins, Finnegan, and
+  De~Silva]{perkins2015amplification}
+Jonathan~P Perkins, Noah~J Finnegan, and Shanaka~L De~Silva.
+\newblock Amplification of bedrock canyon incision by wind.
+\newblock \emph{Nature Geoscience}, 8\penalty0 (4):\penalty0 305, 2015.
+
+\bibitem[Perron et~al.(2009)Perron, Kirchner, and
+  Dietrich]{perron2009formation}
+J~Taylor Perron, James~W Kirchner, and William~E Dietrich.
+\newblock Formation of evenly spaced ridges and valleys.
+\newblock \emph{Nature}, 460\penalty0 (7254):\penalty0 502, 2009.
+
+\bibitem[Petroff et~al.(2011)Petroff, Devauchelle, Abrams, Lobkovsky, Kudrolli,
+  and Rothman]{petroff2011geometry}
+Alexander~P Petroff, Olivier Devauchelle, Daniel~M Abrams, Alexander~E
+  Lobkovsky, Arshad Kudrolli, and Daniel~H Rothman.
+\newblock Geometry of valley growth.
+\newblock \emph{Journal of Fluid Mechanics}, 673:\penalty0 245--254, 2011.
+
+\bibitem[Picioreanu et~al.(2001)Picioreanu, van Loosdrecht, and
+  Heijnen]{pic-van-hei2000}
+Cristian Picioreanu, Mark C.~M. van Loosdrecht, and Joseph~J. Heijnen.
+\newblock {Two-Dimensional Model of Biofilm Detachment Caused by Internal
+  Stress from Liquid Flow}.
+\newblock \emph{Biotechnology and Bioengineering}, 72\penalty0 (2):\penalty0
+  205--218, 2001.
+
+\bibitem[Power(1993)]{pow1993}
+H.~Power.
+\newblock {The completed double layer boundary integral equation method for
+  two-dimensional Stokes flow}.
+\newblock \emph{IMA Journal of Applied Mathematics}, 51\penalty0 (2):\penalty0
+  123--145, 1993.
+
+\bibitem[Power and Miranda(1987)]{pow-mir1987}
+H.~Power and G.~Miranda.
+\newblock Second kind integral equation formulation of stokes' flows past a
+  particle of arbitrary shape.
+\newblock \emph{SIAM Journal on Applied Mathematics}, 47\penalty0 (4):\penalty0
+  689--698, 1987.
+
+\bibitem[Pozrikidis(1992)]{poz1992}
+C.~Pozrikidis.
+\newblock \emph{{Boundary Integral and Singularity Methods for Linearized
+  Viscous Flow}}.
+\newblock Cambridge University Press, New York, NY, USA, 1992.
+
+\bibitem[Pozrikidis(1997)]{poz1997}
+C.~Pozrikidis.
+\newblock \emph{Introduction to Theoretical and Computational Fluid Dynamics}.
+\newblock Oxford University Press, New York, 1997.
+
+\bibitem[Quaife and Biros(2014)]{qua-bir2014a}
+Bryan Quaife and George Biros.
+\newblock High-volume fraction simulations of two-dimensional vesicle
+  suspensions.
+\newblock \emph{Journal of Computational Physics}, 274:\penalty0 245--267,
+  2014.
+
+\bibitem[Quaife and Biros(2015)]{qua-bir2015a}
+Bryan Quaife and George Biros.
+\newblock {On preconditioners for the Laplace double-layer potential in 2D}.
+\newblock \emph{Numerical Linear Algebra with Applications}, 22:\penalty0
+  101--122, 2015.
+
+\bibitem[Quaife and Biros(2016)]{qua-bir2016}
+Bryan Quaife and George Biros.
+\newblock {Adaptive time stepping for vesicle simulations}.
+\newblock \emph{Journal of Computational Physics}, 306:\penalty0 478--499,
+  2016.
+
+\bibitem[Quaife et~al.(2018)Quaife, Coulier, and Darve]{qua-cou-dar2018}
+Bryan Quaife, Pieter Coulier, and Eric Darve.
+\newblock {An efficient preconditioner for the fast simulation of a 2D Stokes
+  flow in porous media}.
+\newblock \emph{International Journal for Numerical Methods in Engineering},
+  113:\penalty0 561--580, 2018.
+
+\bibitem[Rachh and Serkh(2017)]{rac-ser2017}
+M.~Rachh and K.~Serkh.
+\newblock {On the solution of Stokes equation on regions with corners}.
+\newblock \emph{arxiv}, 1711.04072, 2017.
+
+\bibitem[Rachh and Greengard(2016)]{rac-gre2016}
+Manas Rachh and L.~Greengard.
+\newblock Integral equation methods for elastance and mobility problems in two
+  dimensions.
+\newblock \emph{SIAM Journal on Numerical Analysis}, 54\penalty0 (5):\penalty0
+  2889--2909, 2016.
+
+\bibitem[Ristroph(2018)]{ristroph2018sculpting}
+Leif Ristroph.
+\newblock Sculpting with flow.
+\newblock \emph{Journal of Fluid Mechanics}, 838:\penalty0 1--4, 2018.
+
+\bibitem[Ristroph et~al.(2012)Ristroph, Moore, Childress, Shelley, and
+  Zhang]{ris-moo-chi-she-zha2012}
+Leif Ristroph, Matthew N.~J. Moore, Stephen Childress, Michael~J. Shelley, and
+  Jun Zhang.
+\newblock Sculpting of an erodible body in flowing water.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 109\penalty0
+  (48):\penalty0 19606--19609, 2012.
+
+\bibitem[Rycroft and Bazant(2016)]{rycroft2016asymmetric}
+Chris~H. Rycroft and Martin~Z. Bazant.
+\newblock Asymmetric collapse by dissolution or melting in a uniform flow.
+\newblock In \emph{Proc. R. Soc. A}, volume 472, page 20150531. The Royal
+  Society, 2016.
+
+\bibitem[Saad and Schultz(1986)]{saa-sch1986}
+Y.~Saad and M.H. Schultz.
+\newblock {GMRES: A Generalized Minimal Residual Algorithm for Solving
+  Nonsymmetric Linear Systems}.
+\newblock \emph{SIAM Journal on Scientific and Statistical Computing},
+  7:\penalty0 856--869, 1986.
+
+\bibitem[Sangani and Mo(1994)]{san-mo1994}
+Ashok~S. Sangani and Guobiao Mo.
+\newblock Inclusion of lubrication forces in dynamic simulations.
+\newblock \emph{Physics of fluids}, 6\penalty0 (5):\penalty0 1653--1662, 1994.
+
+\bibitem[Serkh and Rokhlin(2016)]{ser-rok2016}
+K.~Serkh and V.~Rokhlin.
+\newblock On the solution of elliptic partial differential equations on regions
+  with corners.
+\newblock \emph{Journal of Computational Physics}, 305:\penalty0 150--171,
+  2016.
+
+\bibitem[Shah(2002)]{sha2002}
+Prediman~K. Shah.
+\newblock {Pathophysiology of coronary thrombosis: role of plaque rupture and
+  plaque erosion}.
+\newblock \emph{Progress in Cardiovascular Diseases}, 44\penalty0 (5):\penalty0
+  357--368, 2002.
+
+\bibitem[Sidi and Israeli(1988)]{sid-isr1988}
+Avram Sidi and Moshe Israeli.
+\newblock Quadrature {M}ethods for {P}eriodic {S}ingular and {W}eakly
+  {S}ingular {F}redholm {I}ntegral {E}quations.
+\newblock \emph{Journal of Scientific Computing}, 3\penalty0 (2):\penalty0
+  201--231, 1988.
+
+\bibitem[Trefethen and Weideman(2014)]{tre-wei2014}
+Lloyd~N. Trefethen and J.~A.~C. Weideman.
+\newblock {The Exponentially Convergent Trapezoidal Rule}.
+\newblock \emph{SIAM Review}, 56\penalty0 (3):\penalty0 385--458, 2014.
+
+\bibitem[Ying et~al.(2004)Ying, Biros, and Zorin]{yin-bir-zor2004}
+L.~Ying, G.~Biros, and D.~Zorin.
+\newblock {A kernel-independent adaptive fast multipole algorithm in two and
+  three dimensions}.
+\newblock \emph{Journal of Computational Physics}, 194\penalty0 (2):\penalty0
+  591--626, 2004.
+
+\end{thebibliography}
+
+
+%\bibliography{refs}
+
+
 \end{document}
 
 
