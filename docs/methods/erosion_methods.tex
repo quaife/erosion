@@ -315,21 +315,10 @@ where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the double-layer 
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)) \, ,
 \end{align}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector at $\xx \in \bd\Omega$.  The equations for the Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are also discretized with the trapezoid rule.  Applying this discretization strategy to~\eqref{eqn:completed_BIE}, the dense linear system to be solved is
-%\begin{equation}
-%\todo[inline]{Typo above}
-%\begin{equation}
 \begin{subequations}
   \label{eqn:completed_BIE_discretized}
   \begin{align}
   \label{eqn:discretized_DLP}
-%  \begin{aligned} 
-%    \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
-%      K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
-%      \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) \\
-%      &\hspace{53pt}
-%      +\sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) 
-%      +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
-%      \nn(\xx_j))\eeta(\xx_j) \, , \\
     \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
       K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
       \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) +
@@ -346,9 +335,6 @@ for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  When $\xx_i \in \Gamma$, the term
       \nn(\xx_j))\eeta(\xx_j) \, ,
 \end{align}
 is added to~\eqref{eqn:discretized_DLP}.  Since we discetize integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
-%We have applied the trapezoid rule since all the integrands are smooth and periodic, and this guarantees that the numerical solutions converges to the true solution with spectral accuracy~\cite{tre-wei2014}.
-%\todo[inline]{The above sentence strikes me as awkward and verbose. Rephrase? \\
-%How about this: Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy.}
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:discretized_DLP}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
  
@@ -790,8 +776,9 @@ To more thoroughly examine the influence of the smoothing parameters, we report 
 In summary, we have found that a single-body eroding in 2D Stokes flow converges to a terminal form characterized by nearly uniform shear stress along its surface. The final shape is fairly slender, with an aspect ratio of 2.7, and distinguished by  corners of opening angle $102^{\circ}$ at the front and rear. This shape is closely related to the drag-minimizing profile found by Pironneau (1973)---the geometry that minimizes drag in 3D Stokes flow subject to the constraint of fixed volume~\cite{pir1973}. Using variational principles, Pironneau showed that the drag-minimizing form has constant shear (or vorticity) along its surface. The resulting {\em axisymmetric} shape has an aspect ratio of 2.1 and front/rear opening-angles of $120^{\circ}$~\cite{pir1973, mit-spa2016}.  Interestingly, 3D simulations of viscous erosion showed close resemblance between the shape formed by a single eroding body and this Pironneau form~\cite{mit-spa2016}. It was found that the eroding body does not converge {\em precisely} to the Pironneau shape because the long-time surface-stress distribution created by erosion is only {\em approximately} uniform. Rather than strict uniformity, variations in body curvature must be offset by slight variations in $\Vn$ for self-similar reduction~\cite{pir1973, mit-spa2016}. Pironneau's argument that the drag-minimizing form has constant surface stress applies to 2D as well. Therefore, the shape observed in our simulation is approximately the form that minimizes drag subject to fixed area, i.e.~the 2D counterpart to Pironneau's shape. How close this shape is to the true drag-minimizer is related to how close the stress distributions are to uniform, as can be seen in Fig.~\ref{fixed_intface}(b).  
 
 \subsection{Convergence test}
-As a final validation, we now verify that our method converges with the expected second-order accuracy in time. For this, we run the same single-body simulation shown in Figs.~\ref{01bodseq} and~\ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 10^{-2}$. This stopping time is 56\% of the vanishing time, and was selected so that the body will have eroded substantially but is not small enough to compromise accuracy (due to the stress diverging).  We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table~\ref{convtab}, we report these errors along with the order of accuracy, obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine, demonstrating a nearly linear increase in computational time. Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of the overall complexity.
-\todo[inline]{Aren't the CPU scaling times we report obvious.  If we take a time step size half the size, it will of course take twice as long.  We report these numbers in a couple of tables.  We have not reported CPU time versus the spatial resolution which is where the value of the FMM would be obvious.}
+As a final validation, we now verify that our method converges with the expected second-order accuracy in time. For this, we run the same single-body simulation shown in Figs.~\ref{01bodseq} and~\ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 10^{-2}$. This stopping time is 56\% of the vanishing time, and was selected so that the body will have eroded substantially but is not small enough to compromise accuracy (due to the stress diverging).  We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table~\ref{convtab}, we report these errors along with the order of accuracy, obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine.
+%, demonstrating a nearly linear increase in computational time with refinement of the time step. 
+%Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of the overall complexity.
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
