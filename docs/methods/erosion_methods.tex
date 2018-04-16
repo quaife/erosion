@@ -1,7 +1,6 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
-\newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}}
-\newcommand{\secref}[1]{\ref{#1}}
+\newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}} \newcommand{\secref}[1]{\ref{#1}}
 
 \input{preambles.tex}
 \begin{document}
@@ -21,9 +20,7 @@
 \address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-We develop numerical methods to simulate the fluid-mechanical erosion of many bodies in two-dimensional Stokes flow. The broad aim is to simulate the erosion of a porous medium (e.g.~groundwater flow) with grain-scale resolution. Our fluid solver is based on a second-kind boundary integral formulation of the Stokes equations that is discretized with a spectrally-accurate Nystr\"om method and solved with fast-multipole-accelerated GMRES. 
-The fluid solver provides the surface shear stress which is used to advance solid boundaries. We regularize interface evolution via curvature penalization using the {\thL} formulation, which affords numerically stable treatment of stiff terms and therefore permits large time steps.
-The overall accuracy of our method is spectral in space and second-order in time. The method is computationally efficient, with the fluid solver requiring $\mathcal{O}(N)$ operations per GMRES iteration, a mesh-independent number of GMRES iterations, and a one-time $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-body results against analytical predictions for the limiting morphology and vanishing rate. Multibody simulations reveal the spontaneous formation of channels between bodies of close initial proximity. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
+We develop numerical methods to simulate the fluid-mechanical erosion of many bodies in two-dimensional Stokes flow. The broad aim is to simulate the erosion of a porous medium (e.g.~groundwater flow) with grain-scale resolution. Our fluid solver is based on a second-kind boundary integral formulation of the Stokes equations that is discretized with a spectrally-accurate Nystr\"om method and solved with fast-multipole-accelerated GMRES.  The fluid solver provides the surface shear stress which is used to advance solid boundaries. We regularize interface evolution via curvature penalization using the {\thL} formulation, which affords numerically stable treatment of stiff terms and therefore permits large time steps.  The overall accuracy of our method is spectral in space and second-order in time. The method is computationally efficient, with the fluid solver requiring $\mathcal{O}(N)$ operations per GMRES iteration, a mesh-independent number of GMRES iterations, and a one-time $\mathcal{O}(N^2)$ computation to compute the shear stress. We benchmark single-body results against analytical predictions for the limiting morphology and vanishing rate. Multibody simulations reveal the spontaneous formation of channels between bodies of close initial proximity. The channelization is associated with a dramatic reduction in the resistance of the porous medium, much more than would be expected from the reduction in grain size alone.
 \end{abstract}
 
 \begin{keyword}
@@ -60,7 +57,7 @@ To perform the above simulation, two fast and accurate methods are
 employed---one to solve the fluid equations and the other to evolve the
 eroding bodies.  The fluid equations are reformulated in terms of a boundary integral equation (BIE)~\cite{poz1992}.  Since the boundary conditions are Dirichlet, we employ a double-layer potential so that the resulting BIE is second-kind.  This second-kind BIE is discretized with a spectrally accurate trapezoid rule~\cite{tre-wei2014} which results in a well-conditioned dense linear system for an unknown density function. The linear system is solved using fast-multipole-accelerated GMRES~\cite{saa-sch1986}.  Once the density function is determined, we compute the shear stress with a spectrally accurate odd-even quadrature rule~\cite{sid-isr1988}.
 
-At the next stage, we must use the shear stress to advance solid boundaries. Tracking fluid-structure interfaces with long time horizons presents numerical challenges in that the underlying mesh can become distorted and tangled. Furthermore, the process of erosion naturally leads to regions of high curvature and even corners.  We address these tracking issues in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arc length but that does not affect dynamics; second, we suppress high-frequency oscillations in the interface evolution via curvature penalization. The interface is parametrized in the so-called {\thL} coordinate system so that the curvature penalization appears as a diffusive term \cite{hou-low-she1994}. This term can be easily be handled in a numerically stable fashion with an exponential integrator.  Once the simulation is complete, we perform a post-processing step in which we compute bulk properties, such as vorticity and pressure, using an upsampled trapezoid rule.
+At the next stage, we must use the shear stress to advance solid boundaries. Tracking fluid-structure interfaces with long time horizons presents numerical challenges in that the underlying mesh can become distorted and tangled. Furthermore, the process of erosion naturally leads to regions of high curvature and even corners.  We address these tracking issues in two ways: first, we introduce a tangential velocity that keeps the grid equispaced with respect to arclength but that does not affect dynamics; second, we suppress high-frequency oscillations in the interface evolution via curvature penalization. The interface is parametrized in the so-called {\thL} coordinate system so that the curvature penalization appears as a diffusive term \cite{hou-low-she1994}. This term can be easily be handled in a numerically stable fashion with an exponential integrator.  Once the simulation is complete, we perform a post-processing step in which we compute bulk properties, such as vorticity and pressure, using an upsampled trapezoid rule.  
 
 We supplement our primarily computational study with a few analytical results. In particular, our simulation shows that a single eroding body tends to a slender, for-aft symmetric form characterized by nearly uniform shear stress along its surface. This body exhibits sharp corners at its front and rear. The principle of long-time uniform stress combined with some local analysis leads to an analytical prediction for the opening angles formed at the front and rear. Additionally, slender-body theory gives rise to scaling laws for the reduction rate of the body's area and drag. These analytical results, in addition to their own intrinsic value, allow us to conclusively validate the numerical simulation.
 
@@ -69,9 +66,9 @@ We supplement our primarily computational study with a few analytical results. I
 We make two fundamental design choices in the simulations described here: first, we restrict attention to two spatial dimensions, and second the bodies are considered immobile (i.e.~fixed to their initial locations). By restricting to two dimensions, we can simulate many bodies (up to $50$ in this manuscript) with high resolution, enabling accurate characterization of porous-medium erosion. While BIEs are available in three dimensions, the extra computational cost limits the number of bodies that could be practically simulated and makes porous-medium simulations less feasible. Meanwhile, the second assumption of immobile bodies affords a simple framework to explore the effects of erosion in isolation. While other mechanisms, such as sedimentation or transport, undoubtedly play a role in real applications, these effects would introduce additional complexity, both conceptually and numerically. We therefore defer their study to future work.
 
 \paragraph{Related Work}
-In a closely related study, Mitchell \& Spagnolie used a traction integral equation formulation to simulate the viscous erosion of a single body in three dimensions~\cite{mit-spa2016}. The flexibility of this formulation enabled simulations of a {\em mobile} body eroding in an {\em aribtrary} background flow (e.g.~uniform flow, shear flow, etc.).  An advantage of the traction formulation is that is directly provides the shear stress needed to evolve surfaces.  In the present work, we aim to simulate the erosion of a porous medium and, further, choose to fix the bodies to their initial locations. Thus, rather than a {\em single, mobile} body as considered in~\cite{mit-spa2016}, we aim to simulate the erosion of {\em many, immobile} bodies. Although the traction formulation has several attractive features, we instead employ a standard double-layer formulation since it allows us to easily calculate bulk quantities (e.g.~vorticity, pressure, and velocity) that will assist our understanding of the erosion process.
+In a closely related study, Mitchell \& Spagnolie used a traction integral equation formulation to simulate the viscous erosion of a single body in three dimensions~\cite{mit-spa2016}. The flexibility of this formulation enabled simulations of a {\em mobile} body eroding in an {\em aribtrary} background flow (e.g.~uniform flow, shear flow, etc.).  An advantage of the traction formulation is that it directly provides the shear stress needed to evolve surfaces.  In the present work, we aim to simulate the erosion of a porous medium and, further, choose to fix the bodies to their initial locations. Thus, rather than a {\em single, mobile} body as considered in~\cite{mit-spa2016}, we aim to simulate the erosion of {\em many, immobile} bodies. Although the traction formulation has several attractive features, we instead employ a standard double-layer formulation since it allows us to easily calculate bulk quantities (e.g.~vorticity, pressure, and velocity) that will assist our understanding of the erosion process.
 
-For the porous network simulations considered here, it is essential to resolve nonlocal effects between the different bodies.  BIEs naturally resolve these interactions, and they have been used extensively to simulate viscous fluids in complex geometries, including porous media flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2018}.  Common challenges of a BIE formulation include developing efficient preconditioners for the discretized system and numerical difficulties associated with nearly touching bodies. In this work, we consider geometries requiring $\mathcal{O}(100)$ GMRES iterations, so that preconditioners are not necessary. In future work, we will address mobile bodies for which near contacts may necessitate preconditoners~\cite{qua-bir2015a, qua-cou-dar2018, cou-pou-dar2017}. Similarly, near-singular schemes will not be necessary due to the fact that the spacing between receding bodies of fixed position always grows in time. Again, the future consideration of mobile bodies may necessitate near-singular schemes~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
+For the porous network simulations considered here, it is essential to resolve nonlocal effects between the different bodies.  BIEs naturally resolve these interactions, and they have been used extensively to simulate viscous fluids in complex geometries, including porous media flow~\cite{dea-qua-bir-jua2018, bar-mar-vee-zha2018}.  Common challenges of a BIE formulation include developing efficient preconditioners for the discretized system and numerical difficulties associated with nearly touching bodies. In this work, we consider geometries requiring $\mathcal{O}(100)$ GMRES iterations, so preconditioners are currently unnecessary. In future work, we will address mobile bodies for which near contacts may necessitate preconditoners~\cite{qua-bir2015a, qua-cou-dar2018, cou-pou-dar2017}. Similarly, near-singular schemes will not be necessary due to the fact that the spacing between receding bodies of fixed position always grows in time. Again, the future consideration of mobile bodies may necessitate near-singular schemes~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a, bea-lai2001}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
@@ -80,7 +77,7 @@ In Section~\ref{s:formulation}, we describe the governing equations for both the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formulation}
 \label{s:formulation}
-We start by defining the main variables used to model erosion.  We consider flows that are confined by a solid wall $\Gamma$ that encloses $M$ eroding bodies as diagrammed in Fig.~\ref{fig:schematic}.  The bodies are denoted as $\gamma_\ell$, $\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup \gamma_M$.  On each body, $\nn$ and $\ss$ denote the unit normal and unit tangent vectors respectively.  Throughout the paper, we adopt the convention that $\ss$ points in the counterclockwise direction and $\nn$ points out of the fluid domain (i.e.~into the bodies). Neglecting inertial forces, the dynamics of the fluid is fully determined by the position of the bodies $\xx_\ell(s,t) \in \gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given $\xx_\ell(s,t)$, $\ell=1,\ldots,M$, derived variables include the fluid velocity $\uu$, the pressure $p$, and the shear stress $\tau$.   On the bounding wall, we prescribe a velocity $\UU(\xx,t)$.  Then, the governing equations are
+We start by defining the main variables used to model erosion.  We consider flows that are confined by a solid wall $\Gamma$ that encloses $M$ eroding bodies as diagrammed in Fig.~\ref{fig:schematic}.  The bodies are denoted as $\gamma_\ell$, $\ell=1,\ldots,M$, and we write $\gamma = \gamma_1 \cup \cdots \cup \gamma_M$.  Therefore, the boundary of the fluid domain is $\bd\Omega = \Gamma \cup \gamma$. On each body, $\nn$ and $\ss$ denote the unit normal and unit tangent vectors respectively.  Throughout the paper, we adopt the convention that $\ss$ points in the counterclockwise direction and $\nn$ points out of the fluid domain (i.e.~into the bodies). Neglecting inertial forces, the dynamics of the fluid is fully determined by the position of the bodies $\xx_\ell(s,t) \in \gamma_\ell$, where $s$ is the arclength and $t$ is time.  Given $\xx_\ell(s,t)$, $\ell=1,\ldots,M$, derived variables include the fluid velocity $\uu$, the pressure $p$, and the shear stress $\tau$.   On the bounding wall, we prescribe a velocity $\UU(\xx,t)$.  Then, the governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
 \begin{split}
@@ -101,12 +98,11 @@ The outer wall is formed by rounding off the corners of $[-3,3] \times [-1,1]$, 
 \begin{align}
   \UU(\xx) = \umax (1-y^2,0)\, , \quad \xx \in \Gamma\, ,
 \end{align}
-where $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply set $U=1$, but in some instances we change $U$ dynamically to enforce that the pressure drop across the computational cell is constant as bodies erode within it.  The boundary of the fluid domain is $\bd\Omega = \gamma_1 \cup \cdots \cup \gamma_M \cup \Gamma$.  To minimize the boundary effects of the inflow and outflow, we only place bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.
-
+where $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply set $U=1$, but in some instances we change $U$ dynamically to enforce that the pressure drop across the computational cell is constant as bodies erode within it.  To minimize the boundary effects of the inflow and outflow, we only place bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.  
 \begin{figure}[htpb]
   \centering
   \input{figs/schematic.tikz}
-  \caption{\label{fig:schematic} A schematic for the governing equations.  A no-slip boundary condition is imposed on each body $\gamma_\ell$ whose unit normal points outward relative to the geometry.  On the outer geometry $\Gamma$, a Hagen-Poiseuille flow is imposed.  The bodies erode at a rate that is proportional to the magnitude of the shear stress applied by the fluid.  The bodies are constrained to the middle third of the channel that is located between the dashed lines.}
+  \caption{\label{fig:schematic} A schematic for the governing equations.  A no-slip boundary condition is imposed on each body $\gamma_\ell$ whose unit normal points outward relative to the geometry.  On the outer geometry $\Gamma$, a Hagen-Poiseuille flow is imposed.  The bodies erode at a rate that is equal to the magnitude of the shear stress applied by the fluid.  The bodies are constrained to the middle third of the channel that is located between the dashed lines.}
 \end{figure}
 
 We describe how the incompressible Stokes equations are solved in $\Omega$ using a boundary integral equation in Section~\ref{sec:bies}.  In Section~\ref{sec:shearStressLP}, we discuss how the shear stress is computed.  Finally, in Section~\ref{sec:thetaL}, we describe how corners in the bodies are avoided and perform a change of coordinates to treat a stiff term.
@@ -172,7 +168,8 @@ where the density function, Stokeslets, and rotlets satisfy
 Here,
 \begin{align}
   \NN_0[\eeta](\xx) = \int_{\Gamma} 
-    (\nn(\xx) \otimes \nn(\yy))\eeta(\yy) \, ds_\yy
+    (\nn(\xx) \otimes \nn(\yy))\eeta(\yy) \, ds_\yy, \quad \xx \in
+    \Gamma\, ,
 \end{align}
 removes the rank one null space resulting from the flux-free requirement of $\ff$.
 
@@ -263,7 +260,7 @@ The boundary of each body will be represented by a grid of collocation points. I
 \begin{align}
   \pderiv{\Vs}{\alpha} = \thalpha \Vn - \mean{\thalpha \Vn} \, .
 \end{align} 
-The evolution of the interface is then given by the combination of the normal and tangential velocity
+The evolution of the interface is then given by the combination of the normal and tangential velocities
 \begin{align}
   \dot{\xx}(t) = \Vn \nn + \Vs \ss \, .
 \end{align}
@@ -293,7 +290,7 @@ We note that tracking the center of mass is also a valid choice, but the surface
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical methods}
 \label{s:method}
-To perform numerical simulations, we exploit the difference between the erosion and fluid time scales.  Since erosion occurs much slower, we freeze the geometry at each time step, solve the incompressible Stokes equations, and then update the geometry according to the erosion model.  Therefore, there are three main numerical methods that need to be developed.  In Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE} is solved.  Once the density function is found, Section~\ref{sec:shearStress} describes how the shear stress~\eqref{eqn:shearStressLP} is computed.  Then, Section~\ref{sec:timeStepping} describes a time stepping method for advancing the interface according to equations~\eqref{eqn:Levo1}--\eqref{eq:xsurf}. 
+To perform numerical simulations, we exploit the difference between the erosion and fluid time scales.  Since erosion occurs much slower, we freeze the geometry at each time step, solve the incompressible Stokes equations, compute the shear stress, and then update the geometry according to the erosion model.  Therefore, there are three main numerical methods that need to be developed.  In Section~\ref{sec:BIE}, we describe how the BIE~\eqref{eqn:completed_BIE} is solved.  Once the density function is found, Section~\ref{sec:shearStress} describes how the shear stress~\eqref{eqn:shearStressLP} is computed.  Then, Section~\ref{sec:timeStepping} describes a time stepping method for advancing the interface according to equations~\eqref{eqn:Levo1}--\eqref{eq:xsurf}. 
 
 To create stable simulations with long time horizons, we use numerical methods that achieve spectral accuracy in space, second-order accuracy in time, and maintain an equispaced discretization of the bodies.  The boundaries are represented in Fourier space, giving us a set of discretization points $\xx_i$ of each body, and all derivatives and integrals (the arclength, curvature, and mean values) are computed with spectral accuracy using the Fourier representation.
 
@@ -318,25 +315,55 @@ where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the double-layer 
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)) \, ,
 \end{align}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector at $\xx \in \bd\Omega$.  The equations for the Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are also discretized with the trapezoid rule.  Applying this discretization strategy to~\eqref{eqn:completed_BIE}, the dense linear system to be solved is
+<<<<<<< HEAD
 \begin{equation}
+=======
+%\todo[inline]{Typo above}
+%\begin{equation}
+\begin{subequations}
+>>>>>>> 5ab044b57c2b26f5cda347b7dd8ee337d76894a7
   \label{eqn:completed_BIE_discretized}
-  \begin{aligned}
+  \begin{align}
+  \label{eqn:discretized_DLP}
+%  \begin{aligned} 
+%    \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
+%      K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
+%      \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) \\
+%      &\hspace{53pt}
+%      +\sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) 
+%      +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
+%      \nn(\xx_j))\eeta(\xx_j) \, , \\
     \ff(\xx_i) &= -\frac{1}{2}\ssigma(\xx_i) + \sum_{j=1}^{N} 
       K(\xx_i,\xx_j) \eeta(\xx_j) \Delta s_{j} + 
-      \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) \\
-      &\hspace{53pt}
-      +\sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) 
-      +\sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
-      \nn(\xx_j))\eeta(\xx_j) \, , \\
+      \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx_i) +
+      \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx_i) \\
     \llambda_\ell &= \sum_{\xx_j \in \gamma_\ell} \eeta(\xx_j) 
       \Delta s_j \, , \\ 
     \xi_\ell &= \sum_{\xx_j \in \gamma_\ell}
       {(\xx_j - \cc_\ell)}^\perp \cdot \eeta(\xx_j) \Delta s_j \, ,
+<<<<<<< HEAD
   \end{aligned}
 \end{equation}
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:completed_BIE_discretized}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
+=======
+    \end{align}
+%  \end{aligned}
+\end{subequations}
+%\end{equation}
+for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  When $\xx_i \in \Gamma$, the term 
+\begin{align}
+  \sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
+      \nn(\xx_j))\eeta(\xx_j) \, ,
+\end{align}
+is added to~\eqref{eqn:discretized_DLP}.  Since we are discetizing integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
+%We have applied the trapezoid rule since all the integrands are smooth and periodic, and this guarantees that the numerical solutions converges to the true solution with spectral accuracy~\cite{tre-wei2014}.
+%\todo[inline]{The above sentence strikes me as awkward and verbose. Rephrase? \\
+%How about this: Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy.}
+
+The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:discretized_DLP}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
+>>>>>>> 5ab044b57c2b26f5cda347b7dd8ee337d76894a7
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shear stress}
@@ -408,7 +435,7 @@ Then,~\eqref{eqn:Levo1} and~\eqref{eqn:thetaevo1} can be compactly expressed as
 \label{eqn:thetaevo2}
 & \pderiv{\theta}{t} = \eps \elfun \ppd{\theta}{\alpha} + \NLterm \,.
 \end{align}
-The diffusive term on the right of~\eqref{eqn:thetaevo2} results from the curvature penalization and is the stiffest term present. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$). Meanwhile, $\NLterm$, represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both nonlinear and nonlocal.
+The diffusive term on the right of~\eqref{eqn:thetaevo2} results from the curvature penalization and is the stiffest term present. This term is multiplied by $\zeta$, which is spatially constant but depends on time (due to $L$ and $\mean{\atau}$). Meanwhile, $\NLterm$ represents all remaining terms in the evolution equation, including contributions from the shear-dependent erosion law and from the artificial tangential velocity, $\Vs$. Since the local shear stress depends on interactions between bodies, $\NLterm$ is both nonlinear and nonlocal.
 
 We will evolve $\theta(\alpha,t)$ in spectral space and so introduce the Fourier series for $\theta$ and $\NLterm$
 \begin{align}
@@ -474,7 +501,7 @@ We must eventually compute the geometry at step $n+1$, and so we insert~\eqref{e
 - \frac{1}{2} \eps k^2 \Dt \left( 2 \elfun^{(n+1/2)} - \elfun^{(n)}
 \right) \right) \, .
 \end{align}
-Once again, both exponential terms act to smooth the geometry. Finally, to track the reference point, $\mean{x}$, we simply apply the same RK2 method to~\eqref{eq:xsurf}.
+Once again, both exponential terms act to smooth the geometry. Finally, to track the reference point, $\mean{\xx}$, we simply apply the same RK2 method to~\eqref{eq:xsurf}.
 
 We point out that most exponential integrators use some form of quadrature to treat~\eqref{eq:mu}, but, here, we have simply applied the same RK2 method used for the rest of the system. We believe this to be a simple, systematic approach to arrive at a self-consistent discretization of desired accuracy because it avoids choices regarding which quadrature to use (midpoint, trapezoid, Simpson's, etc.) and can be easily generalized to other time-stepping methods, such as fourth-order Runge-Kutta. 
 
@@ -505,14 +532,12 @@ and the vorticity of a rotlet is zero.  Therefore, the vorticity at $\xx
   \omega(\xx) = \omega^\DD(\xx) + \omega^S(\xx)\, .
 \end{align}
 
-For the Stokes equations, on boundaries that have a no-slip boundary
-condition, the shear stress is equivalent to the vorticity.  Therefore,
-the vorticity is computed on the bodies $\gamma_\ell$ by numerically compute the shear stress as described in Section~\ref{sec:shearStress}.
+For the Stokes equations, on boundaries that have a no-slip boundary condition, the shear stress is equivalent to the vorticity.  Therefore, the vorticity is computed on the bodies $\gamma_\ell$ by numerically computing the shear stress as described in Section~\ref{sec:shearStress}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pressure}
 \label{sec:pressure}
-To compute the pressure at $\xx \in \Omega$, we follow the same procedure used for the shear stress.  We first compute the pressure of the double-layer potential for $\xx \in \Omega$ and add the appropriate jump if $\xx \in \Gamma$. The pressure of the double-layer potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
+To compute the pressure at $\xx \in \Omega$, we follow the same procedure used for the shear stress and vorticity.  We first compute the pressure of the double-layer potential for $\xx \in \Omega$ and add the appropriate jump if $\xx \in \Gamma$. The pressure of the double-layer potential~\eqref{eqn:velocityDLP} at $\xx \in \Omega$ is
 \begin{align}
   p^{\DD}(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
@@ -526,7 +551,7 @@ To compute~\eqref{eqn:pressureDLP} numerically, we apply the trapezoid rule with
 \end{align}
 and the pressure due to the rotlets is zero.  Therefore, the pressure is
 \begin{align}
-  p(\xx) = p^{\DD}(\xx) + p^{S}(\xx)\, , \quad \xx \in \Omega \, ,
+  p(\xx) = p^{\DD}(\xx) + p^{S}(\xx)\, , \quad \xx \in \Omega \, .
 \end{align}
 
 For target points on the boundary of the geometry, $\xx \in \bd \Omega$, there is an additional term resulting from a jump in the pressure double-layer potential~\cite{poz1992}
@@ -535,21 +560,20 @@ For target points on the boundary of the geometry, $\xx \in \bd \Omega$, there i
               p^{S}(\xx)\, , \quad \xx \in \bd\Omega \, .
   \label{eqn:pressureJump}
 \end{align}
-Similar to the shear stress, the singularity of the pressure corresponding to the double-layer potential~\eqref{eqn:pressureDLP} is too strong when $\xx \in \bd\Omega$ for the trapezoid rule to be directly applied.  Therefore, we again subtract a constant density function and write the pressure as
-\begin{equation}
-\begin{aligned}
+Similar to the shear stress, the singularity of the kernel~\eqref{eqn:pressureDLP} is too strong when $\xx \in \bd\Omega$ for the trapezoid rule to be directly applied.  Therefore, we again subtract a constant density function and write the pressure as
+\begin{align}
   p^\DD(\xx) = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) 
     \nn \cdot (\eeta(\yy) - \eeta(\xx)) \,ds_\yy\, , 
     \quad \xx \in \bd\Omega\, .
-\end{aligned}
-\end{equation}
-Then, identical to how the shear stress is computed in~\eqref{eqn:stressOddEven}, odd-even integration is used to evaluate this layer potential for pressure, and the jump condition in~\eqref{eqn:pressureJump} is computed with Fourier differentiation.  
+  \label{eqn:pressureOddEven}
+\end{align}
+Then, identical to how the shear stress is computed in~\eqref{eqn:stressOddEven}, odd-even integration is used to evaluate~\eqref{eqn:pressureOddEven}, and the jump condition in~\eqref{eqn:pressureJump} is computed with Fourier differentiation.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Drag}
 \label{sec:drag}
-Once the pressure and shear stress is computed, the drag on a single body with boundary $\gamma_\ell$ is
+Once the pressure and shear stress are computed, the drag on a single body with boundary $\gamma_\ell$ is
 \begin{align}
 \FFD = \int_{\gamma_\ell} p \nn + \tau \ss \,ds\, .
 \label{eqn:drag}
@@ -561,7 +585,7 @@ The reader may notice an unusual sign convention for pressure in this formula, w
 \label{sec:NSI}
 The layer potentials for the velocity~\eqref{eqn:velocityDLP}, vorticity~\eqref{eqn:vorticityDLP}, and pressure~\eqref{eqn:pressureDLP} need to be evaluated at points $\xx \in \Omega$. We write the general layer potential as
 \begin{align}
-  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) \, ds_\yy\, .
+  \phi(\xx) = \int_{\bd\Omega} K(\xx,\yy) \eeta(\yy) \, ds_\yy\,, \quad \xx \in \Omega\, .
   \label{eqn:genericLP}
 \end{align}
 Since the integrand is periodic and smooth, the trapezoid rule guarantees spectral accuracy.  However, when the target point $\xx$ is close to $\bd\Omega$, the integrand is nearly-singular, and the accuracy of the trapezoid rule deteriorates unless a large number of discretization points are used~\cite{bar2014}.  We are only interested in computing the velocity, vorticity, and pressure to visualize the flow, so it is not necessary that we resolve the integrands for arbitrarily close target points.
@@ -571,11 +595,14 @@ The layer potential~\eqref{eqn:genericLP} is approximated with the trapezoid rul
   \phi(\xx) = \sum_{j=1}^N q_j K(\xx,\yy_j)\, ,
   \label{eqn:layerPotential}
 \end{align}
-where $q$ contains the quadrature weights, Jacobian, and density function.  Based on numerical experiments, the error of the $N$-point trapezoid rule is acceptable for points $\xx$ that are more than five arclength spacings from $\bd\Omega$. For points that are closer than five arclength spacings to $\bd\Omega$, we use an upsampled trapezoid rule.  The required upsampling of the geometry and the density function is done with a Fourier interpolant.  To minimize the number of discretization points that are used to approximate the layer potential~\eqref{eqn:layerPotential}, we use the same upsampling rate for all target points in dyadic intervals (Table~\ref{tbl:upsampling}).  For points that are closer than $5/16$ of an arclength from $\bd\Omega$, a value of 0 is simply assigned to $\phi$.
+where $q$ contains the quadrature weights, Jacobian, and density function, and $N$ depends on the distance between $\xx$ and $\bd\Omega$.  Based on numerical experiments, the error of the $N$-point trapezoid rule is acceptable for points $\xx$ that are more than five arclength spacings from $\bd\Omega$. For points that are closer than five arclength spacings to $\bd\Omega$, we use an upsampled trapezoid rule.  The required upsampling of the geometry and the density function is done with a Fourier interpolant.  To minimize the number of discretization points that are used to approximate the layer potential~\eqref{eqn:layerPotential}, we use the same upsampling rate for all target points in dyadic intervals (Table~\ref{tbl:upsampling}).  For points that are closer than $5/16$ of an arclength from $\bd\Omega$, a value of 0 is simply assigned to $\phi$.
 \newcolumntype{V}{>{\centering\arraybackslash}m{4em}}
 \newcolumntype{N}{@{}m{0pt}@{}}
 \begin{table}[htpb]
-\centering
+\begin{center}
+\caption{\label{tbl:upsampling}The upsampling rate of our near-singular integration scheme.  $d(\xx,\bd\Omega)$ is the distance between $\xx \in \Omega$ and $\bd\Omega$, and $h$ is an arclength spacing.}
+\vspace{0.3 pc}
+\label{table:arangle}
 \begin{tabular}{|V|V|V|V|V|V|N}
   \hline
   $d(\xx,\bd\Omega)$ &
@@ -588,7 +615,7 @@ where $q$ contains the quadrature weights, Jacobian, and density function.  Base
   Upsample Rate & 1 & 2 & 4 & 8 & 16 & \\
   \hline
 \end{tabular}
-\caption{\label{tbl:upsampling}The upsampling rate of our near-singular integration scheme.  $d(\xx,\bd\Omega)$ is the distance between a point $\xx \in \Omega$ and the boundary of the domain $\bd\Omega$, and $h$ is an arclength spacing.}
+\end{center}
 \end{table}
 
 If eroding bodies are also sedimenting, bodies will come too close to one another for upsampling to be sufficient.  Therefore, future work will apply one of several near-singular integration schemes available in the literature~\cite{qua-bir2014a, klo-bar-gre-one2013, bar-wu-vee2015, hel-oja2008a}.
@@ -676,7 +703,7 @@ As a check on these results, we can use slender-body theory to estimate the drag
 \label{dragscaling}
 \frac{F_D}{4 \pi} \sim \frac{ \mu U}{\log(\ell/a)}\, ,	\qquad \text{for } a \ll \ell \, .
 \end{align}
-For a {\em circular} cylinder, the normalization factor $4 \pi$ produces an {\em exact} relationship (within the context of slender-body theory), where $a$ is taken to be the radius. For other shapes, the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic lengthscale since it generalizes the case of a circle. In Fig.~\ref{area_drag}(b) we show this prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as $t \to t_f$, confirming that the simulation accurately captures the slender limit as the body disappears.
+For a {\em circular} cylinder, the normalization factor $4 \pi$ produces an {\em exact} relationship (within the context of slender-body theory), where $a$ is taken to be the radius. For other shapes, the formula will be approximate and we define $a = \sqrt{A/\pi}$ as the characteristic length scale since it generalizes the case of a circle. In Fig.~\ref{area_drag}(b) we show this prediction (red dotted curve), where $\ell = 2.3 a_0$ is a fit parameter and $a_0 = 0.2$ is the radius of the initially circular body. The scaling law and measured drag agree closely as $t \to t_f$, confirming that the simulation accurately captures the slender limit as the body disappears.
 
 
 \subsection{Local analysis for the limiting shape}
@@ -731,7 +758,7 @@ We now aim to measure the opening angles formed in the numerical simulations to 
 \end{align}
 This modification allows erosion to sculpt the shape as it would normally, but with the area artificially held fixed.
 
-We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process, with the same spatial resolution, $N_\iin = 1024$, as before. Notice the body obtains a similar profile as observed previously, but now with fixed area. Importantly, more numerical accuracy is available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) zooms on the rear corner demonstrate that, due to our numerical regularization, the body is actually smooth on a fine scale. We show in Fig.~\ref{fixed_intface}(b) the stress distributions on the same interfaces. As observed previously, the stress becomes more evenly distributed as erosion reshapes the body. The slight rise in shear near the front/rear corners that was observed in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that this effect was due to loss of accuracy. Rather, the late-time stress distributions in Fig.~\ref{fixed_intface}(b) decrease monotonically to zero near the stagnation points. In this figure, time is normalized by the vanishing time $t_f = 1.79 \times 10^{-2}$ from the shrinking simulations (i.e.~Fig.~\ref{shrink_intface}). Curiously, about 3 multiples of $t_f$ are required to reach a visible steady state, which contrasts with previous studies on high-Reynolds-number erosion in which a steady state usually emerged before the body disappeared~\cite{moo-ris-chi-zha-she2013}.  
+We show in Fig.~\ref{fixed_intface}(a) several interfaces of this modified erosion process, with the same spatial resolution, $N_\iin = 1024$, as before. Notice the body obtains a similar profile as observed previously, but now with fixed area. Importantly, more numerical accuracy is available to quantify the terminal state. The inset in Fig.~\ref{fixed_intface}(a) zooms on the rear corner and demonstrates that, due to our numerical regularization, the body is actually smooth on a fine scale. We show in Fig.~\ref{fixed_intface}(b) the stress distributions on the same interfaces. As observed previously, the stress becomes more evenly distributed as erosion reshapes the body. The slight rise in shear near the front/rear corners that was observed in Fig.~\ref{shrink_intface}(b) is no longer present, suggesting that this effect was due to loss of accuracy. Rather, the late-time stress distributions in Fig.~\ref{fixed_intface}(b) decrease monotonically to zero near the stagnation points. In this figure, time is normalized by the vanishing time $t_f = 1.79 \times 10^{-2}$ from the shrinking simulations (i.e.~Fig.~\ref{shrink_intface}). Curiously, about 3 multiples of $t_f$ are required to reach a visible steady state, which contrasts with previous studies on high-Reynolds-number erosion in which a steady state usually emerged before the body disappeared~\cite{moo-ris-chi-zha-she2013}.  
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -757,7 +784,6 @@ To more thoroughly examine the influence of the smoothing parameters, we report 
 \caption{The long-time aspect ratio and opening-angle measurements for three cases of numerical smoothing. In these runs, we fix the resolution $N_\iin = 1024$, and vary the two smoothing parameters, $\eps, \sigma$. As $\eps, \sigma \to 0$, the aspect ratio tends to roughly 2.7 and the opening angle converges to the predicted value of $102^{\circ}$. Furthermore, the uncertainty in the angle measurement becomes smaller.
 } 
 \vspace{0.3 pc}
-\label{table:arangle}
 \begin{tabular}{c c c}
 \hline
 \hspace{0.5pc} smoothing parameters: $\eps$ and $\sigma$
@@ -778,6 +804,7 @@ In summary, we have found that a single-body eroding in 2D Stokes flow converges
 
 \subsection{Convergence test}
 As a final validation, we now verify that our method converges with the expected second-order accuracy in time. For this, we run the same single-body simulation shown in Figs.~\ref{01bodseq} and~\ref{shrink_intface} (except with a coarser $N_\iin=256$) to a stopping time of $t_s = 10^{-2}$. This stopping time is 56\% of the vanishing time, and was selected so that the body will have eroded substantially but is not small enough to compromise accuracy (due to the stress diverging).  We assess error by measuring the $L^2$-difference in the body shape obtained from simulations of successive resolution, with $\Delta t$ halved at each stage. In Table~\ref{convtab}, we report these errors along with the order of accuracy, obtained by Richardson-extrapolation-type calculations. The table confirms that our method converges with expected second-order accuracy. The last column of the table shows the CPU time taken for the simulation to run on a single-processor machine, demonstrating a nearly linear increase in computational time. Though the main parts of the algorithm are easily paralyzed, the single-processor times provide a simple assessment of the overall complexity.
+\todo[inline]{Aren't the CPU scaling times we report obvious.  If we take a time step size half the size, it will of course take twice as long.  We report these numbers in a couple of tables.  We have not reported CPU time versus the spatial resolution which is where the value of the FMM would be obvious.}
 
 % Table
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -826,7 +853,7 @@ We will impose the fixed-pressure-drop condition by dynamically controlling the 
 p_{-} = \frac{1}{2} \int_{-1}^{1} p(-2,y) \, dy \, , \qquad
 p_{+} = \frac{1}{2} \int_{-1}^{1} p(+2,y) \, dy \, .
 \end{align}
-We then rescale the computed density function by the pressure difference
+We then rescale the computed density function, Stokeslets, and rotlets  by the pressure difference
 \begin{align}
 \eeta \leftarrow \frac{\eeta}{(p_{-} - p_{+})}\, , \quad 
 \llambda \leftarrow \frac{\llambda}{(p_{-} - p_{+})}\, , \quad 
@@ -841,7 +868,7 @@ To validate the multibody simulations with this new fixed-pressure-drop conditio
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{table}%[htbp]
 \begin{center}
-\caption{Convergence test for multiple-body erosion with fixed-pressure-drop condition. In this test, we use 20 bodies with $N_{\iin} = 128$ grid points on each. We run the simulations to a stopping time of $t_s = 4 \times 10^{-3}$ (24\% of the time it takes for {\em all} bodies to vanish). We measure the {\em combined} $L^2$-difference in the shapes of {\em all} bodies. The table confirms that the method maintains second-order accuracy in time, even with multiple bodies and a time-varying inflow rate $\umax$.
+\caption{Convergence test for multiple-body erosion with a fixed-pressure-drop condition. In this test, we use 20 bodies with $N_{\iin} = 128$ grid points on each. We run the simulations to a stopping time of $t_s = 4 \times 10^{-3}$ (24\% of the time it takes for {\em all} bodies to vanish). We measure the {\em combined} $L^2$-difference in the shapes of {\em all} bodies. The table confirms that the method maintains second-order accuracy in time, even with multiple bodies and a time-varying inflow rate $\umax$.
 %We compare the shapes of {\em all} bodies from simulations of successive resolution using {\combined} $L^2$-norm
 }
 \vspace{0.3 pc}
@@ -910,7 +937,7 @@ With the validation complete, we now discuss the emergent physics of multibody e
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.80 \textwidth]{./figs/06bod.pdf}
-\caption{\label{fig:06bodies} The simulated erosion of 6 bodies with the fixed-pressure drop condition. Erosion causes flat faces to develop wherever bodies were initially very close to one another. This effect leads to the appearance of straight channels between bodies, and causes the bodies themselves to appear distinctly polygonal. The vorticity field (color-bar at right) shows that the flow is concentrated primarily in a single channel that runs horizontally across the domain. }
+\caption{\label{fig:06bodies} The simulated erosion of 6 bodies with the fixed-pressure-drop condition. Erosion causes flat faces to develop wherever bodies were initially very close to one another. This effect leads to the appearance of straight channels between bodies, and causes the bodies themselves to appear distinctly polygonal. The vorticity field (color-bar at right) shows that the flow is concentrated primarily in a single channel that runs horizontally across the domain. }
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
