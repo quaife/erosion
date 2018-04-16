@@ -315,13 +315,10 @@ where $\rr = \xx - \yy$ and $\rho = \|\rr\|$, is the kernel of the double-layer 
   D(\xx,\xx) = -\frac{\kappa(\xx)}{2\pi}(\ss(\xx) \otimes \ss(\xx)) \, ,
 \end{align}
 where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector at $\xx \in \bd\Omega$.  The equations for the Stokeslets~\eqref{eqn:stokeslet} and the rotlets~\eqref{eqn:rotlet} are also discretized with the trapezoid rule.  Applying this discretization strategy to~\eqref{eqn:completed_BIE}, the dense linear system to be solved is
-<<<<<<< HEAD
-\begin{equation}
-=======
+%\begin{equation}
 %\todo[inline]{Typo above}
 %\begin{equation}
 \begin{subequations}
->>>>>>> 5ab044b57c2b26f5cda347b7dd8ee337d76894a7
   \label{eqn:completed_BIE_discretized}
   \begin{align}
   \label{eqn:discretized_DLP}
@@ -341,30 +338,20 @@ where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector a
       \Delta s_j \, , \\ 
     \xi_\ell &= \sum_{\xx_j \in \gamma_\ell}
       {(\xx_j - \cc_\ell)}^\perp \cdot \eeta(\xx_j) \Delta s_j \, ,
-<<<<<<< HEAD
-  \end{aligned}
-\end{equation}
-for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.
-
-The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:completed_BIE_discretized}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
-=======
-    \end{align}
-%  \end{aligned}
+  \end{align}
 \end{subequations}
-%\end{equation}
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  When $\xx_i \in \Gamma$, the term 
 \begin{align}
   \sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
       \nn(\xx_j))\eeta(\xx_j) \, ,
 \end{align}
-is added to~\eqref{eqn:discretized_DLP}.  Since we are discetizing integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
+is added to~\eqref{eqn:discretized_DLP}.  Since we discetize integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
 %We have applied the trapezoid rule since all the integrands are smooth and periodic, and this guarantees that the numerical solutions converges to the true solution with spectral accuracy~\cite{tre-wei2014}.
 %\todo[inline]{The above sentence strikes me as awkward and verbose. Rephrase? \\
 %How about this: Since all integrands are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy.}
 
 The linear system~\eqref{eqn:completed_BIE_discretized} is solved iteratively with the generalized minimal residual method (GMRES)~\cite{saa-sch1986}.  Since the BIE is second-kind, only a mesh-independent number of GMRES iterations are required~\cite{cam-ips-kel-mey-xue1996}.  Therefore, the asymptotic cost is determined by the cost of performing a matrix-vector multiplication, and the bulk of the cost is evaluating the $N$-term sum in~\eqref{eqn:discretized_DLP}. We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} so that the cost of solving~\eqref{eqn:completed_BIE_discretized} is $\bigO(N)$ operations.
->>>>>>> 5ab044b57c2b26f5cda347b7dd8ee337d76894a7
-
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shear stress}
 \label{sec:shearStress}
