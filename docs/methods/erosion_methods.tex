@@ -344,7 +344,7 @@ where $\kappa(\xx)$ is the curvature and $\ss(\xx)$ is the unit tangent vector a
 for $i=1,\ldots,N$, $\ell=1,\ldots,M$.  When $\xx_i \in \Gamma$, the term 
 \begin{align}
   \sum_{\xx_j \in \Gamma} (\nn(\xx_i) \otimes
-      \nn(\xx_j))\eeta(\xx_j) \, ,
+      \nn(\xx_j))\eeta(\xx_j) \Delta s_j \, ,
 \end{align}
 is added to~\eqref{eqn:discretized_DLP}.  Since we discretize integrands that are smooth and periodic, the trapezoid rule employed above achieves spectral accuracy~\cite{tre-wei2014}.  
 
@@ -494,7 +494,21 @@ We point out that most exponential integrators use some form of quadrature to tr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post processing quantities of interest}
 \label{s:qoi}
-We further characterize the flow by computing the vorticity (Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}), and drag (Section~\ref{sec:drag}).  Once equation~\eqref{eqn:completed_DLP} is solved, the vorticity and pressure will be computed at points both inside the fluid bulk and on the along individual bodies, and then the drag of individual bodies will be computed.  For target points in the fluid domain, the integrands of the layer potentials are periodic and smooth, and the trapezoid rule guarantees spectral accuracy~\cite{tre-wei2014}.  However, if the target point is close to $\bd \Omega$, a nearly-singular integrand must be integrated, and this requires upsampling that is described in Section~\ref{sec:NSI}.  When the target points is on the boundary, the integrands involve singularities that are evaluated by combining singularity subtraction and odd-even integration~\cite{sid-isr1988}.  
+We further characterize the flow by computing the vorticity
+(Section~\ref{sec:vorticity}), pressure (Section~\ref{sec:pressure}),
+and drag (Section~\ref{sec:drag}).  Once
+equation~\eqref{eqn:completed_DLP} is solved for the velocity, $\uu =
+(u,v)$, the vorticity and pressure will be computed at points both
+inside the fluid bulk and on the along individual bodies, and then the
+drag of individual bodies will be computed.  For target points in the
+fluid domain, the integrands of the layer potentials are periodic and
+smooth, and the trapezoid rule guarantees spectral
+accuracy~\cite{tre-wei2014}.  However, if the target point is close to
+$\bd \Omega$, a nearly-singular integrand must be integrated, and this
+requires upsampling that is described in Section~\ref{sec:NSI}.  When
+the target points is on the boundary, the integrands involve
+singularities that are evaluated by combining singularity subtraction
+and odd-even integration~\cite{sid-isr1988}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vorticity}
