@@ -102,7 +102,7 @@ velocity} \\
 &&\mbox{\em erosion model} .
 \end{split}
 \end{equation}
-where $\Vn$ is the normal velocity of the interface. Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$, as well as a characteristic flow speed $U^*$ and domain scale $L^*$. Non-dimensionalization, however, allows us to remove these parameters from consideration. We non-dimensionalize the Stokes equations in the standard way, equivalent to setting $\mu = 1$ above. For interface evolution, we scale time on the so-called erosion timescale $T^* = {L^*}^2/(\CE \mu U)$, which can be achieved by simply setting $\CE = 1$ above. For the sake of numerical stability, we will modify the erosion model in Section~\ref{sec:thetaL}. 
+where $\Vn$ is the normal velocity of the interface. Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$, as well as a characteristic flow speed $U^*$ and domain scale $L^*$. Non-dimensionalization, however, allows us to remove these parameters from consideration. We non-dimensionalize the Stokes equations in the standard way, equivalent to setting $\mu = 1$ above. For interface evolution, we scale time on the so-called erosion timescale $T^* = {L^*}^2/(\CE \mu U^*)$, which can be achieved by simply setting $\CE = 1$ above. In Section~\ref{sec:thetaL}, we will make slight modifications to the erosion model for better numerical stability.
 
 The outer wall is formed by rounding off the corners of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align}
