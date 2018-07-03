@@ -102,14 +102,14 @@ velocity} \\
 &&\mbox{\em erosion model} .
 \end{split}
 \end{equation}
-where $\Vn$ is the normal velocity of the interface. The parameters in this system are $\mu$ the fluid viscosity and $\CE$ the mater-dependent erosion constant.
-%A scaling constant often appears in the erosion model in~\eqref{eqn:erosionModel}, but in the Stokes limit, the constant only sets the time scale, so we have taken it to be one.  For the sake of numerical stability, we will modify the erosion model in Section~\ref{sec:thetaL}. 
+where $\Vn$ is the normal velocity of the interface. Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$, as well as a characteristic flow speed $U^*$ and domain scale $L^*$. Non-dimensionalization, however, allows us to remove these parameters from consideration. We non-dimensionalize the Stokes equations in the standard way, equivalent to setting $\mu = 1$ above. For interface evolution, we scale time on the so-called erosion timescale $T^* = {L^*}^2/(\CE \mu U)$, which can be achieved by simply setting $\CE = 1$ above. For the sake of numerical stability, we will modify the erosion model in Section~\ref{sec:thetaL}. 
 
 The outer wall is formed by rounding off the corners of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx) = \umax (1-y^2,0)\, , \quad \xx \in \Gamma\, ,
 \end{align}
-where $U$ sets the maximum of the imposed Poiseuille flow. Often, we will simply set $U=1$, but in some instances we change $U$ dynamically to enforce that the pressure drop across the computational cell is constant as bodies erode within it.  To minimize the boundary effects of the inflow and outflow, we only place bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.  
+where $U$ (dimensionless) sets the maximum of the imposed Poiseuille flow. Often, we will simply set $U=1$, but in some instances we change $U$ dynamically to enforce that the pressure drop across the computational cell is constant as bodies erode within it. To minimize the boundary effects of the inflow and outflow, we only place bodies in the center third, $[-1,1] \times [-1,1]$, of the fluid domain.  
+
 \begin{figure}[htpb]
   \centering
   \input{figs/schematic.tikz}
@@ -126,7 +126,7 @@ We describe how the incompressible Stokes equations are solved in $\Omega$ using
 In this section, we describe an equivalent BIE formulation of the incompressible Stokes equations with Dirichlet boundary conditions
 \begin{equation}
   \begin{split}
-  \mu\Delta \uu &= \grad p\, , \qquad && \xx \in \Omega, \\
+  \Delta \uu &= \grad p\, , \qquad && \xx \in \Omega, \\
   \grad \cdot \uu &= 0,   && \xx \in \Omega, \\
   \uu &= \ff,  && \xx \in \bd\Omega.
   \end{split}
@@ -140,7 +140,8 @@ $\Gamma$, and it is zero on the eroding bodies $\gamma$.  In two dimensions, a B
     \eeta(\yy) \, ds_\yy\, , \quad \xx \in \Omega \, ,
     \label{eqn:velocityDLP}
 \end{align}
-where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown density function.  As the viscosity $\mu$ also sets the time scale, we take $\mu=1$.
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown density function.  
+%As the viscosity $\mu$ also sets the time scale, we take $\mu=1$.
 
 Since the double-layer potential is not able to represent force- and torque-free velocity fields,  we complete the double-layer potential with Stokeslets and rotlets~\cite{pow-mir1987, pow1993}
 \begin{align}
