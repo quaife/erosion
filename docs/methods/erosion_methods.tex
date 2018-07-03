@@ -98,11 +98,12 @@ of momentum}\\
 bodies} \\
 \uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{\em outer wall
 velocity} \\
-\Vn = \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
-&&\mbox{\em erosion model},
+\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
+&&\mbox{\em erosion model} .
 \end{split}
 \end{equation}
-where $\Vn$ is the normal velocity of the interface and $\mu$ is the fluid viscosity.  A scaling constant often appears in the erosion model in~\eqref{eqn:erosionModel}, but in the Stokes limit, the constant only sets the time scale, so we have taken it to be one.  For the sake of numerical stability, we will modify the erosion model in Section~\ref{sec:thetaL}. 
+where $\Vn$ is the normal velocity of the interface. The parameters in this system are $\mu$ the fluid viscosity and $\CE$ the mater-dependent erosion constant.
+%A scaling constant often appears in the erosion model in~\eqref{eqn:erosionModel}, but in the Stokes limit, the constant only sets the time scale, so we have taken it to be one.  For the sake of numerical stability, we will modify the erosion model in Section~\ref{sec:thetaL}. 
 
 The outer wall is formed by rounding off the corners of $[-3,3] \times [-1,1]$, and we impose the Hagen-Poiseuille flow
 \begin{align}
