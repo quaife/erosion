@@ -35,7 +35,7 @@ previously}
 \comment{The time scale of erosion totally disappears from the analysis.
 How would this time scale be set in practise?}
 \begin{itemize}
-  \item After equation (1), the erosion timescale is described.
+\item This is a great question and an issue that admittedly was skirted in the original manuscript. In the revised manuscript, we have more carefully explained the non-dimensionalization. See the text immediately below Eq.~(1). In particular, the erosion timescale is given by $T^* = {L^*}^2/(C_E \mu U^*)$, where $C_E$ is the erosion constant (a material property), $L^*$ is a characteristic lengthscale and $U^*$ a characteristic flow rate.
 \end{itemize}
 
 \noindent
@@ -43,7 +43,7 @@ How would this time scale be set in practise?}
 It seems to me like the drag coefficient might be a better quantity to
 base the discussion on.}
 \begin{itemize}
-\item Yes, we agree that it makes more sense to make this normalization dimensionless.  Accordingly, we have now included the viscosity in the denominator, so that we are dealing with the quantity $F_D /(4 \pi \mu U)$. This modification does not actually change the numbers in the plot since we have already set $\mu =1$ to non-dimensionalize, but it would make it easier to apply our results to laboratory or field studies (which is a driving interest of ours).
+\item Yes, we agree that it makes more sense to have this normalization be dimensionless.  Accordingly, we have now included the viscosity in the denominator, so that we are dealing with the quantity $F_D /(4 \pi \mu U)$. This modification does not actually change the values shown in the plot because we have already set $\mu =1$ in order to non-dimensionalize. However, it would make it easier to apply our results to laboratory or field studies, which is a driving interest of ours.
 
 As a side-note, in case you are concerned that there should be a lengthscale included in the denominator, remember that, since these are 2D simulations, $F_D$ is actually the drag-per-unit span (as discussed in Section 5.2).
 \end{itemize}
@@ -54,7 +54,7 @@ are subject to zero shear. Is it just a consequence of the
 regularization?}
 \begin{itemize}
 \item
-This is a good question. Indeed, the recession of the stagnation points is a result of the numerical smoothing (both the curvature penalization and the smoothing of the stress distribution). However, in laboratory experiments, stagnation points do indeed recede, which leads us to believe that the numerical smoothing represents a real mechanism. For example, the smoothing could plausibly represent small-scale drifting of the stagnation point resulting from noise, or perhaps a second-order pressure dependence in the erosion rate. If you are interested, there is a discussion of these possibilities in Moore et al.~{\it POF} 2013.
+This is a good question. Indeed, the recession of the stagnation points is a result of the numerical smoothing (both the curvature penalization and the smoothing of the stress distribution) in our simulations. Stagnation points, however, do actually recede in laboratory experiments on erosion, leading us to believe that the numerical smoothing represents a real mechanism. For example, the smoothing could plausibly represent small-scale drifting of the stagnation point due to noise, or perhaps a second-order pressure dependence in the erosion rate. If you are interested, various possibilities are discussed in Moore et al.~{\it POF} 2013.
 
 We have added the following text at the end of section 5.1:
 \begin{quotation}
