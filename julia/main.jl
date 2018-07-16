@@ -53,7 +53,7 @@ end
 function startup(paramsfile::AbstractString)
 	# Read the input geometry file.
 	paramvec = readvec(paramsfile)
-	geoinfile = string("../geometries/",paramvec[1],".in")
+	geoinfile = string("../",paramvec[1])
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
 	npts,nbods = getnvals(thlenvec0)
