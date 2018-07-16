@@ -90,7 +90,7 @@ function shiftcircs(circvec::Vector{CircType},
 end
 
 # Main routine to make the geometry.
-function makegeos(nbods::Int, areafrac::Float64)
+function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	# Parameters.
 	buff = 0.08
 	bolap = 0.03
@@ -101,7 +101,7 @@ function makegeos(nbods::Int, areafrac::Float64)
 	# 0.91 is the absolute upper bound. 
 	assert(areafrac < 0.71)
 	# Seed the random number generator.
-	srand(123)
+	srand(seed)
 		# Create the list of random radii.
 	dray = Rayleigh()
 	dchi = Chi(4)
@@ -138,6 +138,6 @@ function makegeos(nbods::Int, areafrac::Float64)
 end
 
 
-makegeos(20,0.5)
+makegeos(20, 0.5, 5)
 save_thlen("20circ",512)
 
