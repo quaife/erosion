@@ -33,7 +33,7 @@ end
 # Save the circle data to a file: radii and centers.
 function save_circ_data(circvec::Vector{CircType})
 	nbods = endof(circvec)
-	circfile = string("../geos2/",nbods,"circ.dat")
+	circfile = string("../geos2/",nbods,"circ.circ")
 	circdata = zeros(Float64, 0)
 	radvec = zeros(Float64, nbods)
 	for nn=1:nbods
@@ -46,23 +46,39 @@ function save_circ_data(circvec::Vector{CircType})
 		"# data below: radius, xc, yc for each body."; circdata]
 	writedata(data, circfile)
 end
-
-# Create a circle of given radius and center.
-function circthlen(npts::Integer, rad::Float64, xc::Float64, yc::Float64)
+# Return thlen data for a circle of given radius and center.
+function circthlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	thlen = new_thlen()
 	alpha = getalpha(npts)
 	# Get the tangent angle, theta, and the total arclength, len.
 	thlen.theta = 0.5*pi + 2*pi*alpha
 	thlen.len = 2*pi*rad
 	# Save the surface mean values, xsm and ysm.
-	thlen.xsm = xsm; thlen.ysm = ysm
+	thlen.xsm = xc; thlen.ysm = yc
 	return thlen
 end
-
 # Convert the circle data to theta-L data.
-function save_thlen(circfile::AbstractString, npts::Float64)
+function save_thlen(circfile::AbstractString, thlenfile::AbstractString, npts::Int)
+	# Read the circle data.
 	circdata = readvec(circfile)
 	nbods = round(Int, circdata[1])
 	deleteat!(circdata,1)
-	#for nn = 1:nbods
+	# Create the data vector to save the thlen values.
+	thlendata = zeros(Float64, 2)
+	thlendata[1] = npts
+	thlendata[2] = nbods
+	for nn = 1:nbods
+		rad, xc, yc = circdata[1], circdata[2], circdata[3]
+		thlen = circthlen(npts, rad, xc, yc)
+		append!(thlendata, [thlen.theta; thlen.len; thlen.xsm; thlen.ysm])
+		deleteat!(circdata,1:3)
+	end
+	writedata(thlendata, thlenfile)
 end
+# Convert the circle data to theta-L data.
+function save_thlen(name::AbstractString, npts::Int)
+	circfile = string("../geos2/",name,".circ")
+	thlenfile = string("../geos2/",name,npts,".thlen")
+	save_thlen(circfile, thlenfile, npts)
+end
+

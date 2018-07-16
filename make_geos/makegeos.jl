@@ -1,15 +1,14 @@
 # Make the geometries
 using Distributions
 using Winston
-
+include("../julia/basic.jl")
+include("../julia/thetalen.jl")
+include("../julia/ioroutines.jl")
 # Circle data type.
 type CircType
 	rad::Float64; xc::Float64; yc::Float64
 end
 include("iogeos.jl")
-include("../julia/basic.jl")
-include("../julia/ioroutines.jl")
-include("../julia/thetalen.jl")
 
 # The repulsive force on circ1 due to circ2.
 function fcircs(circ1::CircType, circ2::CircType, pow::Float64, buff::Float64, )
@@ -136,10 +135,11 @@ function makegeos(nbods::Int, areafrac::Float64)
 		println("foverlap = ",foverlap)
 	end
 	plotcircs(circvec,figfolder,cnt)
-
 	# Output to data files.
 	save_circ_data(circvec)
 	return
 end
 
 makegeos(20,0.5)
+save_thlen("20circ", 512)
+
