@@ -178,7 +178,7 @@ function vecmult(uu::Vector{Float64},vv::Vector{Float64})
 #	return mult_dealias(uu,vv)
 	return uu.*vv
 end
-# getalpha: Get alpha = 2pi*s/L, using an offset grid.
+# getalpha: Get alpha = 2 pi s/L, using an offset grid.
 function getalpha(npts::Integer)
 	dalpha = 2*pi/npts
 	return alpha = collect(range(0.5*dalpha, dalpha, npts))

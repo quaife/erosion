@@ -97,14 +97,12 @@ function makegeos(nbods::Int, areafrac::Float64)
 	pow = 0.5
 	dt = 5e-2
 	fthresh = 1e-8
-
 	# Check that the desired area fraction is not too high.
 	# 0.91 is the absolute upper bound. 
 	assert(areafrac < 0.71)
 	# Seed the random number generator.
 	srand(123)
-	
-	# Create the list of random radii.
+		# Create the list of random radii.
 	dray = Rayleigh()
 	dchi = Chi(4)
 	drad = dchi
@@ -117,7 +115,6 @@ function makegeos(nbods::Int, areafrac::Float64)
 	yc = rand(duni, nbods)
 	# Create the list of circles
 	circvec = [CircType(radvec[nn],xc[nn],yc[nn]) for nn=1:nbods]
-
 	# Shift the centers until no overlap.
 	figfolder = "./figs/"
 	newfolder(figfolder)
@@ -140,6 +137,7 @@ function makegeos(nbods::Int, areafrac::Float64)
 	return
 end
 
-makegeos(1,0.5)
-save_thlen("1circ", 512)
+
+makegeos(20,0.5)
+save_thlen("20circ",512)
 

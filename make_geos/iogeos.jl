@@ -51,7 +51,7 @@ function circthlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	thlen = new_thlen()
 	alpha = getalpha(npts)
 	# Get the tangent angle, theta, and the total arclength, len.
-	thlen.theta = 0.5*pi + 2*pi*alpha
+	thlen.theta = 0.5*pi + alpha
 	thlen.len = 2*pi*rad
 	# Save the surface mean values, xsm and ysm.
 	thlen.xsm = xc; thlen.ysm = yc
