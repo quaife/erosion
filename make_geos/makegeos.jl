@@ -31,7 +31,7 @@ function fcircs(circ1::CircType, circ2::CircType, pow::Float64, buff::Float64, )
 end
 # The repulisve force due to the walls
 function fwall(circ::CircType, pow::Float64, buff::Float64)
-	rcrit = (1+2*buff)*circ.rad
+	rcrit = (1+4*buff)*circ.rad
 	# Get the force component in the x or y direction.
 	function fcomp(xx::Float64)
 		ff = 0.
@@ -138,6 +138,6 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 end
 
 
-makegeos(20, 0.5, 5)
-save_thlen("20circ",512)
+makegeos(10, 0.5, 5)
+save_thlen("10circ",512)
 
