@@ -270,10 +270,16 @@ c     generic boundary condition
         do k = 1,nouter
           call bgFlow(1,xouter(k),youter(k),rhs(k),rhs(k+nouter))
         enddo
-        do k = 1,ninner*nbodies
-          rhs(k+2*nouter) = 0.d0
-          rhs(k+2*nouter+ninner) = 0.d0
+        do j = 1,nbodies
+          do k = 1,ninner
+            rhs(2*nouter + (j-1)*2*ninner + k) = 0.d0
+            rhs(2*nouter + (j-1)*2*ninner + k + ninner) = 0.d0
+          enddo
         enddo
+c        do k = 1,ninner*nbodies
+c          rhs(k+2*nouter) = 0.d0
+c          rhs(k+2*nouter+ninner) = 0.d0
+c        enddo
       endif
 c     constant background flow on outer walls on no slip on obstacle
 
