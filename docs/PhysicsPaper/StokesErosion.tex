@@ -1,5 +1,15 @@
 % Journal of Computational Sciences
-\documentclass[3p]{elsarticle}
+%\documentclass[3p]{elsarticle}
+
+
+% AIP and APS Journals use revtex package.
+%\documentclass[aip, pof, reprint]{revtex4-1} 
+%\documentclass[reprint,superscriptaddress]{revtex4-1}
+% Note: I believe PRL is APS.
+
+
+\documentclass[reprint,superscriptaddress,notitlepage]{revtex4-1}
+% PRF is APS
 
 % PACKAGES
 \usepackage{graphicx, amsmath, amssymb, amsfonts, mathtools, mathrsfs, color}
@@ -43,10 +53,10 @@
 %\title{An eroding porous medium}
 \title{The development of anisotropy in an eroding porous medium}
 %
-\author[Nick]{M.~Nicholas J.~Moore}
-\author[Bryan]{Bryan D.~Quaife}
-\address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
-\address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+\author{M.~N.~J.~Moore}
+\affiliation{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+\author{Bryan D.~Quaife}
+\affiliation{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \begin{abstract}
 We numerically simulate the erosion of a porous medium due to an internally flowing fluid. The solid constituents of the porous medium erode under the action of surface shear stress. As the particles shrink, they elongate in the direction of the flow, giving rise to anisotropic conductivity of the porous medium.
 \end{abstract}
