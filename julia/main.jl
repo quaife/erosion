@@ -1,5 +1,6 @@
 # main.jl: The main routines to call
-using Winston
+#using Winston
+using Plots
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
