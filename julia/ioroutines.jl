@@ -148,10 +148,6 @@ function read_density_file(filename::AbstractString)
 end
 # readvec: Read a vector from a data file.
 function readvec(filename::AbstractString)
-
-
-	println("In readvec(), filename is ", filename)
-
 	iostream = open(filename, "r")
 	invec = readdlm(iostream, comments=true)[:,1]
 	close(iostream)
