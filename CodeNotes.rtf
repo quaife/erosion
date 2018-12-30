@@ -202,8 +202,7 @@ In certain situations, we witness an instability in the shape of eroding bodies,
 \b Fixed parameters in the code\
 
 \b0 In spectral.jl, there is relthold in imagtest() and relthold in krasnyfilter().\
-In thetalen.jl, there are two threshold values in test_theta()\
-There is mtermthresh\
+In thetalen.jl, there is thresh in test_theta_means() and test_theta_ends and mthresh in delete_indices()\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural\partightenfactor0
 
@@ -231,8 +230,6 @@ There is mtermthresh\
 - Run \'93make\'94 in fortran_code/fmm, then move files *.so up a directory \'93mv *.so ..\'94\
 - Run \'93make\'94 in fortran_code/, then move the files *.so to the julia/ folder.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 Git commands\
