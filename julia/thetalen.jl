@@ -214,7 +214,7 @@ function test_theta_means(theta::Vector{Float64})
 	m1 = mean(cos(theta))
 	m2 = mean(sin(theta))
 	maxmean = maximum(abs([m1,m2]))
-	thresh = 20./npts
+	thresh = 20/npts
 	if maxmean > thresh
 		warn("theta means")
 		println("The max mean of sin, cos is: ", 

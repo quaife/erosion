@@ -89,7 +89,7 @@ function read_thlen_file(filename::AbstractString)
 	nbods = round(Int,invec[2])
 	deleteat!(invec,1:2)
 	# Consistency test.
-	assert( endof(invec) == nbods*(npts+3))
+	@assert length(invec) == nbods*(npts+3)
 	# Extract thlenvec for each body.
 	thlenvec = new_thlenvec(nbods)
 	for nn=1:nbods
@@ -115,7 +115,7 @@ function read_geom_file(filename::AbstractString)
 	nbods = round(Int,invec[3])
 	deleteat!(invec,1:3)
 	# Consistency test.
-	assert( endof(invec) == nbods*(3*npts+3))
+	@assert length(invec) == nbods*(3*npts+3)
 	# Read theta, len, xsm, ysm, xx, yy and save in thlenvec.
 	thlenvec = new_thlenvec(nbods)
 	for nn=1:nbods
@@ -139,8 +139,8 @@ end
 # read_density_file: Read the density file to get the density and rotated density.
 function read_density_file(filename::AbstractString)
 	dendata = readvec(filename)
-	nn = endof(dendata)
-	assert(iseven(nn))
+	nn = length(dendata)
+	@assert iseven(nn)
 	nhalf = div(nn,2)
 	density = dendata[1:nhalf]
 	denrot = dendata[nhalf+1:nn]
@@ -148,8 +148,12 @@ function read_density_file(filename::AbstractString)
 end
 # readvec: Read a vector from a data file.
 function readvec(filename::AbstractString)
+
+
+	println("In readvec(), filename is ", filename)
+
 	iostream = open(filename, "r")
-	invec = readdlm(iostream)[:,1]
+	invec = readdlm(iostream, comments=true)[:,1]
 	close(iostream)
 	return invec
 end
@@ -186,7 +190,7 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 	width = axlims[1]/axlims[2]*height
 	pp = plot()
 	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
-	for ii = 1:endof(thlenvec)
+	for ii = 1:lastindex(thlenvec)
 		thlen = thlenvec[ii]
 		if thlen.len<=0
 			throw("Cannot plot a curve with non-positive length.")

@@ -2,29 +2,29 @@
 
 #--------------- OBJECTS ---------------#
 # ThetaLenType: Includes the geometry data and stress of a single body.
-type ThetaLenType
+mutable struct ThetaLenType
 	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64;
 	xx::Vector{Float64}; yy::Vector{Float64}; atau::Vector{Float64}; 
 end
 # ThLenDenType: Includes the vector of all thlens and the density function.
-type ThLenDenType
+mutable struct ThLenDenType
 	thlenvec::Vector{ThetaLenType}; 
 	density::Vector{Float64}; denrot::Vector{Float64};
 end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
-type ParamType
+mutable struct ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
 	nouter::Int; ifmm::Int; fixarea::Bool; fixpdrop::Bool;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64;
 	geofile::AbstractString; paramsfile::AbstractString
 end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm.
-type DerivsType
+mutable struct DerivsType
 	mterm::Float64; nterm::Vector{Float64}; 
 	xsmdot::Float64; ysmdot::Float64
 end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
-type TargetsType
+mutable struct TargetsType
 	xtar::Vector{Float64}; ytar::Vector{Float64};
 	utar::Vector{Float64}; vtar::Vector{Float64};
 	ptar::Vector{Float64}; vortar::Vector{Float64};
@@ -48,7 +48,7 @@ function new_derivs()
 	return DerivsType(0.,evec(),0.,0.)
 end
 function evec()
-	return Array(Float64,0)
+	return Array{Float64}(undef,0)
 end
 
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
@@ -94,10 +94,10 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
 	nits = zeros(Int,1)
 	# Call the Fortran routine StokesSolver.
-	ccall((:stokessolver_, "libstokes.so"), Void, 
+	ccall((:stokessolver_, "libstokes.so"), Nothing, 
 		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},
 		Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Int}), 
-		&npts, &nbods, &nouter, &ifmm, xx, yy, density, nits)
+		npts, nbods, nouter, ifmm, xx, yy, density, nits)
 	println("The total number of GMRES iterations is ", nits[1],"\n\n")
 	return density
 end
@@ -115,10 +115,10 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
 	tau = zeros(Float64, npts*nbods)
 	if nbods > 0
-		ccall((:computeshearstress_, "libstokes.so"), Void,
+		ccall((:computeshearstress_, "libstokes.so"), Nothing,
 			(Ptr{Int},Ptr{Int},Ptr{Int},
 			Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
-			&npts, &nbods, &nouter, xx, yy, density, tau)
+			npts, nbods, nouter, xx, yy, density, tau)
 	end
 	return tau
 end
@@ -136,10 +136,10 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
 	pressure = zeros(Float64, npts*nbods)
 	if nbods > 0
-		ccall((:computepressure_, "libstokes.so"), Void,
+		ccall((:computepressure_, "libstokes.so"), Nothing,
 			(Ptr{Int},Ptr{Int},Ptr{Int},
 			Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
-			&npts, &nbods, &nouter, xx, yy, density, pressure)
+			npts, nbods, nouter, xx, yy, density, pressure)
 	end
 	return pressure
 end
@@ -158,12 +158,12 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		npts::Int, nbods::Int, nouter::Int)
 	ntargets = endof(xtar)
 	utar,vtar,ptar,vortar = [zeros(Float64,ntargets) for ii=1:4]
-	ccall((:computeqoitargets_, "libstokes.so"), Void,
+	ccall((:computeqoitargets_, "libstokes.so"), Nothing,
 		(Ptr{Int}, Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64},
 		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, 
 		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
-		&npts, &nbods, &nouter, xx, yy, density, 
-		&ntargets, xtar, ytar, utar, vtar, ptar, vortar)
+		npts, nbods, nouter, xx, yy, density, 
+		ntargets, xtar, ytar, utar, vtar, ptar, vortar)
 	return utar,vtar,ptar,vortar
 end
 
@@ -228,7 +228,7 @@ function getumax(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
 	umax = 1.
 	if fixpdrop
 		pdrop = getpdrop(thlenden, nouter)[1]
-		umax =  10 * 8./pdrop
+		umax =  10 * 8/pdrop
 		println("Fixing pdrop, umax = ", signif(umax,3))
 	end
 	return umax
@@ -239,7 +239,7 @@ Note: this routine assumes that umax = 1; If different, need to apply rescaling.
 function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0; rotation::Bool=false)
 	# Set up targets points on two vertical slices.
 	nypts = 13
-	dy = 2./nypts
+	dy = 2/nypts
 	ylocs = collect(-1+0.5*dy: dy: 1-0.5*dy)
 	# Target points for plus/minus x0.
 	tarp = regulargridtargs([x0],ylocs)
