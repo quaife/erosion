@@ -188,7 +188,7 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 	axlims = [1.0,1.0]
 	height = 400
 	width = axlims[1]/axlims[2]*height
-	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]))
+	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), size=(width,height),leg=false)
 	for ii = 1:lastindex(thlenvec)
 		thlen = thlenvec[ii]
 		if thlen.len<=0
@@ -196,10 +196,9 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 		end
 		getxy!(thlen)
 		xx, yy = thlen.xx, thlen.yy
-		plot!(plt, xx,yy)
+		plot!(plt, xx,yy,color="black")
 	end
 	# Save the figure in a file.
-	#savefig(pp, figname, width=width, height=height)
 	savefig(plt, figname)
 	return
 end
