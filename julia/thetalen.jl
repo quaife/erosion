@@ -45,7 +45,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	end
 	# Loop over all bodies and advance each forward in time.
 	npts, nbods = getnvals(thld0.thlenvec)
-	assert(endof(dvec) == endof(thld_derivs.thlenvec) == nbods);
+	@assert (length(dvec) == length(thld_derivs.thlenvec) == nbods)
 	thlv1 = new_thlenvec(nbods)
 	epsilon = params.epsilon
 	alpha = getalpha(npts)
@@ -65,7 +65,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		mataud = mean(thlend.atau)	
 		# Advance len first.
 		len1 = len0 + dt1*mterm
-		assert(len1 > 0.)	
+		@assert (len1 > 0.)	
 		# To advance theta, need zeta.
 		zeta0 = zetafun(len0,matau0)
 		zetad = zetafun(lend,mataud)
@@ -98,7 +98,7 @@ end
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamType)
 	getstress!(thlenden, params)
-	nbods = endof(thlenden.thlenvec)
+	nbods = length(thlenden.thlenvec)
 	dvec = new_dvec(nbods)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
@@ -113,21 +113,21 @@ function getderivs(thlen::ThetaLenType, epsilon::Float64, fixarea::Bool)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
 	# Make sure atau has been computed.
-	assert(endof(atau)>0)
+	@assert length(atau)>0
 	# Compute the effective atau to be used in evolution, depending on fixarea.
 	matau = mean(atau)
-	ataueff = atau - fixarea*matau
+	ataueff = atau .- fixarea*matau
 	# Calculate the derivative terms.
-	alpha = getalpha(endof(theta))
-	dtheta = specdiff(theta - alpha) + 1.0
-	vnorm = ataueff + epsilon*matau*(dtheta - 1.0)
+	alpha = getalpha(length(theta))
+	dtheta = specdiff(theta - alpha) .+ 1.0
+	vnorm = ataueff + epsilon*matau*(dtheta .- 1.0)
 	vtang, mterm = tangvel(dtheta, vnorm)
 	# Derivative of absolute-value of shear stress.
 	datau = specdiff(atau)
 	nterm = 2*pi/len * (datau + vecmult(dtheta,vtang))
 	# Get the derivatives of xsm and ysm.
-	xsmdot = mean(-vecmult(vnorm,sin(theta)) + vecmult(vtang,cos(theta)))
-	ysmdot = mean( vecmult(vnorm,cos(theta)) + vecmult(vtang,sin(theta)))
+	xsmdot = mean(-vecmult(vnorm,sin.(theta)) + vecmult(vtang,cos.(theta)))
+	ysmdot = mean( vecmult(vnorm,cos.(theta)) + vecmult(vtang,sin.(theta)))
 	# Save in object.
 	derivs = DerivsType(mterm, nterm, xsmdot, ysmdot)
 	return derivs
@@ -139,7 +139,7 @@ function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
 	# Formula for mterm = dL/dt.
 	mterm = -2*pi*mdthvn
 	# The derivative of the tangnential velocity wrt alpha.
-	dvtang = dthvn - mdthvn
+	dvtang = dthvn .- mdthvn
 	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 	vtang = specint(dvtang)
 	return vtang, mterm
@@ -152,9 +152,9 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 	ndts = 1.0
 	mthresh = 10.
 	thlv = thld0.thlenvec
-	nbods = endof(thlv)
-	assert(endof(dvec) == nbods)
-	deletevec = Array(Int,0)
+	nbods = length(thlv)
+	@assert length(dvec) == nbods
+	deletevec = Array{Int}(undef,0)
 	for nn = 1:nbods
 		len = thlv[nn].len
 		mterm = dvec[nn].mterm
@@ -181,7 +181,7 @@ end
 # getalpha: Get alpha = 2 pi s/L, using an offset grid.
 function getalpha(npts::Integer)
 	dalpha = 2*pi/npts
-	return alpha = collect(range(0.5*dalpha, dalpha, npts))
+	return alpha = collect(range(0.5*dalpha, step=dalpha, length=npts))
 end
 # getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
 function getxy!(thlen::ThetaLenType)
@@ -194,14 +194,14 @@ end
 xsm and ysm are the boundary-averaged values. =#
 function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
 	test_theta_means(theta)
-	assert(len > 0.)
+	@assert len > 0.
 	# The partial derivatives dx/dalpha and dy/dalpha.
-	dx = len/(2*pi) * (cos(theta) - mean(cos(theta)))
-	dy = len/(2*pi) * (sin(theta) - mean(sin(theta)))
+	dx = len/(2*pi) * (cos.(theta) .- mean(cos.(theta)))
+	dy = len/(2*pi) * (sin.(theta) .- mean(sin.(theta)))
 	# Integrate to get the x,y coordinates; result will have mean zero.
 	xx = specint(dx); yy = specint(dy)
 	# Move to have the correct average values.
-	xx += xsm; yy += ysm
+	xx .+= xsm; yy .+= ysm
 	return xx,yy
 end
 
@@ -210,10 +210,10 @@ end
 These are conditions for theta to describe a closed curve 
 in the equal arc length frame. =#
 function test_theta_means(theta::Vector{Float64})
-	npts = endof(theta)
-	m1 = mean(cos(theta))
-	m2 = mean(sin(theta))
-	maxmean = maximum(abs([m1,m2]))
+	npts = length(theta)
+	m1 = mean(cos.(theta))
+	m2 = mean(sin.(theta))
+	maxmean = maximum(abs.([m1,m2]))
 	thresh = 20/npts
 	if maxmean > thresh
 		warn("theta means")

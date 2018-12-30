@@ -7,7 +7,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
 	datafolder, plotfolder = getfoldernames(params.paramsfile)
-	nfilestr = lpad(nfile,4,0)
+	nfilestr = lpad(string(nfile),4,string(0))
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
 	pinfofile = string(datafolder,"apinfo.out")
@@ -56,8 +56,8 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 end
 # save_pinfo: Save info about the parameters.
 function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString)
-	cputime = round( (time()-params.cput0)/60. , 2)
-	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (minutes)"
+	cputime = round( (time()-params.cput0)/3600. , sigdigits=2)
+	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (hours)"
 	paramdata = [label2; params.npts; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
@@ -188,8 +188,7 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 	axlims = [1.0,1.0]
 	height = 400
 	width = axlims[1]/axlims[2]*height
-	pp = plot()
-	xlim(-axlims[1],axlims[1]); ylim(-axlims[2],axlims[2])
+	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]))
 	for ii = 1:lastindex(thlenvec)
 		thlen = thlenvec[ii]
 		if thlen.len<=0
@@ -197,10 +196,11 @@ function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)
 		end
 		getxy!(thlen)
 		xx, yy = thlen.xx, thlen.yy
-		pp = oplot(xx,yy,"-")
+		plot!(plt, xx,yy)
 	end
 	# Save the figure in a file.
-	savefig(pp, figname, width=width, height=height)
+	#savefig(pp, figname, width=width, height=height)
+	savefig(plt, figname)
 	return
 end
 

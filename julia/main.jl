@@ -2,6 +2,7 @@
 using Plots
 using DelimitedFiles
 using Statistics
+using FFTW
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
@@ -23,17 +24,17 @@ function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
 end
 # erosion: The main routine to erode a group of bodies.
 function erosion(thlenden::ThLenDenType, params::ParamType)
-	println("Running erosion with dt = ", signif(params.dt,3), 
-		" and tfin = ", signif(params.tfin,3))
+	println("Running erosion with dt = ", round(params.dt,sigdigits=3), 
+		" and tfin = ", round(params.tfin,sigdigits=3))
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
 	# Enter the time loop to apply Runge-Kutta.
-	while(tt < params.tfin - 0.1*params.dt && endof(thlenden.thlenvec) > 0)
+	while(tt < params.tfin - 0.1*params.dt && length(thlenden.thlenvec) > 0)
 		# Advance the variables forward one timestep with RK4.
 		nn += 1
 		println("\n\n\nTIME STEP ", nn)
-		println("t/tfin = ", signif(tt/params.tfin,3))
+		println("t/tfin = ", round(tt/params.tfin,sigdigits=3))
 		thlenden, dt = rungekutta2(thlenden, params)
 		tt += dt
 		# Plot and save the data if appropriate.

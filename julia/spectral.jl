@@ -39,14 +39,14 @@ function specint(fx::Vector, intvlen::Float64=2*pi)
 	kv = kvec(length(fx), 0)
 	Fh = fh./(2*pi*im*kv)
 	# This kills the zeroth mode and, if nn is even, also the highest mode.
-	Fh[kv.==0] = 0.
+	Fh[kv.==0] .= 0.
 	Fx = ifftnice(Fh)
 	imagtest(Fx)
 	return real(Fx)*intvlen	
 end
 # imagtest: Test that the imaginary part is negligible.
 function imagtest(fx::Vector, relthold::Float64=1e-8)
-	maximrel = maxabs(imag(fx))/maxabs(fx)
+	maximrel = maximum(abs.(imag(fx)))/maximum(abs.(fx))
 	if maximrel > relthold
 		warn("imag part too big: ", maximrel)
 	end
@@ -56,7 +56,7 @@ end
 function expsmooth(fx::Vector, factor::Float64)
 	fh = fftnice(fx)
 	kv = kvec(length(fx), 1)
-	fh .*= exp(-factor*abs(kv).^2)
+	fh .*= exp.(-factor*abs.(kv).^2)
 	fs = ifftnice(fh)
 	imagtest(fs)
 	return real(fs) 

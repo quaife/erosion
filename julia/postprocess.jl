@@ -221,7 +221,7 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType},
 	ind0 = div(npts,2*nptslayer)
 	ind0 = max(ind0,1)
 	ind = ind0:2*ind0:npts
-	nlayers = endof(spacevec)
+	nlayers = length(spacevec)
 	xtar,ytar = Array(Float64,0), Array(Float64,0)
 	for nn = 1:nbods
 		thlen = thlenv[nn]
@@ -243,15 +243,15 @@ function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 end
 # regulargrid: Set up target points on a regular grid; return x and y.
 function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
-	nx = endof(xlocs)
-	ny = endof(ylocs)
+	nx = length(xlocs)
+	ny = length(ylocs)
 	ntargs = nx*ny
 	xtar = zeros(Float64,ntargs)
 	ytar = zeros(Float64,ntargs)
 	for nn=1:nx
 		n1,n2 = n1n2(ny,nn)
-		xtar[n1:n2] = xlocs[nn]
-		ytar[n1:n2] = ylocs
+		xtar[n1:n2] .= xlocs[nn]
+		ytar[n1:n2] .= ylocs
 	end
 	return xtar,ytar
 end

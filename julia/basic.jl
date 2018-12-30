@@ -63,7 +63,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
 		n1,n2 = n1n2(npts,nn)
-		atau = abs(tau[n1:n2])
+		atau = abs.(tau[n1:n2])
 		atau = gaussfilter(atau, params.sigma)
 		thlenden.thlenvec[nn].atau = atau[:]
 	end
@@ -76,11 +76,11 @@ end
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
 function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
-	if (rotation == false && endof(thlenden.density) == 0)
+	if (rotation == false && length(thlenden.density) == 0)
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
-	elseif (rotation == true && endof(thlenden.denrot) == 0)
+	elseif (rotation == true && length(thlenden.denrot) == 0)
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
@@ -95,8 +95,8 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64},
 	nits = zeros(Int,1)
 	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Nothing, 
-		(Ptr{Int},Ptr{Int},Ptr{Int},Ptr{Int},
-		Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Int}), 
+		(Ref{Int},Ref{Int},Ref{Int},Ref{Int},
+		Ref{Float64},Ref{Float64},Ref{Float64},Ref{Int}), 
 		npts, nbods, nouter, ifmm, xx, yy, density, nits)
 	println("The total number of GMRES iterations is ", nits[1],"\n\n")
 	return density
@@ -116,8 +116,8 @@ function compute_stress(xx::Vector{Float64}, yy::Vector{Float64},
 	tau = zeros(Float64, npts*nbods)
 	if nbods > 0
 		ccall((:computeshearstress_, "libstokes.so"), Nothing,
-			(Ptr{Int},Ptr{Int},Ptr{Int},
-			Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
+			(Ref{Int},Ref{Int},Ref{Int},
+			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
 			npts, nbods, nouter, xx, yy, density, tau)
 	end
 	return tau
@@ -137,8 +137,8 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 	pressure = zeros(Float64, npts*nbods)
 	if nbods > 0
 		ccall((:computepressure_, "libstokes.so"), Nothing,
-			(Ptr{Int},Ptr{Int},Ptr{Int},
-			Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64}),
+			(Ref{Int},Ref{Int},Ref{Int},
+			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
 			npts, nbods, nouter, xx, yy, density, pressure)
 	end
 	return pressure
@@ -156,12 +156,12 @@ end
 function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
 		npts::Int, nbods::Int, nouter::Int)
-	ntargets = endof(xtar)
+	ntargets = length(xtar)
 	utar,vtar,ptar,vortar = [zeros(Float64,ntargets) for ii=1:4]
 	ccall((:computeqoitargets_, "libstokes.so"), Nothing,
-		(Ptr{Int}, Ptr{Int}, Ptr{Int}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64},
-		Ptr{Int}, Ptr{Float64}, Ptr{Float64}, 
-		Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}),
+		(Ref{Int}, Ref{Int}, Ref{Int}, Ref{Float64}, Ref{Float64}, Ref{Float64},
+		Ref{Int}, Ref{Float64}, Ref{Float64}, 
+		Ref{Float64}, Ref{Float64}, Ref{Float64}, Ref{Float64}),
 		npts, nbods, nouter, xx, yy, density, 
 		ntargets, xtar, ytar, utar, vtar, ptar, vortar)
 	return utar,vtar,ptar,vortar
@@ -186,11 +186,11 @@ function getallxy(thlenv::Vector{ThetaLenType}, npts::Int, nbods::Int)
 end
 # getnvals: Calculate npts and nbods.
 function getnvals(thlenv::Vector{ThetaLenType})
-	nbods = endof(thlenv)
+	nbods = length(thlenv)
 	if nbods == 0
 		npts = 0
 	else
-		npts = endof(thlenv[1].theta)
+		npts = length(thlenv[1].theta)
 	end
 	return npts,nbods
 end
@@ -229,7 +229,7 @@ function getumax(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
 	if fixpdrop
 		pdrop = getpdrop(thlenden, nouter)[1]
 		umax =  10 * 8/pdrop
-		println("Fixing pdrop, umax = ", signif(umax,3))
+		println("Fixing pdrop, umax = ", round(umax,sigdigits=3))
 	end
 	return umax
 end
@@ -258,7 +258,7 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0; rotati
 	So check that it is the same at x0 and -x0. =#
 	qreldiff = (qplus-qminus)/qavg
 	if qreldiff > 1e-3
-		warn("The flux does not match at x0 and -x0: qreldiff = ", signif(qreldiff,3))
+		warn("The flux does not match at x0 and -x0: qreldiff = ", round(qreldiff,sigdigits=3))
 	end
 	return pdrop,qavg
 end
