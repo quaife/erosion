@@ -92,7 +92,7 @@ c      close(unit=4)
 c     load boundary condition
 
       call solveBIE(ninner,nbodies,nouter,den,rhs,
-     $      gmwork,lrwork,igwork,liwork,maxl,ifmm,iter)
+     $      gmwork,lrwork,igwork,liwork,maxl,ifmm,ibary,iter)
 c     solve for the density function with GMRES
 
 c      call eval_velocity_targets(ninner,nbodies,
@@ -465,7 +465,7 @@ c       the y component of the position
 
 c***********************************************************************
       subroutine solveBIE(ninner,nbodies,nouter,den,rhs,
-     $    gmwork,lrwork,igwork,liwork,maxl,ifmm,iter)
+     $    gmwork,lrwork,igwork,liwork,maxl,ifmm,ibary,iter)
 c     Solve the boundary integral equation with GMRES
       implicit real*8 (a-h,o-z)
 
@@ -530,26 +530,33 @@ c          print*,k,vel1(k)-vel2(k)
 cc        endif
 c      enddo
 
-
-      if (ifmm .eq. 1) then
-        print*,'USING FMM'
+      if (ibary .eq. 1) then
+        print*,'USING Barycentric'
         call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
      $      nelt,ia,ja,a,isym,
-     $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
+     $      matvec_DLP_bary,msolve_DLP,itol,tol,itmax,iter,err,
      $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
-c        USE FMM
+c       Use Barycentric
       else
-        print*,'USING DIRECT'
-        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
-     $      nelt,ia,ja,a,isym,
-     $      matvec_DLP,msolve_DLP,itol,tol,itmax,iter,err,
-     $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
-c        DON'T USE FMM
+
+        if (ifmm .eq. 1) then
+          print*,'USING FMM'
+          call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+       $      nelt,ia,ja,a,isym,
+       $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
+       $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
+c         USE FMM
+        else
+          print*,'USING DIRECT'
+          call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+       $      nelt,ia,ja,a,isym,
+       $      matvec_DLP,msolve_DLP,itol,tol,itmax,iter,err,
+       $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
+c          DON'T USE FMM
+        endif
+c       use GMRES to find the density function of the double layer
+c       potential
       endif
-c     use GMRES to find the density function of the double layer
-c     potential
-
-
 
       end
 
@@ -938,6 +945,11 @@ c     defined on the outer boundary
       enddo
 c     outer product of normal at source with normal at target multiplied
 c     by density function.  This removes the rank one null space
+
+
+      do k = 1,2*nouter + 2*ninner*nbodies
+        print*,vel(k)
+      enddo
 
       return
       end
@@ -1334,6 +1346,7 @@ c       assign real and imaginary parts to appropriate locations of r
 
 
 c***********************************************************************
+c     TODO: NEW INPUT VARIABLE FOR THE BARYCENTRIC FLAG
       subroutine deformation_on_boundary(ninner,nbodies,x,y,
      $    centerx,centery,
      $    px,py,speed,nouter,xouter,youter,px0,py0,speed0,den,
@@ -1895,6 +1908,7 @@ c
 c      end
 
 c***********************************************************************
+c     TODO: NEW INPUT VARIABLE FOR THE BARYCENTRIC FLAG
       subroutine computeQoiTargets(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
 c     Compute the velocity, pressure, and vorticity at a set of target 
@@ -2467,6 +2481,7 @@ c       END OF DOING POINTS THAT REQUIRE 16X UPSAMPLING
       end
 
 c***********************************************************************
+c     TODO: THIS CODE SHOULD ONLY EVER BE CALLED IF USING TRAPEZOID RULE
       subroutine evalLPbodies(ninner,x,y,
      $    denx,deny,ntargets,xtar,ytar,
      $    utar,vtar,press_tar,vort_tar)
@@ -2524,6 +2539,7 @@ c     build inner geometry
       end
 
 c***********************************************************************
+c     TODO: THIS CODE SHOULD ONLY EVER BE CALLED IF USING TRAPEZOID RULE
       subroutine evalLPouter(n,x,y,
      $    denx,deny,ntargets,xtar,ytar,
      $    utar,vtar,press_tar,vort_tar)
