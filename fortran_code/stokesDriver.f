@@ -255,7 +255,7 @@ c     $          var_rad*(dsin(k*dtheta))
 c        endif     
 c        enddo      
 c      enddo        
-      call computeQoiTargetsBaryCen(ninner,nbodies,nouter,x,y,den,
+      call computeQoiTargetsBarycen(ninner,nbodies,nouter,x,y,den,
      $  ninner*nbodies,xtar_test,ytar_test,utar_test,vtar_test,
      $  press_tar_test,vort_tar_test) 
      
