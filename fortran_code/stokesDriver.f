@@ -180,11 +180,11 @@ c
 
       
       if( ibary .eq. 1) then
-      call computeQoiTargetsBaryCen(ninner,nbodies,nouter,x,y,den,
+      call computeQoiTargetsBarycen(ninner,nbodies,nouter,x,y,den,
      $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
       print *, 'computeQoiTargets_Bary'
       else 
-      call computeQoiTargetsOld(ninner,nbodies,nouter,x,y,den,
+      call computeQoiTargetsTrap(ninner,nbodies,nouter,x,y,den,
      $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
       print *, 'computeQoiTargets_trap'      
       endif

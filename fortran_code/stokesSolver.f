@@ -2524,7 +2524,7 @@ c
       end
 
 ***********************************************************************
-      subroutine computeQoiTargetsBaryCen(ninner,nbodies,nouter,
+      subroutine computeQoiTargetsBarycen(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
 c     Compute the velocity, pressure, and vorticity at a set of target 
 c     points xtar and ytar.  Target points must be sufficiently far 
@@ -2736,7 +2736,7 @@ c      enddo
       end
       
 ***********************************************************************
-      subroutine computeQoiTargetsOld(ninner,nbodies,nouter,
+      subroutine computeQoiTargetsTrap(ninner,nbodies,nouter,
      $    x,y,den,ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
 c     Compute the velocity, pressure, and vorticity at a set of target 
 c     points xtar and ytar.  Target points must be sufficiently far 
