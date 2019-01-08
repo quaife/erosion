@@ -180,15 +180,17 @@ c
 
       
       if( ibary .eq. 1) then
-      call computeQoiTargetsBarycen(ninner,nbodies,nouter,x,y,den,
-     $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
       print *, 'computeQoiTargets_Bary'
       else 
-      call computeQoiTargetsTrap(ninner,nbodies,nouter,x,y,den,
-     $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
+c      call computeQoiTargetsTrap(ninner,nbodies,nouter,x,y,den,
+c     $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
       print *, 'computeQoiTargets_trap'      
       endif
       
+      
+      call computeQoiTargets(ninner,nbodies,nouter,ibary,x,y,den,
+     $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
+     
       call computeShearStress(ninner,nbodies,nouter,x,y,den,ibary,
      $    shear_stress)
 c     pass in the density function and return the shear_stress
@@ -255,7 +257,7 @@ c     $          var_rad*(dsin(k*dtheta))
 c        endif     
 c        enddo      
 c      enddo        
-      call computeQoiTargetsBarycen(ninner,nbodies,nouter,x,y,den,
+      call computeQoiTargets(ninner,nbodies,nouter,ibary,x,y,den,
      $  ninner*nbodies,xtar_test,ytar_test,utar_test,vtar_test,
      $  press_tar_test,vort_tar_test) 
      
