@@ -657,14 +657,13 @@ c       loop over target points
           ytar(k) = y((itar-1)*ninner+k)           
         enddo
         
-c         loop over source points
+c      loop over source points
        nbeta = 1
        noutc = nouter
        nder = 1
        call StokesInteriorDLP(nouter,noutc,nbeta,xouter,youter,
      &          denx,deny,px0,py0,ninner,xtar,ytar,nder,
      &          ux,uy,u1x,u1y,u2x,u2y) 
-
 
         do k = 1,ninner
           vel(2*nouter+(itar-1)*2*ninner+k) = 
@@ -756,11 +755,11 @@ c         loop over target points
             ytar(k) = y((itar-1)*ninner+k)           
           enddo
             
-c           loop over source points
-       nbeta = 1
-       ninnc = ninner
-       nder = 1
-       call StokesExteriorDLP(ninner,ninnc,nbeta,xsou,ysou,
+c         loop over source points
+          nbeta = 1
+          ninnc = ninner
+          nder = 1
+          call StokesExteriorDLP(ninner,ninnc,nbeta,xsou,ysou,
      &          denx,deny,px,py,ninner,xtar,ytar,isou,nbodies,nder,
      &          ux,uy,u1x,u1y,u2x,u2y) 
 c        print *, '2'       
@@ -785,11 +784,11 @@ c       loop over target points
           ux(k) = 0.d0
           uy(k) = 0.d0
         enddo
-c         loop over source points
-       nbeta = 1
-       ninnc = ninner
-       nder = 1
-       call StokesExteriorDLP(ninner,ninnc,nbeta,xsou,ysou,
+c       loop over source points
+        nbeta = 1
+        ninnc = ninner
+        nder = 1
+        call StokesExteriorDLP(ninner,ninnc,nbeta,xsou,ysou,
      &          denx,deny,px,py,nouter,xouter,youter,isou,nbodies,nder,
      &          ux,uy,u1x,u1y,u2x,u2y) 
 c        print *, '3'       
@@ -2611,33 +2610,33 @@ c     Density function defined on the outer geometry
      $         (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
      $         speed0(k)*twopi/dble(nouter)/pi
           else
-          utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
-     $      speed0(k)*twopi/dble(nouter)/pi
-          vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
-     $      speed0(k)*twopi/dble(nouter)/pi
-          press_tar(j) = press_tar(j) + 
+            utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $        speed0(k)*twopi/dble(nouter)/pi
+            vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $        speed0(k)*twopi/dble(nouter)/pi
+            press_tar(j) = press_tar(j) + 
      $        (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
      $        speed0(k)*twopi/dble(nouter)/pi
-          vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
-     $      rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
+            vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*routden)/
+     $        rho2**2.d0*speed0(k)*twopi/dble(nouter)/pi
           endif
         enddo
       enddo
       
-       if(ibary .eq. 1) then
-           nder = 2 
-           nbeta = 1
-           noutc = nouter
-           call StokesInteriorDLP(nouter,noutc,nbeta,xouter,youter,
-     &              denx,deny,px0,py0,ntargets,xtar,ytar,nder,
-     &              utmp,vtmp,uxtmp,uytmp,vxtmp,vytmp)
+      if(ibary .eq. 1) then
+        nder = 2 
+        nbeta = 1
+        noutc = nouter
+        call StokesInteriorDLP(nouter,noutc,nbeta,xouter,youter,
+     &           denx,deny,px0,py0,ntargets,xtar,ytar,nder,
+     &           utmp,vtmp,uxtmp,uytmp,vxtmp,vytmp)
            
-           do j = 1,ntargets
-                utar(j) = utar(j) + utmp(j)       
-                vtar(j) = vtar(j) + vtmp(j)
-                vort_tar(j) = vort_tar(j) + vxtmp(j)-uytmp(j)
-           enddo
-       endif 
+        do j = 1,ntargets
+          utar(j) = utar(j) + utmp(j)       
+          vtar(j) = vtar(j) + vtmp(j)
+          vort_tar(j) = vort_tar(j) + vxtmp(j)-uytmp(j)
+        enddo
+      endif 
        
 c     Contribution from the density function on each inner obstacle
       do isou = 1,nbodies
@@ -2663,37 +2662,37 @@ c       Density function defined on the inner geometry
             routden = -rx*deny(k) + ry*denx(k)
 
             if(ibary .eq. 1) then
-                press_tar(j) = press_tar(j) + 
-     $            (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
-     $            speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+              press_tar(j) = press_tar(j) + 
+     $          (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
             else
-                utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
-     $            speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-                vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
-     $            speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-               press_tar(j) = press_tar(j) + 
-     $              (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
-     $              speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
-                vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*
-     $                routden)/rho2**2.d0*speed((isou-1)*ninner+k)*
-     $                twopi/dble(ninner)/pi
+              utar(j) = utar(j) + rdotn/rho2*rdotden/rho2*rx*
+     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+              vtar(j) = vtar(j) + rdotn/rho2*rdotden/rho2*ry*
+     $          speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+              press_tar(j) = press_tar(j) + 
+     $           (2.d0*rdotn*rdotden/rho2/rho2 - dendotn/rho2)*
+     $           speed((isou-1)*ninner+k)*twopi/dble(ninner)/pi
+              vort_tar(j) = vort_tar(j) + (rdotden*routn + rdotn*
+     $           routden)/rho2**2.d0*speed((isou-1)*ninner+k)*
+     $           twopi/dble(ninner)/pi
             endif
           enddo
         enddo
         
         if(ibary .eq. 1) then
-           nder = 2 
-           nbeta = 1
-           ninnc = ninner 
-           call StokesExteriorDLP(ninner,ninnc,nbeta,xisou,yisou,
-     &             denx,deny,px,py,ntargets,xtar,ytar,isou,nbodies,nder,
-     &             utmp,vtmp,uxtmp,uytmp,vxtmp,vytmp)
+         nder = 2 
+         nbeta = 1
+         ninnc = ninner 
+         call StokesExteriorDLP(ninner,ninnc,nbeta,xisou,yisou,
+     &         denx,deny,px,py,ntargets,xtar,ytar,isou,nbodies,nder,
+     &         utmp,vtmp,uxtmp,uytmp,vxtmp,vytmp)
            
-           do j = 1,ntargets
-               utar(j) = utar(j) + utmp(j)       
-               vtar(j) = vtar(j) + vtmp(j)
-               vort_tar(j) = vort_tar(j) + vxtmp(j)-uytmp(j)
-           enddo
+         do j = 1,ntargets
+           utar(j) = utar(j) + utmp(j)       
+           vtar(j) = vtar(j) + vtmp(j)
+           vort_tar(j) = vort_tar(j) + vxtmp(j)-uytmp(j)
+         enddo
         endif
       enddo
            
@@ -2725,9 +2724,6 @@ c         rotlet contribution
       enddo
 c     Add in contribution from Rotlets and Stokeslets
 
-      
-      
-
       do k = 1,ntargets
 c        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
         if (iside(k) .eq. 0) then
@@ -2737,7 +2733,6 @@ c        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
           vort_tar(k) = 0.d0
         endif
       enddo
-
 
 c      do j=1,nbodies
 c        do k = 1,nnear(j)
@@ -4364,7 +4359,6 @@ c     initialize drag to be zero
       end
 
 c*******************************************************************************8      
-
       subroutine StokesInteriorDLP(npts,nptsc,nbeta,xsou,ysou,
      &          dens1,dens2,nx,ny,ntar,xtar,ytar,nder,
      &          utar1x,utar1y,u1xtar,u1ytar,u2xtar,u2ytar)
@@ -4609,12 +4603,21 @@ c        bdval(j) = -bdval(j)
 c     put geometry in complex variables
       call fourierDiff(npts,dzsou)
 
+c     FMM for the denominator
+c     FMM for the first numerator ... also compute the gradient
+c     FMM for the second numerator with weight function bdval .. also
+compute the gradient which you need for the third part
+c     for j=1,ntar
+c       num(j) = num(j) + utar(j)*grad(j)
+c     enddo
+
+c     den2 = FMMcall()
+
       do j = 1,ntar
         ztar = xtar(j) + eye*ytar(j)
         num = czero
         den = czero
         do k = 1,npts
-          den1(k) = czero
           den1(k) = zsou(k) - ztar
           num = num + bdval(k)/den1(k)*dzsou(k)
           den = den + 1.d0/den1(k)*dzsou(k)
@@ -4624,12 +4627,10 @@ c       of Barnett, Wu, Veerapaneni
 
         utar(j) = num/den
 
-
 c       Start computing derivative (equation (3.10)).  Term in
 c       denominator is unchanged
         num = czero
         do k = 1,npts
-          den2(k) = czero
           den2(k) = den1(k)*den1(k)          
           num = num + (bdval(k) - utar(j))/
      $          den2(k)*dzsou(k)
@@ -4638,18 +4639,21 @@ c       compute numerator and denominator term in equation (3.5) of
 c       Barnett, Wu, Veerapaneni
         dutar(j) = num/den
 
-c      Computing the second derivative of DLP for the stress tensor
+c       Computing the second derivative of DLP for the stress tensor
+        num = czero
+        num1 = czero
+        den3 = czero
+        do k=1,npts
+          den3 = den2(k)*den1(k)
+          num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
+     $           den3*dzsou(k)
+        enddo
+        ddutar(j)=2.d0*num1/den
+      enddo
 
-       num = czero
-       num1 = czero
-       den3 = czero
-         Do k=1,npts
-             den3 = den2(k)*den1(k)
-             num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
-     $               den3*dzsou(k)
-         enddo
-         ddutar(j)=2.d0*num1/den
-       enddo
+c      do k = 1,ntar
+c        print*,den(k) - den2(k)
+c      enddo
 
       end
 

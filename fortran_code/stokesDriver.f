@@ -4,7 +4,7 @@
       parameter (ninner = 2**8)
       parameter (nbodies = 2)
       parameter (nouter = 2**8)
-      parameter (ntargets = 120)
+      parameter (ntargets = 500)
       parameter (maxbodies = 10)
 
 c      parameter (ninnc = 2**8,nbeta = 1,ninner = nbeta*ninnc)      
@@ -57,7 +57,7 @@ c     Testing for stress tensor
       radius(1) = 2.d-1
       radius(2) = 2.d-1
       centerx(1) = 0.5d0
-      centerx(2) = 0.5d0 - radius(1) - radius(2) - 0.1d0
+      centerx(2) = 0.5d0 - radius(1) - radius(2) - 0.1d-1
       centery(1) = 0.1d0 !+ 0.4999d0 
       centery(2) = 0.1d0 !+ 0.4999d0
 
@@ -125,10 +125,10 @@ c        endif
 c        enddo
 c      enddo            
 c      
-      xmin = -8.d-1
-      xmax = 8.d-1
-      ymin = -0.99d0
-      ymax = 0.99d0
+      xmin = -0.111
+      xmax = 0.71
+      ymin = -0.31
+      ymax = 0.51
       nx = ntargets
       ny = ntargets
       dx = (xmax - xmin)/dble(nx-1)
