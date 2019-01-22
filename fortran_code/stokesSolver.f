@@ -2332,7 +2332,7 @@ c         loop over target points
             xsou(k) = x((isou-1)*ninner+k)
             ysou(k) = y((isou-1)*ninner+k)            
           enddo
-          print *, itar,isou
+c          print *, itar,isou
             
 c           loop over source points
        nbeta = 1
@@ -2342,7 +2342,7 @@ c           loop over source points
      &          denx,deny,px,py,ninner,xtar,ytar,isou,nbodies,nder,
      &          ux,uy,u1x,u1y,u2x,u2y) 
    
-          print *, itar,isou     
+c          print *, itar,isou     
           do k = 1,ninner
             E11((itar-1)*ninner+k) = E11((itar-1)*ninner+k) + u1x(k) 
             E12((itar-1)*ninner+k) = E12((itar-1)*ninner+k) +  
@@ -4440,7 +4440,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_in(nptsc,xsou,ysou,dcmplx(sdotd),bdval)
 
       call laplaceInteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)
      
       do j = 1,ntar
         utar1x(j) = utar1x(j) + dreal(dutar(j))
@@ -4458,7 +4458,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_in(nptsc,xsou,ysou,dcmplx(dens1c),bdval)
 
       call laplaceInteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)     
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)     
 
       do j = 1,ntar
         utar1x(j) = utar1x(j) - xtar(j)*dreal(dutar(j))
@@ -4478,7 +4478,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_in(nptsc,xsou,ysou,dcmplx(dens2c),bdval)
 
       call laplaceInteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)     
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)     
 
       do j = 1,ntar
         utar1x(j) = utar1x(j) - ytar(j)*dreal(dutar(j))
@@ -4497,7 +4497,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_in(npts,xsou,ysou,tau1,bdval)
 
       call laplaceInteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)
 
       do j = 1,ntar
         utar1x(j) = utar1x(j) + dreal(utar(j))
@@ -4511,7 +4511,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_in(npts,xsou,ysou,tau2,bdval)
 
       call laplaceInteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)
 
       do j = 1,ntar
         utar1y(j) = utar1y(j) + dreal(utar(j))
@@ -4573,7 +4573,7 @@ c        bdval(j) = -bdval(j)
 
 ******************************************************************
       subroutine laplaceInteriorHolomorphic(npts,xsou,ysou,bdval,
-     $      ntar,xtar,ytar,utar,dutar,ddutar)
+     $      ntar,xtar,ytar,utar,nder,dutar,ddutar)
       implicit real*8 (a-h,o-z)
 
       dimension xsou(npts),ysou(npts)
@@ -4640,15 +4640,17 @@ c       Barnett, Wu, Veerapaneni
         dutar(j) = num/den
 
 c       Computing the second derivative of DLP for the stress tensor
-        num = czero
-        num1 = czero
-        den3 = czero
-        do k=1,npts
-          den3 = den2(k)*den1(k)
-          num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
-     $           den3*dzsou(k)
-        enddo
-        ddutar(j)=2.d0*num1/den
+        if(nder .eq. 2) then
+          num = czero
+          num1 = czero
+          den3 = czero
+          do k=1,npts
+            den3 = den2(k)*den1(k)
+            num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
+     $             den3*dzsou(k)
+          enddo
+          ddutar(j)=2.d0*num1/den
+        endif
       enddo
 
 c      do k = 1,ntar
@@ -4660,7 +4662,7 @@ c      enddo
 c****************************************************************
       subroutine StokesExteriorDLP(npts,nptsc,nbeta,xsou,ysou,
      &          densx,densy,px,py,ntar,xtar,ytar,isou,n,nder,
-     &          utar1x,utar1y,u1xtar,u1ytar,u2xtar,u2ytar)!,press_tar)
+     &          utar1x,utar1y,u1xtar,u1ytar,u2xtar,u2ytar)
       implicit real*8 (a-h,o-z)
 
       dimension xsou(npts),ysou(npts),
@@ -4724,7 +4726,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_ex(npts,xsou,ysou,dcmplx(sdotd),bdval)
 
       call laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)
      
       do j = 1,ntar
         utar1x(j) = utar1x(j) + dreal(dutar(j))
@@ -4742,7 +4744,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_ex(npts,xsou,ysou,dcmplx(densx),bdval)
 
       call laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)     
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)     
 
       do j = 1,ntar
         utar1x(j) = utar1x(j) - xtar(j)*dreal(dutar(j))
@@ -4762,7 +4764,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_ex(npts,xsou,ysou,dcmplx(densy),bdval)
 
       call laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)     
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)     
 
       do j = 1,ntar
         utar1x(j) = utar1x(j) - ytar(j)*dreal(dutar(j))
@@ -4781,7 +4783,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_ex(npts,xsou,ysou,tau1,bdval)
 
       call laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)
       
       do j = 1,ntar
         utar1x(j) = utar1x(j) + dreal(utar(j))
@@ -4796,7 +4798,7 @@ c      The Second, Third and, Forth parts
       call compute_bdval_ex(npts,xsou,ysou,tau2,bdval)
 
       call laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
-     $    ntar,xtar,ytar,utar,dutar,ddutar)
+     $    ntar,xtar,ytar,utar,nder,dutar,ddutar)
       
       do j = 1,ntar
         utar1y(j) = utar1y(j) + dreal(utar(j))
@@ -4866,7 +4868,7 @@ c     The formula (4.3) for exterior limit v^+
 c******************************************************************
 
       subroutine laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
-     $      ntar,xtar,ytar,utar,dutar,ddutar)
+     $      ntar,xtar,ytar,utar,nder,dutar,ddutar)
       implicit real*8 (a-h,o-z)
 
       dimension xsou(npts),ysou(npts)
@@ -4954,19 +4956,18 @@ c       compute numerator and denominator term in equation (3.8) of
 c       Barnett, Wu, Veerapaneni
         dutar(j) = num/(ztar - dcmplx(a))/den
         
-c      Computing the second derivative of DLP for the stress tensor
-        
-       num = czero
-       num1 = czero
-       
-         Do k=1,npts
-             den3=den2(k)*den1(k)
-             num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
+c       Computing the second derivative of DLP for the stress tensor
+        if(nder .eq. 2) then
+        num = czero
+        num1 = czero
+          Do k=1,npts
+            den3=den2(k)*den1(k)
+            num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
      $               den3*dzsou(k)
-         enddo
-         
-         ddutar(j)=2.d0*num1/(ztar - dcmplx(a))/den
-       enddo
+          enddo
+          ddutar(j)=2.d0*num1/(ztar - dcmplx(a))/den
+        endif
+      enddo
 
       return
       end
