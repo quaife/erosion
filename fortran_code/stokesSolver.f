@@ -4589,8 +4589,9 @@ c        bdval(j) = -bdval(j)
      $             ddutar(ntar)
 
       complex *16 eye,czero
-      complex*16 zsou(npts),dzsou(npts)
-      complex *16 num,den,num1
+      complex *16 zsou(npts),dzsou(npts)
+      complex *16 den1(npts),den2(npts)
+      complex *16 num,den,num1,den3
       complex *16 ztar
       complex *16 ftar1,dftar1
       complex *16 ftar2,dftar2
@@ -4613,8 +4614,10 @@ c     put geometry in complex variables
         num = czero
         den = czero
         do k = 1,npts
-          num = num + bdval(k)/(zsou(k) - ztar)*dzsou(k)
-          den = den + 1.d0/(zsou(k) - ztar)*dzsou(k)
+          den1(k) = czero
+          den1(k) = zsou(k) - ztar
+          num = num + bdval(k)/den1(k)*dzsou(k)
+          den = den + 1.d0/den1(k)*dzsou(k)
         enddo
 c       compute numerator and denominator term in equation (3.5) of
 c       of Barnett, Wu, Veerapaneni
@@ -4626,8 +4629,10 @@ c       Start computing derivative (equation (3.10)).  Term in
 c       denominator is unchanged
         num = czero
         do k = 1,npts
+          den2(k) = czero
+          den2(k) = den1(k)*den1(k)          
           num = num + (bdval(k) - utar(j))/
-     $          (zsou(k) - ztar)**2.d0*dzsou(k)
+     $          den2(k)*dzsou(k)
         enddo
 c       compute numerator and denominator term in equation (3.5) of
 c       Barnett, Wu, Veerapaneni
@@ -4637,10 +4642,11 @@ c      Computing the second derivative of DLP for the stress tensor
 
        num = czero
        num1 = czero
-       
-         Do k=1,npts       
+       den3 = czero
+         Do k=1,npts
+             den3 = den2(k)*den1(k)
              num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
-     $               (zsou(k)-ztar)**3.d0*dzsou(k)
+     $               den3*dzsou(k)
          enddo
          ddutar(j)=2.d0*num1/den
        enddo
@@ -4866,8 +4872,9 @@ c******************************************************************
      &            ddutar(ntar) 
 
       complex *16 eye,czero,a
-      complex*16 zsou(npts),dzsou(npts)
-      complex *16 num,den,num1
+      complex *16 zsou(npts),dzsou(npts)
+      complex *16 den1(npts), den2(npts)
+      complex *16 num,den,num1,den3
       complex *16 ztar
       complex *16 ftar1,dftar1
       complex *16 ftar2,dftar2
@@ -4898,10 +4905,12 @@ c     put geometry in complex variables
         num = czero
         den = czero
         do k = 1,npts
-          num = num + bdval(k)/(zsou(k) - ztar)*dzsou(k)
+          den1(k) = czero
+          den1(k) = (zsou(k) - ztar)
+          num = num + bdval(k)/den1(k)*dzsou(k)
 c          den = den + 1.d0/((zsou(k) - dcmplx(a))
 c     $          *(zsou(k) - ztar))*dzsou(k)
-          den = den + 1.d0/(zsou(k) - ztar)*dzsou(k)
+          den = den + 1.d0/den1(k)*dzsou(k)
         enddo
 c       compute numerator and denominator term in equation (3.8) of
 c       of Barnett, Wu, Veerapaneni and let a=(0,0) 
@@ -4916,9 +4925,11 @@ c       denominator is unchanged
         tmp1 = czero
         tmp2 = czero
         do k = 1,npts
+          den2(k) = czero
+          den2(k) = den1(k)*den1(k)         
         if( CDABS(zsou(k)-ztar) .gt. 1.d-10) then
           num = num + (bdval(k) - utar(j))/
-     $          (zsou(k) - ztar)**2.d0*dzsou(k)
+     $          den2(k)*dzsou(k)
           else
 c          print *,1
           do l=1,npts
@@ -4944,9 +4955,10 @@ c      Computing the second derivative of DLP for the stress tensor
        num = czero
        num1 = czero
        
-         Do k=1,npts       
+         Do k=1,npts
+             den3=den2(k)*den1(k)
              num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
-     $               (zsou(k)-ztar)**3.d0*dzsou(k)
+     $               den3*dzsou(k)
          enddo
          
          ddutar(j)=2.d0*num1/(ztar - dcmplx(a))/den

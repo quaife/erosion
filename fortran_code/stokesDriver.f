@@ -57,9 +57,9 @@ c     Testing for stress tensor
       radius(1) = 2.d-1
       radius(2) = 2.d-1
       centerx(1) = 0.5d0
-      centerx(2) = 0.5d0 - radius(1) - radius(2) - 0.001d0
-      centery(1) = 0.1d0 + 0.499d0
-      centery(2) = 0.1d0 + 0.499d0
+      centerx(2) = 0.5d0 - radius(1) - radius(2) - 0.1d0
+      centery(1) = 0.1d0 !+ 0.4999d0 
+      centery(2) = 0.1d0 !+ 0.4999d0
 
 c      radius(3) = 5.d-2
       phi(1) = 0.d0
