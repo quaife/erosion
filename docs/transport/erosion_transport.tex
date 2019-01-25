@@ -1,0 +1,158 @@
+\documentclass[preprint, 10pt]{elsarticle}
+
+\newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}} \newcommand{\secref}[1]{\ref{#1}}
+
+\input{preambles.tex}
+\begin{document}
+
+\title{Viscous Transport in Eroding Porous Media}
+
+
+% OTHER TITLE POSSIBILITIES
+% Viscous Erosion in Porous Media (change 'in' to 'of'?)
+% A fast and accurate method for viscous erosion of a 2D porous medium
+% A boundary-integral method for viscous erosion of a porous medium
+% A computational framework to simulate the viscous erosion of a porous medium
+
+\author[SH]{Shang-Huan Chiu}
+\author[Nick]{M.~Nicholas J.~Moore}
+\author[Bryan]{Bryan D.~Quaife}
+
+\address[SH]{Department of Scientific Computing, Florida State
+University, Tallahassee, FL, 32306.}
+\address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+\address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+
+\begin{abstract} 
+  An abstract
+\end{abstract}
+
+\begin{keyword}
+  Keyword 1 \sep Keyword 2 \sep Keyword 3 
+\end{keyword}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction\label{s:intro}}
+A continuation of the methods paper~\cite{qua-moo2018}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Contributions}
+\begin{itemize}
+  \item Use novel near-singular Barycentric integration scheme for
+    Stokes equation outlined in~\cite{bar-wu-vee2015}.
+  \item Need to compute one additional derivative since we need the
+    derivative of the velocity to find the vorticity and stress tensor
+  \item Tracer trajectories at different time steps
+  \item Compute the anomalous diffusion rate using similar techniques as
+    the paper with Pietro~\cite{dea-qua-bir-jua2018}
+  \item Need a novel way to do time stepping through the complex
+    geometry
+\end{itemize}
+
+\paragraph{Limitations}
+\begin{itemize}
+  \item Bodies are still pinned
+  \item Bodies are still two dimensional
+\end{itemize}
+
+\paragraph{Related Work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Outline of the Paper}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formulation}
+\label{s:formulation}
+Similar to the JCP methods paper.  However, need to put everything into
+complex variables formulation so that we can use Barycentric ideas.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boundary integral equation formulation} 
+\label{sec:bies}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Computing the shear stress}
+\label{sec:shearStressLP}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boundary evolution in the {\thL} framework} 
+\label{sec:thetaL}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical methods}
+\label{s:method}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fast Summation Methods}
+\label{sec:FMM}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Solving the BIE}
+\label{sec:BIE}
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Shear stress}
+\label{sec:shearStress}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TIME-STEPPING %%
+\subsection{Time-stepping with the {\thL} method} 
+\label{sec:timeStepping}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Post processing quantities of interest}
+\label{s:qoi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Vorticity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Pressure}
+\label{sec:pressure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Drag}
+\label{sec:drag}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Near-singular integration}
+\label{sec:NSI}
+
+%%-----------------------------------------------------------------%%
+% RESULTS SECTION
+%%-----------------------------------------------------------------%%
+\section{Results: Single-body erosion}
+\label{s:SingleResults}
+
+\subsection{A single body eroding in Stokes flow}
+
+\subsection{Scaling laws for area and drag}
+\label{sec:scaling}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions\label{s:conclusions}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\bf Acknowledgments} We would like to thank Manas Rachh for
+supplying the FMM for the Stokes double-layer potential. BQ and NM were
+supported by Florida State University startup funds and Simons
+Foundation Mathematics and Physical Sciences-Collaboration Grants for
+Mathematicians.
+
+\bibliographystyle{plainnat} 
+\biboptions{sort&compress}
+\bibliography{refs}
+
+
+\end{document}
+
+

@@ -125,10 +125,14 @@ c        endif
 c        enddo
 c      enddo            
 c      
-      xmin = -0.111
-      xmax = 0.71
-      ymin = -0.31
-      ymax = 0.51
+c      xmin = -0.111
+c      xmax = 0.71
+c      ymin = -0.31
+c      ymax = 0.51
+      xmin = -1.d0
+      xmax = 2.d0
+      ymin = -0.99d0
+      ymax = 0.99d0
       nx = ntargets
       ny = ntargets
       dx = (xmax - xmin)/dble(nx-1)
