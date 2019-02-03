@@ -1,7 +1,0 @@
-20 circles of variable radii
-Each circle discretized with 128 points
-Radii comes from a Gamma distribution with parameters A=15, B = 0.01
-Centers are uniformly distributed
-All circles are entirely contained in the box [-0.95,0.95] x
-[-0.95,0.95]
-buffer = 1.1
