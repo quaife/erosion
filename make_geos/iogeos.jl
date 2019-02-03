@@ -11,13 +11,13 @@ function plotcircs(circvec::Vector{CircType},
 		figfolder::AbstractString, nfile::Int)
 	# Parameters.
 	npts = 128
-	nfilestr = lpad(nfile,4,0)
+	nfilestr = lpad("nfile",4,"0")
 	figname = string(figfolder,"/circ", nfilestr,".pdf")
 	# Make the figure.
 	pp = plot()
 	xlim(-1,1); ylim(-1,1)
 	# Plot each body.
-	nbods = endof(circvec)
+	nbods = length(circvec)
 	alpha = getalpha(npts)
 	for nn = 1:nbods
 		circ = circvec[nn]
@@ -32,7 +32,7 @@ end
 
 # Save the circle data to a file: radii and centers.
 function save_circ_data(circvec::Vector{CircType})
-	nbods = endof(circvec)
+	nbods = length(circvec)
 	circfile = string("../geos2/",nbods,"circ.circ")
 	circdata = zeros(Float64, 0)
 	radvec = zeros(Float64, nbods)

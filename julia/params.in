@@ -1,5 +1,5 @@
 # Parameters
-geos2/10circ512.thlen		# the data file for the initial geometry
+input_geos/10circ512.thlen		# the data file for the initial geometry
 50		# epsfac: epsilon = epsfac/npts
 20		# sigfac: sigma = sigfac/npts
 1e-4		# dt

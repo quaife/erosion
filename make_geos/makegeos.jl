@@ -1,11 +1,14 @@
 # Make the geometries
 using Distributions
-using Winston
+using Random
+using Plots
+using LinearAlgebra
+using DelimitedFiles
 include("../julia/basic.jl")
 include("../julia/thetalen.jl")
 include("../julia/ioroutines.jl")
 # Circle data type.
-type CircType
+mutable struct CircType
 	rad::Float64; xc::Float64; yc::Float64
 end
 include("iogeos.jl")
@@ -50,7 +53,7 @@ end
 # The sum of all forces on each circle.
 function forcesum(circvec::Vector{CircType}, pow::Float64, 
 		buff::Float64, bolap::Float64)
-	nbods = endof(circvec)
+	nbods = length(circvec)
 	#ftot = [zeros(Float64,2) for nn=1:nbods]
 	fx,fy,fxo,fyo = [zeros(Float64,nbods) for nn=1:4]
 	# Compute the total forces.
@@ -72,14 +75,14 @@ function forcesum(circvec::Vector{CircType}, pow::Float64,
 		fxo[nn] += finco[1]
 		fyo[nn] += finco[2]
 	end
-	foverlap = max(maxabs(fxo),maxabs(fyo))
+	foverlap = max(norm(fxo,Inf),norm(fyo,Inf))
 	return fx,fy,foverlap
 end
 # Shift the circles with given force.
 function shiftcircs(circvec::Vector{CircType}, 
 		fxv::Vector{Float64}, fyv::Vector{Float64}, 
 		dt::Float64, sigma::Float64)
-	nbods = endof(circvec)
+	nbods = length(circvec)
 	rvec = randn(2*nbods)
 	sdt12 = sigma*sqrt(dt)
 	for nn = 1:nbods
@@ -99,9 +102,9 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	fthresh = 1e-8
 	# Check that the desired area fraction is not too high.
 	# 0.91 is the absolute upper bound. 
-	assert(areafrac < 0.71)
+	@assert areafrac < 0.71
 	# Seed the random number generator.
-	srand(seed)
+	Random.seed!()
 		# Create the list of random radii.
 	dray = Rayleigh()
 	dchi = Chi(4)
