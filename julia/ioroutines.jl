@@ -65,7 +65,7 @@ end
 #--------------- HANDLING FOLDERS ---------------#
 # getfoldernames: Set the name of the data and plot folders.
 function getfoldernames(paramsfile::AbstractString)
-	datafolder = string("../datafiles/run_",paramsfile,"/")
+	datafolder = string("../output_data/run_",paramsfile,"/")
 	plotfolder = string("../figs_",paramsfile,"/")
 	return datafolder, plotfolder
 end
@@ -172,7 +172,7 @@ function geom2thlen(geofile::AbstractString, thlenfile::AbstractString)
 end
 # Generic version that automatically names the files.
 function geom2thlen(geomnum::AbstractString)
-	geofile = string("../datafiles/run/geom", geomnum, ".dat")
+	geofile = string("../output_data/run/geom", geomnum, ".dat")
 	thlenfile = "../thlen.in"
 	geom2thlen(geofile,thlenfile)
 end
