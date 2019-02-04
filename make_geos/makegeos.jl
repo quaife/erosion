@@ -119,14 +119,13 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	# Create the list of circles
 	circvec = [CircType(radvec[nn],xc[nn],yc[nn]) for nn=1:nbods]
 	# Shift the centers until no overlap.
-	figfolder = "./figs/"
-	newfolder(figfolder)
+	newfolder(figfolder())
 	cnt = 0
 	fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
 	while(cnt < 50 || foverlap > 1e-10)
 		# Plot the circles.
 		println("count = ", cnt)
-		plotcircs(circvec, figfolder, cnt)
+		plotcircs(circvec, cnt)
 		# Shift the circles.
 		sigma = 0.15*exp(-0.5*cnt*dt)
 		shiftcircs(circvec,fx,fy,dt,sigma)
@@ -134,7 +133,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 		fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
 		println("foverlap = ",foverlap)
 	end
-	plotcircs(circvec,figfolder,cnt)
+	plotcircs(circvec,cnt)
 	# Output to data files.
 	save_circ_data(circvec)
 	return

@@ -7,12 +7,11 @@ function newfolder(foldername::AbstractString)
 	return
 end
 # Plot the circles.
-function plotcircs(circvec::Vector{CircType}, 
-		figfolder::AbstractString, nfile::Int)
+function plotcircs(circvec::Vector{CircType}, nfile::Int)
 	# Parameters.
 	npts = 128
-	nfilestr = lpad("nfile",4,"0")
-	figname = string(figfolder,"/circ", nfilestr,".pdf")
+	nfilestr = lpad(string(nfile),4,"0")
+	figname = string(figfolder(),"/circ", nfilestr,".pdf")
 	width = 400; height = 400
 	# Make the figure.
 	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false)
@@ -84,4 +83,7 @@ end
 
 function geosfolder()
 	return "../input_geos/"
+end
+function figfolder()
+	return "./figs/"
 end
