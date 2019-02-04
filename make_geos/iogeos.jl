@@ -10,19 +10,25 @@ end
 function plotcircs(circvec::Vector{CircType}, nfile::Int)
 	# Parameters.
 	npts = 128
-	nfilestr = lpad(string(nfile),4,"0")
-	figname = string(figfolder(),"/circ", nfilestr,".pdf")
 	width = 400; height = 400
-	# Make the figure.
-	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false)
-	# Plot each body.
 	nbods = length(circvec)
 	alpha = getalpha(npts)
+	# Set name of the folder and file.
+	if nfile >= 0
+		nfilestr = lpad(string(nfile),4,"0")
+		figname = string(figfolder(),"circ", nfilestr,".pdf")
+	else
+		figname = string(geosfolder(),lpad(string(nbods),2,"0"),"circ.pdf")
+	end
+	# Make the figure.
+	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false);
+	# Plot each body.
+
 	for nn = 1:nbods
 		circ = circvec[nn]
 		xx = circ.xc .+ circ.rad*cos.(alpha)
 		yy = circ.yc .+ circ.rad*sin.(alpha)
-		plot!(pp,xx,yy,color="black")
+		plot!(pp,xx,yy,color="black");
 	end
 	# Save the figure in a file.
 	savefig(pp, figname)
@@ -32,7 +38,7 @@ end
 # Save the circle data to a file: radii and centers.
 function save_circ_data(circvec::Vector{CircType})
 	nbods = length(circvec)
-	circfile = string(geosfolder(),nbods,"circ.circ")
+	circfile = string(geosfolder(),lpad(string(nbods),2,"0"),"circ.circ")
 	circdata = zeros(Float64, 0)
 	radvec = zeros(Float64, nbods)
 	for nn=1:nbods
@@ -79,11 +85,4 @@ function save_thlen(name::AbstractString, npts::Int)
 	circfile = string(geosfolder(),name,".circ")
 	thlenfile = string(geosfolder(),name,npts,".thlen")
 	save_thlen(circfile, thlenfile, npts)
-end
-
-function geosfolder()
-	return "../input_geos/"
-end
-function figfolder()
-	return "./figs/"
 end

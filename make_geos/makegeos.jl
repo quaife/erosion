@@ -11,6 +11,12 @@ include("../julia/ioroutines.jl")
 mutable struct CircType
 	rad::Float64; xc::Float64; yc::Float64
 end
+function geosfolder()
+	return "../input_geos/"
+end
+function figfolder()
+	return "./figs/"
+end
 include("iogeos.jl")
 
 # The repulsive force on circ1 due to circ2.
@@ -92,6 +98,7 @@ function shiftcircs(circvec::Vector{CircType},
 	return
 end
 
+
 # Main routine to make the geometry.
 function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	# Parameters.
@@ -104,7 +111,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	# 0.91 is the absolute upper bound. 
 	@assert areafrac < 0.71
 	# Seed the random number generator.
-	Random.seed!()
+	Random.seed!(seed)
 		# Create the list of random radii.
 	dray = Rayleigh()
 	dchi = Chi(4)
@@ -134,6 +141,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 		println("foverlap = ",foverlap)
 	end
 	plotcircs(circvec,cnt)
+	plotcircs(circvec,-1)
 	# Output to data files.
 	save_circ_data(circvec)
 	return
@@ -141,5 +149,4 @@ end
 
 
 makegeos(2, 0.3, 5)
-save_thlen("2circ",128)
-
+save_thlen("02circ",128)
