@@ -13,27 +13,27 @@ function plotcircs(circvec::Vector{CircType},
 	npts = 128
 	nfilestr = lpad("nfile",4,"0")
 	figname = string(figfolder,"/circ", nfilestr,".pdf")
+	width = 400; height = 400
 	# Make the figure.
-	pp = plot()
-	xlim(-1,1); ylim(-1,1)
+	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false)
 	# Plot each body.
 	nbods = length(circvec)
 	alpha = getalpha(npts)
 	for nn = 1:nbods
 		circ = circvec[nn]
-		xx = circ.xc + circ.rad*cos(alpha)
-		yy = circ.yc + circ.rad*sin(alpha)
-		pp = oplot(xx,yy,"-")
+		xx = circ.xc .+ circ.rad*cos.(alpha)
+		yy = circ.yc .+ circ.rad*sin.(alpha)
+		plot!(pp,xx,yy,color="black")
 	end
 	# Save the figure in a file.
-	savefig(pp, figname, width=400, height=400)
+	savefig(pp, figname)
 	return
 end
 
 # Save the circle data to a file: radii and centers.
 function save_circ_data(circvec::Vector{CircType})
 	nbods = length(circvec)
-	circfile = string("../geos2/",nbods,"circ.circ")
+	circfile = string(geosfolder(),nbods,"circ.circ")
 	circdata = zeros(Float64, 0)
 	radvec = zeros(Float64, nbods)
 	for nn=1:nbods
@@ -51,7 +51,7 @@ function circthlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	thlen = new_thlen()
 	alpha = getalpha(npts)
 	# Get the tangent angle, theta, and the total arclength, len.
-	thlen.theta = 0.5*pi + alpha
+	thlen.theta = 0.5*pi .+ alpha
 	thlen.len = 2*pi*rad
 	# Save the surface mean values, xsm and ysm.
 	thlen.xsm = xc; thlen.ysm = yc
@@ -77,8 +77,11 @@ function save_thlen(circfile::AbstractString, thlenfile::AbstractString, npts::I
 end
 # Convert the circle data to theta-L data.
 function save_thlen(name::AbstractString, npts::Int)
-	circfile = string("../geos2/",name,".circ")
-	thlenfile = string("../geos2/",name,npts,".thlen")
+	circfile = string(geosfolder(),name,".circ")
+	thlenfile = string(geosfolder(),name,npts,".thlen")
 	save_thlen(circfile, thlenfile, npts)
 end
 
+function geosfolder()
+	return "../input_geos/"
+end

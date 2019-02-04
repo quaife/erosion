@@ -141,6 +141,6 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 end
 
 
-makegeos(20, 0.5, 5)
-save_thlen("20circ",512)
+makegeos(2, 0.3, 5)
+save_thlen("2circ",128)
 
