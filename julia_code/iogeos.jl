@@ -7,7 +7,7 @@ function newfolder(foldername::AbstractString)
 	return
 end
 # Plot the circles.
-function plotcircs(circvec::Vector{CircType}, nfile::Int)
+function plotcircs(circvec::Vector{CircType}, nfile::Int, seed::Int)
 	# Parameters.
 	npts = 128
 	width = 400; height = 400
@@ -18,7 +18,7 @@ function plotcircs(circvec::Vector{CircType}, nfile::Int)
 		nfilestr = lpad(string(nfile),4,"0")
 		figname = string(figfolder(),"circ", nfilestr,".pdf")
 	else
-		figname = string(geosfolder(),lpad(string(nbods),2,"0"),"circ.pdf")
+		figname = string(geosfolder(),lpad(string(nbods),2,"0"),"circ",string(seed),".pdf")
 	end
 	# Make the figure.
 	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false);
@@ -38,7 +38,7 @@ end
 # Save the circle data to a file: radii and centers.
 function save_circ_data(circvec::Vector{CircType}, seed::Int)
 	nbods = length(circvec)
-	circfile = string(geosfolder(),lpad(string(nbods),2,"0"),"circ.circ")
+	circfile = string(geosfolder(),lpad(string(nbods),2,"0"),"circ",string(seed),".circ")
 	circdata = zeros(Float64, 0)
 	radvec = zeros(Float64, nbods)
 	for nn=1:nbods
@@ -83,6 +83,6 @@ end
 # Convert the circle data to theta-L data.
 function save_thlen(name::AbstractString, npts::Int)
 	circfile = string(geosfolder(),name,".circ")
-	thlenfile = string(geosfolder(),name,npts,".thlen")
+	thlenfile = string(geosfolder(),name,"_",npts,".thlen")
 	save_thlen(circfile, thlenfile, npts)
 end
