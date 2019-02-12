@@ -1,6 +1,6 @@
 # Parameters
 input_geos/10circ4_512.thlen		# the data file for the initial geometry
-20		# epsfac: epsilon = epsfac/npts
+30		# epsfac: epsilon = epsfac/npts
 10		# sigfac: sigma = sigfac/npts
 1e-4		# dt
 2e-4		# dtout: if zero, will round up to output at every step. 
