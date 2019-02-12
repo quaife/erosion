@@ -36,7 +36,7 @@ function plotcircs(circvec::Vector{CircType}, nfile::Int)
 end
 
 # Save the circle data to a file: radii and centers.
-function save_circ_data(circvec::Vector{CircType})
+function save_circ_data(circvec::Vector{CircType}, seed::Int)
 	nbods = length(circvec)
 	circfile = string(geosfolder(),lpad(string(nbods),2,"0"),"circ.circ")
 	circdata = zeros(Float64, 0)
@@ -47,8 +47,8 @@ function save_circ_data(circvec::Vector{CircType})
 		radvec[nn] = circ.rad
 	end
 	areafrac = 0.25*pi*sum(radvec.^2)
-	data = [string("# nbods = ", nbods, ", areafrac = ", areafrac); nbods;
-		"# data below: radius, xc, yc for each body."; circdata]
+	data = [string("# nbods = ", nbods, ", areafrac = ", areafrac, ", seed = ", seed); 
+	nbods; "# data below: radius, xc, yc for each body."; circdata]
 	writedata(data, circfile)
 end
 # Return thlen data for a circle of given radius and center.

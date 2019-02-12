@@ -4,9 +4,9 @@ using Random
 using Plots
 using LinearAlgebra
 using DelimitedFiles
-include("../julia/basic.jl")
-include("../julia/thetalen.jl")
-include("../julia/ioroutines.jl")
+include("./basic.jl")
+include("./thetalen.jl")
+include("./ioroutines.jl")
 # Circle data type.
 mutable struct CircType
 	rad::Float64; xc::Float64; yc::Float64
@@ -112,7 +112,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	@assert areafrac < 0.71
 	# Seed the random number generator.
 	Random.seed!(seed)
-		# Create the list of random radii.
+	# Create the list of random radii.
 	dray = Rayleigh()
 	dchi = Chi(4)
 	drad = dchi
@@ -143,7 +143,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	plotcircs(circvec,cnt)
 	plotcircs(circvec,-1)
 	# Output to data files.
-	save_circ_data(circvec)
+	save_circ_data(circvec,seed)
 	return
 end
 
