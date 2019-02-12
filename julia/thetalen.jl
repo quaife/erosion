@@ -164,7 +164,7 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 			println("\n\n--------------------------------------------------")
 			println("DELETING BODY ", nn)
 			println("mterm = ", round(mterm,sigdigits=3), "; len = ", 
-				round(len,sigdigits=3), "; minlen = ", round(minlen,sigdigit=3))
+				round(len,sigdigits=3), "; minlen = ", round(minlen,sigdigits=3))
 			println("--------------------------------------------------\n")
 			append!(deletevec,[nn])
 		end
