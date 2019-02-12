@@ -12,7 +12,7 @@ include("postprocess.jl")
 
 #--------------- MAIN ROUTINE ---------------#
 # Dispatch to call the main routine with dt and tfin set by params file.
-function erosion(paramsfile::AbstractString = "params.in")
+function erosion(paramsfile::AbstractString = "params")
 	thlenden,params = startup(paramsfile)
 	erosion(thlenden,params)
 end
@@ -55,7 +55,7 @@ end
 # startup: Read params and geoinfile; setup stuff.
 function startup(paramsfile::AbstractString)
 	# Read the input geometry file.
-	paramvec = readvec(paramsfile)
+	paramvec = readvec(pfext(paramsfile))
 	geoinfile = string("../",paramvec[1])
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
@@ -74,7 +74,7 @@ end
 # function getparams: Define the object of parameters.
 function getparams(paramsfile::AbstractString, npts::Int)
 	# Read the parameters and calculate needed quantities.
-	paramvec = readvec(paramsfile)
+	paramvec = readvec(pfext(paramsfile))
 	geofile,epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[1:8]
 	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
 	epsilon = epsfac/npts
