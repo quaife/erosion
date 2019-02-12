@@ -15,7 +15,7 @@ function geosfolder()
 	return "../input_geos/"
 end
 function figfolder()
-	return "./figs/"
+	return "../figs_geos/"
 end
 include("iogeos.jl")
 
