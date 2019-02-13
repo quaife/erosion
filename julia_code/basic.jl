@@ -258,7 +258,7 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0; rotati
 	So check that it is the same at x0 and -x0. =#
 	qreldiff = (qplus-qminus)/qavg
 	if qreldiff > 1e-3
-		@warn("The flux does not match at x0 and -x0: qreldiff = ", round(qreldiff,sigdigits=3))
+		@warn string("The flux does not match at x0 and -x0: qreldiff = ", round(qreldiff,sigdigits=3))
 	end
 	return pdrop,qavg
 end

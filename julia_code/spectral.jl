@@ -48,7 +48,7 @@ end
 function imagtest(fx::Vector, relthold::Float64=1e-8)
 	maximrel = maximum(abs.(imag(fx)))/maximum(abs.(fx))
 	if maximrel > relthold
-		warn("imag part too big: ", maximrel)
+		@warn string("imag part too big: ", maximrel)
 	end
 	return
 end
