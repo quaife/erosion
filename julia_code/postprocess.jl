@@ -147,7 +147,7 @@ function getareas(thlenden::ThLenDenType)
 		areay = -dot(yy,ny)*ds
 		area = 0.5*(areax+areay)
 		reldiff = abs(areax-areay)/area
-		reldiff > 1e-3 ? warn("Relative error in area = ", signif(reldiff,2)) : 0.
+		reldiff > 1e-3 ? @warn("Relative error in area = ", round(reldiff,sigdigits=2)) : 0.
 		areavec[nn] = area
 	end
 	return areavec
