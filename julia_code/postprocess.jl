@@ -107,7 +107,7 @@ end
 # startpostprocess
 function startpostprocess(foldername::AbstractString)
 	# Define the data folder and files.
-	datafolder = string("../datafiles/",foldername,"/")
+	datafolder = string("../output_data/",foldername,"/")
 	paramsfile = string(datafolder,"aparams.txt")
 	pinfofile = string(datafolder,"apinfo.txt")
 	# Get extra information from apinfo.
