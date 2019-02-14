@@ -10,7 +10,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	nfilestr = lpad(string(nfile),4,string(0))
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
-	pinfofile = string(datafolder,"apinfo.out")
+	pinfofile = string(datafolder,"apinfo.txt")
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)

@@ -108,8 +108,8 @@ end
 function startpostprocess(foldername::AbstractString)
 	# Define the data folder and files.
 	datafolder = string("../datafiles/",foldername,"/")
-	paramsfile = string(datafolder,"aparams.in")
-	pinfofile = string(datafolder,"apinfo.out")
+	paramsfile = string(datafolder,"aparams.txt")
+	pinfofile = string(datafolder,"apinfo.txt")
 	# Get extra information from apinfo.
 	pinfovec = readvec(pinfofile)
 	npts = Int(pinfovec[1])
