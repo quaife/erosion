@@ -1,5 +1,5 @@
-# postporcess.jl
 # Post-processing routines.
+using LinearAlgebra
 
 #----------- MAIN ROUTINES -----------#
 #postprocess: Run all postprocess routines pp1-3.
@@ -108,7 +108,7 @@ end
 function startpostprocess(foldername::AbstractString)
 	# Define the data folder and files.
 	datafolder = string("../output_data/",foldername,"/")
-	paramsfile = string(datafolder,"aparams.txt")
+	paramsfile = string(datafolder,"aparams")
 	pinfofile = string(datafolder,"apinfo.txt")
 	# Get extra information from apinfo.
 	pinfovec = readvec(pinfofile)
@@ -121,7 +121,7 @@ end
 # get_thlenden
 function get_thlenden(datafolder::AbstractString,cnt::Int)
 	# Get the file name at each time.
-	cntstr = lpad(cnt,4,0)
+	cntstr = lpad(string(cnt),4,"0")
 	geomfile = string(datafolder,"geom",cntstr,".dat")
 	densityfile = string(datafolder,"density",cntstr,".dat")
 	# Extract thlenvec, density, and denrot.
@@ -180,7 +180,7 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 		press = pressvec[n1:n2]
 		tau = tauvec[n1:n2]
 		# Go ahead and compute the absolute smoothed stress.
-		atauvec[n1:n2] = gaussfilter(abs(tau), params.sigma)
+		atauvec[n1:n2] = gaussfilter(abs.(tau), params.sigma)
 		# Get the tangent/normal vectors and arc length increment.
 		sx,sy,nx,ny = getns(thlenvec[nn].theta,rotation)
 		ds = thlenvec[nn].len / npts
@@ -260,9 +260,9 @@ end
 function getns(theta::Vector{Float64}, rotation::Bool=false)
 	# CCW tangent vector.
 	if rotation == false
-		sx, sy = cos(theta), sin(theta)
+		sx, sy = cos.(theta), sin.(theta)
 	else
-		sx, sy = -sin(theta), cos(theta)
+		sx, sy = -sin.(theta), cos.(theta)
 	end
 	# Inward pointing normal vector.
 	nx, ny = -sy, sx

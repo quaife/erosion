@@ -1,4 +1,3 @@
-# misc.jl
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
@@ -65,7 +64,7 @@ end
 #--------------- HANDLING FOLDERS ---------------#
 # Add the extension .in to the params file.
 function pfext(paramsfile::AbstractString)
-	return string(paramsfile,".in")
+	return string(paramsfile,".txt")
 end
 # getfoldernames: Set the name of the data and plot folders.
 function getfoldernames(paramsfile::AbstractString)
