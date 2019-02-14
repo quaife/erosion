@@ -1,8 +1,8 @@
 # Parameters
-input_geos/10circ4_512.thlen		# the data file for the initial geometry
+input_geos/02circ1_128.thlen		# the data file for the initial geometry
 30		# epsfac: epsilon = epsfac/npts
 10		# sigfac: sigma = sigfac/npts
-1e-4		# dt
+10e-4		# dt
 2e-4		# dtout: if zero, will round up to output at every step. 
 0.1		# tfin
 1024		# nouter
