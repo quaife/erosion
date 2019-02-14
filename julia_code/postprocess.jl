@@ -222,7 +222,7 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType},
 	ind0 = max(ind0,1)
 	ind = ind0:2*ind0:npts
 	nlayers = length(spacevec)
-	xtar,ytar = Array(Float64,0), Array(Float64,0)
+	xtar,ytar = Array{Float64}(undef,0), Array{Float64}(undef,0)
 	for nn = 1:nbods
 		thlen = thlenv[nn]
 		xx,yy = thlen.xx[ind], thlen.yy[ind]
