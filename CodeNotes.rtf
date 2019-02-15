@@ -10,6 +10,13 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 \
+Back to analysis with DataTank\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 Feb 15, 2019\
+I am noticing some obsolete things in the DataTank script and I am deleting some for simplicity. In particular, the Aspect Ratio calculations were for all the bodies total, so it only made sense if there was a single body. Therefore I am deleting this part.
+\b \
+\
 Revamping codes\
 
 \b0 Feb 12, 2019.\
@@ -28,11 +35,13 @@ I am starting to write the second paper and realized that I had forgotten a lot 
 - I modified the makegeos codes to print a pdf of the geometry in the input_geos folder for quick viewing.\
 - I moved the makegeos codes in with the rest of the Julia codes.\
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \
+\b \cf0 \
 Updated to Julia 1.0\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 January, 2019\
+\b0 \cf0 January, 2019\
 I updated the Julia codes to be compatible with 1.0. Running the erosion simulation now works in Julia 1.0.
 \b \
 \
@@ -40,11 +49,13 @@ New geometry files\
 
 \b0 Summer 2018\
 At some point over the summer, I wrote new routines to produce geometries with more control, i.e. one can control the exact volume fraction and size distribution while still using randomized geometries. The geometries are now in a different folder goes2/. In the input file, I simply input the folder and file name.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \
+\b \cf0 \
 New time-stepping method\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 Feb 18, 2018\
+\b0 \cf0 Feb 18, 2018\
 It occurred to me that I could simply use RK2 to update the argument of the integrating factor, int(zeta). Surprisingly, this gives a different integration rule compared to what I had been doing. The advantage is that it probably can generalize to RK4. I ran a convergence test and the new rule is indeed second order.
 \b \
 \
@@ -98,7 +109,8 @@ My initial tests with 20 bodies and the new scaling of the smoothing look promis
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \ulc0 Parameter test\
-\ulnone I am testing how small I can make epsfac and sigfac with the new scaling of the smoothing term, using the 20-body geometry.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \ulnone I am testing how small I can make epsfac and sigfac with the new scaling of the smoothing term, using the 20-body geometry.\
 GOOD means the simulation runs without errors. BAD means that numerically instabilities develops.\
 epsfac = 8, sigfac = 8	GOOD, run A\
 epsfac = 10, sigfac = 5	GOOD, run B\
@@ -118,8 +130,7 @@ epsfac = 15, sigfac = 10	NOT QUITE GOOD\
 epsfac = 20, sigfac = 10	GOOD ENOUGH\
 \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \ul Convergence test\ulnone \
+\ul Convergence test\ulnone \
 Remember to consider there is error in calculating pdrop and umax.\
 Test 1: 01circ256.in, espfac = 8, sigfac = 8, tfin = 0.002, fixprdop = 1, nits = 11\
 RESULTS\
@@ -127,9 +138,8 @@ The dt values: [0.002,0.001,0.0005,0.00025,0.000125,6.2e-5,3.1e-5,1.6e-5,8.0e-6,
 The drag values: [9.936,9.898,9.866,9.846,9.835,9.83,9.828,9.827,9.827,9.827,9.827]\
 The error: [0.0379,0.0325,0.0197,0.011,0.0051,0.0019,0.0006,0.0002,0.0,0.0]\
 The order: [0.22,0.72,0.85,1.1,1.4,1.66,1.83,1.92,1.96]\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Conclusion:
+\b Conclusion:
 \b0  It looks like 2nd order, though you have to go all the way to dt = 8, 4, or 2 e-6 to see resolution. At dt = 2e-4, the order is close to 1 and the relative error is close to 1e-3.
 \b \
 \
@@ -217,9 +227,8 @@ In certain situations, we witness an instability in the shape of eroding bodies,
 \b0 ~March 20, 2017: Due to my convergence test, I removed the lenevo hack. Instead, to keep the body from shrinking, I can subtract the mean-value from atau. This preserves area. After implementing this, the simulations run much better. They show convergence of the Aspect Ratio and the Opening Angle with respect to increasing N and decreasing dt. The opening angle results even seem to agree with my theoretical prediction of 102\'ba now! The simulation is also much more stable now.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \ulnone The FMM Works!\
+\b \ulnone The FMM Works!\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \b0 \cf0 Dec 27, 2016: The FMM is working! Next, Bryan wants to implement a block preconditioner so that multiple bodies runs faster.\
