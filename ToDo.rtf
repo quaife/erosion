@@ -8,6 +8,19 @@
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
 \
+I have run several new simulations and maybe can evaluate now.\
+Questions: \
+Would I be better off have a larger output time step so the output files are smaller in size? \
+Would I be better off using 256 points per body, and perhaps a smaller value of epsilon (to achieve roughly the same spatial resolution), again so the output files are smaller in size?\
+\
+For 20 circles, the output data files are about 300 MB each. I would like to vary the number of bodies systematically, and also vary the initial area fraction to 0.6.\
+remember, epsilon = epsfac/npts\
+\
+Next test to answer above question: For 10, 20, or 30 body case, create a npts=256 initial geometry and run the simulation with a smaller epsfac. See if the simulation is stable. If it is, I should use npts=256 with the smaller epsfac because it is about the same spatial resolution but will have much smaller output file sizes (about half the size) and also would run a bit faster.\
+The 20 body case took about 14-15 hours to run. This is a good example.\
+\
+\
+\
 I identified the best initial geometries for 10-50 bodies. Next, do it for 60, 70, 80, 90, 100 bodes.\
 makegeos(40,0.5,1)\
 save_thlen(\'9340circ1\'94,512)\
