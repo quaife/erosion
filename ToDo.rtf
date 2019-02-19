@@ -2,28 +2,11 @@
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11280\viewh9460\viewkind0
+\margl1440\margr1440\vieww11620\viewh11660\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
-\
-I have run several new simulations and maybe can evaluate now.\
-Questions: \
-Would I be better off have a larger output time step so the output files are smaller in size? \
-Would I be better off using 256 points per body, and perhaps a smaller value of epsilon (to achieve roughly the same spatial resolution), again so the output files are smaller in size?\
-\
-For 20 circles, the output data files are about 300 MB each. I would like to vary the number of bodies systematically, and also vary the initial area fraction to 0.6.\
-remember, epsilon = epsfac/npts\
-\
-Next test to answer above question: For 10, 20, or 30 body case, create a npts=256 initial geometry and run the simulation with a smaller epsfac. See if the simulation is stable. If it is, I should use npts=256 with the smaller epsfac because it is about the same spatial resolution but will have much smaller output file sizes (about half the size) and also would run a bit faster.\
-The 20 body case took about 14-15 hours to run. This is a good example.\
-\
-Note: Now I remember why I kept dtout=2e-4 and did not make it any larger. Though make dtout larger would save me in folder size, it would make the plots against time look bad. For example, the plot of normalized drag vs time nose dives abruptly near t=t_f and having less resolution here would look bad. Although, looking closely at this graph, perhaps I could afford to give away a little resolution.\
-\
-\
-\
-\
 \
 I identified the best initial geometries for 10-50 bodies. Next, do it for 60, 70, 80, 90, 100 bodes.\
 makegeos(40,0.5,1)\
@@ -46,9 +29,8 @@ save_thlen(\'9340circ1\'94,512)\
 \
 
 \b Other to do\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Some of these may or may not become necessary later.\
+\b0 Some of these may or may not become necessary later.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 \cf0 - In the check to see if a body is about to vanish, the parameter ndts is set to 1. I could change this to 1.2 or 1.5, but see if any problems result first.\
 - I could implement adaptive time stepping based on either how big mterm is or how\

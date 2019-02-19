@@ -10,15 +10,26 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 \
-Back to analysis with DataTank\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+Optimal parameters for simulations\
 
-\b0 \cf0 Feb 15, 2019\
+\b0 Feb 19, 2019\
+I am planning to run a systematic set of multi body simulations with 10-100 bodies and a few different area fractions. I have already run a few preliminary simulations with 10-30 bodies, using area fraction = 0.5, dtout = 2e-4, and using either 512 or 256 points per body. I foresee a problem with very large folder sizes; for the 30-body case with 512, the folder is about 500 MB (with 150 files and taking 30 hours to run). By using 256 points, I can reduce the folder size (by close to half) and also reduce the run time by about half; also, by making dtout larger I can reduce the file size. Thus, I have decided to use the following default parameters:\
+\ul \
+Default parameters\ulnone \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4
+\b \
+\
+\
+Back to analysis with DataTank\
+
+\b0 Feb 15, 2019\
 I am noticing some obsolete things in the DataTank script and I am deleting some for simplicity. In particular, the Aspect Ratio calculations were for all the bodies total, so it only made sense if there was a single body. Therefore I am deleting this part.
 \b \
 \
 
-\b0 Feb 18, 2019: umax scaling.\
+\b0 Feb 18, 2019: 
+\b rescaling of drag on umax
+\b0 \
 I noticed the code is kind of messy and unclear regarding the scaling of drag by umax. In the Julia code, I compute all drag values with umax=1, which means I am computing the drag normalized by umax. Then to calculate the true drag, I multiply by umax. Also, at this second stage, I can rescale umax arbitrarily, and in the DataTank code it looks like I decided to use umax/10 as my new umax (as long as I am consistent with this rescaling). This was a consequence of the choice I made in the Julia code to make umax = 10 * 8/pdrop in the case of fixed pdrop. I don\'92t know exactly why I made this choice, but I guess it was so that I could use comparable values of dt (and maybe other stuff) independent of whether I chose fixpdrop = 0 or 1.\
 Also, FYI, the vorticity is calculate in the Julia code as the true vorticity. So if I want rescaled vorticity, I have to rescale by umax.
 \b \
@@ -41,13 +52,11 @@ I am starting to write the second paper and realized that I had forgotten a lot 
 - I modified the makegeos codes to print a pdf of the geometry in the input_geos folder for quick viewing.\
 - I moved the makegeos codes in with the rest of the Julia codes.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \
+\b \
 Updated to Julia 1.0\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 January, 2019\
+\b0 January, 2019\
 I updated the Julia codes to be compatible with 1.0. Running the erosion simulation now works in Julia 1.0.
 \b \
 \
@@ -55,13 +64,11 @@ New geometry files\
 
 \b0 Summer 2018\
 At some point over the summer, I wrote new routines to produce geometries with more control, i.e. one can control the exact volume fraction and size distribution while still using randomized geometries. The geometries are now in a different folder goes2/. In the input file, I simply input the folder and file name.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \
+\b \
 New time-stepping method\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Feb 18, 2018\
+\b0 Feb 18, 2018\
 It occurred to me that I could simply use RK2 to update the argument of the integrating factor, int(zeta). Surprisingly, this gives a different integration rule compared to what I had been doing. The advantage is that it probably can generalize to RK4. I ran a convergence test and the new rule is indeed second order.
 \b \
 \
