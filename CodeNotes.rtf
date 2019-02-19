@@ -17,6 +17,12 @@ Back to analysis with DataTank\
 I am noticing some obsolete things in the DataTank script and I am deleting some for simplicity. In particular, the Aspect Ratio calculations were for all the bodies total, so it only made sense if there was a single body. Therefore I am deleting this part.
 \b \
 \
+
+\b0 Feb 18, 2019: umax scaling.\
+I noticed the code is kind of messy and unclear regarding the scaling of drag by umax. In the Julia code, I compute all drag values with umax=1, which means I am computing the drag normalized by umax. Then to calculate the true drag, I multiply by umax. Also, at this second stage, I can rescale umax arbitrarily, and in the DataTank code it looks like I decided to use umax/10 as my new umax (as long as I am consistent with this rescaling). This was a consequence of the choice I made in the Julia code to make umax = 10 * 8/pdrop in the case of fixed pdrop. I don\'92t know exactly why I made this choice, but I guess it was so that I could use comparable values of dt (and maybe other stuff) independent of whether I chose fixpdrop = 0 or 1.\
+Also, FYI, the vorticity is calculate in the Julia code as the true vorticity. So if I want rescaled vorticity, I have to rescale by umax.
+\b \
+\
 Revamping codes\
 
 \b0 Feb 12, 2019.\
@@ -130,7 +136,8 @@ epsfac = 15, sigfac = 10	NOT QUITE GOOD\
 epsfac = 20, sigfac = 10	GOOD ENOUGH\
 \
 \
-\ul Convergence test\ulnone \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \ul Convergence test\ulnone \
 Remember to consider there is error in calculating pdrop and umax.\
 Test 1: 01circ256.in, espfac = 8, sigfac = 8, tfin = 0.002, fixprdop = 1, nits = 11\
 RESULTS\
@@ -138,8 +145,9 @@ The dt values: [0.002,0.001,0.0005,0.00025,0.000125,6.2e-5,3.1e-5,1.6e-5,8.0e-6,
 The drag values: [9.936,9.898,9.866,9.846,9.835,9.83,9.828,9.827,9.827,9.827,9.827]\
 The error: [0.0379,0.0325,0.0197,0.011,0.0051,0.0019,0.0006,0.0002,0.0,0.0]\
 The order: [0.22,0.72,0.85,1.1,1.4,1.66,1.83,1.92,1.96]\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b Conclusion:
+\b \cf0 Conclusion:
 \b0  It looks like 2nd order, though you have to go all the way to dt = 8, 4, or 2 e-6 to see resolution. At dt = 2e-4, the order is close to 1 and the relative error is close to 1e-3.
 \b \
 \
@@ -227,8 +235,9 @@ In certain situations, we witness an instability in the shape of eroding bodies,
 \b0 ~March 20, 2017: Due to my convergence test, I removed the lenevo hack. Instead, to keep the body from shrinking, I can subtract the mean-value from atau. This preserves area. After implementing this, the simulations run much better. They show convergence of the Aspect Ratio and the Opening Angle with respect to increasing N and decreasing dt. The opening angle results even seem to agree with my theoretical prediction of 102\'ba now! The simulation is also much more stable now.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \ulnone The FMM Works!\
+\b \cf0 \ulnone The FMM Works!\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \b0 \cf0 Dec 27, 2016: The FMM is working! Next, Bryan wants to implement a block preconditioner so that multiple bodies runs faster.\
