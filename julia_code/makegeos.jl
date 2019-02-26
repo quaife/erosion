@@ -75,7 +75,7 @@ end
 # Call the main routine with given nbods and areafrac for 9 different seeds.
 function make9geos(nbods::Int,areafrac::Float64)
 	for ii=1:9
-		makegeos(nbods,afrac,ii)
+		makegeos(nbods,areafrac,ii)
 	end
 end
 
