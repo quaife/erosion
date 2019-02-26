@@ -72,6 +72,13 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	return
 end
 
+# Call the main routine with given nbods and areafrac for 9 different seeds.
+function make9geos(nbods::Int,areafrac::Float64)
+	for ii=1:9
+		makegeos(nbods,afrac,ii)
+	end
+end
+
 #--------------- SUPPORTING ROUTINES ---------------#
 # The repulsive force on circ1 due to circ2.
 function fcircs(circ1::CircType, circ2::CircType, pow::Float64, buff::Float64, )
