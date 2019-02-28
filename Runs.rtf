@@ -104,17 +104,22 @@ npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4\
 Postprocessing complete, 246 MB\
 \
 \
+
+\b Failed runs\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Failed runs\
-
-\b0 Feb 28: 100 and 90 body runs, all with npts=256, epsfac=15, sigfac=10, dt=1e-4, dtout=3e-4.\
+\b0 \cf0 Feb 28: 100 and 90 body runs, all with npts=256, epsfac=15, sigfac=10, dt=1e-4, dtout=3e-4.\
 100circ9_256: Deleted all of the bodies very quickly, within the first 1-2 time steps. Wow!\
 100circ3_256: Error with len1 < 0 after time step 2; also umax=inf.\
 90circ8_256: Error with len1 < 0 after time step 2; also umax=inf.\
 90circ6_256: Error with len1 < 0 after time step 2; also umax=inf.
 \b \
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 Feb 28: Observation on failed runs.\
+Now I am attempting 60-70 bodies. I notice that, in the first time step, the number of GMRES iterations is consistently 2000, which perhaps indicates we are hitting the maximum allowed GMRES iterations, which would explain the loss of accuracy and consequential errors.
+\b \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b0 \cf0 \
