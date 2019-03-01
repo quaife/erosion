@@ -1,4 +1,3 @@
-# misc.jl
 # IO routines for plotting and saving data.
 
 # plotnsave: Calls plotcurves() and savedata()
@@ -10,7 +9,7 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 	nfilestr = lpad(string(nfile),4,string(0))
 	geomfile = string(datafolder,"geom",nfilestr,".dat")
 	densityfile = string(datafolder,"density",nfilestr,".dat")
-	pinfofile = string(datafolder,"apinfo.out")
+	pinfofile = string(datafolder,"apinfo.txt")
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
@@ -63,6 +62,10 @@ function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString
 	return
 end
 #--------------- HANDLING FOLDERS ---------------#
+# Add the extension .in to the params file.
+function pfext(paramsfile::AbstractString)
+	return string(paramsfile,".txt")
+end
 # getfoldernames: Set the name of the data and plot folders.
 function getfoldernames(paramsfile::AbstractString)
 	datafolder = string("../output_data/run_",paramsfile,"/")

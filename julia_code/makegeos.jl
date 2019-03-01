@@ -1,13 +1,17 @@
-# Make the geometries
+#= Codes to make the initial geometries. =#
+# Example commands to run
+# makegeos(10, 0.5, 4)
+# save_thlen("10circ",512)
+
+#--------------- INITIALIZATION ---------------#
 using Distributions
 using Random
 using Plots
 using LinearAlgebra
 using DelimitedFiles
-include("../julia/basic.jl")
-include("../julia/thetalen.jl")
-include("../julia/ioroutines.jl")
-# Circle data type.
+include("./basic.jl")
+include("./thetalen.jl")
+include("./ioroutines.jl")
 mutable struct CircType
 	rad::Float64; xc::Float64; yc::Float64
 end
@@ -15,10 +19,67 @@ function geosfolder()
 	return "../input_geos/"
 end
 function figfolder()
-	return "./figs/"
+	return "../figs_geos/"
 end
 include("iogeos.jl")
 
+#--------------- MAIN ROUTINE ---------------#
+# Main routine to make the geometry.
+function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
+	# Parameters.
+	buff = 0.08
+	bolap = 0.03
+	pow = 0.5
+	dt = 5e-2
+	fthresh = 1e-8
+	# Check that the desired area fraction is not too high.
+	# 0.91 is the absolute upper bound. 
+	@assert areafrac < 0.71
+	# Seed the random number generator.
+	Random.seed!(seed)
+	# Create the list of random radii.
+	dray = Rayleigh()
+	dchi = Chi(4)
+	drad = dchi
+	radvec = rand(drad, nbods)
+	# Rescale the radii to achieve desired area fraction.
+	radvec *= sqrt( 4*areafrac/ (pi*sum(radvec.^2)) )
+	# Chose the provisional centers.
+	duni = Uniform(-1,1)
+	xc = rand(duni, nbods)
+	yc = rand(duni, nbods)
+	# Create the list of circles
+	circvec = [CircType(radvec[nn],xc[nn],yc[nn]) for nn=1:nbods]
+	# Shift the centers until no overlap.
+	newfolder(figfolder())
+	cnt = 0
+	fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
+	while(cnt < 50 || foverlap > 1e-10)
+		# Plot the circles.
+		println("count = ", cnt)
+		plotcircs(circvec,cnt,seed)
+		# Shift the circles.
+		sigma = 0.15*exp(-0.5*cnt*dt)
+		shiftcircs(circvec,fx,fy,dt,sigma)
+		cnt += 1
+		fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
+		println("foverlap = ",foverlap)
+	end
+	plotcircs(circvec,cnt,seed)
+	plotcircs(circvec,-1,seed)
+	# Output to data files.
+	save_circ_data(circvec,seed)
+	return
+end
+
+# Call the main routine with given nbods and areafrac for 9 different seeds.
+function make9geos(nbods::Int,areafrac::Float64)
+	for ii=1:9
+		makegeos(nbods,areafrac,ii)
+	end
+end
+
+#--------------- SUPPORTING ROUTINES ---------------#
 # The repulsive force on circ1 due to circ2.
 function fcircs(circ1::CircType, circ2::CircType, pow::Float64, buff::Float64, )
 	# The critical distance.
@@ -97,56 +158,3 @@ function shiftcircs(circvec::Vector{CircType},
 	end
 	return
 end
-
-
-# Main routine to make the geometry.
-function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
-	# Parameters.
-	buff = 0.08
-	bolap = 0.03
-	pow = 0.5
-	dt = 5e-2
-	fthresh = 1e-8
-	# Check that the desired area fraction is not too high.
-	# 0.91 is the absolute upper bound. 
-	@assert areafrac < 0.71
-	# Seed the random number generator.
-	Random.seed!(seed)
-		# Create the list of random radii.
-	dray = Rayleigh()
-	dchi = Chi(4)
-	drad = dchi
-	radvec = rand(drad, nbods)
-	# Rescale the radii to achieve desired area fraction.
-	radvec *= sqrt( 4*areafrac/ (pi*sum(radvec.^2)) )
-	# Chose the provisional centers.
-	duni = Uniform(-1,1)
-	xc = rand(duni, nbods)
-	yc = rand(duni, nbods)
-	# Create the list of circles
-	circvec = [CircType(radvec[nn],xc[nn],yc[nn]) for nn=1:nbods]
-	# Shift the centers until no overlap.
-	newfolder(figfolder())
-	cnt = 0
-	fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
-	while(cnt < 50 || foverlap > 1e-10)
-		# Plot the circles.
-		println("count = ", cnt)
-		plotcircs(circvec, cnt)
-		# Shift the circles.
-		sigma = 0.15*exp(-0.5*cnt*dt)
-		shiftcircs(circvec,fx,fy,dt,sigma)
-		cnt += 1
-		fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
-		println("foverlap = ",foverlap)
-	end
-	plotcircs(circvec,cnt)
-	plotcircs(circvec,-1)
-	# Output to data files.
-	save_circ_data(circvec)
-	return
-end
-
-
-makegeos(2, 0.3, 5)
-save_thlen("02circ",128)

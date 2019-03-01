@@ -2,7 +2,7 @@
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11780\viewh12140\viewkind0
+\margl1440\margr1440\vieww11620\viewh11660\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \f0\b\fs36 \cf0 Code Archive
@@ -10,9 +10,36 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 \
+Optimal parameters for simulations\
+
+\b0 Feb 19, 2019\
+I am planning to run a systematic set of multi body simulations with 10-100 bodies and a few different area fractions. I have already run a few preliminary simulations with 10-30 bodies, using area fraction = 0.5, dtout = 2e-4, and using either 512 or 256 points per body. I foresee a problem with very large folder sizes; for the 30-body case with 512, the folder is about 500 MB (with 150 files and taking 30 hours to run). By using 256 points, I can reduce the folder size (by close to half) and also reduce the run time by about half; also, by making dtout larger I can reduce the file size. Thus, I have decided to use the following default parameters:\
+\ul \
+Default parameters\ulnone \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4
+\b \
+\
+\
+Back to analysis with DataTank\
+
+\b0 Feb 15, 2019\
+I am noticing some obsolete things in the DataTank script and I am deleting some for simplicity. In particular, the Aspect Ratio calculations were for all the bodies total, so it only made sense if there was a single body. Therefore I am deleting this part.
+\b \
+\
+
+\b0 Feb 18, 2019: 
+\b rescaling of drag on umax
+\b0 \
+I noticed the code is kind of messy and unclear regarding the scaling of drag by umax. In the Julia code, I compute all drag values with umax=1, which means I am computing the drag normalized by umax. Then to calculate the true drag, I multiply by umax. Also, at this second stage, I can rescale umax arbitrarily, and in the DataTank code it looks like I decided to use umax/10 as my new umax (as long as I am consistent with this rescaling). This was a consequence of the choice I made in the Julia code to make umax = 10 * 8/pdrop in the case of fixed pdrop. I don\'92t know exactly why I made this choice, but I guess it was so that I could use comparable values of dt (and maybe other stuff) independent of whether I chose fixpdrop = 0 or 1.\
+Also, FYI, the vorticity is calculate in the Julia code as the true vorticity. So if I want rescaled vorticity, I have to rescale by umax.
+\b \
+\
 Revamping codes\
 
-\b0 February 3, 2019.\
+\b0 Feb 12, 2019.\
+I made a few more aesthetic changes. I got rid of the annoying extensions in the folder names for the saved figures and data. I changed the folder julia to julia_code. I saved the seed used to generate the initial geometry in the circ file.\
+\
+Feb 3, 2019.\
 I am starting to write the second paper and realized that I had forgotten a lot about how to use these codes. Therefore, I am updating and getting rid of obsolete things to make life easier. These are the updates I made:\
 - I removed geos.jl in the main Julia folder. This code was made obsolete by the new codes in make_geos folder. However, the one thing I might want to return to is the routine to make polygon geometries of arbitrary number of sides. That is kind of cool.\
 - I removed the entire geometries/ folder since it is obsolete. We are now using initial geometries from geos2/ and I renamed that folder to input_geos/
@@ -95,7 +122,8 @@ My initial tests with 20 bodies and the new scaling of the smoothing look promis
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \ulc0 Parameter test\
-\ulnone I am testing how small I can make epsfac and sigfac with the new scaling of the smoothing term, using the 20-body geometry.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \ulnone I am testing how small I can make epsfac and sigfac with the new scaling of the smoothing term, using the 20-body geometry.\
 GOOD means the simulation runs without errors. BAD means that numerically instabilities develops.\
 epsfac = 8, sigfac = 8	GOOD, run A\
 epsfac = 10, sigfac = 5	GOOD, run B\

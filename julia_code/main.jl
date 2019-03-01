@@ -12,9 +12,10 @@ include("postprocess.jl")
 
 #--------------- MAIN ROUTINE ---------------#
 # Dispatch to call the main routine with dt and tfin set by params file.
-function erosion(paramsfile::AbstractString = "params.in")
+function erosion(paramsfile::AbstractString = "params")
 	thlenden,params = startup(paramsfile)
 	erosion(thlenden,params)
+	postprocess(string("run_",paramsfile))
 end
 # Dispatch to call the main routine with dt and tfin set by the caller.
 function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
@@ -46,7 +47,7 @@ function erosion(thlenden::ThLenDenType, params::ParamType)
 	# Plot and save one last time with zero bodies.
 	nfile += 1
 	plotnsave(nfile,tt,thlenden,params)
-	cputime = round( (time()-params.cput0)/60. , 2)
+	cputime = round( (time()-params.cput0)/60. , sigdigits=3)
 	println("\n\n\nCOMPLETED SIMULATION")
 	println("cpu time = ", cputime, " minutes.\n\n")
 	return thlenden,params,tt,cputime
@@ -55,7 +56,7 @@ end
 # startup: Read params and geoinfile; setup stuff.
 function startup(paramsfile::AbstractString)
 	# Read the input geometry file.
-	paramvec = readvec(paramsfile)
+	paramvec = readvec(pfext(paramsfile))
 	geoinfile = string("../",paramvec[1])
 	thlenvec0 = read_thlen_file(geoinfile)
 	thlenden0 = new_thlenden(thlenvec0)
@@ -67,14 +68,14 @@ function startup(paramsfile::AbstractString)
 	newfolder(datafolder)
 	newfolder(plotfolder)
 	# Save the input parameters file.
-	saveparamsfile = string(datafolder,"aparams.in")
+	saveparamsfile = string(datafolder,"aparams.txt")
 	writedata(paramvec,saveparamsfile)
 	return thlenden0,params
 end
 # function getparams: Define the object of parameters.
 function getparams(paramsfile::AbstractString, npts::Int)
 	# Read the parameters and calculate needed quantities.
-	paramvec = readvec(paramsfile)
+	paramvec = readvec(pfext(paramsfile))
 	geofile,epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[1:8]
 	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
 	epsilon = epsfac/npts

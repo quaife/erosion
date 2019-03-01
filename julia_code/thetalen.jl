@@ -159,12 +159,12 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 		len = thlv[nn].len
 		mterm = dvec[nn].mterm
 		minlen = -sqrt(2)*mterm*ndts*dt
-		if mterm > 0.; warn("mterm is positive."); end;
+		if mterm > 0.; @warn("mterm is positive."); end;
 		if (len <= minlen || mterm > mthresh)
 			println("\n\n--------------------------------------------------")
 			println("DELETING BODY ", nn)
-			println("mterm = ", signif(mterm,3), "; len = ", 
-				signif(len,3), "; minlen = ", signif(minlen,3))
+			println("mterm = ", round(mterm,sigdigits=3), "; len = ", 
+				round(len,sigdigits=3), "; minlen = ", round(minlen,sigdigits=3))
 			println("--------------------------------------------------\n")
 			append!(deletevec,[nn])
 		end
@@ -216,9 +216,9 @@ function test_theta_means(theta::Vector{Float64})
 	maxmean = maximum(abs.([m1,m2]))
 	thresh = 20/npts
 	if maxmean > thresh
-		warn("theta means")
+		@warn("theta means")
 		println("The max mean of sin, cos is: ", 
-			signif(maxmean,3), " > ", signif(thresh,3))
+			round(maxmean,sigdigits=3), " > ", round(thresh,sigdigits=3))
 	end
 	return
 end
@@ -231,9 +231,9 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 	# Compare the two extrpaolations.
 	th0diff = abs(th0left - th0right)
 	if th0diff > thresh
-		warn("theta ends") 
+		@warn("theta ends") 
 		println("The difference between the ends is: ", 
-			signif(th0diff,3), " > ", signif(thresh,3))
+			round(th0diff,sigdigits=3), " > ", round(thresh,sigdigits=3))
 	end
 	return
 end
