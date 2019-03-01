@@ -1,5 +1,5 @@
       subroutine stokesSolver(nninner,nnbodies,nnouter,
-     $     ifmm,ibary,xx,yy,den,iter)
+     $     ifmm,ibary,maxl,xx,yy,den,iter)
 c     Input x and y coordinates and return the density function on the
 c     boundary.  Outer wall is used to enclose the inner boundary so
 c     that Stokes paradox is avoided
@@ -11,10 +11,11 @@ c     x and y coordinates of obstacle
       parameter (nmax = 2**17)
       parameter (maxbodies = 50)
       parameter (ntargets = 2500)
-c     max points on the boundary of the obstacle      
-      parameter (maxl = 2000, liwork = 30)
-      parameter (lrwork = 10 + nmax*(maxl+6) + 
-     $     maxl*(maxl+3))
+c     max points on the boundary of the obstacle
+      parameter (liwork = 30)
+!      parameter (maxl = 2000, liwork = 30)
+!      parameter (lrwork = 10 + nmax*(maxl+6) + 
+!     $     maxl*(maxl+3))
 c     maximum size of workspaces for GMRES
 c     maxl is the maximum number of GMRES steps
 
@@ -38,7 +39,8 @@ c     x and y coordinates of the normal of the confining wall
       dimension cur0(nmax), speed0(nmax)
 c     Jacobian and curvature of the confining wall
 
-      dimension gmwork(lrwork), igwork(liwork)
+      real *8, allocatable :: gmwork(:)
+      dimension igwork(liwork)
 c     workspaces for GMRES
 
       dimension rhs(nmax)
@@ -91,7 +93,10 @@ c      close(unit=4)
       call bd_condition(ninner,nbodies,x,y,nouter,xouter,youter,rhs)
 c     load boundary condition
       print *, 'load Bd condition'
-
+      
+      lrwork = 10 + nmax*(maxl+6) + maxli*(maxl+3)
+      allocate(gmwork(lrwork))
+      
       call solveBIE(ninner,nbodies,nouter,den,rhs,
      $      gmwork,lrwork,igwork,liwork,maxl,ifmm,ibary,iter)
 c     solve for the density function with GMRES

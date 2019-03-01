@@ -168,7 +168,9 @@ c      enddo
       
       ibary = 1
       ifmm = 0
-      call stokesSolver(ninner,nbodies,nouter,ifmm,ibary,x,y,den,iter)
+      maxl = 2000
+      call stokesSolver(ninner,nbodies,nouter,ifmm,ibary,maxl,
+     $        x,y,den,iter)
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
       print *, 'Solver'
