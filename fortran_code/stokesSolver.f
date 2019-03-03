@@ -486,7 +486,7 @@ c     gmres workspaces
 c     workspace integer array that'll be passed to preconditioner msolve
 
       itol = 0
-      tol = 1.d-12
+      tol = 1.d-8
       isym = 0
       igwork(1) = maxl
       do i=2,liwork
