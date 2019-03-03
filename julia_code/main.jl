@@ -78,12 +78,14 @@ function getparams(paramsfile::AbstractString, npts::Int)
 	paramvec = readvec(pfext(paramsfile))
 	geofile,epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[1:8]
 	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
+	ibary = paramvec[11]
+	maxl = paramvec[12]
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	cntout = max(round(Int,dtout/dt),1)
 	cput0 = time()
 	# Save the parameters in an object.
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,
+	params = ParamType(dt,epsilon,sigma,nouter,ifmm,ibary,maxl,
 		fixarea,fixpdrop,npts,tfin,cntout,cput0,geofile,paramsfile)
 	return params
 end

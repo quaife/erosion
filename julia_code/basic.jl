@@ -14,7 +14,7 @@ end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
 mutable struct ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
-	nouter::Int; ifmm::Int; fixarea::Bool; fixpdrop::Bool;
+	nouter::Int; ifmm::Int; ibary::Int; maxl::Int; fixarea::Bool; fixpdrop::Bool;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64;
 	geofile::AbstractString; paramsfile::AbstractString
 end
@@ -58,7 +58,7 @@ function getstress!(thlenden::ThLenDenType, params::ParamType)
 	# Compute the density if not loaded already.
 	compute_density!(thlenden, params)
 	# Compute the stress.
-	tau = compute_stress(thlenden,params.nouter,fixpdrop=params.fixpdrop,rotation=false)
+	tau = compute_stress(thlenden,params.nouter,params.ibary,fixpdrop=params.fixpdrop,rotation=false)
 	# Smooth atau and save it in each of the thlen variables.
 	npts,nbods = getnvals(thlenden.thlenvec)
 	for nn = 1:nbods
@@ -79,46 +79,46 @@ function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::B
 	if (rotation == false && length(thlenden.density) == 0)
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
-		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm)
+		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
 	elseif (rotation == true && length(thlenden.denrot) == 0)
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
 	end
 	return
 end
 # compute_density: Fortran wrapper.
 function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, 
-		npts::Int, nbods::Int, nouter::Int, ifmm::Int)
+		npts::Int, nbods::Int, nouter::Int, ifmm::Int, ibary::Int, maxl::Int)
 	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
 	nits = zeros(Int,1)
 	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Nothing, 
-		(Ref{Int},Ref{Int},Ref{Int},Ref{Int},
+		(Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},
 		Ref{Float64},Ref{Float64},Ref{Float64},Ref{Int}), 
-		npts, nbods, nouter, ifmm, xx, yy, density, nits)
+		npts, nbods, nouter, ifmm, ibary, maxl, xx, yy, density, nits)
 	println("The total number of GMRES iterations is ", nits[1],"\n\n")
 	return density
 end
 
 #--- THE SHEAR STRESS ---#
 # compute_stress: Dispatch for ThLenDenType.
-function compute_stress(thlenden::ThLenDenType, nouter::Int; 
+function compute_stress(thlenden::ThLenDenType, nouter::Int, ibary::Int; 
 		fixpdrop::Bool=false, rotation::Bool=false)
-	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
-	tau = compute_stress(xv,yv,density,npts,nbods,nouter)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,ibary,fixpdrop,rotation)
+	tau = compute_stress(xv,yv,density,npts,nbods,nouter,ibary)
 	return tau
 end
 # compute_stress: Fortran wrapper.
 function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, 
-		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
+		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
 	tau = zeros(Float64, npts*nbods)
 	if nbods > 0
 		ccall((:computeshearstress_, "libstokes.so"), Nothing,
 			(Ref{Int},Ref{Int},Ref{Int},
-			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
-			npts, nbods, nouter, xx, yy, density, tau)
+			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Int},Ref{Float64}),
+			npts, nbods, nouter, xx, yy, density, ibary, tau)
 	end
 	return tau
 end
@@ -145,24 +145,24 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 end
 #--- THE QUANTITIES OF INTEREST ---#
 # compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
-function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int;
+function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int, ibary::Int;
 		fixpdrop::Bool=false, rotation::Bool=false)
-	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,ibary,fixpdrop,rotation)
 	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
-			compute_qoi_targets(xv,yv,density,targets.xtar,targets.ytar,npts,nbods,nouter)
+			compute_qoi_targets(xv,yv,density,targets.xtar,targets.ytar,npts,nbods,nouter,ibary)
 	return
 end
 # compute_qoi_targets: Fortran wrapper.
 function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		density::Vector{Float64}, xtar::Vector{Float64}, ytar::Vector{Float64},
-		npts::Int, nbods::Int, nouter::Int)
+		npts::Int, nbods::Int, nouter::Int, ibary::Int)
 	ntargets = length(xtar)
 	utar,vtar,ptar,vortar = [zeros(Float64,ntargets) for ii=1:4]
 	ccall((:computeqoitargets_, "libstokes.so"), Nothing,
-		(Ref{Int}, Ref{Int}, Ref{Int}, Ref{Float64}, Ref{Float64}, Ref{Float64},
+		(Ref{Int}, Ref{Int}, Ref{Int}, Ref{Int}, Ref{Float64}, Ref{Float64}, Ref{Float64},
 		Ref{Int}, Ref{Float64}, Ref{Float64}, 
 		Ref{Float64}, Ref{Float64}, Ref{Float64}, Ref{Float64}),
-		npts, nbods, nouter, xx, yy, density, 
+		npts, nbods, nouter, ibary, xx, yy, density, 
 		ntargets, xtar, ytar, utar, vtar, ptar, vortar)
 	return utar,vtar,ptar,vortar
 end
@@ -209,10 +209,10 @@ end
 
 #--------------- KEEP PRESSURE DROP FIXED ---------------#
 # getnxyden: Get these values depending on fixpdrop and rotation.
-function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation::Bool)
+function getnxyden(thlenden::ThLenDenType, nouter::Int, ibary::Int, fixpdrop::Bool, rotation::Bool)
 	npts,nbods,xv,yv = getnxy(thlenden)
 	# Consider fixpdrop.
-	rescale = getumax(thlenden, nouter, fixpdrop)
+	rescale = getumax(thlenden, nouter, ibary, fixpdrop)
 	# Consider rotation.
 	if rotation
 		xv,yv = xyrot(xv,yv)
@@ -223,11 +223,11 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool, rotation
 	return npts,nbods,xv,yv,density
 end
 # getumax: Get umax to rescale the density function.
-function getumax(thlenden::ThLenDenType, nouter::Int, fixpdrop::Bool)
+function getumax(thlenden::ThLenDenType, nouter::Int, ibary::Int, fixpdrop::Bool)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
 	umax = 1.
 	if fixpdrop
-		pdrop = getpdrop(thlenden, nouter)[1]
+		pdrop = getpdrop(thlenden, nouter, ibary)[1]
 		umax =  10 * 8/pdrop
 		println("Fixing pdrop, umax = ", round(umax,sigdigits=3))
 	end
@@ -236,7 +236,7 @@ end
 #= getpdrop: Calculate the pressure drop from -x0 to x0. 
 Also get the average flux while at it. 
 Note: this routine assumes that umax = 1; If different, need to apply rescaling. =#
-function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0; rotation::Bool=false)
+function getpdrop(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64 = 2.0; rotation::Bool=false)
 	# Set up targets points on two vertical slices.
 	nypts = 13
 	dy = 2/nypts
@@ -244,8 +244,8 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, x0::Float64 = 2.0; rotati
 	# Target points for plus/minus x0.
 	tarp = regulargridtargs([x0],ylocs)
 	tarm = regulargridtargs([-x0],ylocs)
-	compute_qoi_targets!(thlenden,tarp,nouter,rotation=rotation)
-	compute_qoi_targets!(thlenden,tarm,nouter,rotation=rotation)
+	compute_qoi_targets!(thlenden,tarp,nouter,ibary,rotation=rotation)
+	compute_qoi_targets!(thlenden,tarm,nouter,ibary,rotation=rotation)
 	# Compute the pressure drop.
 	pplus = mean(tarp.ptar)
 	pminus = mean(tarm.ptar)

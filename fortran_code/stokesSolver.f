@@ -9,7 +9,7 @@ c     that Stokes paradox is avoided
 c     x and y coordinates of obstacle
 
       parameter (nmax = 2**17)
-      parameter (maxbodies = 50)
+      parameter (maxbodies = 500)
       parameter (ntargets = 2500)
 c     max points on the boundary of the obstacle
       parameter (liwork = 30)
@@ -569,7 +569,7 @@ c     potential
       implicit real*8 (a-h,o-z)
 
       parameter (nmax = 2**17)
-      parameter (maxbodies = 50)
+      parameter (maxbodies = 500)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -957,7 +957,7 @@ c     potential
       implicit real*8 (a-h,o-z)
 
       parameter (nmax = 2**17)
-      parameter (maxbodies = 50)
+      parameter (maxbodies = 500)
 
       dimension den(ntotal)
       dimension vel(ntotal)
@@ -1349,7 +1349,7 @@ c     potential
       implicit real*8 (a-h,o-z)
 
       parameter (nmax = 2**17)
-      parameter (maxbodies = 50)
+      parameter (maxbodies = 500)
 
       dimension den(ntotal)
       dimension vel(ntotal)
