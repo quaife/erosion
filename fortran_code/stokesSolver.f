@@ -94,7 +94,7 @@ c      close(unit=4)
 c     load boundary condition
       print *, 'load Bd condition'
       
-      lrwork = 10 + nmax*(maxl+6) + maxli*(maxl+3)
+      lrwork = 10 + nmax*(maxl+6) + maxl*(maxl+3)
       allocate(gmwork(lrwork))
       
       call solveBIE(ninner,nbodies,nouter,den,rhs,
