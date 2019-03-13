@@ -884,6 +884,9 @@ c************************************************************
 c     START OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
 c     STOKESLETS
       do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)        
         do k = 1,ninner
           denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
           deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
@@ -1272,6 +1275,9 @@ c************************************************************
 c     START OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
 c     STOKESLETS
       do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)        
         do k = 1,ninner
           denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
           deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
