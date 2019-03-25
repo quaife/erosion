@@ -95,10 +95,10 @@ Consider a Laplace's equations with Dirichlet boundary condition
 Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
 The double-layer potential which solves \eqref{Laplace} is 
 \begin{align*}
-\D[\sigma]({\bf x})&=\frac{1}{2\pi}\displaystyle\int_{\Gamma} \frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma({\bf y})dS_y,
-%\frac{1}{2\pi}\displaystyle\int_{\Gamma}\frac{\partial}{\partial {\bf n_y}} \log |{\bf x}-{\bf y}| \sigma({\bf y})dS_y,\\ \\
-%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{{\bf r}\cdot{\bf n_y}}{\rho^2} \sigma({\bf y})dS_y\\ \\
-%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{n_1(x_1-y_1)+n_2(x_2-y_2)}{(x_1-y_1)^2+(x_2-y_2)^2} \sigma({\bf y})dS_y 
+\D[\sigma]({\bf x})&=\frac{1}{2\pi}\displaystyle\int_{\Gamma} \frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma({\bf y})ds_y,
+%\frac{1}{2\pi}\displaystyle\int_{\Gamma}\frac{\partial}{\partial {\bf n_y}} \log |{\bf x}-{\bf y}| \sigma({\bf y})ds_y,\\ \\
+%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{{\bf r}\cdot{\bf n_y}}{\rho^2} \sigma({\bf y})ds_y\\ \\
+%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{n_1(x_1-y_1)+n_2(x_2-y_2)}{(x_1-y_1)^2+(x_2-y_2)^2} \sigma({\bf y})ds_y 
 \numberthis\label{DLP:real}
 \end{align*}
 where $\sigma$ is the density function on the boundary $\Gamma$.
@@ -108,7 +108,7 @@ Consider a Cauchy integral
 \begin{equation}\label{CI}
 v({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{\sigma({ y})}{{ y}-{ x}} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
 \end{equation}
-where ${ x}=x_1+ix_2$, $ { y}=y_1+iy_2$, ${ n_y}=n_1+i n_2$ and $d{ y}=i {n_y}dS_y$. It is easy to show that 
+where ${ x}=x_1+ix_2$, $ { y}=y_1+iy_2$, ${ n_y}=n_1+i n_2$ and $d{ y}=i {n_y}ds_y$. It can be showed that 
 the real part of the Cauchy integral in \eqref{CI} is equivalent to the double-layer potential in \eqref{DLP:real}. 
 
 
@@ -119,12 +119,12 @@ Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf
 
 The Stokes double-layer potential  is
 \begin{equation}\label{StokesDLP1}
-\D[\boldsymbol\sigma]({\bf x}):=\frac{1}{\pi}\int_{\Gamma}\left(\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\frac{{\bf r} \otimes {\bf r}}{\rho^2}\right) {\boldsymbol\sigma({\bf y})} d S_y.
+\D[\boldsymbol\sigma]({\bf x}):=\frac{1}{\pi}\int_{\Gamma}\left(\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\frac{{\bf r} \otimes {\bf r}}{\rho^2}\right) {\boldsymbol\sigma({\bf y})} d s_y.
 \end{equation}
 We could rewrite the Stokes DLP in terms of the Laplace DLP as
 \begin{align*}\label{StokesDLP2}
-\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})dS_y+\frac{1}{2\pi}\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})dS_y\\
-&-\frac{1}{2\pi}x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1dS_y-\frac{1}{2\pi}x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2dS_y. \numberthis
+\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
+&-\frac{1}{2\pi}x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y-\frac{1}{2\pi}x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y. \numberthis
 \end{align*}
 
 
@@ -135,8 +135,8 @@ We could rewrite the Stokes DLP in terms of the Laplace DLP as
 
 To calculate the shear stress, we need to know the gradient of double-layer potential in \eqref{StokesDLP2} 
 \begin{align*}\label{SSLP}
-\nabla\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\nabla\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})dS_y+\frac{1}{2\pi}\nabla^2\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})dS_y\\
-&-\frac{1}{2\pi}\nabla\left(x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1dS_y\right)-\frac{1}{2\pi}\nabla\left(x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2dS_y\right). \numberthis
+\nabla\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\nabla\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla^2\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
+&-\frac{1}{2\pi}\nabla\left(x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y\right)-\frac{1}{2\pi}\nabla\left(x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y\right). \numberthis
 \end{align*}
 
 
@@ -160,36 +160,60 @@ To calculate the shear stress, we need to know the gradient of double-layer pote
 \label{sec:BIE}
 \subsubsection{Interior Case}
 Consider a Cauchy integral 
-\begin{equation}\label{NCI}
-v({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{{ y}-{ x}} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
-\end{equation}
-By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{{ y}-{ x}} d{ y}=1,$ we can rewrtie \eqref{NCI} and get 
+\begin{align}\label{CIFI}
+\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{{ y}-{ x}} d{ y}
+&=\begin{cases}
+\,v(x), &{ x} \in \Omega,\\ 
+\,0,  &{ x} \in \Cdb\setminus \bar{\Omega}.
+\end{cases}
+\end{align}
+By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{{ y}-{ x}} d{ y}=1,$ we can rewrtie \eqref{CIFI} and get 
 \begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)}{{ y}-{ x}} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
+\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)}{{ y}-{ x}} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
 \end{equation}
 \begin{equation}\label{dNCI}
-v'({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{(y- x)^2} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
+v'({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{(y- x)^2} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
 \end{equation}
 By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{dNCI} and get 
 \begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)-(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
+\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)-(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
 \end{equation}
 
 \subsubsection{Exterior case}
- 
+Consider a Cauchy integral formula for the exterior domain
+\begin{align}\label{CIFE}
+\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})}{{ y}-{ x}} d{ y}
+&=\begin{cases}
+\,v_{\infty}, &{ x} \in \Omega,\\ 
+\,-v(x)+v_{\infty},  &{ x} \in \Omega^c,
+\end{cases}
+\end{align}
+where $v_{\infty}=\displaystyle\lim_{x \to \infty}v(x)$.
+\begin{equation}
+\frac{1}{x-a}=\frac{-1}{2 \pi i} \int_{\Gamma}\frac{(y-a)^{-1}}{y-x} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+\end{equation}
+\begin{equation}
+\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-(y-a)^{-1}(x-a)v(x)}{y-x} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+\end{equation}
+\begin{equation}
+\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-v(x)-(y-a)^{-1}(x-a)(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+\end{equation}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shear stress}
 \label{sec:shearStress}
 \subsubsection{Interior Case}
 \begin{equation}\label{ddNCI}
-v''({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})}{(y- x)^3} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
+v''({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})}{(y- x)^3} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
 \end{equation}
 By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{ddNCI} and get 
 \begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
+\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
 \end{equation}
 \subsubsection{Exterior case}
-
+\begin{equation}
+\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^+({ y})-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+\end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TIME-STEPPING %%
 \subsection{Time-stepping with the {\thL} method} 
