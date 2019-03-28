@@ -125,15 +125,15 @@ end
 
 #--- THE PRESSURE ---#
 # compute_pressure: Dispatch for ThLenDenType.
-function compute_pressure(thlenden::ThLenDenType, nouter::Int;
+function compute_pressure(thlenden::ThLenDenType, nouter::Int, ibary::Int;
 		fixpdrop::Bool=false, rotation::Bool=false)
-	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,fixpdrop,rotation)
-	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter)
+	npts,nbods,xv,yv,density = getnxyden(thlenden,nouter,ibary,fixpdrop,rotation)
+	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter,ibary)
 	return pressure
 end
 # compute_pressure: Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
-		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int)
+		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
 	pressure = zeros(Float64, npts*nbods)
 	if nbods > 0
 		ccall((:computepressure_, "libstokes.so"), Nothing,

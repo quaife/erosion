@@ -10,7 +10,7 @@ input_geos/100circ3_256.thlen		# the data file for the initial geometry
 0		# fixarea: 1 to keep area fixed.
 1		# fixpdrop: 1 to keep pressure drop fixed.
 1		# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
-5000            # maxl: the number of GMRES iterations.
+10000            # maxl: the number of GMRES iterations.
 
 # In most cases, keep the following parameters fixed:
 # tfin = 0.1, nouter = 1024, iffm = 1, fixarea = 0

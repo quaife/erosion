@@ -31,8 +31,8 @@ function pp1(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		println("Beginning the resistivity computation.")
-		rbods = resistivity(thlenden,params.nouter,2.0)
-		rbodsrot = resistivity(thlenden,params.nouter,2.0,rotation=true)
+		rbods = resistivity(thlenden,params.nouter,params.ibary,2.0)
+		rbodsrot = resistivity(thlenden,params.nouter,params.ibary,2.0,rotation=true)
 		# Save the resistivity data to a file.
 		resfile = string(datafolder,"resistivity",cntstr,".dat")
 		label = string("# Data on resistivity: nbods, resistivity, rotated resistivity.")
@@ -90,7 +90,7 @@ function pp3(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points.
 		targets = regbodtargs(thlenden.thlenvec)
-		compute_qoi_targets!(thlenden,targets,params.nouter,fixpdrop=params.fixpdrop)
+		compute_qoi_targets!(thlenden,targets,params.nouter,params.ibary,fixpdrop=params.fixpdrop)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
@@ -153,9 +153,9 @@ function getareas(thlenden::ThLenDenType)
 	return areavec
 end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, x0::Float64=2.0; rotation::Bool=false)
+function resistivity(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64=2.0; rotation::Bool=false)
 	# Retrieve the pressure drop and flux (assuming umax = 1)
-	pdrop,qavg = getpdrop(thlenden,nouter,x0,rotation=rotation)
+	pdrop,qavg = getpdrop(thlenden,nouter,ibary,x0,rotation=rotation)
 	# Calculate the total resistivity
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
@@ -168,8 +168,8 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note 1: the stress is not smoothed and absolute value is not taken.
 	# Note 2: these are the values with umax = 1.
-	tauvec = compute_stress(thlenden,params.nouter,fixpdrop=false,rotation=rotation)
-	pressvec = compute_pressure(thlenden,params.nouter,fixpdrop=false,rotation=rotation)
+	tauvec = compute_stress(thlenden,params.nouter,params.ibary,fixpdrop=false,rotation=rotation)
+	pressvec = compute_pressure(thlenden,params.nouter,params.ibary,fixpdrop=false,rotation=rotation)
 	thlenvec = thlenden.thlenvec
 	npts,nbods = getnvals(thlenvec)
 	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
@@ -191,7 +191,7 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 		vdragx += dot(tau,sx)*ds
 		vdragy += dot(tau,sy)*ds
 	end
-	umax = getumax(thlenden, params.nouter, params.fixpdrop)
+	umax = getumax(thlenden, params.nouter, params.ibary,params.fixpdrop)
 	return pdragx, pdragy, vdragx, vdragy, umax, tauvec, atauvec
 end
 

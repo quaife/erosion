@@ -471,7 +471,8 @@ c***********************************************************************
 c     Solve the boundary integral equation with GMRES
       implicit real*8 (a-h,o-z)
 
-      external msolve_DLP,matvec_DLP,matvec_DLP_fmm,matvec_DLP_bary
+      external msolve_DLP,matvec_DLP,matvec_DLP_fmm,matvec_DLP_bary,
+     $         matvec_DLP_fmmbary 
 
       dimension den(2*nouter+2*ninner*nbodies+3*nbodies)
       dimension rhs(2*nouter+2*ninner*nbodies+3*nbodies)
@@ -532,36 +533,596 @@ c          print*,k,vel1(k)-vel2(k)
 cc        endif
 c      enddo
 
+      print *, 'Start GMRES'
+      call cpu_time(t1)
       if (ibary .eq. 1) then
-        print*,'USING Barycentric'
-        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+        if (ifmm .eq. 1) then
+          print*,'USING FMMBarycentric'         
+          call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+     $      nelt,ia,ja,a,isym,
+     $      matvec_DLP_fmmbary,msolve_DLP,itol,tol,itmax,iter,err,
+     $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
+        else
+          print*,'USING Barycentric'
+          call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
      $      nelt,ia,ja,a,isym,
      $      matvec_DLP_bary,msolve_DLP,itol,tol,itmax,iter,err,
      $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
 c       Use Barycentric
-      elseif (ifmm .eq. 1) then
-        print*,'USING FMM'
-        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+        endif
+      else
+        if (ifmm .eq. 1) then
+          print*,'USING FMM'
+          call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
      $      nelt,ia,ja,a,isym,
      $      matvec_DLP_fmm,msolve_DLP,itol,tol,itmax,iter,err,
      $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
 c        USE FMM
-      else
-        print*,'USING DIRECT'
-        call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
+        else
+          print*,'USING DIRECT'
+          call DGMRES(2*nouter+2*ninner*nbodies+3*nbodies,rhs,den,
      $      nelt,ia,ja,a,isym,
      $      matvec_DLP,msolve_DLP,itol,tol,itmax,iter,err,
      $      ierr,6,sb,sx,gmwork,lrwork,igwork,liwork,rwork,iwork)
 c        DON'T USE FMM
+        endif
       endif
 c     use GMRES to find the density function of the double layer
 c     potential
+      call cpu_time(t2)
+      print *, 'GMRES  time =', t2-t1
 
 
 
       end
 
+c***********************************************************************
 
+      subroutine matvec_DLP_fmmbary(ntotal,den,vel,nelt,ia,ja,a,isym)
+c     matrix vector multiplication routine for the double-layer
+c     potential
+      implicit real*8 (a-h,o-z)
+
+      parameter (nmax = 2**17)
+      parameter (maxbodies = 500)
+
+      dimension den(ntotal)
+      dimension vel(ntotal)
+
+      common /geometry/x,y,centerx,centery,px,py,cur,speed,
+     $    ninner,nbodies
+      common /wall/ xouter,youter,px0,py0,cur0,speed0,nouter
+
+      dimension x(nmax),y(nmax)
+      dimension xtar(nbodies*ninner),ytar(nbodies*ninner),
+     &          xsou(ninner),ysou(ninner)
+      dimension xtarloc(ninner),ytarloc(ninner)
+      dimension px(nmax),py(nmax)
+      dimension cur(nmax),speed(nmax)
+      dimension centerx(maxbodies),centery(maxbodies)
+
+      dimension xouter(nmax),youter(nmax)
+      dimension px0(nmax),py0(nmax)
+      dimension cur0(nmax),speed0(nmax)
+
+      dimension denx(max(ninner,nouter)),deny(max(ninner,nouter))
+      dimension denxb(max(ninner,nouter)),denyb(max(ninner,nouter))       
+      dimension ux(max(ninner*nbodies,nouter)),
+     &          uy(max(ninner*nbodies,nouter))
+      dimension u1x(max(ninner*nbodies,nouter)),
+     &          u1y(max(ninner*nbodies,nouter)),
+     &          u2x(max(ninner*nbodies,nouter)),
+     &          u2y(max(ninner*nbodies,nouter))       
+      
+      dimension indw2b(2,ninner*nbodies)
+      dimension indb2b(2,ninner*nbodies)
+      dimension indb2w(nouter)
+
+      real *8 xboth(nouter + ninner*nbodies)
+      real *8 yboth(nouter + ninner*nbodies)
+      complex *16 eye
+      complex *16 mu(nouter + ninner*nbodies)
+      complex *16 z(nouter + ninner*nbodies)
+      complex *16 dip1(nouter + ninner*nbodies)
+      complex *16 dip2(nouter + ninner*nbodies)     
+      complex *16 vel_cmplx(nouter + ninner*nbodies)
+
+      czero = (0.0d0,0.0d0)
+      eye = (0.d0,1.d0)
+      pi = 4.d0*datan(1.d0)
+      twopi = 2.d0*pi
+      nbeta = 1
+
+      do k = 1,nouter + ninner*nbodies
+        vel_cmplx(k) = czero
+      enddo
+c     initialize complex-valued velocity to 0
+
+      do k = 1,2*nouter + 2*ninner*nbodies + 3*nbodies
+        vel(k) = 0.d0
+      enddo
+c     initialize velocity to 0
+
+      do k = 1,nouter
+        mu(k) = (den(k+nouter) - eye*den(k))*speed0(k)*
+     $      twopi/dble(nouter)
+        z(k) = px0(k) + eye*py0(k)
+        xboth(k) = xouter(k)
+        yboth(k) = youter(k)
+      enddo
+
+      do isou = 1,nbodies
+        do k=1,ninner
+          mu(nouter + (isou-1)*ninner + k) = 
+     $        (den(2*nouter+(isou-1)*2*ninner+k+ninner) - eye*
+     $         den(2*nouter+(isou-1)*2*ninner+k))*
+     $         speed((isou-1)*ninner+k)*twopi/dble(ninner)
+          z(nouter + (isou-1)*ninner + k) = 
+     $        px((isou-1)*ninner+k) + eye*py((isou-1)*ninner+k)
+          xboth(nouter + (isou-1)*ninner + k) = 
+     $        x((isou-1)*ninner + k)
+          yboth(nouter + (isou-1)*ninner + k) = 
+     $        y((isou-1)*ninner + k)
+        enddo
+      enddo
+
+      dip1 = 2.5d-1/pi*mu*z
+      dip2 = 2.5d-1/pi*(mu*conjg(z) - conjg(mu)*z)
+
+      call stokesDLPnew(nouter+nbodies*ninner,xboth,yboth,
+     $        dip1,dip2,vel_cmplx)
+c     Apply FMM to do the all-to-all particle interactions in linear
+c     time
+
+      do k = 1,nouter
+        vel(k) = -imag(vel_cmplx(k))
+        vel(k+nouter) = real(vel_cmplx(k))
+      enddo
+c     copy velocity on outer boundary in correct order
+
+      do isou = 1,nbodies
+        do k = 1,ninner
+          vel(2*nouter+(isou-1)*2*ninner+k) = 
+     $      -imag(vel_cmplx(nouter+(isou-1)*ninner+k))
+          vel(2*nouter+(isou-1)*2*ninner+k+ninner) = 
+     $      real(vel_cmplx(nouter+(isou-1)*ninner+k))
+        enddo
+      enddo
+c     copy velocity on inner boundaries in correct order
+
+c    START OF REPLACING THE TRAPEZOID RUSELTS BY BARYCENTRIC ONE WHEN
+c    TWO POINTS ARE TOO CLOSED
+
+
+c     START the wall-bodies section
+c     start the wall-to-bodies part
+      do k = 1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k + nouter)
+      enddo      
+
+      m=1
+      do itar = 1,nbodies
+
+c       loop over target points
+c       when the distancce between wall and bodies is closed
+        if( abs(centery(itar)) .ge. 0.5d0) then
+
+          do k=1,ninner
+            xtarloc(k)=x((itar-1)*ninner+k)
+            ytarloc(k)=y((itar-1)*ninner+k)
+            denxb(k) = den(2*nouter + (itar-1)*2*ninner + k)
+            denyb(k) = den(2*nouter + (itar-1)*2*ninner + k + ninner)
+c           save xtarloc, ytarloc, denxb, and denyb for body-to-wall barycentric           
+          
+            if(abs(y((itar-1)*ninner+k)) .ge. 0.5d0)  then
+              ux(k) = 0.d0
+              uy(k) = 0.d0
+              xtar(m) = x((itar-1)*ninner+k)
+              ytar(m) = y((itar-1)*ninner+k)
+              indw2b(1,m) = itar
+              indw2b(2,m) = k
+              m = m + 1            
+c             save xtar, ytar, indw2b for wall-to-bodies barycentric            
+              
+c             Apply trapezoid rule from wall to point_indw2b
+c             loop over source points
+              do j=1,nouter
+                rx = x((itar-1)*ninner+k) - xouter(j)
+                ry = y((itar-1)*ninner+k) - youter(j)
+                rdotn = rx*px0(j) + ry*py0(j)
+                rdotden = rx*denx(j) + ry*deny(j)
+                rho2 = rx**2.d0 + ry**2.d0
+              
+                ux(k) = ux(k) + rdotn*rdotden/rho2/rho2*rx*speed0(j)
+                uy(k) = uy(k) + rdotn*rdotden/rho2/rho2*ry*speed0(j)
+              enddo
+              ux(k) = ux(k)*twopi/dble(nouter)/pi
+              uy(k) = uy(k)*twopi/dble(nouter)/pi
+              
+              vel(2*nouter+(itar-1)*2*ninner+k) = 
+     $          vel(2*nouter+(itar-1)*2*ninner+k) - ux(k)
+              vel(2*nouter+(itar-1)*2*ninner+k+ninner) = 
+     $          vel(2*nouter+(itar-1)*2*ninner+k+ninner) - uy(k)
+c             Take out the trapezoid part at p_indw2b     
+            endif
+          enddo
+c         end of the wall-to-bodies part and save the index indw2b for doing barycentric 
+c         later once for all 
+
+c         start the body-to-wall part
+          rtar = 0.d0
+          do k = 1, ninner
+            rtar = rtar + speed((itar-1)*ninner+k)  
+          enddo
+          rtar = rtar/ninner
+          i = 1
+          do j=1,nouter
+            dx = centerx(itar) - xouter(j)
+            dy = centery(itar) - youter(j)
+            d2 = dx**2.d0 + dy**2.d0
+            r = 1.d0 - abs(centery(itar)) + 2.d0*rtar
+            
+            if( d2 .le. r**2) then
+              xsou(i) = xouter(j)
+              ysou(i) = youter(j)
+              indb2w(i) = j              
+              i = i + 1
+            endif
+          enddo
+          
+          do k=1,i-1
+            ux(k) = 0.d0
+            uy(k) = 0.d0
+          
+            do j=1,ninner
+              rx = xsou(k) - x((itar-1)*ninner + j)
+              ry = ysou(k) - y((itar-1)*ninner + j)
+              rdotn = rx*px((itar-1)*ninner + j) + 
+     $              ry*py((itar-1)*ninner + j)
+              rdotden = rx*denxb(j) + ry*denyb(j)
+              rho2 = rx**2.d0 + ry**2.d0
+
+              ux(k) = ux(k) + rdotn*rdotden/rho2/rho2*rx*
+     $            speed((itar-1)*ninner+j)
+              uy(k) = uy(k) + rdotn*rdotden/rho2/rho2*ry*
+     $            speed((itar-1)*ninner+j)
+            enddo
+            ux(k) = ux(k)*twopi/dble(ninner)/pi
+            uy(k) = uy(k)*twopi/dble(ninner)/pi
+          enddo
+
+          do k=1,i-1
+            vel(indb2w(k)) = vel(indb2w(k)) - ux(k)
+            vel(indb2w(k) + nouter) = vel(indb2w(k) + nouter) - uy(k)
+          enddo
+          
+          ninnc = ninner/nbeta
+          nder = 1
+          call StokesExteriorDLP(ninner,ninnc,nbeta,xtarloc,ytarloc,
+     &          denxb,denyb,px,py,i-1,xsou,ysou,itar,nbodies,
+     &          nder,ux,uy,u1x,u1y,u2x,u2y)
+     
+          do k=1,i-1
+            vel(indb2w(k)) = vel(indb2w(k)) + ux(k)
+            vel(indb2w(k) + nouter) = vel(indb2w(k) + nouter) + uy(k)
+          enddo           
+        endif  
+      enddo
+c     end of the body-to-wall part
+
+c     Apply barycentric rule  from wall to point_indw2b once for all      
+      noutc = nouter/nbeta
+      nder = 1
+      call StokesInteriorDLP(nouter,noutc,nbeta,xouter,youter,
+     &      denx,deny,px0,py0,m-1,xtar,ytar,nder,
+     &      ux,uy,u1x,u1y,u2x,u2y)
+      
+      do k = 1,m-1
+        vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)) = 
+     $    vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)) + ux(k)
+        vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)+ninner) = 
+     $    vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)+ninner) + 
+     $    uy(k)
+      enddo      
+c     END of the section of the wall-bodies replacement
+
+c     START OF the section of body-to-bodies replacement
+      do isou = 1,nbodies
+        rsou = 0.d0
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
+          xsou(k) = x((isou-1)*ninner+k)
+          ysou(k) = y((isou-1)*ninner+k)
+          rsou = rsou + speed((isou-1)*ninner+k)
+        enddo
+        rsou = rsou/ninner
+c       density function due to obstacle isou
+
+c       START OF TARGET POINTS ~= OBSTACLE isou
+        l = 1
+c        print *, 'isou', isou
+        do itar = 1,nbodies
+          if (itar .eq. isou) then
+            cycle
+          endif
+          rtar = 0.d0
+          do k=1,ninner
+            rtar = rtar +  speed((itar-1)*ninner+k)
+          enddo
+          rtar = rtar/ninner
+c         skip the diagonal term since this was taking care above with
+c         the trapezoid rule with the correcting liming value at the
+c         diagonal
+          dx = centerx(isou) - centerx(itar)
+          dy = centery(isou) - centery(itar)
+          d2 = dx**2.d0+dy**2.d0
+          rsum = 2.d0*(rsou + rtar)
+c         check if B_itar is closed to B_isou          
+          if( d2 .le. rsum**2) then 
+c         loop over target points
+            
+            do k = 1,ninner
+              ux(k) = 0.d0
+              uy(k) = 0.d0
+              dx = centerx(isou)-x((itar-1)*ninner+k)
+              dy = centery(isou)-y((itar-1)*ninner+k)              
+              d2 = dx**2.d0 + dy**2.d0
+c             Check if point_k is closed to B_isou              
+              if (d2 .le. rsum**2) then              
+                xtar(l) = x((itar-1)*ninner+k)
+                ytar(l) = y((itar-1)*ninner+k)
+                indb2b(1,l) = itar
+                indb2b(2,l) = k               
+c               Save the index indb2b for appling barycentric from B_sou to 
+c               point_indb2b of B_itar if they are closed                
+                l = l + 1
+
+                do j=1,ninner
+                  rx = x((itar-1)*ninner+k) - x((isou-1)*ninner+j)
+                  ry = y((itar-1)*ninner+k) - y((isou-1)*ninner+j)
+                  rdotn = rx*px((isou-1)*ninner+j) + 
+     $                ry*py((isou-1)*ninner+j) 
+                  rdotden = rx*denx(j) + ry*deny(j)
+                  rho2 = rx**2.d0 + ry**2.d0
+
+                  ux(k) = ux(k) + rdotn*rdotden/rho2/rho2*rx*
+     $              speed((isou-1)*ninner+j)
+                  uy(k) = uy(k) + rdotn*rdotden/rho2/rho2*ry*
+     $              speed((isou-1)*ninner+j)
+                enddo
+              ux(k) = ux(k)*twopi/dble(ninner)/pi
+              uy(k) = uy(k)*twopi/dble(ninner)/pi
+c             Get the result by trapezoid rule at p_indb2b
+              vel(2*nouter + (itar-1)*2*ninner + k) = 
+     $          vel(2*nouter + (itar-1)*2*ninner + k) - ux(k)
+              vel(2*nouter + (itar-1)*2*ninner + k + ninner) = 
+     $          vel(2*nouter + (itar-1)*2*ninner + k + ninner) - uy(k)
+c             Take the result away at point_indb2b and replace it by 
+c             the result of barycentric later              
+              endif
+            enddo
+          endif
+        enddo
+        if( l .gt. 1) then
+c         Apply barycentric rule from B_isou and point_indb2b          
+          ninnc = ninner/nbeta
+          nder = 1
+          call StokesExteriorDLP(ninner,ninnc,nbeta,xsou,ysou,
+     &      denx,deny,px,py,l-1,xtar,ytar,isou,nbodies,nder,
+     &      ux,uy,u1x,u1y,u2x,u2y)
+     
+          do k = 1,l-1          
+            vel(2*nouter+(indb2b(1,k)-1)*2*ninner+indb2b(2,k)) = 
+     $        vel(2*nouter+(indb2b(1,k)-1)*2*ninner+indb2b(2,k)) + 
+     $        ux(k)
+            vel(2*nouter+(indb2b(1,k)-1)*2*ninner+indb2b(2,k)+ninner) = 
+     $      vel(2*nouter+(indb2b(1,k)-1)*2*ninner+indb2b(2,k)+ninner) + 
+     $        uy(k)        
+          enddo
+        endif  
+      enddo          
+
+c    END of the section of body to bodies replacement
+  
+
+c     START OF EXTRA TERMS DUE TO CHARGES ON OUTER WALLS
+      do k = 1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k + nouter)
+      enddo
+
+      do k=1,nouter
+        tdotden = py0(k)*denx(k) - px0(k)*deny(k)
+        vel(k) = vel(k) - 
+     $        cur0(k)*tdotden*py0(k)*
+     $        speed0(k)/dble(nouter)
+        vel(k+nouter) = vel(k + nouter) + 
+     $        cur0(k)*tdotden*px0(k)*
+     $        speed0(k)/dble(nouter)
+      enddo
+c     Add in correction at diagonal term that involves the curvature
+
+      do k = 1,nouter
+        vel(k) = vel(k) - 5.d-1*denx(k)
+        vel(k + nouter) = vel(k + nouter) - 5.d-1*deny(k)
+      enddo
+c     add in the jump condition
+c     END OF EXTRA TERMS DUE TO CHARGES ON OUTER WALLS
+
+c************************************************************
+
+c     START OF EXTRA TERMS DUE TO CHARGES ON OBSTACLE isou
+      do isou = 1,nbodies
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
+        enddo
+
+        do k=1,ninner
+          tdotden = py((isou-1)*ninner+k)*denx(k) - 
+     $              px((isou-1)*ninner+k)*deny(k)
+          vel(2*nouter + (isou-1)*2*ninner + k) = 
+     $        vel(2*nouter + (isou-1)*2*ninner + k) -
+     $        cur((isou-1)*ninner + k)*tdotden*
+     $        py((isou-1)*ninner + k)*speed((isou-1)*ninner + k)/
+     $        dble(ninner)
+          vel(2*nouter + (isou-1)*2*ninner + k + ninner) = 
+     $        vel(2*nouter + (isou-1)*2*ninner + k + ninner) +
+     $        cur((isou-1)*ninner + k)*tdotden*
+     $        px((isou-1)*ninner + k)*speed((isou-1)*ninner + k)/
+     $        dble(ninner)
+        enddo
+c       Add in correction at diagonal term that involves the curvature
+
+        do k = 1,ninner
+          vel(2*nouter + (isou-1)*2*ninner + k) = 
+     $    vel(2*nouter + (isou-1)*2*ninner + k) - 5.d-1*denx(k)
+          vel(2*nouter + (isou-1)*2*ninner + k + ninner) = 
+     $    vel(2*nouter + (isou-1)*2*ninner + k + ninner) - 5.d-1*deny(k)
+        enddo
+c       add in the jump condition
+      enddo
+c     END OF EXTRA TERMS DUE TO CHARGES ON OBSTACLE isou
+       
+c************************************************************
+c     START OF SOURCE POINTS == ROTLETS AND STOKESLETS
+      do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
+
+c       START OF TARGET POINTS == OUTER WALL
+c       loop over target points
+        do k = 1,nouter
+          ux(k) = 0.d0
+          uy(k) = 0.d0
+          rx = xouter(k) - centerx(ibod)
+          ry = youter(k) - centery(ibod)
+          rho2 = rx**2.d0 + ry**2.d0
+          rdots = rx*sto1 + ry*sto2
+          ux(k) = 5.d-1/twopi*
+     $        (-5.d-1*log(rho2)*sto1 + rdots/rho2*rx)
+          uy(k) = 5.d-1/twopi*
+     $        (-5.d-1*log(rho2)*sto2 + rdots/rho2*ry)
+          ux(k) = ux(k) + rot*ry/rho2
+          uy(k) = uy(k) - rot*rx/rho2
+        enddo
+c       stokeslets and rotlets contribute to the velocity
+
+        do k=1,nouter
+          vel(k) = vel(k) + ux(k)
+          vel(k+nouter) = vel(k+nouter) + uy(k)
+        enddo
+c       END OF TARGET POINTS == OUTER WALL
+
+c       START OF TARGET POINTS == OBSTACLE
+        do itar = 1,nbodies
+c         loop over target points
+          do k = 1,ninner
+            ux(k) = 0.d0
+            uy(k) = 0.d0
+            rx = x((itar-1)*ninner + k) - centerx(ibod)
+            ry = y((itar-1)*ninner + k) - centery(ibod)
+            rho2 = rx**2.d0 + ry**2.d0
+            rdots = rx*sto1 + ry*sto2
+            ux(k) = 5.d-1/twopi*
+     $          (-5.d-1*dlog(rho2)*sto1 + rdots/rho2*rx)
+            uy(k) = 5.d-1/twopi*
+     $          (-5.d-1*dlog(rho2)*sto2 + rdots/rho2*ry)
+            ux(k) = ux(k) + rot*ry/rho2
+            uy(k) = uy(k) - rot*rx/rho2
+          enddo
+c         stokeslets and rotlets contribute to the velocity
+
+          do k=1,ninner
+            vel(2*nouter+(itar-1)*2*ninner+k) = 
+     $          vel(2*nouter+(itar-1)*2*ninner+k) + ux(k)
+            vel(2*nouter+(itar-1)*2*ninner+k+ninner) = 
+     $          vel(2*nouter+(itar-1)*2*ninner+k+ninner) + uy(k)
+          enddo
+        enddo
+c       END OF TARGET POINTS == OBSTACLE
+      enddo
+c     END OF SOURCE POINTS == ROTLETS AND STOKESLETS
+
+c************************************************************
+
+c     START OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
+c     STOKESLETS
+      do ibod = 1,nbodies
+        sto1 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+1)
+        sto2 = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+2)
+        rot  = den(2*nouter+2*ninner*nbodies+(ibod-1)*3+3)
+        do k = 1,ninner
+          denx(k) = den(2*nouter + (ibod-1)*2*ninner + k)
+          deny(k) = den(2*nouter + (ibod-1)*2*ninner + k + ninner)
+        enddo
+c       density function due to obstacle ibod
+
+        do k = 1,ninner
+          vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) - 
+     $      denx(k)*speed((ibod-1)*ninner+k)
+          vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) - 
+     $      deny(k)*speed((ibod-1)*ninner+k)
+          vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) - 
+     $      (denx(k)*y((ibod-1)*ninner+k)-
+     $      deny(k)*x((ibod-1)*ninner+k))*
+     $      speed((ibod-1)*ninner+k)
+        enddo
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
+     $    vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1)/twopi * 
+     $    (twopi/dble(ninner))
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) = 
+     $    vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2)/twopi * 
+     $    (twopi/dble(ninner))
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) = 
+     $    vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3)/twopi * 
+     $    (twopi/dble(ninner))
+
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+1) + sto1
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+2) + sto2
+        vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) = 
+     $      vel(2*nouter+2*nbodies*ninner+(ibod-1)*3+3) + rot
+c       END OF INTEGRALS OF DENSITY FUNCTION BEING EQUAL TO ROTLETS AND
+c       STOKESLETS
+      enddo
+
+c************************************************************
+
+c     START OF RANK 1 CORRECTION TO HANDLE NULL SPACE FROM THE OUTERMOST
+c     BOUNDARY
+      do k = 1,nouter
+        denx(k) = den(k)
+        deny(k) = den(k + nouter)
+      enddo
+
+      sigdotn = 0.d0
+      do k = 1,nouter
+        sigdotn = sigdotn + (px0(k)*denx(k) + py0(k)*deny(k))*speed0(k)
+      enddo
+      sigdotn = sigdotn*twopi/dble(nouter)
+c     integral of dot product of the normal vector and density function
+c     defined on the outer boundary
+
+      do k = 1,nouter
+        vel(k) = vel(k) + sigdotn * px0(k)
+        vel(k+nouter) = vel(k+nouter) + sigdotn * py0(k)
+      enddo
+c     outer product of normal at source with normal at target multiplied
+c     by density function.  This removes the rank one null space
+
+
+      return
+      end
+
+      
 c***********************************************************************
       subroutine matvec_DLP_bary(ntotal,den,vel,nelt,ia,ja,a,isym)
 c     matrix vector multiplication routine for the double-layer
