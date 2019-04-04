@@ -1,15 +1,15 @@
 # Parameters
-input_geos/100circ3_256.thlen		# the data file for the initial geometry
+input_geos/02circ1_128.thlen	# the data file for the initial geometry
 15		# epsfac: epsilon = epsfac/npts
 10		# sigfac: sigma = sigfac/npts
 1e-4		# dt
 3e-4		# dtout: if zero, will round up to output at every step. 
 0.1		# tfin
 1024		# nouter
-1		# iffm: 1 to use the ffm, 0 to use direct.
+0		# iffm: 1 to use the ffm, 0 to use direct.
 0		# fixarea: 1 to keep area fixed.
 1		# fixpdrop: 1 to keep pressure drop fixed.
-1		# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
+0		# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
 10000            # maxl: the number of GMRES iterations.
 
 # In most cases, keep the following parameters fixed:
