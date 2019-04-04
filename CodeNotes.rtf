@@ -16,19 +16,25 @@ Testing new Barycentric code\
 I am testing the new Barycentric code written by Shang-Huan Chiu and Bryan. First I am simply testing all the variants of ibary = 1 or 0 and ifmm = 1 or 0 for the simple case of 02circ1-128.thlen. I am making sure that erosion proceeds reasonably well for at least 3-5 output times.\
 \
 Testing 02circ1-128.thlen\
-Parameters			Result		cpu time at step 8 (in minutes)\
-ifmm = 1, ibary = 1	Pass		0.86\
-ifmm = 0, ibary = 1	Pass		2.0\
-ifmm = 1, ibary = 0	Pass		0.25\
-ifmm = 0, ibary = 0	Pass		0.14\
+Parameters			Visual result		cpu time (in minutes) at step 8\
+ifmm = 1, ibary = 1	Pass			0.86\
+ifmm = 0, ibary = 1	Pass			2.0\
+ifmm = 1, ibary = 0	Pass			0.25\
+ifmm = 0, ibary = 0	Pass			0.14\
 From these tests it is clear that barycentric can slow the simulation. Of course, it also offers higher accuracy for nearly touching bodies presumably. It is a little curious that for ibary=0, the FMM actually slows the simulation. Lets try a test with more bodies and more grid points.\
 \
 Testing 10circ4-256.thlen\
-Parameters			Result		cpu time at step (in minutes)\
-ifmm = 1, ibary = 1	Pass		13 (23 for step 4)\
-ifmm = 0, ibary = 1	P		\
-ifmm = 1, ibary = 0	P		\
-ifmm = 0, ibary = 0	P		\
+Parameters			Visual result		cpu time (in minutes) at step 3 and 4\
+ifmm = 1, ibary = 1	Pass			13 at step 3; 23 at step 4\
+ifmm = 0, ibary = 1	Pass			68 at step 3; takes too long\
+ifmm = 1, ibary = 0	Pass			1.3 at step 3; 2.3 at step 4\
+ifmm = 0, ibary = 0	Pass			0.99 at step 3; 1.8 at step 4\
+Still, ifmm slows down the simulation in the case of ibary=0. Lets test more bodies.\
+\
+Testing 30circ2-256.thlen\
+Parameters			Visual result		cpu time (in minutes) at step 2 and 3\
+ifmm = 1, ibary = 0	P			7 at step 2; 12 at step 3\
+ifmm = 0, ibary = 0	P			at step 2; at step 3\
 \
 
 \b Optimal parameters for simulations\
