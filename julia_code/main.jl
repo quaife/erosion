@@ -80,9 +80,10 @@ function getparams(paramsfile::AbstractString, npts::Int)
 	# Read the parameters.
 	paramvec = readvec(pfext(paramsfile))
 	geofile = paramvec[1]
-	ibary, iffm = Int(paramvec[2]), Int(paramvec[3])
-	epsfac, sigfac, dt, dtout, tfin = paramvec[4:7, 10]
+	ibary, ifmm = Int(paramvec[2]), Int(paramvec[3])
+	epsfac, sigfac, dt, dtout = paramvec[4:7]
 	fixpdrop, fixarea = Bool(paramvec[8]), Bool(paramvec[9])
+	tfin = paramvec[10]
 	maxl, nouter = Int(paramvec[11]), Int(paramvec[12])
 	# Calculate the needed quantities.
 	epsilon = epsfac/npts
