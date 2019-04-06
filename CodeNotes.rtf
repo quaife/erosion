@@ -2,7 +2,7 @@
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww16340\viewh10760\viewkind0
+\margl1440\margr1440\vieww12260\viewh9280\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \f0\b\fs36 \cf0 Code Archive
@@ -41,7 +41,7 @@ Good, in this test with standard trapezoid rule, the FMM reduces the computation
 \
 Now testing a 60 body case just to make sure the code can now handle that many bodies in all cases of ifmm and ibary. \
 Testing 60circ3_256.thlen\
-Parameters			Visual		cpu (mins) at step 1-9	Warnings\
+Parameters			Visual		cpu (mins) at step 1-4	Warnings\
 ifmm = 1, ibary = 0	Pass		140, 150, 170, 350		*See below\
 ifmm = 0, ibary = 0	-		-\
 * Warnings on flux not matching; One body was deleted halfway through step 1 and it should not have been.\
@@ -61,9 +61,8 @@ npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4
 \
 \
 Back to analysis with DataTank\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Feb 15, 2019\
+\b0 Feb 15, 2019\
 I am noticing some obsolete things in the DataTank script and I am deleting some for simplicity. In particular, the Aspect Ratio calculations were for all the bodies total, so it only made sense if there was a single body. Therefore I am deleting this part.
 \b \
 \
@@ -161,19 +160,16 @@ Once I changed to fixing the pressure drop across the cell, it becomes less clea
 \
 My initial tests with 20 bodies and the new scaling of the smoothing look promising. Also, I ran the convergence test with a single body, and it looks like nearly 2nd order convergence in dt.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \ul \ulc0 Parameter test\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \ulnone I am testing how small I can make epsfac and sigfac with the new scaling of the smoothing term, using the 20-body geometry.\
+\ul Parameter test\
+\ulnone I am testing how small I can make epsfac and sigfac with the new scaling of the smoothing term, using the 20-body geometry.\
 GOOD means the simulation runs without errors. BAD means that numerically instabilities develops.\
 epsfac = 8, sigfac = 8	GOOD, run A\
 epsfac = 10, sigfac = 5	GOOD, run B\
 epsfac = 5, sigfac = 20	GOOD, deleted\
 epsfac = 5, sigfac = 10	BAD, deleted\
 epsfac = 10, sigfac = 1	BAD, deleted\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Conclusion:
+\b Conclusion:
 \b0  epsfac = 8, sigfac = 8 is a good choice to build from.\
 \
 Now testing the 6-body geometry\
@@ -184,8 +180,7 @@ epsfac = 15, sigfac = 10	NOT QUITE GOOD\
 epsfac = 20, sigfac = 10	GOOD ENOUGH\
 \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \ul Convergence test\ulnone \
+\ul Convergence test\ulnone \
 Remember to consider there is error in calculating pdrop and umax.\
 Test 1: 01circ256.in, espfac = 8, sigfac = 8, tfin = 0.002, fixprdop = 1, nits = 11\
 RESULTS\
@@ -193,34 +188,28 @@ The dt values: [0.002,0.001,0.0005,0.00025,0.000125,6.2e-5,3.1e-5,1.6e-5,8.0e-6,
 The drag values: [9.936,9.898,9.866,9.846,9.835,9.83,9.828,9.827,9.827,9.827,9.827]\
 The error: [0.0379,0.0325,0.0197,0.011,0.0051,0.0019,0.0006,0.0002,0.0,0.0]\
 The order: [0.22,0.72,0.85,1.1,1.4,1.66,1.83,1.92,1.96]\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Conclusion:
+\b Conclusion:
 \b0  It looks like 2nd order, though you have to go all the way to dt = 8, 4, or 2 e-6 to see resolution. At dt = 2e-4, the order is close to 1 and the relative error is close to 1e-3.
 \b \
 \
 \
 Fix pressure drop\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Nov 24, 2017\
+\b0 Nov 24, 2017\
 First, I wrote code to adjust the maximum of the parabolic profile based on keeping the pressure drop from x = -2 to 2 fixed. There is a corresponding parameter in the params.dat file called fixpdrop. \
 Secondly, I adjusted the curvature-smoothing term based on the maximum velocity. In principle, this should make it so that the bodies are not overs-moothed in the beginning when the velocity is slow. I expected this to make a big difference in the body shapes. However, comparing to the plots without this adjustment, there is only a very slight difference. The run I am comparing is 20 bodies.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \
+\b \
 Visualize vorticity with body-fit mesh\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Nov 22, 2017\
+\b0 Nov 22, 2017\
 In postprocess, I wrote code to combine a regular and body-fit mesh to view the vorticity. It works.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \
+\b \
 Runge-Kutta 2 implementation\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Nov 7, 2017\
+\b0 Nov 7, 2017\
 After I determined my RK4 implementation was both unnecessary and flawed, I implemented RK2. The simulation runs and it shows 2nd order convergence!
 \b \
 \
@@ -228,17 +217,15 @@ After I determined my RK4 implementation was both unnecessary and flawed, I impl
 \b0 Nov 10, 2017\
 I had to correct some issues with how I delete bodies when they are too small. There are some tricky issues with the two stages of RK2; i.e. What do you do if the body does not vanish at stage 1, but it does at stage 2? I finally worked all of this out and got a code that seems to work. The best geometry file to test the code is test20.in.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Convention alpha = s/L or 2 pi s/L
+\b Convention alpha = s/L or 2 pi s/L
 \b0 \
 Nov 18, 2017: For the paper, Bryan prefers the 2 pi s /L convention because it really cleans up the Fourier expansion expressions, and I agree. I implemented this change in the paper only early this month. My codes all use the s/L convention. It would be really great, as a check on the formulas, to have my code match the paper, but I think this is asking too much. A bunch of little routines (e.g. even my spectraldiff routine) would have to be modified and I would probably get myself into trouble. So just leave the code as is, with alpha = s/L.\
 \
 
 \b List of numerical tricks that do not appear to help at all\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 1) Krasny filter.\
+\b0 1) Krasny filter.\
 2) De-aliasing vector products by upsampling.\
 3) Giving GMRES a good initial guess.
 \b \
@@ -251,13 +238,11 @@ I got a few good ideas from the Oaxaca workshop.\
 a) Implement a multi-scale time-stepping procedure, where the stress (and density function) is only computed on large time-steps, and the evolution of theta-L is done with finer time steps. We could linearly extrapolate the stress on the fine-time grid.\
 b) We could use the previously computed density function as information for computing the density function at the next time step. Bryan told me previously that GMRES does not benefit immensely from an initial guess, but he expressed some doubt about that later. Alternatively, we could use another iterative method that is more sensitive to the initial guess.\
 2) It is attractive to keep the computation in spectral space for as long as possible. I briefly considered simply expanding the Cartesian coordinates xy spectrally and evolving the coefficients in these expansions, so that the method is not necessarily attached to any grid, but rather just a spectral representation. Of course, if we go back to Cartesian representation, we would lose the benefits of the theta-L method. In particular, with theta-L we can add the smoothing curvature-driven term and use implicit (stable) methods to treat this term, and make it area preserving. Going back to Cartesian, the curvature is not easy to compute (nonlinear). We could just ad hod add some diffusion in x-y, but it is not clear how to make that area preserving. Also, when using collocation, we would not stay equally spaced in arc length of course. However, I could remind myself to keep the theta-L computation in spectral space whenever possible. In fact, I believe the code is already implemented like this. We should, however, up-sample when doing products to reduce aliasing errors. This might make the simulation more stable too.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \
+\b \
 Ideas to fix the theta-mean problem\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Sep 26, 2017\
+\b0 Sep 26, 2017\
 I had some ideas to fix the problem regarding the mean of cos, sin theta, but I will probably not implement them because it seems to be a non-issue (see notes above). Nonetheless, the ideas were as follows.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 \cf0 \
@@ -283,9 +268,8 @@ In certain situations, we witness an instability in the shape of eroding bodies,
 \b0 ~March 20, 2017: Due to my convergence test, I removed the lenevo hack. Instead, to keep the body from shrinking, I can subtract the mean-value from atau. This preserves area. After implementing this, the simulations run much better. They show convergence of the Aspect Ratio and the Opening Angle with respect to increasing N and decreasing dt. The opening angle results even seem to agree with my theoretical prediction of 102\'ba now! The simulation is also much more stable now.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \ulnone The FMM Works!\
+\b \ulnone The FMM Works!\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \b0 \cf0 Dec 27, 2016: The FMM is working! Next, Bryan wants to implement a block preconditioner so that multiple bodies runs faster.\
@@ -312,25 +296,21 @@ In thetalen.jl, there is thresh in test_theta_means() and test_theta_ends and mt
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 Calling Fortran\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Good reference: http://julia-programming-language.2336112.n4.nabble.com/example-for-ccall-use-and-fortran-td7737.html\
+\b0 Good reference: http://julia-programming-language.2336112.n4.nabble.com/example-for-ccall-use-and-fortran-td7737.html\
 - You have to mangle the name. Use the command \'91nm\'92 in a terminal to see how the Fortran name is mangled with underscores; e.g. \'91nm libstokes.so\'92\
 - Remember, do not include the first leading underscore.\
 - If you get weird errors such as segmentation faults or malloc_debug type messages, then one possibility is that you are passing arrays of the wrong size into the Fortran code.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Compiling Fortran erosion codes\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b Compiling Fortran erosion codes\
 
-\b0 \cf0 - Run \'93make clean\'94 form fortran_code/ and from fortran_code/fmm.\
+\b0 - Run \'93make clean\'94 form fortran_code/ and from fortran_code/fmm.\
 - Run \'93make\'94 in fortran_code/fmm, then move files *.so up a directory \'93mv *.so ..\'94\
 - Run \'93make\'94 in fortran_code/, then move the files *.so to the julia/ folder.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Git commands\
+\b Git commands\
 \pard\pardeftab720\partightenfactor0
 
 \b0 \cf0 username: nickmoore83, medium password\
