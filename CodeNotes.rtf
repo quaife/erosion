@@ -17,33 +17,33 @@ I am testing the new Barycentric code written by Shang-Huan Chiu and Bryan. Firs
 \
 Testing 02circ1-128.thlen\
 Parameters			Visual result		cpu time (in minutes) at step 8\
-ifmm = 1, ibary = 1	Pass			0.86\
-ifmm = 0, ibary = 1	Pass			2.0\
-ifmm = 1, ibary = 0	Pass			0.25\
-ifmm = 0, ibary = 0	Pass			0.14\
+ibary = 1, ifmm = 1	Pass			0.86\
+ibary = 1, ifmm = 0	Pass			2.0\
+ibary = 0, ifmm = 1	Pass			0.25\
+ibary = 0, ifmm = 0	Pass			0.14\
 From these tests it is clear that barycentric can slow the simulation. Of course, it also offers higher accuracy for nearly touching bodies presumably. It is a little curious that for ibary=0, the FMM actually slows the simulation. Lets try a test with more bodies and more grid points.\
 \
 Testing 10circ4-256.thlen\
 Parameters			Visual result		cpu time (in minutes) at step 3 & 4\
-ifmm = 1, ibary = 1	Pass			13 & 23\
-ifmm = 0, ibary = 1	Pass			68 & too long\
-ifmm = 1, ibary = 0	Pass			1.3 & 2.3 \
-ifmm = 0, ibary = 0	Pass			0.99 & 1.8\
+ibary = 1, ifmm = 1	Pass			13 & 23\
+ibary = 1, ifmm = 0	Pass			68 & too long\
+ibary = 0, ifmm = 1	Pass			1.3 & 2.3 \
+ibary = 0, ifmm = 0	Pass			0.99 & 1.8\
 Still, ifmm slows down the simulation in the case of ibary=0. Lets test more bodies.\
 \
 Testing 30circ2-256.thlen\
 Parameters			Visual result		cpu time (in minutes) at step 2 & 3\
-ifmm = 1, ibary = 1	-			140 & too long\
-ifmm = 0, ibary = 1			\
-ifmm = 1, ibary = 0	Pass			5.6 & 9.3\
-ifmm = 0, ibary = 0	Pass			7 & 12\
+ibary = 1, ifmm = 1	-			140 & too long\
+ibary = 1, ifmm = 0	-			-\
+ibary = 0, ifmm = 1	Pass			5.6 & 9.3\
+ibary = 0, ifmm = 0	Pass			7 & 12\
 Good, in this test with standard trapezoid rule, the FMM reduces the computational time as it should.\
 \
 Now testing a 60 body case just to make sure the code can now handle that many bodies in all cases of ifmm and ibary. \
 Testing 60circ3_256.thlen\
 Parameters			Visual		cpu (mins) at step 1-4	Warnings\
-ifmm = 1, ibary = 0	Pass		140, 150, 170, 350		*See below\
-ifmm = 0, ibary = 0	-		-\
+ibary = 0, ifmm = 1	Pass		140, 150, 170, 350		*See below\
+ibary = 0, ifmm = 0	-		-\
 * Warnings on flux not matching; One body was deleted halfway through step 1 and it should not have been.\
 * Also, the output time steps seem to take way too long for this run. Why? Too much data?\
 \
