@@ -77,12 +77,14 @@ function startup(paramsfile::AbstractString)
 end
 # function getparams: Define the object of parameters.
 function getparams(paramsfile::AbstractString, npts::Int)
-	# Read the parameters and calculate needed quantities.
+	# Read the parameters.
 	paramvec = readvec(pfext(paramsfile))
-	geofile,epsfac,sigfac,dt,dtout,tfin,nouter,ifmm = paramvec[1:8]
-	fixarea,fixpdrop = Bool(paramvec[9]),Bool(paramvec[10])
-	ibary = paramvec[11]
-	maxl = paramvec[12]
+	geofile = paramvec[1]
+	ibary, iffm = Int(paramvec[2]), Int(paramvec[3])
+	epsfac, sigfac, dt, dtout, tfin = paramvec[4:7, 10]
+	fixpdrop, fixarea = Bool(paramvec[8]), Bool(paramvec[9])
+	maxl, nouter = Int(paramvec[11]), Int(paramvec[12])
+	# Calculate the needed quantities.
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	cntout = max(round(Int,dtout/dt),1)
