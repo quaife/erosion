@@ -43,18 +43,20 @@ Now testing a 60 body case just to make sure the code can now handle that many b
 Testing 60circ3_256.thlen\
 MAC MINI\
 Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
-ibary, ifmm = 0,1	Pass*		38, 49, 69, 110		3425		**\
-ibary, ifmm = 0,0	Pass*		110, 140, 200, 320		3234		**\
-ibary, ifmm = 1,1	Pass*		470, 680, 1100, 		1848		None\
-GMRES = # iterations at Output 0\
-Output time: for 0,1 the cpu time of each step is about 20 mins, and the cpu time for the output is about 40 mins which is reasonable.\
+ibary, ifmm = 0,1	Pass*		38, 49, 69, 110		3425		Flux\
+ibary, ifmm = 0,0	Pass*		110, 140, 200, 320		3234		Flux\
+ibary, ifmm = 1,1	?		470, 680, 1100, 		1848		None\
+* One body was deleted halfway through step 1 and it should not have been. The deleted body is close to the top wall, suggesting that we need more resolution on the walls.\
+- GMRES = # iterations at Output 0\
+- Warning on Flux: the flux does not match.\
+- Output time: for 0,1, the cpu time for each step is about 20 mins, and the cpu time for the output is about 40 mins which is reasonable.\
+- For 0,0, the cpu time for each step is about 60 mins, and for the output it is about 120 mins.\
 \
 LAPTOP\
 Parameters		Visual		cpu (mins) at step 1-4	Warnings\
-ibary, ifmm = 0,1	Pass*		140, 150, 170, 350		**	\
+ibary, ifmm = 0,1	Pass*		140, 150, 170, 350		Flux\
 * One body was deleted halfway through step 1 and it should not have been.\
-** Warnings on flux not matching; \
-** Also, the output time steps seem to take way too long for this run. Why? Too much data?\
+- The output time steps seem to take way too long for this run. The cpu time for each step is about 20 mins, but the cpu time for output is about 180 mins, which is unreasonable. This run must have hit a limit regarding writing memory to a data file.\
 \
 \
 
