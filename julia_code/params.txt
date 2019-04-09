@@ -4,20 +4,20 @@
 input_geos/02circ1_128.thlen	
 
 # Varied computational parameters
-0		# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
-1		# iffm: 1 to use the ffm, 0 to use direct.
+0	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
+1	# iffm: 1 to use the ffm, 0 to use direct.
 
 # Varied physical parameters
-15		# epsfac: epsilon = epsfac/npts
-10		# sigfac: sigma = sigfac/npts
-1e-4		# dt
-3e-4		# dtout: if zero, will round up to output at every step. 
+15	# epsfac: epsilon = epsfac/npts
+10	# sigfac: sigma = sigfac/npts
+1e-4	# dt
+3e-4	# dtout: if zero, will round up to output at every step. 
 
 # Fixed physical parameters
-1		# fixpdrop: 1 to keep pressure drop fixed.
-0		# fixarea: 1 to keep area fixed.
-0.1		# tfin
+1	# fixpdrop: 1 to keep pressure drop fixed.
+0	# fixarea: 1 to keep area fixed.
+0.1	# tfin
 
 # Fixed computational parameters
 10000	# maxl: the number of GMRES iterations.
-1024		# nouter
+1024	# nouter
