@@ -9,14 +9,14 @@
 \b0 \
 \
 \
-Make sure the new code works for greater than 50 bodies in all cases (ibary = 0 or 1, iffm = 0 or 1, etc)\
-\
 Figure out what is going on with the output time for 60 body run. Does the output time increase dramatically with the number of bodies and/or number of points? Is there a critical number of unknowns where writing the data files becomes much more expensive? Test this by comparing the 60 body, 256 point run against 1) 60 bodies with 128 points; 2) 30, 40, or 50 bodies with 256 points.\
 \
 \
 \
 \
 Reconsider my parameter values. Perhaps I should use npts=128 instead of 256 to save storage space (and computational time).\
+\
+Also, I should change nouter to 2048, at least for the runs with many bodies. The reason is bodies tend to vanish prematurely near the boundary, suggesting the resolution is too low there.\
 \
 Also, I just realized it makes sense for dtout to be larger than dt because that way you are not wasting time computing the rotated density function unless you need to. Currently the ratio is 3; perhaps it should be 4 or 5.\
 \
