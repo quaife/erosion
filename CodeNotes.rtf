@@ -44,8 +44,9 @@ MAC MINI\
 Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
 ibary, ifmm = 0,1	Pass*		38, 49, 69, 110		3425		Flux\
 ibary, ifmm = 0,0	Pass*		110, 140, 200, 320		3234		Flux\
-ibary, ifmm = 1,1	?		470, 680, 1100, 		1848		None\
-* One body was deleted halfway through step 1 and it should not have been. The deleted body is close to the top wall, suggesting that we need more resolution on the walls.\
+ibary, ifmm = 1,1	Pass		470, 680, 1100, 		1848		None\
+*Note: For the ibary=0 cases, one body was deleted halfway through step 1 and it should not have been. The deleted body is close to the top wall, suggesting that we need more resolution on the walls.\
+For the ibary=1 case, that same body is not deleted prematurely.\
 - GMRES = # iterations at Output 0\
 - Warning on Flux: the flux does not match.\
 - Output time for case 0, 1: The cpu time for each step is about 20 mins (step 3-step2); The cpu time for the output is about 20 mins (step4-step3 - 20). This makes perfect sense.\
