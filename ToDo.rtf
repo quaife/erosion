@@ -14,7 +14,7 @@ Figure out what is going on with the output time for 60 body run. Does the outpu
 \
 \
 \
-Reconsider my parameter values. Perhaps I should use npts=128 instead of 256 to save storage space (and computational time).\
+Reconsider my parameter values. Perhaps I should use npts=128 instead of 256 to save storage space (as well as computational time). Also, I recently observed that the output time seems to increase dramatically once a threshold nbods (and maybe npts) is exceeded, which is even more reason to reduce npts.\
 \
 Also, I should change nouter to 2048, at least for the runs with many bodies. The reason is bodies tend to vanish prematurely near the boundary, suggesting the resolution is too low there.\
 \
