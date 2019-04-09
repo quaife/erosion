@@ -8,25 +8,16 @@
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
 \
-Make the same initial geometries, but with npts = 128 in all cases (and maybe even 64 as well). At least do this for a few cases of nbods (like 40, 60, 80) as test cases.\
-\
-Also, for initial geometries, upload the circ files to the repo (and probably the pdf files too), so that I can work from laptop or work computer.\
+On my laptop, I say the output time drastically increase once a threshold nbods and npts was exceeded. This behavior did not happen on my Mac mini for the same threshold, but I should like for evidence of the behavior for larger nbods. For example, I should test the case nbods = 100 and npts = 256 and see if there is a dramatic jump in the output time.\
 \
 \
-Figure out what is going on with the output time for 60 body run. Does the output time increase dramatically with the number of bodies and/or number of points? Is there a critical number of unknowns where writing the data files becomes much more expensive? Test this by comparing the 60 body, 256 point run against 1) 60 bodies with 128 points; 2) 30, 40, or 50 bodies with 256 points.\
+Run a new set of simulations with npts = 128 in all cases in order to save storage space and computational time. For this, I should retune all of my parameter values.\
+- Maybe I can make epsfac smaller since npts is smaller.\
+- Previously I saw evidence that suggests I should make nouter larger. I should see if this is still the case now that npts=128. The evidence was in the 60-body case, a body near the boundary vanished prematurely and gave the flux error.\
+- Perhaps I can change dt and dtout too. Remember that the larger dtout is compared to dt, the more time you save by not computing the rotated density function as often. As of now, dtout/dt = 3; perhaps it should be 4 or 5 or larger.\
 \
+Test the cases of nbods = 60, 80, 100 to settle on good parameter values. Once I have parameter values chosen, run all of the other simulations so that I can aggregate all of the data.\
 \
-\
-\
-Reconsider my parameter values. Perhaps I should use npts=128 instead of 256 to save storage space (as well as computational time). Also, I recently observed that the output time seems to increase dramatically once a threshold nbods (and maybe npts) is exceeded, which is even more reason to reduce npts.\
-\
-Also, I should change nouter to 2048, at least for the runs with many bodies. The reason is bodies tend to vanish prematurely near the boundary, suggesting the resolution is too low there.\
-\
-Also, I just realized it makes sense for dtout to be larger than dt because that way you are not wasting time computing the rotated density function unless you need to. Currently the ratio is 3; perhaps it should be 4 or 5.\
-\
-Once parameters are settled, finish running the simulations for 50, 60, 70, 80, 90, 100 bodies and save the data.\
-\
-I should first do runs 20, 40, 60, 80, 100 to make sure things look right with the parameters and then fill in the rest later.\
 \
 
 \b To do sometime soon or for next paper
