@@ -141,13 +141,18 @@ The upper-right body still vanishes during Step 2. So the small increase in smoo
 \b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
 Get malloc error.\
 Trying the same run but with ibary = 0 does NOT give the malloc error.\
-\
-\
-\
-\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 100circ-3-128
+\b \cf0 60circ3-32ibary
+\b0 \
+npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
+Malloc error.\
+Trying the same but with ibary = 1 does NOT give the malloc error.\
+\
+\
+\
+
+\b 100circ-3-128
 \b0 \
 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
 This run looks smooth at output times 0-3.\

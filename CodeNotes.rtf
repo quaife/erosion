@@ -43,8 +43,8 @@ Good, in this test with standard trapezoid rule, the FMM reduces the computation
 Now testing a 60 body case just to make sure the code can now handle that many bodies in all cases of ifmm and ibary. Testing 60circ3_256.thlen\
 MAC MINI\
 Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
-ibary, ifmm = 0,1	Pass*		38, 49, 69, 110		3425		Flux\
-ibary, ifmm = 0,0	Pass*		110, 140, 200, 320		3234		Flux\
+ibary, ifmm = 0,1	*		38, 49, 69, 110		3425		Flux\
+ibary, ifmm = 0,0	*		110, 140, 200, 320		3234		Flux\
 ibary, ifmm = 1,1	Pass		470, 680, 1100, -		1848		None\
 *Note: For the ibary=0 cases, one body was deleted halfway through step 1 and it should not have been. The deleted body is close to the top wall, suggesting that we need more resolution on the walls.\
 For the ibary=1 case, that same body is not deleted prematurely.\
@@ -55,7 +55,7 @@ For the ibary=1 case, that same body is not deleted prematurely.\
 \
 LAPTOP\
 Parameters		Visual		cpu (mins) at step 1-4	Warnings\
-ibary, ifmm = 0,1	Pass*		140, 150, 170, 350		Flux\
+ibary, ifmm = 0,1	*		140, 150, 170, 350		Flux\
 * One body was deleted halfway through step 1 and it should not have been.\
 - The output time steps seem to take way too long for this run. The cpu time for each step is about 20 mins (step3-step2); But the cpu time for output is about 160 mins (step4-step3 - 20), which is unreasonable. This run must have hit a limit regarding writing memory to a data file.\
 \
@@ -69,12 +69,10 @@ Parameters			Result 	cpu (mins) at step 1-3\
 ibary = 0, npts = 256	FAIL		22, 63, 94	\
 ibary = 1, npts = 64	Malloc error\
 ibary = 1, npts = 128	\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+In this case, FAIL means that the upper-right body vanishes prematurely.
+\b \
 
-\b \cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b0 \cf0 \
+\b0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 Testing the output cpu time issue\
