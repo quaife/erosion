@@ -104,33 +104,39 @@ Postprocessing complete, 246 MB\
 \b 60circ3-128
 \b0 \
 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-Problem: This run produces the \'91flux warning\'92 at Output 0 and at Time Step 1. During Step 1, after Stage 1 of RK, a body in the top-right corner is deleted prematurely.\
+Problem: This run produces the \'91flux warning\'92 at Output 0 and at Time Step 1. During Step 1, after Stage 1 of RK, a body in the top-right corner is deleted prematurely. Not only that, but a 2nd and 3rd body closer to the middle of the domain vanish prematurely too.\
+Note: Since the flux warning appears at step 0 (i.e. for the initial geometry) it seems it would not be sufficient to increase the smoothing parameters. I believe we have to increase the resolution to 256 at least.\
 \
 
 \b 60circ3-128-2048
 \b0 \
 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048\
-The only change is that nouter=2048. This run still produces the flux warning. The top-right body is not deleted at the first time step, but it does get very jagged and then deleted a few steps later. Thus, setting nouter=2048 slightly improves the behavior, but it does not fix the problem. Instead, we need to either increase the resolution, increase the smoothing, reduce the time-step size, use barycentric, or a combination thereof.\
+The only change is that nouter=2048. This run still produces the flux warning. The top-right body is not deleted at the first time step, but it does get very jagged and then deleted a few steps later. Thus, setting nouter=2048 slightly improves the behavior, but it does not fix the problem. Instead, we need to either increase the resolution, increase the smoothing, reduce the time-step size, use barycentric, or a combination thereof. In this case, the 2nd body does not vanish prematurely, but the 3rd body does vanish prematurely.\
+\
+
+\b 60circ3-256 (not saved)
+\b0 \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
+While I did not save the output files for this run (I easily could), I observed the same problem with the body in the upper-right corner vanishing prematurely during Step 1. I am not sure if the 2nd and 3rd body vanish prematurely too.\
+\
+
+\b 60circ3-256-2048
+\b0 \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048\
+\
+\
+\
 \
 
 \b 100circ-3-128
 \b0 \
 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
 This run looks smooth at output times 0 and 1.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b \cf0 60circ3-256 (not saved)
-\b0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 While I did not save the output files for this run (I easily could), I observed the same problem with the body in the upper-right corner vanishing prematurely during Step 1.\
 \
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b\fs32 Failed runs from long ago (well before April 2019)
+\b\fs32 \cf0 Failed runs from long ago (well before April 2019)
 \fs28 \
 
 \b0 Feb 28: 100 and 90 body runs, all with npts=256, epsfac=15, sigfac=10, dt=1e-4, dtout=3e-4.\
