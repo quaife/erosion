@@ -59,7 +59,14 @@ ibary, ifmm = 0,1	Pass*		140, 150, 170, 350		Flux\
 * One body was deleted halfway through step 1 and it should not have been.\
 - The output time steps seem to take way too long for this run. The cpu time for each step is about 20 mins (step3-step2); But the cpu time for output is about 160 mins (step4-step3 - 20), which is unreasonable. This run must have hit a limit regarding writing memory to a data file.\
 \
-Now testing 30-body case to get to the bottom of the mystery of output times being too large. Testing 30circ2_256.thlen\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 Testing the output cpu time issue\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 On my laptop, I witnessed an issue where the cpu time for the output steps is disproportionately larger than the cpu time for the regular steps. So far, I have only seen this issue on my laptop and not my Mac Mini.\
+\
+Testing 30circ2_256.thlen\
 MAC MINI\
 Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
 ibary, ifmm = 0,1	Pass		5.1, 7.6, 12, 22		732		None	\
@@ -67,6 +74,11 @@ ibary, ifmm = 0,0	Pass		9.1, 14, 22, 40		732\
 Case 0,1: The cpu time for each step is about 5 mins; for output, the cpu time is about 5 mins. Perfect.\
 Case 1,1: The cpu time for each step is about 8 mins; for output, the cpu time is about 10 mins, which is good.\
 \
+Testing 100circ3_128.thlen\
+MAC MINI\
+Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
+ibary, ifmm = 0, 1	Pass		37, 55, 91, 160		2507		None\
+The cpu time for each step is about 36 mins; for output, the cpu time is about 33 mins. Perfect.\
 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
