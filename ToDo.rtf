@@ -10,6 +10,11 @@
 \
 Next run: run the 60-body case but with barycentric and npts=128. Barycentric is much slower but reducing npts to 128 might be enough to offset that slowness a bit. Maybe even use npts=64.\
 \
+\
+\
+\
+\
+\
 Next run: run the 100-body case with npts=256 to see if the output cpu time issue crops up.\
 \
 On my laptop, I say the output time drastically increase once a threshold nbods and npts was exceeded. This behavior did not happen on my Mac mini for the same threshold, but I should like for evidence of the behavior for larger nbods. For example, I should test the case nbods = 100 and npts = 256 and see if there is a dramatic jump in the output time.\
