@@ -124,14 +124,16 @@ Note: I am setting dtout=1e-4 so that I see what happens at every single time st
 \b 60circ3-256-2048a
 \b0 \
 npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048\
-At the first stage of Step, this run gives the flux warning and then the upper-right body vanishes prematurely. So setting nouter=2048 gives an improvement (vanishing at Step 2 instead of Step 1) but does not fix the problem. On the bright side, there are no warnings whatsoever at Output 0 or Step 1, suggesting that smoothing may fix things from here.\
-THIS RUN: Simply rerun with dtout = 1e-4 to verify the same thing happens and save the output data.\
+At the first stage of Step 2, this run gives the flux warning and then the upper-right body vanishes prematurely. So setting nouter=2048 gives an improvement (vanishing at Step 2 instead of Step 1) but does not fix the problem. On the bright side, there are no warnings whatsoever at Output 0 or Step 1, suggesting that smoothing may fix things from here.\
 \
 
 \b 60circ3-256-2048b\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b0 \cf0 npts = 256, epsfac = 20, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048\
+The upper-right body still vanishes during Step 2. So the small increase in smoothing did not fix the problem.\
+\
+\
 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
@@ -139,7 +141,7 @@ THIS RUN: Simply rerun with dtout = 1e-4 to verify the same thing happens and sa
 \b \cf0 100circ-3-128
 \b0 \
 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-This run looks smooth at output times 0 and 1.\
+This run looks smooth at output times 0-3.\
 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
