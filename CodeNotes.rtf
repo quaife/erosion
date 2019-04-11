@@ -82,7 +82,10 @@ In this case, FAIL means that the upper-right body vanishes prematurely.
 The error occurs regardless of what nouter is.\
 The error does NOT occur when ibary = 0, no matter what all the other parameters are.\
 The error does NOT occur when ibary = 1 and ifmm = 0.\
+Note: Based on the screen output, I can tell that the error is occurring in the routine compute_density() which calls the Fortran code stokessolver.\
+\
 Conclusion: Malloc errors are usually associated with passing arrays of inconsistent dimension between Julia and Fortran. The above tests indicate the error is specific to the barycentric code using FMM.\
+\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
