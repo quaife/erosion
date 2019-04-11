@@ -75,6 +75,17 @@ In this case, FAIL means that the upper-right body vanishes prematurely.
 \b0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
+\b \cf0 Malloc error\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 I get a malloc error running 60circ3_32.thlen with ibary = 1 and ifmm = 1.\
+The error occurs regardless of what nouter is.\
+The error does NOT occur when ibary = 0, no matter what all the other parameters are.\
+The error does NOT occur when ibary = 1 and ifmm = 0.\
+Conclusion: Malloc errors are usually associated with passing arrays of inconsistent dimension between Julia and Fortran. The above tests indicate the error is specific to the barycentric code using FMM.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
 \b \cf0 Testing the output cpu time issue\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
