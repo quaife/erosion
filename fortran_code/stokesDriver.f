@@ -167,7 +167,7 @@ c      enddo
       enddo
       
       ibary = 1
-      ifmm = 0
+      ifmm = 1
       maxl = 2000
       call stokesSolver(ninner,nbodies,nouter,ifmm,ibary,maxl,
      $        x,y,den,iter)

@@ -595,7 +595,7 @@ c     potential
 
       dimension x(nmax),y(nmax)
       dimension xtar(nbodies*ninner),ytar(nbodies*ninner),
-     &          xsou(ninner),ysou(ninner)
+     &          xsou(max(ninner,nouter)),ysou(max(ninner,nouter))
       dimension xtarloc(ninner),ytarloc(ninner)
       dimension px(nmax),py(nmax)
       dimension cur(nmax),speed(nmax)
