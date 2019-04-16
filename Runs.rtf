@@ -26,9 +26,92 @@ epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
 50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1\
 \
 \
+\
+\
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b\fs40 \cf0 Multi-body Runs
+\b\fs32 \cf0 Tests from April 2019 with barycentric\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0\fs28 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs32 \cf0 Tests from April 2019 without barycentric
+\b0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 60circ3-128
+\b0 \
+npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
+Problem: This run produces the \'91flux warning\'92 at Output 0 and at Time Step 1. During Step 1, after Stage 1 of RK, a body in the top-right corner is deleted prematurely. Not only that, but a 2nd and 3rd body closer to the middle of the domain vanish prematurely too.\
+Note: Since the flux warning appears at step 0 (i.e. for the initial geometry) it seems it would not be sufficient to increase the smoothing parameters. I believe we have to increase the resolution to 256 at least.\
+\
+
+\b 60circ3-128-2048
+\b0 \
+npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048\
+The only change is that nouter=2048. This run still produces the flux warning. The top-right body is not deleted at the first time step, but it does get very jagged and then deleted a few steps later. Thus, setting nouter=2048 slightly improves the behavior, but it does not fix the problem. Instead, we need to either increase the resolution, increase the smoothing, reduce the time-step size, use barycentric, or a combination thereof. In this case, the 2nd body does not vanish prematurely, but the 3rd body does vanish prematurely.\
+\
+
+\b 60circ3-256 (not saved)
+\b0 \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
+While I did not save the output files for this run (I easily could), I observed the same problem with the body in the upper-right corner vanishing prematurely during Step 1. I am not sure if the 2nd and 3rd body vanish prematurely too.\
+\
+Note: I am setting dtout=1e-4 so that I see what happens at every single time step.\
+
+\b 60circ3-256-2048a
+\b0 \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048\
+At the first stage of Step 2, this run gives the flux warning and then the upper-right body vanishes prematurely. So setting nouter=2048 gives an improvement (vanishing at Step 2 instead of Step 1) but does not fix the problem. On the bright side, there are no warnings whatsoever at Output 0 or Step 1, suggesting that smoothing may fix things from here.\
+\
+
+\b 60circ3-256-2048b\
+
+\b0 npts = 256, epsfac = 20, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048\
+The upper-right body still vanishes during Step 2. So the small increase in smoothing did not fix the problem.\
+\
+
+\b 60circ3-64ibary\
+
+\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
+Get malloc error.\
+Trying the same run but with ibary = 0 does NOT give the malloc error.\
+
+\b 60circ3-32ibary
+\b0 \
+npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
+Malloc error.\
+Trying the same but with ibary = 1 does NOT give the malloc error.\
+\
+\
+
+\b 100circ-3-128 (partial)
+\b0 \
+npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
+This run looks smooth at output times 0-40.\
+There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 100circ-3-256 (partial)
+\b0 \
+npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
+This run looks smooth at output times 0-12.\
+There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\
+\
+\
+\
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs40 \cf0 Multi-body Runs from 2018 and before
 \b0\fs28 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
@@ -96,74 +179,9 @@ npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4\
 Postprocessing complete, 246 MB\
 \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b\fs32 \cf0 Tests from April 2019
-\b0\fs28 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b \cf0 60circ3-128
-\b0 \
-npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-Problem: This run produces the \'91flux warning\'92 at Output 0 and at Time Step 1. During Step 1, after Stage 1 of RK, a body in the top-right corner is deleted prematurely. Not only that, but a 2nd and 3rd body closer to the middle of the domain vanish prematurely too.\
-Note: Since the flux warning appears at step 0 (i.e. for the initial geometry) it seems it would not be sufficient to increase the smoothing parameters. I believe we have to increase the resolution to 256 at least.\
 \
-
-\b 60circ3-128-2048
-\b0 \
-npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048\
-The only change is that nouter=2048. This run still produces the flux warning. The top-right body is not deleted at the first time step, but it does get very jagged and then deleted a few steps later. Thus, setting nouter=2048 slightly improves the behavior, but it does not fix the problem. Instead, we need to either increase the resolution, increase the smoothing, reduce the time-step size, use barycentric, or a combination thereof. In this case, the 2nd body does not vanish prematurely, but the 3rd body does vanish prematurely.\
-\
-
-\b 60circ3-256 (not saved)
-\b0 \
-npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-While I did not save the output files for this run (I easily could), I observed the same problem with the body in the upper-right corner vanishing prematurely during Step 1. I am not sure if the 2nd and 3rd body vanish prematurely too.\
-\
-Note: I am setting dtout=1e-4 so that I see what happens at every single time step.\
-
-\b 60circ3-256-2048a
-\b0 \
-npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048\
-At the first stage of Step 2, this run gives the flux warning and then the upper-right body vanishes prematurely. So setting nouter=2048 gives an improvement (vanishing at Step 2 instead of Step 1) but does not fix the problem. On the bright side, there are no warnings whatsoever at Output 0 or Step 1, suggesting that smoothing may fix things from here.\
-\
-
-\b 60circ3-256-2048b\
-
-\b0 npts = 256, epsfac = 20, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048\
-The upper-right body still vanishes during Step 2. So the small increase in smoothing did not fix the problem.\
-\
-
-\b 60circ3-64ibary\
-
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
-Get malloc error.\
-Trying the same run but with ibary = 0 does NOT give the malloc error.\
-
-\b 60circ3-32ibary
-\b0 \
-npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
-Malloc error.\
-Trying the same but with ibary = 1 does NOT give the malloc error.\
-\
-\
-
-\b 100circ-3-128 (partial)
-\b0 \
-npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-This run looks smooth at output times 0-40.\
-There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
-\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b \cf0 100circ-3-256 (partial)
-\b0 \
-npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
-This run looks smooth at output times 0-12.\
-There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \
-\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs32 \cf0 Failed runs from long ago (well before April 2019)
