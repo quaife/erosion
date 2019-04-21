@@ -600,7 +600,8 @@ c     potential
       dimension px(nmax),py(nmax)
       dimension cur(nmax),speed(nmax)
       dimension centerx(maxbodies),centery(maxbodies)
-
+      dimension rtar(nbodies)
+      
       dimension xouter(nmax),youter(nmax)
       dimension px0(nmax),py0(nmax)
       dimension cur0(nmax),speed0(nmax)
@@ -701,12 +702,32 @@ c     start the wall-to-bodies part
         deny(k) = den(k + nouter)
       enddo      
 
+      alpha1 = 4.d0! the criterion parameter for B2Bs
+      alpha2 = 4.d0! the criterion parameter for W2Bs
+c     Find the radii of bodies      
+      do itar = 1, nbodies
+        rtar(itar) = 0.d0
+        do k = 1, ninner
+          rtar(itar) = rtar(itar) + speed((itar-1)*ninner+k)  
+        enddo
+        rtar(itar) = rtar(itar)/ninner
+      enddo
+c     Find the length of wall      
+      lw = 0.d0
+      do k=1, nouter
+        lw = lw + speed0(k)
+      enddo
+      lw = lw/nouter      
+      
       m=1
       do itar = 1,nbodies
-
 c       loop over target points
 c       when the distancce between wall and bodies is closed
-        if( abs(centery(itar)) .ge. 0.5d0) then
+
+c       the criterion of W2Bs
+        dsum = rtar(itar) + alpha2*lw*twopi/nouter
+        dsum2 = 1.d0 - dsum
+        if( abs(centery(itar)) .ge. dsum2) then
 
           do k=1,ninner
             xtarloc(k)=x((itar-1)*ninner+k)
@@ -715,7 +736,7 @@ c       when the distancce between wall and bodies is closed
             denyb(k) = den(2*nouter + (itar-1)*2*ninner + k + ninner)
 c           save xtarloc, ytarloc, denxb, and denyb for body-to-wall barycentric           
           
-            if(abs(y((itar-1)*ninner+k)) .ge. 0.5d0)  then
+            if(abs(y((itar-1)*ninner+k)) .ge. dsum2)  then
               ux(k) = 0.d0
               uy(k) = 0.d0
               xtar(m) = x((itar-1)*ninner+k)
@@ -751,17 +772,12 @@ c         end of the wall-to-bodies part and save the index indw2b for doing bar
 c         later once for all 
 
 c         start the body-to-wall part
-          rtar = 0.d0
-          do k = 1, ninner
-            rtar = rtar + speed((itar-1)*ninner+k)  
-          enddo
-          rtar = rtar/ninner
           i = 1
           do j=1,nouter
             dx = centerx(itar) - xouter(j)
             dy = centery(itar) - youter(j)
             d2 = dx**2.d0 + dy**2.d0
-            r = 1.d0 - abs(centery(itar)) + 2.d0*rtar
+            r = 1.d0 - abs(centery(itar)) + 2.d0*rtar(itar)
             
             if( d2 .le. r**2) then
               xsou(i) = xouter(j)
@@ -811,20 +827,22 @@ c         start the body-to-wall part
       enddo
 c     end of the body-to-wall part
 
-c     Apply barycentric rule  from wall to point_indw2b once for all      
-      noutc = nouter/nbeta
-      nder = 1
-      call StokesInteriorDLP(nouter,noutc,nbeta,xouter,youter,
-     &      denx,deny,px0,py0,m-1,xtar,ytar,nder,
-     &      ux,uy,u1x,u1y,u2x,u2y)
-      
-      do k = 1,m-1
-        vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)) = 
-     $    vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)) + ux(k)
-        vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)+ninner) = 
-     $    vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)+ninner) + 
-     $    uy(k)
-      enddo      
+c     Apply barycentric rule  from wall to point_indw2b once for all
+      if( m .gt. 1) then
+        noutc = nouter/nbeta
+        nder = 1
+        call StokesInteriorDLP(nouter,noutc,nbeta,xouter,youter,
+     &        denx,deny,px0,py0,m-1,xtar,ytar,nder,
+     &        ux,uy,u1x,u1y,u2x,u2y)
+        
+        do k = 1,m-1
+          vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)) = 
+     $      vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)) + ux(k)
+          vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)+ninner) = 
+     $      vel(2*nouter+(indw2b(1,k)-1)*2*ninner+indw2b(2,k)+ninner) + 
+     $      uy(k)
+        enddo
+      endif  
 c     END of the section of the wall-bodies replacement
 
 c     START OF the section of body-to-bodies replacement
@@ -835,9 +853,7 @@ c     START OF the section of body-to-bodies replacement
           deny(k) = den(2*nouter + (isou-1)*2*ninner + k + ninner)
           xsou(k) = x((isou-1)*ninner+k)
           ysou(k) = y((isou-1)*ninner+k)
-          rsou = rsou + speed((isou-1)*ninner+k)
         enddo
-        rsou = rsou/ninner
 c       density function due to obstacle isou
 
 c       START OF TARGET POINTS ~= OBSTACLE isou
@@ -847,18 +863,14 @@ c        print *, 'isou', isou
           if (itar .eq. isou) then
             cycle
           endif
-          rtar = 0.d0
-          do k=1,ninner
-            rtar = rtar +  speed((itar-1)*ninner+k)
-          enddo
-          rtar = rtar/ninner
 c         skip the diagonal term since this was taking care above with
 c         the trapezoid rule with the correcting liming value at the
 c         diagonal
           dx = centerx(isou) - centerx(itar)
           dy = centery(isou) - centery(itar)
           d2 = dx**2.d0+dy**2.d0
-          rsum = 2.d0*(rsou + rtar)
+          rsum = rtar(isou) + rtar(itar)+  
+     $           alpha1*(rtar(isou) + rtar(itar))*twopi/ninner          
 c         check if B_itar is closed to B_isou          
           if( d2 .le. rsum**2) then 
 c         loop over target points

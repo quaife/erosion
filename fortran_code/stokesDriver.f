@@ -3,7 +3,7 @@
 
       parameter (ninner = 2**8)
       parameter (nbodies = 2)
-      parameter (nouter = 2**8)
+      parameter (nouter = 2**10)
       parameter (ntargets = 500)
       parameter (maxbodies = 10)
 
