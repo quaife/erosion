@@ -2,7 +2,7 @@
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww12620\viewh13000\viewkind0
+\margl1440\margr1440\vieww14380\viewh13480\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \f0\b\fs36 \cf0 Code Archive
@@ -11,9 +11,8 @@
 
 \b \cf0 \
 Testing new Barycentric code\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 April 4, 2019\
+\b0 April 4, 2019\
 I am testing the new Barycentric code written by Shang-Huan Chiu and Bryan. First I am simply testing all the variants of ibary = 1 or 0 and ifmm = 1 or 0 for the simple case of 02circ1-128.thlen. I am making sure that erosion proceeds reasonably well for at least 3-5 output times.\
 \
 Testing 02circ1-128.thlen\
@@ -59,12 +58,10 @@ ibary, ifmm = 0,1	*		140, 150, 170, 350		Flux\
 * One body was deleted halfway through step 1 and it should not have been.\
 - The output time steps seem to take way too long for this run. The cpu time for each step is about 20 mins (step3-step2); But the cpu time for output is about 160 mins (step4-step3 - 20), which is unreasonable. This run must have hit a limit regarding writing memory to a data file.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Testing the cpu time with various resolutions and ibary values\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b Testing the cpu time with various resolutions and ibary values\
 
-\b0 \cf0 Testing 60circ3 on my MAC MINI with ifmm = 1 always. Also, nouter = 2048, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4.\
+\b0 Testing 60circ3 on my MAC MINI with ifmm = 1 always. Also, nouter = 2048, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4.\
 Parameters			Result 	cpu (mins) at step 1-3\
 ibary = 0, npts = 256	FAIL		22, 63, 94	\
 ibary = 1, npts = 64	Malloc error\
@@ -73,12 +70,10 @@ In this case, FAIL means that the upper-right body vanishes prematurely.
 \b \
 
 \b0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Malloc error\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b Malloc error\
 
-\b0 \cf0 I get a malloc error running 60circ3_32.thlen with ibary = 1 and ifmm = 1.\
+\b0 I get a malloc error running 60circ3_32.thlen with ibary = 1 and ifmm = 1.\
 The error occurs regardless of what nouter is.\
 The error does NOT occur when ibary = 0, no matter what all the other parameters are.\
 The error does NOT occur when ibary = 1 and ifmm = 0.\
@@ -87,12 +82,23 @@ Note: Based on the screen output, I can tell that the error is occurring in the 
 Conclusion: Malloc errors are usually associated with passing arrays of inconsistent dimension between Julia and Fortran. The above tests indicate the error is specific to the barycentric code using FMM.\
 \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Testing the output cpu time issue\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b Testing the cpu time with various resolutions and ibary values after the malloc error was fixed\
 
-\b0 \cf0 On my laptop, I witnessed an issue where the cpu time for the output steps is disproportionately larger than the cpu time for the regular steps. So far, I have only seen this issue on my laptop and not my Mac Mini.\
+\b0 Testing 60circ3 on my MAC MINI with ifmm = 1 always. Also, nouter = 2048, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4.\
+Parameters			Result 	cpu (mins) at step 1-3\
+ibary = 0, npts = 256	FAIL		22, 63, 94	\
+ibary = 1, npts = 32	Pass*		36, 54, 88, 160\
+ibary = 1, npts = 64	Pass*		67, 99, 160, 290\
+In this case, FAIL means that the upper-right body vanishes prematurely.
+\b \
+
+\b0 Pass* = Evolution proceed smoothly with no bodies vanishing prematurely, but the bodies look just a little bit strange. It looks like there is an overall tilt to the shape of the bodies. I could be imagining this.\
+\
+
+\b Testing the output cpu time issue\
+
+\b0 On my laptop, I witnessed an issue where the cpu time for the output steps is disproportionately larger than the cpu time for the regular steps. This issue only occurs on my laptop. I have tested thoroughly for the issue on my Mac Mini, and the output time does not take too long, even for 100 bodies with npts=256.\
 \
 Testing 30circ2_256.thlen\
 MAC MINI\
@@ -104,17 +110,23 @@ Case 1,1: The cpu time for each step is about 8 mins; for output, the cpu time i
 \
 Testing 100circ3_128.thlen\
 MAC MINI\
-Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
-ibary, ifmm = 0, 1	Pass		37, 55, 91, 160		2507		None\
+Parameters		Visual		cpu (mins) step 1-5	GMRES	Warnings\
+ibary, ifmm = 0,1	Pass		37, 55, 91, 160, 180	2507		None\
 The cpu time for each step is about 36 mins; for output, the cpu time is about 33 mins. Perfect.\
+The bodies look a bit wiggly near the top and bottom surfaces.\
+\
+Testing 100circ3_256.thlen\
+MAC MINI\
+Parameters		Visual		cpu (mins) step 1-5	GMRES	Warnings\
+ibary, ifmm = 0,1	Pass		86, 130, 210, 370, 410	3088		None\
+The cpu time for each step is about 80 mins; for output, the cpu time is about 80 min. Perfect.\
+The bodies look a bit wiggly near the top and bottom surfaces.\
 \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Optimal parameters for simulations\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b Optimal parameters for simulations\
 
-\b0 \cf0 Feb 19, 2019\
+\b0 Feb 19, 2019\
 I am planning to run a systematic set of multi body simulations with 10-100 bodies and a few different area fractions. I have already run a few preliminary simulations with 10-30 bodies, using area fraction = 0.5, dtout = 2e-4, and using either 512 or 256 points per body. I foresee a problem with very large folder sizes; for the 30-body case with 512, the folder is about 500 MB (with 150 files and taking 30 hours to run). By using 256 points, I can reduce the folder size (by close to half) and also reduce the run time by about half; also, by making dtout larger I can reduce the file size. Thus, I have decided to use the following default parameters:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \ulc0 Default parameters\ulnone \

@@ -5,7 +5,7 @@ input_geos/60circ3_32.thlen
 
 # Varied computational parameters
 1	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
-0	# iffm: 1 to use the ffm, 0 to use direct.
+1	# iffm: 1 to use the ffm, 0 to use direct.
 
 # Varied physical parameters
 15	# epsfac: epsilon = epsfac/npts

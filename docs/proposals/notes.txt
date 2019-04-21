@@ -1,0 +1,71 @@
+Content taken from DOE Office of Science FY 2019 Continuation of
+Solicitation for the Office of Science Financial Assistance Program
+
+
+The Advanced Scientific Computing Research (ACSR) has priority areas in:
+Develop mathematical models, methods and algorithms to accurately
+describe and predict the behavior of complex systems involving processes
+that span vastly different time and/or length scales.
+
+Applied Mathematics subprogram:
+This subprogram supports research and development of applied
+mathematical models, methods, and algorithms for understanding complex
+natural and engineered systems related to DOE’s mission. Important areas
+of supported research include: (1) novel numerical methods for the
+scalable solution of large-scale, linear and nonlinear systems of
+equations, including those solution methods that take into consideration
+the possibilities brought about by future HPC architectures; ... (3)
+numerical methods for modeling multiscale, multi-physics or
+multi-component continuous or discrete systems that span a wide range of
+time and length scales; 
+
+Submission of preliminary research descriptions (e.g., preproposals,
+preapplications) is strongly encouraged. They will be reviewed for
+responsiveness of the proposed work to the research topics. Send e-mail
+to the Subprogram Contact for information regarding format and content.
+
+Steven Lee, (301) 903-5710, 
+Steven.Lee@science.doe.gov
+http://science.energy.gov/ascr/research/applied-mathematics/
+
+
+Historically, applications that arrive in response to the FOA have
+resulted in 200 to 350 new awards per year.
+
+Awards are expected to be made for a project period of six months to
+five years as befitting the project, with the most common project period
+being three years in duration.
+
+
+Pre-applications (White paper)
+
+The pre-application should be concise (up to three pages), provide a
+summary of the proposed research, provide a list of proposed
+collaborators/co-investigators/consultants with their institutions, and
+contain brief biographical information of the principal investigator(s).
+Please also include an order-of-magnitude estimate of the proposed
+work’s total cost.
+
+Feedback from DOE to the principal investigator is optional, but you are encouraged to use your submitted pre-application/white paper to initiate a discussion with the listed program manager about the appropriateness of the proposed research for this solicitation.
+
+The pre-application attachment should include, at the top of the first page, the following information:
+    Title of Pre-application
+    Principal Investigator Name, Job Title
+    Institution
+    PI Phone Number, PI Email Address
+    DOE/Office of Science Program Office:
+    Funding Opportunity Announcement Number: DE-FOA-0001968
+
+
+It is important that the pre-application be a single file with extension
+.pdf, .docx, or .doc. The filename should not exceed 50 characters. The
+pre-application must be submitted electronically through the DOE Office
+of Science Portfolio Analysis and Management System (PAMS) website
+https://pamspublic.science.energy.gov/. The Principal Investigator and
+anyone submitting on behalf of the Principal Investigator must register
+for an account in PAMS before it will be possible to submit a
+pre-application. All PIs and those submitting pre-applications on behalf
+of PIs are encouraged to establish PAMS accounts as soon as possible to
+avoid submission delays.
+
+
