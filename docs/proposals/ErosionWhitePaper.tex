@@ -149,7 +149,7 @@ porous medium}.
 \input{figs/vort1.tikz}
 \caption{\label{fig:vort1} \em The vorticity along a vertical slice
 cutting through a single body.  There are solid walls at $y = \pm 1$,
-and an eroding body at $y = (-0.5,0.5)$.  The trapezoid rule gives large
+and an eroding body at $y = [-0.3,0.5]$.  The trapezoid rule gives large
 errors near the solid walls, while the Barycentric quadrature formula
 results in a smooth vorticity field.}
 \end{wrapfigure}
@@ -170,10 +170,10 @@ develop quadrature formula to accurately compute the shear stress,
 vorticity, and other physical quantities.  In Figure~\ref{fig:vort1},
 the vorticity is computed along a vertical slice that cuts through a
 single eroding body.  The trapezoid rule is accurate far from the solid
-walls ($y = \pm 1$) and the boundary of the eroding body ($y = \pm
-0.5$), but introduces large errors near the walls and body.  However,
-our new Barycentric quadrature rule is uniformly accurate throughout the
-entire fluid domain.
+walls ($y = \pm 1$) and the boundary of the eroding body ($y \in
+[-0.3,0.5]$), but introduces large errors near the walls and body.
+However, our new Barycentric quadrature rule is uniformly accurate
+throughout the entire fluid domain.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
