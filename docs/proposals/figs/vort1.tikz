@@ -12,7 +12,8 @@ ymax=25,
 xlabel = {$y$},
 ylabel = {Vorticity},
 title = {\Large Mid-plane Vorticity},
-legend style={draw=none}
+legend style={draw=none},
+legend cell align={left},
 ] 
 
 % vorticity in midplane

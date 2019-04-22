@@ -88,17 +88,16 @@ Funding Opportunity Announcement Number: DE-FOA-0001968
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-\begin{wrapfigure}[24]{r}{0.7\textwidth}
+\begin{wrapfigure}[22]{r}{0.6\textwidth}
 \centering
-\includegraphics[width=0.68\textwidth]{figs/50bod.pdf}
+\includegraphics[width=0.58\textwidth]{figs/50bod.pdf}
 \caption{\label{fig:50bod} \em Simulation of 50 bodies eroding in Stokes
 flow under the action of fluid-mechanical erosion. The flow is
 horizontal (left to right) and the 6 snapshots are evenly spaced in
 time.  The local erosion rate on the bodies is proportional to the
 magnitude of the vorticity which we compute in the fluid bulk (color
-scale).  Erosion not only diminishes the size of the bodies but also
-alters their shapes considerably. A few well-defined channels develop in
-the space between bodies.}
+scale).  Erosion both diminishes the size of the bodies and considerably
+alters their shapes.}
 \end{wrapfigure}
 
 Flow-induced erosion deteriorates and reshapes solid material over a
@@ -111,78 +110,70 @@ structures like plaque and biofilms. Motivated by such examples, we are
 interested in studying fluid-mechanical erosion in Stokes flow---the
 most relevant regime for groundwater and bio-fluid applications.
 
-
-
 In our recent publication~\cite{qua-moo2018}, we describe a suite of
 numerical methods to simulate erosion in a viscous fluid
 (Figure~\ref{fig:50bod}).  The highlights of our numerical methods are:
 \begin{enumerate}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
   \item {\bf Boundary Integral Equation Fluid Solver}: The
-  incompressible Stokes equations are solved with a boundary integral
-  equation (BIE).  By using a BIE, the complex geometries are naturally
-  handled, high-order accurate discretizations are deployed, and fast
-  summation methods result in optimal complexity.
-
-  \item {\bf Interface Tracking}: Instead of tracking the $(x,y)$
-  coordinates of the of the eroding interfaces, we track the {\thL}
-  coordinates, where $\theta$ is a local tangent angle, and $L$ is the
-  total interface length.  The governing equations of the {\thL}
-  coordinates offers several advantages in the ability to numerically
-  stabilize the evolving interface.
+  fluid equations are solved with a boundary integral equation (BIE).
+  The BIE formulation achives high-order accuracy in complex geometries
+  with optimal computational complexity.
 
   \item {\bf Regularizations of the Interface}: Erosion results in
-  numerically challenging corners of the bodies at stagnation points of
-  the flow.  We use a regularization term and a smoothing operation to
-  control the smoothness of the moving interface.
+  numerically challenging corners of the bodies.  We use a
+  regularization term and a smoothing operation to control the
+  smoothness of the moving interface.
 
-  \item {\bf Analysis of Single Eroding Bodies}: We validate our method
-  by comparing numerical simulations with scaling laws.
+  \item {\bf Interface Tracking}: We describe the interface using
+  {\thL} coordinates, where $\theta$ is a local tangent angle, and $L$
+  is the total interface length.  In these coordinates, the
+  stiff terms are linear and are be discretized implicitly.
+
+  \item {\bf Validation}: We compare the numerical simulations with
+  scaling laws.
 \end{enumerate}
 
 \section{Proposed Work}
 Having developed and validated numerical methods for simulating viscous
 erosion, there are two main directions that our research will follow.
-First, additional numerical tools are required to simulate more
+First, {\bf additional numerical tools are required to simulate more
 realistic scenarios such as denser packings, transport, and
-three-dimensional erosion.  Second, we will investigate physically
+three-dimensional erosion}.  Second, {\bf we will investigate physically
 motivated questions regarding the geometry and flow inside an eroding
-porous medium.
+porous medium}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improved Numerical Methods}
 \begin{wrapfigure}[22]{r}{0.4\textwidth}
 \centering
 \input{figs/vort1.tikz}
-\caption{\label{fig:vort1} \em The vorticity a vertical slice cutting
-through a single body.  There are solid walls at $y = \pm 1$, and an
-eroding body at $y = (-0.5,0.5)$.  The trapezoid rule gives large errors
-near the solid walls, while the Barycentric quadrature formula results
-in a smooth vorticity field.}
+\caption{\label{fig:vort1} \em The vorticity along a vertical slice
+cutting through a single body.  There are solid walls at $y = \pm 1$,
+and an eroding body at $y = (-0.5,0.5)$.  The trapezoid rule gives large
+errors near the solid walls, while the Barycentric quadrature formula
+results in a smooth vorticity field.}
 \end{wrapfigure}
 
-In its current formulation, our bodies are fixed in space.  However, in
-reality, eroding bodies are also transported by the flow.  To allow the
-bodies to move, there are two additional tools that we will develop.
-The PI is experienced with simulating moving interfaces in Stokes flow.
-For example, he has developed high-order adaptive time stepping methods
-for simulating deformable bodies (vesicles) in a viscous
-fluid~\cite{qua-bir2015b, qua-bir2014, qua-bir2016}. More recently, the
-PI and his former Ph.D.~student developed time stepping methods for
-rigid body transport in a viscous fluid~\cite{bys-sha-qua2018}.  This
-work extends a contact algorithm, originally developed by Lu et
-al.~\cite{lu-rah-zor2017}, to accuratly simulate the dynamics of
-nearly-touching rigid bodies.  The contact algorithm resolves errors
-introduced by time stepping, but quadrature error introduced by the
-integral equation formulation must also be addressed.  A postdoc in the
-PI's group is extending a Barycentric near-singular integration scheme
-developed by Barnett et al.~\cite{bar-wu-vee2015} to develop quadrature
-formula to compute the shear stress and vorticity.  In
-Figure~\ref{fig:vort1}, the vorticity is computed along a vertical slice
-that cuts through a single eroding body.  The trapezoid rule is accurate
-far from the solid walls ($y = \pm 1$) and the boundary of the eroding
-body ($y = \pm 0.5$), but introduces large errors near the walls and
-body.  However, the Barycentric quadrature rule is uniformly accurate
-throughout the entire fluid domain.
+Our current formulation fixes all bodies space.  However, in reality,
+the bodies are also transported by the flow.  The PI has simulated
+moving interfaces in Stokes flow~\cite{qua-bir2015b, qua-bir2014,
+qua-bir2016}. More recently, the PI and his former Ph.D.~student
+developed time stepping methods for rigid body transport in Stokes
+flow~\cite{bys-sha-qua2018}.  This work extends a contact algorithm,
+originally developed by Lu et al.~\cite{lu-rah-zor2017}, to accuratly
+simulate the dynamics of nearly-touching rigid bodies.  The contact
+algorithm resolves errors introduced by time stepping, but quadrature
+error introduced by the BIE formulation must also be addressed.  A
+postdoc in the PI's group is extending a Barycentric near-singular
+integration scheme developed by Barnett et al.~\cite{bar-wu-vee2015} to
+develop quadrature formula to accurately compute the shear stress,
+vorticity, and other physical quantities.  In Figure~\ref{fig:vort1},
+the vorticity is computed along a vertical slice that cuts through a
+single eroding body.  The trapezoid rule is accurate far from the solid
+walls ($y = \pm 1$) and the boundary of the eroding body ($y = \pm
+0.5$), but introduces large errors near the walls and body.  However,
+our new Barycentric quadrature rule is uniformly accurate throughout the
+entire fluid domain.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
