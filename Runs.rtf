@@ -31,26 +31,31 @@ epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b\fs32 \cf0 Tests from April 2019 with barycentric\
+\b\fs32 \cf0 Tests from April 2019, many with barycentric\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b0\fs28 \cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 60circ3-32ibary\
+\b 60circ3-32baryA\
 
 \b0 npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
+Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 60circ3-64ibary\
+\b 60circ3-64baryA\
 
 \b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, ibary = 1\
 Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+
+\b \cf0 60circ3-256\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 Trying to get a case that runs smoothly without ibary.\
+npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 1e-4, nouter = 2048, ibary = 0\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
 \
 %\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97%\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
@@ -71,14 +76,14 @@ npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4, nouter = 2048, iba
 Malloc error.\
 Trying the same but with ibary = 1 does NOT give the malloc error.\
 %\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97%\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs32 \cf0 Tests from April 2019 without barycentric\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 In all cases ibary = 0 and ifmm = 1
+\b0 \cf0 In all cases ibary = 0 and ifmm = 1
 \b \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
@@ -123,15 +128,13 @@ npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
 This run looks smooth at output times 0-40.\
 There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 100circ-3-256 (partial)
+\b 100circ-3-256 (partial)
 \b0 \
 npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
 This run looks smooth at output times 0-12.\
 There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+\
 \
 \
 \
@@ -208,8 +211,7 @@ Postprocessing complete, 246 MB\
 \
 \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs32 \cf0 Failed runs from long ago (well before April 2019)
