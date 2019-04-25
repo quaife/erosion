@@ -43,6 +43,24 @@ University, Tallahassee, FL, 32306.}
 \section{Introduction\label{s:intro}}
 A continuation of the methods paper~\cite{qua-moo2018}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Governing Equations}
+\begin{equation}
+\label{eqn:erosionModel}
+\begin{split}
+  \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation
+of momentum}\\
+\grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation of mass} \\
+\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{\em no slip on the
+bodies} \\
+\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{\em outer wall
+velocity} \\
+\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
+&&\mbox{\em erosion model}.
+\end{split}
+\end{equation}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
@@ -70,8 +88,133 @@ A continuation of the methods paper~\cite{qua-moo2018}.
 \paragraph{Outline of the Paper}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Formulation}
+\section{Boundary Integral Equation Formulation}
 \label{s:formulation}
+Continuing on our previous work~\cite{qua-moo2018}, we use a completed
+double-layer potential formulation for the velocity $\uu$.  The
+double-layer potential is
+\begin{align}
+  \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
+    \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
+    \eeta(\yy) ds_\yy,
+\end{align}
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown
+density function.  The double-layer potential itself can not represent
+all solutions of the incompressible Stokes equations.  Therefore, we
+complete the integral equation formulation following the work of Power
+and Miranda~\cite{pow-mir1987}.  The completion depends on the
+Stokeslets and rotlets
+\begin{align}
+  S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
+    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \qquad
+  R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
+\end{align}
+where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
+$\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
+\|\rr\|$.  Then, the solution of the Stokes equation is
+\begin{align}
+  \uu(\xx) = \DDD[\eeta](\xx) + 
+    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
+    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx),
+\end{align}
+where the density function, Stokeslets, and rotlets satisfy
+\begin{align}
+  \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
+    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
+    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
+    \NN_0(\eeta](\xx), \qquad \xx \in \bd\Omega, \\
+  \lambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
+    \eeta(\yy) ds_\yy \qquad \ell = 1,\ldots,M, \\
+  \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
+    (\yy - \cc_\ell)^\perp  \eeta(\yy) ds_\yy 
+    \qquad \ell = 1,\ldots,M.
+\end{align}
+The Stokes double-layer potential can be written as
+\begin{align}
+  \DDD[\eeta](\xx) &= 
+    \frac{1}{2\pi} \int_{\Gamma} 
+      \frac{\nn}{\rho^2} (\rr \cdot \eeta) ds_\yy + 
+    \frac{1}{2\pi} \nabla \int_{\Gamma}
+      \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta)ds_\yy \\
+    &- \frac{1}{2\pi} x_1 \nabla \int_{\Gamma}
+      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) ds_\yy -
+    \frac{1}{2\pi} x_2 \nabla \int_{\Gamma}
+      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy,
+\end{align}
+and this formulation is convenient since each of the integrals can be
+written as a Laplacian double-layer potential,
+\begin{align}
+  \DD[\tau](\xx) = -\frac{1}{2\pi} \int_{\Gamma} \pderiv{}{\nn_\yy}
+    \log(\rho) \tau(\yy) ds_\yy.
+\end{align}
+Finally, by identifying $\RR^2$ with $\CC$, for purely real $\tau$, the
+Laplacian double-layer potential can be written as the real part of a
+Cauchy integral
+\begin{align}
+  \DD[\tau](x) = \Re (v(x)),
+  \qquad \text{where} \qquad
+  v(x) = \frac{1}{2\pi i} \int_\Gamma \frac{\tau(y)}{x - y} dy.
+\end{align}
+Therefore, the Stokes double-layer potential can be written as five
+Cauchy integrals and their derivatives with the density functions $\yy
+\cdot \nn$, $\eta_1$, and $\eta_2.$ 
+
+Since the rate of erosion is proportional to the shear stress, we also
+require the gradient of the Stokes double-layer potential $\nabla
+\DDD[\eeta](\xx)$.  Using the Cauchy integral formulation, the shear
+stress of the double-layer potential velocity is
+\begin{align}
+  \nabla\D[\eeta](\xx) = \frac{1}{2\pi}\nabla\int_{\Gamma}
+    &\frac{\nn}{\rho^2}(\rr \cdot \eeta)ds_\yy +
+  \frac{1}{2\pi}\nabla\nabla\int_{\Gamma}
+    \frac{\rr \cdot \nn}{\rho^2}({\yy} \cdot\eeta) ds_y \\
+  &- \frac{1}{2\pi} \nabla x_1 \nabla \int_{\Gamma}
+      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) ds_\yy -
+  \frac{1}{2\pi} \nabla x_2 \nabla \int_{\Gamma}
+      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy.
+\end{align}
+
+
+\section{New Section}
+A standard discretization of these equations approximates the
+double-layer potential with the trapezoid rule.  This quadrature rule is
+appropriate if the integrands are sufficiently smooth, where the
+smoothness depends on the number of discretization points.  However,
+given a fixed resolution, if the target point $\xx$ is too close to $\bd
+\Omega$, the trapezoid rule becomes inaccurate and the overall method
+becomes unstable.  There have been a variety of near-singular
+integration schemes developed, and we extend a method first outlined by
+Barnett et al.~\cite{bar-wu-vee2015} which we will call the {\em
+Barycentric quadrature rule}.  Here, we briefly describe this quadrature
+method, and then derive a necessary extension to simulate erosion.
+
+The Barycentric quadrature rule was first described for the single- and
+double-layer potentials corresponding to Laplace's equation.  
+
+
+
+A quadrature scheme for $v(x)$, for a target point $x$, is
+\begin{align}
+  v(x) \approx \frac{1}{2\pi i} \sum_{j=1}^N 
+    w_j \frac{\tau(y_j)}{x - y_j},
+\end{align}
+where $w_j$ are the quadrature weights and $y_j \in \Gamma$ are the
+quadrature nodes.  If the trapezoid rule is used, the quadrature rule
+has spectral accuracy.  However, for a fixed resolution $N$, the error
+grows without bound as $x$ approaches $\Gamma$.  As outline by Barnett
+et al.~\cite{bar-wu-vee2015}, the error is uniformly bounded if the
+Barycentric quadrature rule
+\begin{align}
+  v(x) \approx \frac{\sum_{j=1}^N \frac{v_j^-}{y_j-x}w_j}
+    {\sum_{j=1}^N \frac{1}{y_j-x}w_j},  \qquad
+  v'(x) \approx \frac{\sum_{j=1}^N \frac{v_j^- - v(x)}{(y_j - x)^2}w_j}
+    {\sum_{j=1}^N \frac{1}{y_j-x}w_j}, 
+\end{align}
+is used, where $x$ is a target point that is interior to $\Gamma$,
+and $v_j^-$ is the value of $v(y_j)$.  Modifications of this formula
+exist if $x$ is exterior to $\Gamma$.
+
+
 Similar to the JCP methods paper.  However, need to put everything into
 complex variables formulation so that we can use Barycentric ideas.
 
@@ -80,53 +223,54 @@ complex variables formulation so that we can use Barycentric ideas.
 \subsection{Boundary integral equation formulation} 
 \label{sec:bies}
 Add an introduction why we do not use the double-layer potentials of Stokes equations but the double-layer potentials of Laplace equations to solve Stokes equation when we use Barycentric approach (or complex variable approach).
-\subsubsection{Laplace's equations from $\Rdb^2$ to $\Cdb$ }
 
-Let $\Omega$ be the domain of fluid. The boundary of $\Omega$ is $\Gamma$ and the outward normal vector on $\Gamma$ is ${\bf n_y}=(n_1,n_2)$.
-
-Consider a Laplace's equations with Dirichlet boundary condition
-\begin{equation}\label{Laplace}
-  \begin{cases}
-    \Delta {\bf u}=0, & \text{in}\,\,\, \Omega \in \Rdb^2;\\
-    {\bf u}={\bf f}, & \text{on}\,\,\, \Gamma.
-  \end{cases}
-\end{equation}
-
-Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
-The double-layer potential which solves \eqref{Laplace} is 
-\begin{align*}
-\D[\sigma]({\bf x})&=\frac{1}{2\pi}\displaystyle\int_{\Gamma} \frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma({\bf y})ds_y,
-%\frac{1}{2\pi}\displaystyle\int_{\Gamma}\frac{\partial}{\partial {\bf n_y}} \log |{\bf x}-{\bf y}| \sigma({\bf y})ds_y,\\ \\
-%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{{\bf r}\cdot{\bf n_y}}{\rho^2} \sigma({\bf y})ds_y\\ \\
-%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{n_1(x_1-y_1)+n_2(x_2-y_2)}{(x_1-y_1)^2+(x_2-y_2)^2} \sigma({\bf y})ds_y 
-\numberthis\label{DLP:real}
-\end{align*}
-where $\sigma$ is the density function on the boundary $\Gamma$.
-
-
-Consider a Cauchy integral 
-\begin{equation}\label{CI}
-v({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{\sigma({ y})}{{ y}-{ x}} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
-\end{equation}
-where ${ x}=x_1+ix_2$, $ { y}=y_1+iy_2$, ${ n_y}=n_1+i n_2$ and $d{ y}=i {n_y}ds_y$. It can be shown that 
-the real part of the Cauchy integral in \eqref{CI} is equivalent to the double-layer potential in \eqref{DLP:real}. 
-
-
-\subsubsection{From Stokes DLP to Laplace DLPs}
-
-Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
-
-
-The Stokes double-layer potential  is
-\begin{equation}\label{StokesDLP1}
-\D[\boldsymbol\sigma]({\bf x}):=\frac{1}{\pi}\int_{\Gamma}\left(\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\frac{{\bf r} \otimes {\bf r}}{\rho^2}\right) {\boldsymbol\sigma({\bf y})} d s_y.
-\end{equation}
-We could rewrite the Stokes DLP in terms of the Laplace DLP as
-\begin{align*}\label{StokesDLP2}
-\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
-&-\frac{1}{2\pi}x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y-\frac{1}{2\pi}x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y. \numberthis
-\end{align*}
-
+%\subsubsection{Laplace's equations from $\Rdb^2$ to $\Cdb$ }
+%
+%Let $\Omega$ be the domain of fluid. The boundary of $\Omega$ is $\Gamma$ and the outward normal vector on $\Gamma$ is ${\bf n_y}=(n_1,n_2)$.
+%
+%Consider a Laplace's equations with Dirichlet boundary condition
+%\begin{equation}\label{Laplace}
+%  \begin{cases}
+%    \Delta {\bf u}=0, & \text{in}\,\,\, \Omega \in \Rdb^2;\\
+%    {\bf u}={\bf f}, & \text{on}\,\,\, \Gamma.
+%  \end{cases}
+%\end{equation}
+%
+%Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
+%The double-layer potential which solves \eqref{Laplace} is 
+%\begin{align*}
+%\D[\sigma]({\bf x})&=\frac{1}{2\pi}\displaystyle\int_{\Gamma} \frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma({\bf y})ds_y,
+%%\frac{1}{2\pi}\displaystyle\int_{\Gamma}\frac{\partial}{\partial {\bf n_y}} \log |{\bf x}-{\bf y}| \sigma({\bf y})ds_y,\\ \\
+%%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{{\bf r}\cdot{\bf n_y}}{\rho^2} \sigma({\bf y})ds_y\\ \\
+%%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{n_1(x_1-y_1)+n_2(x_2-y_2)}{(x_1-y_1)^2+(x_2-y_2)^2} \sigma({\bf y})ds_y 
+%\numberthis\label{DLP:real}
+%\end{align*}
+%where $\sigma$ is the density function on the boundary $\Gamma$.
+%
+%
+%Consider a Cauchy integral 
+%\begin{equation}\label{CI}
+%v({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{\sigma({ y})}{{ y}-{ x}} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
+%\end{equation}
+%where ${ x}=x_1+ix_2$, $ { y}=y_1+iy_2$, ${ n_y}=n_1+i n_2$ and $d{ y}=i {n_y}ds_y$. It can be shown that 
+%the real part of the Cauchy integral in \eqref{CI} is equivalent to the double-layer potential in \eqref{DLP:real}. 
+%
+%
+%\subsubsection{From Stokes DLP to Laplace DLPs}
+%
+%Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
+%
+%
+%The Stokes double-layer potential  is
+%\begin{equation}\label{StokesDLP1}
+%\D[\boldsymbol\sigma]({\bf x}):=\frac{1}{\pi}\int_{\Gamma}\left(\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\frac{{\bf r} \otimes {\bf r}}{\rho^2}\right) {\boldsymbol\sigma({\bf y})} d s_y.
+%\end{equation}
+%We could rewrite the Stokes DLP in terms of the Laplace DLP as
+%\begin{align*}\label{StokesDLP2}
+%\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
+%&-\frac{1}{2\pi}x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y-\frac{1}{2\pi}x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y. \numberthis
+%\end{align*}
+%
 
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
