@@ -40,10 +40,10 @@ University, Tallahassee, FL, 32306.}
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction\label{s:intro}}
-A continuation of the methods paper~\cite{qua-moo2018}.
-
+\section{Introduction}
+\label{s:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A continuation of the methods paper~\cite{qua-moo2018}.
 \paragraph{Governing Equations}
 \begin{equation}
 \label{eqn:erosionModel}
@@ -129,6 +129,23 @@ where the density function, Stokeslets, and rotlets satisfy
     (\yy - \cc_\ell)^\perp  \eeta(\yy) ds_\yy 
     \qquad \ell = 1,\ldots,M.
 \end{align}
+
+We will apply a quadrature rule that requires that the double-layer
+potential representations of the velocity, shear stress, pressure, and
+vorticity are written in terms of the Cauchy integral and its first two
+derivatives
+\begin{align}
+  \label{eqn:Cauchy}
+  v(x) &= \frac{1}{2\pi i} \int_\Gamma 
+    \frac{\tau(y)}{x - y} dy, \\
+  v'(x) &= -\frac{1}{2\pi i} \int_\Gamma 
+    \frac{\tau(y)}{(x - y)^2} dy, \\
+  v''(x) &= \frac{2}{2\pi i} \int_\Gamma 
+    \frac{\tau(y)}{(x - y)^3} dy.
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cauchy Integral Representation of the Velocity}
 The Stokes double-layer potential can be written as
 \begin{align}
   \DDD[\eeta](\xx) &= 
@@ -159,10 +176,12 @@ Therefore, the Stokes double-layer potential can be written as five
 Cauchy integrals and their derivatives with the density functions $\yy
 \cdot \nn$, $\eta_1$, and $\eta_2.$ 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cauchy Integral Representation of the Shear Stress}
 Since the rate of erosion is proportional to the shear stress, we also
 require the gradient of the Stokes double-layer potential $\nabla
-\DDD[\eeta](\xx)$.  Using the Cauchy integral formulation, the shear
-stress of the double-layer potential velocity is
+\DDD[\eeta](\xx)$.  Using the Cauchy integral formulation, the gradient
+of of the double-layer potential velocity is
 \begin{align}
   \nabla\D[\eeta](\xx) = \frac{1}{2\pi}\nabla\int_{\Gamma}
     &\frac{\nn}{\rho^2}(\rr \cdot \eeta)ds_\yy +
@@ -173,9 +192,45 @@ stress of the double-layer potential velocity is
   \frac{1}{2\pi} \nabla x_2 \nabla \int_{\Gamma}
       \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy.
 \end{align}
+Then, the deformation tensor can be written in terms of Cauchy integrals
+\todo[inline]{For S-H to fill in}
+\begin{align}
+  \ssigma = \frac{1}{2} 
+    \left(\nabla \DDD[\eeta] + \nabla^T \DDD[\eeta] \right) 
+      \nn \cdot \ss = \ldots
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cauchy Integral Representation of the Vorticity}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cauchy Integral Representation of the Pressure}
 
 
-\section{New Section}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Transport, Tracers, and Tortuosity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Erosion leads to interesting porous geometries, and we are interested in
+characterizing transport in these geometries.  To characterize the
+transport, we first require tracer trajectories (streamlines) that are
+governed by
+\begin{align}
+  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
+\end{align}
+Instead of allowing the transport and erosion to happen simultaneously,
+we freeze the geometry and compute the streamlines in this fixed
+geometry.  Therefore, the velocity $\uu$ has no temporal dependence when
+we characterize the transport.
+
+The tortuosity measures ...
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical Methods}
+\label{s:method}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 A standard discretization of these equations approximates the
 double-layer potential with the trapezoid rule.  This quadrature rule is
 appropriate if the integrands are sufficiently smooth, where the
@@ -188,12 +243,10 @@ Barnett et al.~\cite{bar-wu-vee2015} which we will call the {\em
 Barycentric quadrature rule}.  Here, we briefly describe this quadrature
 method, and then derive a necessary extension to simulate erosion.
 
-The Barycentric quadrature rule was first described for the single- and
-double-layer potentials corresponding to Laplace's equation.  
-
-
-
-A quadrature scheme for $v(x)$, for a target point $x$, is
+Since we are able to write on all our quantities of interest in terms of
+a Cauchy integral and its derivatives, we only require a near-singular
+integration method for equation~\eqref{eqn:Cauchy}.  A quadrature scheme
+for $v(x)$, for a target point $x$, is
 \begin{align}
   v(x) \approx \frac{1}{2\pi i} \sum_{j=1}^N 
     w_j \frac{\tau(y_j)}{x - y_j},
@@ -214,25 +267,101 @@ is used, where $x$ is a target point that is interior to $\Gamma$,
 and $v_j^-$ is the value of $v(y_j)$.  Modifications of this formula
 exist if $x$ is exterior to $\Gamma$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Barcyentric Quadrature for $v''(x)$}
+In order to simulate erosion, we require the deformation gradient which
+means that a quadrature rule for $v''(x)$ is required.  Using the same
+techniques that are used to compute $v(x)$ and $v'(x)$, a Barycentric
+quadrature rule for the second derivative can be constructed using the
+identities
+\begin{alignat}{3}
+  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{v^-(y)-v(x)}{y-x} dy, &&x \in \Omega, \\
+  0 &= \frac{1}{2\pi i}\int_{\Gamma}
+    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
+    {(y-x)^3} dy, \quad &&x \in \Omega^c.
+\end{alignat}
 
-Similar to the JCP methods paper.  However, need to put everything into
-complex variables formulation so that we can use Barycentric ideas.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Boundary integral equation formulation} 
-\label{sec:bies}
-Add an introduction why we do not use the double-layer potentials of Stokes equations but the double-layer potentials of Laplace equations to solve Stokes equation when we use Barycentric approach (or complex variable approach).
+\subsection{Fast Summation Methods}
+\label{sec:fmm}
+\begin{itemize}
+  \item Apply trapezoid rule as a first pass
+  \item Efficiently find points that are too close for trapezoid
+  \item Subtract off trapezoid rule directly
+  \item Add on Barycentric directly
+\end{itemize}
 
-%\subsubsection{Laplace's equations from $\Rdb^2$ to $\Cdb$ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical Results}
+\label{s:results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We do some simulations.  The parameters are
+\begin{itemize}
+  \item time step size
+  \item regularization and smoothing parameters
+  \item resolution on bodies and solid wall
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A single body close to a wall}
+\todo[inline]{Do a single body that is extremely close one of the two
+horizontal walls.  This can be compared to some of the
+results~\cite{mit-spa2017}.  Do for a variety of distances to
+demonstrate how close we can put it to the wall with no need to increase
+the resolution}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{20 nearly touching bodies}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{50 nearly touching bodies}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
+\label{s:conclusions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\bf Acknowledgments} We would like to thank Manas Rachh for
+supplying the FMM for the Stokes double-layer potential. BQ and NM were
+supported by Florida State University startup funds and Simons
+Foundation Mathematics and Physical Sciences-Collaboration Grants for
+Mathematicians.
+
+\bibliographystyle{plainnat} 
+\biboptions{sort&compress}
+\bibliography{refs}
+
+
+\end{document}
+
+
+
+
+
+
+
+
+%old stuff%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{boundary integral equation formulation} 
+%\label{sec:bies}
+%add an introduction why we do not use the double-layer potentials of stokes equations but the double-layer potentials of laplace equations to solve stokes equation when we use barycentric approach (or complex variable approach).
 %
-%Let $\Omega$ be the domain of fluid. The boundary of $\Omega$ is $\Gamma$ and the outward normal vector on $\Gamma$ is ${\bf n_y}=(n_1,n_2)$.
+%\subsubsection{laplace's equations from $\rdb^2$ to $\cdb$ }
 %
-%Consider a Laplace's equations with Dirichlet boundary condition
-%\begin{equation}\label{Laplace}
+%let $\omega$ be the domain of fluid. the boundary of $\omega$ is $\gamma$ and the outward normal vector on $\gamma$ is ${\bf n_y}=(n_1,n_2)$.
+%
+%consider a laplace's equations with dirichlet boundary condition
+%\begin{equation}\label{laplace}
 %  \begin{cases}
-%    \Delta {\bf u}=0, & \text{in}\,\,\, \Omega \in \Rdb^2;\\
-%    {\bf u}={\bf f}, & \text{on}\,\,\, \Gamma.
+%    \delta {\bf u}=0, & \text{in}\,\,\, \omega \in \rdb^2;\\
+%    {\bf u}={\bf f}, & \text{on}\,\,\, \gamma.
 %  \end{cases}
 %\end{equation}
 %
@@ -273,143 +402,105 @@ Add an introduction why we do not use the double-layer potentials of Stokes equa
 %
 
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Computing the shear stress}
-\label{sec:shearStressLP}
-
-To calculate the shear stress, we need to know the gradient of double-layer potential in \eqref{StokesDLP2} 
-\begin{align*}\label{SSLP}
-\nabla\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\nabla\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla^2\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
-&-\frac{1}{2\pi}\nabla\left(x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y\right)-\frac{1}{2\pi}\nabla\left(x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y\right). \numberthis
-\end{align*}
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Boundary evolution in the {\thL} framework} 
-\label{sec:thetaL}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Numerical methods}
-\label{s:method}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Fast Summation Methods}
-\label{sec:FMM}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Solving the BIE}
-\label{sec:BIE}
-\subsubsection{Interior Case}
-Consider a Cauchy integral 
-\begin{align}\label{CIFI}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{{ y}-{ x}} d{ y}
-&=\begin{cases}
-\,v(x), &{ x} \in \Omega,\\ 
-\,0,  &{ x} \in \Cdb\setminus \bar{\Omega}.
-\end{cases}
-\end{align}
-By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{{ y}-{ x}} d{ y}=1,$ we can rewrtie \eqref{CIFI} and get 
-\begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)}{{ y}-{ x}} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-\end{equation}
-\begin{equation}\label{dNCI}
-v'({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{(y- x)^2} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-\end{equation}
-By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{dNCI} and get 
-\begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)-(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-\end{equation}
-
-\subsubsection{Exterior case}
-Consider a Cauchy integral formula for the exterior domain
-\begin{align}\label{CIFE}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})}{{ y}-{ x}} d{ y}
-&=\begin{cases}
-\,v_{\infty}, &{ x} \in \Omega,\\ 
-\,-v(x)+v_{\infty},  &{ x} \in \Omega^c,
-\end{cases}
-\end{align}
-where $v_{\infty}=\displaystyle\lim_{x \to \infty}v(x)$.
-\begin{equation}
-\frac{1}{x-a}=\frac{-1}{2 \pi i} \int_{\Gamma}\frac{(y-a)^{-1}}{y-x} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-\end{equation}
-\begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-(y-a)^{-1}(x-a)v(x)}{y-x} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-\end{equation}
-\begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-v(x)-(y-a)^{-1}(x-a)(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-\end{equation}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Shear stress}
-\label{sec:shearStress}
-\subsubsection{Interior Case}
-\begin{equation}\label{ddNCI}
-v''({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})}{(y- x)^3} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-\end{equation}
-By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{ddNCI} and get 
-\begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-\end{equation}
-\subsubsection{Exterior case}
-\begin{equation}
-\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^+({ y})-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-\end{equation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% TIME-STEPPING %%
-\subsection{Time-stepping with the {\thL} method} 
-\label{sec:timeStepping}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Post processing quantities of interest}
-\label{s:qoi}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Vorticity}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Pressure}
-\label{sec:pressure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Drag}
-\label{sec:drag}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Near-singular integration}
-\label{sec:NSI}
-
-%%-----------------------------------------------------------------%%
-% RESULTS SECTION
-%%-----------------------------------------------------------------%%
-\section{Results: Single-body erosion}
-\label{s:SingleResults}
-
-\subsection{A single body eroding in Stokes flow}
-
-\subsection{Scaling laws for area and drag}
-\label{sec:scaling}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusions\label{s:conclusions}}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{\bf Acknowledgments} We would like to thank Manas Rachh for
-supplying the FMM for the Stokes double-layer potential. BQ and NM were
-supported by Florida State University startup funds and Simons
-Foundation Mathematics and Physical Sciences-Collaboration Grants for
-Mathematicians.
-
-\bibliographystyle{plainnat} 
-\biboptions{sort&compress}
-\bibliography{refs}
-
-
-\end{document}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Computing the shear stress}
+%\label{sec:shearStressLP}
+%
+%To calculate the shear stress, we need to know the gradient of double-layer potential in \eqref{StokesDLP2} 
+%\begin{align*}\label{SSLP}
+%\nabla\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\nabla\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla^2\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
+%&-\frac{1}{2\pi}\nabla\left(x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y\right)-\frac{1}{2\pi}\nabla\left(x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y\right). \numberthis
+%\end{align*}
+%
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Boundary evolution in the {\thL} framework} 
+%\label{sec:thetaL}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Solving the BIE}
+%\label{sec:BIE}
+%\subsubsection{Interior Case}
+%Consider a Cauchy integral 
+%\begin{align}\label{CIFI}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{{ y}-{ x}} d{ y}
+%&=\begin{cases}
+%\,v(x), &{ x} \in \Omega,\\ 
+%\,0,  &{ x} \in \Cdb\setminus \bar{\Omega}.
+%\end{cases}
+%\end{align}
+%By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{{ y}-{ x}} d{ y}=1,$ we can rewrtie \eqref{CIFI} and get 
+%\begin{equation}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)}{{ y}-{ x}} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
+%\end{equation}
+%\begin{equation}\label{dNCI}
+%v'({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{(y- x)^2} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
+%\end{equation}
+%By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{dNCI} and get 
+%\begin{equation}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)-(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
+%\end{equation}
+%
+%\subsubsection{Exterior case}
+%Consider a Cauchy integral formula for the exterior domain
+%\begin{align}\label{CIFE}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})}{{ y}-{ x}} d{ y}
+%&=\begin{cases}
+%\,v_{\infty}, &{ x} \in \Omega,\\ 
+%\,-v(x)+v_{\infty},  &{ x} \in \Omega^c,
+%\end{cases}
+%\end{align}
+%where $v_{\infty}=\displaystyle\lim_{x \to \infty}v(x)$.
+%\begin{equation}
+%\frac{1}{x-a}=\frac{-1}{2 \pi i} \int_{\Gamma}\frac{(y-a)^{-1}}{y-x} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+%\end{equation}
+%\begin{equation}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-(y-a)^{-1}(x-a)v(x)}{y-x} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+%\end{equation}
+%\begin{equation}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-v(x)-(y-a)^{-1}(x-a)(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+%\end{equation}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Shear stress}
+%\label{sec:shearStress}
+%\subsubsection{Interior Case}
+%\begin{equation}\label{ddNCI}
+%v''({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})}{(y- x)^3} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
+%\end{equation}
+%By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{ddNCI} and get 
+%\begin{equation}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
+%\end{equation}
+%\subsubsection{Exterior case}
+%\begin{equation}
+%\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^+({ y})-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
+%\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TIME-STEPPING %%
+%\subsection{Time-stepping with the {\thL} method} 
+%\label{sec:timeStepping}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Post processing quantities of interest}
+%\label{s:qoi}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Vorticity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Pressure}
+%\label{sec:pressure}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Drag}
+%\label{sec:drag}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Near-singular integration}
+%\label{sec:NSI}
+%
 
