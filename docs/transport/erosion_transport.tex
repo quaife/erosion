@@ -174,24 +174,70 @@ Cauchy integral
 \end{align}
 Therefore, the Stokes double-layer potential can be written as five
 Cauchy integrals and their derivatives with the density functions $\yy
-\cdot \nn$, $\eta_1$, and $\eta_2.$ 
-
+\cdot {\color{red}\eeta}$, $\eta_1$, and $\eta_2,$
+{\color{red}
+\begin{align}
+ u_1(\xx)&= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
+           -x_1\Re (v'[\eta_1](x)) -x_2\Re (v'[\eta_2](x)),\\
+ u_2(\xx)&= \Re (v[\tau_2](x)) - \operatorname{Im} (v'[\yy\cdot\eeta](x)) 
+       +x_1\operatorname{Im} (v'[\eta_1](x)) 
+      +x_2\operatorname{Im} (v'[\eta_2](x)),
+\end{align}
+where
+\begin{align*} 
+\DD[\eeta](\xx)=(u_1(\xx),u_2(\xx)), \,\, 
+\xx=x_1+x_2, \,\,
+\tau_1=(\eta_1+i\eta_2)\frac{\Re \, n}{n}, \text{ and }
+\tau_2=(\eta_1+i\eta_2)\frac{\operatorname{Im} n}{n}.
+\end{align*}
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Shear Stress}
 Since the rate of erosion is proportional to the shear stress, we also
 require the gradient of the Stokes double-layer potential $\nabla
 \DDD[\eeta](\xx)$.  Using the Cauchy integral formulation, the gradient
 of of the double-layer potential velocity is
+{\color{red}
 \begin{align}
-  \nabla\D[\eeta](\xx) = \frac{1}{2\pi}\nabla\int_{\Gamma}
-    &\frac{\nn}{\rho^2}(\rr \cdot \eeta)ds_\yy +
-  \frac{1}{2\pi}\nabla\nabla\int_{\Gamma}
-    \frac{\rr \cdot \nn}{\rho^2}({\yy} \cdot\eeta) ds_y \\
-  &- \frac{1}{2\pi} \nabla x_1 \nabla \int_{\Gamma}
-      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) ds_\yy -
-  \frac{1}{2\pi} \nabla x_2 \nabla \int_{\Gamma}
-      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy.
+ \nabla\D[\eeta] (\xx)=
+\left[
+\begin{matrix}
+\displaystyle\frac{\partial u_1(\xx)}{x_1} & \displaystyle\frac{\partial u_1(\xx)}{x_2}\\ \\
+\displaystyle\frac{\partial u_2(\xx)}{x_1} & \displaystyle\frac{\partial u_2(\xx)}{x_2}
+\end{matrix}
+\right],
 \end{align}
+where 
+\begin{align}
+\frac{\partial u_1(\xx)}{x_1}&= \Re (v'[\tau_1](x)) + \Re (v''[\yy\cdot\eeta](x)) 
+           -\Re (v'[\eta_1](x)) -x_1\Re (v''[\eta_1](x))-x_2\Re (v''[\eta_2](x)),\\
+\frac{\partial u_1(\xx)}{x_2}&= - \operatorname{Im} (v'[\tau_1](x)) 
+      - \operatorname{Im} (v''[\yy\cdot\eeta](x)) 
+       +x_1\operatorname{Im} (v''[\eta_1](x)) 
+       -\Re (v'[\eta_2](x))
+      +x_2\operatorname{Im} (v''[\eta_2](x)),\\
+\frac{\partial v_1(\xx)}{x_1}&= \Re (v'[\tau_2](x)) 
+      -\operatorname{Im} (v''[\yy\cdot\eeta](x)) 
+       +\operatorname{Im} (v'[\eta_1](x))
+       +x_1\operatorname{Im} (v''[\eta_1](x)) 
+      +x_2\operatorname{Im} (v''[\eta_2](x)),\\
+\frac{\partial v_2(\xx)}{x_2}&= -\operatorname{Im} (v'[\tau_2](x)) 
+      -\Re (v''[\yy\cdot\eeta](x)) 
+       +x_1\Re (v''[\eta_1](x)) 
+      +\operatorname{Im} (v'[\eta_2](x)
+      +x_2\operatorname{Im} (v''[\eta_2](x)).
+\end{align}
+}
+%\begin{align}
+%  \nabla\D[\eeta](\xx) = \frac{1}{2\pi}\nabla\int_{\Gamma}
+%    &\frac{\nn}{\rho^2}(\rr \cdot \eeta)ds_\yy +
+%  \frac{1}{2\pi}\nabla\nabla\int_{\Gamma}
+%    \frac{\rr \cdot \nn}{\rho^2}({\yy} \cdot\eeta) ds_y \\
+%  &- \frac{1}{2\pi} \nabla x_1 \nabla \int_{\Gamma}
+%      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) ds_\yy -
+%  \frac{1}{2\pi} \nabla x_2 \nabla \int_{\Gamma}
+%      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy.
+%\end{align}
 Then, the deformation tensor can be written in terms of Cauchy integrals
 \todo[inline]{For S-H to fill in}
 \begin{align}
