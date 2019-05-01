@@ -35,17 +35,46 @@ epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b0\fs28 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 60circ3-128baryB\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 cpu time 84 hours\
+97 files\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 60circ3-64baryB\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 cpu time 61 hours (SWEET!)\
+99 files\
+\
+Note: Below here is when the barycentric code was very slow. Above are the runs after Shang fixed the code to be faster and thus more usable.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 60circ3-64baryA\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 cpu time 200 hours\
+99 files\
+\
 
 \b 60circ3-32baryA\
 
 \b0 npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
 Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
-\
-
-\b 60circ3-64baryA\
-
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
+cpu time 120 hours\
+103 files\
 \
 
 \b 60circ3-256\
@@ -53,6 +82,8 @@ Shang fixed the code so there is no malloc error. However, the images of the run
 \b0 Trying to get a case that runs smoothly without ibary.\
 npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 3e-4, nouter = 2048, ibary = 0\
 The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
+cpu time 100 hours\
+96 files\
 \
 %\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97%\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
