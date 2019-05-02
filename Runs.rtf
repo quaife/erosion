@@ -27,45 +27,34 @@ epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
 \
 \
 \
-\
-\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs32 \cf0 Tests from April 2019, many with barycentric\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b0\fs28 \cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 60circ3-128baryB\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b 60circ3-128baryB\
 
-\b0 \cf0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 cpu time 84 hours\
+\b0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+cpu time 84 hours\
 97 files\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 60circ3-64baryB\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b 60circ3-64baryB\
 
-\b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 cpu time 61 hours (SWEET!)\
+\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+cpu time 61 hours (SWEET!)\
 99 files\
 \
 Note: Below here is when the barycentric code was very slow. Above are the runs after Shang fixed the code to be faster and thus more usable.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 60circ3-64baryA\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b 60circ3-64baryA\
 
-\b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
 Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 cpu time 200 hours\
+cpu time 200 hours\
 99 files\
 \
 
@@ -84,26 +73,6 @@ npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 3e-4, nouter = 2048, 
 The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
 cpu time 100 hours\
 96 files\
-\
-%\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97%\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b\fs32 \cf0 Malloc errors before Shang fixed code
-\b0\fs28 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b \cf0 60circ3-64ibary\
-
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4?, nouter = 2048, ibary = 1\
-Get malloc error.\
-Trying the same run but with ibary = 0 does NOT give the malloc error.\
-
-\b 60circ3-32ibary
-\b0 \
-npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4?, nouter = 2048, ibary = 1\
-Malloc error.\
-Trying the same but with ibary = 1 does NOT give the malloc error.\
-%\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97%\
 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
@@ -162,9 +131,6 @@ There is no issue with the output cpu time substantially exceeding the regular t
 npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 1024\
 This run looks smooth at output times 0-12.\
 There is no issue with the output cpu time substantially exceeding the regular time step cpu time, at least on my Mac Mini.\
-\
-\
-\
 \
 \
 \
@@ -239,30 +205,6 @@ Postprocessing complete, 246 MB\
 \
 \
 \
-\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b\fs32 \cf0 Failed runs from long ago (well before April 2019)
-\fs28 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b0 \cf0 Feb 28: 100 and 90 body runs, all with npts=256, epsfac=15, sigfac=10, dt=1e-4, dtout=3e-4.\
-First batch:\
-100circ9_256: Deleted all of the bodies very quickly, within the first 1-2 time steps. Wow!\
-100circ3_256: Error with len1 < 0 after time step 2; also umax=inf.\
-90circ8_256: Error with len1 < 0 after time step 2; also umax=inf.\
-90circ6_256: Error with len1 < 0 after time step 2; also umax=inf.\
-Second batch:\
-60circ3_256: len1 error\
-60circ5_256: len1 error\
-70circ5_256: Deleted all the bodies.\
-80circ7-256: Deleted all the bodies.\
-\
-Feb 28: Observation on failed runs.\
-Now I am attempting 60-70 bodies. I notice that, in the first time step, the number of GMRES iterations is consistently 2000, which perhaps indicates we are hitting the maximum allowed GMRES iterations, which would explain the loss of accuracy and consequential errors.
-\b \
-
-\b0 Note: For the 50-body runs, which did complete just fine, the number of GMRES iterations at the first few time steps is around 1,100 to 1,200. The fact that this simulation ran fine is consistent with my guess that the maximum allowed iterations is 2,000.\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
