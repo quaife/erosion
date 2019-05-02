@@ -10,118 +10,19 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 \
-Testing new Barycentric code\
-
-\b0 April 4, 2019\
-I am testing the new Barycentric code written by Shang-Huan Chiu and Bryan. First I am simply testing all the variants of ibary = 1 or 0 and ifmm = 1 or 0 for the simple case of 02circ1-128.thlen. I am making sure that erosion proceeds reasonably well for at least 3-5 output times.\
-\
-Testing 02circ1-128.thlen\
-Parameters			Visual result		cpu time (in minutes) at step 8\
-ibary = 1, ifmm = 1	Pass			0.86\
-ibary = 1, ifmm = 0	Pass			2.0\
-ibary = 0, ifmm = 1	Pass			0.25\
-ibary = 0, ifmm = 0	Pass			0.14\
-From these tests it is clear that barycentric can slow the simulation. Of course, it also offers higher accuracy for nearly touching bodies presumably. It is a little curious that for ibary=0, the FMM actually slows the simulation. Lets try a test with more bodies and more grid points.\
-\
-Testing 10circ4-256.thlen\
-Parameters			Visual result		cpu time (in minutes) at step 3 & 4\
-ibary = 1, ifmm = 1	Pass			13 & 23\
-ibary = 1, ifmm = 0	Pass			68 & too long\
-ibary = 0, ifmm = 1	Pass			1.3 & 2.3 \
-ibary = 0, ifmm = 0	Pass			0.99 & 1.8\
-Still, ifmm slows down the simulation in the case of ibary=0. Lets test more bodies.\
-\
-Testing 30circ2-256.thlen\
-Parameters			Visual result		cpu time (in minutes) at step 2 & 3\
-ibary = 1, ifmm = 1	-			140 & too long\
-ibary = 1, ifmm = 0	-			-\
-ibary = 0, ifmm = 1	Pass			5.6 & 9.3\
-ibary = 0, ifmm = 0	Pass			7 & 12\
-Good, in this test with standard trapezoid rule, the FMM reduces the computational time as it should.\
-\
-Now testing a 60 body case just to make sure the code can now handle that many bodies in all cases of ifmm and ibary. Testing 60circ3_256.thlen\
-MAC MINI\
-Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
-ibary, ifmm = 0,1	*		38, 49, 69, 110		3425		Flux\
-ibary, ifmm = 0,0	*		110, 140, 200, 320		3234		Flux\
-ibary, ifmm = 1,1	Pass		470, 680, 1100, -		1848		None\
-*Note: For the ibary=0 cases, one body was deleted halfway through step 1 and it should not have been. The deleted body is close to the top wall, suggesting that we need more resolution on the walls.\
-For the ibary=1 case, that same body is not deleted prematurely.\
-- GMRES = # iterations at Output 0\
-- Warning on Flux: the flux does not match.\
-- Output time for case 0, 1: The cpu time for each step is about 20 mins (step 3-step2); The cpu time for the output is about 20 mins (step4-step3 - 20). This makes perfect sense.\
-- Output time for case 0, 0: The cpu time for each step is about 60 mins; the cpu time for output it is about 60 mins. Perfect\
-\
-LAPTOP\
-Parameters		Visual		cpu (mins) at step 1-4	Warnings\
-ibary, ifmm = 0,1	*		140, 150, 170, 350		Flux\
-* One body was deleted halfway through step 1 and it should not have been.\
-- The output time steps seem to take way too long for this run. The cpu time for each step is about 20 mins (step3-step2); But the cpu time for output is about 160 mins (step4-step3 - 20), which is unreasonable. This run must have hit a limit regarding writing memory to a data file.\
-\
-
-\b Testing the cpu time with various resolutions and ibary values\
-
-\b0 Testing 60circ3 on my MAC MINI with ifmm = 1 always. Also, nouter = 2048, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4.\
-Parameters			Result 	cpu (mins) at step 1-3\
-ibary = 0, npts = 256	FAIL		22, 63, 94	\
-ibary = 1, npts = 64	Malloc error\
-ibary = 1, npts = 128	\
-In this case, FAIL means that the upper-right body vanishes prematurely.
-\b \
 
 \b0 \
 
-\b Malloc error\
+\b Testing the new barycentric code April 2019\
 
-\b0 I get a malloc error running 60circ3_32.thlen with ibary = 1 and ifmm = 1.\
-The error occurs regardless of what nouter is.\
-The error does NOT occur when ibary = 0, no matter what all the other parameters are.\
-The error does NOT occur when ibary = 1 and ifmm = 0.\
-Note: Based on the screen output, I can tell that the error is occurring in the routine compute_density() which calls the Fortran code stokessolver.\
-\
-Conclusion: Malloc errors are usually associated with passing arrays of inconsistent dimension between Julia and Fortran. The above tests indicate the error is specific to the barycentric code using FMM.\
-\
-\
-
-\b Testing the cpu time with various resolutions and ibary values after the malloc error was fixed\
-
-\b0 Testing 60circ3 on my MAC MINI with ifmm = 1 always. Also, nouter = 2048, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4.\
-Parameters			Result 	cpu (mins) at step 1-3\
-ibary = 0, npts = 256	FAIL		22, 63, 94	\
-ibary = 1, npts = 32	Pass*		36, 54, 88, 160\
-ibary = 1, npts = 64	Pass*		67, 99, 160, 290\
-In this case, FAIL means that the upper-right body vanishes prematurely.
+\b0 I ran a number of tests on the new code in April 2019. The main things I tested were:\
+- The new Barycentric code, implemented by Shang and Bryan.\
+- An cpu time issue, in which the cpu time for output was too long compared to the time for the regular time steps. This issue only arose on my laptop and not on my Mac mini.\
+- Initially, there was a malloc error given by the barycentric code (ibary=1) sometimes, but this issue was fixed.\
+- Initially, the barycentric code took way too long compared to the regular quadrature, but this issue was fixed too by adjusting the test for whether barycentric is needed or not.
 \b \
 
-\b0 Pass* = Evolution proceed smoothly with no bodies vanishing prematurely, but the bodies look just a little bit strange. It looks like there is an overall tilt to the shape of the bodies. I could be imagining this.\
-\
-
-\b Testing the output cpu time issue\
-
-\b0 On my laptop, I witnessed an issue where the cpu time for the output steps is disproportionately larger than the cpu time for the regular steps. This issue only occurs on my laptop. I have tested thoroughly for the issue on my Mac Mini, and the output time does not take too long, even for 100 bodies with npts=256.\
-\
-Testing 30circ2_256.thlen\
-MAC MINI\
-Parameters		Visual		cpu (mins) step 1-4	GMRES	Warnings\
-ibary, ifmm = 0,1	Pass		5.1, 7.6, 12, 22		732		None	\
-ibary, ifmm = 0,0	Pass		9.1, 14, 22, 40		732\
-Case 0,1: The cpu time for each step is about 5 mins; for output, the cpu time is about 5 mins. Perfect.\
-Case 1,1: The cpu time for each step is about 8 mins; for output, the cpu time is about 10 mins, which is good.\
-\
-Testing 100circ3_128.thlen\
-MAC MINI\
-Parameters		Visual		cpu (mins) step 1-5	GMRES	Warnings\
-ibary, ifmm = 0,1	Pass		37, 55, 91, 160, 180	2507		None\
-The cpu time for each step is about 36 mins; for output, the cpu time is about 33 mins. Perfect.\
-The bodies look a bit wiggly near the top and bottom surfaces.\
-\
-Testing 100circ3_256.thlen\
-MAC MINI\
-Parameters		Visual		cpu (mins) step 1-5	GMRES	Warnings\
-ibary, ifmm = 0,1	Pass		86, 130, 210, 370, 410	3088		None\
-The cpu time for each step is about 80 mins; for output, the cpu time is about 80 min. Perfect.\
-The bodies look a bit wiggly near the top and bottom surfaces.\
-\
+\b0 Detailed notes of my tests are in misc/CodeNotesMisc.rtf\
 \
 
 \b Optimal parameters for simulations\
