@@ -186,7 +186,7 @@ Cauchy integrals and their derivatives with the density functions $\yy
 where
 \begin{align*} 
 \DD[\eeta](\xx)=(u_1(\xx),u_2(\xx)), \,\, 
-\xx=x_1+x_2, \,\,
+\xx=(x_1,x_2), \,\,
 \tau_1=(\eta_1+i\eta_2)\frac{\Re \, n}{n}, \text{ and }
 \tau_2=(\eta_1+i\eta_2)\frac{\operatorname{Im} n}{n}.
 \end{align*}
@@ -216,12 +216,12 @@ where
        +x_1\operatorname{Im} (v''[\eta_1](x)) 
        -\Re (v'[\eta_2](x))
       +x_2\operatorname{Im} (v''[\eta_2](x)),\\
-\frac{\partial v_1(\xx)}{x_1}&= \Re (v'[\tau_2](x)) 
+\frac{\partial u_2(\xx)}{x_1}&= \Re (v'[\tau_2](x)) 
       -\operatorname{Im} (v''[\yy\cdot\eeta](x)) 
        +\operatorname{Im} (v'[\eta_1](x))
        +x_1\operatorname{Im} (v''[\eta_1](x)) 
       +x_2\operatorname{Im} (v''[\eta_2](x)),\\
-\frac{\partial v_2(\xx)}{x_2}&= -\operatorname{Im} (v'[\tau_2](x)) 
+\frac{\partial u_2(\xx)}{x_2}&= -\operatorname{Im} (v'[\tau_2](x)) 
       -\Re (v''[\yy\cdot\eeta](x)) 
        +x_1\Re (v''[\eta_1](x)) 
       +\operatorname{Im} (v'[\eta_2](x)
@@ -304,10 +304,10 @@ grows without bound as $x$ approaches $\Gamma$.  As outline by Barnett
 et al.~\cite{bar-wu-vee2015}, the error is uniformly bounded if the
 Barycentric quadrature rule
 \begin{align}
-  v(x) \approx \frac{\sum_{j=1}^N \frac{v_j^-}{y_j-x}w_j}
-    {\sum_{j=1}^N \frac{1}{y_j-x}w_j},  \qquad
-  v'(x) \approx \frac{\sum_{j=1}^N \frac{v_j^- - v(x)}{(y_j - x)^2}w_j}
-    {\sum_{j=1}^N \frac{1}{y_j-x}w_j}, 
+  v(x) \approx \frac{\sum\limits_{j=1}^N \frac{v_j^-}{y_j-x}w_j}
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j},  \qquad
+  v'(x) \approx \frac{\sum\limits_{j=1}^N \frac{v_j^- - v(x)}{(y_j - x)^2}w_j}
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, 
 \end{align}
 is used, where $x$ is a target point that is interior to $\Gamma$,
 and $v_j^-$ is the value of $v(y_j)$.  Modifications of this formula
@@ -320,14 +320,26 @@ means that a quadrature rule for $v''(x)$ is required.  Using the same
 techniques that are used to compute $v(x)$ and $v'(x)$, a Barycentric
 quadrature rule for the second derivative can be constructed using the
 identities
+{\color{red}
 \begin{alignat}{3}
   0 &= \frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{v^-(y)-v(x)}{y-x} dy, &&x \in \Omega, \\
+    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3}, &&x \in \Omega, \\
   0 &= \frac{1}{2\pi i}\int_{\Gamma}
     \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
-    {(y-x)^3} dy, \quad &&x \in \Omega^c.
+    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
 \end{alignat}
+and the quadrature formulations are
+\begin{alignat}{3}
+  v''(x) &\approx
+    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
+  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
+    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
+    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
+\end{alignat}
+where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
 
+}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,6 +348,16 @@ identities
 \begin{itemize}
   \item Apply trapezoid rule as a first pass
   \item Efficiently find points that are too close for trapezoid
+
+{\color{red}
+To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer boundary with $N_\out$ points. Let $L_w$ be the length of the boundary of wall and $L_{b}$ be length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of wall to body,  let $d$ be the minimum distance between wall to a point $x_i$ on the body $b$, we define they are too close when
+$$d<\frac{L_{b}}{2\pi} + \alpha_1\frac{L_w}{N_\out}$$
+where $\alpha_1$ is a constant. 
+For criterion between two bodies, let $d$ be the minimum distance between a point $y_j$ on the body $b_1$ to a point $x_i$ on the body $b_2$, we define they are too close when
+$$d<\frac{L_{b_1}}{2\pi}+\frac{L_{b_1}}{2\pi}+\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)$$
+where $\alpha_2$ is a constant. 
+
+}
   \item Subtract off trapezoid rule directly
   \item Add on Barycentric directly
 \end{itemize}
