@@ -1,0 +1,171 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww11480\viewh13260\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs28 \cf0 New convergence tests\
+
+\b0 I am rerunning the original convergence tests with the new time-stepping rule (in which the integrating factor is treated with RK2).
+\b \
+\
+
+\b0 Test 1\
+01circ256, nits = 8, dt0 = 2e-4, tfin = 1e-2\
+epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0\
+This test is in the paper.\
+\
+dt/dt_s	error        	order      	CPU time (mins)\
+1/50     	& 1.68E-5 	& --      	& 0.88 (53 secs)	\\\\\
+1/100    	& 4.84E-6 	& 1.79 	& 1.75	\\\\\
+1/200   	& 1.30E-6 	& 1.90 	& 3.50	\\\\\
+1/400   	& 3.36E-7 	& 1.95   	& 6.92	\\\\\
+1/800   	& 8.54E-8 	& 1.98   	& 13.73	\\\\\
+1/1600 	& 2.15E-8 	& 1.99   	& 28.11	\\\\\
+1/3200 	& 5.40E-9 	& 1.99   	& 56.1	\\\\\
+1/6400 	& --           	& --         	& 111.1	\\\\\
+\
+Test 4\
+20circ128, nits = 5, dt0 = 4e-4, tfin=4e-3\
+For 20circ128, vanishing time is tvan = 1.7e-2.\
+tfin: originally I chose 1e-2, but I had to change it to 4e-3 because of a problem with a body vanishing.\
+epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1\
+Estimate run time: about 12 hours?\
+\
+dt/dt_s     	error         	order     	CPU time (mins)\
+1/10     	& 2.67E-5 	& --        	& 13.98	\\\\\
+1/20     	& 7.23E-6 	& 1.88 	& 26.55	\\\\\
+1/40     	& 1.95E-6 	& 1.89 	& 52.15	\\\\\
+1/80     	& 4.90E-7 	& 1.99 	& 103.95 (1.73 hours)	\\\\\
+1/160     	& 1.25E-7 	& 1.97  	& 205.8 (3.42 hours)	\\\\\
+\
+\
+
+\b GMRES iterations tests\
+
+\b0 Testing how the GMRES iteration count depends on the number of bodies, the number of points, and the volume fraction.\
+\
+Geometry	# GMRES iterations\
+10circ128	223 (then 222)\
+15circ128	292 (then 291)\
+20circ128	363 (then 362)\
+30circ128	496 (then 494)\
+40circ128	676 (then 669)\
+50circ128	991 (then 987)\
+Note: In all these tests the GMRES tolerance is 1e-8.\
+
+\b \
+
+\b0 Geometry	# GMRES iterations\
+10circ32	228 (then 208)\
+10circ64	226 (then 225)\
+10circ128	223 (then 222)\
+10circ256	223 (then 222)\
+10circ512	223 (then 222)\
+10circ1024	223
+\b \
+
+\b0 Note: The lowest resolution, 10circ32, showed numerical instability in the shape at time-steps 1, 2, etc . This does not matter for the GMRES test because I am only testing the number of iterations for the initial geometry. Because of this, I increased the smoothing to eps=sig=20 in all tests. The numerical instabilities are still there for 10circ32 (but none of the others). To get stability for 10circ32, I had to reduce the time-step to 1e-4.
+\b \
+\
+\
+Notes on convergence tests using the new integration rule\
+
+\b0 Feb 18, 2018: It occurred to me that I could simply use RK2 to update the argument of the integrating factor, int(zeta). Surprisingly, this gives a different integration rule compared to what I had been doing. I want to test if this different integration rule is still indeed second order. To this end, I am running a simple convergence test with the default values of nits, dt0, tfin. I am using 01circ256 with epsfac=sigfac=20 (to make the test a bit simpler than with 10) and with fixarea=fixpdrop=0.\
+Note: The key advantage to the new rule is that it could probably generalize to RK4.\
+\
+In running convtest with nits=3, dt0=1e-4, tfin=1e-2 (the old default values), the CPU time of each iteration is as follows:\
+Iteration 1, dt=1e-4, CPU time = 2 mins\
+Iteration 2, dt=5e-5, CPU time = 3.7 mins\
+Iteration 3, dt=2.5e-5, CPU time =  7.4 mins\
+So the total runtime is about 14 minutes.\
+
+\b \
+Note:
+\b0  I am changing the default values in convtest to nits=4 and dt0=2e-4 to get a little more convergence information at a minimal increase in run time.\
+\
+Running the convergence test with new default values of nits=4, dt0=2e-4, tfin=1e-2.\
+Before making any changes to the time-stepping, the results are:\
+dt/dt_s	error			order\
+1/50		& 6.60E-6		& --		\\\\\
+1/100		& 1.77E-6		& 1.90	\\\\\
+1/200		& 4.58E-7		& 1.95	\\\\\
+1/400		& --			& --		\\\\\
+\
+After changing the time-stepping, the results are:\
+dt/dt_s	error			order\
+1/50		& 6.98E-6		& --		\\\\\
+1/100		& 1.87E-6		& 1.90 	\\\\\
+1/200		& 4.84E-7		& 1.95 	\\\\\
+1/400		& --			& --		\\\\\
+\
+
+\b Conclusion:
+\b0  The new time-stepping method is still 2nd order and has nearly the same constant (the constant is only slightly larger, by about 5% maybe). Since the new method might generalize more easily, I will use it as long as I don\'92t encounter any new numerical instabilities.\
+
+\b \
+\
+Original convergence tests\
+
+\b0 These tests were run before updating the time-stepping rule to do the integrating factor with RK2 (before Feb 2018). I estimate nits = 3 takes about 16 minutes and nits = 7 takes about 4 hours.\
+Vanishing time for 01circ1024aa is about 1.8e-2\
+\
+Test 1\
+01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2\
+epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 0\
+This test is already in the paper.\
+\
+dt/dt_s	error			order\
+1/100		& 4.69E-6		& --		\\\\\
+1/200		& 1.26E-6		& 1.90	\\\\\
+1/400		& 3.26E-7		& 1.95	\\\\\
+1/800		& 8.28E-8		& 1.98	\\\\\
+1/1600	& 2.09E-8		& 1.99	\\\\\
+1/3200	& 5.26E-9		& 1.99	\\\\\
+1/6400	& --			& --		\\\\\
+\
+\
+Test 2\
+01circ256, nits = 7, dt0 = 1e-4, tfin = 1e-2\
+epsfac = 10, sigfac = 10, fixarea = 1, fixprdop = 0\
+\
+dt/dt_s	error			order\
+1/100		& 4.50E-7		& --		\\\\\
+1/200		& 1.15E-7		& 1.97	\\\\\
+1/400		& 2.89E-8		& 1.99	\\\\\
+1/800		& 7.25E-9		& 1.99	\\\\\
+1/1600	& 1.84E-9		& 1.98	\\\\\
+1/3200	& 5.45E-10		& 1.76	\\\\\
+1/6400	& --			& --		\\\\\
+\
+Test 3\
+01circ256, nits = 7, dt0 = 1e-5, tfin = 1e-3\
+epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1\
+Vanishing time is 3.5e-3, so a good stopping time is 1e-3.\
+\
+dt/dt_s	error			order\
+1/100		& 2.74E-8		& --		\\\\\
+1/200		& 6.93E-9		& 1.98	\\\\\
+1/400		& 1.74E-9		& 1.99	\\\\\
+1/800		& 4.37E-10		& 2.00	\\\\\
+1/1600	& 1.09E-10		& 2.00	\\\\\
+1/3200	& 2.73E-11		& 2.00	\\\\\
+1/6400	& --			& --		\\\\\
+\
+Test 4\
+20circ128, nits = 4, dt0 = 4e-4\
+For 20circ128, vanishing time is tvan = 1.7e-2.\
+tfin: originally was 1e-2, buts I had to change it to 4e-3 because of a problem with a body vanishing.\
+epsfac = 10, sigfac = 10, fixarea = 0, fixprdop = 1\
+Estimate run time: about 12 hours?\
+\
+dt/dt_s	error			order\
+1/10		& 	2.57E-5	& --		\\\\\
+1/20		& 	6.94E-6	& 1.89	\\\\\
+1/40		& 	1.87E-6	& 1.89	\\\\\
+1/80		& 	--		& --		\\\\\
+\
+Test with tfin = 1e-2 did not finish because the dimensions in shape_error did not match. Likely, this problem is due to a body vanishing in one run and not the other. Looking at the plots, this is a bad choice for stopping time because a body at the lower left just barely vanishes. This means it could vanish in some runs and not others.\
+Last run had a cpu time of 251 minutes.\
+Test with tfin = 4e-3 ran fine.\
+}
