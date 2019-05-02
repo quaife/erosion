@@ -202,26 +202,28 @@ of of the double-layer potential velocity is
  \nabla\D[\eeta] (\xx)=
 \left[
 \begin{matrix}
-\displaystyle\frac{\partial u_1(\xx)}{x_1} & \displaystyle\frac{\partial u_1(\xx)}{x_2}\\ \\
-\displaystyle\frac{\partial u_2(\xx)}{x_1} & \displaystyle\frac{\partial u_2(\xx)}{x_2}
+\displaystyle\frac{\partial u_1(\xx)}{\partial x_1} & 
+\displaystyle\frac{\partial u_1(\xx)}{\partial x_2}\\ \\
+\displaystyle\frac{\partial u_2(\xx)}{\partial x_1} & 
+\displaystyle\frac{\partial u_2(\xx)}{\partial x_2}
 \end{matrix}
 \right],
 \end{align}
 where 
 \begin{align}
-\frac{\partial u_1(\xx)}{x_1}&= \Re (v'[\tau_1](x)) + \Re (v''[\yy\cdot\eeta](x)) 
+\frac{\partial u_1(\xx)}{\partial x_1}&= \Re (v'[\tau_1](x)) + \Re (v''[\yy\cdot\eeta](x)) 
            -\Re (v'[\eta_1](x)) -x_1\Re (v''[\eta_1](x))-x_2\Re (v''[\eta_2](x)),\\
-\frac{\partial u_1(\xx)}{x_2}&= - \operatorname{Im} (v'[\tau_1](x)) 
+\frac{\partial u_1(\xx)}{\partial x_2}&= - \operatorname{Im} (v'[\tau_1](x)) 
       - \operatorname{Im} (v''[\yy\cdot\eeta](x)) 
        +x_1\operatorname{Im} (v''[\eta_1](x)) 
        -\Re (v'[\eta_2](x))
       +x_2\operatorname{Im} (v''[\eta_2](x)),\\
-\frac{\partial u_2(\xx)}{x_1}&= \Re (v'[\tau_2](x)) 
+\frac{\partial u_2(\xx)}{\partial x_1}&= \Re (v'[\tau_2](x)) 
       -\operatorname{Im} (v''[\yy\cdot\eeta](x)) 
        +\operatorname{Im} (v'[\eta_1](x))
        +x_1\operatorname{Im} (v''[\eta_1](x)) 
       +x_2\operatorname{Im} (v''[\eta_2](x)),\\
-\frac{\partial u_2(\xx)}{x_2}&= -\operatorname{Im} (v'[\tau_2](x)) 
+\frac{\partial u_2(\xx)}{\partial x_2}&= -\operatorname{Im} (v'[\tau_2](x)) 
       -\Re (v''[\yy\cdot\eeta](x)) 
        +x_1\Re (v''[\eta_1](x)) 
       +\operatorname{Im} (v'[\eta_2](x)
@@ -356,7 +358,7 @@ To numerically compute the completed double-layer potential, we discretize each 
   \item Efficiently find points that are too close for trapezoid
 
 {\color{red}
- Let $L_w$ be the length of the outer boundary and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer boundary to body,  let $d$ be the minimum distance between outer boundary and a point $x$ on the body $b$, we say $x$ is too close to wall if
+ Let $L_w$ be the length of the outer boundary and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer boundary to body,  let $d$ be the minimum distance between outer boundary and a point $x$ on the body $b$, we say $x$ is too close to outer boundary if
 $$d<\frac{L_{b}}{2\pi} + \alpha_1\frac{L_w}{N_\out}$$
 where $\alpha_1$ is a constant. 
 For criterion between two bodies, let $d$ be the distance between the centroid $a$ of the body $b_1$ and a point $x$ on the body $b_2$, we say they are too close if
