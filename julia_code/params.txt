@@ -1,7 +1,7 @@
 # Parameters
 
 # The data file for the initial geometry
-input_geos/60circ3_32.thlen	
+input_geos/60circ3_128.thlen	
 
 # Varied computational parameters
 1	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
