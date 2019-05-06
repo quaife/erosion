@@ -11,7 +11,7 @@ input_geos/60circ3_128.thlen
 15	# epsfac: epsilon = epsfac/npts
 10	# sigfac: sigma = sigfac/npts
 1e-4	# dt
-3e-4	# dtout: if zero, will round up to output at every step. 
+4e-4	# dtout: if zero, will round up to output at every step. 
 
 # Fixed physical parameters
 1	# fixpdrop: 1 to keep pressure drop fixed.

@@ -8,15 +8,13 @@
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
 \
-I have decided to do all runs with barycentric and with npts = 128. Early in 2019, I did a set of runs with npts = 256 and with trapezoid (since the barycentric code had not been developed yet). Reducing npts to 128 should reduce the size of the data files significantly.\
+- I have decided to do all runs with barycentric and with npts = 128. Early in 2019, I did a set of runs with npts = 256 and with trapezoid (since the barycentric code had not been developed yet). Reducing npts to 128 should reduce the size of the data files significantly.\
+- I also made nouter 4096 to mitigate the artificially high vortiticity near the walls.\
+- I also changed dtout to 4, to reduce the file sizes and to reduce the computational time a bit (do not have to compute rotated density as often).\
 \
-- Perhaps I should increase nouter even more to 4096; my tests with 60 bodies indicated high vorticity (perhaps artificially high) near the walls.\
 \
 \
-\
-- Perhaps I can change dt and dtout too. Remember that the larger dtout is compared to dt, the more time you save by not computing the rotated density function as often. As of now, dtout/dt = 3; perhaps it should be 4 or 5 or larger.\
-\
-Test the cases of nbods = 60, 80, 100 to settle on good parameter values. Once I have parameter values chosen, run all of the other simulations so that I can aggregate all of the data.\
+Plan: Test the cases of nbods = 60, 80, 100 to settle on good parameter values. Once I have parameter values chosen, run all of the other simulations so that I can aggregate all of the data.\
 \
 \
 \
