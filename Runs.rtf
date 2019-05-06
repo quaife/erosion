@@ -54,69 +54,29 @@ Conclusions:
 - The best data files to keep from this set are 128baryB
 \b \
 \
-60circ3-128baryC (bad)\
+Note:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 npts = 128, epsfac = 10, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1
-\b \
-
-\b0 cpu time 73 hours\
-Note: Several bodies get wiggly and numerically unstable when they are very small, especially near the end of the simulation.\
-Conclusion: This run is bad because epsfac is too small.
-\b \
-\
-60circ3-64baryC (bad)\
-
-\b0 npts = 64, epsfac = 10, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-cpu time 58 hours\
-Note: I see a few bodies that get wiggly and numerically unstable when they are very small.\
-Conclusion: This run is bad because epsfac is too small.\
-\
+\b0 \cf0 I am keeping only the data files for 60circ3-128baryB and 60circ3-64baryB on the hard drive (everything else is baked up on the ROCSTAR disk). I dropping the B in the name\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 60circ3-128baryB\
+\b \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 60circ3-128bary (previously labeled with B)\
 
-\b0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-cpu time 84 hours (SWEET!)\
-97 files\
+\b0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 84 hours, 197 MB\
 \
 
-\b 60circ3-64baryB\
+\b 60circ3-64bary (previously labeled with B)\
 
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-cpu time 61 hours (SWEET!)\
-99 files\
-\
-Note: Below here is when the barycentric code was very slow. Above are the runs after Shang fixed the code to be faster and thus more usable.\
+\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 61 hours, 147 MB\
 \
 
-\b 60circ3-64baryA\
-
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
-cpu time 200 hours\
-99 files\
-\
-
-\b 60circ3-32baryA\
-
-\b0 npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
-Shang fixed the code so there is no malloc error. However, the images of the run look kinda off.\
-cpu time 120 hours\
-103 files\
-\
-
-\b 60circ3-256\
+\b 60circ3-256trap (previously labeled without the trap)\
 
 \b0 Trying to get a case that runs smoothly without ibary.\
-npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 3e-4, nouter = 2048, ibary = 0\
+npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 3e-4, nouter = 2048, ibary = 0; 100 hours, 296 MB\
 The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
-cpu time 100 hours\
-96 files\
-\
-\
-\
-\
 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
