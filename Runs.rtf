@@ -2,7 +2,7 @@
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww14380\viewh13480\viewkind0
+\margl1440\margr1440\vieww15600\viewh19060\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\b\fs40 \cf0 Good parameter values\
@@ -33,6 +33,18 @@ epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \fs28 \cf0 \
+Summary: 
+\b0 In these tests, I use the initial geometry 60circ3 because it is the one that I found to most likely go unstable due to bodies that nearly touch the walls or each other. I am testing the new barycentric code, as well as the old trapezoid code, and also testing the values of the smoothing parameters.
+\b \
+\
+Conclusions:
+\b0 \
+- The barycentric algorithm seems to be absolutely essential. The test 60circ3-256 shows that without barycentric, I cannot get a simulation without numerical instability, even when the number of points is 256 and the smoothing parameters are quite large.\
+- The cpu time of the barycentric code is now very reasonable. The test 60circ3-128baryB shows that running barycentric with npts=128 is about the same computational time as running trapezoid with npts=256, even a little less (84 hours vs 100 hours)\
+- The best value of the main smoothing parameter is epsfac=15. The test 60circ3-128baryC shows that if the parameter is reduced to epsfac=10, numerical instabilities develop on the surface of some bodies.\
+- The best data files to keep from this set are 128baryB
+\b \
+\
 60circ3-128baryC (bad)\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
