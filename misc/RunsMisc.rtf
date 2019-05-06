@@ -2,11 +2,42 @@
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11480\viewh13260\viewkind0
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\margl1440\margr1440\vieww17060\viewh18720\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\f0\b\fs36 \cf0 \
+\f0\b\fs40 \cf0 Default parameter values
+\b0\fs28 \
+# Varied computational parameters\
+1	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.\
+1	# iffm: 1 to use the ffm, 0 to use direct.\
 \
+# Varied physical parameters\
+15	# epsfac: epsilon = epsfac/npts\
+10	# sigfac: sigma = sigfac/npts\
+1e-4	# dt\
+3e-4	# dtout: if zero, will round up to output at every step. \
+\
+# Fixed physical parameters\
+1	# fixpdrop: 1 to keep pressure drop fixed.\
+0	# fixarea: 1 to keep area fixed.\
+0.1	# tfin\
+\
+# Fixed computational parameters\
+10000	# maxl: the number of GMRES iterations.\
+2048	# nouter\
+\
+Note: Sometimes the smoothing needs to be increased by setting epsfac up to 30.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \ul \ulc0 Old parameter settings for multiple-body runs before 2019\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \ulnone 20 body case with fixpdrop: epsfac = 8, sigfac = 8, dt = 2e-4\
+6 body case (tight spacing) with fixpdrop: epsfac = 20, sigfac = 10, dt = 2e-4\
+50circ128: npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
+50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+\b\fs36 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf0 \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
@@ -22,23 +53,25 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 60circ3-64ibary\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4?, nouter = 2048, ibary = 1\
+\b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4?, nouter = 2048, ibary = 1\
 Get malloc error.\
 Trying the same run but with ibary = 0 does NOT give the malloc error.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b 60circ3-32ibary
+\b \cf0 60circ3-32ibary
 \b0 \
 npts = 32, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 1e-4?, nouter = 2048, ibary = 1\
 Malloc error.\
 Trying the same but with ibary = 1 does NOT give the malloc error.\
 %\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97%\
 \
-
-\b\fs36 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\fs32 \cf0 Failed runs from long ago (well before April 2019)
+\b\fs36 \cf0 \
+
+\fs32 Failed runs from long ago (well before April 2019)
 \fs28 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
@@ -58,4 +91,77 @@ Feb 28: Observation on failed runs.\
 Now I am attempting 60-70 bodies. I notice that, in the first time step, the number of GMRES iterations is consistently 2000, which perhaps indicates we are hitting the maximum allowed GMRES iterations, which would explain the loss of accuracy and consequential errors.
 \b \
 
-\b0 Note: For the 50-body runs, which did complete just fine, the number of GMRES iterations at the first few time steps is around 1,100 to 1,200. The fact that this simulation ran fine is consistent with my guess that the maximum allowed iterations is 2,000.}
+\b0 Note: For the 50-body runs, which did complete just fine, the number of GMRES iterations at the first few time steps is around 1,100 to 1,200. The fact that this simulation ran fine is consistent with my guess that the maximum allowed iterations is 2,000.\
+\
+\
+\
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs40 \cf0 \
+Runs used in 2018 JCP Paper
+\b0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs32 \cf0 \
+General Notes
+\b0\fs28 \
+All runs now scaling the smoothing term on mean(abs(tau))\
+All runs have these parameters unless otherwise specified:\
+dtout = 2e-4, tfin = 0.1, nouter = 1024, iffm = 1, fixarea = 0\
+\
+
+\b\fs32 Multi-body Runs
+\b0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 \
+06circ512a\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 npts = 512, epsfac = 20, sigfac = 10, dt = 2e-4, fixpdrop = 0\
+/85 MB, 160 files, 43 mins.
+\b \
+\
+06circ512bb\
+
+\b0 npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1\
+62/? MB, 142 files, 108 mins.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 \
+20circ
+\b0 \
+npts = 128, epsfac = 8, sigfac = 8, dt = 2e-4, fixpdrop = 1\
+31/53 MB, 87 files, 88 mins.\
+Vanishing time 1.7e-2
+\b \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 40circ
+\b0 \
+npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
+62/113 MB, 109 files, 4.9 hours.\
+Vanishing time 2.2e-2\
+\
+
+\b 50circ
+\b0 \
+npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
+62/113 MB, 109 files, 4.9 hours.\
+Vanishing time 3.1e-2\
+Reran with new time-stepping (50circN) and it looks the same.\
+\
+
+\b 50circ512p5\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1\
+361/ MB, 136 files, 3647 mins = 61 hours\
+This run is smooth. No signs of numerical instability are visible.\
+Vanishing time 2.7e-2}

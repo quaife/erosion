@@ -5,25 +5,34 @@
 \margl1440\margr1440\vieww15600\viewh19060\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\f0\b\fs40 \cf0 Good parameter values\
+\f0\b\fs40 \cf0 \
+Default parameter values
+\b0\fs28 \
+# Varied computational parameters\
+1	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.\
+1	# iffm: 1 to use the ffm, 0 to use direct.\
+\
+# Varied physical parameters\
+15	# epsfac: epsilon = epsfac/npts\
+10	# sigfac: sigma = sigfac/npts\
+1e-4	# dt\
+3e-4	# dtout: if zero, will round up to output at every step. \
+\
+# Fixed physical parameters\
+1	# fixpdrop: 1 to keep pressure drop fixed.\
+0	# fixarea: 1 to keep area fixed.\
+0.1	# tfin\
+\
+# Fixed computational parameters\
+10000	# maxl: the number of GMRES iterations.\
+2048	# nouter\
+\
+Note: Sometimes the smoothing needs to be increased by setting epsfac up to 30.\
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\b0\fs28 \cf0 \ul \ulc0 \
-General guidelines
-\b \ulnone \
-
-\b0 In most cases, keep the following parameters fixed:\
-tfin = 0.1, nouter = 1024, iffm = 1, fixarea = 0\
-Default values chosen in Feb 2019 (see CodeNotes) are:\
-epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
-\b \
-
-\b0 \
-\ul Multiple body runs before 2019\
-\ulnone 20 body case with fixpdrop: epsfac = 8, sigfac = 8, dt = 2e-4\
-6 body case (tight spacing) with fixpdrop: epsfac = 20, sigfac = 10, dt = 2e-4\
-50circ128: npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
-50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1\
+\cf0 \ul Old parameter settings for multiple-body runs before 2019\ulnone \
+50circ128: npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1; cpu time\
+50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1; cpu time\
 \
 \
 \
