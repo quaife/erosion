@@ -33,8 +33,8 @@ Note: Sometimes the smoothing needs to be increased by setting epsfac up to 30.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ulnone 20 body case with fixpdrop: epsfac = 8, sigfac = 8, dt = 2e-4\
 6 body case (tight spacing) with fixpdrop: epsfac = 20, sigfac = 10, dt = 2e-4\
-50circ128: npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
-50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1
+50circ128: npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1; cpu time 5 hours\
+50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1; cpu time 61 hours
 \b\fs36 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 \cf0 \
@@ -101,23 +101,26 @@ Now I am attempting 60-70 bodies. I notice that, in the first time step, the num
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs40 \cf0 \
-Runs used in 2018 JCP Paper
-\b0\fs28 \
+
+\fs48 Runs used in 2018 JCP Paper
+\b0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs32 \cf0 \
-General Notes
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs40 \cf0 General Notes
 \b0\fs28 \
 All runs now scaling the smoothing term on mean(abs(tau))\
 All runs have these parameters unless otherwise specified:\
 dtout = 2e-4, tfin = 0.1, nouter = 1024, iffm = 1, fixarea = 0\
 \
 
-\b\fs32 Multi-body Runs
-\b0\fs28 \
+\b\fs40 Multi-body Runs
+\b0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 \
+\b\fs28 \cf0 \
 06circ512a\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
@@ -164,4 +167,208 @@ Reran with new time-stepping (50circN) and it looks the same.\
 \b0 \cf0 npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1\
 361/ MB, 136 files, 3647 mins = 61 hours\
 This run is smooth. No signs of numerical instability are visible.\
-Vanishing time 2.7e-2}
+Vanishing time 2.7e-2\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs40 \cf0 Single Body Runs\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0\fs28 \cf0 a indicates fixpdrop = 0 (fixarea = 0)\
+b indicates fixpdrop = 1 (fixarea = 0)\
+c indicates fixarea = 1 (fixpdrop = 0)\
+Single letter indicates dt = 2e-4, double letter indicates dt = 1e-6\
+Usually I keep epsfac = 10, sigfac = 10.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 01circ1024aa\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 epsfac = 10, sigfac = 10, dt = 1e-6, dtout = 2e-4, fixarea = 0, fixpdrop = 0\
+20/29 MB, 90 files, 415 mins = 6.9 hours\
+Vanishing time 1.8e-2 (or exactly 0.017938)
+\b \
+
+\b0 The only small problem is drag is noticeably discrete at the very end.
+\b \
+
+\b0 Reran with new time-stepping (01circ1024aaN) and it looks the same.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 01circ1024aaa\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 epsfac = 10, sigfac = 10, dt = 1e-7, dtout = 1e-4, fixarea = 0, fixpdrop = 0\
+39/ MB, 180 files, 3950 mins = 66 hours\
+In this run, the drag looks better at the end.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 01circ1024bb\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 epsfac = 10, sigfac = 10, dt = 1e-6, dtout = 2e-5, fixarea = 0, fixpdrop = 1\
+38/60 MB, 174 files, 87 mins.
+\b \
+
+\b0 Vanishing time 3.5e-3\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 01circ1024c10
+\b0 \
+epsfac = 10, sigfac = 10, dt = 2e-4, fixarea = 1, fixpdrop = 0\
+109/166 MB, 501 files, 18 mins
+\b \
+01circ1024c5
+\b0 \
+epsfac = 5, sigfac = 5, dt = 2e-4, fixarea = 1, fixpdrop = 0\
+109/166 MB, 501 files, 23 mins\
+
+\b 01circ1024c20
+\b0 \
+epsfac = 20, sigfac = 20, dt = 2e-4, fixarea = 1, fixpdrop = 0\
+109/166 MB, 501 files, 22 mins
+\b \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs40 \cf0 Unused Runs
+\b0\fs28 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 \
+Stability test with the new timestepping: 50circ512iN
+\b0 \
+50circ512i: npts = 512, epsfac = 10, sigfac = 10, dt = 2e-4, dtout = 2e-4, fixpdrop = 1; 36 hours\
+
+\b Idea
+\b0 : Perhaps the new time-stepping method (RK2 for the integrating factor) is more stable than the previous version, so I ran a case for which the previous version showed numerical instability.\
+
+\b Conclusion
+\b0 : I still see a few numerical instabilities when certain bodies vanish, for example at time step 83. So the new time-stepping method does not appear any more stable or less stable than the old method.\
+
+\b \
+01circ256a
+\b0 \
+epsfac = 8, sigfac = 8, dt = 2e-4, fixarea = 0, fixpdrop = 0\
+/20 MB, 93 files, 2 mins\
+
+\b 01circ512a
+\b0 \
+epsfac = 10, sigfac = 10, dt = 2e-4, fixarea = 0, fixpdrop = 0\
+14/23 MB, 93 files, 2.4 mins mins\
+
+\b 01circ1024a
+\b0 \
+epsfac = 10, sigfac = 10, dt = 2e-4, fixarea = 0, fixpdrop = 0\
+20/29 MB, 89 files, 3.3 mins.\
+\
+
+\b 01circ512aa\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 epsfac = 10, sigfac = 10, dt = 1e-6, fixarea = 0, fixpdrop = 0\
+14/23 MB, 90 files, 284 mins = 4.7 hours\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 01circ512c10
+\b0 \
+npts = 512, epsfac = 10, sigfac = 10, dt = 2e-4, fixarea = 1, fixpdrop = 0\
+76/130 MB, 501 files, 13 mins\
+
+\b 01circ512cc10\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 Same as 01circ512c10 but dt = 1e-6\
+76/ MB, 501 files, 1524 mins = 25.4 hours\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 01circ1024cc10\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 Same as 01circ1024c10 but dt = 1e-6\
+109/ MB, 501 files, 2260 mins = 38 hours\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 Note
+\b0 : For the fixed area case, change dt from 2e-4 to 1e-6 (i.e. comparing c vs cc) makes a barely perceptible change. \
+\
+
+\b 06circ512b
+\b0 \
+npts = 512, epsfac = 20, sigfac = 10, dt = 2e-4, fixpdrop = 1\
+62/90 MB, 143 files, 63 mins.\
+Vanishing time 2.8e-2
+\b \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 There is a very slight numerical instability at time 137\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 30circ
+\b0 \
+npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
+45/81 MB, 98 files, 156 mins.\
+The bodies near the bottom vanish sooner than those at the top.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 \ul \ulc0 50 body runs
+\b0 \ulnone \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 50circ512p1\
+
+\b0 npts = 512, epsfac = 20, sigfac = 10, dt = 4e-5, fixpdrop = 1\
+359/ MB, 134 files, 8017 mins = 134 hours = 5.6 days\
+This run looks almost entirely good, except for one strange body at 117 and possibly 110. \
+Unfortunately, it also gives a few spikes in the drag and a few steps at which the vorticity mesh is bad.\
+
+\b 50circ512p6\
+
+\b0 npts = 512, epsfac = 25, sigfac = 15, dt = 1e-4, fixpdrop = 1\
+360/ MB, 135 files, 3649 mins = 61 hours\
+This run is smooth. No signs of numerical instability are visible.\
+I simply decided to use p5 instead of this one.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b\fs40 \cf0 Good parameter values\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0\fs28 \cf0 \ul General guidelines
+\b \ulnone \
+
+\b0 In most cases, keep the following parameters fixed:\
+dtout = 2e-4, tfin = 0.1, nouter = 1024, iffm = 1, fixarea = 0\
+Good default values are:\
+epsfac = 10, sigfac = 10, dt = 2e-4
+\b \
+
+\b0 \
+\ul Multiple body runs\
+\ulnone 20 body case with fixpdrop: epsfac = 8, sigfac = 8, dt = 2e-4\
+6 body case (tight spacing) with fixpdrop: epsfac = 20, sigfac = 10, dt = 2e-4\
+50circ128: npts = 128, epsfac = 10, sigfac = 10, dt = 2e-4, fixpdrop = 1\
+50circ512: npts = 512, epsfac = 30, sigfac = 10, dt = 1e-4, fixpdrop = 1\
+\
+\ul Convergence test\
+\ulnone I usually use 01circ256, with these values:\
+For fixpdrop = 0, tfin = 0.01\
+For fixpdrop = 1, tfin = 0.002\
+\
+\ul Single body\
+\ulnone epsfac = 10, sigfac = 10, dt = 2e-4 or smaller.\
+- For 01circ256, you could use epsfac = 8, sigfac = 8, but this gives numerical instability for 512 and 1024.\
+- For fixed area, keep all of the parameters the same. In particular, tfin = 0.1 is sufficient.}
