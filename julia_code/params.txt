@@ -19,5 +19,5 @@ input_geos/60circ3_32.thlen
 0.1	# tfin
 
 # Fixed computational parameters
-10000	# maxl: the number of GMRES iterations.
-2048	# nouter
+8000	# maxl: the number of GMRES iterations.
+4096	# nouter

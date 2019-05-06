@@ -10,15 +10,33 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+Conclusions of the barycentric tests in April and May 2019\
 
-\b0 \cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b0 Summary: In these tests, I use the initial geometry 60circ3 because it is the one that I found to most likely go unstable due to bodies that nearly touch the walls or each other. I am testing the new barycentric code, as well as the old trapezoid code, and also testing the values of the smoothing parameters.
+\b \
+\
 
-\b \cf0 Testing the new barycentric code April 2019\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b0 Conclusions:\
+- The barycentric algorithm seems to be absolutely essential. The test 60circ3-256 shows that without barycentric, I cannot get a simulation without numerical instability, even when the number of points is 256 and the smoothing parameters are quite large.\
+- The cpu time of the barycentric code is now very reasonable. The test 60circ3-128baryB shows that running barycentric with npts=128 is about the same computational time as running trapezoid with npts=256, even a little less (84 hours vs. 100 hours)\
+- The best value of the main smoothing parameter is epsfac=15. The test 60circ3-128baryC shows that if the parameter is reduced to epsfac=10, numerical instabilities develop on the surface of some bodies.\
+- The best data files to keep from this set are 128baryB (and I dropped the B in the label once I got rid of the others).
+\b \
 
-\b0 \cf0 I ran a number of tests on the new code in April 2019. The main things I tested were:\
+\b0 \
+Viewing in DataTank:
+\b \
+
+\b0 - The vorticity field for trap looks absolutely crazy. The vorticity fields for both bary runs looks much more normal, with just a few regions of perhaps unrealistic vorticity near the walls, suggesting that maybe we should increase router to 4096.
+\b \
+
+\b0 - Comparing the two bary runs, the run with npts=128 does have noticeable finer features. Everything else, like the plots of area fraction, drag, resistivity, anisotropy, look about the same. Therefore, lets use the 128 data set.\
+\
+\
+
+\b Testing the new barycentric code April 2019\
+
+\b0 I ran a number of tests on the new code in April 2019. The main things I tested were:\
 - The new Barycentric code, implemented by Shang and Bryan.\
 - An cpu time issue, in which the cpu time for output was too long compared to the time for the regular time steps. This issue only arose on my laptop and not on my Mac mini.\
 - Initially, there was a malloc error given by the barycentric code (ibary=1) sometimes, but this issue was fixed.\
@@ -27,12 +45,10 @@
 
 \b0 Detailed notes of my tests are in misc/CodeNotesMisc.rtf\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \cf0 Optimal parameters for simulations\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\b Optimal parameters for simulations\
 
-\b0 \cf0 Feb 19, 2019\
+\b0 Feb 19, 2019\
 I am planning to run a systematic set of multi body simulations with 10-100 bodies and a few different area fractions. I have already run a few preliminary simulations with 10-30 bodies, using area fraction = 0.5, dtout = 2e-4, and using either 512 or 256 points per body. I foresee a problem with very large folder sizes; for the 30-body case with 512, the folder is about 500 MB (with 150 files and taking 30 hours to run). By using 256 points, I can reduce the folder size (by close to half) and also reduce the run time by about half; also, by making dtout larger I can reduce the file size. Thus, I have decided to use the following default parameters:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 \ul \ulc0 Default parameters\ulnone \
