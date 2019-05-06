@@ -32,9 +32,28 @@ epsfac = 10-30, sigfac = 10, dt = 1e-4, dtout = 3e-4
 \b\fs32 \cf0 Tests from April 2019, many with barycentric\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0\fs28 \cf0 \
+\fs28 \cf0 \
+60circ3-128baryC (bad)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b 60circ3-128baryB\
+\b0 \cf0 npts = 128, epsfac = 10, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1
+\b \
+
+\b0 cpu time 73 hours\
+Note: Several bodies get wiggly and numerically unstable when they are very small, especially near the end of the simulation.\
+Conclusion: This run is bad because epsfac is too small.
+\b \
+\
+60circ3-64baryC (bad)\
+
+\b0 npts = 64, epsfac = 10, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
+cpu time 58 hours\
+Note: I see a few bodies that get wiggly and numerically unstable when they are very small.\
+Conclusion: This run is bad because epsfac is too small.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 60circ3-128baryB\
 
 \b0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1\
 cpu time 84 hours\
