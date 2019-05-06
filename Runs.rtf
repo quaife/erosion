@@ -61,10 +61,15 @@ Note:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b \cf0 \
-60circ3-128bary (previously labeled with B)\
+Viewing in DataTank:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 84 hours, 197 MB\
+\b0 \cf0 Viewing these runs in DataTank, the vorticity field for trap looks absolutely crazy. The vorticity fields for both bary runs looks much more normal, with just a few regions of perhaps unrealistic vorticity near the walls, suggesting that maybe we should increase router to 4096.
+\b \
+\
+60circ3-128bary (previously labeled with B)\
+
+\b0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 84 hours, 197 MB\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
@@ -80,8 +85,8 @@ Note:\
 
 \b0 \cf0 Trying to get a case that runs smoothly without ibary.\
 npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 3e-4, nouter = 2048, ibary = 0; 100 hours, 296 MB\
-The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
-\
+- The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
+- Viewing in DataTank, the vorticity field is absolutely crazy at early times.\
 \
 
 \b\fs40 \
