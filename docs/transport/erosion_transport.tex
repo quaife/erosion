@@ -347,7 +347,11 @@ where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fast Summation Methods}
 \label{sec:fmm}
+
 {\color{red}
+To numerically approach the nearly singular integraton by using Barycentric quadrature rule, 
+
+
 To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer boundary with $N_\out$ points.
 }
 \begin{itemize}
@@ -359,18 +363,27 @@ To numerically compute the completed double-layer potential, we discretize each 
 
 {\color{red}
  Let $L_w$ be the length of the outer boundary and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer boundary to body,  let $d$ be the minimum distance between outer boundary and a point $x$ on the body $b$, we say $x$ is too close to outer boundary if
-$$d<\frac{L_{b}}{2\pi} + \alpha_1\frac{L_w}{N_\out}$$
+\begin{equation}\label{eqn:Cw2b}
+d<\frac{L_{b}}{2\pi} + \alpha_1\frac{L_w}{N_\out}
+\end{equation}
 where $\alpha_1$ is a constant. 
 For criterion between two bodies, let $d$ be the distance between the centroid $a$ of the body $b_1$ and a point $x$ on the body $b_2$, we say they are too close if
-$$d<\frac{L_{b_1}}{2\pi}+\frac{L_{b_2}}{2\pi}+\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)$$
+\begin{equation}\label{eqn:Cb2b}
+d<\frac{L_{b_1}}{2\pi}+\frac{L_{b_2}}{2\pi}+\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)
+\end{equation}
 where $\alpha_2$ is a constant. 
 
 }
   \item Subtract off trapezoid rule directly
   \item Add on Barycentric directly
-\end{itemize}
-{\color{red} Discussion of the choices of $\alpha_1$ and $\alpha_2$ with respect to accuracy and  efficiency?}
 
+{\color{red} \item Discussion of the choices of $\alpha_1$ and $\alpha_2$ with respect to accuracy and  efficiency
+
+To find the suitable values of $\alpha_1$ and $\alpha_2$ in~\eqref{eqn:Cw2b} and \eqref{eqn:Cb2b}, we set $\alpha_1=\alpha_2=1, 2, 3$, and $4$ to test the criteria on a 20-body problem with $N_\out = 1024$ and $N_\iin = 128, 256$, and $512$. To check the accuracy of the simulations, we use (?)
+To see how efficient our code is, we record the cpu time for each step.
+
+}
+\end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Results}
 \label{s:results}
@@ -389,10 +402,14 @@ horizontal walls.  This can be compared to some of the
 results~\cite{mit-spa2017}.  Do for a variety of distances to
 demonstrate how close we can put it to the wall with no need to increase
 the resolution}
+{\color{red} We first consider a circular body in a shear flow. The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. The velocity of flow form the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. Let the radius of the body be $r$, the length of the body be $L$, $N_\iin$ and $N_\out$ be the number discretization points on the body and wall respectively, $h=L/N_\iin$ be the resolution mesh size of the body, and $d$ be the initial minimum distance from body to wall. 
+To investigate the shape of eroding body when it is close to wall, we set $r=0.4$, $N_\iin=256$, and $N_\out=1024$ with respect to three different $d=h, h/2$, and $ h/10$. 
 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 nearly touching bodies}
-
+{\color{red} To 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{50 nearly touching bodies}
 
