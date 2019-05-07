@@ -7,7 +7,7 @@
 \newcommand{\D}{\mbox{${\mathcal D}$}}
 
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
-
+\usepackage{float}
 \input{preambles.tex}
 \begin{document}
 
@@ -407,21 +407,49 @@ the resolution}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r1h_shear}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r0d5h_shear}
 \includegraphics[width = 0.35 \textwidth]{./figs/1b_0d4r0d1h_shear}
-\caption{A single body eroding in Stokes flow. Color indicates the local shear stress on the body. In this simulation, we use three the minimum body-to-wall initial distance $d=h$(left), $h/2$(middle), and $h/10$(right) with $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt$, and smoothing parameters of $\eps $ and $\sigma $.}
-\label{01bodseq} 
+\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$(left), $h/2$(middle), and $h/10$(right) with $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt$, and smoothing parameters of $\eps $ and $\sigma $.}
+\label{} 
 \end{center}
 \end{figure}
-{\color{red} We first consider a circular body in a shear flow. The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. The velocity of flow form the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. Let the radius of the body be $r$, the length of the body be $L$, $N_\iin$ and $N_\out$ be the number of discretization points on the body and wall respectively, $h=L/N_\iin$ be the resolution mesh size of the body, and $d$ be the minimum initial distance from body to wall. 
+{\color{red} We first consider a single circular body in a shear flow. The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. Let the radius of the body be $r$, the length of the body be $L$, $N_\iin$ and $N_\out$ be the number of discretization points on the body and wall respectively, $h=L/N_\iin$ be the resolution mesh size of the body, and $d$ be the minimum initial distance from body to wall. 
 To investigate the shape of eroding body when it is close to wall, we set $r=0.4$, $N_\iin=256$, and $N_\out=1024$ with respect to three different $d=h, h/2$, and $ h/10$. 
 
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_1}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_101}\\
+
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_201}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_301}
+\caption{Erosion of 20 nearly touching bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps $ and $\sigma $.}
+\label{} 
+\end{center}
+\end{figure}
 \subsection{20 nearly touching bodies}
-{\color{red} To 
+{\color{red} 
+By using Barycentric quadrature rule, we are able to capture the details in the fluid when wall and bodies or body and bodies are close to each other. The first nearly touching bodies case is 20 bodies in a Hagen-Poiseuille flow. The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=(1+x_2)(1-x_2)$. The number of discretization points $N_\iin$ on the bodies is 256 and the number of discretization points $N_\out$ on the outer boundary is 1024. 
 }
+
+\begin{figure}[H]
+\begin{center}
+\caption{The trajectories of tracers in the fluid with 20 bodies. The 6 snapshots are evenly spaced in time.}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\caption{The tortuosity of the 20 nearly touching bodies}
+\end{center}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{50 nearly touching bodies}
-
+{\color{red}
+The first nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 \label{s:conclusions}
