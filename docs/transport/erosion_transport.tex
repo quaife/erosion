@@ -1,13 +1,5 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
-\newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}} \newcommand{\secref}[1]{\ref{#1}}
-\newcommand{\Cdb}{\mbox{$\mathbb{C}$}}
-\newcommand{\Rdb}{\mbox{$\mathbb{R}$}}
-
-\newcommand{\D}{\mbox{${\mathcal D}$}}
-
-\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
-\usepackage{float}
 \input{preambles.tex}
 \begin{document}
 
@@ -15,10 +7,7 @@
 
 
 % OTHER TITLE POSSIBILITIES
-% Viscous Erosion in Porous Media (change 'in' to 'of'?)
-% A fast and accurate method for viscous erosion of a 2D porous medium
-% A boundary-integral method for viscous erosion of a porous medium
-% A computational framework to simulate the viscous erosion of a porous medium
+% ???
 
 \author[SH]{Shang-Huan Chiu}
 \author[Nick]{M.~Nicholas J.~Moore}
@@ -96,17 +85,47 @@ double-layer potential is
 \begin{align}
   \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
-    \eeta(\yy) ds_\yy,
+    \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
+  \label{eqn:stokesDLP}
 \end{align}
-where $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\eeta$ is an unknown
-density function.  The double-layer potential itself can not represent
-all solutions of the incompressible Stokes equations.  Therefore, we
-complete the integral equation formulation following the work of Power
-and Miranda~\cite{pow-mir1987}.  The completion depends on the
-Stokeslets and rotlets
+where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
+normal at $\yy$, and $\eeta$ is an unknown density function.  The Stokes
+double-layer potential can be as the sum of the Laplace double-layer
+potential and its gradient.  By identifying $\xx,\yy \in \RR^2$ with the
+points $x,y \in \CC$, the Laplace double-layer potential for a
+real-valued density function $\eta$ can also be written as the real part
+of the Cauchy integral
+\begin{align}
+  \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
+    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy = 
+  \Re \left( \frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{x - y} \, dy \right).
+\end{align}
+Therefore, the Stokes double-layer potential can be written in terms of
+Cauchy integrals and its first derivative.  In addition, we also require
+expressions for the derivative of the velocity field which can be
+written in terms of a Cauchy integral and its first two derivatives.
+Therefore, we introduce the notation
+\begin{align}
+  \label{eqn:cauchy}
+  v[\eta](x) = \frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{x - y} \, dy,  \quad
+  v'[\eta](x) = -\frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{(x - y)^2} \, dy, \quad
+  v''[\eta](x) = \frac{1}{\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{(x - y)^3} \, dy.
+\end{align}
+To simplify notation, whenever it will not cause confusion, we exclude
+$\tau$ and instead write $v(x)$, $v'(x)$, and $v''(x)$.
+
+The Stokes double-layer potential itself can not represent all solutions
+of the incompressible Stokes equations.  Therefore, we complete the
+integral equation formulation following the work of Power and
+Miranda~\cite{pow-mir1987}.  The completion depends on the Stokeslets
+and rotlets
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
-    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \qquad
+    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \quad
   R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
 \end{align}
 where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
@@ -122,137 +141,101 @@ where the density function, Stokeslets, and rotlets satisfy
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
-    \NN_0(\eeta](\xx), \qquad \xx \in \bd\Omega, \\
-  \lambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-    \eeta(\yy) ds_\yy \qquad \ell = 1,\ldots,M, \\
+    \NN_0(\eeta](\xx), \quad \xx \in \bd\Omega, \\
+  \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
+    \eeta(\yy) ds_\yy \quad \ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
-    (\yy - \cc_\ell)^\perp  \eeta(\yy) ds_\yy 
-    \qquad \ell = 1,\ldots,M.
+    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy) ds_\yy 
+    \quad \ell = 1,\ldots,M,
 \end{align}
-
-We will apply a quadrature rule that requires that the double-layer
-potential representations of the velocity, shear stress, pressure, and
-vorticity are written in terms of the Cauchy integral and its first two
-derivatives
-\begin{align}
-  \label{eqn:Cauchy}
-  v(x) &= \frac{1}{2\pi i} \int_\Gamma 
-    \frac{\tau(y)}{x - y} dy, \\
-  v'(x) &= -\frac{1}{2\pi i} \int_\Gamma 
-    \frac{\tau(y)}{(x - y)^2} dy, \\
-  v''(x) &= \frac{2}{2\pi i} \int_\Gamma 
-    \frac{\tau(y)}{(x - y)^3} dy.
-\end{align}
+where $\ff$ is the prescribed Dirichlet boundary condition of the
+velocity on the outer wall and eroding bodies.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cauchy Integral Representation of the Velocity}
-The Stokes double-layer potential can be written as
+\subsection{Cauchy Integral Representation of the Double-Layer
+Potential}
+The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
+decomposed as
 \begin{align}
   \DDD[\eeta](\xx) &= 
     \frac{1}{2\pi} \int_{\Gamma} 
-      \frac{\nn}{\rho^2} (\rr \cdot \eeta) ds_\yy + 
+      \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
     \frac{1}{2\pi} \nabla \int_{\Gamma}
-      \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta)ds_\yy \\
+      \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
     &- \frac{1}{2\pi} x_1 \nabla \int_{\Gamma}
-      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) ds_\yy -
+      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
     \frac{1}{2\pi} x_2 \nabla \int_{\Gamma}
-      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy,
+      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
 \end{align}
-and this formulation is convenient since each of the integrals can be
-written as a Laplacian double-layer potential,
+All these integrals but the first are a gradient of a Laplace layer
+potential with the density functions $\eta_1$, $\eta_2$, and $\yy \cdot
+\eeta$.  In addition, each component of the first integral can be
+written as a Cauchy integral with a complex-valued
+densities~\cite{bar-wu-vee2015}.  Therefore, the Stokes double-layer
+potential can be written as five Cauchy integrals and their derivatives
+with the density functions $\yy \cdot \eeta$, $\eta_1$, and $\eta_2$.
+The individual velocity components are
 \begin{align}
-  \DD[\tau](\xx) = -\frac{1}{2\pi} \int_{\Gamma} \pderiv{}{\nn_\yy}
-    \log(\rho) \tau(\yy) ds_\yy.
-\end{align}
-Finally, by identifying $\RR^2$ with $\CC$, for purely real $\tau$, the
-Laplacian double-layer potential can be written as the real part of a
-Cauchy integral
-\begin{align}
-  \DD[\tau](x) = \Re (v(x)),
-  \qquad \text{where} \qquad
-  v(x) = \frac{1}{2\pi i} \int_\Gamma \frac{\tau(y)}{x - y} dy.
-\end{align}
-Therefore, the Stokes double-layer potential can be written as five
-Cauchy integrals and their derivatives with the density functions $\yy
-\cdot {\color{red}\eeta}$, $\eta_1$, and $\eta_2,$
-{\color{red}
-\begin{align}
- u_1(\xx)&= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
-           -x_1\Re (v'[\eta_1](x)) -x_2\Re (v'[\eta_2](x)),\\
- u_2(\xx)&= \Re (v[\tau_2](x)) - \operatorname{Im} (v'[\yy\cdot\eeta](x)) 
-       +x_1\operatorname{Im} (v'[\eta_1](x)) 
-      +x_2\operatorname{Im} (v'[\eta_2](x)),
+  u_1(\xx) &= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
+           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)),\\
+  u_2(\xx) &= \Re (v[\tau_2](x)) - \Im (v'[\yy\cdot\eeta](x)) 
+       +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
 \end{align}
 where
-\begin{align*} 
-\DD[\eeta](\xx)=(u_1(\xx),u_2(\xx)), \,\, 
-\xx=(x_1,x_2), \,\,
-\tau_1=(\eta_1+i\eta_2)\frac{\Re \, n}{n}, \text{ and }
-\tau_2=(\eta_1+i\eta_2)\frac{\operatorname{Im} n}{n}.
-\end{align*}
-}
+\begin{align} 
+  \tau_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad \text{and} \quad
+  \tau_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
+\end{align}
+and $n \in \CC$ is the complex representation of $\nn \in \RR^2$
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Shear Stress}
-Since the rate of erosion is proportional to the shear stress, we also
-require the gradient of the Stokes double-layer potential $\nabla
-\DDD[\eeta](\xx)$.  Using the Cauchy integral formulation, the gradient
-of of the double-layer potential velocity is
-{\color{red}
+To compute the rate of erosion, we must compute the shear stress of the
+double-layer potential
 \begin{align}
- \nabla\D[\eeta] (\xx)=
-\left[
-\begin{matrix}
-\displaystyle\frac{\partial u_1(\xx)}{\partial x_1} & 
-\displaystyle\frac{\partial u_1(\xx)}{\partial x_2}\\ \\
-\displaystyle\frac{\partial u_2(\xx)}{\partial x_1} & 
-\displaystyle\frac{\partial u_2(\xx)}{\partial x_2}
-\end{matrix}
-\right],
+  \tau(\xx) = \left(\nabla \DDD[\eeta](\xx) + 
+    \nabla^T \DDD[\eeta](\xx) \right) \nn \cdot \ss,
 \end{align}
-where 
+where $\nn$ and $\ss$ are the unit normal and tangent vectors at $\xx$,
+respectively.  Each term of the gradient of the velocity field can be
+written in terms of Cauchy integrals as
+\todo[inline]{not clear enough how we got these equations.  Need to show
+how we do one of them and say the rest are calculated similarly.}
 \begin{align}
-\frac{\partial u_1(\xx)}{\partial x_1}&= \Re (v'[\tau_1](x)) + \Re (v''[\yy\cdot\eeta](x)) 
-           -\Re (v'[\eta_1](x)) -x_1\Re (v''[\eta_1](x))-x_2\Re (v''[\eta_2](x)),\\
-\frac{\partial u_1(\xx)}{\partial x_2}&= - \operatorname{Im} (v'[\tau_1](x)) 
-      - \operatorname{Im} (v''[\yy\cdot\eeta](x)) 
-       +x_1\operatorname{Im} (v''[\eta_1](x)) 
-       -\Re (v'[\eta_2](x))
-      +x_2\operatorname{Im} (v''[\eta_2](x)),\\
-\frac{\partial u_2(\xx)}{\partial x_1}&= \Re (v'[\tau_2](x)) 
-      -\operatorname{Im} (v''[\yy\cdot\eeta](x)) 
-       +\operatorname{Im} (v'[\eta_1](x))
-       +x_1\operatorname{Im} (v''[\eta_1](x)) 
-      +x_2\operatorname{Im} (v''[\eta_2](x)),\\
-\frac{\partial u_2(\xx)}{\partial x_2}&= -\operatorname{Im} (v'[\tau_2](x)) 
-      -\Re (v''[\yy\cdot\eeta](x)) 
-       +x_1\Re (v''[\eta_1](x)) 
-      +\operatorname{Im} (v'[\eta_2](x)
-      +x_2\Re (v''[\eta_2](x)).
+  \pderiv{u_1}{x_1}(\xx) &= \Re (v'[\tau_1](x)) + 
+    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
+    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
+  \pderiv{u_1}{x_2}(\xx) &= - \Im (v'[\tau_1](x)) - 
+    \Im (v''[\yy\cdot\eeta](x)) + \Im (v''[\eta_1](x)) - 
+    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
+  \pderiv{u_2}{x_1}(\xx) &= \Re (v'[\tau_2](x)) - 
+    \Im (v''[\yy\cdot\eeta](x)) + \Im (v'[\eta_1](x)) +
+    x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
+  \pderiv{u_2}{x_2}(\xx) &= -\Im (v'[\tau_2](x)) - 
+    \Re (v''[\yy\cdot\eeta](x)) + x_1\Re (v''[\eta_1](x)) +
+    \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
-}
-%\begin{align}
-%  \nabla\D[\eeta](\xx) = \frac{1}{2\pi}\nabla\int_{\Gamma}
-%    &\frac{\nn}{\rho^2}(\rr \cdot \eeta)ds_\yy +
-%  \frac{1}{2\pi}\nabla\nabla\int_{\Gamma}
-%    \frac{\rr \cdot \nn}{\rho^2}({\yy} \cdot\eeta) ds_y \\
-%  &- \frac{1}{2\pi} \nabla x_1 \nabla \int_{\Gamma}
-%      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) ds_\yy -
-%  \frac{1}{2\pi} \nabla x_2 \nabla \int_{\Gamma}
-%      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) ds_\yy.
-%\end{align}
-Then, the deformation tensor can be written in terms of Cauchy integrals
-\todo[inline]{For S-H to fill in}
-\begin{align}
-  \ssigma = \frac{1}{2} 
-    \left(\nabla \DDD[\eeta] + \nabla^T \DDD[\eeta] \right) 
-      \nn \cdot \ss = \ldots
-\end{align}
+\todo[inline]{S-H: last term seems to be missing an $x_1$.  Some of the
+other terms seem to be a bit off.  It might be partially my fault from
+when I updated some of the tex.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Vorticity}
+Having calculated all derivatives of the double-layer potential, the
+vorticity can written in terms of Cauchy integrals.  In particular
+\begin{align}
+  \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
+\end{align}
+\todo[inline]{For S-H to fill in}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Pressure}
+The pressure of the double-layer potential is
+\begin{align}
+  p(\xx) = -\frac{1}{\pi} \int_{\bd\Omega} \frac{1}{\rho^2}
+    \left(1 - 2 \frac{\rr \otimes \rr}{\rho^2} \right) \nn
+    \cdot \eeta(\yy) \, ds_\yy.
+\end{align}
 
 
 
@@ -279,36 +262,40 @@ The tortuosity measures ...
 \section{Numerical Methods}
 \label{s:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-A standard discretization of these equations approximates the
-double-layer potential with the trapezoid rule.  This quadrature rule is
-appropriate if the integrands are sufficiently smooth, where the
+We are interested in computing the velocity, shear stress, vorticity,
+and pressure of the Stokes double-layer potential.  We have shown that
+all these quantities can be written in terms of Cauchy integrals and its
+first two derivatives.  Therefore, we require quadrature methods to
+evaluate the expressions in equation~\eqref{eqn:cauchy}.  The trapezoid
+rule is appropriate if the integrands are sufficiently smooth, where the
 smoothness depends on the number of discretization points.  However,
 given a fixed resolution, if the target point $\xx$ is too close to $\bd
-\Omega$, the trapezoid rule becomes inaccurate and the overall method
-becomes unstable.  There have been a variety of near-singular
-integration schemes developed, and we extend a method first outlined by
-Barnett et al.~\cite{bar-wu-vee2015} which we will call the {\em
-Barycentric quadrature rule}.  Here, we briefly describe this quadrature
-method, and then derive a necessary extension to simulate erosion.
+\Omega$, the trapezoid rule becomes inaccurate and the overall method is
+unstable.  There have been a variety of near-singular integration
+schemes developed, and we extend a method first outlined by Barnett et
+al.~\cite{bar-wu-vee2015} which we will call the {\em Barycentric
+quadrature rule}.  Here, we briefly describe this quadrature method, and
+then derive a necessary extension to simulate erosion.
 
-Since we are able to write on all our quantities of interest in terms of
-a Cauchy integral and its derivatives, we only require a near-singular
-integration method for equation~\eqref{eqn:Cauchy}.  A quadrature scheme
-for $v(x)$, for a target point $x$, is
+The Barycentric quadrature rule starts with a general quadrature rule
+for $v(x)$
 \begin{align}
   v(x) \approx \frac{1}{2\pi i} \sum_{j=1}^N 
     w_j \frac{\tau(y_j)}{x - y_j},
 \end{align}
 where $w_j$ are the quadrature weights and $y_j \in \Gamma$ are the
-quadrature nodes.  If the trapezoid rule is used, the quadrature rule
-has spectral accuracy.  However, for a fixed resolution $N$, the error
-grows without bound as $x$ approaches $\Gamma$.  As outline by Barnett
-et al.~\cite{bar-wu-vee2015}, the error is uniformly bounded if the
+quadrature nodes.  We will use the trapezoid rule because of its
+superior accuracy when $x$ is sufficiently far from $\Gamma$.  However,
+for a fixed resolution $N$, the error grows without bound as $x$
+approaches $\Gamma$.  As outline by Barnett et
+al.~\cite{bar-wu-vee2015}, the error is uniformly bounded if the
 Barycentric quadrature rule
 \begin{align}
   v(x) \approx \frac{\sum\limits_{j=1}^N \frac{v_j^-}{y_j-x}w_j}
-    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j},  \qquad
-  v'(x) \approx \frac{\sum\limits_{j=1}^N \frac{v_j^- - v(x)}{(y_j - x)^2}w_j}
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}
+  \quad \text{and} \quad
+  v'(x) \approx \frac{\sum\limits_{j=1}^N 
+    \frac{v_j^- - v(x)}{(y_j - x)^2}w_j}
     {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, 
 \end{align}
 is used, where $x$ is a target point that is interior to $\Gamma$,
@@ -317,12 +304,11 @@ exist if $x$ is exterior to $\Gamma$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature for $v''(x)$}
-In order to simulate erosion, we require the deformation gradient which
-means that a quadrature rule for $v''(x)$ is required.  Using the same
-techniques that are used to compute $v(x)$ and $v'(x)$, a Barycentric
-quadrature rule for the second derivative can be constructed using the
-identities
-{\color{red}
+While accurate quadrature rules for $v(x)$ and $v'(x)$ have already been
+developed~\cite{bar-wu-vee2015}, this work requires a similar quadrature
+rule for $v''(x)$.  We mimic the approach developed
+in~\cite{bar-wu-vee2015} by starting with the identities
+\todo[inline]{S-H: How do we get these identities?}
 \begin{alignat}{3}
   0 &= \frac{1}{2\pi i}\int_{\Gamma} 
     \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
@@ -330,6 +316,7 @@ identities
     \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
     {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
 \end{alignat}
+{\color{red}
 and the quadrature formulations are
 \begin{alignat}{3}
   v''(x) &\approx
