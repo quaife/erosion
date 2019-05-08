@@ -7,9 +7,28 @@
 
 \f0\fs28 \cf0 Note: For default parameter values, see the file params.txt on the repo.
 \b\fs40 \
+
+\b0\fs28 \
+
+\b\fs40 Runs from May 2019\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0\fs28 \cf0 \
+\fs28 \cf0 Note: 
+\b0 All of these runs use barycentric with the following default parameters (unless otherwise specified):\
+npts = 128; ibary = 1; iffm = 1; epsfac = 15; sigfac = 10; dt = 1e-4; dtout = 4e-4; \
+fixdrop = 1; fixarea = 0; tfin = 0.1; maxl = 8000; nouter = 4096\
+Also, all initial geometries have an area fraction of 0.5 unless otherwise specified.\
+All runs look good visually unless otherwise specified.\
+
+\b \
+10circ4: 
+\b0 6.4 hours, 80 MB, 97 files
+\b \
+20circ3:
+\b0  14 hours, 91 MB, 81 files\
+\
+\
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs40 \cf0 Tests from April 2019, many with barycentric\
@@ -29,13 +48,16 @@ Conclusions:
 \b \
 \
 Note:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 I am keeping only the data files for 60circ3-128baryB and 60circ3-64baryB on the hard drive (everything else is baked up on the ROCSTAR disk). I dropping the B in the name\
+\b0 \cf0 I am keeping only the data files for 60circ3-128baryB and 60circ3-64baryB on the hard drive (everything else is baked up on the ROCSTAR disk). I dropping the B in the name\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b \
+\b \cf0 \
 Viewing in DataTank:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 - The vorticity field for trap looks absolutely crazy. The vorticity fields for both bary runs looks much more normal, with just a few regions of perhaps unrealistic vorticity near the walls, suggesting that maybe we should increase router to 4096.
+\b0 \cf0 - The vorticity field for trap looks absolutely crazy. The vorticity fields for both bary runs looks much more normal, with just a few regions of perhaps unrealistic vorticity near the walls, suggesting that maybe we should increase router to 4096.
 \b \
 
 \b0 - Comparing the two bary runs, the run with npts=128 does have noticeable finer features. Everything else, like the plots of area fraction, drag, resistivity, anisotropy, look about the same. Therefore, lets use the 128 data set.
@@ -45,22 +67,25 @@ Viewing in DataTank:\
 
 \b0 npts = 128, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 84 hours, 197 MB\
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b 60circ3-64bary (previously labeled with B)\
+\b \cf0 60circ3-64bary (previously labeled with B)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 61 hours, 147 MB\
+\b0 \cf0 npts = 64, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4, nouter = 2048, ibary = 1; 61 hours, 147 MB\
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b 60circ3-256trap (previously labeled without the trap)\
+\b \cf0 60circ3-256trap (previously labeled without the trap)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 Trying to get a case that runs smoothly without ibary.\
+\b0 \cf0 Trying to get a case that runs smoothly without ibary.\
 npts = 256, epsfac = 30, sigfac = 10, dt = 0.5e-4, dtout = 3e-4, nouter = 2048, ibary = 0; 100 hours, 296 MB\
 - The upper-right body still vanishes prematurely. However, the 2nd and 3rd body do not vanish prematurely.\
 - Viewing in DataTank, the vorticity field is absolutely crazy at early times.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b\fs40 \cf0 \
+\b\fs40 \
 Some previous multi-body runs for reference
 \b0\fs28 \
 Note: All of these are without the barycentric algorithm. They were run mostly in 2018. I keep them to have a reference for cpu time and memory usage of the data files.\
@@ -78,9 +103,8 @@ npts = 256, epsfac = 15, sigfac = 10, dt = 1e-4, dtout = 3e-4; 37 hours, 246 MB\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b\fs40 \cf0 Geometries\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0\fs28 \cf0 For the following cases there is a thlen input file saved. In all cases the area fraction is 0.5 unless otherwise specified.
+\b0\fs28 For the following cases there is a thlen input file saved. In all cases the area fraction is 0.5 unless otherwise specified.
 \b\fs40 \
 
 \b0\fs28 2 bodies: seed = 1, area fraction = 0.3\

@@ -16,6 +16,7 @@
 \
 Plan: Test the cases of nbods = 60, 80, 100 to settle on good parameter values. Once I have parameter values chosen, run all of the other simulations so that I can aggregate all of the data.\
 \
+Note: I started the tests for 60, 80, and 100 bodies with geometries 60circ3, 80circ7, and 100circ3. I had to kill the jobs due to the planned power outage. Of these three, 80circ7 was clearly running the fastest; 60circ3 and 100circ3 were running about the same speed. 80circ7 was running about twice as fast as the other two.\
 \
 \
 \
@@ -33,8 +34,9 @@ Plan: Test the cases of nbods = 60, 80, 100 to settle on good parameter values. 
 \
 
 \b Other to do\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 Some of these may or may not become necessary later.\
+\b0 \cf0 Some of these may or may not become necessary later.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 \cf0 - In the check to see if a body is about to vanish, the parameter ndts is set to 1. I could change this to 1.2 or 1.5, but see if any problems result first.\
 - I could implement adaptive time stepping based on either how big mterm is or how\
