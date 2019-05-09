@@ -177,7 +177,7 @@ with the density functions $\yy \cdot \eeta$, $\eta_1$, and $\eta_2$.
 The individual velocity components are
 \begin{align}
   u_1(\xx) &= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
-           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)),\\
+           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \label{eqn:cauchy1}\\
   u_2(\xx) &= \Re (v[\tau_2](x)) - \Im (v'[\yy\cdot\eeta](x)) 
        +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
 \end{align}
@@ -204,10 +204,10 @@ how we do one of them and say the rest are calculated similarly.}
 \begin{align}
   \pderiv{u_1}{x_1}(\xx) &= \Re (v'[\tau_1](x)) + 
     \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
-    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
+    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \label{eqn:pderiv1} \\
   \pderiv{u_1}{x_2}(\xx) &= - \Im (v'[\tau_1](x)) - 
-    \Im (v''[\yy\cdot\eeta](x)) + \Im (v''[\eta_1](x)) - 
-    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
+    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
+    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)),  \label{eqn:pderiv2}\\
   \pderiv{u_2}{x_1}(\xx) &= \Re (v'[\tau_2](x)) - 
     \Im (v''[\yy\cdot\eeta](x)) + \Im (v'[\eta_1](x)) +
     x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
@@ -215,6 +215,53 @@ how we do one of them and say the rest are calculated similarly.}
     \Re (v''[\yy\cdot\eeta](x)) + x_1\Re (v''[\eta_1](x)) +
     \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
+{\color{red}
+Here we derive the equations~\eqref{eqn:pderiv1}-\eqref{eqn:pderiv2} 
+and the other two are similar.
+To derive equations~\eqref{eqn:pderiv1} and \eqref{eqn:pderiv2}, 
+we need to apply the fact that if a real function $u$ is equivalent to 
+the real part of a complex varaible function $f$, 
+then we have $\nabla u=(\Re(f'),-\Im(f'))$.
+Let $f_1(x)= v[\tau_1](x)$, $f_2(x)=v'[\yy\cdot\eeta](x)$, $f_3(x)=v'[\eta_1](x)$,
+and $f_4(x)= v'[\eta_2](x)$. Then we can rewrite equation~\eqref{eqn:cauchy1}
+\begin{align*}
+u_1(\xx)&= u_{11}(\xx) +  u_{12}(\xx) +u_{13}(\xx)+u_{14}(\xx) \\
+&=\Re (f_1(x)) + \Re (f_2(x))-x_1\Re (f_3(x)) - x_2\Re (f_4(x)).
+\end{align*}
+To get the gradient of $u_1(x)$, we have
+\begin{align*}
+\nabla u_1(x)&= \nabla u_{11}(x)+\nabla  u_{12}(x) 
++\nabla u_{13}(x)+\nabla u_{14}(x) \\ \\
+&=\begin{bmatrix}
+\Re(f_1'(x))\\ \\
+-\Im(f_1'(x))
+\end{bmatrix}+
+\begin{bmatrix}
+\Re(f_2'(x))\\ \\
+-\Im(f_2'(x))
+\end{bmatrix}
++
+\begin{bmatrix}
+-\Re(f_3(x))-x_1\Re(f_3'(x))\\ \\
+x_1\Im(f_3'(x))
+\end{bmatrix}
++
+\begin{bmatrix}
+-x_2\Re(f_4'(x))\\ \\
+-\Re(f_4(x))+x_2\Im(f_4'(x))
+\end{bmatrix}\\ \\
+&=
+\begin{bmatrix}
+\Re (v'[\tau_1](x)) + 
+    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
+    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x))\\ \\
+- \Im (v'[\tau_1](x)) - 
+    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
+    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x))
+\end{bmatrix}.
+\end{align*}
+
+}
 \todo[inline]{S-H: last term seems to be missing an $x_1$.  Some of the
 other terms seem to be a bit off.  It might be partially my fault from
 when I updated some of the tex.}
@@ -223,9 +270,13 @@ when I updated some of the tex.}
 \subsection{Cauchy Integral Representation of the Vorticity}
 Having calculated all derivatives of the double-layer potential, the
 vorticity can written in terms of Cauchy integrals.  In particular
+{\color{red}
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
+\Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
+ + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)).
 \end{align}
+}
 \todo[inline]{For S-H to fill in}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,7 +358,37 @@ exist if $x$ is exterior to $\Gamma$.
 While accurate quadrature rules for $v(x)$ and $v'(x)$ have already been
 developed~\cite{bar-wu-vee2015}, this work requires a similar quadrature
 rule for $v''(x)$.  We mimic the approach developed
-in~\cite{bar-wu-vee2015} by starting with the identities
+in~\cite{bar-wu-vee2015} by starting with the Cauchy integral identities
+{\color{red}
+\begin{alignat}{3}
+1 &= \frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
+\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
+    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
+\end{alignat}
+and the contour integral 
+\begin{align}\label{eqn:cauchyId3}
+0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
+\end{align}
+Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
+the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
+\begin{align*}
+0 &= \frac{1}{2\pi i} \int_{\Gamma}
+    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
+&= \frac{1}{2\pi i} \int_{\Gamma}
+    \frac{2v^-(y)}{(y - x)^3} \, dy 
+-v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{1}{y-x} dy\\
+&= \frac{1}{2\pi i} \int_{\Gamma}
+    \frac{2v^-(y)}{(y - x)^3} \, dy 
+-\frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
+-\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
+-\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
+&= \frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
+\end{align*}
+}
 \todo[inline]{S-H: How do we get these identities?}
 \begin{alignat}{3}
   0 &= \frac{1}{2\pi i}\int_{\Gamma} 
