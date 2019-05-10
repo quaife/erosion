@@ -79,7 +79,7 @@ velocity} \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
 \label{s:formulation}
-Continuing on our previous work~\cite{qua-moo2018}, we use a completed
+Continuing with our previous work~\cite{qua-moo2018}, we use a completed
 double-layer potential formulation for the velocity $\uu$.  The
 double-layer potential is
 \begin{align}
@@ -168,16 +168,16 @@ decomposed as
       \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
 \end{align}
 All these integrals but the first are a gradient of a Laplace layer
-potential with the density functions $\eta_1$, $\eta_2$, and $\yy \cdot
-\eeta$.  In addition, each component of the first integral can be
-written as a Cauchy integral with a complex-valued
-densities~\cite{bar-wu-vee2015}.  Therefore, the Stokes double-layer
+potential.  In addition, each component of the first integral can be
+written as a Cauchy integral with a complex-valued density
+function~\cite{bar-wu-vee2015}.  Therefore, the Stokes double-layer
 potential can be written as five Cauchy integrals and their derivatives
 with the density functions $\yy \cdot \eeta$, $\eta_1$, and $\eta_2$.
 The individual velocity components are
 \begin{align}
+  \label{eqn:cauchy1}
   u_1(\xx) &= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
-           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \label{eqn:cauchy1}\\
+           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
   u_2(\xx) &= \Re (v[\tau_2](x)) - \Im (v'[\yy\cdot\eeta](x)) 
        +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
 \end{align}
@@ -186,7 +186,8 @@ where
   \tau_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad \text{and} \quad
   \tau_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
 \end{align}
-and $n \in \CC$ is the complex representation of $\nn \in \RR^2$
+and $n \in \CC$ is the complex representation of the outward unit normal
+$\nn \in \RR^2$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Shear Stress}
@@ -195,89 +196,46 @@ double-layer potential
 \begin{align}
   \tau(\xx) = \left(\nabla \DDD[\eeta](\xx) + 
     \nabla^T \DDD[\eeta](\xx) \right) \nn \cdot \ss,
-\end{align}
-where $\nn$ and $\ss$ are the unit normal and tangent vectors at $\xx$,
-respectively.  Each term of the gradient of the velocity field can be
-written in terms of Cauchy integrals as
-\todo[inline]{not clear enough how we got these equations.  Need to show
-how we do one of them and say the rest are calculated similarly.}
+\end{align} where $\nn$ and $\ss$ are the unit normal and tangent
+vectors at $\xx$, respectively.  Each term of the gradient of the
+velocity field can be written in terms of Cauchy integrals.  For
+example,
 \begin{align}
-  \pderiv{u_1}{x_1}(\xx) &= \Re (v'[\tau_1](x)) + 
+  \pderiv{u_1}{x_2} &= \Re(iv'[\tau_1](x)) + 
+      \Re(i v''[\yy \cdot \nn](x)) -
+      x_1\Re(i v''[\eta_1](x))  -
+      \Re(v'[\eta_2](x)) - x_2 \Re(iv''[\eta_2](x)) \\
+    &= -\Im(v''[\tau_1](x)) - 
+      \Im(v''[\yy \cdot \nn](x)) +
+      x_1\Im(v''[\eta_1](x)) -
+      \Re(v'[\eta_2](x)) + x_2 \Im(v''[\eta_2](x)).
+\end{align}
+Similarly, the other three components of $\nabla \DDD[\eeta]$ can be
+calculated
+\begin{align}
+  \pderiv{u_1}{x_1} &= \Re (v'[\tau_1](x)) + 
     \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
-    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \label{eqn:pderiv1} \\
-  \pderiv{u_1}{x_2}(\xx) &= - \Im (v'[\tau_1](x)) - 
+    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
+  \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
     \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
-    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)),  \label{eqn:pderiv2}\\
-  \pderiv{u_2}{x_1}(\xx) &= \Re (v'[\tau_2](x)) - 
+    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
+  \pderiv{u_2}{x_1} &= \Re (v'[\tau_2](x)) - 
     \Im (v''[\yy\cdot\eeta](x)) + \Im (v'[\eta_1](x)) +
     x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
-  \pderiv{u_2}{x_2}(\xx) &= -\Im (v'[\tau_2](x)) - 
+  \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
     \Re (v''[\yy\cdot\eeta](x)) + x_1\Re (v''[\eta_1](x)) +
     \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
-{\color{red}
-Here we derive the equations~\eqref{eqn:pderiv1}-\eqref{eqn:pderiv2} 
-and the other two are similar.
-To derive equations~\eqref{eqn:pderiv1} and \eqref{eqn:pderiv2}, 
-we need to apply the fact that if a real function $u$ is equivalent to 
-the real part of a complex varaible function $f$, 
-then we have $\nabla u=(\Re(f'),-\Im(f'))$.
-Let $f_1(x)= v[\tau_1](x)$, $f_2(x)=v'[\yy\cdot\eeta](x)$, $f_3(x)=v'[\eta_1](x)$,
-and $f_4(x)= v'[\eta_2](x)$. Then we can rewrite equation~\eqref{eqn:cauchy1}
-\begin{align*}
-u_1(\xx)&= u_{11}(\xx) +  u_{12}(\xx) +u_{13}(\xx)+u_{14}(\xx) \\
-&=\Re (f_1(x)) + \Re (f_2(x))-x_1\Re (f_3(x)) - x_2\Re (f_4(x)).
-\end{align*}
-To get the gradient of $u_1(x)$, we have
-\begin{align*}
-\nabla u_1(x)&= \nabla u_{11}(x)+\nabla  u_{12}(x) 
-+\nabla u_{13}(x)+\nabla u_{14}(x) \\ \\
-&=\begin{bmatrix}
-\Re(f_1'(x))\\ \\
--\Im(f_1'(x))
-\end{bmatrix}+
-\begin{bmatrix}
-\Re(f_2'(x))\\ \\
--\Im(f_2'(x))
-\end{bmatrix}
-+
-\begin{bmatrix}
--\Re(f_3(x))-x_1\Re(f_3'(x))\\ \\
-x_1\Im(f_3'(x))
-\end{bmatrix}
-+
-\begin{bmatrix}
--x_2\Re(f_4'(x))\\ \\
--\Re(f_4(x))+x_2\Im(f_4'(x))
-\end{bmatrix}\\ \\
-&=
-\begin{bmatrix}
-\Re (v'[\tau_1](x)) + 
-    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
-    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x))\\ \\
-- \Im (v'[\tau_1](x)) - 
-    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
-    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x))
-\end{bmatrix}.
-\end{align*}
-
-}
-\todo[inline]{S-H: last term seems to be missing an $x_1$.  Some of the
-other terms seem to be a bit off.  It might be partially my fault from
-when I updated some of the tex.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Vorticity}
 Having calculated all derivatives of the double-layer potential, the
-vorticity can written in terms of Cauchy integrals.  In particular
-{\color{red}
+vorticity can written in terms of Cauchy integrals.  In particular,
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
  + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)).
 \end{align}
-}
-\todo[inline]{For S-H to fill in}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Pressure}
@@ -721,4 +679,49 @@ Mathematicians.
 %\subsection{Near-singular integration}
 %\label{sec:NSI}
 %
-
+%
+%{\color{red}
+%Here we derive the equations~\eqref{eqn:pderiv1}-\eqref{eqn:pderiv2} 
+%and the other two are similar.
+%To derive equations~\eqref{eqn:pderiv1} and \eqref{eqn:pderiv2}, 
+%we need to apply the fact that if a real function $u$ is equivalent to 
+%the real part of a complex varaible function $f$, 
+%then we have $\nabla u=(\Re(f'),-\Im(f'))$.
+%Let $f_1(x)= v[\tau_1](x)$, $f_2(x)=v'[\yy\cdot\eeta](x)$, $f_3(x)=v'[\eta_1](x)$,
+%and $f_4(x)= v'[\eta_2](x)$. Then we can rewrite equation~\eqref{eqn:cauchy1}
+%\begin{align*}
+%u_1(\xx)&= u_{11}(\xx) +  u_{12}(\xx) +u_{13}(\xx)+u_{14}(\xx) \\
+%&=\Re (f_1(x)) + \Re (f_2(x))-x_1\Re (f_3(x)) - x_2\Re (f_4(x)).
+%\end{align*}
+%To get the gradient of $u_1(x)$, we have
+%\begin{align*}
+%\nabla u_1(x)&= \nabla u_{11}(x)+\nabla  u_{12}(x) 
+%+\nabla u_{13}(x)+\nabla u_{14}(x) \\ \\
+%&=\begin{bmatrix}
+%\Re(f_1'(x))\\ \\
+%-\Im(f_1'(x))
+%\end{bmatrix}+
+%\begin{bmatrix}
+%\Re(f_2'(x))\\ \\
+%-\Im(f_2'(x))
+%\end{bmatrix}
+%+
+%\begin{bmatrix}
+%-\Re(f_3(x))-x_1\Re(f_3'(x))\\ \\
+%x_1\Im(f_3'(x))
+%\end{bmatrix}
+%+
+%\begin{bmatrix}
+%-x_2\Re(f_4'(x))\\ \\
+%-\Re(f_4(x))+x_2\Im(f_4'(x))
+%\end{bmatrix}\\ \\
+%&=
+%\begin{bmatrix}
+%\Re (v'[\tau_1](x)) + 
+%    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
+%    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x))\\ \\
+%- \Im (v'[\tau_1](x)) - 
+%    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
+%    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x))
+%\end{bmatrix}.
+%\end{align*}
