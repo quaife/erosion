@@ -143,9 +143,9 @@ where the density function, Stokeslets, and rotlets satisfy
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
     \NN_0(\eeta](\xx), \quad \xx \in \bd\Omega, \\
   \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-    \eeta(\yy) ds_\yy \quad \ell = 1,\ldots,M, \\
+    \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
-    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy) ds_\yy 
+    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
     \quad \ell = 1,\ldots,M,
 \end{align}
 where $\ff$ is the prescribed Dirichlet boundary condition of the
@@ -158,13 +158,13 @@ The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
 decomposed as
 \begin{align}
   \DDD[\eeta](\xx) &= 
-    \frac{1}{2\pi} \int_{\Gamma} 
+    \frac{1}{2\pi} \int_{\bd\Omega} 
       \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
-    \frac{1}{2\pi} \nabla \int_{\Gamma}
+    \frac{1}{2\pi} \nabla \int_{\bd\Omega}
       \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
-    &- \frac{1}{2\pi} x_1 \nabla \int_{\Gamma}
+    &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
       \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
-    \frac{1}{2\pi} x_2 \nabla \int_{\Gamma}
+    \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
       \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
 \end{align}
 All these integrals but the first are a gradient of a Laplace layer
@@ -286,22 +286,22 @@ rule}.  This method first uses the density function $\tau(y)$ to compute
 the boundary data of $v$, denoted by $v^-{y}$.  Then, it makes use
 of the identity
 \begin{align}
-  v(x) = \int_{\Gamma} \frac{v^{-}(y)}{y-x} \, dy, 
+  v(x) = \int_{\bd\Omega} \frac{v^{-}(y)}{y-x} \, dy, 
   \quad x \in \Omega.
 \end{align}
 
 Here, we briefly describe this quadrature method, and then derive a
 necessary extension to simulate erosion.  The Barycentric quadrature
-rule starts with a quadrature rule with nodes $y_j \in \Gamma$ and
+rule starts with a quadrature rule with nodes $y_j \in \bd\Omega$ and
 weights $w_j$. We use the trapezoid rule because of its superior
-accuracy when $x$ is sufficiently far from $\Gamma$.  However, as $x$
-approaches $\Gamma$, the integrand becomes nearly singular and the
+accuracy when $x$ is sufficiently far from $\bd\Omega$.  However, as $x$
+approaches $\bd\Omega$, the integrand becomes nearly singular and the
 quality of the trapezoid rule deteriorates. To eliminate the
 nearly-singular integrand, we use the identity
 \begin{align}
-  \int_{\Gamma} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0.
+  \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0.
 \end{align}
-Then, even if $x$ is close to $\Gamma$, the integrand is no longer
+Then, even if $x$ is close to $\bd\Omega$, the integrand is no longer
 nearly-singular and the accuracy of the trapezoid rule is bounded
 independent of $x$.  A similar identity identity involving $v'(x)$ also
 holds.   Now, applying the spectrally accurate trapezoid rule, the
@@ -326,7 +326,7 @@ rule for $v''(x)$.  We mimic the approach developed
 in~\cite{bar-wu-vee2015}.  First, if $x \in \Omega$ and $n \in
 \mathbb{N}$, then 
 \begin{align}
-  \frac{1}{2\pi i}\int_{\Gamma} \frac{1}{(y-x)^n}\, dy = 
+  \frac{1}{2\pi i}\int_{\bd\Omega} \frac{1}{(y-x)^n}\, dy = 
   \left\{
     \begin{array}{ll}
       1, & n = 1, \\
@@ -337,17 +337,17 @@ in~\cite{bar-wu-vee2015}.  First, if $x \in \Omega$ and $n \in
 Applying this identity to the Cauchy integral theorem for $v''(x)$, we
 have
 \begin{align}
-  0 &= \frac{1}{2\pi i} \int_{\Gamma} 
+  0 &= \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x) \\
-    &= \frac{1}{2\pi i} \int_{\Gamma} 
+    &= \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - 
-    \frac{1}{2\pi i} \int_{\Gamma} 
+    \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{(y-x)^2 v''(x)}{(y-x)^3}\,dy -
-    \frac{1}{2\pi i} \int_{\Gamma} 
+    \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v(x)}{(y-x)^3}\, dy -
-    \frac{1}{2\pi i} \int_{\Gamma} 
+    \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2(y-x)v'(x)}{(y-x)^3}\, dy \\
-    &= \frac{1}{2\pi i} \int_{\Gamma} 
+    &= \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y) - v''(x)(y-x)^2 - 2v(x) - 2(y-x)v'(x)}
       {(y-x)^3}\, dy.
 \end{align}
@@ -364,7 +364,7 @@ To compute $v(x)$ and $v'(x)$, the Barycentric quadrature rule in
 equation~\eqref{eqn:vvpQuadrature} is used. If $x \in \Omega^c$, the
 identity
 \begin{align}
-\frac{1}{x-a} &= -\frac{1}{2\pi i}\int_{\Gamma} 
+\frac{1}{x-a} &= -\frac{1}{2\pi i}\int_{\bd\Omega} 
     \frac{(y-a)^{-1}}{y-x} dy, 
 \end{align}
 is used, and the resulting Barycentric quadrature formula is
@@ -391,8 +391,8 @@ every GMRES iteration, so a fast algorithm is used.
 To compute the velocity with $\mathcal{O}(N)$ operations, we start by
 using the trapezoid rule accelerated with the fast multipole method
 (FMM). Since the trapezoid rule is inaccurate when $x$ is close to
-$\Gamma$, we replace the trapezoid rule with the Barycentric quadrature
-rule for such points.
+$\bd\Omega$, we replace the trapezoid rule with the Barycentric
+quadrature rule for such points.
 
 This
 cost can be reduced to $\mathcal{O}(N)$ by applying the fast multipole
