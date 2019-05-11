@@ -8,7 +8,13 @@
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
 \
-- Either wait for B&S to fix the problem with high vorticity near the outer boundary or rerun simulations with nouter = 1024 because, strangely, the problem is more severe the higher nouter is.\
+- Aha, I figured out the problem with artificially high vorticity near the boundary. Some of my target points were outside of the outer boundary! I fixed it in DataTank by removing these points. \
+- I should also fix it in the postprocessing Julia code and trim out these points from the beginning, although I guess it is not absolutely essential.\
+- I should write the resolution in CodeNotes so I remember it.\
+\
+- I could go back and run the simulations I already ran but with more reasonable nouter = 1024 or 2048, since I now know that larger nouter is not necessary.\
+\
+\
 \
 - I have decided to do all runs with barycentric and with npts = 128. Early in 2019, I did a set of runs with npts = 256 and with trapezoid (since the barycentric code had not been developed yet). Reducing npts to 128 should reduce the size of the data files significantly.\
 - I also made nouter 4096 to mitigate the artificially high vorticity near the walls.\
