@@ -106,6 +106,8 @@ Cauchy integrals and its first derivative.  In addition, we also require
 expressions for the derivative of the velocity field which can be
 written in terms of a Cauchy integral and its first two derivatives.
 Therefore, we introduce the notation
+\todo[inline]{BQ: Need to discuss boundary data and how to get it from
+density $\eta$}
 \begin{align}
   \label{eqn:cauchy}
   v[\eta](x) = \frac{1}{2\pi i} \int_{\bd\Omega}
@@ -339,14 +341,14 @@ have
 \begin{align}
   0 &= \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x) \\
-    &= \frac{1}{2\pi i} \int_{\bd\Omega} 
-      \frac{2v^{-}(y)}{(y-x)^3}\,dy - 
-    \frac{1}{2\pi i} \int_{\bd\Omega} 
-      \frac{(y-x)^2 v''(x)}{(y-x)^3}\,dy -
-    \frac{1}{2\pi i} \int_{\bd\Omega} 
-      \frac{2v(x)}{(y-x)^3}\, dy -
-    \frac{1}{2\pi i} \int_{\bd\Omega} 
-      \frac{2(y-x)v'(x)}{(y-x)^3}\, dy \\
+%    &= \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{2v^{-}(y)}{(y-x)^3}\,dy - 
+%    \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{(y-x)^2 v''(x)}{(y-x)^3}\,dy -
+%    \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{2v(x)}{(y-x)^3}\, dy -
+%    \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{2(y-x)v'(x)}{(y-x)^3}\, dy \\
     &= \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y) - v''(x)(y-x)^2 - 2v(x) - 2(y-x)v'(x)}
       {(y-x)^3}\, dy.
