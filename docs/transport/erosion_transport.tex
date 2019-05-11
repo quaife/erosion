@@ -384,23 +384,41 @@ is used, and the resulting Barycentric quadrature formula is
 \label{sec:fmm}
 The Barycentric quadrature rule achieves acceptable accuracy for
 computing the velocity, shear stress, and vorticity.  However, applied
-naively, it requires $\mathcal{O}(N^2)$ operations to directly.  Since
-the shear stress must only be computed once per time step, and the
-vorticity is only used as a post-processing step, we accept the
-$\mathcal{O}(N^2)$ algorithm.  However, the velocity must be computed at
-every GMRES iteration, so a fast algorithm is used.
+directly, it requires $\mathcal{O}(N^2)$ operations.  Since the shear
+stress must only be computed once per time step, and the vorticity is
+only used as a post-processing step, we accept the $\mathcal{O}(N^2)$
+algorithm.  However, the velocity must be computed at every GMRES
+iteration, which would make the overall method impractical without a
+fast algorithm.
 
 To compute the velocity with $\mathcal{O}(N)$ operations, we start by
 using the trapezoid rule accelerated with the fast multipole method
-(FMM). Since the trapezoid rule is inaccurate when $x$ is close to
-$\bd\Omega$, we replace the trapezoid rule with the Barycentric
-quadrature rule for such points.
+(FMM) \todo[inline]{reference here}. For target points that are
+sufficiently far from $\bd\Omega$, the resulting velocity is
+sufficiently accurate.  However, the velocity at points that are too
+close to $\bd\Omega$ must be corrected.  For a general point $\xx$,
+\begin{align}
+  \vv(\xx) = \int_{\Gamma} D(\xx,\yy) \eeta(\yy)\, ds_\yy + 
+    \sum_{k=1}^{M} \int_{\gamma_k} D(\xx,\yy) \eeta(\yy)\, ds_\yy.
+\end{align}
+Assuming that $\xx$ is too close to $\gamma_i$, we first subtract the
+velocity contribution of $\vv(\xx)$ due to $\gamma_i$.  Then, the
+Barycentric quadrature rule is used to compute the velocity due to
+$\gamma_i$ with more accuracy.  This is correction is applied to all
+points that are close to an eroding body or the outer wall $\Gamma$.
 
-This
-cost can be reduced to $\mathcal{O}(N)$ by applying the fast multipole
-method (FMM).  Rather than developing an FMM for layer potentials that
-involve high-order derivatives of the Green's functions, we 
+The same strategy of using the trapezoid rule and then correcting with
+the Barycentric quadrature is used to compute the shear stress on
+$\bd\Omega$ and vorticity in $\Omega$.  The trapezoid rule is applied
+with a direct summation, but this cost is only incurred once per time
+step, and the majority of the computational effort is still required to
+compute the velocity using the fast summation method.
 
+To determine if a point $\xx \in \gamma_i$ needs to be corrected with
+the Barycentric quadrature rule, we first estimate the proximity of
+$\xx$ to $\bd\Omega$.  The criteria depends on the length of the outer
+wall, $L_w$, the length of the eroding bodies $L_i$, $i=1,\ldots,M$, and
+the number of discretization points $N_\out$ and $N_\iin$.  
 
 
 {\color{red}
