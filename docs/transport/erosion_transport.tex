@@ -90,19 +90,31 @@ double-layer potential is
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
 normal at $\yy$, and $\eeta$ is an unknown density function.  The Stokes
-double-layer potential can be as the sum of the Laplace double-layer
-potential and its gradient.  By identifying $\xx,\yy \in \RR^2$ with the
-points $x,y \in \CC$, the Laplace double-layer potential for a
-real-valued density function $\eta$ can also be written as the real part
-of the Cauchy integral
+double-layer potential can also be expressed as the sum of a Laplace
+double-layer potential 
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
-    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy = 
-  \Re \left( \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy \right).
+    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy
+\end{align}
+and its gradient.  By identifying $\xx,\yy \in
+\RR^2$ with the points $x,y \in \CC$, the Laplace double-layer potential
+for a real-valued density function $\eta$ can also be written as the
+real part of the Cauchy integral
+\begin{align}
+  \DD[\eta](\xx) = \Re (v(x)) \quad \text{where} \quad
+  v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{x - y} \, dy.
 \end{align}
 Therefore, the Stokes double-layer potential can be written in terms of
-Cauchy integrals and its first derivative.  In addition, we also require
+Cauchy integrals and its first derivative.  Rather than immediately
+applying a quadrature rule to compute $v(x)$, we will first compute the
+boundary data of $v(x)$ by applying the Sokhotski-Plemelj jump relation
+\begin{align}
+  v^{-}(x) = -\frac{1}{2} \eta(x) - \frac{1}{2\pi i} \text{PV}
+\end{align}
+
+
+In addition, we also require
 expressions for the derivative of the velocity field which can be
 written in terms of a Cauchy integral and its first two derivatives.
 Therefore, we introduce the notation
