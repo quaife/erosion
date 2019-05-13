@@ -79,7 +79,7 @@ velocity} \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
 \label{s:formulation}
-Continuing on our previous work~\cite{qua-moo2018}, we use a completed
+Continuing with our previous work~\cite{qua-moo2018}, we use a completed
 double-layer potential formulation for the velocity $\uu$.  The
 double-layer potential is
 \begin{align}
@@ -90,22 +90,36 @@ double-layer potential is
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
 normal at $\yy$, and $\eeta$ is an unknown density function.  The Stokes
-double-layer potential can be as the sum of the Laplace double-layer
-potential and its gradient.  By identifying $\xx,\yy \in \RR^2$ with the
-points $x,y \in \CC$, the Laplace double-layer potential for a
-real-valued density function $\eta$ can also be written as the real part
-of the Cauchy integral
+double-layer potential can also be expressed as the sum of a Laplace
+double-layer potential 
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
-    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy = 
-  \Re \left( \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy \right).
+    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy
+\end{align}
+and its gradient.  By identifying $\xx,\yy \in
+\RR^2$ with the points $x,y \in \CC$, the Laplace double-layer potential
+for a real-valued density function $\eta$ can also be written as the
+real part of the Cauchy integral
+\begin{align}
+  \DD[\eta](\xx) = \Re (v(x)) \quad \text{where} \quad
+  v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{x - y} \, dy.
 \end{align}
 Therefore, the Stokes double-layer potential can be written in terms of
-Cauchy integrals and its first derivative.  In addition, we also require
+Cauchy integrals and its first derivative.  Rather than immediately
+applying a quadrature rule to compute $v(x)$, we will first compute the
+boundary data of $v(x)$ by applying the Sokhotski-Plemelj jump relation
+\begin{align}
+  v^{-}(x) = -\frac{1}{2} \eta(x) - \frac{1}{2\pi i} \text{PV}
+\end{align}
+
+
+In addition, we also require
 expressions for the derivative of the velocity field which can be
 written in terms of a Cauchy integral and its first two derivatives.
 Therefore, we introduce the notation
+\todo[inline]{BQ: Need to discuss boundary data and how to get it from
+density $\eta$}
 \begin{align}
   \label{eqn:cauchy}
   v[\eta](x) = \frac{1}{2\pi i} \int_{\bd\Omega}
@@ -143,9 +157,9 @@ where the density function, Stokeslets, and rotlets satisfy
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
     \NN_0(\eeta](\xx), \quad \xx \in \bd\Omega, \\
   \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-    \eeta(\yy) ds_\yy \quad \ell = 1,\ldots,M, \\
+    \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
-    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy) ds_\yy 
+    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
     \quad \ell = 1,\ldots,M,
 \end{align}
 where $\ff$ is the prescribed Dirichlet boundary condition of the
@@ -158,26 +172,26 @@ The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
 decomposed as
 \begin{align}
   \DDD[\eeta](\xx) &= 
-    \frac{1}{2\pi} \int_{\Gamma} 
+    \frac{1}{2\pi} \int_{\bd\Omega} 
       \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
-    \frac{1}{2\pi} \nabla \int_{\Gamma}
+    \frac{1}{2\pi} \nabla \int_{\bd\Omega}
       \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
-    &- \frac{1}{2\pi} x_1 \nabla \int_{\Gamma}
+    &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
       \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
-    \frac{1}{2\pi} x_2 \nabla \int_{\Gamma}
+    \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
       \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
 \end{align}
 All these integrals but the first are a gradient of a Laplace layer
-potential with the density functions $\eta_1$, $\eta_2$, and $\yy \cdot
-\eeta$.  In addition, each component of the first integral can be
-written as a Cauchy integral with a complex-valued
-densities~\cite{bar-wu-vee2015}.  Therefore, the Stokes double-layer
+potential.  In addition, each component of the first integral can be
+written as a Cauchy integral with a complex-valued density
+function~\cite{bar-wu-vee2015}.  Therefore, the Stokes double-layer
 potential can be written as five Cauchy integrals and their derivatives
 with the density functions $\yy \cdot \eeta$, $\eta_1$, and $\eta_2$.
 The individual velocity components are
 \begin{align}
+  \label{eqn:cauchy1}
   u_1(\xx) &= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
-           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)),\\
+           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
   u_2(\xx) &= \Re (v[\tau_2](x)) - \Im (v'[\yy\cdot\eeta](x)) 
        +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
 \end{align}
@@ -186,7 +200,8 @@ where
   \tau_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad \text{and} \quad
   \tau_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
 \end{align}
-and $n \in \CC$ is the complex representation of $\nn \in \RR^2$
+and $n \in \CC$ is the complex representation of the outward unit normal
+$\nn \in \RR^2$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Shear Stress}
@@ -195,38 +210,46 @@ double-layer potential
 \begin{align}
   \tau(\xx) = \left(\nabla \DDD[\eeta](\xx) + 
     \nabla^T \DDD[\eeta](\xx) \right) \nn \cdot \ss,
-\end{align}
-where $\nn$ and $\ss$ are the unit normal and tangent vectors at $\xx$,
-respectively.  Each term of the gradient of the velocity field can be
-written in terms of Cauchy integrals as
-\todo[inline]{not clear enough how we got these equations.  Need to show
-how we do one of them and say the rest are calculated similarly.}
+\end{align} where $\nn$ and $\ss$ are the unit normal and tangent
+vectors at $\xx$, respectively.  Each term of the gradient of the
+velocity field can be written in terms of Cauchy integrals.  For
+example,
 \begin{align}
-  \pderiv{u_1}{x_1}(\xx) &= \Re (v'[\tau_1](x)) + 
+  \pderiv{u_1}{x_2} &= \Re(iv'[\tau_1](x)) + 
+      \Re(i v''[\yy \cdot \nn](x)) -
+      x_1\Re(i v''[\eta_1](x))  -
+      \Re(v'[\eta_2](x)) - x_2 \Re(iv''[\eta_2](x)) \\
+    &= -\Im(v''[\tau_1](x)) - 
+      \Im(v''[\yy \cdot \nn](x)) +
+      x_1\Im(v''[\eta_1](x)) -
+      \Re(v'[\eta_2](x)) + x_2 \Im(v''[\eta_2](x)).
+\end{align}
+Similarly, the other three components of $\nabla \DDD[\eeta]$ can be
+calculated
+\begin{align}
+  \pderiv{u_1}{x_1} &= \Re (v'[\tau_1](x)) + 
     \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
     x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
-  \pderiv{u_1}{x_2}(\xx) &= - \Im (v'[\tau_1](x)) - 
-    \Im (v''[\yy\cdot\eeta](x)) + \Im (v''[\eta_1](x)) - 
+  \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
+    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
     \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
-  \pderiv{u_2}{x_1}(\xx) &= \Re (v'[\tau_2](x)) - 
+  \pderiv{u_2}{x_1} &= \Re (v'[\tau_2](x)) - 
     \Im (v''[\yy\cdot\eeta](x)) + \Im (v'[\eta_1](x)) +
     x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
-  \pderiv{u_2}{x_2}(\xx) &= -\Im (v'[\tau_2](x)) - 
+  \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
     \Re (v''[\yy\cdot\eeta](x)) + x_1\Re (v''[\eta_1](x)) +
     \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
-\todo[inline]{S-H: last term seems to be missing an $x_1$.  Some of the
-other terms seem to be a bit off.  It might be partially my fault from
-when I updated some of the tex.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Vorticity}
 Having calculated all derivatives of the double-layer potential, the
-vorticity can written in terms of Cauchy integrals.  In particular
+vorticity can written in terms of Cauchy integrals.  In particular,
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
+\Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
+ + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)).
 \end{align}
-\todo[inline]{For S-H to fill in}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Pressure}
@@ -262,34 +285,41 @@ The tortuosity measures ...
 \section{Numerical Methods}
 \label{s:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We are interested in computing the velocity, shear stress, vorticity,
-and pressure of the Stokes double-layer potential.  We have shown that
-all these quantities can be written in terms of Cauchy integrals and its
-first two derivatives.  Therefore, we require quadrature methods to
-evaluate the expressions in equation~\eqref{eqn:cauchy}.  The trapezoid
-rule is appropriate if the integrands are sufficiently smooth, where the
-smoothness depends on the number of discretization points.  However,
-given a fixed resolution, if the target point $\xx$ is too close to $\bd
-\Omega$, the trapezoid rule becomes inaccurate and the overall method is
-unstable.  There have been a variety of near-singular integration
-schemes developed, and we extend a method first outlined by Barnett et
-al.~\cite{bar-wu-vee2015} which we will call the {\em Barycentric
-quadrature rule}.  Here, we briefly describe this quadrature method, and
-then derive a necessary extension to simulate erosion.
-
-The Barycentric quadrature rule starts with a general quadrature rule
-for $v(x)$
+We have shown that the velocity, shear stress, vorticity, and pressure
+of the double-layer potential can all be written in terms of Cauchy
+integrals and its first two derivatives.  Therefore, we require
+quadrature methods to evaluate the expressions in
+equation~\eqref{eqn:cauchy}.  Since the integrands are all smooth and
+periodic, the Trapezoid rule has spectral accuracy.  However, the
+integrand is nearly singular if $x$ is close to $\bd\Omega$, and the
+quadrature error is arbitrarily large if the resolution $N$ is fixed.
+There have been a variety of near-singular integration schemes
+developed, and we extend a method first outlined by Barnett et
+al.~\cite{bar-wu-vee2015} which we call the {\em Barycentric quadrature
+rule}.  This method first uses the density function $\tau(y)$ to compute
+the boundary data of $v$, denoted by $v^-{y}$.  Then, it makes use
+of the identity
 \begin{align}
-  v(x) \approx \frac{1}{2\pi i} \sum_{j=1}^N 
-    w_j \frac{\tau(y_j)}{x - y_j},
+  v(x) = \int_{\bd\Omega} \frac{v^{-}(y)}{y-x} \, dy, 
+  \quad x \in \Omega.
 \end{align}
-where $w_j$ are the quadrature weights and $y_j \in \Gamma$ are the
-quadrature nodes.  We will use the trapezoid rule because of its
-superior accuracy when $x$ is sufficiently far from $\Gamma$.  However,
-for a fixed resolution $N$, the error grows without bound as $x$
-approaches $\Gamma$.  As outline by Barnett et
-al.~\cite{bar-wu-vee2015}, the error is uniformly bounded if the
-Barycentric quadrature rule
+
+Here, we briefly describe this quadrature method, and then derive a
+necessary extension to simulate erosion.  The Barycentric quadrature
+rule starts with a quadrature rule with nodes $y_j \in \bd\Omega$ and
+weights $w_j$. We use the trapezoid rule because of its superior
+accuracy when $x$ is sufficiently far from $\bd\Omega$.  However, as $x$
+approaches $\bd\Omega$, the integrand becomes nearly singular and the
+quality of the trapezoid rule deteriorates. To eliminate the
+nearly-singular integrand, we use the identity
+\begin{align}
+  \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0.
+\end{align}
+Then, even if $x$ is close to $\bd\Omega$, the integrand is no longer
+nearly-singular and the accuracy of the trapezoid rule is bounded
+independent of $x$.  A similar identity identity involving $v'(x)$ also
+holds.   Now, applying the spectrally accurate trapezoid rule, the
+quadrature error of the Barycentric quadrature rule
 \begin{align}
   v(x) \approx \frac{\sum\limits_{j=1}^N \frac{v_j^-}{y_j-x}w_j}
     {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}
@@ -297,43 +327,111 @@ Barycentric quadrature rule
   v'(x) \approx \frac{\sum\limits_{j=1}^N 
     \frac{v_j^- - v(x)}{(y_j - x)^2}w_j}
     {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, 
+  \label{eqn:vvpQuadrature}
 \end{align}
-is used, where $x$ is a target point that is interior to $\Gamma$,
-and $v_j^-$ is the value of $v(y_j)$.  Modifications of this formula
-exist if $x$ is exterior to $\Gamma$.
+is uniformly bounded~\cite{bar-wu-vee2015}.  A slight modification of
+these formulae are applied if $x \in \Omega^{c}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature for $v''(x)$}
 While accurate quadrature rules for $v(x)$ and $v'(x)$ have already been
 developed~\cite{bar-wu-vee2015}, this work requires a similar quadrature
 rule for $v''(x)$.  We mimic the approach developed
-in~\cite{bar-wu-vee2015} by starting with the identities
-\todo[inline]{S-H: How do we get these identities?}
-\begin{alignat}{3}
-  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
-  0 &= \frac{1}{2\pi i}\int_{\Gamma}
-    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
-    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
-\end{alignat}
-{\color{red}
-and the quadrature formulations are
-\begin{alignat}{3}
-  v''(x) &\approx
-    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
-    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
+in~\cite{bar-wu-vee2015}.  First, if $x \in \Omega$ and $n \in
+\mathbb{N}$, then 
+\begin{align}
+  \frac{1}{2\pi i}\int_{\bd\Omega} \frac{1}{(y-x)^n}\, dy = 
+  \left\{
+    \begin{array}{ll}
+      1, & n = 1, \\
+      0, & n > 1. \\
+    \end{array}
+  \right.
+\end{align}
+Applying this identity to the Cauchy integral theorem for $v''(x)$, we
+have
+\begin{align}
+  0 &= \frac{1}{2\pi i} \int_{\bd\Omega} 
+      \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x) \\
+%    &= \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{2v^{-}(y)}{(y-x)^3}\,dy - 
+%    \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{(y-x)^2 v''(x)}{(y-x)^3}\,dy -
+%    \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{2v(x)}{(y-x)^3}\, dy -
+%    \frac{1}{2\pi i} \int_{\bd\Omega} 
+%      \frac{2(y-x)v'(x)}{(y-x)^3}\, dy \\
+    &= \frac{1}{2\pi i} \int_{\bd\Omega} 
+      \frac{2v^{-}(y) - v''(x)(y-x)^2 - 2v(x) - 2(y-x)v'(x)}
+      {(y-x)^3}\, dy.
+\end{align}
+Since we have constructed the integrand so that it is bounded for for
+all $x \in \Omega$, the quadrature error of the trapezoid rule is
+acceptable.  Applying the quadrature rule and solving for $v''(x)$, the
+Barycentric quadrature rule for the second derivative is
+\begin{align}
+  v''(x) &\approx \frac{2\sum\limits_{j=1}^N 
+    \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}.
+\end{align}
+To compute $v(x)$ and $v'(x)$, the Barycentric quadrature rule in
+equation~\eqref{eqn:vvpQuadrature} is used. If $x \in \Omega^c$, the
+identity
+\begin{align}
+\frac{1}{x-a} &= -\frac{1}{2\pi i}\int_{\bd\Omega} 
+    \frac{(y-a)^{-1}}{y-x} dy, 
+\end{align}
+is used, and the resulting Barycentric quadrature formula is
+\begin{align}
   v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
-    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
-\end{alignat}
-where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
+    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}}
+    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}.
+\end{align}
 
-}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fast Summation Methods}
 \label{sec:fmm}
+The Barycentric quadrature rule achieves acceptable accuracy for
+computing the velocity, shear stress, and vorticity.  However, applied
+directly, it requires $\mathcal{O}(N^2)$ operations.  Since the shear
+stress must only be computed once per time step, and the vorticity is
+only used as a post-processing step, we accept the $\mathcal{O}(N^2)$
+algorithm.  However, the velocity must be computed at every GMRES
+iteration, which would make the overall method impractical without a
+fast algorithm.
+
+To compute the velocity with $\mathcal{O}(N)$ operations, we start by
+using the trapezoid rule accelerated with the fast multipole method
+(FMM) \todo[inline]{reference here}. For target points that are
+sufficiently far from $\bd\Omega$, the resulting velocity is
+sufficiently accurate.  However, the velocity at points that are too
+close to $\bd\Omega$ must be corrected.  For a general point $\xx$,
+\begin{align}
+  \vv(\xx) = \int_{\Gamma} D(\xx,\yy) \eeta(\yy)\, ds_\yy + 
+    \sum_{k=1}^{M} \int_{\gamma_k} D(\xx,\yy) \eeta(\yy)\, ds_\yy.
+\end{align}
+Assuming that $\xx$ is too close to $\gamma_i$, we first subtract the
+velocity contribution of $\vv(\xx)$ due to $\gamma_i$.  Then, the
+Barycentric quadrature rule is used to compute the velocity due to
+$\gamma_i$ with more accuracy.  This is correction is applied to all
+points that are close to an eroding body or the outer wall $\Gamma$.
+
+The same strategy of using the trapezoid rule and then correcting with
+the Barycentric quadrature is used to compute the shear stress on
+$\bd\Omega$ and vorticity in $\Omega$.  The trapezoid rule is applied
+with a direct summation, but this cost is only incurred once per time
+step, and the majority of the computational effort is still required to
+compute the velocity using the fast summation method.
+
+To determine if a point $\xx \in \gamma_i$ needs to be corrected with
+the Barycentric quadrature rule, we first estimate the proximity of
+$\xx$ to $\bd\Omega$.  The criteria depends on the length of the outer
+wall, $L_w$, the length of the eroding bodies $L_i$, $i=1,\ldots,M$, and
+the number of discretization points $N_\out$ and $N_\iin$.  
+
 
 {\color{red}
 By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
@@ -406,11 +504,11 @@ To investigate the shape of eroding body when it is close to wall, we set $r=0.4
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_1}
-\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_101}\\
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense1}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense101}\\
 
-\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_201}
-\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_301}
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense301}
 \caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $.}
 \end{center}
 \end{figure}
@@ -640,4 +738,103 @@ Mathematicians.
 %\subsection{Near-singular integration}
 %\label{sec:NSI}
 %
+%
+%{\color{red}
+%Here we derive the equations~\eqref{eqn:pderiv1}-\eqref{eqn:pderiv2} 
+%and the other two are similar.
+%To derive equations~\eqref{eqn:pderiv1} and \eqref{eqn:pderiv2}, 
+%we need to apply the fact that if a real function $u$ is equivalent to 
+%the real part of a complex varaible function $f$, 
+%then we have $\nabla u=(\Re(f'),-\Im(f'))$.
+%Let $f_1(x)= v[\tau_1](x)$, $f_2(x)=v'[\yy\cdot\eeta](x)$, $f_3(x)=v'[\eta_1](x)$,
+%and $f_4(x)= v'[\eta_2](x)$. Then we can rewrite equation~\eqref{eqn:cauchy1}
+%\begin{align*}
+%u_1(\xx)&= u_{11}(\xx) +  u_{12}(\xx) +u_{13}(\xx)+u_{14}(\xx) \\
+%&=\Re (f_1(x)) + \Re (f_2(x))-x_1\Re (f_3(x)) - x_2\Re (f_4(x)).
+%\end{align*}
+%To get the gradient of $u_1(x)$, we have
+%\begin{align*}
+%\nabla u_1(x)&= \nabla u_{11}(x)+\nabla  u_{12}(x) 
+%+\nabla u_{13}(x)+\nabla u_{14}(x) \\ \\
+%&=\begin{bmatrix}
+%\Re(f_1'(x))\\ \\
+%-\Im(f_1'(x))
+%\end{bmatrix}+
+%\begin{bmatrix}
+%\Re(f_2'(x))\\ \\
+%-\Im(f_2'(x))
+%\end{bmatrix}
+%+
+%\begin{bmatrix}
+%-\Re(f_3(x))-x_1\Re(f_3'(x))\\ \\
+%x_1\Im(f_3'(x))
+%\end{bmatrix}
+%+
+%\begin{bmatrix}
+%-x_2\Re(f_4'(x))\\ \\
+%-\Re(f_4(x))+x_2\Im(f_4'(x))
+%\end{bmatrix}\\ \\
+%&=
+%\begin{bmatrix}
+%\Re (v'[\tau_1](x)) + 
+%    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
+%    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x))\\ \\
+%- \Im (v'[\tau_1](x)) - 
+%    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
+%    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x))
+%\end{bmatrix}.
+%\end{align*}
+
+%{\color{red}
+%\begin{alignat}{3}
+%1 &= \frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
+%\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
+%    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
+%\end{alignat}
+%and the contour integral 
+%\begin{align}\label{eqn:cauchyId3}
+%0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
+%\end{align}
+%Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
+%the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
+%\begin{align*}
+%0 &= \frac{1}{2\pi i} \int_{\Gamma}
+%    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
+%&= \frac{1}{2\pi i} \int_{\Gamma}
+%    \frac{2v^-(y)}{(y - x)^3} \, dy 
+%-v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{1}{y-x} dy\\
+%&= \frac{1}{2\pi i} \int_{\Gamma}
+%    \frac{2v^-(y)}{(y - x)^3} \, dy 
+%-\frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
+%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
+%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
+%&= \frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
+%\end{align*}
+%}
+%\todo[inline]{S-H: How do we get these identities?}
+%\begin{alignat}{3}
+%  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
+%  0 &= \frac{1}{2\pi i}\int_{\Gamma}
+%    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
+%    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
+%\end{alignat}
+%{\color{red}
+%and the quadrature formulations are
+%\begin{alignat}{3}
+%  v''(x) &\approx
+%    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
+%    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
+%  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
+%    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
+%    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
+%\end{alignat}
+%where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
+%
+%}
+
 

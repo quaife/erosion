@@ -8,8 +8,16 @@
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
 \
+- Aha, I figured out the problem with artificially high vorticity near the boundary. Some of my target points were outside of the outer boundary! I fixed it in DataTank by removing these points. \
+- I should also fix it in the postprocessing Julia code and trim out these points from the beginning, although I guess it is not absolutely essential.\
+- I should write the resolution in CodeNotes so I remember it.\
+\
+- I could go back and run the simulations I already ran but with more reasonable nouter = 1024 or 2048, since I now know that larger nouter is not necessary.\
+\
+\
+\
 - I have decided to do all runs with barycentric and with npts = 128. Early in 2019, I did a set of runs with npts = 256 and with trapezoid (since the barycentric code had not been developed yet). Reducing npts to 128 should reduce the size of the data files significantly.\
-- I also made nouter 4096 to mitigate the artificially high vortiticity near the walls.\
+- I also made nouter 4096 to mitigate the artificially high vorticity near the walls.\
 - I also changed dtout to 4, to reduce the file sizes and to reduce the computational time a bit (do not have to compute rotated density as often).\
 \
 \
@@ -34,9 +42,8 @@ Note: I started the tests for 60, 80, and 100 bodies with geometries 60circ3, 80
 \
 
 \b Other to do\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\b0 \cf0 Some of these may or may not become necessary later.\
+\b0 Some of these may or may not become necessary later.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 \cf0 - In the check to see if a body is about to vanish, the parameter ndts is set to 1. I could change this to 1.2 or 1.5, but see if any problems result first.\
 - I could implement adaptive time stepping based on either how big mterm is or how\
