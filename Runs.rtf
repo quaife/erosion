@@ -18,28 +18,40 @@
 \b0 All of these runs use barycentric with the following default parameters (unless otherwise specified):\
 npts = 128; ibary = 1; iffm = 1; epsfac = 15; sigfac = 10; dt = 1e-4; dtout = 4e-4; \
 fixdrop = 1; fixarea = 0; tfin = 0.1; maxl = 8000; nouter = 1024\
-Note: I had nouter = 4096 for the first few simulations I ran (10circ4, 20circ3, 60circ3, 80circ6, 100circ3) because I was worried about the vorticity near the outer boundary. But once I realized what I was seeing was due to a bug in the target points being outside of the outer boundary, I switched back to nouter = 1024.\
- \
-Also, all initial geometries have an area fraction of 0.5 unless otherwise specified.\
+All initial geometries have an area fraction of 0.5 unless otherwise specified.\
 All runs look good visually unless otherwise specified.\
 
 \b \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b0 \cf0 Note: I had nouter = 4096 for the first few simulations I ran because I was worried about the vorticity near the outer boundary. But once I realized what I was seeing was due to a bug in the target points being outside of the outer boundary, I switched back to nouter = 1024.\
+Note: Comparing nouter=1024 versus 4096 in the runs 10circ4 and 20circ3, nouter=1024 saves about 20 MB in the file size and saves significant CPU time. Likely, for larger number of bodies, these savings are not as significant.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\b \cf0 \
+\
 10circ4: 
-\b0 6.4 hours, 80 MB, 97 files
+\b0 2.8 hours, 57 MB, 97 files
 \b \
 20circ3:
-\b0  14 hours, 91 MB, 81 files\
+\b0  8.6 hours, 72 MB, 81 files\
 
 \b \
+60circ3-4096:
+\b0  89 hours, 159 MB, 73 files (nouter = 4096)\
+
+\b 80circ7-4096:
+\b0  94 hours, 191 MB, 73 files (nouter = 4096)\
+
+\b \
+\
+Obselete\
 10circ4-4096: 
 \b0 6.4 hours, 80 MB, 97 files (nouter = 4096)
 \b \
 20circ3-4096:
 \b0  14 hours, 91 MB, 81 files (nouter = 4096)\
 \
-
-\b 60circ3-4096:
-\b0  89 hours, 159 MB, 73 files (nouter = 4096)\
 \
 \
 \
