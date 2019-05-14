@@ -79,58 +79,60 @@ velocity} \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
 \label{s:formulation}
-Continuing with our previous work~\cite{qua-moo2018}, we use a completed
+Continuing with our previous work~\cite{qua-moo2018}, we use a
 double-layer potential formulation for the velocity $\uu$.  The
 double-layer potential is
 \begin{align}
-  \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
+  \uu(\xx) = \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
   \label{eqn:stokesDLP}
 \end{align}
 where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
-normal at $\yy$, and $\eeta$ is an unknown density function.  The Stokes
-double-layer potential can also be expressed as the sum of a Laplace
-double-layer potential 
+normal at $\yy$, and $\eeta$ is an unknown density function.  In
+Section~\ref{sec:DLPcomplex}, we show how the Stokes double-layer
+potential can also be expressed as the sum of a Laplacian double-layer
+potential 
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
     \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy
 \end{align}
-and its gradient.  By identifying $\xx,\yy \in
-\RR^2$ with the points $x,y \in \CC$, the Laplace double-layer potential
-for a real-valued density function $\eta$ can also be written as the
-real part of the Cauchy integral
+and its gradient.  Since the Laplacian double-layer potential can be
+written as a Cauchy integral
 \begin{align}
   \DD[\eta](\xx) = \Re (v(x)) \quad \text{where} \quad
   v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy.
+    \frac{\eta(y)}{x - y} \, dy,
+  \label{eqn:laplaceComplex}
 \end{align}
-Therefore, the Stokes double-layer potential can be written in terms of
-Cauchy integrals and its first derivative.  Rather than immediately
-applying a quadrature rule to compute $v(x)$, we will first compute the
-boundary data of $v(x)$ by applying the Sokhotski-Plemelj jump relation
+where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$,
+the Stokes double-layer potential can be written in terms of Cauchy
+integrals and its first derivative.  We also require the derivative of
+the Stokes double-layer potential which requires the second derivative
+of Cauchy integrals.
+
+We will be using quadrature formulae to compute $v$ and its derivatives
+that rely on the Cauchy integral theorem.  Since $v$ is holomorphic, its
+value only depends on its boundary data.  The boundary data satisfies
+the Sokhotski-Plemelj jump relation
 \begin{align}
-  v^{-}(x) = -\frac{1}{2} \eta(x) - \frac{1}{2\pi i} \text{PV}
+  v(x) = -\frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
 \end{align}
-
-
-In addition, we also require
-expressions for the derivative of the velocity field which can be
-written in terms of a Cauchy integral and its first two derivatives.
-Therefore, we introduce the notation
-\todo[inline]{BQ: Need to discuss boundary data and how to get it from
-density $\eta$}
+Once the boundary data of $v$ is computed, we have
 \begin{align}
   \label{eqn:cauchy}
-  v[\eta](x) = \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy,  \quad
-  v'[\eta](x) = -\frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{(x - y)^2} \, dy, \quad
-  v''[\eta](x) = \frac{1}{\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{(x - y)^3} \, dy.
+  v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
+    \frac{v(y)}{y-x} \,dy, \quad
+  v'(x) = -\frac{1}{2\pi i} \int_{\bd\Omega}
+    \frac{v(y)}{(y-x)^2} \, dy, \quad
+  v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
+    \frac{v(y)}{(y-x)^3} \, dy.
 \end{align}
-To simplify notation, whenever it will not cause confusion, we exclude
-$\tau$ and instead write $v(x)$, $v'(x)$, and $v''(x)$.
+for $x \in \Omega$.  Since $v(x)$ depends on the density function $\eta
+\in \CC$, we use the notation $v[\eta](x)$ to denote the holomorphic
+function defined in equation~\eqref{eqn:laplaceComplex}, and the
+derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.
 
 The Stokes double-layer potential itself can not represent all solutions
 of the incompressible Stokes equations.  Therefore, we complete the
@@ -168,6 +170,7 @@ velocity on the outer wall and eroding bodies.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
+\label{sec:DLPcomplex}
 The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
 decomposed as
 \begin{align}
@@ -190,12 +193,12 @@ with the density functions $\yy \cdot \eeta$, $\eta_1$, and $\eta_2$.
 The individual velocity components are
 \begin{align}
   \label{eqn:cauchy1}
-  u_1(\xx) &= \Re (v[\tau_1](x)) + \Re (v'[\yy\cdot\eeta](x)) 
+  u_1(x) &= \Re (v[\tau_1](x)) + \Re (v'[y\cdot\eta](x)) 
            -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
-  u_2(\xx) &= \Re (v[\tau_2](x)) - \Im (v'[\yy\cdot\eeta](x)) 
+  u_2(x) &= \Re (v[\tau_2](x)) - \Im (v'[y\cdot\eta](x)) 
        +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
 \end{align}
-where
+where $y \cdot \eta = y_1 \eta_1 + i y_2 \eta_2 \in \CC$, 
 \begin{align} 
   \tau_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad \text{and} \quad
   \tau_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
@@ -216,11 +219,11 @@ velocity field can be written in terms of Cauchy integrals.  For
 example,
 \begin{align}
   \pderiv{u_1}{x_2} &= \Re(iv'[\tau_1](x)) + 
-      \Re(i v''[\yy \cdot \nn](x)) -
+      \Re(i v''[y \cdot \eta](x)) -
       x_1\Re(i v''[\eta_1](x))  -
       \Re(v'[\eta_2](x)) - x_2 \Re(iv''[\eta_2](x)) \\
     &= -\Im(v''[\tau_1](x)) - 
-      \Im(v''[\yy \cdot \nn](x)) +
+      \Im(v''[y \cdot \eta](x)) +
       x_1\Im(v''[\eta_1](x)) -
       \Re(v'[\eta_2](x)) + x_2 \Im(v''[\eta_2](x)).
 \end{align}
@@ -228,16 +231,16 @@ Similarly, the other three components of $\nabla \DDD[\eeta]$ can be
 calculated
 \begin{align}
   \pderiv{u_1}{x_1} &= \Re (v'[\tau_1](x)) + 
-    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
+    \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
     x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
   \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
-    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
+    \Im (v''[y\cdot\eta](x)) + x_1\Im (v''[\eta_1](x)) - 
     \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
   \pderiv{u_2}{x_1} &= \Re (v'[\tau_2](x)) - 
-    \Im (v''[\yy\cdot\eeta](x)) + \Im (v'[\eta_1](x)) +
+    \Im (v''[y\cdot\eta](x)) + \Im (v'[\eta_1](x)) +
     x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
   \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
-    \Re (v''[\yy\cdot\eeta](x)) + x_1\Re (v''[\eta_1](x)) +
+    \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
     \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
 
@@ -504,11 +507,11 @@ To investigate the shape of eroding body when it is close to wall, we set $r=0.4
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense1}
-\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense101}\\
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_1}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_101}\\
 
-\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
-\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense301}
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_201}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_301}
 \caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $.}
 \end{center}
 \end{figure}
