@@ -8,6 +8,9 @@
 \f0\b\fs28 \cf0 Code To Do
 \b0 \
 \
+- I am rerunning 10circ4 and 20circ4 with nouter =1024 instead of 4096, since I now know the source of the vorticity bug. I want to see if the resulting output file size is exactly the same, or if it is slightly less due to the smaller nouter. If it is about the same, I will keep the 60, 80, 100 body run as is (with 4096).\
+\
+\
 - Aha, I figured out the problem with artificially high vorticity near the boundary. Some of my target points were outside of the outer boundary! I fixed it in DataTank by removing these points. \
 - I should also fix it in the postprocessing Julia code and trim out these points from the beginning, although I guess it is not absolutely essential.\
 - I should write the resolution in CodeNotes so I remember it.\

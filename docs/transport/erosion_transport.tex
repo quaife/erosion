@@ -499,8 +499,18 @@ the resolution}
 \label{} 
 \end{center}
 \end{figure}
-{\color{red} We first consider a single circular body in a shear flow. The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. Let the initial radius of the body be $r$, the initial length of the body be $L$, $N_\iin$ and $N_\out$ be the number of discretization points on the body and wall respectively, $h=L/N_\iin$ be the resolution mesh size of the body, and $d$ be the minimum initial distance from body to wall. 
-To investigate the shape of eroding body when it is close to wall, we set $r=0.4$, $N_\iin=256$, and $N_\out=1024$ with respect to three different $d=h, h/2$, and $ h/10$. 
+{\color{red} We first consider a single circular body in a shear flow. 
+The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. 
+The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. 
+Let the initial radius of the body be $r$, 
+the initial length of the body be $L$, $N_\iin$ and 
+$N_\out$ be the number of discretization points 
+on the body and wall respectively, 
+$h=L/N_\iin$ be the resolution mesh size of the body, 
+and $d$ be the minimum initial distance from body to wall. 
+To investigate the shape of eroding body when it is close to wall, 
+we set $r=0.4$, $N_\iin=256$, and $N_\out=1024$ 
+with respect to three different $d=h, h/2$, and $ h/10$. 
 
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -513,17 +523,59 @@ To investigate the shape of eroding body when it is close to wall, we set $r=0.4
 \includegraphics[width = 0.42 \textwidth]{./figs/20b_dense_201}
 \includegraphics[width = 0.507 \textwidth]{./figs/20b_dense_301}
 \caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $.}
+\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
+\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense301}
+\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the forth frame, bodies 4, 12, and 17 have vanished completely, and body 19 (the one without number on the right) has almost vanished because of eroding.}
 \end{center}
 \end{figure}
 \subsection{20 nearly touching bodies}
 {\color{red} 
-By using Barycentric quadrature rule, we are able to capture the details in the fluid when wall and bodies or body and bodies are close to each other. The first nearly touching bodies case is 20 bodies in a Hagen-Poiseuille flow. The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=(1+x_2)(1-x_2)$. The number of discretization points $N_\iin$ on the bodies is 256 and the number of discretization points $N_\out$ on the outer boundary is 1024. 
+By using Barycentric quadrature rule, 
+we are able to capture the details in the fluid when wall and bodies or body and bodies 
+are close to each other. 
+The first nearly touching bodies case is 20 bodies in a Hagen-Poiseuille flow. 
+The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. 
+The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=(1+x_2)(1-x_2)$. 
+The number of discretization points $N_\iin$ on the bodies is 256 and the number 
+of discretization points $N_\out$ on the outer boundary is 1024. 
 
-The snapshots of the process of 20 nearly touching bodies eroding are in Fig.~\ref{fig:Eroding20vort}. 
-We place some bodies to nearly contact not only one another but also the outer boundary. For example, bodies 1, 6, 13, and 15 are very close to outer boundary. In~\cite{qua-moo2018} we reported the quick expanding space at the narrow channel between neighboring bodies, the developing flat faces at the sites of near contact, and bodies vanishing. In this nearly touching bodies structure, we also observe these phenomena but with more new details.
-For the speed of expanding space at the narrow channel, we see some narrow channels do expand faster than other wider channels. For example, the spacing between bodies 14 \& 18 is smaller than the spacing between bodies
- 7 \& 14 initially and the former one is comparable to the latter one by the second frame. But there are some small initial spacings that do not expand that much at all by the fourth frame, for example between bodies 1 \& 6, 3 \& 9. 
-We could find the explanation from the tracer test in Fig.~\ref{fig:Eroding20tracer}. Since the direction of flow is from left to right, most of the tracers will not travel vertically but horizontally. If the trajectory of tracer }
+The snapshots of the process of 20 nearly touching bodies 
+eroding are in Fig.~\ref{fig:Eroding20vort}. 
+We place some bodies to nearly contact not only one another 
+but also the outer boundary. For example, bodies 1, 6, 13, and 15 
+are very close to outer boundary. In~\cite{qua-moo2018} 
+we reported the quick expanding space at the narrow channel 
+between neighboring bodies, the developing flat faces at the sites 
+of near contact, and bodies vanishing. In this nearly touching bodies 
+structure, we also observe these phenomena but with more new details.
+
+For the speed of expanding space at the narrow channel, we see some 
+narrow channels do expand faster than other wider channels. 
+For example, the spacing between bodies 14 \& 18 is smaller 
+than the spacing between bodies 7 \& 14 initially and the former one is 
+comparable to the latter one by the second frame. But there are some 
+small initial spacings that do not expand that much at all by the fourth frame, 
+for example between bodies 1 \& 6, 3 \& 9. 
+We could find the explanation from the vorticity of fluid 
+in Fig.~\ref{fig:Eroding20vort}. 
+Since the eroding velocity on the body is proportional to the 
+absolute value of vorticity in our erosion model,  
+then when the  absolute value of vorticity is small 
+there is not much erosion on the body. 
+In all four frames of Fig.~\ref{fig:Eroding20vort}, 
+the vorticity is relatively small between bodies 1 \& 6 and 3 \& 9.
+
+Besides the channels between two bodies, there is a single channel 
+
+For the flat faces at the sites of near contact, since we put the body be close to one another
+so we are able to see all the channels between two close bodies have flat faces. 
+Besides the channels between bodies, we also observe the flat faces on the bodies 
+which are close to the outer boundary. For example, we see the flat faces 
+on the top of bodies 1 \& 6 and the bottom of bodies 13 \& 15.  
+
+
+
+Since the direction of flow is from left to right, most of the tracers will not travel vertically but horizontally when the gaps or channels are too small.  }
 
 \begin{figure}[H]
 \begin{center}
