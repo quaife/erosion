@@ -601,9 +601,23 @@ Besides the channels between bodies, we also observe the flat faces on the bodie
 which are close to the outer boundary. For example, we see the flat faces 
 on the top of bodies 1 \& 6 and the bottom of bodies 13 \& 15.  
 
+Since we use a Barycentric quadrature rule to approximate the velocity of tracers
+and apply fourth order Runge Kutta method to find the new locations of tracers in each step,
+the tracers can be very close to but not penetrate the bodies. 
+Those body-closed tracers are moving perfectly 
+so we are able to observe the details of the interaction of bodies and fluid.
 Although the direction of flow is from left to right, 
-the tracers will not only travel horizontally but vertically. 
-In the last three frames of Fig.~\ref{fig:Eroding20tracer},  }
+the tracers will not only travel horizontally but also vertically. 
+In the last three frames of Fig.~\ref{fig:Eroding20tracer}, 
+some tracers climb up from right to left around the body. 
+There are zoom windows of the climbing tracers trajectories 
+in Fig.~\ref{fig:Eroding20zoom} and they are taken from the 
+last three frames of Fig.~\ref{fig:Eroding20tracer} with more tracers. 
+In Fig.~\ref{fig:Eroding20zoom} the tracers around 
+the center body first go from the channel below the body, 
+climb up to the left, then go to the right and join another tracers 
+in the channel above the body. 
+ }
 
 \begin{figure}[H]
 \begin{center}
@@ -621,6 +635,15 @@ In the last three frames of Fig.~\ref{fig:Eroding20tracer},  }
 \caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in the fluid with 20 bodies. The 9 snapshots are evenly spaced in time. The tracers are evenly spread in the $x_2-$direction and released at $x_1=-1$.}
 \end{center}
 \end{figure}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b210_zoom}
+\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b240_zoom}
+\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b270_zoom}
+\caption{\label{fig:Eroding20zoom}The zoom windows in the last three frames of Fig.~\ref{fig:Eroding20tracer}. The trajectories of tracers around the bodies. Since we use a Barycentric quadrature rule and fourth order Runge Kutta method, the tracers can be very close to but not penetrate the bodies. }
+\end{center}
+\end{figure}
+
 
 \begin{figure}[H]
 \begin{center}
