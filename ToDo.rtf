@@ -11,26 +11,11 @@
 - I realized something I could do to make running batches of simulations easier. Instead of making all the different thlen files with different values for npts, I could simply specify the .circ file and specify npts separately. The advantages would be: (1) Less files cluttering up the repo; (2) npts would be explicitly specified in the params file, so there is no doubt.\
 \
 \
-- I am rerunning 10circ4 and 20circ4 with nouter =1024 instead of 4096, since I now know the source of the vorticity bug. I want to see if the resulting output file size is exactly the same, or if it is slightly less due to the smaller nouter. If it is about the same, I will keep the 60, 80, 100 body run as is (with 4096).\
-\
 \
 - Aha, I figured out the problem with artificially high vorticity near the boundary. Some of my target points were outside of the outer boundary! I fixed it in DataTank by removing these points. \
 - I should also fix it in the postprocessing Julia code and trim out these points from the beginning, although I guess it is not absolutely essential.\
 - I should write the resolution in CodeNotes so I remember it.\
 \
-- I could go back and run the simulations I already ran but with more reasonable nouter = 1024 or 2048, since I now know that larger nouter is not necessary.\
-\
-\
-\
-- I have decided to do all runs with barycentric and with npts = 128. Early in 2019, I did a set of runs with npts = 256 and with trapezoid (since the barycentric code had not been developed yet). Reducing npts to 128 should reduce the size of the data files significantly.\
-- I also made nouter 4096 to mitigate the artificially high vorticity near the walls.\
-- I also changed dtout to 4, to reduce the file sizes and to reduce the computational time a bit (do not have to compute rotated density as often).\
-\
-\
-\
-Plan: Test the cases of nbods = 60, 80, 100 to settle on good parameter values. Once I have parameter values chosen, run all of the other simulations so that I can aggregate all of the data.\
-\
-Note: I started the tests for 60, 80, and 100 bodies with geometries 60circ3, 80circ7, and 100circ3. I had to kill the jobs due to the planned power outage. Of these three, 80circ7 was clearly running the fastest; 60circ3 and 100circ3 were running about the same speed. 80circ7 was running about twice as fast as the other two. All seemed to be running smoothly visually. 80circ7 had been running for 50 hours and had produced 21 output files; this might be just under halfway through.\
 \
 \
 \
