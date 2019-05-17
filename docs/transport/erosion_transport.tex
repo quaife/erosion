@@ -55,7 +55,10 @@ velocity} \\
 \paragraph{Contributions}
 \begin{itemize}
   \item Use novel near-singular Barycentric integration scheme for
-    Stokes equation outlined in~\cite{bar-wu-vee2015}. (Remember to include historically significant reference Shelley \cite{baker1986boundary}).
+    Stokes equation outlined in~\cite{bar-wu-vee2015}. (Remember to
+    include historically significant reference Shelley
+    \cite{baker1986boundary}).  Also need discuss Helsing and Ojala who
+    did a similar panel-based quadrature~\cite{hel-oja2008}
   \item Need to compute one additional derivative since we need the
     derivative of the velocity to find the vorticity and stress tensor
   \item Annealing algorithm to create initial body configurations of specified area fraction specified size distribution (NM can do the writing for this).
@@ -84,16 +87,18 @@ Continuing with our previous work~\cite{qua-moo2018}, we use a
 double-layer potential formulation for the velocity $\uu$.  The
 double-layer potential is
 \begin{align}
-  \uu(\xx) = \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
+  \uu(\xx) = \DDD[\eeta](\xx) = 
+    \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
+  \frac{1}{\pi}\int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
   \label{eqn:stokesDLP}
 \end{align}
-where $\rr = \xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward
-normal at $\yy$, and $\eeta$ is an unknown density function.  In
-Section~\ref{sec:DLPcomplex}, we show how the Stokes double-layer
-potential can also be expressed as the sum of a Laplacian double-layer
-potential 
+where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
+$\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
+is an unknown density function.  In Section~\ref{sec:DLPcomplex}, we
+show how the Stokes double-layer potential can also be expressed as the
+sum of a Laplacian double-layer potential 
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
     \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy
@@ -117,6 +122,7 @@ that rely on the Cauchy integral theorem.  Since $v$ is holomorphic, its
 value only depends on its boundary data.  The boundary data satisfies
 the Sokhotski-Plemelj jump relation
 \begin{align}
+  \label{eqn:SPrelation}
   v(x) = -\frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
     \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
 \end{align}
@@ -174,17 +180,20 @@ Potential}
 \label{sec:DLPcomplex}
 The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
 decomposed as
-\begin{align}
-  \DDD[\eeta](\xx) &= 
-    \frac{1}{2\pi} \int_{\bd\Omega} 
-      \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
-    \frac{1}{2\pi} \nabla \int_{\bd\Omega}
-      \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
-    &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
-      \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
-    \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
-      \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
-\end{align}
+\begin{equation}
+  \label{eqn:Stokes2Laplace}
+  \begin{aligned}
+    \DDD[\eeta](\xx) &= 
+      \frac{1}{2\pi} \int_{\bd\Omega} 
+        \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
+      \frac{1}{2\pi} \nabla \int_{\bd\Omega}
+        \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
+      &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
+        \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
+      \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
+        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
+  \end{aligned}
+\end{equation}
 All these integrals but the first are a gradient of a Laplace layer
 potential.  In addition, each component of the first integral can be
 written as a Cauchy integral with a complex-valued density
@@ -301,7 +310,7 @@ There have been a variety of near-singular integration schemes
 developed, and we extend a method first outlined by Barnett et
 al.~\cite{bar-wu-vee2015} which we call the {\em Barycentric quadrature
 rule}.  This method first uses the density function $\tau(y)$ to compute
-the boundary data of $v$, denoted by $v^-{y}$.  Then, it makes use
+the boundary data of $v$, denoted by $v^-(y)$.  Then, it makes use
 of the identity
 \begin{align}
   v(x) = \int_{\bd\Omega} \frac{v^{-}(y)}{y-x} \, dy, 
@@ -319,11 +328,64 @@ nearly-singular integrand, we use the identity
 \begin{align}
   \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0.
 \end{align}
-Then, even if $x$ is close to $\bd\Omega$, the integrand is no longer
-nearly-singular and the accuracy of the trapezoid rule is bounded
-independent of $x$.  A similar identity identity involving $v'(x)$ also
-holds.   Now, applying the spectrally accurate trapezoid rule, the
-quadrature error of the Barycentric quadrature rule
+Rearranging for $v(x)$, we have
+\begin{align}
+  v(x) = \frac{\int\limits_{\bd\Omega} \frac{v^{-}(y)}{y-x}\, dy}
+    {\int\limits_{\bd\Omega} \frac{1}{y-x}\, dy}.
+\end{align}
+Of course, the denominator is simply $1$, but applying a quadrature rule
+to both integrands results in a uniform bound on the quadrature error.
+Differentiating Cauchy's integral theorem, the derivative of $v$ is
+\begin{align}
+  v'(x) = \frac{\int\limits_{\bd\Omega} \frac{v^{-}(y) - v(x)}{(y-x)^2}\, dy}
+    {\int\limits_{\bd\Omega} \frac{1}{y-x}\, dy}.
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Spatial Discretization}
+\label{s:spatialDiscretization}
+By using an integral equation formulation, we only have to discretize
+the boundary of the domain.  Therefore, we only have to discretize
+one-dimensional closed-curves, allowing us to use the spectrally
+accurate trapezoid rule~\cite{tre-wei2014} and Fourier differentiation.
+Moreover, since we only discretize the boundary of the domain, resolving
+the complex eroding bodies is straightforward.
+
+Consider eroding bodies $\gamma_k$, $k=1,\ldots,M$, in a fluid domain
+$\Omega$ with boundary $\Gamma$.  Let the length of $\Gamma$ be $L_{0}$,
+and the length of $\gamma_k$ be $L_k$.  We discretize each eroding body
+$\gamma_k$ with $N_\iin$ points and discretize $\Gamma$ with $N_\out$
+points.  The $j^{th}$ discretization point on $\Gamma$ is denoted by
+$\yy_j^0$, and the $j^{th}$ discretization point on $\gamma_k$ is
+denoted by $\yy^k_j$.  The discretization points are initially
+distributed evenly in arclength, and this equispacing is maintained for
+the entire simulation by using a {\thL}
+formulation~\cite{hou-low-she1994}.  In addition, we apply mild
+smoothing strategies~\cite{qua-moo2018} to avoid the corners that
+erosion inevitably develop.    Since the points are equispaced, the
+trapezoid rule to evaluate the velocity at a target point $\xx$ is
+\begin{align}
+  \label{eqn:trap}
+  \uu(\xx) \approx \frac{L_0}{N_\out} \sum_{j=1}^{N_\out} 
+    D(\xx,\yy^0_j) \eeta_j +
+  \sum_{k=1}^M \sum_{j=1}^{N_\iin}
+    D(\xx,\yy^k_j) \eeta^k_j,
+\end{align}
+where $D$ is the kernel of the Stokes double-layer potential defined in
+Equation~\eqref{eqn:stokesDLP}.
+
+As previously mentioned, the quadrature error of the trapezoid rule is
+large if $\xx$ is close to $\bd\Omega$.  The proximity between $\xx$ and
+$\bd\Omega$ occurs in dense packings, and also when evaluating the
+velocity in the fluid bulk.  For these nearby points, instead of
+applying the trapezoid rule, the Barycentric quadrature rule is applied.
+In particular, the Stokes double-layer potential is decomposed into
+Laplacian double-layer potentials~\eqref{eqn:Stokes2Laplace}.  Then, for
+each of these Laplacian double-layer potentials, the density function is
+used to find the boundary values of the analytic function whose real
+part is the layer potential of interest~\eqref{eqn:SPrelation}.
+Finally, instead of applying the trapezoid rule to compute the Cauchy
+integrals, the quadrature rule outlined by Barnet et.~al is used
 \begin{align}
   v(x) \approx \frac{\sum\limits_{j=1}^N \frac{v_j^-}{y_j-x}w_j}
     {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}
@@ -333,16 +395,21 @@ quadrature error of the Barycentric quadrature rule
     {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, 
   \label{eqn:vvpQuadrature}
 \end{align}
+Then, even if $x$ is close to $\bd\Omega$, the integrand is no longer
+nearly-singular and the accuracy of the trapezoid rule is bounded
+independent of $x$.  A similar identity identity involving $v'(x)$ also
+holds.   Now, applying the spectrally accurate trapezoid rule, the
+quadrature error of the Barycentric quadrature rule
 is uniformly bounded~\cite{bar-wu-vee2015}.  A slight modification of
 these formulae are applied if $x \in \Omega^{c}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature for $v''(x)$}
 While accurate quadrature rules for $v(x)$ and $v'(x)$ have already been
-developed~\cite{bar-wu-vee2015}, this work requires a similar quadrature
-rule for $v''(x)$.  We mimic the approach developed
-in~\cite{bar-wu-vee2015}.  First, if $x \in \Omega$ and $n \in
-\mathbb{N}$, then 
+developed~\cite{bar-wu-vee2015}, computing the shear stress and
+vorticity requires a Barycentric quadrature rule for $v''(x)$.  We mimic
+the approach developed in~\cite{bar-wu-vee2015}.  First, if $x \in
+\Omega$ and $n \in \mathbb{N}$, then 
 \begin{align}
   \frac{1}{2\pi i}\int_{\bd\Omega} \frac{1}{(y-x)^n}\, dy = 
   \left\{
@@ -407,28 +474,44 @@ algorithm.  However, the velocity must be computed at every GMRES
 iteration, which would make the overall method impractical without a
 fast algorithm.
 
-To compute the velocity with $\mathcal{O}(N)$ operations, we start by
-using the trapezoid rule accelerated with the fast multipole method
-(FMM) \todo[inline]{reference here}. For target points that are
-sufficiently far from $\bd\Omega$, the resulting velocity is
-sufficiently accurate.  However, the velocity at points that are too
-close to $\bd\Omega$ must be corrected.  For a general point $\xx$,
+At each GMRES iteration, we must compute the velocity at each
+discretization point on $\bd\Omega$.  To reduce the cost of computing
+the velocity, we start by using the trapezoid rule~\eqref{eqn:trap}
+accelerated with the fast multipole method (FMM)~\cite{gre-rok1987},
+which requires $\mathcal{O}(N)$ operations, and we call this velocity
+$v_\trap(\xx)$.  For target points that are sufficiently far from
+$\bd\Omega$, $v_\trap(\xx)$ is sufficiently accurate.  However, this
+velocity is inaccurate at points that are too close to $\bd\Omega$, and
+the velocity must be corrected.  Assuming that $\xx$ is too close to
+$\gamma_k$, only the velocity due to $\gamma_k$ must be corrected. We
+first subtract the velocity contribution of $\vv(\xx)$ due to
+$\gamma_k$.  Then, the Barycentric quadrature rule is used to compute
+the velocity due to $\gamma_i$ with more accuracy.  That is, the
+final velocity is
 \begin{align}
-  \vv(\xx) = \int_{\Gamma} D(\xx,\yy) \eeta(\yy)\, ds_\yy + 
-    \sum_{k=1}^{M} \int_{\gamma_k} D(\xx,\yy) \eeta(\yy)\, ds_\yy.
+  \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
+    D(\xx,\yy^k_j) \eeta(\yy_j) + v^k_\bary(\xx),
 \end{align}
-Assuming that $\xx$ is too close to $\gamma_i$, we first subtract the
-velocity contribution of $\vv(\xx)$ due to $\gamma_i$.  Then, the
-Barycentric quadrature rule is used to compute the velocity due to
-$\gamma_i$ with more accuracy.  This is correction is applied to all
-points that are close to an eroding body or the outer wall $\Gamma$.
+where $v^k_\bary(\xx)$ is the velocity at $\xx$ resulting from applying
+the Barycentric quadrature rule due to $\gamma_k$.  This method
+naturally extends to points that are close to $\Gamma$, and to the
+scenario when $\xx$ is simultaneously close to multiple components of
+$\bd\Omega$.
+
+We do not use any fast summation methods to apply the Barycentric
+quadrature rule.  Therefore, to it is imperative that we only apply
+the Barycentric quadrature at target points where they are required.
+
 
 The same strategy of using the trapezoid rule and then correcting with
 the Barycentric quadrature is used to compute the shear stress on
 $\bd\Omega$ and vorticity in $\Omega$.  The trapezoid rule is applied
 with a direct summation, but this cost is only incurred once per time
 step, and the majority of the computational effort is still required to
-compute the velocity using the fast summation method.
+compute the velocity using the fast summation method.\todo[inline]{BQ:
+Discuss how we don't do Barycentric everywhere since it involves several
+$N$ body calculations, while the trapezoid rule only requires a single
+one}
 
 To determine if a point $\xx \in \gamma_i$ needs to be corrected with
 the Barycentric quadrature rule, we first estimate the proximity of
@@ -463,8 +546,6 @@ d<\frac{L_{b_1}}{2\pi}+\frac{L_{b_2}}{2\pi}+\alpha_2\left(\frac{L_{b_1}}{N_\iin}
 where $\alpha_2$ is a constant. 
 
 }
-  \item Subtract off trapezoid rule directly
-  \item Add on Barycentric directly
 \end{itemize}
 {\color{red}  (Discussion of the choices of $\alpha_1$ and $\alpha_2$ with respect to accuracy and  efficiency)
 
