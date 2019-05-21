@@ -127,10 +127,9 @@ numerical methods to simulate erosion in a viscous fluid
   \item {\bf Interface Tracking}: We describe the interface using
   {\thL} coordinates, where $\theta$ is a local tangent angle, and $L$
   is the total interface length.  In these coordinates, the
-  stiff terms are linear and are be discretized implicitly.
+  stiff terms are linear which allows implicit methods to be used for time discretization.
 
-  \item {\bf Validation}: We compare the numerical simulations with
-  scaling laws.
+  \item {\bf Validation}: We compare the numerical simulations against analytical predictions for the limiting shape of a single body and scaling laws for its vanishing rate.
 \end{enumerate}
 
 \section{Proposed Work}
@@ -139,7 +138,7 @@ erosion, there are two main directions that our research will follow.
 First, {\bf additional numerical tools are required to simulate more
 realistic scenarios such as denser packings, transport, and
 three-dimensional erosion}.  Second, {\bf we will investigate physically
-motivated questions regarding the geometry and flow inside an eroding
+motivated questions regarding the reconfiguration of geometry and flow inside an eroding
 porous medium}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
