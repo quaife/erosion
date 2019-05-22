@@ -131,7 +131,7 @@ Once the boundary data of $v$ is computed, we have
   \label{eqn:cauchy}
   v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
     \frac{v(y)}{y-x} \,dy, \quad
-  v'(x) = -\frac{1}{2\pi i} \int_{\bd\Omega}
+  v'(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^2} \, dy, \quad
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy.
@@ -372,7 +372,7 @@ trapezoid rule to evaluate the velocity at a target point $\xx$ is
   \label{eqn:trap}
   \uu(\xx) \approx \frac{L_0}{N_\out} \sum_{j=1}^{N_\out} 
     D(\xx,\yy^0_j) \eeta_j +
-  \sum_{k=1}^M \sum_{j=1}^{N_\iin}
+  \sum_{k=1}^M \frac{L_k}{N_\iin} \sum_{j=1}^{N_\iin}
     D(\xx,\yy^k_j) \eeta^k_j,
 \end{align}
 where $D$ is the kernel of the Stokes double-layer potential defined in
@@ -494,7 +494,7 @@ the velocity due to $\gamma_i$ with more accuracy.  That is, the
 final velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
-    D(\xx,\yy^k_j) \eeta(\yy_j) + v^k_\bary(\xx),
+    D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
 \end{align}
 where $v^k_\bary(\xx)$ is the velocity at $\xx$ resulting from applying
 the Barycentric quadrature rule due to $\gamma_k$.  This method
