@@ -116,7 +116,7 @@ numerical methods to simulate erosion in a viscous fluid
 \begin{enumerate}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
   \item {\bf Boundary Integral Equation Fluid Solver}: The
   fluid equations are solved with a boundary integral equation (BIE).
-  The BIE formulation achives high-order accuracy in complex geometries
+  The BIE formulation achieves high-order accuracy in complex geometries
   with optimal computational complexity.
 
   \item {\bf Regularizations of the Interface}: Erosion results in
@@ -138,12 +138,12 @@ erosion, there are two main directions that our research will follow.
 First, {\bf additional numerical tools are required to simulate more
 realistic scenarios such as denser packings, transport, and
 three-dimensional erosion}.  Second, {\bf we will investigate physically
-motivated questions regarding the reconfiguration of geometry and flow inside an eroding
-porous medium}.
+motivated questions regarding the reconfiguration of the geometry and
+transport inside an eroding porous medium}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improved Numerical Methods}
-\begin{wrapfigure}[22]{r}{0.4\textwidth}
+\begin{wrapfigure}[20]{r}{0.35\textwidth}
 \centering
 \input{figs/vort1.tikz}
 \caption{\label{fig:vort1} \em The vorticity along a vertical slice
@@ -154,17 +154,16 @@ results in a smooth vorticity field.}
 \end{wrapfigure}
 
 Our current formulation fixes all bodies space.  However, in reality,
-the bodies are also transported by the flow.  The PI has simulated
-moving interfaces in Stokes flow~\cite{qua-bir2015b, qua-bir2014,
-qua-bir2016}. More recently, the PI and his former Ph.D.~student
-developed time stepping methods for rigid body transport in Stokes
-flow~\cite{bys-sha-qua2018}.  This work extends a contact algorithm,
-originally developed by Lu et al.~\cite{lu-rah-zor2017}, to accuratly
-simulate the dynamics of nearly-touching rigid bodies.  The contact
-algorithm resolves errors introduced by time stepping, but quadrature
-error introduced by the BIE formulation must also be addressed.  A
-postdoc in the PI's group is extending a Barycentric near-singular
-integration scheme developed by Barnett et al.~\cite{bar-wu-vee2015} to
+the bodies are also transported by the flow.  The PI is experienced with
+simulating moving interfaces in Stokes flow~\cite{qua-bir2014,
+qua-bir2016}. Recently, the PI and his former Ph.D.~student developed
+time stepping methods for rigid body dynamics in Stokes
+flow~\cite{bys-sha-qua2018}.  This work extends a contact
+algorithm~\cite{lu-rah-zor2017} to simulate the dynamics of
+nearly-touching rigid bodies.  The contact algorithm addresses time
+stepping errors, but quadrature error introduced by the BIE formulation
+must also be addressed.  A postdoc in the PI's group is extending a
+Barycentric near-singular integration scheme~\cite{bar-wu-vee2015} to
 develop quadrature formula to accurately compute the shear stress,
 vorticity, and other physical quantities.  In Figure~\ref{fig:vort1},
 the vorticity is computed along a vertical slice that cuts through a
@@ -178,43 +177,82 @@ throughout the entire fluid domain.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Physics-Based Understanding of Viscous Erosion}
 
-Armed with these new tools, we plan to investigate how erosion alters a porous medium through a reshaping process that occurs on the grain scale. Initial investigations showed that, as bodies erode and reduce in size, the permeability of the medium increases. The rate of increase, however, cannot be explained by the reduction in grain size alone, as the reshaping and associated formation of channels are vital elements. The new methods will allow us to examine these features in more detail. In particular, we anticipate that erosion may also lead to the development of {\bf anisotropic} permeability, as the medium gradually reconfigures to transmit flow more easily in the direction of the initial flow. The new methods will allow us to characterize the changes in permeability and anisotropy especially in nearly-touching body configurations, in more dense packings, and eventually in configurations of mobile and/or sedimenting grains. 
+Armed with these new tools, we plan to investigate how erosion alters a
+porous medium through a reshaping process that occurs on the grain
+scale. Initial investigations show that, as bodies erode and reduce in
+size, the permeability of the medium increases. The rate of increase,
+however, cannot be explained by the reduction in grain size alone, as
+the reshaping and associated formation of channels are vital elements.
+The new methods will allow us to examine these features in more detail.
+In particular, we anticipate that erosion leads to the development of
+{\bf anisotropic} permeability, as the medium gradually reconfigures to
+transmit flow more easily in the direction of the initial flow. We will
+characterize the changes in permeability and anisotropy especially in
+nearly-touching body configurations, in more dense packings, and
+eventually in configurations of mobile and sedimenting grains. 
 
-\todo[inline]{Coarse-grained transport (anomalous diffusion)}
-\todo[inline]{Nick: I am not an expert on anomalous diffusion. Bryan, do you want to write this paragraph?}
+We will also investigate transport in eroding geometries. Two ways to
+describe transport is with {\bf anomalous
+diffusion}~\cite{dea-qua-bir-jua2018} and {\bf tortuosity}.  Anomalous
+diffusion characterizes the spread of particles submerged in a geometry,
+and the tortuosity quantifies the length of trajectories relative to
+their size in a channel flow with no grains.  Both of these quantities
+require a statistical analysis of streamlines, and we have already begun
+these calculations (Figure~\ref{fig:streams}).  Once these quantities
+are computed, we will investigate the relationship between erosion and
+transport in eroding geometries.  The result will be new coarse-grained
+descriptions for transport in complex eroding geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Biographical Information}
+
+\begin{wrapfigure}[19]{l}{0.3\textwidth}
+\centering
+\includegraphics[width=0.28\textwidth]{figs/100b_t100tracer.pdf}
+\caption{\label{fig:streams} \em Trajectories of passive particles in an
+eroded geometry with 100 bodies.  The transport of flow in such a
+geometry will be characterized by a statistical analysis of the
+trajectories.}
+\end{wrapfigure}
 Since 2015, {\bf Bryan Quaife} has been an Assistant Professor in the
-Department of Scientific Computing at Florida State University.  He is
-also a Research Associate in FSU's Geophysical Fluid Dynamics Institute.
-Dr.~Quaife received his Ph.D.~in 2011 in Applied and Computational
-Mathematics at Simon Fraser University.  He was a postdoctoral fellow
-for four years in Dr.~George Biros' group at the Institute for
-Computational Science and Engineering at the University of Texas.  His
-research interests include the development of  high-fidelity and
-efficient numerical methods for simulating fluid dynamics in complex
+Department of Scientific Computing at Florida State University (FSU).
+He is also a Research Associate in FSU's Geophysical Fluid Dynamics
+Institute.  Dr.~Quaife received his Ph.D.~in 2011 in Applied and
+Computational Mathematics at Simon Fraser University.  He was a
+postdoctoral fellow from 2011--2015 in Dr.~George Biros' group at the
+Institute for Computational Science and Engineering at the University of
+Texas.  His research interests include the development of  high-fidelity
+and efficient numerical methods for simulating fluid dynamics in complex
 geometries.
 
 The co-PI of this project is {\bf Nick Moore}.  Since 2014, Dr.~Moore
 has been an Assistant Professor in the Department of Mathematics at
 Florida State University.  He is also a Research Associate in FSU's
-Geophysical Fluid Dynamics Institute. 
-Dr.~Moore received his Ph.D.~in 2010 in Mathematics at the University of North Carolina, Chapel Hill. He was a postdoctoral researcher at the Courant Institute of Mathematical Sciences from 2010-2014 working with Michael Shelley and others. His expertise includes modeling dynamic interactions between fluids and structures, especially in geophysically and biologically motivated settings. 
+Geophysical Fluid Dynamics Institute.  Dr.~Moore received his Ph.D.~in
+2010 in Mathematics at the University of North Carolina, Chapel Hill. He
+was a postdoctoral researcher at the Courant Institute of Mathematical
+Sciences from 2010--2014 working with Dr.~Michael Shelley and others.
+His expertise includes modeling dynamic interactions between fluids and
+structures, especially in geophysically and biologically motivated
+settings. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Expected Budget}
-\todo[inline]{I can have Michelle put one together.  Funds are needed
-for the following}
-\begin{itemize}
-  \item Summer salary (1 month a year for 3 years)
-  \item 2 RA (1 in Math, 1 on DSC)
-  \item 1 joint postdoc
-  \item Travel
-  \item Computers
-  \item FSU overhead
-\end{itemize}
+We request funding for three years.  For the project to be successful,
+we propose one month of summer salary each year for both the PI and
+co-PI, one joint two-year postdoctoral fellow, two full-time RAs (one
+from each of our home departments), laptops, and travel money.
+Including FSU's overhead, we expect that {\bf the total cost of the
+project would be around \$750,000.}
+%\begin{itemize}
+%  \item Summer salary (1 month a year for 3 years)
+%  \item 2 RA (1 in Math, 1 on DSC)
+%  \item 1 joint postdoc
+%  \item Travel
+%  \item Computers
+%  \item FSU overhead
+%\end{itemize}
 
 
 
