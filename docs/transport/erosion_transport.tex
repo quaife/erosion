@@ -583,7 +583,9 @@ We do some simulations.  The parameters are
   \item regularization and smoothing parameters
   \item resolution on bodies and solid wall
 \end{itemize}
-
+{\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. We impose the fixed-pressure-drop condition on the simulation
+ smoothing parameters of $\eps$ and $\sigma $.
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A single body close to a wall}
 \todo[inline]{Do a single body that is extremely close one of the two
@@ -596,7 +598,7 @@ the resolution}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r1h_shear}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r0d5h_shear}
 \includegraphics[width = 0.35 \textwidth]{./figs/1b_0d4r0d1h_shear}
-\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$(left), $h/2$(middle), and $h/10$(right) with $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt$, and smoothing parameters of $\eps $ and $\sigma $.}
+\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$ (left), $h/2$ (middle), and $h/10$ (right) with $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=0.0001$, and smoothing parameters of $\eps$ and $\sigma $.}
 \label{} 
 \end{center}
 \end{figure}
