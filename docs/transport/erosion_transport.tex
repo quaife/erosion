@@ -240,13 +240,13 @@ example,
 Similarly, the other three components of $\nabla \DDD[\eeta]$ can be
 calculated
 \begin{align}
-  \pderiv{u_1}{x_1} &= \Re (v'[\tau_1](x)) + 
+  \pderiv{u_1}{x_1} &= +\Re (v'[\tau_1](x)) + 
     \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
     x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
   \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
     \Im (v''[y\cdot\eta](x)) + x_1\Im (v''[\eta_1](x)) - 
     \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
-  \pderiv{u_2}{x_1} &= \Re (v'[\tau_2](x)) - 
+  \pderiv{u_2}{x_1} &= +\Re (v'[\tau_2](x)) - 
     \Im (v''[y\cdot\eta](x)) + \Im (v'[\eta_1](x)) +
     x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
   \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
@@ -309,13 +309,13 @@ quadrature methods to evaluate the expressions in
 equation~\eqref{eqn:cauchy}.  Since the integrands are all smooth and
 periodic, the Trapezoid rule has spectral accuracy.  However, the
 integrand is nearly singular if $x$ is close to $\bd\Omega$, and the
-quadrature error is arbitrarily large if the resolution $N$ is fixed.
-There have been a variety of near-singular integration schemes
-developed, and we extend a method first outlined by Barnett et
+quadrature error is arbitrarily large for a fixed resolution.  There
+have been a variety of near-singular integration schemes developed, and
+we extend a method first outlined by Barnett et
 al.~\cite{bar-wu-vee2015} which we call the {\em Barycentric quadrature
 rule}.  This method first uses the density function $\tau(y)$ to compute
-the boundary data of $v$, denoted by $v^-(y)$.  Then, it makes use
-of the identity
+the boundary data of $v$, denoted by $v^-(y)$.  Then, it makes use of
+the identity
 \begin{align}
   v(x) = \int_{\bd\Omega} \frac{v^{-}(y)}{y-x} \, dy, 
   \quad x \in \Omega.
@@ -483,29 +483,44 @@ discretization point on $\bd\Omega$.  To reduce the cost of computing
 the velocity, we start by using the trapezoid rule~\eqref{eqn:trap}
 accelerated with the fast multipole method (FMM)~\cite{gre-rok1987},
 which requires $\mathcal{O}(N)$ operations, and we call this velocity
-$v_\trap(\xx)$.  For target points that are sufficiently far from
-$\bd\Omega$, $v_\trap(\xx)$ is sufficiently accurate.  However, this
+$\vv_\trap(\xx)$.  For target points that are sufficiently far from
+$\bd\Omega$, $\vv_\trap(\xx)$ is sufficiently accurate.  However, this
 velocity is inaccurate at points that are too close to $\bd\Omega$, and
 the velocity must be corrected.  Assuming that $\xx$ is too close to
 $\gamma_k$, only the velocity due to $\gamma_k$ must be corrected. We
 first subtract the velocity contribution of $\vv(\xx)$ due to
 $\gamma_k$.  Then, the Barycentric quadrature rule is used to compute
-the velocity due to $\gamma_i$ with more accuracy.  That is, the
-final velocity is
+the velocity due to $\gamma_i$ with more accuracy.  That is, the final
+velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
 \end{align}
-where $v^k_\bary(\xx)$ is the velocity at $\xx$ resulting from applying
-the Barycentric quadrature rule due to $\gamma_k$.  This method
+where $\vv^k_\bary(\xx)$ is the velocity at $\xx$ resulting from
+applying the Barycentric quadrature rule due to $\gamma_k$.  This method
 naturally extends to points that are close to $\Gamma$, and to the
 scenario when $\xx$ is simultaneously close to multiple components of
 $\bd\Omega$.
 
-We do not use any fast summation methods to apply the Barycentric
-quadrature rule.  Therefore, to it is imperative that we only apply
-the Barycentric quadrature at target points where they are required.
+Similarly, to compute the vorticity and shear stress, the trapezoid rule
+is first used.  Then, if $\xx$ is close to $\gamma_k$, the trapezoid
+quadrature rule contribution due to $\gamma_k$ is subtracted and the
+Barycentric quadrature rule contribution due to $\gamma_k$ is added.
+Since the shear stress and vorticity are only computed once per time
+step, we use a direct summation rather than the FMM.  Relative to the
+cost of applying GMRES with the FMM, the additional once-per-time-step
+cost is minimal.
 
+We also do not use any fast summation methods to apply the Barycentric
+quadrature rule.  Since this quadrature rule is applied at every GMRES
+iteration, it is imperative that we only apply the Barycentric
+quadrature at target points where they are required.  As a rule of
+thumb, the trapezoid rule due to $\gamma_k$ is accurate if
+\begin{align}
+  d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| < 
+    5 \frac{L_k}{N_\iin}.
+\end{align}
+To avoid having to check if a target point $\xx$ satisifies
 
 The same strategy of using the trapezoid rule and then correcting with
 the Barycentric quadrature is used to compute the shear stress on
