@@ -517,7 +517,7 @@ iteration, it is imperative that we only apply the Barycentric
 quadrature at target points where they are required.  As a rule of
 thumb, the trapezoid rule due to $\gamma_k$ is accurate if
 \begin{align}
-  d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| < 
+  d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
     5 \frac{L_k}{N_\iin}.
 \end{align}
 To avoid having to check if a target point $\xx$ satisifies
@@ -583,8 +583,7 @@ We do some simulations.  The parameters are
   \item regularization and smoothing parameters
   \item resolution on bodies and solid wall
 \end{itemize}
-{\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. We impose the fixed-pressure-drop condition on the simulation
- smoothing parameters of $\eps$ and $\sigma $.
+{\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. There are $N_\out = 1024$ points on the outer boundary for all the simultions. We impose the fixed pressure drop condition. We use smoothing parameters of $\eps$ and $\sigma$ to control eroding motion on the bodies.  
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A single body close to a wall}
@@ -598,17 +597,15 @@ the resolution}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r1h_shear}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r0d5h_shear}
 \includegraphics[width = 0.35 \textwidth]{./figs/1b_0d4r0d1h_shear}
-\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$ (left), $h/2$ (middle), and $h/10$ (right) with $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=0.0001$, and smoothing parameters of $\eps$ and $\sigma $.}
+\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$ (left), $h/2$ (middle), and $h/10$ (right) with $N_\iin = 256$ discretization points on the body, a time-step of $\Dt=0.0001$, and $\eps = 15/256$ and $\sigma=10/256$.}
 \label{} 
 \end{center}
 \end{figure}
 {\color{red} We first consider a single circular body in a shear flow. 
-The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. 
 The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. 
 Let the initial radius of the body be $r$, 
-the initial length of the body be $L$, $N_\iin$ and 
-$N_\out$ be the number of discretization points 
-on the body and wall respectively, 
+the initial length of the body be $L$, $N_\iin$ be the number of discretization points 
+on the body, 
 $h=L/N_\iin$ be the resolution mesh size of the body, 
 and $d$ be the minimum initial distance from body to wall. 
 To investigate the shape of eroding body when it is close to wall, 
@@ -625,7 +622,7 @@ with respect to three different $d=h, h/2$, and $ h/10$.
 
 \includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
 \includegraphics[width = 0.507 \textwidth]{./figs/20b_dense301}
-\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the forth frame, bodies 4, 12, and 17 have vanished completely, and body 19 (the one without number on the right) has almost vanished because of eroding.}
+\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed pressure drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the forth frame, bodies 4, 12, and 17 have vanished completely, and body 19 (the one without number on the right) has almost vanished because of eroding.}
 \end{center}
 \end{figure}
 \subsection{20 nearly touching bodies}
@@ -680,7 +677,7 @@ From the first frame to the forth frame of Fig.~\ref{fig:Eroding20vort},
 this channel is expanding faster than other channel 
 and bodies 4 \& 12 has vanished and body 19 is almost gone in the forth frame. 
 The reason of fast expansion of this channel is the high vorticity. 
-In the forth frame of Fig.~\ref{fig:Eroding20tracer}, 
+In the forth frame of Fig.~\ref{fig:Eroding20vort}, 
 we could see the vorticity is relatively high on the side of bodies which form this channel
 so the bodies are eroded fast on the side of this channel or have vanished completely.
 
