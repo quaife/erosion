@@ -583,7 +583,8 @@ We do some simulations.  The parameters are
   \item regularization and smoothing parameters
   \item resolution on bodies and solid wall
 \end{itemize}
-{\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. There are $N_\out = 1024$ points on the outer boundary for all the simultions. We impose the fixed pressure drop condition. We use smoothing parameters of $\eps$ and $\sigma$ to control eroding motion on the bodies.  
+{\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. Let the initial radius of the body be $r$, the initial length of the body be $L$, 
+and $d$ be the minimum initial distance from body to wall. Let $N_\out$ and $N_\iin$ be the number of discretization points on the outer boundary and discretization points on the bodies, respectively.  We fix $N_\out=1024$ for all the simultions. We impose the fixed pressure drop condition on our numerical results to satisfy the physical phenomenon which has been introduced in~\cite{qua-moo2018}. We use smoothing parameters of $\eps$ and $\sigma$ to control eroding motion on the bodies and the parameters $\alpha_1$ and $\alpha_2$ to determine if the target point is close enough to boundary.
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A single body close to a wall}
@@ -597,20 +598,18 @@ the resolution}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r1h_shear}
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r0d5h_shear}
 \includegraphics[width = 0.35 \textwidth]{./figs/1b_0d4r0d1h_shear}
-\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$ (left), $h/2$ (middle), and $h/10$ (right) with $N_\iin = 256$ discretization points on the body, a time-step of $\Dt=0.0001$, and $\eps = 15/256$ and $\sigma=10/256$.}
+\caption{A single body eroding in Stokes flow. Color indicates the shear stress on the body. In this simulation, we use three minimum body-to-wall initial distances $d=h$ (left), $h/2$ (middle), and $h/10$ (right) with $N_\iin = 256$ discretization points on the body, a time-step of $\Dt=10^{-4}$, and $\eps = 15/256$ and $\sigma=10/256$.}
 \label{} 
 \end{center}
 \end{figure}
-{\color{red} We first consider a single circular body in a shear flow. 
-The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=x_2+1$. 
-Let the initial radius of the body be $r$, 
-the initial length of the body be $L$, $N_\iin$ be the number of discretization points 
-on the body, 
-$h=L/N_\iin$ be the resolution mesh size of the body, 
-and $d$ be the minimum initial distance from body to wall. 
-To investigate the shape of eroding body when it is close to wall, 
-we set $r=0.4$, $N_\iin=256$, and $N_\out=1024$ 
-with respect to three different $d=h, h/2$, and $ h/10$. 
+{\color{red} We first consider a single circular body in the shear flow. 
+This example shows that we can resolve eroding bodies near the solid wall which is similar to \cite{mit-spa2017}.
+The velocity of flow from the left side of $\Omega$ is 
+$$\vv=\begin{bmatrix} y+1 \\ 0 \end{bmatrix}.$$
+We place a single eroding body close to the no-slip wall ($y=-1$).
+This example has no pressure drop. 
+We investigate the shape of eroding body when it is close to a solid wall at the three  
+distances $d=h, h/2$, and $ h/10$ where $h=L/N_\iin$ is the arclength spacing correponding to the initial radius $r$ of 0.4 and $N_\iin=256$ discretization points . 
 
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -622,34 +621,35 @@ with respect to three different $d=h, h/2$, and $ h/10$.
 
 \includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
 \includegraphics[width = 0.507 \textwidth]{./figs/20b_dense301}
-\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed pressure drop condition. The color is the vorticity of fluid. The 4 snapshots are evenly spaced in time. In this simulation, we use $N_\iin = 256$ discretization points on the body, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the forth frame, bodies 4, 12, and 17 have vanished completely, and body 19 (the one without number on the right) has almost vanished because of eroding.}
+\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies with the fixed pressure drop condition. The color is the vorticity of the fluid. The 4 snapshots are evenly spaced in time. We use $N_\iin = 256$ discretization points on the body, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the forth frame, bodies 4, 12, and 17 have vanished completely, and body 19 has almost completely eroded.}
 \end{center}
 \end{figure}
 \subsection{20 nearly touching bodies}
 {\color{red} 
 By using Barycentric quadrature rule, 
-we are able to capture the details in the fluid when wall and bodies or body and bodies 
-are close to each other. 
+we are able to capture the details in the fluid when wall 
+and bodies or body and bodies are close to each other. 
 The first nearly touching bodies case is 20 bodies in a Hagen-Poiseuille flow. 
-The domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded corners. 
-The velocity of flow from the left side of $\Omega$ is $v(x_1,x_2)=(1+x_2)(1-x_2)$. 
-The number of discretization points $N_\iin$ on the bodies is 256 and the number 
-of discretization points $N_\out$ on the outer boundary is 1024. 
+The initial velocity of flow from the left side of $\Omega$ is 
+$$\vv=U\begin{bmatrix} 1-y^2\\ 0\end{bmatrix},$$ 
+where $U$ is chosen such that 
+the pressure drop between  $x=-2$ and $x=2$ remains fixed at 8.
+With this choice, the velocity in the absent of grains has flow rate $U=1$.
+The number of discretization points is $N_\iin = 256$.
 
 The snapshots of the process of 20 nearly touching bodies 
 eroding are in Fig.~\ref{fig:Eroding20vort}. 
-We place some bodies to nearly contact not only one another 
+We initially place some bodies to nearly contact not only one another 
 but also the outer boundary. For example, bodies 1, 6, 13, and 15 
 are very close to outer boundary. In~\cite{qua-moo2018} 
 we reported the quick expanding space at the narrow channel 
 between neighboring bodies, the developing flat faces at the sites 
 of near contact, and bodies vanishing. In this nearly touching bodies 
-structure, we also observe these phenomena but with more new details.
-
+structure, we also observe these similar phenomena but not totally the same.
 For the speed of expanding space at the narrow channel, we see some 
 narrow channels do expand faster than other wider channels. 
-For example, the spacing between bodies 14 \& 18 is smaller 
-than the spacing between bodies 7 \& 14 initially and the former one is 
+For example, the spacing between bodies 14 and 18 is smaller 
+than the spacing between bodies 7 and 14 initially and the former one is 
 comparable to the latter one by the second frame. But there are some 
 small initial spacings that do not expand that much at all by the fourth frame, 
 for example between bodies 1 \& 6, 3 \& 9. 
