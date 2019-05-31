@@ -543,7 +543,7 @@ the number of discretization points $N_\out$ and $N_\iin$.
 By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
 
 
-To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer boundary with $N_\out$ points. The following is the four-step fast summation methods.
+To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer wall with $N_\out$ points. The following is the four-step fast summation methods.
 }
 \begin{itemize}
   \item Apply trapezoid rule as a first pass
@@ -553,14 +553,14 @@ To numerically compute the completed double-layer potential, we discretize each 
   \item Efficiently find points that are too close for trapezoid
 
 {\color{red}
- Let $L_w$ be the length of the outer boundary and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer boundary to body,  let $d$ be the minimum distance between outer boundary and a point $x$ on the body $b$, we say $x$ is too close to outer boundary if
+ Let $L_w$ be the length of the outer wall and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer wall to body,  let $d$ be the minimum distance between outer wall and a point $x$ on the body $b$, we say $x$ is too close to outer wall if
 \begin{equation}\label{eqn:Cw2b}
-d<\frac{L_{b}}{2\pi} + \alpha_1\frac{L_w}{N_\out}
+d< \alpha_1\frac{L_w}{N_\out}
 \end{equation}
 where $\alpha_1$ is a constant. 
 For criterion between two bodies, let $d$ be the distance between the centroid $a$ of the body $b_1$ and a point $x$ on the body $b_2$, we say they are too close if
 \begin{equation}\label{eqn:Cb2b}
-d<\frac{L_{b_1}}{2\pi}+\frac{L_{b_2}}{2\pi}+\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)
+d<\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)
 \end{equation}
 where $\alpha_2$ is a constant. 
 
@@ -584,7 +584,7 @@ We do some simulations.  The parameters are
   \item resolution on bodies and solid wall
 \end{itemize}
 {\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. Let the initial radius of the body be $r$, the initial length of the body be $L$, 
-and $d$ be the minimum initial distance from body to wall. Let $N_\out$ and $N_\iin$ be the number of discretization points on the outer boundary and discretization points on the bodies, respectively.  We fix $N_\out=1024$ for all the simultions. We impose the fixed pressure drop condition on our numerical results to satisfy the physical phenomenon which has been introduced in~\cite{qua-moo2018}. We use smoothing parameters of $\eps$ and $\sigma$ to control eroding motion on the bodies and the parameters $\alpha_1$ and $\alpha_2$ to determine if the target point is close enough to boundary.
+and $d$ be the minimum initial distance from body to wall. Let $N_\out$ and $N_\iin$ be the number of discretization points on the outer wall and discretization points on the bodies, respectively.  We fix $N_\out=1024$ for all the simultions. We impose the fixed pressure drop condition on our numerical results to satisfy the physical phenomenon which has been introduced in~\cite{qua-moo2018}. We use smoothing parameters of $\eps$ and $\sigma$ to control eroding motion on the bodies and the parameters $\alpha_1$ and $\alpha_2$ to determine if the target point is close enough to boundary.
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A single body close to a wall}
@@ -640,8 +640,14 @@ The number of discretization points is $N_\iin = 256$.
 The snapshots of the process of 20 nearly touching bodies 
 eroding are in Fig.~\ref{fig:Eroding20vort}. 
 We initially place some bodies to nearly contact not only one another 
-but also the outer boundary. For example, bodies 1, 6, 13, and 15 
-are very close to outer boundary. In~\cite{qua-moo2018} 
+but also the outer wall. For example, bodies 1, 6, 13, and 15 
+are very close to outer wall: 
+the distance between body 1 and outer wall is $1.3025h$, 
+the distance between body 6 and outer wall is $2.9275h$,
+the distance between body 13 and outer wall is $2.8447h$,
+the distance between body 15 and outer wall is $1.3352h$ 
+where $h=L_w/N_\out$ is the arclength spacing correponding to the outer wall.
+ In~\cite{qua-moo2018} 
 we reported the quick expanding space at the narrow channel 
 between neighboring bodies, the developing flat faces at the sites 
 of near contact, and bodies vanishing. In this nearly touching bodies 
@@ -671,7 +677,7 @@ We can get a better understanding of this channel from
 the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}. 
 In the top three frames of  Fig.~\ref{fig:Eroding20tracer},
 the flow (or tracer) first comes from three small channels 
-between outer boundary \& body 10, bodies 7 \& 14, and bodies 14 \& 18, 
+between outer wall \& body 10, bodies 7 \& 14, and bodies 14 \& 18, 
 then the three branches become one and go into the main channel between bodies 1 \& 9. 
 From the first frame to the forth frame of Fig.~\ref{fig:Eroding20vort}, 
 this channel is expanding faster than other channel 
@@ -697,7 +703,7 @@ All of these eight bodies were around this channel before they are gone.
 For the flat faces at the sites of near contact, since we put the body be close to one another
 so we are able to see all the channels between two close bodies have flat faces. 
 Besides the channels between bodies, we also observe the flat faces on the bodies 
-which are close to the outer boundary. For example, we see the flat faces 
+which are close to the outer wall. For example, we see the flat faces 
 on the top of bodies 1 \& 6 and the bottom of bodies 13 \& 15.  
 
 Since we use a Barycentric quadrature rule to approximate the velocity of tracers
@@ -717,7 +723,7 @@ the center body first go from the channel below the body,
 climb up to the left, then go to the right and join another tracers 
 in the channel above the body. 
 
-In Fig.~\ref{fig:Eroding20area} and Fig.~\ref{fig:Eroding20flowrate} we measure the area occupied by bodies and the flow rate $U$ quantifily during the eroding. At the beggining, 62.32\% of area of $[-1,1] \times [-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
+In Fig.~\ref{fig:Eroding20area} and Fig.~\ref{fig:Eroding20flowrate} we measure the area occupied by bodies and the flow rate $U$ quantifily during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times [-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing when more and more bodies are vanished in the fluid. 
 
 The flow rate increases exponentially with growth rate close to $\ln10^4$. 
  }
@@ -800,7 +806,7 @@ This case is 100 bodies in a Hagen-Poiseuille flow.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width = 0.8\textwidth]{./figs/100b_50}
-\caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer boundary, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $}
+\caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the fixed-pressure-drop condition. The color is the vorticity of fluid. In this simulation, we use $N_\iin = 256$ discretization points on the body, $N_\out = 1024$ points on the outer wall, a time-step of $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $}
 \end{center}
 \end{figure}
 \begin{figure}[H]
