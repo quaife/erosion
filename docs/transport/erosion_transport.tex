@@ -604,8 +604,8 @@ the resolution}
 \end{figure}
 {\color{red} We first consider a single circular body in the shear flow. 
 This example shows that we can resolve eroding bodies near the solid wall which is similar to \cite{mit-spa2017}.
-The velocity of flow from the left side of $\Omega$ is 
-$$\vv=\begin{bmatrix} y+1 \\ 0 \end{bmatrix}.$$
+The initial velocity of flow from the left side of $\Omega$ is 
+$$\UU(\xx)=\begin{bmatrix} y+1 \\ 0 \end{bmatrix}.$$
 We place a single eroding body close to the no-slip wall ($y=-1$).
 This example has no pressure drop. 
 We investigate the shape of eroding body when it is close to a solid wall at the three  
@@ -631,7 +631,7 @@ we are able to capture the details in the fluid when wall
 and bodies or body and bodies are close to each other. 
 The first nearly touching bodies case is 20 bodies in a Hagen-Poiseuille flow. 
 The initial velocity of flow from the left side of $\Omega$ is 
-$$\vv=U\begin{bmatrix} 1-y^2\\ 0\end{bmatrix},$$ 
+$$\UU(\xx)=U\begin{bmatrix} 1-y^2\\ 0\end{bmatrix},$$ 
 where $U$ is chosen such that 
 the pressure drop between  $x=-2$ and $x=2$ remains fixed at 8.
 With this choice, the velocity in the absent of grains has flow rate $U=1$.
@@ -717,7 +717,7 @@ the center body first go from the channel below the body,
 climb up to the left, then go to the right and join another tracers 
 in the channel above the body. 
 
-In Fig.~\ref{fig:Eroding20area} we measure the area occupied by bodies and the flow rate $U$ quantifily during the eroding. At the beggining, 62.32\% of area of $[-1,1] \times [-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
+In Fig.~\ref{fig:Eroding20area} and Fig.~\ref{fig:Eroding20flowrate} we measure the area occupied by bodies and the flow rate $U$ quantifily during the eroding. At the beggining, 62.32\% of area of $[-1,1] \times [-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
 
 The flow rate increases exponentially with growth rate close to $\ln10^4$. 
  }
@@ -748,11 +748,28 @@ The flow rate increases exponentially with growth rate close to $\ln10^4$.
 \end{figure}
 
 \begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.45 \textwidth]{./figs/porosity20dense}
-\includegraphics[width = 0.45 \textwidth]{./figs/flow_rate20dense}
-\caption{\label{fig:Eroding20area}  The area fraction of 20 nearly touching eroding bodies and the incoming flow rate of U verse time.}
-\end{center}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/porosity20dense}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/erodingspeed20dense}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding20area}  The area fraction of 20 nearly touching eroding bodies and the eroding speed verse time.}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding20flowrate}  The incoming flow rate of U verse time.}
 \end{figure}
 
 \begin{figure}[H]
