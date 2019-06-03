@@ -307,8 +307,8 @@ of the double-layer potential can all be written in terms of Cauchy
 integrals and its first two derivatives.  Therefore, we require
 quadrature methods to evaluate the expressions in
 equation~\eqref{eqn:cauchy}.  Since the integrands are all smooth and
-periodic, the Trapezoid rule has spectral accuracy.  However, the
-integrand is nearly singular if $x$ is close to $\bd\Omega$, and the
+periodic, the trapezoid rule has spectral accuracy.  However, the
+integrand becomes nearly singular as $x$ approaches $\bd\Omega$, and the
 quadrature error is arbitrarily large for a fixed resolution.  There
 have been a variety of near-singular integration schemes developed, and
 we extend a method first outlined by Barnett et
@@ -321,28 +321,47 @@ the identity
   \quad x \in \Omega.
 \end{align}
 
-Here, we briefly describe this quadrature method, and then derive a
-necessary extension to simulate erosion.  The Barycentric quadrature
-rule starts with a quadrature rule with nodes $y_j \in \bd\Omega$ and
-weights $w_j$. We use the trapezoid rule because of its superior
-accuracy when $x$ is sufficiently far from $\bd\Omega$.  However, as $x$
-approaches $\bd\Omega$, the integrand becomes nearly singular and the
-quality of the trapezoid rule deteriorates. To eliminate the
-nearly-singular integrand, we use the identity
+Here, we briefly describe the Barycentric quadrature method, and then
+derive a necessary extension to simulate erosion.  The method starts
+with a quadrature rule with nodes $y_j \in \bd\Omega$ and weights $w_j$,
+$j=1,\ldots,N$.  We use the trapezoid rule because of its superior
+accuracy when $x$ is sufficiently far from $\bd\Omega$.  However, at a
+fixed resolution, if $x$ is sufficiently close to $\bd\Omega$, each of
+the integrands in equation~\eqref{eqn:cauchy} are nearly-singular and
+the quadrature error is prohibitively large.  However, the trapezoid
+rule applied to the identity
 \begin{align}
-  \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0.
+  \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0,
+\end{align}
+has a uniformly bounded error since the integrand is not nearly-singular
+as $x$ approaches $\bd\Omega$.  That is,
+\begin{align}
+  \sum_{j=1}^{N} \frac{v^{-}(y_j) - v(x)}{y_j - x} w_j \approx 0.
 \end{align}
 Rearranging for $v(x)$, we have
+\begin{align*}
+  v(x) \approx \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
+  {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j},
+\end{align*}
+which is simply the trapezoid rule applied to the two integrals in the
+identity
 \begin{align}
   v(x) = \frac{\int\limits_{\bd\Omega} \frac{v^{-}(y)}{y-x}\, dy}
     {\int\limits_{\bd\Omega} \frac{1}{y-x}\, dy}.
 \end{align}
-Of course, the denominator is simply $1$, but applying a quadrature rule
-to both integrands results in a uniform bound on the quadrature error.
-Differentiating Cauchy's integral theorem, the derivative of $v$ is
+Of course, the denominator is simply $1$, but by applying the trapezoid
+rule to both integrands, the result is an error with a uniform bound.
+To compute $v'(x)$, the identity
 \begin{align}
-  v'(x) = \frac{\int\limits_{\bd\Omega} \frac{v^{-}(y) - v(x)}{(y-x)^2}\, dy}
-    {\int\limits_{\bd\Omega} \frac{1}{y-x}\, dy}.
+  v'(x) = \frac{\int\limits_{\bd\Omega} 
+    \frac{v^{-}(y) - v(x)}{(y-x)^2}\, dy}
+  {\int\limits_{\bd\Omega} \frac{1}{y-x}\, dy},
+\end{align}
+is used, and applying the trapezoid rule
+\begin{align}
+  v'(x) \approx \frac{\sum\limits_{j=1}^{N}
+    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
+  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}.
 \end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
