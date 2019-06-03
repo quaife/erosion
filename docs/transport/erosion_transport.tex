@@ -747,7 +747,7 @@ In Fig.~\ref{fig:Eroding20area} and Fig.~\ref{fig:Eroding20flowrate} we measure 
 The flow rate increases exponentially with growth rate close to $\ln10^4$. 
 
 
-In Fig.~\ref{fig:Eroding20tort} we use tortuosity to analysis the effect of the geometrical structure on fluid velocity field. }
+In Fig.~\ref{fig:Eroding20tort} we use tortuosity to analysis the effect of the geometrical structure on fluid velocity field. In Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the x-component velocity u(-1, y) and its maximum velocity, namely, $u_{max}=6.2281 \times 10^{-4}$ with respect to equal spreading tracers at x=-1 and y in [-1,1]. }
 
 \begin{figure}[H]
 \begin{center}
@@ -800,15 +800,23 @@ In Fig.~\ref{fig:Eroding20tort} we use tortuosity to analysis the effect of the 
 \end{figure}
 
 \begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.45 \textwidth]{./figs/velocity_loc}
-\includegraphics[width = 0.45 \textwidth]{./figs/tort_local}\\
-
-\includegraphics[width = 0.45 \textwidth]{./figs/tortU_local}
-\includegraphics[width = 0.45 \textwidth]{./figs/uminDumax}
-
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/velocity_loc}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/tort_local}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/tortU_local}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/uminDumax}
+\caption{}
+\end{subfigure}
 \caption{\label{fig:Eroding20tort} The tortuosity of the 20 nearly touching bodies}
-\end{center}
 \end{figure}
 
 
