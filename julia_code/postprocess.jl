@@ -227,9 +227,13 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType},
 		thlen = thlenv[nn]
 		xx,yy = thlen.xx[ind], thlen.yy[ind]
 		nx,ny = getns(thlen.theta)[3:4]
-		nx,ny = nx[ind],ny[ind]
+		nx,ny = nx[ind], ny[ind]
 		append!(xtar, vec(xx*ones(1,nlayers) - nx*transpose(spacevec)))
 		append!(ytar, vec(yy*ones(1,nlayers) - ny*transpose(spacevec)))
+		# Remove the points that lie outside the computational domain.
+		badind = findall( abs(ytar) .> 0.99 )
+		deleteat!(xtar,badind)
+		deletate!(ytar,badind)
 	end
 	return xtar,ytar
 end
