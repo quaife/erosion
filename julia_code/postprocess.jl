@@ -204,7 +204,7 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
 	xreg,yreg = regulargrid(xlocs,ylocs)
 	# Body-fitted grid.
-	spacevec = 0.02*collect(1:2:5)
+	spacevec = 0.01*collect(1:2:3)
 	nptslayer = 32
 	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
 	# Combine the regular and body fitted grid into a single set of points.
@@ -231,9 +231,9 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType},
 		append!(xtar, vec(xx*ones(1,nlayers) - nx*transpose(spacevec)))
 		append!(ytar, vec(yy*ones(1,nlayers) - ny*transpose(spacevec)))
 		# Remove the points that lie outside the computational domain.
-		badind = findall( abs(ytar) .> 0.99 )
+		badind = findall( abs.(ytar) .> 0.999 )
 		deleteat!(xtar,badind)
-		deletate!(ytar,badind)
+		deleteat!(ytar,badind)
 	end
 	return xtar,ytar
 end
