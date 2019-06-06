@@ -88,9 +88,9 @@ function pp3(foldername::AbstractString)
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
-		# Compute velocity, pressure, vorticity at a set of target points.
+		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)
-		compute_qoi_targets!(thlenden,targets,params.nouter,params.ibary,fixpdrop=params.fixpdrop)
+		compute_qoi_targets!(thlenden,targets,params.nouter,params.ibary,fixpdrop=false)
 		# Save the output to a data file.
 		targfile = string(datafolder,"targs",cntstr,".dat")
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
