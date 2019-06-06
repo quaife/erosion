@@ -200,7 +200,7 @@ end
 function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Regular grid.
 	hh = 0.05
-	xlocs = collect(-2.: hh: 2.)
+	xlocs = collect(-1-2*hh: hh: 1+2*hh)
 	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
 	xreg,yreg = regulargrid(xlocs,ylocs)
 	# Body-fitted grid.
