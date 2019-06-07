@@ -6,7 +6,7 @@ using LinearAlgebra
 function postprocess(foldername::AbstractString)
 	println("\n\n%------------------------------------------------------%")
 	t1 = time()
-	println("Beginning postprocess on ", foldername, "\n")
+	println("Beginning postprocessing ", foldername, "\n")
 	pp1(foldername)
 	pp2(foldername)
 	pp3(foldername)
@@ -18,6 +18,7 @@ end
 
 # pp1: Postprocess the fast stuff: area and resistivity.
 function pp1(foldername::AbstractString)
+	println("Beginning pp1 on ", foldername)
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
@@ -45,11 +46,12 @@ function pp1(foldername::AbstractString)
 		# Print progress.
 		println("resistivity completed; ")
 	end
-	println("Finished pp1.")
+	println("Finished pp1 on ", foldername)
 	return
 end
 # pp2: Postprocess the slower stuff: drag and stress.
 function pp2(foldername::AbstractString)
+	println("\n\nBeginning pp2 on ", foldername)
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
@@ -76,10 +78,11 @@ function pp2(foldername::AbstractString)
 		label = string("# Smoothed atau, Raw atau ")
 		writedata([label; atauv; tauv], stressfile)
 	end
-	println("Finished pp2.\n")
+	println("Finished pp2 on ", foldername, "\n")
 end
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
+	println("Beginning pp3 on ", foldername)
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
@@ -98,7 +101,7 @@ function pp3(foldername::AbstractString)
 		writedata(targdata, targfile)
 		println("step completed")
 	end
-	println("Finished pp3.\n")
+	println("Finished pp3 on ", foldername, "\n")
 end
 
 
