@@ -4,9 +4,16 @@ using LinearAlgebra
 #----------- MAIN ROUTINES -----------#
 #postprocess: Run all postprocess routines pp1-3.
 function postprocess(foldername::AbstractString)
+	println("\n\n%------------------------------------------------------%")
+	t1 = time()
+	println("Beginning postprocess on ", foldername)
 	pp1(foldername)
 	pp2(foldername)
 	pp3(foldername)
+	println("Finished postprocessing ", foldername)
+	pptime = round((time()-t1)/60., sigdigits=2)
+	println("Time taken: ", pptime, " minutes.")
+	println("%------------------------------------------------------%\n\n")
 end
 
 # pp1: Postprocess the fast stuff: area and resistivity.
@@ -20,17 +27,15 @@ function pp1(foldername::AbstractString)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
 		# Compute the area of each body.
-		println("Beginning the area computation.")
 		areavec = getareas(thlenden)
 		# Save the data to a file.
 		areasfile = string(datafolder,"areas",cntstr,".dat")
 		label = string("# Area of each individual body.")
 		areadata = [label; areavec]
 		writedata(areadata, areasfile)
-		println("Finished the area computation.\n")
+		println("Finished the area computation.")
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
-		println("Beginning the resistivity computation.")
 		rbods = resistivity(thlenden,params.nouter,params.ibary,2.0)
 		rbodsrot = resistivity(thlenden,params.nouter,params.ibary,2.0,rotation=true)
 		# Save the resistivity data to a file.
@@ -39,10 +44,10 @@ function pp1(foldername::AbstractString)
 		resdata = [label; nbods; rbods; rbodsrot;]
 		writedata(resdata, resfile)
 		# Print progress.
-		println("Finished the resistivity computation.\n")
-		println("Finished step ", cnt, " of ", ntimes, ".\n\n")
+		println("Finished the resistivity computation.")
+		println("Finished step ", cnt, " of ", ntimes, ".\n")
 	end
-	println("Finished pp1.")
+	println("Finished pp1.\n\n")
 	return
 end
 # pp2: Postprocess the slower stuff: drag and stress.
@@ -56,10 +61,9 @@ function pp2(foldername::AbstractString)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
 		# Compute the total pressure and viscous drag on the collection of bodies.
-		println("Beginning the drag computation.")
 		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden,params)
 		pdrxr,pdryr,vdrxr,vdryr,umaxr,tauvr,atauvr = drag(thlenden,params,rotation=true)
-		println("Finished the drag computation.\n")
+		println("Finished the drag computation.")
 		# Save the data to a file.
 		dragfile = string(datafolder,"drag",cntstr,".dat")
 		lab1 = string("# Data on drag: ")
@@ -74,9 +78,9 @@ function pp2(foldername::AbstractString)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
 		writedata([label; atauv; tauv], stressfile)
-		println("Finished step ", cnt, " of ", ntimes, ".\n\n")
+		println("Finished step ", cnt, " of ", ntimes, ".\n")
 	end
-	println("Finished pp2.")
+	println("Finished pp2.\n\n")
 end
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
@@ -97,9 +101,9 @@ function pp3(foldername::AbstractString)
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar; targets.vortar]
 		writedata(targdata, targfile)
-		println("Finished step ", cnt, " of ", ntimes, ".\n\n")
+		println("Finished step ", cnt, " of ", ntimes, ".\n")
 	end
-	println("Finished pp3.")
+	println("Finished pp3.\n\n")
 end
 
 
