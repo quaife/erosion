@@ -6,7 +6,7 @@ using LinearAlgebra
 function postprocess(foldername::AbstractString)
 	println("\n\n%------------------------------------------------------%")
 	t1 = time()
-	println("Beginning postprocess on ", foldername)
+	println("Beginning postprocess on ", foldername, "\n")
 	pp1(foldername)
 	pp2(foldername)
 	pp3(foldername)
@@ -18,11 +18,10 @@ end
 
 # pp1: Postprocess the fast stuff: area and resistivity.
 function pp1(foldername::AbstractString)
-	println("\nBeggining pp1.")
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
-		print("Step ", cnt, " of ", ntimes, ": ")
+		print("pp1 step ", cnt, " of ", ntimes, ": ")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
@@ -46,16 +45,15 @@ function pp1(foldername::AbstractString)
 		# Print progress.
 		println("resistivity completed; ")
 	end
-	println("Finished pp1.\n")
+	println("Finished pp1.")
 	return
 end
 # pp2: Postprocess the slower stuff: drag and stress.
 function pp2(foldername::AbstractString)
-	println("\nBeggining pp2.")
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
-		println("Beggining step ", cnt, " of ", ntimes, ".")
+		println("\npp2 beggining step ", cnt, " of ", ntimes, ".")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
@@ -77,17 +75,15 @@ function pp2(foldername::AbstractString)
 		stressfile = string(datafolder,"stress",cntstr,".dat")
 		label = string("# Smoothed atau, Raw atau ")
 		writedata([label; atauv; tauv], stressfile)
-		println("Finished step ", cnt, " of ", ntimes, ".\n")
 	end
 	println("Finished pp2.\n")
 end
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
-	println("\nBeggining pp3.")
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
-		print("Step ", cnt, " of ", ntimes, "; ")
+		print("pp3 step ", cnt, " of ", ntimes, "; ")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
