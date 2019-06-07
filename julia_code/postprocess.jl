@@ -18,11 +18,11 @@ end
 
 # pp1: Postprocess the fast stuff: area and resistivity.
 function pp1(foldername::AbstractString)
-	println("Beggining pp1.")
+	println("\nBeggining pp1.")
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
-		println("Beggining step ", cnt, " of ", ntimes, ".")
+		print("Step ", cnt, " of ", ntimes, ": ")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
@@ -33,7 +33,7 @@ function pp1(foldername::AbstractString)
 		label = string("# Area of each individual body.")
 		areadata = [label; areavec]
 		writedata(areadata, areasfile)
-		println("Finished the area computation.")
+		print("area completed; ")
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
 		rbods = resistivity(thlenden,params.nouter,params.ibary,2.0)
@@ -44,15 +44,14 @@ function pp1(foldername::AbstractString)
 		resdata = [label; nbods; rbods; rbodsrot;]
 		writedata(resdata, resfile)
 		# Print progress.
-		println("Finished the resistivity computation.")
-		println("Finished step ", cnt, " of ", ntimes, ".\n")
+		println("resistivity completed; ")
 	end
-	println("Finished pp1.\n\n")
+	println("Finished pp1.\n")
 	return
 end
 # pp2: Postprocess the slower stuff: drag and stress.
 function pp2(foldername::AbstractString)
-	println("Beggining pp2.")
+	println("\nBeggining pp2.")
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
@@ -80,15 +79,15 @@ function pp2(foldername::AbstractString)
 		writedata([label; atauv; tauv], stressfile)
 		println("Finished step ", cnt, " of ", ntimes, ".\n")
 	end
-	println("Finished pp2.\n\n")
+	println("Finished pp2.\n")
 end
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
-	println("Beggining pp3.")
+	println("\nBeggining pp3.")
 	datafolder,ntimes,params = startpostprocess(foldername)
 	# Read the data at each time step.
 	for cnt=0:ntimes
-		println("Beggining step ", cnt, " of ", ntimes, ".")
+		print("Step ", cnt, " of ", ntimes, "; ")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
 		npts,nbods = getnvals(thlenden.thlenvec)
 		#--------------------------------------#
@@ -101,9 +100,9 @@ function pp3(foldername::AbstractString)
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar; targets.vortar]
 		writedata(targdata, targfile)
-		println("Finished step ", cnt, " of ", ntimes, ".\n")
+		println("step completed")
 	end
-	println("Finished pp3.\n\n")
+	println("Finished pp3.\n")
 end
 
 
