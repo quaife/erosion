@@ -486,7 +486,7 @@ is used, and the resulting Barycentric quadrature formula is
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Fast Summation Methods}
+\subsection{Efficiently Applying Quadrature}
 \label{sec:fmm}
 The Barycentric quadrature rule achieves acceptable accuracy for
 computing the velocity, shear stress, and vorticity.  However, applied
@@ -536,61 +536,65 @@ iteration, it is imperative that we only apply the Barycentric
 quadrature at target points where they are required.  As a rule of
 thumb, the trapezoid rule due to $\gamma_k$ is accurate if
 \begin{align}
+  \label{eqn:TrapCutoff}
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
     5 \frac{L_k}{N_\iin}.
 \end{align}
-To avoid having to check if a target point $\xx$ satisifies
+To avoid checking if a target point $\xx$
+satisfies~\eqref{eqn:TrapCutoff}, we make use of the {\thL} variables.
+First, given the two eroding bodies $\gamma_i$ and $\gamma_j$ with
+lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we first check
+if
+\begin{align}
+  \label{eqn:BodyCutoff}
+  \|\cc_i - \cc_j\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi} + 
+    \alpha \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right),
+\end{align}
+where $\alpha /geq 1$ is a free parameter that needs to be chosen.
+In this manner, we are checking the proximity of the two circles with
+centers $\cc_i$ and $\cc_j$, and with radii $L_i$ and $L_j$, where
+$\alpha$.  This criteria allows us to quickly determine bodies that
+contain discretization points where the Barycentric quadrature rule
+should be applied.  Assuming that the two bodies $\gamma_i$ and
+$\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
+\in \gamma_j$, we check if
+\begin{align}
+  \label{eqn:PointsCutoff}
+  \|\xx - \cc_i\| < \frac{L_i}{2\pi} + \alpha_\iin 
+    \left(\frac{L_i}{N_\iin} \right).
+\end{align}
+By applying this method, we do not have to do an all-to-all comparison
+of the discretization points on two eroding bodies.
 
-The same strategy of using the trapezoid rule and then correcting with
-the Barycentric quadrature is used to compute the shear stress on
-$\bd\Omega$ and vorticity in $\Omega$.  The trapezoid rule is applied
-with a direct summation, but this cost is only incurred once per time
-step, and the majority of the computational effort is still required to
-compute the velocity using the fast summation method.\todo[inline]{BQ:
-Discuss how we don't do Barycentric everywhere since it involves several
-$N$ body calculations, while the trapezoid rule only requires a single
-one}
+To determine an appropriate value for $\alpha_\iin$, we first compute an
+accurate solution by using the Barycentric quadrature rule for all
+discretization points.  Then, for multiple values of $\alpha_\iin$, we
+compute the velocity field with the trapezoid rule for all points that
+do not satisfy~\eqref{eqn:PointsCutoff}.  By comparing these two
+velocities, we find that a value of $\alpha_\iin = ???$ gives sufficient
+accuracy while keeping the number of points that require the expensive
+Barycentric quadrature rule to a minimum.
 
-To determine if a point $\xx \in \gamma_i$ needs to be corrected with
-the Barycentric quadrature rule, we first estimate the proximity of
-$\xx$ to $\bd\Omega$.  The criteria depends on the length of the outer
-wall, $L_w$, the length of the eroding bodies $L_i$, $i=1,\ldots,M$, and
-the number of discretization points $N_\out$ and $N_\iin$.  
+Given an eroding body $\gamma_i$, to determine if a target point $\xx$
+that is in the fluid bulk rather than on another eroding body requires
+the Barycentric quadrature rule, we only check
+condition~\eqref{eqn:PointCutoff}.  Finally, to determine if points on
+$\gamma_i$ are too close to the outer wall, we make use of the fact that
+the outer wall is bounded in $[-3,3] \times [-1,1]$, and that the bodies
+are all contained in $[-1,1] \times [-1,1]$.  Therefore, we first check
+if
+\begin{align}
+  \|\cc_i \pm 1\| < L_i + \alpha_\out \frac{L_\out}{N_\out}.
+\end{align}
+If body $\gamma_i$ satisfies this condition, for each point $\xx \in
+\gamma_i$, we apply the Barycentric rule to points that satisfy
+\begin{align}
+  \|\xx \pm 1\| < \alpha_\out \frac{L_\out}{N_\out}.
+\end{align}
+Using the same strategy as we used for body-body interactions, we find
+that an appropriate safety parameter is $\alpha_\out = ???$.
 
 
-{\color{red}
-By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
-
-
-To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer wall with $N_\out$ points. The following is the four-step fast summation methods.
-}
-\begin{itemize}
-  \item Apply trapezoid rule as a first pass
-
-{\color{red} We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} with trapezoid rule to calculate the double-layer potential.
-}
-  \item Efficiently find points that are too close for trapezoid
-
-{\color{red}
- Let $L_w$ be the length of the outer wall and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer wall to body,  let $d$ be the minimum distance between outer wall and a point $x$ on the body $b$, we say $x$ is too close to outer wall if
-\begin{equation}\label{eqn:Cw2b}
-d< \alpha_1\frac{L_w}{N_\out}
-\end{equation}
-where $\alpha_1$ is a constant. 
-For criterion between two bodies, let $d$ be the distance between the centroid $a$ of the body $b_1$ and a point $x$ on the body $b_2$, we say they are too close if
-\begin{equation}\label{eqn:Cb2b}
-d<\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)
-\end{equation}
-where $\alpha_2$ is a constant. 
-
-}
-\end{itemize}
-{\color{red}  (Discussion of the choices of $\alpha_1$ and $\alpha_2$ with respect to accuracy and  efficiency)
-
-To find the suitable values of $\alpha_1$ and $\alpha_2$ in~\eqref{eqn:Cw2b} and \eqref{eqn:Cb2b}, we set $\alpha_1=\alpha_2=1, 2, 3$, and $4$ to test the criteria on a 20-body problem with $N_\out = 1024$ and $N_\iin = 128, 256$, and $512$. To check the accuracy of the simulations, we use the solution calculated by \todo[inline]{what method} to \todo[inline]{...}
-To see how efficient our code is, we record the cpu time for each step.
-
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Results}
@@ -1129,4 +1133,37 @@ Mathematicians.
 %
 %}
 
+%{\color{red}
+%By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
+%
+%
+%To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer wall with $N_\out$ points. The following is the four-step fast summation methods.
+%}
+%\begin{itemize}
+%  \item Apply trapezoid rule as a first pass
+%
+%{\color{red} We use the Fast Multipole Method (FMM)~\cite{gre-rok1987, gre-gre-may1992} with trapezoid rule to calculate the double-layer potential.
+%}
+%  \item Efficiently find points that are too close for trapezoid
+%
+%{\color{red}
+% Let $L_w$ be the length of the outer wall and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer wall to body,  let $d$ be the minimum distance between outer wall and a point $x$ on the body $b$, we say $x$ is too close to outer wall if
+%\begin{equation}\label{eqn:Cw2b}
+%d< \alpha_1\frac{L_w}{N_\out}
+%\end{equation}
+%where $\alpha_1$ is a constant. 
+%For criterion between two bodies, let $d$ be the distance between the centroid $a$ of the body $b_1$ and a point $x$ on the body $b_2$, we say they are too close if
+%\begin{equation}\label{eqn:Cb2b}
+%d<\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)
+%\end{equation}
+%where $\alpha_2$ is a constant. 
+%
+%}
+%\end{itemize}
+%{\color{red}  (Discussion of the choices of $\alpha_1$ and $\alpha_2$ with respect to accuracy and  efficiency)
+%
+%To find the suitable values of $\alpha_1$ and $\alpha_2$ in~\eqref{eqn:Cw2b} and \eqref{eqn:Cb2b}, we set $\alpha_1=\alpha_2=1, 2, 3$, and $4$ to test the criteria on a 20-body problem with $N_\out = 1024$ and $N_\iin = 128, 256$, and $512$. To check the accuracy of the simulations, we use the solution calculated by \todo[inline]{what method} to \todo[inline]{...}
+%To see how efficient our code is, we record the cpu time for each step.
+%
+%}
 
