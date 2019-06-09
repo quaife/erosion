@@ -530,6 +530,7 @@ step, we use a direct summation rather than the FMM.  Relative to the
 cost of applying GMRES with the FMM, the additional once-per-time-step
 cost is minimal.
 
+
 We also do not use any fast summation methods to apply the Barycentric
 quadrature rule.  Since this quadrature rule is applied at every GMRES
 iteration, it is imperative that we only apply the Barycentric
@@ -540,7 +541,7 @@ thumb, the trapezoid rule due to $\gamma_k$ is accurate if
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
     5 \frac{L_k}{N_\iin}.
 \end{align}
-To avoid checking if a target point $\xx$
+To avoid checking if all target point $\xx$
 satisfies~\eqref{eqn:TrapCutoff}, we make use of the {\thL} variables.
 First, given the two eroding bodies $\gamma_i$ and $\gamma_j$ with
 lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we first check
@@ -548,51 +549,59 @@ if
 \begin{align}
   \label{eqn:BodyCutoff}
   \|\cc_i - \cc_j\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi} + 
-    \alpha \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right),
+    \alpha_\iin \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right),
 \end{align}
-where $\alpha /geq 1$ is a free parameter that needs to be chosen.
-In this manner, we are checking the proximity of the two circles with
-centers $\cc_i$ and $\cc_j$, and with radii $L_i$ and $L_j$, where
-$\alpha$.  This criteria allows us to quickly determine bodies that
-contain discretization points where the Barycentric quadrature rule
-should be applied.  Assuming that the two bodies $\gamma_i$ and
+where $\alpha_\iin \geq 1$ is a free parameter that needs to be chosen.
+In this manner, rather than using an expensive all-to-all algorithm to
+compute the distance between all pairs of discretization points, we
+compute the distance between pairs of circles.  This criteria allows us
+to quickly determine bodies that contain discretization points where the
+Barycentric quadrature rule may need to be applied, and the parameter
+$\alpha_\iin$ is accounts for the fact that the bodies are being
+approximated with circles.  Assuming that the two bodies $\gamma_i$ and
 $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 \in \gamma_j$, we check if
 \begin{align}
-  \label{eqn:PointsCutoff}
+  \label{eqn:PointsBodyCutoff}
   \|\xx - \cc_i\| < \frac{L_i}{2\pi} + \alpha_\iin 
     \left(\frac{L_i}{N_\iin} \right).
 \end{align}
-By applying this method, we do not have to do an all-to-all comparison
-of the discretization points on two eroding bodies.
 
-To determine an appropriate value for $\alpha_\iin$, we first compute an
-accurate solution by using the Barycentric quadrature rule for all
-discretization points.  Then, for multiple values of $\alpha_\iin$, we
-compute the velocity field with the trapezoid rule for all points that
-do not satisfy~\eqref{eqn:PointsCutoff}.  By comparing these two
-velocities, we find that a value of $\alpha_\iin = ???$ gives sufficient
-accuracy while keeping the number of points that require the expensive
-Barycentric quadrature rule to a minimum.
-
-Given an eroding body $\gamma_i$, to determine if a target point $\xx$
-that is in the fluid bulk rather than on another eroding body requires
-the Barycentric quadrature rule, we only check
-condition~\eqref{eqn:PointCutoff}.  Finally, to determine if points on
-$\gamma_i$ are too close to the outer wall, we make use of the fact that
-the outer wall is bounded in $[-3,3] \times [-1,1]$, and that the bodies
-are all contained in $[-1,1] \times [-1,1]$.  Therefore, we first check
-if
+To determine if points on $\gamma_i$ are too close to the outer wall, we
+use the fact that the outer wall is bounded in $[-3,3] \times [-1,1]$,
+and that the bodies are all contained in $[-1,1] \times [-1,1]$.
+Therefore, we first check if
 \begin{align}
-  \|\cc_i \pm 1\| < L_i + \alpha_\out \frac{L_\out}{N_\out}.
+  \left\|\cc_i - \left[
+    \begin{array}{c}
+      0 \\ \pm 1
+    \end{array}
+    \right]
+  \right\| < L_i + \alpha_\out \frac{L_\out}{N_\out}.
 \end{align}
 If body $\gamma_i$ satisfies this condition, for each point $\xx \in
 \gamma_i$, we apply the Barycentric rule to points that satisfy
 \begin{align}
+  \label{eqn:PointsWallCutoff}
   \|\xx \pm 1\| < \alpha_\out \frac{L_\out}{N_\out}.
 \end{align}
-Using the same strategy as we used for body-body interactions, we find
-that an appropriate safety parameter is $\alpha_\out = ???$.
+
+To determine an appropriate value for $\alpha_\iin$ and $\alpha_\out$,
+we first compute an accurate solution by using the Barycentric
+quadrature rule for all discretization points.  Then, for multiple
+values of $\alpha_\iin$ and $\alpha_\out$, we compute the velocity field
+with the trapezoid rule for all points that do not satisfy
+conditions~\eqref{eqn:PointsBodyCutoff}
+and~\eqref{eqn:PointsWallCutoff}.  By comparing these two velocities, we
+find that $\alpha_\iin = ???$ and $\alpha_\out = ???$ give sufficient
+accuracy while keeping the number of points that require the expensive
+Barycentric quadrature rule to a minimum.
+
+Finally, to determine if a target point $\xx$ that is in the fluid bulk
+rather than on another eroding body requires the Barycentric quadrature
+rule, we only check conditions~\eqref{eqn:PointsBodyCutoff}
+and~\eqref{eqn:PointsWallCutoff}.  
+
 
 
 
