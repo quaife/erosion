@@ -609,15 +609,34 @@ and~\eqref{eqn:PointsWallCutoff}.
 \section{Numerical Results}
 \label{s:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We do some simulations.  The parameters are
-\begin{itemize}
-  \item time step size
-  \item regularization and smoothing parameters
-  \item resolution on bodies and solid wall
-\end{itemize}
-{\color{red} In this section, we present the numerical simulations of bodies eroding in the fluid. The computational domain $\Omega$ is a rectangle $[-3,3]\times[-1,1]$ with rounded off corners and we place bodies only in $[-1,1]\times[-1,1]$. Let the initial radius of the body be $r$, the initial length of the body be $L$, 
-and $d$ be the minimum initial distance from body to wall. Let $N_\out$ and $N_\iin$ be the number of discretization points on the outer wall and discretization points on the bodies, respectively.  We fix $N_\out=1024$ for all the simultions. We impose the fixed pressure drop condition on our numerical results to satisfy the physical phenomenon which has been introduced in~\cite{qua-moo2018}. We use smoothing parameters of $\eps$ and $\sigma$ to control eroding motion on the bodies and the parameters $\alpha_1$ and $\alpha_2$ to determine if the target point is close enough to boundary.
-}
+In this section, we present the numerical simulations of dense packings
+of eroding bodies.  The computational domain $\Omega$ is a rectangle
+$[-3,3] \times [-1,1]$ with rounded off corners and we place bodies only
+in $[-1,1] \times [-1,1]$.  For all simulations, we discretize $\Gamma =
+\bd \Omega$ with $N_\out=1024$ points.  The Dirichlet boundary condition
+on $\Gamma$ is a Hagen-Poiseuille flow.  As the bodies erode, the flow
+rate is adjusted to maintain the physical constant pressure drop
+boundary condition.  To maintain this pressure drop, we compute the
+pressure at near the inlet and outlet at each time step as described in
+our previous work~\cite{qua-moo2018}.
+
+The initial shape of the eroding body $\gamma_i$ is a circle centered at
+$\cc_i$ with radius $r_i$ and length $L_i = 2\pi r_i$, and each
+$\gamma_i$ is discretized with $N_\iin$ points.  Using the annealing
+algorithm described in Section ???, the initial configuration has the
+desired initial porosity, and the minimum separation between any pair of
+bodies and between the bodies and solid wall is $d$.  A no-slip boundary
+condition is imposed on $\gamma$.  To round off inevitable corners on
+the eroding bodies, we apply smoothing the smoothing parameters
+$\eps=???$ and $\sigma=???$, as described in~\cite{qua-moo2018}, for all
+simulations.  
+
+Finally, the parameters used to determine if a point uses the trapezoid
+or Barycentric quadrature rule are $\alpha_\iin = ???$ and
+$\alpha_\out=???$.
+
+\todo[inline]{time step size}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A single body close to a wall}
 \todo[inline]{Do a single body that is extremely close one of the two
