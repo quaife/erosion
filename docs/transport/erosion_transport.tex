@@ -569,30 +569,34 @@ $\alpha_\iin$ is accounts for the fact that the bodies are being
 approximated with circles.  Assuming that the two bodies $\gamma_i$ and
 $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 \in \gamma_j$, we check if
+{\color{red}
 \begin{align}
   \label{eqn:PointsBodyCutoff}
-  \|\xx - \cc_i\| < \frac{L_i}{2\pi} + \alpha_\iin 
-    \left(\frac{L_i}{N_\iin} \right).
+  \|\xx - \cc_i\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi}
++ \alpha_\iin \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right).
 \end{align}
-
+}
 To determine if points on $\gamma_i$ are too close to the outer wall, we
 use the fact that the outer wall is bounded in $[-3,3] \times [-1,1]$,
 and that the bodies are all contained in $[-1,1] \times [-1,1]$.
 Therefore, we first check if
+{\color{red}
 \begin{align}
   \left\|\cc_i - \left[
     \begin{array}{c}
-      0 \\ \pm 1
+      x_{\cc_i } \\ \pm 1
     \end{array}
     \right]
-  \right\| < L_i + \alpha_\out \frac{L_\out}{N_\out}.
+  \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out}
 \end{align}
-If body $\gamma_i$ satisfies this condition, for each point $\xx \in
-\gamma_i$, we apply the Barycentric rule to points that satisfy
+where $x_{\cc_i } $ is the x coordinate of $\cc_i$.}
+If body $\gamma_i$ satisfies this condition, for each point {\color{red}$\xx=(x,y) \in
+\gamma_i$}, we apply the Barycentric rule to points that satisfy
+{\color{red}
 \begin{align}
   \label{eqn:PointsWallCutoff}
-  \|\xx \pm 1\| < \alpha_\out \frac{L_\out}{N_\out}.
-\end{align}
+  \|y \pm 1\| <  \frac{L_i}{2 \pi} +\alpha_\out \frac{L_\out}{N_\out}.
+\end{align}}
 
 To determine an appropriate value for $\alpha_\iin$ and $\alpha_\out$,
 we first compute an accurate solution by using the Barycentric
@@ -601,7 +605,7 @@ values of $\alpha_\iin$ and $\alpha_\out$, we compute the velocity field
 with the trapezoid rule for all points that do not satisfy
 conditions~\eqref{eqn:PointsBodyCutoff}
 and~\eqref{eqn:PointsWallCutoff}.  By comparing these two velocities, we
-find that $\alpha_\iin = ???$ and $\alpha_\out = ???$ give sufficient
+find that {\color{red}$\alpha_\iin = 4$ and $\alpha_\out = 4$ }give sufficient
 accuracy while keeping the number of points that require the expensive
 Barycentric quadrature rule to a minimum.
 
@@ -635,8 +639,8 @@ algorithm described in Section ???, the initial configuration has the
 desired initial porosity, and the minimum separation between any pair of
 bodies and between the bodies and solid wall is $d$.  A no-slip boundary
 condition is imposed on $\gamma$.  To round off inevitable corners on
-the eroding bodies, we apply smoothing the smoothing parameters
-$\eps=???$ and $\sigma=???$, as described in~\cite{qua-moo2018}, for all
+the eroding bodies, we apply smoothing the smoothing parameters {\color{red}
+$\eps=15/256$ and $\sigma=10/256$,} as described in~\cite{qua-moo2018}, for all
 simulations.  
 
 We reuse the time stepping method outlined in our previous
@@ -648,8 +652,8 @@ implicitly, and all other terms, which are non-stiff, are treated
 explicitly.
 
 Finally, the parameters used to determine if a point uses the trapezoid
-or Barycentric quadrature rule are $\alpha_\iin = ???$ and
-$\alpha_\out=???$.
+or Barycentric quadrature rule are $\alpha_\iin = 4$ and
+$\alpha_\out=4$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Single Body Close to a Wall}
