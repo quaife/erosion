@@ -841,14 +841,22 @@ Fig.~\ref{fig:Eroding20zoom} the tracers around the center body first go
 from the channel below the body, climb up to the left, then go to the
 right and join another tracers in the channel above the body. 
 
-In Fig.~\ref{fig:Eroding20area} and Fig.~\ref{fig:Eroding20flowrate} we
-measure the area occupied by bodies and the flow rate $U$ quantifily
+In Fig.~\ref{fig:Eroding20area} we
+measure the area occupied by bodies 
 during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times
 [-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
-when more and more bodies are vanished in the fluid. 
+when more and more bodies are vanished in the fluid and 
+the maximum eroding speed happens when 7.57\% of area of $[-1,1] \times
+[-1,1]$ is occupied by 8 bodies. After that the speed drops rapidly to 0 when
+all the bodies are vanished completely.
 
-The flow rate increases exponentially with growth rate close to
-$\ln10^4$. 
+Fig.~\ref{fig:Eroding20flowrate} we record the flow rate $U$ quantifily
+during the eroding. Since we simulate the erosion by applying fixed pressure drop 
+the flow rate $U$ is small when there are many bodies in the fluid and 
+when the area occupied by bodies is getting smaller $U$ is getting larger.
+When all the bodies have vanished completely the flow rate $U$ is equal to 1.
+In Fig.~\ref{fig:Eroding20flowrate}, the flow rate increases exponentially 
+with growth rate close to $\ln10^4$. 
 
 
 In Fig.~\ref{fig:Eroding20tort} we use tortuosity to analysis the effect
@@ -865,7 +873,8 @@ $\tau$ of the tracers at the cross section. This graph is not continuous
 and the jumps in $\tau$ mean that the initial neighbor tracers have been
 seperated by the bodies. 
 
-In Fig.~\ref{fig:Eroding20tort}(c)
+In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of $\tau$ at two neighboring tracers 
+and draw 
 In Fig.~\ref{fig:Eroding20tort}(d) 
 }
 
@@ -916,14 +925,15 @@ In Fig.~\ref{fig:Eroding20tort}(d)
 
 
 \begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
-\caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
-\caption{}
-\end{subfigure}
+%\begin{subfigure}[b]{0.5\textwidth}
+\center
+\includegraphics*[width =0.5\linewidth]{./figs/flow_rate20dense}
+%\caption{}
+%\end{subfigure}%
+%\begin{subfigure}[b]{0.5\textwidth}
+%\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
+%\caption{}
+%\end{subfigure}
 \caption{\label{fig:Eroding20flowrate}  The incoming flow rate of U verse time.}
 \end{figure}
 
@@ -937,7 +947,7 @@ In Fig.~\ref{fig:Eroding20tort}(d)
 \caption{}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/tortU_local}
+\includegraphics*[width =\linewidth]{./figs/diff_tort}
 \caption{}
 \end{subfigure}%
 \begin{subfigure}[b]{0.5\textwidth}
@@ -947,7 +957,13 @@ In Fig.~\ref{fig:Eroding20tort}(d)
 \caption{\label{fig:Eroding20tort} The tortuosity of the 20 nearly touching bodies}
 \end{figure}
 
-
+\begin{figure}[H]
+\center
+\includegraphics*[width =0.5\linewidth]{./figs/tort_diff_top20}
+\caption{\label{fig:Eroding20tort_traj} The largest 20 difference of the length of 
+two neighbor tracers' trajectories in
+ 20 nearly touching bodies eroding}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
