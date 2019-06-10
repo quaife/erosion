@@ -746,7 +746,7 @@ much closer to one another when compared to our previous
 work~\cite{qua-moo2018}, we see that it is possible for very little
 erosion to occur between a pair of bodies.  In particular, for pairs of
 bodies where the channel between the bodies is nearly perpendicular to
-the main flow direction (bodies 1 \&6, 3 \& 9, and 13 \& 15), there is
+the main flow direction (bodies 1 \& 6, 3 \& 9, and 13 \& 15), there is
 very little shear stress and the effect of erosion is slight. 
 
 \begin{figure}[H]
@@ -768,25 +768,55 @@ very little shear stress and the effect of erosion is slight.
   body 19 has almost completely eroded.}
 \end{center}
 \end{figure}
-{\color{red} 
-In~\cite{qua-moo2018} we reported the quick expanding space at
-the narrow channel between neighboring bodies, the developing flat faces
-at the sites of near contact, and bodies vanishing. In this nearly
-touching bodies structure, we also observe these similar phenomena but
-not totally the same.  For the speed of expanding space at the narrow
-channel, we see some narrow channels do expand faster than other wider
-channels.  For example, the spacing between bodies 14 and 18 is smaller
-than the spacing between bodies 7 and 14 initially and the former one is
-comparable to the latter one by the second frame. But there are some
-small initial spacings that do not expand that much at all by the fourth
-frame, for example between bodies 1 \& 6, 3 \& 9.  We could find the
-explanation from the vorticity of fluid in Fig.~\ref{fig:Eroding20vort}.
-Since the eroding velocity on the body is proportional to the absolute
-value of vorticity in our erosion model,  then when the  absolute value
-of vorticity is small there is not much erosion on the body.  In all
-four frames of Fig.~\ref{fig:Eroding20vort}, the vorticity is relatively
-small between bodies 1 \& 6 and 3 \& 9.
 
+In this example, we also observe that erosion creates a network of
+channels from the inlet to outlet where the velocity and vorticity, and
+therefore erosion rate, are much larger than the other regions.  These
+channels can be further visualized by considering the streamlines at
+several configurations of the eroding body.  In
+Figure~\ref{fig:Eroding20tracer}, we simulate 200 tracers that are
+initially to the left of the porous region and equispaced in $y$.  There
+are two clear region where the tracers pass through the geometry
+much faster than the other regions.  To illustrate the ability of the
+Barycentric quadrature formula, streamlines very close to the eroding
+bodies are illustrated in Figure~\ref{fig:Eroding20zoom}. 
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b30}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b60}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b90}\\
+
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b120}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b150}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b180}\\
+
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b210}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b240}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270}
+\caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in
+  the fluid with 20 bodies. The 9 snapshots are evenly spaced in time.
+  The tracers are evenly spread in the $y$-direction and released at
+  $x=-1$.}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
+\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
+\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
+\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
+  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
+  tracers around the bodies. Since we use a Barycentric quadrature rule
+  and the fourth order Runge Kutta method, the tracers can be very close
+  to but not penetrate the bodies.}
+\end{center}
+\end{figure}
+
+
+
+{\color{red} 
 Besides the channels between two bodies, there is a single channel goes
 across the domain horizontally and the flow has been concentrated in
 this channel.  In the second frame of Fig.~\ref{fig:Eroding20vort}, this
@@ -878,37 +908,6 @@ and draw
 In Fig.~\ref{fig:Eroding20tort}(d) 
 }
 
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b30}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b60}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b90}\\
-
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b120}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b150}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b180}\\
-
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b210}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b240}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b270}
-\caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in
-  the fluid with 20 bodies. The 9 snapshots are evenly spaced in time.
-  The tracers are evenly spread in the $x_2-$direction and released at
-  $x_1=-1$.}
-\end{center}
-\end{figure}
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b210_zoom}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b240_zoom}
-\includegraphics[width = 0.3 \textwidth]{./figs/tracer_20b270_zoom}
-\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
-  frames of Fig.~\ref{fig:Eroding20tracer}. The trajectories of tracers
-  around the bodies. Since we use a Barycentric quadrature rule and the
-  fourth order Runge Kutta method, the tracers can be very close to but
-  not penetrate the bodies. }
-\end{center}
-\end{figure}
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
