@@ -807,21 +807,6 @@ bodies are illustrated in Figure~\ref{fig:Eroding20zoom}.
 \end{center}
 \end{figure}
 
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
-\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
-\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
-\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
-  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
-  tracers around the bodies. Since we use a Barycentric quadrature rule
-  and the fourth order Runge Kutta method, the tracers can be very close
-  to but not penetrate the bodies.}
-\end{center}
-\end{figure}
-
-
-
 {\color{red} 
 Besides the channels between two bodies, there is a single channel goes
 across the domain horizontally and the flow has been concentrated in
@@ -876,7 +861,20 @@ Fig.~\ref{fig:Eroding20tracer} with more tracers.  In
 Fig.~\ref{fig:Eroding20zoom} the tracers around the center body first go
 from the channel below the body, climb up to the left, then go to the
 right and join another tracers in the channel above the body. 
-
+}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
+\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
+\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
+\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
+  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
+  tracers around the bodies. Since we use a Barycentric quadrature rule
+  and the fourth order Runge Kutta method, the tracers can be very close
+  to but not penetrate the bodies.}
+\end{center}
+\end{figure}
+{\color{red}
 In Fig.~\ref{fig:Eroding20area} we
 measure the area occupied by bodies 
 during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times
@@ -915,7 +913,23 @@ where $d = 2$.
 This graph is not continuous
 and the jumps in $\tau$ mean that the initial neighbor tracers have been
 seperated by the bodies. 
+}
 
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/porosity20dense}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/erodingspeed20dense}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding20area}  The area fraction of 20 nearly
+  touching eroding bodies and the eroding speed verse time. }
+\end{figure}
+
+
+{\color{red}
 In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of 
 $\tau$ at two neighboring tracers 
 and draw the trajectories of neighboring tracers in 
@@ -935,18 +949,7 @@ are splitted by three close bodies.
 }
 
 
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/porosity20dense}
-\caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/erodingspeed20dense}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding20area}  The area fraction of 20 nearly
-  touching eroding bodies and the eroding speed verse time. }
-\end{figure}
+
 
 
 \begin{figure}[H]
