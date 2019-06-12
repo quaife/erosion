@@ -307,7 +307,7 @@ $$\tau(y)=\frac{\lambda(y)}{d}$$
 of the tracers at $y$ on the starting cross section
 where $\lambda(y)$ is the trajectory length of the tracer at y 
 and $d$ is the distance from the starting cross section to 
-the endding starting cross section. }  
+the end cross section. }  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -898,7 +898,7 @@ with growth rate close to $\ln10^4$.
 
 In Fig.~\ref{fig:Eroding20tort} we release 1000 tracers 
 from the starting cross section x = -1 to 
-the endding starting cross section x = 1 and 
+the end cross section x = 1 and 
 use the local tortuosity to analysis the effect
 of the geometrical structure on fluid velocity field. In
 Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
@@ -1006,6 +1006,18 @@ The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{100 bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.8\textwidth]{./figs/100b_50}
+\caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the
+  fixed-pressure-drop condition. The color is the vorticity of fluid. In
+  this simulation, we use $N_\iin = 256$ discretization points on the
+  body, $N_\out = 1024$ points on the outer wall, a time-step of
+  $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
+  $\sigma=10/256 $}
+\end{center}
+\end{figure}
+
 {\color{red}
 This case is 100 bodies in a Hagen-Poiseuille flow. The background
 flow is 
@@ -1019,12 +1031,21 @@ flow is
 with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
 In Fig.~\ref{fig:Eroding100vort}
 
-In Fig.~\ref{fig:Eroding100tracer}
+To study the behavior of fluid in the porous media with multiple bodies, 
+we release 1000 equal spreeding tracers from the 
+starting cross section x = -1 and record their trajectories and velocities
+until they arrive the end cross section x = 1. 
+To understand the global action of fluid qualitatively, 
+we only draw 200 historical trajectories from x = -1 to x = 1 
+in Fig.~\ref{fig:Eroding100tracer}. 
 
+To measure the local behavior of fluid quantitatively, 
+we use the velocities and local tortuosities at the starting cross section 
+to analysis the interaction of fluid and bodies until the end cross section 
+in Fig.~\ref{fig:Eroding100tort}.
 In Fig.~\ref{fig:Eroding100tort}(a) the graph represents the ratio of the
 x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
-\times 10^{-4}$ at equal spreading tracers on the cross section (x=-1
-and y in [-1,1]).
+\times 10^{-4}$ at equal spreading tracers on the strating cross section.
 
 
 In Fig.~\ref{fig:Eroding100tort_traj}
@@ -1032,19 +1053,9 @@ In Fig.~\ref{fig:Eroding100tort_traj}
 }
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width = 0.8\textwidth]{./figs/100b_50}
-\caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the
-  fixed-pressure-drop condition. The color is the vorticity of fluid. In
-  this simulation, we use $N_\iin = 256$ discretization points on the
-  body, $N_\out = 1024$ points on the outer wall, a time-step of
-  $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
-  $\sigma=10/256 $}
-\end{center}
-\end{figure}
-\begin{figure}[H]
-\begin{center}
 \includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
-\caption{\label{fig:Eroding100tracer} The trajectories of 200 tracers in the fluid with 100 bodies}
+\caption{\label{fig:Eroding100tracer} The historical trajectories of 
+200 tracers released at x = -1 in the fluid with multiple bodies}
 \end{center}
 \end{figure}
 
