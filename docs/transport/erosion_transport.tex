@@ -301,7 +301,13 @@ The tortuosity measures ...
 {\color{red} the definition of porosity is the ratio 
 $$\phi=\frac{A_v}{A_T}$$
 where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.
-}  
+
+We define the local tortuosity
+$$\tau(y)=\frac{\lambda(y)}{d}$$ 
+of the tracers at $y$ on the starting cross section
+where $\lambda(y)$ is the trajectory length of the tracer at y 
+and $d$ is the distance from the starting cross section to 
+the endding starting cross section. }  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -890,23 +896,32 @@ In Fig.~\ref{fig:Eroding20flowrate}, the flow rate increases exponentially
 with growth rate close to $\ln10^4$. 
 
 
-In Fig.~\ref{fig:Eroding20tort} we use tortuosity to analysis the effect
+In Fig.~\ref{fig:Eroding20tort} we release 1000 tracers 
+from the starting cross section x = -1 to 
+the endding starting cross section x = 1 and 
+use the local tortuosity to analysis the effect
 of the geometrical structure on fluid velocity field. In
 Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
 x-component velocity u(-1, y) to its maximum velocity $u_{max}=6.2281
-\times 10^{-4}$ at equal spreading tracers on the cross section (x=-1
-and y in [-1,1]). The velocity is continuous along the cross section and
+\times 10^{-4}$ at equal spreading tracers on the starting cross section.
+The velocity is continuous along the starting cross section and
 acting as several Poiseuille flows. This velocity graph is different
 from the one in~\cite{matyka2008tortuosity} since we choose our cross
 section to be the beginning of the flow before the fluid touches any
-body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuousity
-$\tau$ of the tracers at the cross section. This graph is not continuous
+body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuosity
+$\tau(y)=\lambda(y)/d$
+of the tracers at $y$ on the starting cross section x = -1 
+where $d = 2$.
+This graph is not continuous
 and the jumps in $\tau$ mean that the initial neighbor tracers have been
 seperated by the bodies. 
 
-In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of $\tau$ at two neighboring tracers 
-and draw the trajectories of neighboring tracers in Fig.~\ref{fig:Eroding20tort_traj}
-if the difference of length of the neighboring trajectories is large. From Fig.~\ref{fig:Eroding20tort_traj},
+In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of 
+$\tau$ at two neighboring tracers 
+and draw the trajectories of neighboring tracers in 
+Fig.~\ref{fig:Eroding20tort_traj}
+if the difference of $\tau$ at the neighboring tracers is large. 
+From Fig.~\ref{fig:Eroding20tort_traj},
  we are able to tell the neighboring trajectories will be very 
 different if they are separated by bodies. In Fig.~\ref{fig:Eroding20tort_traj}
 we collect the 10 largest difference of $\tau$ at the neighboring tracers and 
@@ -914,7 +929,7 @@ draw the pair of trajectories in the same color. For each pair of trajectories,
 they are splitted by the body at the left side of the body, then
 one of them goes up and the other one goes down along the body 
 until they rejoin with each other at the right side of body.  
-The pair trajectories could be splitted by more than one body, 
+Furthermore, the pair trajectories could be splitted by more than one body, 
 for example in Fig.~\ref{fig:Eroding20tort_traj} the toppest red pair trajectories 
 are splitted by three close bodies. 
 }
@@ -930,7 +945,7 @@ are splitted by three close bodies.
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding20area}  The area fraction of 20 nearly
-  touching eroding bodies and the eroding speed verse time.}
+  touching eroding bodies and the eroding speed verse time. }
 \end{figure}
 
 
@@ -964,7 +979,11 @@ are splitted by three close bodies.
 \includegraphics*[width =\linewidth]{./figs/uminDumax}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20tort} The tortuosity of the 20 nearly touching bodies}
+\caption{\label{fig:Eroding20tort} The tortuosity of the 20 nearly touching bodies.
+(a) The 
+x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=6.2281
+\times 10^{-4}$ at equal spreading tracers on the cross section x = -1. 
+(b) The local tortuosity $\tau(y)$ on the cross section x = -1.  }
 \end{figure}
 
 \begin{figure}[H]
@@ -988,7 +1007,28 @@ The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
 \subsection{100 bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {\color{red}
-This case is 100 bodies in a Hagen-Poiseuille flow.
+This case is 100 bodies in a Hagen-Poiseuille flow. The background
+flow is 
+\begin{align}
+  \UU(\xx)=U \left[
+  \begin{array}{c}
+    1-y^2 \\ 0
+  \end{array}
+  \right]
+\end{align}
+with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
+In Fig.~\ref{fig:Eroding100vort}
+
+In Fig.~\ref{fig:Eroding100tracer}
+
+In Fig.~\ref{fig:Eroding100tort}(a) the graph represents the ratio of the
+x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
+\times 10^{-4}$ at equal spreading tracers on the cross section (x=-1
+and y in [-1,1]).
+
+
+In Fig.~\ref{fig:Eroding100tort_traj}
+
 }
 \begin{figure}[H]
 \begin{center}
@@ -1031,7 +1071,7 @@ This case is 100 bodies in a Hagen-Poiseuille flow.
 \begin{figure}[H]
 \center
 \includegraphics*[width =0.5\linewidth]{./figs/tort100b_diff_top50}
-\caption{\label{fig:Eroding20tort_traj} The largest 50 difference of the length of 
+\caption{\label{fig:Eroding100tort_traj} The largest 50 difference of the length of 
 local tortuosity $\tau$ at two neighboring tracers in
 100 bodies eroding. The same color of a pair of trajectories 
 means they are from two neighboring tracers.}
