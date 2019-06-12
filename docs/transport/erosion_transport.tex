@@ -911,7 +911,7 @@ $\tau(y)=\lambda(y)/d$
 of the tracers at $y$ on the starting cross section x = -1 
 where $d = 2$.
 This graph is not continuous
-and the jumps in $\tau$ mean that the initial neighbor tracers have been
+and the jumps in $\tau$ mean that the initial neighboring tracers have been
 seperated by the bodies. 
 }
 
@@ -962,7 +962,10 @@ are splitted by three close bodies.
 %\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
 %\caption{}
 %\end{subfigure}
-\caption{\label{fig:Eroding20flowrate}  The incoming flow rate of U verse time.}
+\caption{\label{fig:Eroding20flowrate}  The incoming flow rate of $U$ in log scale verse time. 
+Under fixed pressure drop condition, $U$ will be small initially,
+increase when bodies are eroding, and grow exponentially 
+to 1 when there is no body in the fluid. }
 \end{figure}
 
 \begin{figure}[H]
@@ -1019,7 +1022,7 @@ The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
   this simulation, we use $N_\iin = 256$ discretization points on the
   body, $N_\out = 1024$ points on the outer wall, a time-step of
   $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
-  $\sigma=10/256 $}
+  $\sigma=10/256$.}
 \end{center}
 \end{figure}
 
@@ -1060,7 +1063,7 @@ In Fig.~\ref{fig:Eroding100tort_traj}
 \begin{center}
 \includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
 \caption{\label{fig:Eroding100tracer} The historical trajectories of 
-200 tracers released at x = -1 in the fluid with multiple bodies}
+200 tracers released at x = -1 in the fluid with multiple bodies.}
 \end{center}
 \end{figure}
 
