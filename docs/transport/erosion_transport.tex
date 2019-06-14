@@ -295,22 +295,30 @@ Instead of allowing the transport and erosion to happen simultaneously,
 we freeze the geometry and compute the streamlines in this fixed
 geometry.  Therefore, the velocity $\uu$ has no temporal dependence when
 we characterize the transport.
-
-The tortuosity measures ...
-{\color{red} the average travel distance of a tracer in a porous media. 
+{\color{red}
+To study the interaction of fluid and fixed bodies in the porous media,
+some parameters can be used to describle the interation quantitively,
+for example the porosity, the permeability, and the tortuosity. 
+The relation of porosity and tortuosity has been studied in~\cite{matyka2008tortuosity}.
+The definition of porosity is the ratio 
+$$\phi=\frac{A_v}{A_T}$$
+where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.}
+The tortuosity ...
+{\color{red} represents the weighted average travel distance of a tracer in a porous media. 
+The definition of tortuosity is 
+$$T=\frac{1}{d}\frac{\displaystyle\int_{S}u_x(y) \lambda(y)dy}{\displaystyle\int_{S}u_x(y)dy}$$
+where $S$ is an arbitrary cross section which is perpendicular to the x axis,
+$\lambda(y)$ is the length of streamline at y on $S$, 
+$u_x(y)$ is the component of velocity at y which is normal to $S$, and 
+$d$ is the distance from $S$ to the end cross section.
 It depends on not only the geometric structure but also the velocity of the fluid 
 which is different from the porosity since porosity only depends on the geometric structure.}
-
-{\color{red} the definition of porosity is the ratio 
-$$\phi=\frac{A_v}{A_T}$$
-where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.
-
-We define the local tortuosity
-$$\tau(y)=\frac{\lambda(y)}{d}$$ 
-of the tracers at $y$ on the starting cross section
-where $\lambda(y)$ is the trajectory length of the tracer at y 
-and $d$ is the distance from the starting cross section to 
-the end cross section. }  
+{\color{red}Beisdes, the local tortuosity has been used to analysis 
+the local behavior of steamline around a body
+in~\cite{matyka2008tortuosity}.
+The definition of local tortuosity of the tracers at $y$ on $S$ is
+$$\tau(y)=\frac{\lambda(y)}{d}.$$ 
+}  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -990,7 +998,7 @@ to 1 when there is no body in the fluid. }
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding20tort} The tortuosity of the 20 nearly touching bodies 
-when the porosity is 62.9 \% and the tortuosity is 2.1957.
+when the porosity is 62.9 \% and the tortuosity is 1.0979.
 (a) The 
 x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=2.9828
 \times 10^{-3}$ at equal spreading tracers on the cross section x = -1. 
@@ -1123,7 +1131,7 @@ travel as far as the two splitted by a bigger body do after they rejoin on the r
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100tort} The tortuosity of the 100 bodies when the porosity is 62.98 \%
-and the tortuosity is 2.2363.}
+and the tortuosity is 1.1182.}
 \end{figure}
 
 \begin{figure}[H]
