@@ -900,8 +900,8 @@ the end cross section x = 1 and
 use the local tortuosity to analysis the effect
 of the geometrical structure on fluid velocity field when the porosity is 62.9 \%.
 In Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
-x-component velocity u(-1, y) to its maximum velocity $u_{max}=6.2281
-\times 10^{-4}$ at equal spreading tracers on the starting cross section.
+x-component velocity u(-1, y) to its maximum velocity $u_{max}=2.9828
+\times 10^{-3}$ at equal spreading tracers on the starting cross section.
 The velocity is continuous along the starting cross section and
 acting as several Poiseuille flows. This velocity graph is different
 from the one in~\cite{matyka2008tortuosity} since we choose our cross
@@ -910,9 +910,10 @@ body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuosity
 $\tau(y)=\lambda(y)/d$
 of the tracers at $y$ on the starting cross section x = -1 
 where $d = 2$.
-This graph is not continuous
+This graph is not continuous 
 and the jumps in $\tau$ mean that the initial neighboring tracers have been
 seperated by the bodies. 
+The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
 }
 
 \begin{figure}[H]
@@ -987,8 +988,8 @@ to 1 when there is no body in the fluid. }
 \end{subfigure}
 \caption{\label{fig:Eroding20tort} The tortuosity of the 20 nearly touching bodies.
 (a) The 
-x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=6.2281
-\times 10^{-4}$ at equal spreading tracers on the cross section x = -1. 
+x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=2.9828
+\times 10^{-3}$ at equal spreading tracers on the cross section x = -1. 
 (b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
 (c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
 (d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
@@ -1057,19 +1058,33 @@ x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
 \times 10^{-4}$ at equal spreading tracers on the strating cross section.
 As in the case of 20 nearly touching bodies, the velocity is continuous along
 the starting cross section and acting as a Poiseuille flow in the channel between
-bodies. But the velocity of the fluid with 100 bodies on the starting cross section 
-changes more rapidly than the velocity of the fluid with 20 bodies 
-and the local maximum velocity of the fluid with 100 bodies 
-on the starting cross section is higher than the maximum velocity 
-of the fluid with 20 bodies. The reason of the rapid change and 
-high velocity on the starting cross section of 100-body case is because there are 
+bodies. When the fluid is close to bodies
+the speed of fluid will be slow down because of the no-slip condition on the bodies
+and this causes the separated branches of the inlet flow.
+The maximum velocity of the fluid with 100 bodies on the starting cross 
+section is slower than the maximum velocity of the fluid with 20 bodies
+but the velocity in the case of 100 bodies 
+changes more rapidly than the velocity of the fluid with 20 bodies.
+The reason of the rapid change on the starting cross section of 
+100-body case is because there are 
 more bodies near the starting cross section in
-100-body case than in the 20-body case. So the inlet flow in 100-body case
+100-body case than in the 20-body case. 
+so the inlet flow in 100-body case
 will be separated into more branches than the flow in 20-body case. 
-Furthermore, under the fixed pressure drop condition the speed of flow in a channel is faster 
-when the channel is smaller.(?)
 
-In Fig.~\ref{fig:Eroding100tort_traj}
+In Fig.~\ref{fig:Eroding100tort}(b) we record the 
+local tortuosity $\tau(y)$ for $y$ on the starting cross section x = -1.
+It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies is
+
+has more jumps than the one in the case of 20 bodies. 
+The jump in this graph means the neighboring trajectories are splitted by bodies
+so it is reasonable to have more jumps in the case of 100-body than the case of 20-body
+since there are more bodies in the former case. In Fig.~\ref{fig:Eroding100tort}(c) 
+we use the data we got from local tortuosity $\tau(y)$
+to find the difference of $\tau$ at the neighboring tracers and
+draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
+in Fig.~\ref{fig:Eroding100tort_traj}. 
+The maximum of $\tau$ is 1.2547 and the minimum is 1.0003.
 
 }
 \begin{figure}[H]
