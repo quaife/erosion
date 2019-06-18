@@ -318,7 +318,9 @@ the local behavior of steamline around a body
 in~\cite{matyka2008tortuosity}.
 The definition of local tortuosity of the tracers at $y$ on $S$ is
 $$\tau(y)=\frac{\lambda(y)}{d}.$$ 
-}  
+To calculate tortuosity $T$ numerically, we use the simple quaduature rule
+$$T=\frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N} u_x(y_i) \lambda(y_i) \Delta y_i}{\displaystyle\sum_{i=1}^{N} u_x(y_i) \Delta y_i},$$ 
+where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.}  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -997,7 +999,8 @@ to 1 when there is no body in the fluid. }
 \includegraphics*[width =\linewidth]{./figs/uminDumax20_268}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20tort} The tortuosity study in the fluid with 20 nearly touching bodies.
+\caption{\label{fig:Eroding20tort} The tortuosity study in the fluid with 
+20 nearly touching bodies when the porosity is 62.9 \%.
 (a) The 
 x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=2.9828
 \times 10^{-3}$ at equal spreading tracers on the cross section x = -1. 
@@ -1130,7 +1133,14 @@ travel as far as the two splitted by a bigger body do after they rejoin on the r
 \includegraphics*[width =\linewidth]{./figs/uminDumax100}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding100tort} The tortuosity study in the fluid with 100 bodies. }
+\caption{\label{fig:Eroding100tort} The tortuosity study in the fluid with 100 bodies 
+when the porosity is 62.98 \%.
+(a) The 
+x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.9021
+\times 10^{-4}$ at equal spreading tracers on the cross section x = -1. 
+(b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
+(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
+(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
 \end{figure}
 
 \begin{figure}[H]
