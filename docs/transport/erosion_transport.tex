@@ -1106,8 +1106,28 @@ than the one in the case of 20 bodies .
 The most of the bodies in this case are smaller than those in the case of 20 bodies.
 So when two neighboring trajectories are splitted on the left side by a smaller body they do not
 travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
-
 }
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_50}
+\caption{100 bodies with 318 gaps at t= 0.005}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_100}
+\caption{99 bodies with 312 gaps at t= 0.01}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_150}
+\caption{94 bodies with 294 gaps at t= 0.015}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_200}
+\caption{82 bodies with 254 gaps at t= 0.02}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap} The histograms of gaps in the case of erosion of 100 bodies at four time steps.}
+\end{figure}
+
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
