@@ -1031,15 +1031,28 @@ The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
 \subsection{100 bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.8\textwidth]{./figs/100b_50}
+ \begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =0.9\linewidth]{./figs/100b_50}
+\caption{100 bodies at t= 0.005}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =1.1\linewidth]{./figs/100b_100}
+\caption{99 bodies at t= 0.01}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =0.9\linewidth]{./figs/100b_150}
+\caption{94 bodies at t= 0.015}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =1.1\linewidth]{./figs/100b_200}
+\caption{82 bodies at t= 0.02}
+\end{subfigure}
 \caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the
   fixed-pressure-drop condition. The color is the vorticity of fluid. In
   this simulation, we use $N_\iin = 256$ discretization points on the
   body, $N_\out = 1024$ points on the outer wall, a time-step of
   $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
   $\sigma=10/256$.}
-\end{center}
 \end{figure}
 
 {\color{red}
