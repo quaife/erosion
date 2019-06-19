@@ -759,13 +759,13 @@ resolution.
 In~\cite{qua-moo2018}, we observed that erosion causes the space
 between nearly touching bodies to quickly expand, and flat faces develop
 along the region of near contact.  This qualitative behavior is also
-observed In Figure~\ref{fig:Eroding20vort}, such as between bodies 3
+observed in Figure~\ref{fig:Eroding20vort}, such as between bodies 3
 \&4 and 15 \& 16.  However, by resolving bodies that are
 much closer to one another when compared to our previous
 work~\cite{qua-moo2018}, we see that it is possible for very little
 erosion to occur between a pair of bodies.  In particular, for pairs of
 bodies where the channel between the bodies is nearly perpendicular to
-the main flow direction (bodies 1 \& 6, 3 \& 9, and 13 \& 15), there is
+the main flow direction (bodies 1 \& 6, 3 \& 9, and 5 \& 13), there is
 very little shear stress and the effect of erosion is slight. 
 
 \begin{figure}[H]
@@ -1066,7 +1066,30 @@ flow is
   \right]
 \end{align}
 with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
-In Fig.~\ref{fig:Eroding100vort}
+We record the vorticity of 
+fluid during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
+measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four time steps.
+
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_50}
+\caption{100 bodies with 318 gaps at t= 0.005}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_100}
+\caption{99 bodies with 312 gaps at t= 0.01}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_150}
+\caption{94 bodies with 294 gaps at t= 0.015}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/gap_hist100_200}
+\caption{82 bodies with 254 gaps at t= 0.02}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap} The histograms of gaps in the case of erosion of 100 bodies at four time steps.}
+\end{figure}
 
 To study the behavior of fluid in the porous media with multiple bodies, 
 we release 1000 equal spreeding tracers from the 
@@ -1121,25 +1144,7 @@ So when two neighboring trajectories are splitted on the left side by a smaller 
 travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
 }
 
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_50}
-\caption{100 bodies with 318 gaps at t= 0.005}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_100}
-\caption{99 bodies with 312 gaps at t= 0.01}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_150}
-\caption{94 bodies with 294 gaps at t= 0.015}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_200}
-\caption{82 bodies with 254 gaps at t= 0.02}
-\end{subfigure}
-\caption{\label{fig:Eroding100gap} The histograms of gaps in the case of erosion of 100 bodies at four time steps.}
-\end{figure}
+
 
 \begin{figure}[H]
 \begin{center}
