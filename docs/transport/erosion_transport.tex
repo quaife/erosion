@@ -1067,9 +1067,10 @@ flow is
 \end{align}
 with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
 We record the vorticity of 
-fluid during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
-measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four time steps.
-
+fluid in colormap during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
+measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four equispaced times.
+Since the vorticity is equivalent to the shear stress and the erosion is faster in the regions where
+the magnitude of the vorticity is larger, 
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1125,7 +1126,7 @@ will be separated into more branches than the flow in 20-body case.
 
 In Fig.~\ref{fig:Eroding100tort}(b) we record the 
 local tortuosity $\tau(y)$ for $y$ on the starting cross section x = -1.
-It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies is
+It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies
 is 1.2547 and the minimum is 1.0003. This function $\tau$
 has more jumps than the one in the case of 20 bodies but its maximum 
 is smaller than the maximum in the case of 20 bodies. 
@@ -1136,7 +1137,7 @@ of $\tau$, we use the data we got from local tortuosity $\tau(y)$
 to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
 and draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
 in Fig.~\ref{fig:Eroding100tort_traj}. These pairs of two neighboring trajectories are splitted by bodies
-then rejoin with each other and it causes the difference of $\tau$ with respect to the neighboring trajectories.   
+then rejoin with each other and the splitting-rejoining behavior causes the difference of $\tau$ with respect to the neighboring trajectories.   
 We also can get the idea why the maximum value of $\tau$ is smaller 
 than the one in the case of 20 bodies . 
 The most of the bodies in this case are smaller than those in the case of 20 bodies.
