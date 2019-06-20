@@ -303,8 +303,7 @@ The relation of porosity and tortuosity has been studied in~\cite{matyka2008tort
 The definition of porosity is the ratio 
 $$\phi=\frac{A_v}{A_T}$$
 where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.}
-The tortuosity ...
-{\color{red} represents the weighted average travel distance of a tracer in a porous media. 
+{\color{red} The tortuosity represents the weighted average travel distance of a tracer in a porous media. 
 The definition of tortuosity is 
 $$T=\frac{1}{d}\frac{\displaystyle\int_{S}u_x(y) \lambda(y)dy}{\displaystyle\int_{S}u_x(y)dy}$$
 where $S$ is an arbitrary cross section which is perpendicular to the x axis,
@@ -313,9 +312,8 @@ $u_x(y)$ is the component of velocity at y which is normal to $S$, and
 $d$ is the distance from $S$ to the end cross section.
 It depends on not only the geometric structure but also the velocity of the fluid 
 which is different from the porosity since porosity only depends on the geometric structure.}
-{\color{red}Beisdes, the local tortuosity has been used to analysis 
-the local behavior of steamline around a body
-in~\cite{matyka2008tortuosity}.
+{\color{red}Beisdes, the local tortuosity~\cite{matyka2008tortuosity} has been used to analysis 
+the local behavior of steamline around a body. 
 The definition of local tortuosity of the tracers at $y$ on $S$ is
 $$\tau(y)=\frac{\lambda(y)}{d}.$$ 
 To calculate tortuosity $T$ numerically, we use the simple quaduature rule
@@ -1033,19 +1031,19 @@ The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
 \begin{figure}[H]
  \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =0.9\linewidth]{./figs/100b_50}
-\caption{100 bodies at t= 0.005}
+\caption{100 bodies and porosity = 55.54\% at t= 0.005}
 \end{subfigure}%
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =1.1\linewidth]{./figs/100b_100}
-\caption{99 bodies at t= 0.01}
+\caption{99 bodies and porosity = 62.98\% at t= 0.01}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =0.9\linewidth]{./figs/100b_150}
-\caption{94 bodies at t= 0.015}
+\caption{94 bodies and porosity = 72.22\% at t= 0.015}
 \end{subfigure}%
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =1.1\linewidth]{./figs/100b_200}
-\caption{82 bodies at t= 0.02}
+\caption{82 bodies and porosity = 83.37\% at t= 0.02}
 \end{subfigure}
 \caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the
   fixed-pressure-drop condition. The color is the vorticity of fluid. In
@@ -1070,8 +1068,14 @@ We record the vorticity of
 fluid in colormap during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
 measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four equispaced times.
 Since the vorticity is equivalent to the shear stress and the erosion is faster in the regions where
-the magnitude of the vorticity is larger, 
-
+the magnitude of the vorticity is larger 
+so the erosion is getting faster and faster 
+from the first snapshot to the forth one in Fig.~\ref{fig:Eroding100vort}.
+At t = 0.005 the porosity is 55.54\% and the most gap sizes between bodies are less than 0.015 in 
+Fig.~\ref{fig:Eroding100gap}(a). Since some of the bodies are vanished in the fluid, the numner of gaps 
+decreases and the gap sizes get larger and larger between the remaining bodies. 
+In Fig.~\ref{fig:Eroding100gap}(b) and (c) we still can see small gap sizes are in the majority but 
+it is not as concentrated as the one we see in  Fig.~\ref{fig:Eroding100gap}(a). 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =\linewidth]{./figs/gap_hist100_50}
