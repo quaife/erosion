@@ -3223,6 +3223,7 @@ c     Density function defined on the outer geometry
       endif 
        
 c     Contribution from the density function on each inner obstacle
+      if( nbodies .gt. 0) then
       do isou = 1,nbodies
         do k = 1,ninner
           denx(k) = den(2*nouter + (isou-1)*2*ninner + k)
@@ -3317,6 +3318,7 @@ c        if (iside(k) .eq. 0 .or. inear(k) .eq. 1) then
           vort_tar(k) = 0.d0
         endif
       enddo
+      endif
 
 c      do j=1,nbodies
 c        do k = 1,nnear(j)
