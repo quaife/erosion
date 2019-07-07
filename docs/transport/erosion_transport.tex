@@ -97,9 +97,9 @@ double-layer potential is
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  In Section~\ref{sec:DLPcomplex}, we
-show how the Stokes double-layer potential can also be expressed as the
-sum of a Laplacian double-layer potential 
+is an unknown density function.  In Section~\ref{s:DLPcomplex}, we show
+how the Stokes double-layer potential can also be expressed as the sum
+of a Laplacian double-layer potential 
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
     \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy
@@ -178,7 +178,7 @@ velocity on the outer wall and eroding bodies.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
-\label{sec:DLPcomplex}
+\label{s:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
 decomposed as
@@ -289,36 +289,36 @@ characterizing transport in these geometries.  To characterize the
 transport, we first require tracer trajectories (streamlines) that are
 governed by
 \begin{align}
+  \label{eqn:trajectories}
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
 \end{align}
 Instead of allowing the transport and erosion to happen simultaneously,
 we freeze the geometry and compute the streamlines in this fixed
 geometry.  Therefore, the velocity $\uu$ has no temporal dependence when
 we characterize the transport.
-{\color{red}
-To study the interaction of fluid and fixed bodies in the porous media,
-some parameters can be used to describle the interation quantitively,
-for example the porosity, the permeability, and the tortuosity. 
-The relation of porosity and tortuosity has been studied in~\cite{matyka2008tortuosity}.
-The definition of porosity is the ratio 
-$$\phi=\frac{A_v}{A_T}$$
-where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.}
-{\color{red} The tortuosity represents the weighted average travel distance of a tracer in a porous media. 
-The definition of tortuosity is 
-$$T=\frac{1}{d}\frac{\displaystyle\int_{S}u_x(y) \lambda(y)dy}{\displaystyle\int_{S}u_x(y)dy}$$
-where $S$ is an arbitrary cross section which is perpendicular to the x axis,
-$\lambda(y)$ is the length of streamline at y on $S$, 
-$u_x(y)$ is the component of velocity at y which is normal to $S$, and 
-$d$ is the distance from $S$ to the end cross section.
-It depends on not only the geometric structure but also the velocity of the fluid 
-which is different from the porosity since porosity only depends on the geometric structure.}
-{\color{red}Beisdes, the local tortuosity~\cite{matyka2008tortuosity} has been used to analysis 
-the local behavior of steamline around a body. 
-The definition of local tortuosity of the tracers at $y$ on $S$ is
-$$\tau(y)=\frac{\lambda(y)}{d}.$$ 
-To calculate tortuosity $T$ numerically, we use the simple quaduature rule
-$$T=\frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N} u_x(y_i) \lambda(y_i) \Delta y_i}{\displaystyle\sum_{i=1}^{N} u_x(y_i) \Delta y_i},$$ 
-where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.}  
+
+Key variables that are used to characterize porous media flow is the
+porosity (area of void space), permeability, and tortuosity.  The
+tortuosity, which  quantifies the amount of turning made by a
+streamline, is
+\begin{align*}
+  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
+  {\displaystyle\int_{S}u_x(y)\,dy},
+\end{align*}
+where $S$ is an cross-section perpendicular to the $x$ axis with length
+$d$, $\lambda(y)$ is the length of the streamline that is initizalized
+at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
+the velocity at the $y$-coordinate along $S$.  There have been efforts
+to relate the tortuosity to the porosity~\cite{matyka2008tortuosity},
+but these results can not be universal since the porosity which depends
+on only a single number, the tortuosity is affected by the distribution
+of pores within the porous network.  In addition to the hydraulic
+tortuosity, a local tortuosity can be used to analyze the local behavior
+of a streamline near a body~\cite{matyka2008tortuosity}.  The local
+tortuosity of a streamline initialized at $y$ along $S$ is
+\begin{align*}
+  \tau(y) = \frac{\lambda(y)}{d}.
+\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -511,7 +511,7 @@ is used, and the resulting Barycentric quadrature formula is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiently Applying Quadrature}
-\label{sec:fmm}
+\label{s:fmm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The Barycentric quadrature rule achieves acceptable accuracy for
 computing the velocity, shear stress, and vorticity.  However, applied
@@ -632,6 +632,25 @@ rule, we only check conditions~\eqref{eqn:PointsBodyCutoff}
 and~\eqref{eqn:PointsWallCutoff}.  
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Streamlines and Tortuosity}
+\label{s:streamlines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Having developed numerically accurate methods to compute the velocity
+$\uu$ at points close to the bodies, we are able to compute the
+trajectories of particles passing through an eroded body.  To find the
+trajectory governed by equation~\eqref{eqn:trajectories}, we use the
+fourth-order explicit Runge-Kutta method with a fixed time step size.
+Since our method is both high-order in time and space, we are able to
+simulate dynamics very close to the eroding bodies.  Resolving the flow
+in these small velocity regions is essential to accurately describe
+anomalous diffusion and mixing~\cite{leb-den-dav-bol-car-dec-bou2011}.
+
+{\color{red}
+To calculate tortuosity $T$ numerically, we use the simple quaduature
+rule
+$$T=\frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N} u_x(y_i) \lambda(y_i) \Delta y_i}{\displaystyle\sum_{i=1}^{N} u_x(y_i) \Delta y_i},$$ 
+where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.}  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1645,4 +1664,26 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %In Fig.~\ref{fig:Eroding20tort}(c)
 %In Fig.~\ref{fig:Eroding20tort}(d) 
 %}
-
+%
+%{\color{red}
+%To study the interaction of fluid and fixed bodies in the porous media,
+%some parameters can be used to describle the interation quantitively,
+%for example the porosity, the permeability, and the tortuosity. 
+%The relation of porosity and tortuosity has been studied in~\cite{matyka2008tortuosity}.
+%The definition of porosity is the ratio 
+%$$\phi=\frac{A_v}{A_T}$$
+%where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.}
+%{\color{red} The tortuosity represents the weighted average travel distance of a tracer in a porous media. 
+%The definition of tortuosity is 
+%$$T=\frac{1}{d}\frac{\displaystyle\int_{S}u_x(y) \lambda(y)dy}{\displaystyle\int_{S}u_x(y)dy}$$
+%where $S$ is an arbitrary cross section which is perpendicular to the x axis,
+%$\lambda(y)$ is the length of streamline at y on $S$, 
+%$u_x(y)$ is the component of velocity at y which is normal to $S$, and 
+%$d$ is the distance from $S$ to the end cross section.
+%It depends on not only the geometric structure but also the velocity of the fluid 
+%which is different from the porosity since porosity only depends on the geometric structure.}
+%{\color{red}Beisdes, the local tortuosity~\cite{matyka2008tortuosity} has been used to analysis 
+%the local behavior of steamline around a body. 
+%The definition of local tortuosity of the tracers at $y$ on $S$ is
+%$$\tau(y)=\frac{\lambda(y)}{d}.$$ 
+%}
