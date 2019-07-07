@@ -567,7 +567,7 @@ thumb, the trapezoid rule due to $\gamma_k$ is accurate if
     5 \frac{L_k}{N_\iin}.
 \end{align}
 To avoid checking if all target point $\xx$
-satisfies~\eqref{eqn:TrapCutoff}, we make use of the {\thL} variables.
+satisfy~\eqref{eqn:TrapCutoff}, we make use of the {\thL} variables.
 First, given the two eroding bodies $\gamma_i$ and $\gamma_j$ with
 lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we first check
 if
@@ -593,11 +593,13 @@ $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 + \alpha_\iin \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right).
 \end{align}
 }
+\todo[inline]{This doesn't seem right.  $\xx$ is already on the boundary
+of the jth body, so $L_j$ should not be part of the criteria.  Should be
+something more like equation (44).}
 To determine if points on $\gamma_i$ are too close to the outer wall, we
 use the fact that the outer wall is bounded in $[-3,3] \times [-1,1]$,
-and that the bodies are all contained in $[-1,1] \times [-1,1]$.
-Therefore, we first check if
-{\color{red}
+and that the bodies are all contained in $[-1,1] \times [-1,1]$.  We
+first check if
 \begin{align}
   \left\|\cc_i - \left[
     \begin{array}{c}
@@ -606,14 +608,13 @@ Therefore, we first check if
     \right]
   \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out}
 \end{align}
-where $x_{\cc_i } $ is the x coordinate of $\cc_i$.}
-If body $\gamma_i$ satisfies this condition, for each point {\color{red}$\xx=(x,y) \in
-\gamma_i$}, we apply the Barycentric rule to points that satisfy
-{\color{red}
+where $x_{\cc_i } $ is the x coordinate of $\cc_i$. If body $\gamma_i$
+satisfies this condition, for each point $\xx=(x,y) \in \gamma_i$, we
+apply the Barycentric rule to points that satisfy
 \begin{align}
   \label{eqn:PointsWallCutoff}
-  \|y \pm 1\| <  \frac{L_i}{2 \pi} +\alpha_\out \frac{L_\out}{N_\out}.
-\end{align}}
+  |y \pm 1| < \frac{L_i}{2 \pi} +\alpha_\out \frac{L_\out}{N_\out}.
+\end{align}
 
 To determine an appropriate value for $\alpha_\iin$ and $\alpha_\out$,
 we first compute an accurate solution by using the Barycentric
@@ -622,7 +623,7 @@ values of $\alpha_\iin$ and $\alpha_\out$, we compute the velocity field
 with the trapezoid rule for all points that do not satisfy
 conditions~\eqref{eqn:PointsBodyCutoff}
 and~\eqref{eqn:PointsWallCutoff}.  By comparing these two velocities, we
-find that {\color{red}$\alpha_\iin = 4$ and $\alpha_\out = 4$ }give sufficient
+find that $\alpha_\iin = 4$ and $\alpha_\out = 4$ give sufficient
 accuracy while keeping the number of points that require the expensive
 Barycentric quadrature rule to a minimum.
 
