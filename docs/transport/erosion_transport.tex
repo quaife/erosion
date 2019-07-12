@@ -32,22 +32,59 @@ University, Tallahassee, FL, 32306.}
 \section{Introduction}
 \label{s:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-A continuation of the methods paper~\cite{qua-moo2018}.
-\paragraph{Governing Equations}
-\begin{equation}
-\label{eqn:erosionModel}
-\begin{split}
-  \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation
-of momentum}\\
-\grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation of mass} \\
-\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{\em no slip on the
-bodies} \\
-\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{\em outer wall
-velocity} \\
-\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
-&&\mbox{\em erosion model}.
-\end{split}
-\end{equation}
+Flow-induced erosion deteriorates and reshapes solid material over a
+range of scales.  At small scales, such as in groundwater flow,
+fluid-mechanical erosion significantly alters the geometry, and
+ultimately changes the process of transport through the media.  This
+paper extends a quadrature method first outlined by
+Barnett~\cite{bar2014} and Barnett, Wu, and
+Veerapaneni~\cite{bar-wu-vee2015} to simulate dense packings of eroding
+bodies, and then studies coarse-grained variables to characterize
+transport in eroded geometries.
+
+The authors previous work~\cite{qua-moo2018} developed numerical methods
+to simulate erosion of multiple bodies suspended in a Stokes flow.  The
+numerical methods can be broadly separated into two classes---a
+high-order method to solve the Stokes equations and the erosion rate in
+a complex geometry, and a time stepping method to evolve the eroding
+bodies.  The fluid solver uses a second-kind integral equation that is
+discretized with the trapezoid rule and solved iteratively with fast
+multipole accelerated GMRES, and then the trapezoid rule is used to
+compute the shear stress which is required to find the erosion rate.
+Once the erosion rate is computed, the bodies are eroded using a {\thL}
+coordinate system.  This allows us to maintain a discretization of the
+eroding bodies that is equally spaced in arclength, and is guaranteed to
+not tangle.
+
+The trapezoid rule is spectrally accurate discretization of integral
+equation formulations of the two-dimensional Stokes equation.  However,
+at a fixed resolution, the quadrature error of the trapezoid rule is
+arbitrarily large near the eroding bodies.  Therefore, simply upsampling
+to evaluate the velocity near the eroding bodies is not sufficient.  In
+our previous work~\cite{qua-moo2018}, we restrict the proximity between
+eroding bodies.  In addition, since we only visualized the velocity and
+vorticity in the fluid bulk once per time step, we used an expensive
+upsampling scheme.  However, upsampling is not practical when if it is
+required at each GMRES iteration or when simulating tracers in the flow.
+Therefore, in this paper, we apply a Barycentric quadrature rule to
+evaluate the Stokes double-layer potential~\cite{bar-wu-vee2015}.
+However, to compute derivatives of the flow, such as the vorticity and
+the shear stress, we extend this work to compute the required
+derivatives of the double-layer potential.
+
+Since erosion alters the geometry, it also affects coarse-grained
+variables.  In this paper, we examine two particular variables that can
+be used to understand transport in porous media---the tortuosity and the
+anomalous diffusion rates.   The tortuosity quantifies the twisting of
+particle trajectories in a medium, and in laminar flow, the tortuosity
+is one.  While a porous media often has a large tortuosity, as erosion
+creates preferential channels, large numbers of particles become more
+laminar, and we expect the tortuosity to decrease.  Anomalous diffusion
+is often used to describe transport in a porous media, and it quantifies
+the dispersion of particles in the flow.  Again, as the geometry erodes,
+particles behave more as a ballistic particle, and we expect less
+dispersion.  In this paper, we compute both the tortuosity and the
+anomalous diffusion rates of several geometries that form via erosion.
 
 
 
@@ -84,9 +121,38 @@ velocity} \\
 \section{Boundary Integral Equation Formulation}
 \label{s:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Continuing with our previous work~\cite{qua-moo2018}, we use a
-double-layer potential formulation for the velocity $\uu$.  The
-double-layer potential is
+We start by defining the main variables used to model erosion.  We
+consider flows inside a confined geometry $\Omega$ that contains $M$
+eroding bodies with boundary $\gamma_\ell$.  The boundary of the
+bounding geometry is $\Gamma$, and the fluid domain is bounded by $\bd
+\Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$.  On each
+eroding body, $\nn$ is the normal vector pointing into the body, and
+$\ss$ is the unit tangent vector pointing in the counterclockwise
+direction.  The normal vector on $\Gamma$ is the outward unit normal.
+Neglecting inertial forces, the governing equations are
+\begin{equation}
+\label{eqn:erosionModel}
+\begin{split}
+  \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation
+of momentum}\\
+\grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation of mass} \\
+\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{\em no slip on the
+bodies} \\
+\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{\em outer wall
+velocity} \\
+\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
+&&\mbox{\em erosion model}.
+\end{split}
+\end{equation}
+Here, $\uu$ is the fluid velocity, $p$ is the pressure, $\UU$ is a
+prescribed Hagen-Poiseuille velocity field, and
+\begin{align}
+  \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
+  \label{eqn:shearStress}
+\end{align}
+is the shear stress on the eroding bodies.  Continuing with our previous
+work~\cite{qua-moo2018}, we use a double-layer potential formulation for
+the velocity $\uu$.  The double-layer potential is
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) = 
     \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
@@ -97,15 +163,78 @@ double-layer potential is
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  In Section~\ref{s:DLPcomplex}, we show
-how the Stokes double-layer potential can also be expressed as the sum
-of a Laplacian double-layer potential 
+is an unknown density function.  The Stokes double-layer potential
+itself can not represent all solutions of the incompressible Stokes
+equations.  Therefore, we complete the integral equation formulation
+following the work of Power and Miranda~\cite{pow-mir1987}.  The
+completion depends on the Stokeslets and rotlets
+\begin{align}
+  S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
+    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \quad
+  R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
+\end{align}
+where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
+$\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
+\|\rr\|$.  Then, the solution of the Stokes equation is
+\begin{align}
+  \uu(\xx) = \DDD[\eeta](\xx) + 
+    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
+    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx),
+\end{align}
+where the density function, Stokeslets, and rotlets satisfy
+\begin{align}
+  \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
+    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
+    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
+    \NN_0(\eeta](\xx), \quad \xx \in \bd\Omega, \\
+  \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
+    \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
+  \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
+    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
+    \quad \ell = 1,\ldots,M,
+\end{align}
+where $\ff$ is the prescribed Dirichlet boundary condition of the
+velocity on the outer wall and eroding bodies.  Then, once the unknown
+density function is computed, the shear stress is found by first
+computing the deformation tensors of the double-layer potential,
+Stokeslets, and rotlets, and then forming the shear stress as defined in
+equation~\eqref{eqn:shearStress}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cauchy Integral Representation of the Double-Layer
+Potential}
+\label{s:DLPcomplex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using the trapezoid rule to discretize the double-layer
+potential~\eqref{eqn:stokesDLP}, and to compute its deformation tensor,
+results in large quadrature errors if $\xx$ is close to $\bd\Omega$.  We
+apply a quadrature method that is constructed in terms of holomorphic
+functions, so we must first write all the layer potentials in terms of
+Cauchy integrals and their derivatives.  The first step is to write the
+Stokes double-layer potential as the sum of a Laplacian double-layer
+potential
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
-    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy
+    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy,
 \end{align}
-and its gradient.  Since the Laplacian double-layer potential can be
-written as a Cauchy integral
+and its gradient.  One such decomposition is
+\begin{equation}
+  \label{eqn:Stokes2Laplace}
+  \begin{aligned}
+    \DDD[\eeta](\xx) &= 
+      \frac{1}{2\pi} \int_{\bd\Omega} 
+        \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
+      \frac{1}{2\pi} \nabla \int_{\bd\Omega}
+        \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
+      &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
+        \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
+      \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
+        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
+  \end{aligned}
+\end{equation}
+Next, since the Laplacian double-layer potential can be written as the
+Cauchy integral
 \begin{align}
   \DD[\eta](\xx) = \Re (v(x)) \quad \text{where} \quad
   v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
@@ -114,7 +243,11 @@ written as a Cauchy integral
 \end{align}
 where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$,
 the Stokes double-layer potential can be written in terms of Cauchy
-integrals and its first derivative.  We also require the derivative of
+integrals and its first derivative.  
+
+
+
+We also require the derivative of
 the Stokes double-layer potential which requires the second derivative
 of Cauchy integrals.
 
@@ -142,60 +275,9 @@ for $x \in \Omega$.  Since $v(x)$ depends on the density function $\eta
 function defined in equation~\eqref{eqn:laplaceComplex}, and the
 derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.
 
-The Stokes double-layer potential itself can not represent all solutions
-of the incompressible Stokes equations.  Therefore, we complete the
-integral equation formulation following the work of Power and
-Miranda~\cite{pow-mir1987}.  The completion depends on the Stokeslets
-and rotlets
-\begin{align}
-  S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
-    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \quad
-  R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
-\end{align}
-where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
-$\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
-\|\rr\|$.  Then, the solution of the Stokes equation is
-\begin{align}
-  \uu(\xx) = \DDD[\eeta](\xx) + 
-    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
-    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx),
-\end{align}
-where the density function, Stokeslets, and rotlets satisfy
-\begin{align}
-  \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
-    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
-    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
-    \NN_0(\eeta](\xx), \quad \xx \in \bd\Omega, \\
-  \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-    \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
-  \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
-    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
-    \quad \ell = 1,\ldots,M,
-\end{align}
-where $\ff$ is the prescribed Dirichlet boundary condition of the
-velocity on the outer wall and eroding bodies.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cauchy Integral Representation of the Double-Layer
-Potential}
-\label{s:DLPcomplex}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
 decomposed as
-\begin{equation}
-  \label{eqn:Stokes2Laplace}
-  \begin{aligned}
-    \DDD[\eeta](\xx) &= 
-      \frac{1}{2\pi} \int_{\bd\Omega} 
-        \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
-      \frac{1}{2\pi} \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
-      &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
-      \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
-  \end{aligned}
-\end{equation}
 All these integrals but the first are a gradient of a Laplace layer
 potential.  In addition, each component of the first integral can be
 written as a Cauchy integral with a complex-valued density
@@ -306,7 +388,7 @@ streamline, is
   {\displaystyle\int_{S}u_x(y)\,dy},
 \end{align*}
 where $S$ is an cross-section perpendicular to the $x$ axis with length
-$d$, $\lambda(y)$ is the length of the streamline that is initizalized
+$d$, $\lambda(y)$ is the length of the streamline that is initialized
 at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
 the velocity at the $y$-coordinate along $S$.  There have been efforts
 to relate the tortuosity to the porosity~\cite{matyka2008tortuosity},
@@ -663,7 +745,7 @@ of eroding bodies.  The computational domain $\Omega$ is a rectangle
 $[-3,3] \times [-1,1]$ with rounded off corners and we place bodies only
 in $[-1,1] \times [-1,1]$.  For all simulations, we discretize $\Gamma =
 \bd \Omega$ with $N_\out=1024$ points.  The Dirichlet boundary condition
-on $\Gamma$ is a Hagen-Poiseuille flow.  As the bodies erode, the flow
+on $\Gamma$ is a hagen-poiseuille flow.  As the bodies erode, the flow
 rate is adjusted to maintain the physical constant pressure drop
 boundary condition.  To maintain this pressure drop, we compute the
 pressure at near the inlet and outlet at each time step as described in
