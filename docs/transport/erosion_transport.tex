@@ -671,8 +671,8 @@ $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 {\color{red}
 \begin{align}
   \label{eqn:PointsBodyCutoff}
-  \|\xx - \cc_i\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi}
-+ \alpha_\iin \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right).
+  \|\xx - \cc_i\| < \frac{L_i}{2\pi}
++ \alpha_\iin \left(\frac{L_i}{N_\iin} \right).
 \end{align}
 }
 \todo[inline]{This doesn't seem right.  $\xx$ is already on the boundary
@@ -988,7 +988,7 @@ right and join another tracers in the channel above the body.
 \end{center}
 \end{figure}
 {\color{red}
-In Fig.~\ref{fig:Eroding20area} we
+In Fig.~\ref{fig:Eroding20area} (a) we
 measure the area occupied by bodies 
 during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times
 [-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
@@ -998,7 +998,7 @@ the maximum eroding speed happens when 7.57\% of area of $[-1,1] \times
 all the bodies are vanished completely.
 
 We record the flow rate $U$ quantifily in log scale
-during the eroding in Fig.~\ref{fig:Eroding20flowrate}. 
+during the eroding in Fig.~\ref{fig:Eroding20area} (b). 
 Since we simulate the erosion by applying fixed pressure drop 
 the flow rate $U$ is small when there are many bodies in the fluid and 
 when the area occupied by bodies is getting smaller $U$ is getting larger.
@@ -1035,11 +1035,15 @@ The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
 \caption{}
 \end{subfigure}%
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/erodingspeed20dense}
+\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20area}  The area fraction of 20 nearly
-  touching eroding bodies and the eroding speed verse time. }
+\caption{\label{fig:Eroding20area}  (a) The area fraction of 20 nearly
+  touching eroding bodies and the eroding speed versus time. 
+(b) The incoming flow rate of $U$ in log scale versus time. 
+Under fixed pressure drop condition, $U$ will be small initially,
+increase when bodies are eroding, and grow exponentially 
+to 1 when there is no body in the fluid. }
 \end{figure}
 
 
@@ -1062,25 +1066,6 @@ for example in Fig.~\ref{fig:Eroding20tort_traj} the toppest red pair trajectori
 are splitted by two close bodies.
 }
 
-
-
-
-
-\begin{figure}[H]
-%\begin{subfigure}[b]{0.5\textwidth}
-\center
-\includegraphics*[width =0.5\linewidth]{./figs/flow_rate20dense}
-%\caption{}
-%\end{subfigure}%
-%\begin{subfigure}[b]{0.5\textwidth}
-%\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
-%\caption{}
-%\end{subfigure}
-\caption{\label{fig:Eroding20flowrate}  The incoming flow rate of $U$ in log scale verse time. 
-Under fixed pressure drop condition, $U$ will be small initially,
-increase when bodies are eroding, and grow exponentially 
-to 1 when there is no body in the fluid. }
-\end{figure}
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
