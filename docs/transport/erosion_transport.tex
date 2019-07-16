@@ -78,15 +78,14 @@ be used to understand transport in porous media---the tortuosity and the
 anomalous diffusion rates.   The tortuosity quantifies the twisting of
 particle trajectories in a medium, and in laminar flow, the tortuosity
 is one.  While a porous media often has a large tortuosity, as erosion
-creates preferential channels, large numbers of particles become more
-laminar, and we expect the tortuosity to decrease.  Anomalous diffusion
-is often used to describe transport in a porous media, and it quantifies
-the dispersion of particles in the flow.  Again, as the geometry erodes,
-particles behave more as a ballistic particle, and we expect less
-dispersion.  In this paper, we compute both the tortuosity and the
-anomalous diffusion rates of several geometries that form via erosion.
-
-\todo[inline]{gap size growth as a function of time}
+increases the gaps between bodies, preferential channels are created,
+large numbers of particles become more laminar, and we expect the
+tortuosity to decrease.  Anomalous diffusion is often used to describe
+transport in a porous media, and it quantifies the dispersion of
+particles in the flow.  Again, as the geometry erodes, particles behave
+more as a ballistic particle, and we expect less dispersion.  In this
+paper, we compute both the tortuosity and the anomalous diffusion rates
+of several geometries that form via erosion.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,9 +150,9 @@ prescribed Hagen-Poiseuille velocity field, and
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
-is the shear stress on the eroding bodies.  Continuing with our previous
-work~\cite{qua-moo2018}, we use a double-layer potential formulation for
-the velocity $\uu$.  The double-layer potential is
+is the shear stress on the eroding bodies.  Using the same approach as
+our previous work~\cite{qua-moo2018}, we use a double-layer potential
+formulation for the velocity $\uu$.  The double-layer potential is
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) = 
     \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
@@ -164,11 +163,10 @@ the velocity $\uu$.  The double-layer potential is
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  The Stokes double-layer potential
-itself can not represent all solutions of the incompressible Stokes
-equations.  Therefore, we complete the integral equation formulation
-following the work of Power and Miranda~\cite{pow-mir1987}.  The
-completion depends on the Stokeslets and rotlets
+is an unknown density function.  Since the Stokes double-layer potential
+can not represent all solutions of the incompressible Stokes equations,
+we complete the integral equation formulation by adding the Stokeslets
+and rotlets~\cite{pow-mir1987}
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
     -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \quad
@@ -187,7 +185,7 @@ where the density function, Stokeslets, and rotlets satisfy
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
-    \NN_0(\eeta](\xx), \quad \xx \in \bd\Omega, \\
+    \NN_0[\eeta](\xx), \quad \xx \in \bd\Omega, \\
   \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
     \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
@@ -195,11 +193,13 @@ where the density function, Stokeslets, and rotlets satisfy
     \quad \ell = 1,\ldots,M,
 \end{align}
 where $\ff$ is the prescribed Dirichlet boundary condition of the
-velocity on the outer wall and eroding bodies.  Then, once the unknown
-density function is computed, the shear stress is found by first
-computing the deformation tensors of the double-layer potential,
-Stokeslets, and rotlets, and then forming the shear stress as defined in
-equation~\eqref{eqn:shearStress}.
+velocity on the outer wall and eroding bodies, and $\NN_0$ is the
+integral operator with kernel $\nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in
+\Gamma$, which removes the rank one null space resulting from the
+flux-free requirement of $\ff$. Once the unknown density function is
+computed, the shear stress is found by first computing the deformation
+tensors of the double-layer potential, Stokeslets, and rotlets, and then
+forming the shear stress as defined in equation~\eqref{eqn:shearStress}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,19 +207,12 @@ equation~\eqref{eqn:shearStress}.
 Potential}
 \label{s:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Using the trapezoid rule to discretize the double-layer
-potential~\eqref{eqn:stokesDLP}, and to compute its deformation tensor,
-results in large quadrature errors if $\xx$ is close to $\bd\Omega$.  We
-apply a quadrature method that is constructed in terms of holomorphic
-functions, so we must first write all the layer potentials in terms of
-Cauchy integrals and their derivatives.  The first step is to write the
-Stokes double-layer potential as the sum of a Laplacian double-layer
-potential
-\begin{align}
-  \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega}
-    \frac{\rr \cdot \nn}{\rho^2} \eta(\yy) ds_\yy,
-\end{align}
-and its gradient.  One such decomposition is
+The layer potential representations of $\uu$~\eqref{eqn:stokesDLP} and
+its gradient are written in terms of contour integrals in $\RR^2$. We
+will be applying a quadrature method for holomorphic functions, so we
+must convert these layer potentials in $\RR^2$ to contour integrals in
+$\CC$.  The first step is to write the Stokes double-layer potential as
+the sum of a Laplacian double-layer potential and its gradient
 \begin{equation}
   \label{eqn:Stokes2Laplace}
   \begin{aligned}
@@ -243,25 +236,20 @@ Cauchy integral
   \label{eqn:laplaceComplex}
 \end{align}
 where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$,
-the Stokes double-layer potential can be written in terms of Cauchy
-integrals and its first derivative.  
+the Stokes double-layer potential can be written in terms of a complex
+integral and its first derivative.  In addition, the derivative of the
+Stokes double-layer potential can be written in terms of a complex
+integral and its first two derivatives.
 
-
-
-We also require the derivative of
-the Stokes double-layer potential which requires the second derivative
-of Cauchy integrals.
-
-We will be using quadrature formulae to compute $v$ and its derivatives
-that rely on the Cauchy integral theorem.  Since $v$ is holomorphic, its
-value only depends on its boundary data.  The boundary data satisfies
-the Sokhotski-Plemelj jump relation
+Equation~\eqref{eqn:laplaceComplex} can be converted to a Cauchy
+integral by first finding boundary data of $v$ which satisfies the
+Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
   v(x) = -\frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
     \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
 \end{align}
-Once the boundary data of $v$ is computed, we have
+Once the boundary data of $v$ is formed, we have
 \begin{align}
   \label{eqn:cauchy}
   v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
@@ -271,60 +259,40 @@ Once the boundary data of $v$ is computed, we have
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy.
 \end{align}
-for $x \in \Omega$.  Since $v(x)$ depends on the density function $\eta
-\in \CC$, we use the notation $v[\eta](x)$ to denote the holomorphic
-function defined in equation~\eqref{eqn:laplaceComplex}, and the
-derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.
-
-
-The Stokes double-layer potential~\eqref{eqn:stokesDLP} can be
-decomposed as
-All these integrals but the first are a gradient of a Laplace layer
-potential.  In addition, each component of the first integral can be
-written as a Cauchy integral with a complex-valued density
-function~\cite{bar-wu-vee2015}.  Therefore, the Stokes double-layer
-potential can be written as five Cauchy integrals and their derivatives
-with the density functions $\yy \cdot \eeta$, $\eta_1$, and $\eta_2$.
-The individual velocity components are
-\begin{align}
+for $x \in \Omega$.  
+  
+In equation~\eqref{eqn:cauchy}, $v(x)$ depends on the density function
+$\eta \in \CC$, so we use the notation $v[\eta](x)$ to denote the
+holomorphic function defined in equation~\eqref{eqn:laplaceComplex}, and
+the derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  Having
+introduced this notation, the components of the Stokes double-layer
+potential are~\cite{bar-wu-vee2015}
+\begin{equation}
+  \begin{aligned}
+    u_1(x) &= \Re (v[\tau_1](x)) + \Re (v'[y\cdot\eta](x)) 
+             -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
+    u_2(x) &= \Re (v[\tau_2](x)) - \Im (v'[y\cdot\eta](x)) 
+         +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
+  \end{aligned}
   \label{eqn:cauchy1}
-  u_1(x) &= \Re (v[\tau_1](x)) + \Re (v'[y\cdot\eta](x)) 
-           -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
-  u_2(x) &= \Re (v[\tau_2](x)) - \Im (v'[y\cdot\eta](x)) 
-       +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
-\end{align}
+\end{equation}
 where $y \cdot \eta = y_1 \eta_1 + i y_2 \eta_2 \in \CC$, 
 \begin{align} 
   \tau_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad \text{and} \quad
   \tau_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
 \end{align}
 and $n \in \CC$ is the complex representation of the outward unit normal
-$\nn \in \RR^2$
+$\nn \in \RR^2$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cauchy Integral Representation of the Shear Stress}
+\subsection{Cauchy Integral Representation for the Gradient of
+the Velocity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-To compute the rate of erosion, we must compute the shear stress of the
-double-layer potential
-\begin{align}
-  \tau(\xx) = \left(\nabla \DDD[\eeta](\xx) + 
-    \nabla^T \DDD[\eeta](\xx) \right) \nn \cdot \ss,
-\end{align} where $\nn$ and $\ss$ are the unit normal and tangent
-vectors at $\xx$, respectively.  Each term of the gradient of the
-velocity field can be written in terms of Cauchy integrals.  For
-example,
-\begin{align}
-  \pderiv{u_1}{x_2} &= \Re(iv'[\tau_1](x)) + 
-      \Re(i v''[y \cdot \eta](x)) -
-      x_1\Re(i v''[\eta_1](x))  -
-      \Re(v'[\eta_2](x)) - x_2 \Re(iv''[\eta_2](x)) \\
-    &= -\Im(v''[\tau_1](x)) - 
-      \Im(v''[y \cdot \eta](x)) +
-      x_1\Im(v''[\eta_1](x)) -
-      \Re(v'[\eta_2](x)) + x_2 \Im(v''[\eta_2](x)).
-\end{align}
-Similarly, the other three components of $\nabla \DDD[\eeta]$ can be
-calculated
+We require complex-valued representations of both the shear stress and
+the vorticity.  Both these quantities depend on the gradient of the
+velocity.  Each term of the gradient of the velocity field can be
+written in terms of Cauchy integrals.  Taking the derivatives of
+equation~\eqref{eqn:cauchy1} with respect to $x_1$ and $x_2$, we have 
 \begin{align}
   \pderiv{u_1}{x_1} &= +\Re (v'[\tau_1](x)) + 
     \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
@@ -339,69 +307,111 @@ calculated
     \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
     \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cauchy Integral Representation of the Vorticity}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Having calculated all derivatives of the double-layer potential, the
-vorticity can written in terms of Cauchy integrals.  In particular,
+With these four expressions, the deformation tensor of the
+double-layer potential, $\ssigma^D = \frac{1}{2} (\nabla \uu + \nabla
+\uu^T)$, is written in terms of Cauchy integrals.  In addition, the
+vorticity can be written as
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
  + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)).
 \end{align}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cauchy Integral Representation of the Pressure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The pressure of the double-layer potential is
-\begin{align}
-  p(\xx) = -\frac{1}{\pi} \int_{\bd\Omega} \frac{1}{\rho^2}
-    \left(1 - 2 \frac{\rr \otimes \rr}{\rho^2} \right) \nn
-    \cdot \eeta(\yy) \, ds_\yy.
-\end{align}
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Transport, Tracers, and Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erosion leads to interesting porous geometries, and we are interested in
-characterizing transport in these geometries.  To characterize the
-transport, we first require tracer trajectories (streamlines) that are
-governed by
+characterizing transport in these geometries.  For porous media, two of
+the most important variables are the porosity and the permeability.
+However, additional properties of the flow are revealed by computing
+the anomalous diffusion rate, the tortuosity, and the distribution the
+gap sizes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Anomalous Diffusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The dynamics of fluid in porous media can be characterized in terms of
+anomalous diffusion.  However, the anomalous diffusion rate depends on
+the properties of the geometry.  In addition to the porosity, the
+distribution of the grains affects the anomalous diffusion rates.  To
+quantify this rate, we require tracer trajectories that are governed by
 \begin{align}
   \label{eqn:trajectories}
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
 \end{align}
-Instead of allowing the transport and erosion to happen simultaneously,
-we freeze the geometry and compute the streamlines in this fixed
-geometry.  Therefore, the velocity $\uu$ has no temporal dependence when
-we characterize the transport.
+Given a trajectory, we define $\lambda_j(t)$ to be the distance
+travelled by the particle
+\begin{align}
+  \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau.
+\end{align}
+Having formed $N_p$ trajectories, the first and second ensemble moments
+are
+\begin{align}
+  \langle \lambda \rangle (t) = 
+    \frac{1}{N_p} \sum_{j=1}^{N_p} \lambda_j(t), \quad 
+    \sigma_\lambda^2(t) = \frac{1}{N_p} 
+    \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
+\end{align}
+If the particle spreading scales with time as $\sigma_\lambda^2 \sim
+t^\alpha$, with $\alpha < 1$, this indicates that the particle
+trajectories are sub-diffusive.  In contrast, if $\sigma_\lambda^2 \sim
+t^2$, the particle trajectories are undergoing a ballistic motion and
+are not affected by the grains.
 
-Key variables that are used to characterize porous media flow is the
-porosity (area of void space), permeability, and tortuosity.  The
-tortuosity, which  quantifies the amount of turning made by a
-streamline, is
-\begin{align*}
+For early times when the geometry has not eroded, we expect the
+trajectories to be sub-diffusive.  However, as the bodies erode and
+straight preferential channels are formed, we expect the dynamics to
+resemble a ballistic motion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Tortuosity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The tortuosity of a geometry quantifies the average amount of turning
+made by a streamline.  Mathematically, it is defined as
+\begin{align}
   T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
   {\displaystyle\int_{S}u_x(y)\,dy},
-\end{align*}
+  \label{eqn:tortuosity1}
+\end{align}
 where $S$ is an cross-section perpendicular to the $x$ axis with length
 $d$, $\lambda(y)$ is the length of the streamline that is initialized
 at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
-the velocity at the $y$-coordinate along $S$.  There have been efforts
-to relate the tortuosity to the porosity~\cite{matyka2008tortuosity},
-but these results can not be universal since the porosity which depends
-on only a single number, the tortuosity is affected by the distribution
-of pores within the porous network.  In addition to the hydraulic
-tortuosity, a local tortuosity can be used to analyze the local behavior
-of a streamline near a body~\cite{matyka2008tortuosity}.  The local
-tortuosity of a streamline initialized at $y$ along $S$ is
+the velocity at the $y$-coordinate along $S$.  Under the assumptions
+that the flow is incompressible and not reentrant, the tortuosity can be
+equivalently measured as~\cite{dud-koz-mat2011}
+\begin{align}
+  T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
+           {\displaystyle\int_\Omega u_x(\yy)\, d\yy}.
+  \label{eqn:tortuosity2}
+\end{align}
+The flow is reentrant if all streamlines connect the inlet to the
+outlet.  Recirculation zones are possible in viscous fluids, but they
+only constitute a small fraction of the total porous media.  Therefore,
+the tortuosity defined in equation~\eqref{eqn:tortuosity2} is an upper
+bound for the definition in equation~\eqref{eqn:tortuosity1}.  We have
+used formulas for a particular geometry, and the difference is
+negligible.  Since equation~\eqref{eqn:tortuosity2} does not require the
+additional work of computing particle trajectories, we use this
+definition for the tortuosity.
+
+There have been efforts to relate the tortuosity to the
+porosity~\cite{matyka2008tortuosity}, but these results can not be
+universal since the porosity which depends on only a single number, the
+tortuosity is affected by the distribution of pores within the porous
+network.  In addition to the hydraulic tortuosity, a local tortuosity
+can be used to analyze the local behavior of a streamline near a
+body~\cite{matyka2008tortuosity}.  The local tortuosity of a streamline
+initialized at $y$ along $S$ is
 \begin{align*}
   \tau(y) = \frac{\lambda(y)}{d}.
 \end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Gap Distribution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -1756,3 +1766,16 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %The definition of local tortuosity of the tracers at $y$ on $S$ is
 %$$\tau(y)=\frac{\lambda(y)}{d}.$$ 
 %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Cauchy Integral Representation of the Pressure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%The pressure of the double-layer potential is
+%\begin{align}
+%  p(\xx) = -\frac{1}{\pi} \int_{\bd\Omega} \frac{1}{\rho^2}
+%    \left(1 - 2 \frac{\rr \otimes \rr}{\rho^2} \right) \nn
+%    \cdot \eeta(\yy) \, ds_\yy.
+%\end{align}
+%
+%
+%
