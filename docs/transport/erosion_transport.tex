@@ -931,7 +931,31 @@ flow is
   \right].
 \end{align}
 Initially, $U=1$, and then $U$ is updated at each time step so that the
-pressure drop from $x=-2$ to $x=2$ remains constant.  Snapshots of the
+pressure drop from $x=-2$ to $x=2$ remains constant.  
+{\color{red}
+We record the flow rate $U$ quantifily in log scale
+during the eroding in Fig.~\ref{fig:Eroding20flowrate}. 
+Since we simulate the erosion by applying fixed pressure drop 
+the flow rate $U$ is small when there are many bodies in the fluid and 
+when the area occupied by bodies is getting smaller $U$ is getting larger.
+When all the bodies have vanished completely the flow rate $U$ is equal to 1.
+In Fig.~\ref{fig:Eroding20flowrate}, the flow rate increases exponentially 
+with growth rate close to $\ln10^4$. }
+
+\begin{figure}[H]
+\center
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
+%\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding20flowrate} The incoming flow rate of $U$ in log scale versus time. 
+Under fixed pressure drop condition, $U$ will be small initially,
+increase when bodies are eroding, and grow exponentially 
+to 1 when there is no body in the fluid. }
+\end{figure}
+
+
+Snapshots of the
 bodies at four equispaced times are shown in
 Figure~\ref{fig:Eroding20vort}.   The colormap is the vorticity which is
 equivalent to the shear stress when restricted to the eroding bodies.
@@ -981,22 +1005,7 @@ very little shear stress and the effect of erosion is slight.
 \end{center}
 \end{figure}
 
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/porosity20dense}
-\caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding20area}  (a) The area fraction of 20 nearly
-  touching eroding bodies and the eroding speed versus time. 
-(b) The incoming flow rate of $U$ in log scale versus time. 
-Under fixed pressure drop condition, $U$ will be small initially,
-increase when bodies are eroding, and grow exponentially 
-to 1 when there is no body in the fluid. }
-\end{figure}
+
 
 
 In this example, we also observe that erosion creates a network of
@@ -1009,7 +1018,7 @@ initially to the left of the porous region and equispaced in $y$.  There
 are two clear region where the tracers pass through the geometry
 much faster than the other regions.  To illustrate the ability of the
 Barycentric quadrature formula, streamlines very close to the eroding
-bodies are illustrated in Figure~\ref{fig:Eroding20zoom}. 
+bodies are illustrated in the last frame of Figure~\ref{fig:Eroding20tracer}. 
 
 \begin{figure}[H]
 \begin{center}
@@ -1080,46 +1089,28 @@ not penetrate the bodies.  Those body-closed tracers are moving
 perfectly so we are able to observe the details of the interaction of
 bodies and fluid.  Although the direction of flow is from left to right,
 the tracers will not only travel horizontally but also vertically.  In
-the last three frames of Fig.~\ref{fig:Eroding20tracer}, some tracers
-climb up from right to left around the body.  There are zoom windows of
-the climbing tracers trajectories in Fig.~\ref{fig:Eroding20zoom} and
-they are taken from the last three frames of
-Fig.~\ref{fig:Eroding20tracer} with more tracers.  In
-Fig.~\ref{fig:Eroding20zoom} the tracers around the center body first go
+the fifth frame of Fig.~\ref{fig:Eroding20tracer}, some tracers
+climb up from right to left around the body.  There is a zoom windows of
+the climbing tracers trajectories in the last frame of Fig.~\ref{fig:Eroding20tracer} and
+they are taken from the fifth frame of
+Fig.~\ref{fig:Eroding20tracer} with more tracers.  In the last frame of 
+Fig.~\ref{fig:Eroding20tracer} the tracers around the center body first go
 from the channel below the body, climb up to the left, then go to the
 right and join another tracers in the channel above the body. 
 }
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
-\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
-\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
-\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
-  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
-  tracers around the bodies. Since we use a Barycentric quadrature rule
-  and the fourth order Runge Kutta method, the tracers can be very close
-  to but not penetrate the bodies.}
-\end{center}
-\end{figure}
+%\begin{figure}[H]
+%\begin{center}
+%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
+%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
+%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
+%\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
+%  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
+%  tracers around the bodies. Since we use a Barycentric quadrature rule
+ % and the fourth order Runge Kutta method, the tracers can be very close
+ % to but not penetrate the bodies.}
+%\end{center}
+%\end{figure}
 {\color{red}
-In Fig.~\ref{fig:Eroding20area}(a) we
-measure the area occupied by bodies 
-during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times
-[-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
-when more and more bodies are vanished in the fluid and 
-the maximum eroding speed happens when 7.57\% of area of $[-1,1] \times
-[-1,1]$ is occupied by 8 bodies. After that the speed drops rapidly to 0 when
-all the bodies are vanished completely.
-
-We record the flow rate $U$ quantifily in log scale
-during the eroding in Fig.~\ref{fig:Eroding20area}(b). 
-Since we simulate the erosion by applying fixed pressure drop 
-the flow rate $U$ is small when there are many bodies in the fluid and 
-when the area occupied by bodies is getting smaller $U$ is getting larger.
-When all the bodies have vanished completely the flow rate $U$ is equal to 1.
-In Fig.~\ref{fig:Eroding20area}(b), the flow rate increases exponentially 
-with growth rate close to $\ln10^4$. 
-
 
 In Fig.~\ref{fig:Eroding20tort} we release 1000 tracers 
 from the starting cross section x = -1 to 
@@ -1148,38 +1139,35 @@ The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
 {\color{red}
 In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of 
 $\tau$ at two neighboring tracers 
-and draw the trajectories of neighboring tracers in 
-Fig.~\ref{fig:Eroding20tort_traj}
+and draw the trajectories of neighboring tracers
 if the difference of $\tau$ at the neighboring tracers is large. 
-From Fig.~\ref{fig:Eroding20tort_traj},
+From Fig.~\ref{fig:Eroding20tort}(c),
  we are able to tell the neighboring trajectories will be very 
-different if they are separated by bodies. In Fig.~\ref{fig:Eroding20tort_traj}
+different if they are separated by bodies. In Fig.~\ref{fig:Eroding20tort}(c)
 we collect the 10 largest difference of $\tau$ at the neighboring tracers and 
 draw the pair of trajectories in the same color. For each pair of trajectories, 
 they are splitted by the body at the left side of the body, then
 one of them goes up and the other one goes down along the body 
 until they rejoin with each other at the right side of body.  
 Furthermore, the pair trajectories could be splitted by more than one body, 
-for example in Fig.~\ref{fig:Eroding20tort_traj} the toppest red pair trajectories 
+for example in Fig.~\ref{fig:Eroding20tort}(c) the toppest red pair trajectories 
 are splitted by two close bodies.
 }
 
 
 \begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/velocity_loc20_268}
 \caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
+\end{subfigure}
+\begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/tort_local20_268}
 \caption{}
 \end{subfigure}
+\end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/diff_tort20_268}
-\caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/uminDumax20_268}
+\includegraphics*[width =\linewidth]{./figs/tort_diff_top10_268}
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding20tort} The tortuosity study in the fluid with 
@@ -1188,19 +1176,44 @@ are splitted by two close bodies.
 x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=2.9828
 \times 10^{-3}$ at equal spreading tracers on the cross section x = -1. 
 (b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
-(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
-(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
-\end{figure}
-
-\begin{figure}[H]
-\center
-\includegraphics*[width =0.5\linewidth]{./figs/tort_diff_top10_268}
-\caption{\label{fig:Eroding20tort_traj} The largest 10 difference of 
+(c) The largest 10 difference of 
 local tortuosity $\tau$ at two neighboring tracers in
  20 nearly touching bodies eroding when the porosity is 62.9 \% 
 and the tortuosity is 1.0979. The same color of a pair of trajectories 
 means they are from two neighboring tracers.}
+%(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
+%(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
 \end{figure}
+{\color{red}
+In Fig.~\ref{fig:Eroding20area} we
+measure the area occupied by bodies 
+during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times
+[-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
+when more and more bodies are vanished in the fluid and 
+the maximum eroding speed happens when 7.57\% of area of $[-1,1] \times
+[-1,1]$ is occupied by 8 bodies. After that the speed drops rapidly to 0 when
+all the bodies are vanished completely.}
+
+\begin{figure}[H]
+\center
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/porosity20dense}
+%\caption{}
+\end{subfigure}%
+\caption{\label{fig:Eroding20area}  The area fraction of 20 nearly
+  touching eroding bodies and the eroding speed versus time. 
+}
+\end{figure}
+
+%\begin{figure}[H]
+%\center
+%\includegraphics*[width =0.5\linewidth]{./figs/tort_diff_top10_268}
+%\caption{\label{fig:Eroding20tort_traj} The largest 10 difference of 
+%local tortuosity $\tau$ at two neighboring tracers in
+% 20 nearly touching bodies eroding when the porosity is 62.9 \% 
+%and the tortuosity is 1.0979. The same color of a pair of trajectories 
+%means they are from two neighboring tracers.}
+%\end{figure}
 
 \begin{figure}[H]
 \center
@@ -1363,20 +1376,18 @@ travel as far as the two splitted by a bigger body do after they rejoin on the r
 \end{figure}
 
 \begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/velocity_loc100}
 \caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
+\end{subfigure}
+\begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/tort_local100}
 \caption{}
 \end{subfigure}
+\end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/diff_tort100}
-\caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/uminDumax100}
+\includegraphics[width = \textwidth]{./figs/100b_t100tracer}
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100tort} The tortuosity study in the fluid with 100 bodies 
@@ -1385,8 +1396,10 @@ when the porosity is 62.98 \%.
 x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.9021
 \times 10^{-4}$ at equal spreading tracers on the cross section x = -1. 
 (b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
-(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
-(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
+(c) The historical trajectories of 
+200 tracers released at x = -1 in the fluid with multiple bodies.}
+%(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
+%(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
 \end{figure}
 
 \begin{figure}[H]
