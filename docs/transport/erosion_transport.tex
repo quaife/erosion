@@ -881,10 +881,10 @@ very little shear stress and the effect of erosion is slight.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[height=0.43\textwidth]{./figs/20b_dense1}
-  \includegraphics[height=0.43\textwidth]{./figs/20b_dense101} \\
-  \includegraphics[height=0.43\textwidth]{./figs/20b_dense201}
-  \includegraphics[height=0.43\textwidth]{./figs/20b_dense301}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense1}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense101}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense201}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense301}
 %\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense1}
 %\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense101}\\
 %\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
@@ -898,6 +898,24 @@ very little shear stress and the effect of erosion is slight.
   body 19 has almost completely eroded.}
 \end{center}
 \end{figure}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/porosity20dense}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding20area}  (a) The area fraction of 20 nearly
+  touching eroding bodies and the eroding speed versus time. 
+(b) The incoming flow rate of $U$ in log scale versus time. 
+Under fixed pressure drop condition, $U$ will be small initially,
+increase when bodies are eroding, and grow exponentially 
+to 1 when there is no body in the fluid. }
+\end{figure}
+
 
 In this example, we also observe that erosion creates a network of
 channels from the inlet to outlet where the velocity and vorticity, and
@@ -914,20 +932,23 @@ bodies are illustrated in Figure~\ref{fig:Eroding20zoom}.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b30}
-\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b60}
-\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b90}\\
-
-\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b120}
-\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b150}
-\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b180}\\
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b90}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b150}\\
 
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b210}
-\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b240}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270}
+\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270_zoom}\\
+
+%\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b210}
+%\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b240}
+%\includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270}
 \caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in
-  the fluid with 20 bodies. The 9 snapshots are evenly spaced in time.
+  the fluid with 20 bodies. The five first snapshots are evenly spaced in time.
   The tracers are evenly spread in the $y$-direction and released at
-  $x=-1$.}
+  $x=-1$. The sixth frame is a zoom window of the fifth frames. 
+Since we use a Barycentric quadrature rule
+  and the fourth order Runge Kutta method, the tracers can be very close
+  to but not penetrate the bodies.}
 \end{center}
 \end{figure}
 
@@ -1040,22 +1061,6 @@ seperated by the bodies.
 The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
 }
 
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/porosity20dense}
-\caption{}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding20area}  (a) The area fraction of 20 nearly
-  touching eroding bodies and the eroding speed versus time. 
-(b) The incoming flow rate of $U$ in log scale versus time. 
-Under fixed pressure drop condition, $U$ will be small initially,
-increase when bodies are eroding, and grow exponentially 
-to 1 when there is no body in the fluid. }
-\end{figure}
 
 
 {\color{red}
