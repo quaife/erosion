@@ -1303,12 +1303,12 @@ until they arrive the end cross section x = 1
 and the porosity of this geometric structure is 62.98 \%. 
 To understand the global action of fluid qualitatively, 
 we only draw 200 historical trajectories from x = -1 to x = 1 
-in Fig.~\ref{fig:Eroding100tracer}. 
+in Fig.~\ref{fig:Eroding100tort}(a). 
 When equispaced tracers are released in a 2D tube without any grains, 
 the streamlines are straight 
 and the intersection points of streamlines and any cross section are equispaced. 
 But it is not the same when there are bodies in the fluid. 
-In Fig.~\ref{fig:Eroding100tracer}
+In Fig.~\ref{fig:Eroding100tort}(a)
 even the tracers are equispaced in $y$ on the cross section $S$, 
 the streamlines have been push up and down by the bodies and
 some of them are close together. 
@@ -1319,8 +1319,8 @@ some of them are close together.
 To measure the local behavior of fluid quantitatively, 
 we use the velocities and local tortuosities at the starting cross section 
 to analysis the interaction of fluid and bodies until the end cross section 
-in Fig.~\ref{fig:Eroding100tort}.
-In Fig.~\ref{fig:Eroding100tort}(a) the graph represents the ratio of the
+in Fig.~\ref{fig:Eroding100tort}(b) and (c).
+In Fig.~\ref{fig:Eroding100tort}(b) the graph represents the ratio of the
 x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
 \times 10^{-4}$ at equal spreading tracers on the strating cross section.
 As in the case of 20 nearly touching bodies, the velocity is continuous along
@@ -1339,7 +1339,7 @@ more bodies near the starting cross section in
 so the inlet flow in 100-body case
 will be separated into more branches than the flow in 20-body case. 
 
-In Fig.~\ref{fig:Eroding100tort}(b) we record the 
+In Fig.~\ref{fig:Eroding100tort}(c) we record the 
 local tortuosity $\tau(y)$ for $y$ on the starting cross section x = -1.
 It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies
 is 1.2547 and the minimum is 1.0003. This function $\tau$
@@ -1347,30 +1347,36 @@ has more jumps than the one in the case of 20 bodies but its maximum
 is smaller than the maximum in the case of 20 bodies. 
 The jump in this graph means the neighboring trajectories are splitted by bodies
 so it is reasonable to have more jumps in the case of 100-body than the case of 20-body
-since there are more bodies in the former case. To understand the meaning of jump 
-of $\tau$, we use the data we got from local tortuosity $\tau(y)$
-to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
-and draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
-in Fig.~\ref{fig:Eroding100tort_traj}. These pairs of two neighboring trajectories are splitted by bodies
-then rejoin with each other and the splitting-rejoining behavior causes the difference of $\tau$ with respect to the neighboring trajectories.   
-We also can get the idea why the maximum value of $\tau$ is smaller 
-than the one in the case of 20 bodies . 
-The most of the bodies in this case are smaller than those in the case of 20 bodies.
-So when two neighboring trajectories are splitted on the left side by a smaller body they do not
-travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
+since there are more bodies in the former case. 
+
+%To understand the meaning of jump 
+%of $\tau$, we use the data we got from local tortuosity $\tau(y)$
+%to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
+%and draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
+%in Fig.~\ref{fig:Eroding100tort_traj}. These pairs of two neighboring trajectories are splitted by bodies
+%then rejoin with each other and the splitting-rejoining behavior causes the difference of $\tau$ with respect to the neighboring trajectories.   
+%We also can get the idea why the maximum value of $\tau$ is smaller 
+%than the one in the case of 20 bodies . 
+%The most of the bodies in this case are smaller than those in the case of 20 bodies.
+%So when two neighboring trajectories are splitted on the left side by a smaller body they do not
+%travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
 }
 
 
 
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
-\caption{\label{fig:Eroding100tracer} The historical trajectories of 
-200 tracers released at x = -1 in the fluid with multiple bodies.}
-\end{center}
-\end{figure}
+%\begin{figure}[H]
+%\begin{center}
+%\includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
+%\caption{\label{fig:Eroding100tracer} The historical trajectories of 
+%200 tracers released at x = -1 in the fluid with multiple bodies.}
+%\end{center}
+%\end{figure}
 
 \begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width = \textwidth]{./figs/100b_t100tracer}
+\caption{}
+\end{subfigure}
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/velocity_loc100}
@@ -1381,31 +1387,30 @@ travel as far as the two splitted by a bigger body do after they rejoin on the r
 \caption{}
 \end{subfigure}
 \end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics[width = \textwidth]{./figs/100b_t100tracer}
-\caption{}
-\end{subfigure}
+
 \caption{\label{fig:Eroding100tort} The tortuosity study in the fluid with 100 bodies 
 when the porosity is 62.98 \%.
-(a) The 
+(a) The historical trajectories of 
+200 tracers released at x = -1 in the fluid with multiple bodies.
+(b) The 
 x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.9021
 \times 10^{-4}$ at equal spreading tracers on the cross section x = -1. 
-(b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
-(c) The historical trajectories of 
-200 tracers released at x = -1 in the fluid with multiple bodies.}
+(c) The local tortuosity $\tau(y)$ on the cross section x = -1. 
+}
 %(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
 %(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
 \end{figure}
 
-\begin{figure}[H]
-\center
-\includegraphics*[width =0.5\linewidth]{./figs/tort100b_diff_top50}
-\caption{\label{fig:Eroding100tort_traj} The largest 50 difference of 
-local tortuosity $\tau$ at two neighboring tracers in
-100 bodies eroding when the porosity is 62.98 \%
-and the tortuosity is 1.1182. The same color of a pair of trajectories 
-means they are from two neighboring tracers.}
-\end{figure}
+%\begin{figure}[H]
+%\center
+%\includegraphics*[width =0.5\linewidth]{./figs/tort100b_diff_top50}
+%\caption{\label{fig:Eroding100tort_traj} The largest 50 difference of 
+%local tortuosity $\tau$ at two neighboring tracers in
+%100 bodies eroding when the porosity is 62.98 \%
+%and the tortuosity is 1.1182. The same color of a pair of trajectories 
+%means they are from two neighboring tracers.}
+%\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 \label{s:conclusions}
