@@ -941,13 +941,13 @@ Since we simulate the erosion by applying fixed pressure drop
 the flow rate $U$ is small when there are many bodies in the fluid and 
 when the area fraction is getting smaller $U$ is getting larger.
 In Fig.~\ref{fig:Eroding20flowrate}, 62.32\% of area of $[-1,1] \times
-[-1,1]$ is occupied by 20 bodies initially and the flow rate U starts from $9.86\times 10^{-5}$. 
+[-1,1]$ is occupied by 20 bodies initially and the flow rate $U$ starts from $9.86\times 10^{-5}$. 
 Then the eroding speed is increasing
 when more and more bodies are vanished in the fluid and 
 the maximum eroding speed happens when the area fraction equals 7.57\% 
 which is occupied by 8 bodies.
 When all the bodies have vanished completely the flow rate $U$ is equal to 1.
-In Fig.~\ref{fig:Eroding20flowrate}(b), the flow rate U increases exponentially 
+In Fig.~\ref{fig:Eroding20flowrate}(b), the flow rate $U$ increases exponentially 
 with growth rate close to $\ln10^4$. }
 
 \begin{figure}[H]
@@ -1049,7 +1049,7 @@ bodies are illustrated in the last frame of Figure~\ref{fig:Eroding20tracer}.
 \caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in
   the fluid with 20 bodies. The five first snapshots are evenly spaced in time.
   The tracers are evenly spread in the $y$-direction and released at
-  $x=-1$. The sixth frame is a zoom window of the fifth frames. 
+  $x=-1$. The bottom right frame is a zoom window of the bottom middle frames. 
 Since we use a Barycentric quadrature rule
   and the fourth order Runge Kutta method, the tracers can be very close
   to but not penetrate the bodies.}
@@ -1062,9 +1062,8 @@ across the domain horizontally and the flow has been concentrated in
 this channel.  In the second frame of Fig.~\ref{fig:Eroding20vort}, this
 channel is between bodies 1 \& 20, 1 \& 9, 4 \& 3, 8 \& 11, 8 \& 2, 6 \&
 12, and 6 \& 19.  We can get a better understanding of this channel from
-the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}.  In the
-top three frames of  Fig.~\ref{fig:Eroding20tracer}, the flow (or
-tracer) first comes from three small channels between outer wall \& body
+the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}.  In Fig.~\ref{fig:Eroding20tracer}, 
+the flow (or tracer) first comes from three small channels between outer wall \& body
 10, bodies 7 \& 14, and bodies 14 \& 18, then the three branches become
 one and go into the main channel between bodies 1 \& 9.  From the first
 frame to the forth frame of Fig.~\ref{fig:Eroding20vort}, this channel
@@ -1075,7 +1074,7 @@ Fig.~\ref{fig:Eroding20vort}, we could see the vorticity is relatively
 high on the side of bodies which form this channel so the bodies are
 eroded fast on the side of this channel or have vanished completely.
 
-Furthermore, how long the body lasts for depends on not only the size of
+Furthermore, how long the body lasts in the fluid depends on not only the size of
 the body but also the location of the body.  For example, the first
 three vanishing bodies are body 12 (as t=0.0256), 4 (as t=0.0278), then
 17 (as t=0.0287).  Since body 4 is located in the main flow channel so
@@ -1102,11 +1101,11 @@ not penetrate the bodies.  Those body-closed tracers are moving
 perfectly so we are able to observe the details of the interaction of
 bodies and fluid.  Although the direction of flow is from left to right,
 the tracers will not only travel horizontally but also vertically.  In
-the fifth frame of Fig.~\ref{fig:Eroding20tracer}, some tracers
+the bottom middle frame of Fig.~\ref{fig:Eroding20tracer}, some tracers
 climb up from right to left around the body.  There is a zoom windows of
-the climbing tracers trajectories in the last frame of Fig.~\ref{fig:Eroding20tracer} and
-they are taken from the fifth frame of
-Fig.~\ref{fig:Eroding20tracer} with more tracers.  In the last frame of 
+the climbing tracers trajectories in the bottom right frame of Fig.~\ref{fig:Eroding20tracer} and
+they are taken from the bottom middle frame of
+Fig.~\ref{fig:Eroding20tracer} with more tracers.  In the bottom right frame of 
 Fig.~\ref{fig:Eroding20tracer} the tracers around the center body first go
 from the channel below the body, climb up to the left, then go to the
 right and join another tracers in the channel above the body. 
