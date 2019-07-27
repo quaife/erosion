@@ -902,12 +902,17 @@ we impose the shear flow
   \end{array}
   \right],
 \end{align}
-on the outer wall.  The eroding body is initially a circle of
-radius $r=0.4$, length $L = 2\pi r$, and is placed near the no-slip wall
-at $y=-1$.  We discretize the eroding body with $N_\iin=256$
-discretization points, and the center of the eroding body is initially
-placed at $h/2$, $h/4$, and $h/10$, where $h = 2\pi r/N\iin$.  For all
-three simulations, we use the time step size $\Delta t=10^{-4}$.
+on the outer wall.  In their experiment, Mitchell and Spagnolie place
+the center of the eroding body $1.5$ times the body's radius above the
+solid wall.  By using the numerical integration scheme described in
+Section~\ref{s:method}, the eroding body can be placed much closer to
+the solid wall.  In the following experiments, we consider an eroding
+body that is initially a circle of radius $r=0.4$ and is placed near the
+no-slip wall at $y=-1$.  We discretize the eroding body with
+$N_\iin=256$ discretization points, and the center of the eroding body
+is initially placed at $h/2$, $h/4$, and $h/10$, where $h = 2\pi
+r/N\iin$.  For all three simulations, we use the time step size $\Delta
+t=10^{-4}$.
 
 With this setup, many of the discretization points on the eroding body
 are too close to the outer wall for the trapezoid rule to achieve
@@ -916,7 +921,15 @@ the numerical stable simulations are possible.  In
 Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
 several equispaced time steps, and the color of indicates the erosion
 rate (magnitude of the shear stress).  Comparing our results to Mitchell
-and Spagnolie~\cite{mit-spa2017} (Figure 7(b)), we see similar results
+and Spagnolie~\cite{mit-spa2017} (Figure 7(c)), we see similar results.
+In particular, between the eroding body and the solid wall the flow is
+very small and there is no recirculation, and this is consistent with
+three-dimensional results~\cite{cah-feu2002}.  Moreover, for all three
+distances, the shear stress is positive \todo[inline]{S-H: Is this
+right?  Is the shear stress ever negative?  I might expect so since
+there are two stagnation points}, so the erosion is smooth.
+
+
 where the shear stress is smallest near the zero background flow line
 $y=-1$.  Moreover, since the shear stress is everywhere positive, the
 erosion rate, which is the magnitude of the shear stress, is a smooth
