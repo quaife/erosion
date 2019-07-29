@@ -36,8 +36,7 @@ Flow-induced erosion deteriorates and reshapes solid material over a
 range of scales.  At small scales, such as in groundwater flow,
 fluid-mechanical erosion significantly alters the geometry, and
 ultimately changes the process of transport through the media.  This
-paper extends a quadrature method first outlined by
-Barnett~\cite{bar2014} and Barnett, Wu, and
+paper extends a quadrature method first outlined by Barnett, Wu, and
 Veerapaneni~\cite{bar-wu-vee2015} to simulate dense packings of eroding
 bodies, and then studies coarse-grained variables to characterize
 transport in eroded geometries.
@@ -156,6 +155,17 @@ compute.
 \item In~\cite{leb-den-car2008}, a statistical model is used to describe
 transport in a high heterogeneous porous media.
 
+\item In~\cite{bar2014}, a local expansion technique similar to QBX is
+used.  The advantage is that this extends naturally to 3D.  Also,
+Barnett analyzed the error of the Laplace DLP and SLP and compared the
+numerical results to the theory.
+
+\item Suite of near-singular integration methods such as QBX,
+panel-based quadrature, other local interpolants, regularization.
+
+\item \cite{ioa-pap-per1991} were the first to develop quadrature for
+analytic functions in the interior case.
+
 \end{itemize}
 
 
@@ -164,10 +174,11 @@ transport in a high heterogeneous porous media.
 \paragraph{Outline of the Paper}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Boundary Integral Equation Formulation}
+\section{Governing Equations}
 \label{s:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We start by defining the main variables used to model erosion.  We
+We start by defining the main variables used to model erosion.  A more
+detailed description is in our previous work~\cite{qua-moo2018}.  We
 consider flows inside a confined geometry $\Omega$ that contains $M$
 eroding bodies with boundary $\gamma_\ell$.  The boundary of the
 bounding geometry is $\Gamma$, and the fluid domain is bounded by $\bd
@@ -178,30 +189,52 @@ direction.  The normal vector on $\Gamma$ is the outward unit normal.
 Neglecting inertial forces, the governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
-\begin{split}
-  \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation
-of momentum}\\
-\grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap &&\mbox{\em conservation of mass} \\
-\uu = 0, &\hspace{20pt} \xx \in \gamma, \gap &&\mbox{\em no slip on the
-bodies} \\
-\uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap &&\mbox{\em outer wall
-velocity} \\
-\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
-&&\mbox{\em erosion model}.
-\end{split}
+  \begin{split}
+    \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap 
+      &&\mbox{\em conservation of momentum}\\
+    \grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap 
+      &&\mbox{\em conservation of mass} \\
+    \uu = 0, &\hspace{20pt} \xx \in \gamma, \gap 
+      &&\mbox{\em no slip on the bodies} \\
+    \uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap 
+      &&\mbox{\em outer wall velocity} \\
+    \Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
+      &&\mbox{\em erosion model}.
+  \end{split}
 \end{equation}
 Here, $\uu$ is the fluid velocity, $p$ is the pressure, $\UU$ is a
-prescribed Hagen-Poiseuille velocity field, and
+prescribed Hagen-Poiseuille velocity field, $\Vn$ is the normal velocity
+of $\gamma$, and
 \begin{align}
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
-is the shear stress on the eroding bodies.  Using the same approach as
+is the shear stress on $\gamma$.
+
+The erosion rate loses differentiability if the shear stress changes
+sign, and this leads to corners developing on $\gamma$ and can lead to
+numerical instabilities.  Therefore, we supplement the erosion rate with
+a curvature penalization term by replacing the erosion model
+in~\eqref{eqn:erosionModel} with 
+\begin{align}
+  \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
+    \frac{L}{2\pi} \kappa - 1 \right),
+\end{align}
+where $\epsilon \ll 1,$ $\langle \cdot \rangle$ is the spatial average,
+$L$ is the length of $\gamma$, and $\kappa$ is the curvature of
+$\gamma$.  The normalization term guarantees that the regularization
+only changes the body's shape, but not its total length.  Finally, to
+increase the overall stability of the method, a narrow Gaussian filter
+is applied to the erosion rate.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Boundary Integral Equation Formulation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using the same approach as
 our previous work~\cite{qua-moo2018}, we use a double-layer potential
 formulation for the velocity $\uu$.  The double-layer potential is
 \begin{align}
-  \uu(\xx) = \DDD[\eeta](\xx) = 
-    \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
+  \DDD[\eeta](\xx) = \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
   \frac{1}{\pi}\int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
@@ -220,7 +253,9 @@ and rotlets~\cite{pow-mir1987}
 \end{align}
 where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
 $\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
-\|\rr\|$.  Then, the solution of the Stokes equation is
+\|\rr\|$.  Then, for any sufficiently smooth geometry $\Omega$, the
+solution of the incompressible Stokes equation with a Dirichlet boundary
+condition $\ff$ is
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
@@ -236,29 +271,56 @@ where the density function, Stokeslets, and rotlets satisfy
     \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
     (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
-    \quad \ell = 1,\ldots,M,
+    \quad \ell = 1,\ldots,M.
 \end{align}
-where $\ff$ is the prescribed Dirichlet boundary condition of the
-velocity on the outer wall and eroding bodies, and $\NN_0$ is the
-integral operator with kernel $\nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in
-\Gamma$, which removes the rank one null space resulting from the
-flux-free requirement of $\ff$. Once the unknown density function is
-computed, the shear stress is found by first computing the deformation
-tensors of the double-layer potential, Stokeslets, and rotlets, and then
-forming the shear stress as defined in equation~\eqref{eqn:shearStress}.
+For our particular problem, $\ff$ is the prescribed velocity on the
+outer wall and is zero on the eroding bodies.  The operator $\NN_0$ is
+the integral operator with kernel $\nn(\xx) \otimes \nn(\yy)$, $\xx,\yy
+\in \Gamma$, which removes the rank one null space resulting from the
+flux-free requirement of $\ff$.
 
+The deformation tensor, pressure, and vorticity of the double-layer
+potential, Stokeslets, and rotlets, can be all be computed analytically
+in terms of the density function.  For $\xx \in \Omega$, the deformation
+tensor, pressure, and vorticity of the double-layer
+potential~\eqref{eqn:stokesDLP} are
+\begin{align}
+  \label{eqn:deformationDLP} 
+  \ssigma^\DD(\xx) &= \frac{1}{2\pi}\int_{\bd\Omega} \left(
+    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
+    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
+    \right. \nonumber \\
+    & \qquad\qquad \left.
+    +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
+    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
+    \right) \, ds_\yy, \\
+  p^\DD(\xx) &= -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
+    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) \nn \cdot
+      \eeta(\yy)\,ds_\yy, \\
+  \omega^\DD(\xx) &= -\frac{1}{\pi} \int_{\bd\Omega}
+    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
+      (\rr \cdot \eeta) \, ds_\yy,
+\end{align}
+respectively. We require the deformation tensor of the double-layer potential at
+$\xx \in \bd \Omega$.  Since the deformation tensor of the double-layer
+potential is discontinuous across $\bd\Omega$, a jump term must be added
+to $\ssigma^\DD(\xx)$ for $\xx \in \gamma$.  Finally, the deformation
+tensor, pressure, and vorticity due to the Stokeslets and rotlets are
+straightforward to compute~\cite{qua-moo2018}.  Having computed the
+deformation tensor on $\gamma$, the shear stress is computed as defined
+in equation~\eqref{eqn:shearStress}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
 \label{s:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The layer potential representations of $\uu$~\eqref{eqn:stokesDLP} and
-its gradient are written in terms of contour integrals in $\RR^2$. We
-will be applying a quadrature method for holomorphic functions, so we
-must convert these layer potentials in $\RR^2$ to contour integrals in
-$\CC$.  The first step is to write the Stokes double-layer potential as
-the sum of a Laplacian double-layer potential and its gradient
+In equations~\eqref{eqn:stokesDLP} and~\eqref{eqn:deformationDLP}, $\uu$
+and its deformation tensor are written as a contour integral in $\RR^2$,
+respectively.  However, these layer potentials can be rewritten in terms
+of Cauchy integrals and its derivatives in $\CC$.  The first step is to
+write the Stokes double-layer potential as the sum of a Laplacian
+double-layer potential and its gradient
 \begin{equation}
   \label{eqn:Stokes2Laplace}
   \begin{aligned}
@@ -288,15 +350,18 @@ Stokes double-layer potential can be written in terms of a complex
 integral and its first two derivatives.
 
 Equation~\eqref{eqn:laplaceComplex} can be converted to a Cauchy
-integral by first finding boundary data of $v$ which satisfies the
-Sokhotski-Plemelj jump relation
+integral by first finding boundary data of $v$.  We assume that $\Omega$
+is a simply-connected interior domain.  Analogous formulas exist for
+exterior domains, and for multiply-connected domains, $\bd\Omega$ is
+simply decomposed into its different connected components.  The boundary
+data of $v$ satisfies the Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
-  v(x) = -\frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
+  v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
     \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
 \end{align}
-\todo[inline]{Need to be careful about interior and exterior limits}
-Once the boundary data of $v$ is formed, we have
+Since $v$ is a holomorphic function and we have its boundary data, by
+the Cauchy integral theorem we have
 \begin{align}
   \label{eqn:cauchy}
   v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
@@ -306,13 +371,13 @@ Once the boundary data of $v$ is formed, we have
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy.
 \end{align}
-for $x \in \Omega$.  
+for $x \in \Omega$.
   
 In equation~\eqref{eqn:cauchy}, $v(x)$ depends on the density function
 $\eta \in \CC$, so we use the notation $v[\eta](x)$ to denote the
 holomorphic function defined in equation~\eqref{eqn:laplaceComplex}, and
 the derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  Having
-introduced this notation, the components of the Stokes double-layer
+introduced this notation, the two components of the Stokes double-layer
 potential are~\cite{bar-wu-vee2015}
 \begin{equation}
   \begin{aligned}
@@ -332,13 +397,13 @@ and $n \in \CC$ is the complex representation of the outward unit normal
 $\nn \in \RR^2$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cauchy Integral Representation for the Gradient of
-the Velocity}
+\subsection{Cauchy Integral Representation for the Gradient of the
+Double-Layer Potential}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We require complex-valued representations of both the shear stress and
-the vorticity.  Both these quantities depend on the gradient of the
-velocity.  Each term of the gradient of the velocity field can be
-written in terms of Cauchy integrals.  Taking the derivatives of
+In addition to the velocity, we require a complex-valued representation
+of the gradient of the velocity so that we can compute the shear stress
+and the vorticity.  Each term of the gradient of the velocity field can
+be written in terms of Cauchy integrals.  Taking the derivatives of
 equation~\eqref{eqn:cauchy1} with respect to $x_1$ and $x_2$, we have 
 \begin{align}
   \pderiv{u_1}{x_1} &= +\Re (v'[\tau_1](x)) + 
@@ -354,10 +419,9 @@ equation~\eqref{eqn:cauchy1} with respect to $x_1$ and $x_2$, we have
     \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
     \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
 \end{align}
-With these four expressions, the deformation tensor of the
-double-layer potential, $\ssigma^D = \frac{1}{2} (\nabla \uu + \nabla
-\uu^T)$, is written in terms of Cauchy integrals.  In addition, the
-vorticity can be written as
+With these four expressions, the deformation tensor of the double-layer
+potential, $\ssigma^D = \frac{1}{2} (\nabla \uu + \nabla \uu^T)$, is
+written in terms of Cauchy integrals.  In addition, the vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
@@ -592,7 +656,9 @@ Rearranging for $v(x)$, we have
   {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}.
   \label{eqn:Baryv}
 \end{align}
-\todo[inline]{Need to cite work that Barnett et al. reference} 
+\todo[inline]{Need to cite~\cite{ioa-pap-per1991}.  They write formulas
+for $v''(x)$ in this paper.  Need to be clear wrt what we did and what
+  others have done} 
 To approximate $v'(x)$, the trapezoid rule is applied to the two
 integrals in the identity
 \begin{align}
