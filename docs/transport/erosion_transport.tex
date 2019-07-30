@@ -1,6 +1,7 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
 \input{preambles.tex}
+\usepackage{showkeys}
 \begin{document}
 
 \title{Viscous Transport in Eroding Porous Media}
@@ -351,7 +352,7 @@ integral and its first two derivatives.
 
 Equation~\eqref{eqn:laplaceComplex} can be converted to a Cauchy
 integral by first finding boundary data of $v$.  We assume that $\Omega$
-is a simply-connected interior domain.  Analogous formulas exist for
+is a simply-connected interior domain.  Similar formulas exist for
 exterior domains, and for multiply-connected domains, $\bd\Omega$ is
 simply decomposed into its different connected components.  The boundary
 data of $v$ satisfies the Sokhotski-Plemelj jump relation
@@ -371,7 +372,10 @@ the Cauchy integral theorem we have
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy.
 \end{align}
-for $x \in \Omega$.
+for $x \in \Omega$.  A quadrature method to compute these Cauchy
+integrals with a uniform error for all $x \in \Omega$ is presented in
+Section~\ref{sec:bary}.
+  
   
 In equation~\eqref{eqn:cauchy}, $v(x)$ depends on the density function
 $\eta \in \CC$, so we use the notation $v[\eta](x)$ to denote the
@@ -386,7 +390,7 @@ potential are~\cite{bar-wu-vee2015}
     u_2(x) &= \Re (v[\tau_2](x)) - \Im (v'[y\cdot\eta](x)) 
          +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
   \end{aligned}
-  \label{eqn:cauchy1}
+  \label{eqn:cauchyVelocity}
 \end{equation}
 where $y \cdot \eta = y_1 \eta_1 + i y_2 \eta_2 \in \CC$, 
 \begin{align} 
@@ -404,21 +408,25 @@ In addition to the velocity, we require a complex-valued representation
 of the gradient of the velocity so that we can compute the shear stress
 and the vorticity.  Each term of the gradient of the velocity field can
 be written in terms of Cauchy integrals.  Taking the derivatives of
-equation~\eqref{eqn:cauchy1} with respect to $x_1$ and $x_2$, we have 
-\begin{align}
-  \pderiv{u_1}{x_1} &= +\Re (v'[\tau_1](x)) + 
-    \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
-    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
-  \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
-    \Im (v''[y\cdot\eta](x)) + x_1\Im (v''[\eta_1](x)) - 
-    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
-  \pderiv{u_2}{x_1} &= +\Re (v'[\tau_2](x)) - 
-    \Im (v''[y\cdot\eta](x)) + \Im (v'[\eta_1](x)) +
-    x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
-  \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
-    \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
-    \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
-\end{align}
+equation~\eqref{eqn:cauchyVelocity} with respect to $x_1$ and $x_2$, we
+have 
+\begin{equation}
+\label{eqn:cauchyGradient}
+  \begin{aligned}
+    \pderiv{u_1}{x_1} &= +\Re (v'[\tau_1](x)) + 
+      \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
+      x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
+    \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
+      \Im (v''[y\cdot\eta](x)) + x_1\Im (v''[\eta_1](x)) - 
+      \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
+    \pderiv{u_2}{x_1} &= +\Re (v'[\tau_2](x)) - 
+      \Im (v''[y\cdot\eta](x)) + \Im (v'[\eta_1](x)) +
+      x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
+    \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
+      \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
+      \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
+  \end{aligned}
+\end{equation}
 With these four expressions, the deformation tensor of the double-layer
 potential, $\ssigma^D = \frac{1}{2} (\nabla \uu + \nabla \uu^T)$, is
 written in terms of Cauchy integrals.  In addition, the vorticity is
@@ -427,108 +435,6 @@ written in terms of Cauchy integrals.  In addition, the vorticity is
 \Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
  + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)).
 \end{align}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Transport, Tracers, and Tortuosity}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Erosion leads to interesting porous geometries, and we are interested in
-characterizing transport in these geometries.  For porous media, two of
-the most important variables are the porosity and the permeability.
-However, additional properties of the flow are revealed by computing
-the anomalous diffusion rate, the tortuosity, and the distribution the
-gap sizes.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Anomalous Diffusion}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The dynamics of fluid in porous media can be characterized in terms of
-anomalous diffusion.  However, the anomalous diffusion rate depends on
-the properties of the geometry.  In addition to the porosity, the
-distribution of the grains affects the anomalous diffusion rates.  To
-quantify this rate, we require tracer trajectories that are governed by
-\begin{align}
-  \label{eqn:trajectories}
-  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
-\end{align}
-Given a trajectory, we define $\lambda_j(t)$ to be the distance
-travelled by the particle
-\begin{align}
-  \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau.
-\end{align}
-Having formed $N_p$ trajectories, the first and second ensemble moments
-are
-\begin{align}
-  \langle \lambda \rangle (t) = 
-    \frac{1}{N_p} \sum_{j=1}^{N_p} \lambda_j(t), \quad 
-    \sigma_\lambda^2(t) = \frac{1}{N_p} 
-    \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
-\end{align}
-If the particle spreading scales with time as $\sigma_\lambda^2 \sim
-t^\alpha$, with $\alpha < 1$, this indicates that the particle
-trajectories are sub-diffusive.  In contrast, if $\sigma_\lambda^2 \sim
-t^2$, the particle trajectories are undergoing a ballistic motion and
-are not affected by the grains.
-
-For early times when the geometry has not eroded, we expect the
-trajectories to be sub-diffusive.  However, as the bodies erode and
-straight preferential channels are formed, we expect the dynamics to
-resemble a ballistic motion.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Tortuosity}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The tortuosity of a geometry quantifies the average amount of turning
-made by a streamline.  Mathematically, it is defined as
-\begin{align}
-  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
-  {\displaystyle\int_{S}u_x(y)\,dy},
-  \label{eqn:tortuosity1}
-\end{align}
-where $S$ is an cross-section perpendicular to the $x$ axis with length
-$d$, $\lambda(y)$ is the length of the streamline that is initialized
-at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
-the velocity at the $y$-coordinate along $S$.  Following~\cite{}, the
-trajectories are formed until they cross a second cross-section.  In our
-work, we always initialize the trajectories at $x=-1$ and stop them when
-they reach $x=1$.
-
-Under the assumptions that the flow is incompressible and not reentrant,
-the tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
-\begin{align}
-  T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
-           {\displaystyle\int_\Omega u_x(\yy)\, d\yy}.
-  \label{eqn:tortuosity2}
-\end{align}
-The flow is reentrant if all streamlines connect the inlet to the
-outlet.  Recirculation zones are possible in viscous fluids, but they
-only constitute a small fraction of the total porous media.  Therefore,
-the tortuosity defined in equation~\eqref{eqn:tortuosity2} is an upper
-bound for the definition in equation~\eqref{eqn:tortuosity1}.  We have
-used formulas for a particular geometry, and the difference is
-negligible.  Since equation~\eqref{eqn:tortuosity2} does not require the
-additional work of computing particle trajectories, we use this
-definition for the tortuosity.
-
-There have been efforts to relate the tortuosity to the
-porosity~\cite{matyka2008tortuosity}, but these results can not be
-universal since the porosity which depends on only a single number, the
-tortuosity is affected by the distribution of pores within the porous
-network.  In addition to the hydraulic tortuosity, a local tortuosity
-can be used to analyze the local behavior of a streamline near a
-body~\cite{matyka2008tortuosity}.  The local tortuosity of a streamline
-initialized at $y$ along $S$ is
-\begin{align*}
-  \tau(y) = \frac{\lambda(y)}{d}.
-\end{align*}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Pore Throat Size}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{itemize}
-  \item Pore throat sizes affect many things such as first passage time,
-  mixing, chemical reactions, heat conduction, biological activities
-\end{itemize}
 
 
 
@@ -614,85 +520,117 @@ we apply a Barycentric quadrature rule
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature for $v''(x)$}
+\label{sec:bary}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The Barycentric quadrature rule developed by Barnett et
-al.~\cite{bar-wu-vee2015} approximates the double-layer potential for
-the velocity~\eqref{eqn:stokesDLP} with bounded error.  However, to
-compute the shear stress and vorticity, the method must be extended.  We
-first briefly describe the original Barycentric quadrature method, and
-then derive a necessary extension to simulate erosion.  We present the
-quadrature for a simply-connected domain $\Omega$, and the method
-naturally extends to the eroding geometry by applying the quadrature to
-each of its connected component.  The method starts with an underlying
-quadrature rule, and we use the trapezoid rule because of its superior
-accuracy for smooth periodic functions~\cite{tre-wei2014}.  Since the
-quadrature points are uniformly distributed, the quadrature weights are
-$w_j = L/N$, $j=1,\ldots,N$, where $L$ is the length of $\bd\Omega$.
+Equations~\eqref{eqn:cauchyVelocity} and~\eqref{eqn:cauchyGradient} show
+that computing the Stokes velocity, shear stress, and vorticity hinge on
+accurate quadrature methods for the Cauchy integral and its first two
+derivatives as defined in equation~\eqref{eqn:cauchy}.  Even though the
+trapezoid rule is spectrally accurate for a fixed $x \in
+\Omega$~\cite{tre-wei2014}, its error depends on bounds of the
+derivative of the integrand.  Therefore for a fixed resolution, as $x$
+approaches $\bd\Omega$, causing the integrands to become more singular,
+the error grows without bound.  Ioakimidis et al.~\cite{ioa-pap-per1991}
+developed quadrature methods to compute Cauchy integrals and their
+derivatives with an error bound that is independent of $x$.  Then,
+Barnett et al.~\cite{bar-wu-vee2015} applied these quadratur emethods to
+compute the Stokes double-layer potential representation of the
+velocity~\eqref{eqn:stokesDLP}.  To compute the shear stress and
+vorticity with the same accuracy, we extend the method by using
+Barycentric quadrature methods for the second derivative of a Cauchy
+integral.  
 
-We next identify all the discretization points, the normal vector, and
-the density function with their complex-value counterparts.  Then, all
-the layer potentials are a combination of a Cauchy integral and its
-first two derivatives.  Given a density function $\tau(y)$, the boundary
-data is solved using the Sokhotski-Plemelj jump
-relation~\eqref{eqn:SPrelation}.  If $x \in \Omega$ is too close to
-$\bd\Omega$ and the trapezoid rule is applied to the identity
-\begin{align}
-  v(x) = \int_{\bd\Omega} \frac{v^{-}(y)}{y-x} \, dy, 
-  \quad x \in \Omega,
-\end{align}
-the quadrature error is large since the integrand has a large
-derivative.  However, if the trapezoid rule is applied to
+We briefly summarize the Baryncentric quadrature method for computing
+the velocity~\cite{bar-wu-vee2015}.  Then, we apply additional
+quadrature methods to compute the gradient of the velocity so that we
+can simulate erosion.  We present the quadrature for a simply-connected
+interior domain $\Omega$, and we consider the target points $x \in
+\Omega$ and $x \in \Omega^c$. Then, the method naturally extends to the
+eroding geometry by applying the quadrature to each of its connected
+component.  The method starts with an underlying quadrature rule, and we
+use the spectrally accurate trapezoid rule.  Since the quadrature points
+are uniformly distributed, the quadrature weights are $w_j = L/N$,
+$j=1,\ldots,N$, where $L$ is the length of $\bd\Omega$.
+
+Again, given a density function $\tau$, the boundary data of $v$ as
+defined in equation~\eqref{eqn:laplaceComplex} can be found by applying
+the Sokhotski-Plemelj jump relation~\eqref{eqn:SPrelation}.  The
+boundary data differs if we are considering the interior problem ($x \in
+\Omega$) or the exterior problem ($x \in \Omega^c$).  Therfore, for the
+boundary data we use the notation $v^-$ for the interior problem and
+$v^+$ for the exterior problem.  Rather than directly applying the
+trapezoid rule to $v(x)$, we start with the identity
 \begin{align}
   \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0,
 \end{align}
-the quadrature error is bounded since the integrand and all its
-derivatives are bounded with respect to $x$. That is,
+where we are considering the interior problem.  Since the integrand is
+bounded as $x$ approaches $\bd\Omega$, we can apply the trapezoid rule
 \begin{align}
-  \sum_{j=1}^{N} \frac{v^{-}(y_j) - v(x)}{y_j - x} w_j \approx 0.
+  \sum_{j=1}^{N} \frac{v^{-}(y_j) - v(x)}{y_j - x} w_j \approx 0,
 \end{align}
-Rearranging for $v(x)$, we have
+and the error is independent of $x$.  Rearranging for $v(x)$, we have
+the quadrature formula
 \begin{align}
-  v(x) \approx \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
+  v(x) = \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
   {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}.
-  \label{eqn:Baryv}
+  \label{eqn:BaryvInterior}
 \end{align}
-\todo[inline]{Need to cite~\cite{ioa-pap-per1991}.  They write formulas
-for $v''(x)$ in this paper.  Need to be clear wrt what we did and what
-  others have done} 
-To approximate $v'(x)$, the trapezoid rule is applied to the two
-integrals in the identity
+Using a similar construction and letting $a$ be any point inside
+$\Omega$, the Barycentric quadrature rule for the exterior problem is
 \begin{align}
-  v'(x) = \frac{\int\limits_{\bd\Omega} 
-    \frac{v^{-}(y) - v(x)}{(y-x)^2}\, dy}
-  {\int\limits_{\bd\Omega} \frac{1}{y-x}\, dy},
-\end{align}
-resulting in the quadrature rule
-\begin{align}
-  v'(x) \approx \frac{\sum\limits_{j=1}^{N}
-    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
-  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}.
-  \label{eqn:Baryvprime}
+  v(x) = \frac{1}{x-a} 
+    \frac{\sum\limits_{j=1}^N \frac{v^+(y_j)}{y_j - x}w_j}
+    {\sum\limits_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j}.
+  \label{eqn:BaryvExterior}
 \end{align}
 
+Similar constructions can be used to derive quadrature rules
+for $v'(x)$.  For $x \in \Omega$, we have the identity
+\begin{align}
+  \int_{\bd\Omega} \frac{v^-(y) - v(x) + (y-x)v'(x)}{(y - x)^2} = 0,
+\end{align}
+and the integrand is bounded for all $x$.  Therefore, upon applying the
+quadrature rule and rearranging for $v'(x)$, we have
+\begin{align}
+  v'(x) = \frac{\sum\limits_{j=1}^{N}
+    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
+  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}.
+  \label{eqn:BaryvprimeInterior}
+\end{align}
+Using a similar construction, the Barycentric quadrature rule to compute
+$v'(x)$ in $\Omega^c$ is
+\begin{align}
+  v'(x) = \frac{1}{x-a} \frac{\sum\limits_{j=1}^N
+    \frac{v^+_j - v(x)}{(y_j - x)^2} w_j}
+    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j}.
+  \label{eqn:BaryvprimeExterior}
+\end{align}
+Note that the value $v(x)$ is required to compute $v'(x)$ for both the
+interior and exterior case.  These are computed using the quadrature
+methods in equations~\eqref{eqn:BaryvInterior}
+and~\eqref{eqn:BaryvExterior}.
+
 To compute the shear stress and vorticity, we require a Barycentric
-quadrature rule for $v''(x)$.  Mimicking the construction of the
-quadrature rule for $v(x)$ and $v'(x)$, we start with the second
-derivative of the Cauchy integral theorem
+quadrature rule for $v''(x)$.  Following the work of Ioakimidis et
+al~\cite{ioa-pap-per1991} (see equation (2.12)), we mimick the
+construction of the quadrature rule for $v(x)$ and $v'(x)$. We start
+with the second derivative of the Cauchy integral theorem
 \begin{align}
   0 = \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x).
 \end{align}
-Using the identity
+For the interior case, $x \in \Omega$, we use the identity
 \begin{align}
   \frac{1}{2\pi i}\int_{\bd\Omega} \frac{1}{(y-x)^n}\, dy = 
   \left\{
     \begin{array}{ll}
       1, & n = 1, \\
-      0, & n > 1, \\
+      0, & n = 2,3,\ldots. \\
     \end{array}
   \right.
 \end{align}
-where $x \in \Omega$ and $n \in \mathbb{N}$, we have
+Combining this identity with the Cauchy integral representation of
+$v''(x)$, we have
 \begin{align}
   0 = \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y) - v''(x)(y-x)^2 - 2v(x) - 2(y-x)v'(x)}
@@ -705,34 +643,38 @@ This integrand is constructed so that it is bounded for all $x \in
       \frac{2v^{-}(y_j) - v''(x)(y_j-x)^2 - 2v(x) - 2(y_j-x)v'(x)}
       {(y_j-x)^3} w_j,
 \end{align}
-where the accuracy is independent of the proximity of $x$ to
-$\bd\Omega$. Solving for $v''(x)$, the Barycentric quadrature rule for
-the second derivative is
+where the accuracy is independent of $x$.  Solving for $v''(x)$, the
+Barycentric quadrature rule for the second derivative is
 \begin{align}
   v''(x) &\approx \frac{2\sum\limits_{j=1}^N 
     \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
     {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}.
 \end{align}
-This formula requires accurate approximations of $v(x)$ and $v'(x)$, but
-these are available in equations~\eqref{eqn:Baryv}
-and~\eqref{eqn:Baryvprime}.
-
-To apply the quadrature to multiply-connected domains, we must all
-consider exterior points $x \in \Omega^c$.  Mimicking the construction
-in~\cite{bar-wu-vee2015}, we use the quadrature rule
+For the exterior case, $x \in \Omega^c$, we start with the identity
 \begin{align}
 \frac{1}{x-a} &= -\frac{1}{2\pi i}\int_{\bd\Omega} 
-    \frac{(y-a)^{-1}}{y-x} dy, 
+    \frac{(y-a)^{-1}}{y-x} dy. 
 \end{align}
-is used, and the resulting Barycentric quadrature formula is
+Combining this identity with the Cauchy integral representation of
+$v''(x)$, we have
+\begin{align}
+  0 = \frac{1}{2\pi i} \int_{\bd\Omega} 
+    \frac{2v^+(y) - 2v(x) - 2(y-x)v'(x) + (y-a)^{-1} (x-a) (y-x)^2 v''(x)}
+    {(y-x)^3}.
+\end{align}
+As in the interior case, the integrand is chosen so that it is bounded
+for all $x \in \Omega$.  Therefore, after applying the trapezoid rule
+  and solving for $v''(x)$, we have the Barycentric quadrature rule
 \begin{align}
   v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
     \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}}
     {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}.
 \end{align}
-Again, values of $v(x)$ and $v'(x)$ are required, and these are
-available in~\cite{bar-wu-vee2015}.
-
+Similar to the quadrature rule for $v'(x)$ requring the value $v(x)$,
+the quadrature rule for $v''(x)$ requires the values $v(x)$ and $v'(x)$.
+Both these quantities are computed using the quadrature rules in
+equations~\eqref{eqn:BaryvInterior},~\eqref{eqn:BaryvExterior},~\eqref{eqn:BaryvprimeInterior},
+and~\eqref{eqn:BaryvprimeExterior}.
 
 
 
@@ -856,10 +798,122 @@ rule, we only check conditions~\eqref{eqn:PointsBodyCutoff}
 and~\eqref{eqn:PointsWallCutoff}.  
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Time Integration}
+\label{s:time}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We reuse the time stepping method outlined in our previous
+work~\cite{qua-moo2018}.  Rather than tracking the $(x,y)$
+coordinates, the {\thL} variables are tracked. A second-order
+Implicit-Explicit method is used. In particular, the diffusive term
+corresponding to the curvature penalization term is discretized
+implicitly, and all other terms, which are non-stiff, are treated
+explicitly.
+
+\todo[inline]{Talk about time integration for erosion and for tracers}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Transport, Tracers, and Tortuosity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Erosion leads to interesting porous geometries, and we are interested in
+characterizing transport in these geometries.  For porous media, two of
+the most important variables are the porosity and the permeability.
+However, additional properties of the flow are revealed by computing
+the anomalous diffusion rate, the tortuosity, and the distribution the
+gap sizes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Anomalous Diffusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The dynamics of fluid in porous media can be characterized in terms of
+anomalous diffusion.  However, the anomalous diffusion rate depends on
+the properties of the geometry.  In addition to the porosity, the
+distribution of the grains affects the anomalous diffusion rates.  To
+quantify this rate, we require tracer trajectories that are governed by
+\begin{align}
+  \label{eqn:trajectories}
+  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
+\end{align}
+Given a trajectory, we define $\lambda_j(t)$ to be the distance
+travelled by the particle
+\begin{align}
+  \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau.
+\end{align}
+Having formed $N_p$ trajectories, the first and second ensemble moments
+are
+\begin{align}
+  \langle \lambda \rangle (t) = 
+    \frac{1}{N_p} \sum_{j=1}^{N_p} \lambda_j(t), \quad 
+    \sigma_\lambda^2(t) = \frac{1}{N_p} 
+    \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
+\end{align}
+If the particle spreading scales with time as $\sigma_\lambda^2 \sim
+t^\alpha$, with $\alpha < 1$, this indicates that the particle
+trajectories are sub-diffusive.  In contrast, if $\sigma_\lambda^2 \sim
+t^2$, the particle trajectories are undergoing a ballistic motion and
+are not affected by the grains.
+
+For early times when the geometry has not eroded, we expect the
+trajectories to be sub-diffusive.  However, as the bodies erode and
+straight preferential channels are formed, we expect the dynamics to
+resemble a ballistic motion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Tortuosity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The tortuosity of a geometry quantifies the average amount of turning
+made by a streamline.  Mathematically, it is defined as
+\begin{align}
+  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
+  {\displaystyle\int_{S}u_x(y)\,dy},
+  \label{eqn:tortuosity1}
+\end{align}
+where $S$ is an cross-section perpendicular to the $x$ axis with length
+$d$, $\lambda(y)$ is the length of the streamline that is initialized
+at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
+the velocity at the $y$-coordinate along $S$.  Following~\cite{}, the
+trajectories are formed until they cross a second cross-section.  In our
+work, we always initialize the trajectories at $x=-1$ and stop them when
+they reach $x=1$.
+
+Under the assumptions that the flow is incompressible and not reentrant,
+the tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
+\begin{align}
+  T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
+           {\displaystyle\int_\Omega u_x(\yy)\, d\yy}.
+  \label{eqn:tortuosity2}
+\end{align}
+The flow is reentrant if all streamlines connect the inlet to the
+outlet.  Recirculation zones are possible in viscous fluids, but they
+only constitute a small fraction of the total porous media.  Therefore,
+the tortuosity defined in equation~\eqref{eqn:tortuosity2} is an upper
+bound for the definition in equation~\eqref{eqn:tortuosity1}.  We have
+used formulas for a particular geometry, and the difference is
+negligible.  Since equation~\eqref{eqn:tortuosity2} does not require the
+additional work of computing particle trajectories, we use this
+definition for the tortuosity.
+
+There have been efforts to relate the tortuosity to the
+porosity~\cite{matyka2008tortuosity}, but these results can not be
+universal since the porosity which depends on only a single number, the
+tortuosity is affected by the distribution of pores within the porous
+network.  In addition to the hydraulic tortuosity, a local tortuosity
+can be used to analyze the local behavior of a streamline near a
+body~\cite{matyka2008tortuosity}.  The local tortuosity of a streamline
+initialized at $y$ along $S$ is
+\begin{align*}
+  \tau(y) = \frac{\lambda(y)}{d}.
+\end{align*}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Streamlines and Tortuosity}
 \label{s:streamlines}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Dump of earlier section for now ... need to fix how this
+is worked into the section}
 Having developed numerically accurate methods to compute the velocity
 $\uu$ at points close to the bodies, we are able to compute the
 trajectories of particles passing through an eroded body.  To find the
@@ -880,20 +934,16 @@ To calculate tortuosity $T$, we use the simple quadrature rule
 \end{align}
 where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Time Integration}
-\label{s:time}
+\subsection{Pore Throat Size}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We reuse the time stepping method outlined in our previous
-work~\cite{qua-moo2018}.  Rather than tracking the $(x,y)$
-coordinates, the {\thL} variables are tracked. A second-order
-Implicit-Explicit method is used. In particular, the diffusive term
-corresponding to the curvature penalization term is discretized
-implicitly, and all other terms, which are non-stiff, are treated
-explicitly.
+\begin{itemize}
+  \item Pore throat sizes affect many things such as first passage time,
+  mixing, chemical reactions, heat conduction, biological activities
+\end{itemize}
 
-\todo[inline]{Talk about time integration for erosion and for tracers}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -976,9 +1026,9 @@ the solid wall.  In the following experiments, we consider an eroding
 body that is initially a circle of radius $r=0.4$ and is placed near the
 no-slip wall at $y=-1$.  We discretize the eroding body with
 $N_\iin=256$ discretization points, and the center of the eroding body
-is initially placed at $h/2$, $h/4$, and $h/10$, where $h = 2\pi
-r/N\iin$.  For all three simulations, we use the time step size $\Delta
-t=10^{-4}$.
+is initially chosen so that the distance between the body and the solid
+wall are $h/2$, $h/4$, and $h/10$, where $h = 2\pi r/N_\iin$.  For all
+three simulations, we use the time step size $\Delta t=10^{-4}$.
 
 With this setup, many of the discretization points on the eroding body
 are too close to the outer wall for the trapezoid rule to achieve
@@ -1527,7 +1577,6 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 \bibliography{refs}
 
 
-\end{document}
 
 
 
@@ -1739,57 +1788,57 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %\end{bmatrix}.
 %\end{align*}
 
-%{\color{red}
-%\begin{alignat}{3}
-%1 &= \frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
-%\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
-%    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
-%\end{alignat}
-%and the contour integral 
-%\begin{align}\label{eqn:cauchyId3}
-%0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
-%\end{align}
-%Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
-%the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
-%\begin{align*}
-%0 &= \frac{1}{2\pi i} \int_{\Gamma}
-%    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
-%&= \frac{1}{2\pi i} \int_{\Gamma}
-%    \frac{2v^-(y)}{(y - x)^3} \, dy 
-%-v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{1}{y-x} dy\\
-%&= \frac{1}{2\pi i} \int_{\Gamma}
-%    \frac{2v^-(y)}{(y - x)^3} \, dy 
-%-\frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
-%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
-%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
-%&= \frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
-%\end{align*}
-%}
-%\todo[inline]{S-H: How do we get these identities?}
-%\begin{alignat}{3}
-%  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
-%  0 &= \frac{1}{2\pi i}\int_{\Gamma}
-%    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
-%    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
-%\end{alignat}
-%{\color{red}
-%and the quadrature formulations are
-%\begin{alignat}{3}
-%  v''(x) &\approx
-%    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
-%    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
-%  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-%    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
-%    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
-%\end{alignat}
-%where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
-%
-%}
+{\color{red}
+\begin{alignat}{3}
+1 &= \frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
+\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
+    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
+\end{alignat}
+and the contour integral 
+\begin{align}\label{eqn:cauchyId3}
+0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
+\end{align}
+Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
+the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
+\begin{align*}
+0 &= \frac{1}{2\pi i} \int_{\Gamma}
+    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
+&= \frac{1}{2\pi i} \int_{\Gamma}
+    \frac{2v^-(y)}{(y - x)^3} \, dy 
+-v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{1}{y-x} dy\\
+&= \frac{1}{2\pi i} \int_{\Gamma}
+    \frac{2v^-(y)}{(y - x)^3} \, dy 
+-\frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
+-\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
+-\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
+&= \frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
+\end{align*}
+}
+\todo[inline]{S-H: How do we get these identities?}
+\begin{alignat}{3}
+  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
+    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
+  0 &= \frac{1}{2\pi i}\int_{\Gamma}
+    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
+    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
+\end{alignat}
+{\color{red}
+and the quadrature formulations are
+\begin{alignat}{3}
+  v''(x) &\approx
+    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
+  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
+    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
+    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
+\end{alignat}
+where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
+
+}
 
 %{\color{red}
 %By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
@@ -1979,3 +2028,7 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %
 %
 %
+
+\end{document}
+
+
