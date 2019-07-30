@@ -1,7 +1,7 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
 \input{preambles.tex}
-\usepackage{showkeys}
+%\usepackage{showkeys}
 \begin{document}
 
 \title{Viscous Transport in Eroding Porous Media}
@@ -569,18 +569,19 @@ bounded as $x$ approaches $\bd\Omega$, we can apply the trapezoid rule
   \sum_{j=1}^{N} \frac{v^{-}(y_j) - v(x)}{y_j - x} w_j \approx 0,
 \end{align}
 and the error is independent of $x$.  Rearranging for $v(x)$, we have
-the quadrature formula
+the interior Barycentric quadrature formula 
 \begin{align}
   v(x) = \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
-  {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}.
+  {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}, \quad x \in \Omega.
   \label{eqn:BaryvInterior}
 \end{align}
 Using a similar construction and letting $a$ be any point inside
-$\Omega$, the Barycentric quadrature rule for the exterior problem is
+$\Omega$, the exterior Barycentric quadrature rule is
 \begin{align}
   v(x) = \frac{1}{x-a} 
     \frac{\sum\limits_{j=1}^N \frac{v^+(y_j)}{y_j - x}w_j}
-    {\sum\limits_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j}.
+    {\sum\limits_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j},
+    \quad x \in \Omega^c.
   \label{eqn:BaryvExterior}
 \end{align}
 
@@ -589,20 +590,23 @@ for $v'(x)$.  For $x \in \Omega$, we have the identity
 \begin{align}
   \int_{\bd\Omega} \frac{v^-(y) - v(x) + (y-x)v'(x)}{(y - x)^2} = 0,
 \end{align}
-and the integrand is bounded for all $x$.  Therefore, upon applying the
-quadrature rule and rearranging for $v'(x)$, we have
+and the integrand is bounded for all $x \in \Omega$.  Therefore, upon
+applying the quadrature rule and rearranging for $v'(x)$, we have the
+interior Barycentric quadrature rule
 \begin{align}
   v'(x) = \frac{\sum\limits_{j=1}^{N}
     \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
-  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}.
+  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}, 
+  \quad x \in \Omega.
   \label{eqn:BaryvprimeInterior}
 \end{align}
-Using a similar construction, the Barycentric quadrature rule to compute
-$v'(x)$ in $\Omega^c$ is
+Using a similar construction, the exterior Barycentric quadrature rule
+for the the first derivative is
 \begin{align}
   v'(x) = \frac{1}{x-a} \frac{\sum\limits_{j=1}^N
     \frac{v^+_j - v(x)}{(y_j - x)^2} w_j}
-    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j}.
+    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j},
+    \quad x \in \Omega^c.
   \label{eqn:BaryvprimeExterior}
 \end{align}
 Note that the value $v(x)$ is required to compute $v'(x)$ for both the
@@ -644,11 +648,11 @@ This integrand is constructed so that it is bounded for all $x \in
       {(y_j-x)^3} w_j,
 \end{align}
 where the accuracy is independent of $x$.  Solving for $v''(x)$, the
-Barycentric quadrature rule for the second derivative is
+Barycentric quadrature rule for the interior second derivative is
 \begin{align}
   v''(x) &\approx \frac{2\sum\limits_{j=1}^N 
     \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
-    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}.
+    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, \quad x \in \Omega.
 \end{align}
 For the exterior case, $x \in \Omega^c$, we start with the identity
 \begin{align}
@@ -663,12 +667,14 @@ $v''(x)$, we have
     {(y-x)^3}.
 \end{align}
 As in the interior case, the integrand is chosen so that it is bounded
-for all $x \in \Omega$.  Therefore, after applying the trapezoid rule
-  and solving for $v''(x)$, we have the Barycentric quadrature rule
+for all $x \in \Omega^c$.  Therefore, after applying the trapezoid rule
+and solving for $v''(x)$, we have the Barycentric quadrature rule for
+the exterior second derivate
 \begin{align}
   v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
     \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}}
-    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}.
+    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
+    \quad x \in \Omega^c.
 \end{align}
 Similar to the quadrature rule for $v'(x)$ requring the value $v(x)$,
 the quadrature rule for $v''(x)$ requires the values $v(x)$ and $v'(x)$.
@@ -684,52 +690,54 @@ and~\eqref{eqn:BaryvprimeExterior}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The Barycentric quadrature rule achieves acceptable accuracy for
 computing the velocity, shear stress, and vorticity.  However, applied
-directly, it requires $\mathcal{O}(N^2)$ operations.  Since the shear
-stress must only be computed once per time step, and the vorticity is
-only used as a post-processing step, we accept the $\mathcal{O}(N^2)$
-algorithm.  However, the velocity must be computed at every GMRES
-iteration, which would make the overall method impractical without a
-fast algorithm.
+directly, it requires $\mathcal{O}(N^2)$ operations.  By using a fast
+algorithm such as the fast multipole method~\cite{gre-rok1987}, this
+cost can be reduced to $\mathcal{O}(N)$ operations.  However, the
+Barycentric quadrature formulas require several $N$-body calculations
+which we would like to avoid.  Instead, we use a hybrid method where the
+fast multipole accelerate trapezoid rule is used to compute the velocity
+at most of the discretization points, and the non-accelerated
+Barycentric quadrature rule is used to locally correct the trapezoid
+rule.
 
-At each GMRES iteration, we must compute the velocity at each
-discretization point on $\bd\Omega$.  To reduce the cost of computing
-the velocity, we start by using the trapezoid rule~\eqref{eqn:trap}
-accelerated with the fast multipole method (FMM)~\cite{gre-rok1987},
-which requires $\mathcal{O}(N)$ operations, and we call this velocity
-$\vv_\trap(\xx)$.  For target points that are sufficiently far from
-$\bd\Omega$, $\vv_\trap(\xx)$ is sufficiently accurate.  However, this
-velocity is inaccurate at points that are too close to $\bd\Omega$, and
-the velocity must be corrected.  Assuming that $\xx$ is too close to
-$\gamma_k$, only the velocity due to $\gamma_k$ must be corrected. We
-first subtract the velocity contribution of $\vv(\xx)$ due to
-$\gamma_k$.  Then, the Barycentric quadrature rule is used to compute
-the velocity due to $\gamma_i$ with more accuracy.  That is, the final
-velocity is
+We start by using the trapezoid rule~\eqref{eqn:trap} accelerated with
+the FMM, which requires $\mathcal{O}(N)$ operations, and we call this
+velocity $\vv_\trap(\xx)$.  For target points that are sufficiently far
+from $\bd\Omega$, $\vv_\trap(\xx)$ is sufficiently accurate.  However,
+if $\xx$ is sufficiently close to one of the eroding bodies $\gamma_k$,
+or the outer wall $\Gamma$, the velocity contribution from that
+particular component of $\bd\Omega$ is inaccurate and it must be
+corrected.  Assuming that $\xx$ is too close to $\gamma_k$, we first
+subtract the velocity contribution of $\vv(\xx)$ due to $\gamma_k$.
+Then, the Barycentric quadrature rule is used to compute the velocity
+due to $\gamma_k$ with more accuracy.  That is, the final velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
+  \label{eqn:velocityDecomp}
 \end{align}
 where $\vv^k_\bary(\xx)$ is the velocity at $\xx$ resulting from
-applying the Barycentric quadrature rule due to $\gamma_k$.  This method
-naturally extends to points that are close to $\Gamma$, and to the
-scenario when $\xx$ is simultaneously close to multiple components of
-$\bd\Omega$.
+applying the Barycentric quadrature rule due to $\gamma_k$.  This
+strategy naturally extends to points that are close to $\Gamma$, and to
+the scenario when $\xx$ is simultaneously close to multiple components
+of $\bd\Omega$.  While the term $\vv_\trap(\xx)$ in
+equation~\eqref{eqn:velocityDecomp} is computed for all target points
+using the FMM, the other two terms are computed with a direct summation.
+However, these terms are only required for target points near an eroding
+body or the outer wall, and the number of such points is much less than
+$N$.  An identical quadrature method is used to compute the vorticity
+and shear stress.  That is, these quantities are computed using the
+trapezoid rule, and then updates due to inaccuracies of the trapezoid
+rule are made.  However, since the shear stress and vorticity are only
+computed once per time step, the trapezoid rule is applied with a direct
+summation rather than the FMM.  Relative to the cost of applying GMRES
+with the FMM, the additional once-per-time-step cost is minimal.
 
-Similarly, to compute the vorticity and shear stress, the trapezoid rule
-is first used.  Then, if $\xx$ is close to $\gamma_k$, the trapezoid
-quadrature rule contribution due to $\gamma_k$ is subtracted and the
-Barycentric quadrature rule contribution due to $\gamma_k$ is added.
-Since the shear stress and vorticity are only computed once per time
-step, we use a direct summation rather than the FMM.  Relative to the
-cost of applying GMRES with the FMM, the additional once-per-time-step
-cost is minimal.
-
-
-We also do not use any fast summation methods to apply the Barycentric
-quadrature rule.  Since this quadrature rule is applied at every GMRES
-iteration, it is imperative that we only apply the Barycentric
-quadrature at target points where they are required.  As a rule of
-thumb, the trapezoid rule due to $\gamma_k$ is accurate if
+Per grid point, evaluating the Barycentric quadrature rules dominates
+the computational cost. Therefore, it is imperative that we only apply
+the Barycentric quadrature when the trapezoid rule is inaccurate.  As a
+rule of thumb, the trapezoid rule due to $\gamma_k$ is
+accurate~\cite{bar2014} if
 \begin{align}
   \label{eqn:TrapCutoff}
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
@@ -745,13 +753,13 @@ if
   \|\cc_i - \cc_j\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi} + 
     \alpha_\iin \left(\frac{L_i}{N_\iin} + \frac{L_j}{N_\iin} \right),
 \end{align}
-where $\alpha_\iin \geq 1$ is a free parameter that needs to be chosen.
-In this manner, rather than using an expensive all-to-all algorithm to
+where $\alpha_\iin \geq 1$ is a parameter that needs to be chosen.  In
+this manner, rather than using an expensive all-to-all algorithm to
 compute the distance between all pairs of discretization points, we
 compute the distance between pairs of circles.  This criteria allows us
 to quickly determine bodies that contain discretization points where the
 Barycentric quadrature rule may need to be applied, and the parameter
-$\alpha_\iin$ is accounts for the fact that the bodies are being
+$\alpha_\iin$ accounts for the fact that the bodies are being
 approximated with circles.  Assuming that the two bodies $\gamma_i$ and
 $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 \in \gamma_j$, we check if
@@ -767,35 +775,34 @@ first check if
 \begin{align}
   \left\|\cc_i - \left[
     \begin{array}{c}
-      x_{\cc_i } \\ \pm 1
+      x_i \\ \pm 1
     \end{array}
     \right]
   \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out}
 \end{align}
-where $x_{\cc_i } $ is the x coordinate of $\cc_i$. If body $\gamma_i$
-satisfies this condition, for each point $\xx=(x,y) \in \gamma_i$, we
-apply the Barycentric rule to points that satisfy
+where $x_i$ is the x coordinate of $\cc_i$. If body $\gamma_i$ satisfies
+this condition, for each point $\xx=(x,y) \in \gamma_i$, we apply the
+Barycentric rule to points that satisfy
 \begin{align}
   \label{eqn:PointsWallCutoff}
   |y \pm 1| < \frac{L_i}{2 \pi} +\alpha_\out \frac{L_\out}{N_\out}.
 \end{align}
+Finally, to determine if a target point $\xx$ that is in the fluid bulk
+rather than on another eroding body requires the Barycentric quadrature
+rule, we only check conditions~\eqref{eqn:PointsBodyCutoff}
+and~\eqref{eqn:PointsWallCutoff}.  
 
 To determine an appropriate value for $\alpha_\iin$ and $\alpha_\out$,
-we first compute an accurate solution by using the Barycentric
-quadrature rule for all discretization points.  Then, for multiple
-values of $\alpha_\iin$ and $\alpha_\out$, we compute the velocity field
-with the trapezoid rule for all points that do not satisfy
-conditions~\eqref{eqn:PointsBodyCutoff}
+we fix a eroded geometry and we compute an accurate solution by using
+the Barycentric quadrature rule for all discretization points.  Then,
+for multiple values of $\alpha_\iin$ and $\alpha_\out$, we compute the
+velocity field with the trapezoid rule for all points that do not
+satisfy conditions~\eqref{eqn:PointsBodyCutoff}
 and~\eqref{eqn:PointsWallCutoff}.  By comparing these two velocities, we
 find that $\alpha_\iin = 4$ and $\alpha_\out = 4$ give sufficient
 accuracy while keeping the number of points that require the expensive
 Barycentric quadrature rule to a minimum.  We use these values for all
 of our numerical simulations.
-
-Finally, to determine if a target point $\xx$ that is in the fluid bulk
-rather than on another eroding body requires the Barycentric quadrature
-rule, we only check conditions~\eqref{eqn:PointsBodyCutoff}
-and~\eqref{eqn:PointsWallCutoff}.  
 
 
 
@@ -805,18 +812,34 @@ and~\eqref{eqn:PointsWallCutoff}.
 \label{s:time}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We reuse the time stepping method outlined in our previous
-work~\cite{qua-moo2018}.  Rather than tracking the $(x,y)$
-coordinates, the {\thL} variables are tracked. A second-order
-Implicit-Explicit method is used. In particular, the diffusive term
-corresponding to the curvature penalization term is discretized
-implicitly, and all other terms, which are non-stiff, are treated
-explicitly.
+work~\cite{qua-moo2018}.  Rather than tracking the $(x,y)$ coordinates,
+the {\thL} variables are tracked. In addition, a tangential velocity
+field is added to each body so that the discretization points remain
+equispaced for all time.  A second-order Implicit-Explicit method is
+used. In particular, the diffusive term corresponding to the curvature
+penalization term is discretized implicitly, and all other terms, which
+are non-stiff, are treated explicitly.  By using this time stepping
+method in conjunction with the curvature penalization and Gaussian
+filter, we stably evolve the eroding bodies.   An in depth description
+of the time stepping method for erosion is in Section 3.3 of our
+previous work~\cite{qua-moo2018}.
 
-\todo[inline]{Talk about time integration for erosion and for tracers}
+In Section~\ref{s:transport}, we we analyze passive tracers suspended in
+an eroded geometry.  Give such a geometry $\Omega$, a tracer $\ss(t)$
+initialized at $\ss_0$ is governed by 
+\begin{align}
+  \label{eqn:trajectories}
+  \frac{d\ss}{dt} = \uu(\ss), \quad \ss(0) = \ss_0.
+\end{align}
+To compute such a trajectory, we apply the standard fourth-order
+Runge-Kutta method.  To evaluate $\uu(\ss)$, depending on the proximity
+of $\ss$ to $\bd\Omega$, we either use the trapezoid rule or the
+Barycentric quadrature rule as described in Section~\ref{s:fmm}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Transport, Tracers, and Tortuosity}
+\label{s:transport}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erosion leads to interesting porous geometries, and we are interested in
 characterizing transport in these geometries.  For porous media, two of
@@ -833,14 +856,11 @@ anomalous diffusion.  However, the anomalous diffusion rate depends on
 the properties of the geometry.  In addition to the porosity, the
 distribution of the grains affects the anomalous diffusion rates.  To
 quantify this rate, we require tracer trajectories that are governed by
+equation~\eqref{eqn:trajectories}.  Given a trajectory, we define
+$\lambda_j(t)$ to be the distance travelled by the particle
 \begin{align}
-  \label{eqn:trajectories}
-  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
-\end{align}
-Given a trajectory, we define $\lambda_j(t)$ to be the distance
-travelled by the particle
-\begin{align}
-  \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau.
+  \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau, 
+    \quad j=1,\ldots,N_p.
 \end{align}
 Having formed $N_p$ trajectories, the first and second ensemble moments
 are
@@ -1787,59 +1807,59 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x))
 %\end{bmatrix}.
 %\end{align*}
-
-{\color{red}
-\begin{alignat}{3}
-1 &= \frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
-\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
-    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
-\end{alignat}
-and the contour integral 
-\begin{align}\label{eqn:cauchyId3}
-0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
-\end{align}
-Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
-the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
-\begin{align*}
-0 &= \frac{1}{2\pi i} \int_{\Gamma}
-    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
-&= \frac{1}{2\pi i} \int_{\Gamma}
-    \frac{2v^-(y)}{(y - x)^3} \, dy 
--v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{1}{y-x} dy\\
-&= \frac{1}{2\pi i} \int_{\Gamma}
-    \frac{2v^-(y)}{(y - x)^3} \, dy 
--\frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
--\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
--\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
-&= \frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
-\end{align*}
-}
-\todo[inline]{S-H: How do we get these identities?}
-\begin{alignat}{3}
-  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
-    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
-  0 &= \frac{1}{2\pi i}\int_{\Gamma}
-    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
-    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
-\end{alignat}
-{\color{red}
-and the quadrature formulations are
-\begin{alignat}{3}
-  v''(x) &\approx
-    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
-    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
-  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
-    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
-\end{alignat}
-where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
-
-}
-
+%
+%{\color{red}
+%\begin{alignat}{3}
+%1 &= \frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
+%\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
+%    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
+%\end{alignat}
+%and the contour integral 
+%\begin{align}\label{eqn:cauchyId3}
+%0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
+%\end{align}
+%Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
+%the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
+%\begin{align*}
+%0 &= \frac{1}{2\pi i} \int_{\Gamma}
+%    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
+%&= \frac{1}{2\pi i} \int_{\Gamma}
+%    \frac{2v^-(y)}{(y - x)^3} \, dy 
+%-v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{1}{y-x} dy\\
+%&= \frac{1}{2\pi i} \int_{\Gamma}
+%    \frac{2v^-(y)}{(y - x)^3} \, dy 
+%-\frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
+%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
+%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
+%&= \frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
+%\end{align*}
+%}
+%\todo[inline]{S-H: How do we get these identities?}
+%\begin{alignat}{3}
+%  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
+%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
+%  0 &= \frac{1}{2\pi i}\int_{\Gamma}
+%    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
+%    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
+%\end{alignat}
+%{\color{red}
+%and the quadrature formulations are
+%\begin{alignat}{3}
+%  v''(x) &\approx
+%    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
+%    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
+%  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
+%    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
+%    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
+%\end{alignat}
+%where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
+%
+%}
+%
 %{\color{red}
 %By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
 %
