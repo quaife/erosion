@@ -672,7 +672,7 @@ and solving for $v''(x)$, we have the Barycentric quadrature rule for
 the exterior second derivate
 \begin{align}
   v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}}
+    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
     {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
     \quad x \in \Omega^c.
 \end{align}
@@ -938,25 +938,27 @@ equation~\eqref{eqn:tortuosity2} does not require the additional work of
 computing particle trajectories, we use this definition for the
 tortuosity.
 
-The first method to compute numerically compute the tortuosity uses $N_p$ trajectories
-that are initially at $(1,y_i)$, $i=1,\ldots,N_p$, and stopped when
-their $x$ coordinate is 1.  T
-
-with originating at $x=-1$ and terminating at $x=1$, we use the approximation 
+The first method to compute numerically compute the tortuosity uses
+$N_p$ trajectories that are initially at $(1,y_i)$, $i=1,\ldots,N_p$,
+and stopped when their $x$ coordinate is 1.  We choose $y_i$ so that the
+trajectories are initially uniformly spaced in $(-1,1)$.  Having
+computed these trajectories, the tortuosity is approximated as
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
-    u_x(y_i) \lambda(y_i) \Delta y_i}
+    u_x(y_i) \lambda(y_i) \Delta y}
   {\displaystyle\sum_{i=1}^{N_p} u_x(y_i) \Delta y_i}, 
 \end{align}
-where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.
-Similarly, to compute the tortuosity in terms of the Eulerian velocity
-field, we use the approximation
+where $\Delta y = 2/(N_p + 1)$ and $y_i = -1 + i \Delta y$,
+$i=1,\ldots,N_p$.  Alternatively, to compute the tortuosity in terms of
+the Eulerian velocity field, we first compute the velocity at $(x_i,y_j)
+= (-1 + i\Delta x, -1 + j\Delta y)$, $i,j=1,\ldots,N$, where $\Delta x =
+\Delta y = 2/N$, and the velocity at points inside an eroding body are
+assigned a value of 0.  Then, the tortuosity is approximated as
 \begin{align}
-  T = \frac{\sum\limits_{i,j=1}^N \|\uu(\yy_{i,j})\|\Delta x_i \Delta y_j}
-      {\sum\limits_{i,j=1}^N u(\yy_{i,j}) \Delta x_i\Delta y_j},
+  T = \frac{\sum\limits_{i,j=1}^N \|\uu(x_i,y_j)\|\Delta x \Delta y}
+      {\sum\limits_{i,j=1}^N u(x_i,y_j) \Delta x \Delta y},
 \end{align}
-where $\Delta x_i = 1/N$
-
+where $\uu = (u,v)$.
 
 There have been efforts to relate the tortuosity to the
 porosity~\cite{matyka2008tortuosity}, but these results can not be
@@ -969,6 +971,7 @@ initialized at $y$ along $S$ is
 \begin{align*}
   \tau(y) = \frac{\lambda(y)}{d}.
 \end{align*}
+\todo[inline]{Need to flesh this out more}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1108,17 +1111,50 @@ stagnation points where corners will develop.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 nearly touching bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider 20 eroding bodies a Hagen-Poiseuille flow.  The background
-flow is 
+We consider 20 eroding bodies initially placed in $[-1,1] \times
+[-1,1]$.  The background flow is the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx)=U \left[
   \begin{array}{c}
     1-y^2 \\ 0
   \end{array}
-  \right].
+  \right],
 \end{align}
-Initially, $U=1$, and then $U$ is updated at each time step so that the
-pressure drop from $x=-2$ to $x=2$ remains constant.  
+where the flow rate $U$ is chosen so that the pressure drop from $x=-2$
+to $x=2$ is held fixed at 2.  For equispaced instances of the
+configuration are plotted in Figure~\ref{fig:Eroding20vort}.  The color
+in these plots is the vorticity, and this can be used to determine
+regions of high and low erosion---erosion happens fastest along regions
+of the eroding bodies with a large vorticity in magnitude.  In
+Figure~\ref{fig:Eroding20flowrate}(a), we plot the area fraction as a
+function of normalized time.  Initially, 62\%  of the geometry eroded
+bodies corresponding to a porosity of $0.38$.  As the bodies erode, the
+area fraction decreases towards 0.  The trend of the area fraction
+resembles that of our previous work~\cite{qua-moo2018} (Figure 10(a)),
+but with a larger initial area fraction.  We also compute the flow rate
+$U$ required to maintain a constant pressure drop across the channel in
+Figure~\ref{fig:Eroding20flowrate}(b).  Again, the trend of $U$
+resembles that of our previous work~\cite{qua-moo2018} (Figure 10(b)),
+except that the initial flow rate is an order of magnitude smaller
+because of the larger initial area fraction.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense1}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense101}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense201}
+  \includegraphics[height=0.23\textwidth]{./figs/20b_dense301}
+\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies
+with the fixed pressure drop condition. The color is the vorticity of
+the fluid. The 4 snapshots are evenly spaced in time. We use $N_\iin =
+256$ discretization points on the body, a time-step of $\Dt=10^{-4}$,
+and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the
+forth frame, bodies 4, 12, and 17 have vanished completely, and body 19
+has almost completely eroded.}
+\end{center}
+\end{figure}
+
+
 {\color{red}
 We
 measure the area occupied by bodies 
@@ -1140,6 +1176,8 @@ with growth rate close to $\ln10^4$. }
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =\linewidth]{./figs/porosity20dense}
+\todo[inline]{SH: Make the y-limits of this figure go from 0 to 0.7 ...
+no need to make it go below 0}
 \caption{}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1184,26 +1222,6 @@ erosion to occur between a pair of bodies.  In particular, for pairs of
 bodies where the channel between the bodies is nearly perpendicular to
 the main flow direction (bodies 1 \& 6, 3 \& 9, and 5 \& 13), there is
 very little shear stress and the effect of erosion is slight. 
-
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[height=0.23\textwidth]{./figs/20b_dense1}
-  \includegraphics[height=0.23\textwidth]{./figs/20b_dense101}
-  \includegraphics[height=0.23\textwidth]{./figs/20b_dense201}
-  \includegraphics[height=0.23\textwidth]{./figs/20b_dense301}
-%\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense1}
-%\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense101}\\
-%\includegraphics[width = 0.42 \textwidth]{./figs/20b_dense201}
-%\includegraphics[width = 0.507 \textwidth]{./figs/20b_dense301}
-\caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies
-  with the fixed pressure drop condition. The color is the vorticity of
-  the fluid. The 4 snapshots are evenly spaced in time. We use $N_\iin =
-  256$ discretization points on the body, a time-step of $\Dt=10^{-4}$,
-  and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In
-  the forth frame, bodies 4, 12, and 17 have vanished completely, and
-  body 19 has almost completely eroded.}
-\end{center}
-\end{figure}
 
 
 
@@ -1328,7 +1346,8 @@ right and join another tracers in the channel above the body.
 \caption{\label{fig:Eroding20tort} The tortuosity study in the fluid with 
 20 nearly touching bodies when the porosity is 62.9 \%.
 (a) The 
-x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=2.9828
+x-component velocity u(-1, y) with respect to its maximum velocity
+$u_{\max}=2.9828
 \times 10^{-3}$ at equal spreading tracers on the cross section x = -1. 
 (b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
 (c) The largest 10 difference of 
