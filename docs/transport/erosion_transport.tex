@@ -1,7 +1,7 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
 \input{preambles.tex}
-%\usepackage{showkeys}
+\usepackage{showkeys}
 \begin{document}
 
 \title{Viscous Transport in Eroding Porous Media}
@@ -831,10 +831,10 @@ initialized at $\ss_0$ is governed by
   \label{eqn:trajectories}
   \frac{d\ss}{dt} = \uu(\ss), \quad \ss(0) = \ss_0.
 \end{align}
-To compute such a trajectory, we apply the standard fourth-order
-Runge-Kutta method.  To evaluate $\uu(\ss)$, depending on the proximity
-of $\ss$ to $\bd\Omega$, we either use the trapezoid rule or the
-Barycentric quadrature rule as described in Section~\ref{s:fmm}.
+To compute such a trajectory, we apply the standard explicit
+fourth-order Runge-Kutta method.  To evaluate $\uu(\ss)$, depending on
+the proximity of $\ss$ to $\bd\Omega$, we either use the trapezoid rule
+or the Barycentric quadrature rule as described in Section~\ref{s:fmm}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -848,16 +848,32 @@ However, additional properties of the flow are revealed by computing
 the anomalous diffusion rate, the tortuosity, and the distribution the
 gap sizes.
 
+Having developed numerically accurate methods to compute the velocity
+$\uu$ at points close to the bodies, we are able to compute the
+trajectories of particles passing through an eroded body.  Since the
+trajectories are computed with high-order methods in both space and
+time,  we are able to simulate dynamics very close to the eroding bodies
+(see Figures~\ref{fig:Eroding20tracer} and~\ref{fig:Eroding100tort}.
+Resolving the flow in these small velocity regions is essential to
+accurately describe anomalous diffusion and
+mixing~\cite{leb-den-dav-bol-car-dec-bou2011}.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Diffusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The dynamics of fluid in porous media can be characterized in terms of
-anomalous diffusion.  However, the anomalous diffusion rate depends on
-the properties of the geometry.  In addition to the porosity, the
-distribution of the grains affects the anomalous diffusion rates.  To
-quantify this rate, we require tracer trajectories that are governed by
-equation~\eqref{eqn:trajectories}.  Given a trajectory, we define
-$\lambda_j(t)$ to be the distance travelled by the particle
+The dynamics of fluid in porous media is often characterized in terms of
+anomalous diffusion~\cite{} \todo[inline]{need references}, and the
+anomalous diffusion rate depends on the properties of the geometry.  The
+anomalous diffusion depends on the porosity~\cite{}, but the
+distribution of the bodies also affects the anomalous diffusion rates.
+Since erosion causes certain structure in porous media, calculating the
+anomalous diffusion rates in these geometries is important.
+
+One way to define the anomalous diffusion rate is by using tracer
+trajectories that are governed by equation~\eqref{eqn:trajectories}.
+Given a set of trajectories, we define $\lambda_j(t)$ to be the distance
+travelled by the particle
 \begin{align}
   \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau, 
     \quad j=1,\ldots,N_p.
@@ -870,22 +886,26 @@ are
     \sigma_\lambda^2(t) = \frac{1}{N_p} 
     \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
 \end{align}
-If the particle spreading scales with time as $\sigma_\lambda^2 \sim
-t^\alpha$, with $\alpha < 1$, this indicates that the particle
-trajectories are sub-diffusive.  In contrast, if $\sigma_\lambda^2 \sim
-t^2$, the particle trajectories are undergoing a ballistic motion and
-are not affected by the grains.
-
-For early times when the geometry has not eroded, we expect the
-trajectories to be sub-diffusive.  However, as the bodies erode and
-straight preferential channels are formed, we expect the dynamics to
-resemble a ballistic motion.
+At early times, the particles have not explored much of the geometry,
+and we expect a ballistic motion $\sigma_\lambda^2 \sim t^2$.  However,
+as the particles pass the grains, their trajectories are altered, and we
+expect that $\sigma_\lambda^2 \sim t^\alpha$, with $\alpha < 1$, which
+would indicate that the flow is sub-diffusive.  With respect to erosion,
+as the bodies erode, we expect that the channelization of the geometry
+results in more trajectories undergoing a ballistic motion, and this
+would indicate a larger anomalous diffusion rate.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The tortuosity of a geometry quantifies the average amount of turning
-made by a streamline.  Mathematically, it is defined as
+made by a streamline.  The choice of how to average is not universal,
+and Duda et al.~\cite{dud-koz-mat2011} summarize several options for
+averaging.  One particular choice, which we shall adopt, allows us to
+compute the tortuosity in terms of trajectories, or by using an area
+integral over the fluid geometry.  Another advantage of this choice is
+that it is not affected by regions of recirculation.  Mathematically,
+the definition of tortuosity that we use is
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
   {\displaystyle\int_{S}u_x(y)\,dy},
@@ -894,10 +914,11 @@ made by a streamline.  Mathematically, it is defined as
 where $S$ is an cross-section perpendicular to the $x$ axis with length
 $d$, $\lambda(y)$ is the length of the streamline that is initialized
 at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
-the velocity at the $y$-coordinate along $S$.  Following~\cite{}, the
-trajectories are formed until they cross a second cross-section.  In our
-work, we always initialize the trajectories at $x=-1$ and stop them when
-they reach $x=1$.
+the velocity at the $y$-coordinate along $S$.
+Following~\cite{dud-koz-mat2011}, the trajectories are formed until they
+cross a second cross-section that is parallel to the initial
+cross-section.  In our work, we always initialize the trajectories at
+$x=-1$ and stop them when they reach $x=1$.
 
 Under the assumptions that the flow is incompressible and not reentrant,
 the tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
@@ -908,13 +929,34 @@ the tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
 \end{align}
 The flow is reentrant if all streamlines connect the inlet to the
 outlet.  Recirculation zones are possible in viscous fluids, but they
-only constitute a small fraction of the total porous media.  Therefore,
-the tortuosity defined in equation~\eqref{eqn:tortuosity2} is an upper
-bound for the definition in equation~\eqref{eqn:tortuosity1}.  We have
-used formulas for a particular geometry, and the difference is
-negligible.  Since equation~\eqref{eqn:tortuosity2} does not require the
-additional work of computing particle trajectories, we use this
-definition for the tortuosity.
+only constitute a small fraction of the total porous media and tend to
+have very small velocities.  Therefore, the tortuosity defined in
+equation~\eqref{eqn:tortuosity2} is an upper bound for the definition in
+equation~\eqref{eqn:tortuosity1}, but for the geometries we consider, we
+will show that their difference is negligible.  Since
+equation~\eqref{eqn:tortuosity2} does not require the additional work of
+computing particle trajectories, we use this definition for the
+tortuosity.
+
+The first method to compute numerically compute the tortuosity uses $N_p$ trajectories
+that are initially at $(1,y_i)$, $i=1,\ldots,N_p$, and stopped when
+their $x$ coordinate is 1.  T
+
+with originating at $x=-1$ and terminating at $x=1$, we use the approximation 
+\begin{align}
+  T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
+    u_x(y_i) \lambda(y_i) \Delta y_i}
+  {\displaystyle\sum_{i=1}^{N_p} u_x(y_i) \Delta y_i}, 
+\end{align}
+where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.
+Similarly, to compute the tortuosity in terms of the Eulerian velocity
+field, we use the approximation
+\begin{align}
+  T = \frac{\sum\limits_{i,j=1}^N \|\uu(\yy_{i,j})\|\Delta x_i \Delta y_j}
+      {\sum\limits_{i,j=1}^N u(\yy_{i,j}) \Delta x_i\Delta y_j},
+\end{align}
+where $\Delta x_i = 1/N$
+
 
 There have been efforts to relate the tortuosity to the
 porosity~\cite{matyka2008tortuosity}, but these results can not be
@@ -928,31 +970,6 @@ initialized at $y$ along $S$ is
   \tau(y) = \frac{\lambda(y)}{d}.
 \end{align*}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Streamlines and Tortuosity}
-\label{s:streamlines}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{Dump of earlier section for now ... need to fix how this
-is worked into the section}
-Having developed numerically accurate methods to compute the velocity
-$\uu$ at points close to the bodies, we are able to compute the
-trajectories of particles passing through an eroded body.  To find the
-trajectory governed by equation~\eqref{eqn:trajectories}, we use the
-fourth-order explicit Runge-Kutta method with a fixed time step size.
-Since our method is both high-order in time and space, we are able to
-simulate dynamics very close to the eroding bodies (Figure~\ref{fig:}
-\todo[inline]{reference a figure or two from the results section)}.
-Resolving the flow in these small velocity regions is essential to
-accurately describe anomalous diffusion and
-mixing~\cite{leb-den-dav-bol-car-dec-bou2011}.
-
-To calculate tortuosity $T$, we use the simple quadrature rule
-\begin{align}
-  T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N} 
-    u_x(y_i) \lambda(y_i) \Delta y_i}
-  {\displaystyle\sum_{i=1}^{N} u_x(y_i) \Delta y_i}, 
-\end{align}
-where $y_i$ is the point on $S$ and $\Delta y_i = y_{i+1}-y_{i}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pore Throat Size}
