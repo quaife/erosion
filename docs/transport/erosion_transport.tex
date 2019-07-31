@@ -31,7 +31,7 @@ University, Tallahassee, FL, 32306.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-\label{s:intro}
+\label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Flow-induced erosion deteriorates and reshapes solid material over a
 range of scales.  At small scales, such as in groundwater flow,
@@ -176,7 +176,7 @@ analytic functions in the interior case.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Governing Equations}
-\label{s:formulation}
+\label{sec:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We start by defining the main variables used to model erosion.  A more
 detailed description is in our previous work~\cite{qua-moo2018}.  We
@@ -314,7 +314,7 @@ in equation~\eqref{eqn:shearStress}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
-\label{s:DLPcomplex}
+\label{sec:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In equations~\eqref{eqn:stokesDLP} and~\eqref{eqn:deformationDLP}, $\uu$
 and its deformation tensor are written as a contour integral in $\RR^2$,
@@ -441,7 +441,7 @@ written in terms of Cauchy integrals.  In addition, the vorticity is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
-\label{s:method}
+\label{sec:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We have shown that the velocity, shear stress, and vorticity of the
 double-layer potential can all be written in terms of Cauchy integrals
@@ -460,7 +460,7 @@ result to include the second derivative.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Spatial Discretization}
-\label{s:spatialDiscretization}
+\label{sec:spatialDiscretization}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 By using an integral equation formulation, we only have to discretize
 the one-dimensional boundary of the domain.  Therefore, we easily
@@ -686,7 +686,7 @@ and~\eqref{eqn:BaryvprimeExterior}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiently Applying the Quadrature}
-\label{s:fmm}
+\label{sec:fmm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The Barycentric quadrature rule achieves acceptable accuracy for
 computing the velocity, shear stress, and vorticity.  However, applied
@@ -809,7 +809,7 @@ of our numerical simulations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Time Integration}
-\label{s:time}
+\label{sec:time}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We reuse the time stepping method outlined in our previous
 work~\cite{qua-moo2018}.  Rather than tracking the $(x,y)$ coordinates,
@@ -824,7 +824,7 @@ filter, we stably evolve the eroding bodies.   An in depth description
 of the time stepping method for erosion is in Section 3.3 of our
 previous work~\cite{qua-moo2018}.
 
-In Section~\ref{s:transport}, we we analyze passive tracers suspended in
+In Section~\ref{sec:transport}, we we analyze passive tracers suspended in
 an eroded geometry.  Give such a geometry $\Omega$, a tracer $\ss(t)$
 initialized at $\ss_0$ is governed by 
 \begin{align}
@@ -834,12 +834,12 @@ initialized at $\ss_0$ is governed by
 To compute such a trajectory, we apply the standard explicit
 fourth-order Runge-Kutta method.  To evaluate $\uu(\ss)$, depending on
 the proximity of $\ss$ to $\bd\Omega$, we either use the trapezoid rule
-or the Barycentric quadrature rule as described in Section~\ref{s:fmm}.
+or the Barycentric quadrature rule as described in Section~\ref{sec:fmm}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Transport, Tracers, and Tortuosity}
-\label{s:transport}
+\label{sec:transport}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erosion leads to interesting porous geometries, and we are interested in
 characterizing transport in these geometries.  For porous media, two of
@@ -988,7 +988,7 @@ initialized at $y$ along $S$ is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Results}
-\label{s:results}
+\label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In this section, we apply our new quadrature method to simulate erosion
 of several different configurations of eroding bodies.  The fluid domain
@@ -1060,9 +1060,10 @@ we impose the shear flow
 \end{align}
 on the outer wall.  In their experiment, Mitchell and Spagnolie place
 the center of the eroding body $1.5$ times the body's radius above the
-solid wall.  By using the numerical integration scheme described in
-Section~\ref{s:method}, the eroding body can be placed much closer to
-the solid wall.  In the following experiments, we consider an eroding
+solid wall.  By using the Barycentric quadrature rule described in
+Section~\ref{sec:bary} rather than the trapezoid rule, the eroding body
+can be placed much closer to the solid wall without requiring an
+unreasonable number of discretization points.  We consider an eroding
 body that is initially a circle of radius $r=0.4$ and is placed near the
 no-slip wall at $y=-1$.  We discretize the eroding body with
 $N_\iin=256$ discretization points, and the center of the eroding body
@@ -1070,27 +1071,29 @@ is initially chosen so that the distance between the body and the solid
 wall are $h/2$, $h/4$, and $h/10$, where $h = 2\pi r/N_\iin$.  For all
 three simulations, we use the time step size $\Delta t=10^{-4}$.
 
-With this setup, many of the discretization points on the eroding body
-are too close to the outer wall for the trapezoid rule to achieve
-sufficient accuracy.  However, by using the Barycentric quadrature rule,
-the numerical stable simulations are possible.  In
-Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
-several equispaced time steps, and the color of indicates the erosion
-rate (magnitude of the shear stress).  Comparing our results to Mitchell
-and Spagnolie~\cite{mit-spa2017} (Figure 7(c)), we see similar results.
-In particular, between the eroding body and the solid wall the flow is
-very small and there is no recirculation, and this is consistent with
-three-dimensional results~\cite{cah-feu2002}.  Moreover, for all three
-distances, the shear stress is positive \todo[inline]{S-H: Is this
-right?  Is the shear stress ever negative?  I might expect so since
-there are two stagnation points}, so the erosion is smooth.
+In Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
+several equispaced time steps.  For the three initial configurations,
+the shear stress is positive for all time, but varies over several
+orders of magnitude.  Therefore, we color eroding body's boundary
+according to the logarithm of the shear stress.  Comparing our results
+to Mitchell and Spagnolie~\cite{mit-spa2017} (Figure 7(c)), we see that
+the body shapes are similar.  The differences we can attribute to our
+assumption of a two-dimensional flow.  In three dimensions, there is no
+recirculation between the solid wall and the spherical
+body~\cite{cha-feu2003}.  In contrast, between a two dimensional
+circular body and a solid wall, there are regions of recirculation on
+the fore and aft sides of the body.  In Figure~\ref{fig:NearWall_vort},
+we plot the vorticity at the final configuration, and the where the
+vorticity is smallest corresponds to the region where there is a slow
+recirculation.  
 
-
-where the shear stress is smallest near the zero background flow line
-$y=-1$.  Moreover, since the shear stress is everywhere positive, the
-erosion rate, which is the magnitude of the shear stress, is a smooth
-function.  The result is that the eroding shape does not have any
-stagnation points where corners will develop.
+Since the shear stress is always positive, the erosion rate is a smooth
+function and does not lead to the development of corners.  However,
+since the location where the shear stress is minimized is close to
+regions of high shear stress, the rate of erosion changes quickly, and
+the result is a body that seems to be developing a corner, although it
+is not.  Similar to the three dimensional case~\cite{mit-spa2017}, this
+region of high curvature develops in the top half of the eroding body.
 
 \begin{figure}[htbp]
 \begin{center}
@@ -1098,13 +1101,12 @@ stagnation points where corners will develop.
 \includegraphics[width = 0.30 \textwidth]{./figs/1b_0d4r0d5h_shear}
 \includegraphics[width = 0.38 \textwidth]{./figs/1b_0d4r0d1h_shear}
 \caption{\label{fig:NearWall} 
-  A single body eroding in Stokes flow. The color indicates the shear
-  stress on the body in log scale. Therefore, erosion is fastest in the red
-  regions and slowest in the blue regions.  In this simulation, we use
-  three minimum body-to-wall initial distances $d=h$ (left), $h/2$
-  (middle), and $h/10$ (right) with $N_\iin = 256$ discretization points
-  on the body, a time step size of $\Dt=10^{-4}$, and smoothing
-  parameters $\eps = 15/256$ and $\sigma=10/256$.}
+  A single body eroding in a Stokes flow. The color denotes the
+  logarithm of the shear stress on the body. Therefore, erosion is
+  fastest in the red regions (top half)and slowest in the blue regions
+  (lower half).  The body is initialized at three different distances
+  from the lower wall: $d=h$ (left), $h/2$ (middle), and $h/10$
+  (right).}
 \end{center}
 \end{figure}
 \begin{figure}[H]
@@ -1607,7 +1609,7 @@ x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.90
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
-\label{s:conclusions}
+\label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
