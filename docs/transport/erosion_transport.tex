@@ -968,9 +968,10 @@ network.  In addition to the hydraulic tortuosity, a local tortuosity
 can be used to analyze the local behavior of a streamline near a
 body~\cite{matyka2008tortuosity}.  The local tortuosity of a streamline
 initialized at $y$ along $S$ is
-\begin{align*}
+\begin{align}
   \tau(y) = \frac{\lambda(y)}{d}.
-\end{align*}
+  \label{eqn:localTort}
+\end{align}
 \todo[inline]{Need to flesh this out more}
 
 
@@ -1049,8 +1050,8 @@ perform are:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We consider a single eroding body close to a solid wall.  To compare our
 results with a similar numerical experiment performed by Mitchell and
-Spagnolie~\cite{mit-spa2017}, rather a pressure drop boundary condition,
-we impose the shear flow
+Spagnolie~\cite{mit-spa2017}, rather than a pressure drop boundary
+condition, we impose the shear flow
 \begin{align}
   \UU(\xx)=\left[
   \begin{array}{c}
@@ -1064,36 +1065,31 @@ solid wall.  By using the Barycentric quadrature rule described in
 Section~\ref{sec:bary} rather than the trapezoid rule, the eroding body
 can be placed much closer to the solid wall without requiring an
 unreasonable number of discretization points.  We consider an eroding
-body that is initially a circle of radius $r=0.4$ and is placed near the
-no-slip wall at $y=-1$.  We discretize the eroding body with
-$N_\iin=256$ discretization points, and the center of the eroding body
-is initially chosen so that the distance between the body and the solid
-wall are $h/2$, $h/4$, and $h/10$, where $h = 2\pi r/N_\iin$.  For all
-three simulations, we use the time step size $\Delta t=10^{-4}$.
+body that is initially a circle of radius $r=0.4$.  We discretize the
+eroding body with $N_\iin=256$ discretization points, and its center is
+chosen so that the distance between the body and the solid wall is
+$h/2$, $h/4$, and $h/10$, where $h = 2\pi r/N_\iin$.  For all three
+simulations, we use the time step size $\Delta t=10^{-4}$.
 
 In Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
-several equispaced time steps.  For the three initial configurations,
-the shear stress is positive for all time, but varies over several
-orders of magnitude.  Therefore, we color eroding body's boundary
-according to the logarithm of the shear stress.  Comparing our results
-to Mitchell and Spagnolie~\cite{mit-spa2017} (Figure 7(c)), we see that
-the body shapes are similar.  The differences we can attribute to our
-assumption of a two-dimensional flow.  In three dimensions, there is no
+equispaced time steps.  For the three initial configurations, the shear
+stress is positive for all time, but varies over several orders of
+magnitude.  Therefore, we color the eroding body's boundary with the
+logarithm of the shear stress.  Since the shear stress is always
+positive, the erosion rate is a smooth function and does not lead to the
+development of corners.  However, the shear stress varies over several
+orders of magnitude, and this leads to interesting shapes.  For
+instance, in the top hemisphere, there is a sudden increase in the shear
+stress, and this leads to a region of high curvature.  This behavior is
+also present in three dimensions~\cite{mit-spa2017} (Figure 7(c)).  The
+biggest difference between the two- and three-dimensional results is the
+presence of a recirculation zone.  In three dimensions, there is no
 recirculation between the solid wall and the spherical
-body~\cite{cha-feu2003}.  In contrast, between a two dimensional
-circular body and a solid wall, there are regions of recirculation on
-the fore and aft sides of the body.  In Figure~\ref{fig:NearWall_vort},
-we plot the vorticity at the final configuration, and the where the
-vorticity is smallest corresponds to the region where there is a slow
-recirculation.  
-
-Since the shear stress is always positive, the erosion rate is a smooth
-function and does not lead to the development of corners.  However,
-since the location where the shear stress is minimized is close to
-regions of high shear stress, the rate of erosion changes quickly, and
-the result is a body that seems to be developing a corner, although it
-is not.  Similar to the three dimensional case~\cite{mit-spa2017}, this
-region of high curvature develops in the top half of the eroding body.
+body~\cite{cha-feu2003}.  In contrast, the two-dimensional flow Stokes
+flow can have recirculation zones~\cite{chw-wu1975, hig1985}. To
+visualize the flow, we plot the vorticity of the final time step from
+Figure~\ref{fig:NearWall} in Figure~\ref{fig:NearWall_vort}.  The region
+where the vorticity is smallest corresponds to the recirculation region.
 
 \begin{figure}[htbp]
 \begin{center}
@@ -1119,11 +1115,14 @@ at time t=0.1001. The initial distances from body to wall are $h$ (left), $h/2$
   (middle), and $h/10$ (right).  }
 \end{center}
 \end{figure}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 nearly touching bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider 20 eroding bodies initially placed in $[-1,1] \times
-[-1,1]$.  The background flow is the Hagen-Poiseuille flow
+We consider 20 eroding bodies that are discretized with $N_\iin=256$
+points and are initially placed in $[-1,1] \times [-1,1]$.  The
+background flow is the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx)=U \left[
   \begin{array}{c}
@@ -1147,23 +1146,19 @@ except that the initial flow rate is an order of magnitude smaller
 because of the larger initial area fraction.  Starting around normalized
 time $0.2$, Figure~\ref{fig:Eroding20flowrate}(b) is roughly linear
 which indicates that the flow rate can be written as a power law.  Using
-a line of best fit, the flow rate is approximately \begin{align} U
-\approx \left(\frac{t}{t_f}\right)^{3.43}, \end{align}
-\todo[inline]{update this with whatever S-H gets} which is the dashed
-line in Figure~\ref{fig:Eroding20flowrate}(b).
+a line of best fit, the flow rate is approximately 
+\begin{align} 
+  U \approx \left(\frac{t}{t_f}\right)^{3.43},
+\end{align}
+which is the dashed line in Figure~\ref{fig:Eroding20flowrate}(b).
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =\linewidth]{./figs/porosity20dense}
-\todo[inline]{SH: Make the y-limits of this figure go from 0 to 0.7 ...
-no need to make it go below 0. Done 07312019}
 \caption{}
 \end{subfigure}
 \begin{subfigure}[b]{0.51\textwidth}
 \includegraphics*[width =\linewidth]{./figs/flow_rate20dense}
-\todo[inline]{SH: In this figure, can you superimpose a line of best fit
-from about normalized time 0.2 to normalize time 1.  Doing this crudely,
-I got a slope of 15/4}
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding20flowrate}(a): The area fraction of 20
@@ -1175,27 +1170,27 @@ $U=1$ that occurs once all the bodies have eroded.}
 \end{figure}
 
 Snapshots of the bodies at four equispaced times are shown in
-Figure~\ref{fig:Eroding20vort}.   The colormap is the vorticity which is
+Figure~\ref{fig:Eroding20vort}.  The color is the vorticity which is
 equivalent to the shear stress when restricted to the eroding bodies.
 Therefore, erosion is fastest in regions where the magnitude of the
 vorticity is largest.  Initially, several of the eroding bodies are
-close to the outer wall.  In particular, with $h=L_2/N_\out$, the
-distance between bodies 1, 6, 13, and 15 are $1.3h$, $2.9h$, $2.8h$, and
-$1.3h$, respectively.  In addition, since each body is discretized with
-$N_\iin=256$ points, the distance between several pairs of eroding
-bodies is too small to be accurately resolved with the trapezoid rule at
-the prescribed resolution.  Particular pairs include bodies 1 \& 6, 3 \&
-9, 6 \& 8, and 14 \& 18.  By using the Barycentric quadrature rule, the
+closer to the outer wall than the $5h$ threshold required to guarantee
+sufficiently accurate quadrature with the trapezoid rule.  In
+particular, with $h=L_2/N_\out$, the distance between bodies 1, 6, 13,
+and 15 are $1.3h$, $2.9h$, $2.8h$, and $1.3h$, respectively.  In
+addition, the distance between several pairs of eroding bodies is too
+small to be accurately resolved with the trapezoid rule at the
+prescribed resolution.  Particular pairs include bodies 1 \& 6, 3 \& 9,
+6 \& 8, and 14 \& 18.  By using the Barycentric quadrature rule, the
 interaction between these nearly-touching bodies can be accurately
 resolved at the prescribed resolution.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[height=0.22\textwidth]{./figs/20b_dense1}
-  \includegraphics[height=0.22\textwidth]{./figs/20b_dense101}
-  \includegraphics[height=0.22\textwidth]{./figs/20b_dense201}
-  \includegraphics[height=0.22\textwidth]{./figs/20b_dense301}
-  \todo[inline]{S-H: Increase the font of the colorbar.   DONE 07312019}
+  \includegraphics[height=0.225\textwidth]{./figs/20b_dense1}
+  \includegraphics[height=0.225\textwidth]{./figs/20b_dense101}
+  \includegraphics[height=0.225\textwidth]{./figs/20b_dense201}
+  \includegraphics[height=0.225\textwidth]{./figs/20b_dense301}
 \caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies
 with the fixed pressure drop condition. The color is the vorticity of
 the fluid. The 4 snapshots are evenly spaced in time. We use $N_\iin =
@@ -1208,30 +1203,33 @@ has almost completely eroded.}
 
 In~\cite{qua-moo2018}, we observed that erosion causes the space between
 nearly touching bodies to quickly expand, and flat faces develop along
-the region of near contact.  This qualitative behavior is also observed
-in Figure~\ref{fig:Eroding20vort}, such as between bodies 3 \& 4 and 15
-\& 16.  However, by resolving bodies that are much closer to one another
-when compared to our previous work~\cite{qua-moo2018}, we see that it is
-possible for very little erosion to occur between a pair of bodies.  In
-particular, for pairs of bodies where the channel between the bodies is
-nearly perpendicular to the main flow direction (bodies 1 \& 6, 3 \& 9,
-and 5 \& 13), there is very little shear stress and the effect of
-erosion is slight. 
+the region of near contact.  This qualitative behavior is present in
+Figure~\ref{fig:Eroding20vort} between bodies 3 \& 4, 15 \& 16, and
+others.  However, now that we can resolve bodies that are much closer
+together, we observe that, at least initially, very little erosion
+occurs between certain pairs of bodies.  For instance the opening
+between bodies 1 \& 6 grows much slower than the opening between bodies
+15 \& 16.  A common feature of the openings that grow slowly is that
+they are nearly perpendicular to the main flow direction, and this
+results in very low erosion because of the small shearing.  For example,
+the openings between the pair of bodies 1 \& 6, 3 \& 9, and 5 \& 13. 
 
 In this example, we also observe that erosion creates a network of
 channels from the inlet to outlet where the velocity and vorticity, and
 therefore erosion rate, are much larger than the other regions.  These
 channels can be further visualized by considering the streamlines.  In
 Figure~\ref{fig:Eroding20tracer}, we freeze the geometry at the second
-time step in Figure~\ref{fig:Eroding20vort}, and we simulate 200
-tracers.  The tracers are initially placed at $x=-1$ and equispaced in
-$y$.  There are two clear region where the tracers pass through the
-geometry much faster than the other regions.  One of these fast regions
-is located between the bodies and the solid wall at $y=1$, and the other
-cuts through the porous region with the upper part of the channel formed
-by bodies 1, 4, 6, and 8.  To illustrate the ability of the Barycentric
-quadrature formula, streamlines very close to the eroding bodies are
-illustrated in the last frame of Figure~\ref{fig:Eroding20tracer}. 
+time step from Figure~\ref{fig:Eroding20vort}, and we simulate 200
+tracers.  The tracers are initially placed at $x=-1$ and are equispaced
+in $y$.  The trajectories are shown at 5 different times, and the final
+plot is a zoom in of the lower right quadrant of the fifth time step.
+There are three clear regions where the tracers pass through the
+geometry fastest.  Two of these regions are located between the bodies
+and the solid walls at $y=\pm 1$, and the third cuts through the porous
+region with the upper part of the channel formed by bodies 1, 4, 6, and
+8.  Since the flow is fastest in these regions, the shearing is largest,
+and this causes these openings to grow fastest which can be observed in
+Figure~\ref{fig:Eroding20vort}.
 
 \begin{figure}[H]
 \begin{center}
@@ -1242,81 +1240,46 @@ illustrated in the last frame of Figure~\ref{fig:Eroding20tracer}.
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270_zoom}
 \caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in
-the fluid with 20 bodies. The five first snapshots are evenly spaced in
-time.  The tracers are evenly spread in the $y$-direction and released
-at $x=-1$. The bottom right frame is a zoom window of the bottom middle
-frames.  Since we use a Barycentric quadrature rule and the fourth order
-Runge Kutta method, the tracers can be very close to but not penetrate
-the bodies.}
+the second geometry from Figure~\ref{fig:Eroding20vort}. The tracers are
+initialized at $x=-1$ and are evenly spaced in the $y$-direction. The
+first five snapshots are evenly spaced in time.  The bottom right frame
+is a zoom window of the fifth snapshot.  Since we use a Barycentric
+quadrature rule and the fourth-order Runge-Kutta method, the tracers can
+be very close to but not penetrate the bodies.}
 \end{center}
 \end{figure}
 
-{\color{red} 
-Besides the channels between two bodies, there is a single channel goes
-across the domain horizontally and the flow has been concentrated in
-this channel.  In the second frame of Fig.~\ref{fig:Eroding20vort}, this
-channel is between bodies 1 \& 20, 1 \& 9, 4 \& 3, 8 \& 11, 8 \& 2, 6 \&
-12, and 6 \& 19.  We can get a better understanding of this channel from
-the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}.  In Fig.~\ref{fig:Eroding20tracer}, 
-the flow (or tracer) first comes from three small channels between outer wall \& body
-10, bodies 7 \& 14, and bodies 14 \& 18, then the three branches become
-one and go into the main channel between bodies 1 \& 9.  From the first
-frame to the forth frame of Fig.~\ref{fig:Eroding20vort}, this channel
-is expanding faster than other channel and bodies 4 \& 12 has vanished
-and body 19 is almost gone in the forth frame.  The reason of fast
-expansion of this channel is the high vorticity.  In the forth frame of
-Fig.~\ref{fig:Eroding20vort}, we could see the vorticity is relatively
-high on the side of bodies which form this channel so the bodies are
-eroded fast on the side of this channel or have vanished completely.
-
-Furthermore, how long the body lasts in the fluid depends on not only the size of
-the body but also the location of the body.  For example, the first
-three vanishing bodies are body 12 (as t=0.0256), 4 (as t=0.0278), then
-17 (as t=0.0287).  Since body 4 is located in the main flow channel so
-the body 4 is vanished earlier than body 17 although the initial size of
-body 4 is larger than the size of body 17.  This channel will keep
-expanding and the bodies around this channel will vanish earlier than
-others.  After body 17, the next 8 vanished bodies with respect to time
-are body 19 (as t=0.0312),  body 7 (as t=0.0325), body 20 (as t=0.0329),
-body 8 (as t=0.0349), body 10 (as t=0.0353), body 3 (as t=0.0356), body
-14 (as t=0.0363), then body 9 (as t=0.0376).  All of these eight bodies
-were around this channel before they are gone.
-
-For the flat faces at the sites of near contact, since we put the body
-be close to one another so we are able to see all the channels between
-two close bodies have flat faces.  Besides the channels between bodies,
-we also observe the flat faces on the bodies which are close to the
-outer wall. For example, we see the flat faces on the top of bodies 1 \&
-6 and the bottom of bodies 13 \& 15.  
-
-Since we use a Barycentric quadrature rule to approximate the velocity
-of tracers and apply the fourth order Runge Kutta method to find the new
-locations of tracers in each step, the tracers can be very close to but
-not penetrate the bodies.  Those body-closed tracers are moving
-perfectly so we are able to observe the details of the interaction of
-bodies and fluid.  Although the direction of flow is from left to right,
-the tracers will not only travel horizontally but also vertically.  In
-the bottom middle frame of Fig.~\ref{fig:Eroding20tracer}, some tracers
-climb up from right to left around the body.  There is a zoom windows of
-the climbing tracers trajectories in the bottom right frame of Fig.~\ref{fig:Eroding20tracer} and
-they are taken from the bottom middle frame of
-Fig.~\ref{fig:Eroding20tracer} with more tracers.  In the bottom right frame of 
-Fig.~\ref{fig:Eroding20tracer} the tracers around the center body first go
-from the channel below the body, climb up to the left, then go to the
-right and join another tracers in the channel above the body. 
-}
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
-%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
-%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
-%\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
-%  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
-%  tracers around the bodies. Since we use a Barycentric quadrature rule
- % and the fourth order Runge Kutta method, the tracers can be very close
- % to but not penetrate the bodies.}
-%\end{center}
-%\end{figure}
+Next, we use the tracer trajectories to compute the anomalous diffusion
+rates and the tortuosities in the eroding geometry.  Since these
+calculations use a statistical analysis of the tracer trajectories, we
+increase the number of trajectories to $N_p = 1000$.  Again, the tracers
+are initialized at $x=-1$, and their $y$ coordinates are distributed
+evenly across the entire channel.  To compute the tortuosity, we
+require the velocity at the initialization points of the tracers.  These
+normalized velocities are plotted in Figure~ref{fig:Eroding20tort}(a)
+for the eroded geometry with porosity 62.9\% (see
+Figure~\ref{fig:Eroding20tort}(c)).  The velocities are similar to the
+work of Matyka et al.~\cite{matyka2008tortuosity} (see Figure 4(a)),
+except that our cross-section does not cut through any of the bodies.
+Next, in Figure~\ref{fig:Eroding20tort}(b), we plot the local
+tortuosity~\eqref{eqn:localTort} by calculating the length of each
+trajectory as it traverses the channel from $x=-1$ to $x=1$ in
+Figure~\ref{fig:Eroding20tort}(b), and dividing by the length of the
+channel.  The local tortuosity ranges from 1 to 1.27, meaning that one
+of the tracers travelled 27\% farther than it would have if the bodies
+had been absent.  The average tracer travelled 9.79\% farther than if
+the bodies had been absent, meaning that the tortuosity of the eroded
+channel is $1.098$.  Again, comparing the local tortuosity to
+Matyka~\cite{matyka2008tortuosity} (Figure 4(b)), the results are
+qualitatively similar. However, since our initial cross-section does not
+cut through any bodies, the local tortuosity does not have any gaps.
+The discontinuities correspond to neighboring tracers with one traveling
+much farther than the other.  In Figure~\ref{fig:Eroding20tort}(c), we
+plot pairs of trajectories that correspond to the ten largest jumps in
+the local tortuosity.  Corresponding pairs are always plotted in the
+same color.  The discrepancy between the trajectory lengths can be
+attributed to the tracers diverging from one another as they approach
+opposite sides of a stagnation point in the flow.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.45\textwidth}
@@ -1326,6 +1289,7 @@ right and join another tracers in the channel above the body.
 \end{subfigure}
 \begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/tort_local20_268}
+\todo[inline]{S-H: Can cut the ylimit at 1.3}
 \caption{}
 \end{subfigure}
 \end{subfigure}
@@ -1333,68 +1297,15 @@ right and join another tracers in the channel above the body.
 \includegraphics*[width =\linewidth]{./figs/tort_diff_top10_268}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20tort} The tortuosity study in the fluid with 
-20 nearly touching bodies when the porosity is 62.9 \%.
-(a) The 
-x-component velocity u(-1, y) with respect to its maximum velocity
-$u_{\max}=2.9828
-\times 10^{-3}$ at equal spreading tracers on the cross section x = -1. 
-(b) The local tortuosity $\tau(y)$ on the cross section x = -1. 
-(c) The largest 10 difference of 
-local tortuosity $\tau$ at two neighboring tracers in
- 20 nearly touching bodies eroding when the porosity is 62.9 \% 
-and the tortuosity is 1.0979. The same color of a pair of trajectories 
-means they are from two neighboring tracers.}
-%(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
-%(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
+\caption{\label{fig:Eroding20tort} The tortuosity of an eroded geometry
+with porosity 62.9\%. (a) The x-component of the velocity $u(-1, y)$
+normalized by its maximum velocity of $2.98 \times 10^{-3}$. (b) The
+local tortuosity $\tau(y)$ on the cross section $x = -1$.  The spatially
+averaged tortuosity through the channel is $1.098$.  (c) The
+trajectories resulting in the ten largest differences between
+neighboring trajectories.  Neighboring trajectories have the same
+color.}
 \end{figure}
-
-{\color{red}
-In Fig.~\ref{fig:Eroding20tort} we release 1000 tracers 
-from the starting cross section x = -1 to 
-the end cross section x = 1 and 
-use the local tortuosity to analysis the effect
-of the geometrical structure on fluid velocity field when the porosity is 62.9 \%.
-In Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
-x-component velocity u(-1, y) to its maximum velocity $u_{max}=2.9828
-\times 10^{-3}$ at equal spreading tracers on the starting cross section.
-The velocity is continuous along the starting cross section and
-acting as several Poiseuille flows. This velocity graph is different
-from the one in~\cite{matyka2008tortuosity} since we choose our cross
-section to be the beginning of the flow before the fluid touches any
-body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuosity
-$\tau(y)=\lambda(y)/d$
-of the tracers at $y$ on the starting cross section x = -1 
-where $d = 2$.
-This graph is not continuous 
-and the jumps in $\tau$ mean that the initial neighboring tracers have been
-seperated by the bodies. 
-The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
-}
-
-
-
-{\color{red}
-In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of 
-$\tau$ at two neighboring tracers 
-and draw the trajectories of neighboring tracers
-if the difference of $\tau$ at the neighboring tracers is large. 
-From Fig.~\ref{fig:Eroding20tort}(c), we collect the 10 largest difference of $\tau$ 
-at the neighboring tracers and 
-draw the pair of trajectories in the same color and 
-are able to tell the neighboring trajectories will be very 
-different if they are separated by bodies.
-For each pair of trajectories, 
-they are splitted by the body at the left side of the body, then
-one of them goes up and the other one goes down along the body 
-until they rejoin with each other at the right side of body.  
-Furthermore, the pair trajectories could be splitted by more than one body, 
-for example in Fig.~\ref{fig:Eroding20tort}(c) the toppest red pair trajectories 
-are splitted by two close bodies.
-}
-
-
-
 
 %\begin{figure}[H]
 %\center
@@ -2091,6 +2002,117 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %When all the bodies have vanished completely the flow rate $U$ is equal to 1.
 %In Fig.~\ref{fig:Eroding20flowrate}(b), the flow rate $U$ increases exponentially 
 %with growth rate close to $\ln10^4$. }
+%Besides the channels between two bodies, there is a single channel goes
+%across the domain horizontally and the flow has been concentrated in
+%this channel.  In the second frame of Fig.~\ref{fig:Eroding20vort}, this
+%channel is between bodies 1 \& 20, 1 \& 9, 4 \& 3, 8 \& 11, 8 \& 2, 6 \&
+%12, and 6 \& 19.  We can get a better understanding of this channel from
+%the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}.  In Fig.~\ref{fig:Eroding20tracer}, 
+%the flow (or tracer) first comes from three small channels between outer wall \& body
+%10, bodies 7 \& 14, and bodies 14 \& 18, then the three branches become
+%one and go into the main channel between bodies 1 \& 9.  From the first
+%frame to the forth frame of Fig.~\ref{fig:Eroding20vort}, this channel
+%is expanding faster than other channel and bodies 4 \& 12 has vanished
+%and body 19 is almost gone in the forth frame.  The reason of fast
+%expansion of this channel is the high vorticity.  In the forth frame of
+%Fig.~\ref{fig:Eroding20vort}, we could see the vorticity is relatively
+%high on the side of bodies which form this channel so the bodies are
+%eroded fast on the side of this channel or have vanished completely.
+%{\color{red} 
+%Furthermore, how long the body lasts in the fluid depends on not only
+%the size of the body but also the location of the body.  For example,
+%the first three vanishing bodies are body 12 (as t=0.0256), 4 (as
+%t=0.0278), then 17 (as t=0.0287).  Since body 4 is located in the main
+%flow channel so the body 4 is vanished earlier than body 17 although the
+%initial size of body 4 is larger than the size of body 17.  This channel
+%will keep expanding and the bodies around this channel will vanish
+%earlier than others.  After body 17, the next 8 vanished bodies with
+%respect to time are body 19 (as t=0.0312),  body 7 (as t=0.0325), body
+%20 (as t=0.0329), body 8 (as t=0.0349), body 10 (as t=0.0353), body 3
+%(as t=0.0356), body 14 (as t=0.0363), then body 9 (as t=0.0376).  All of
+%these eight bodies were around this channel before they are gone.
+%
+%For the flat faces at the sites of near contact, since we put the body
+%be close to one another so we are able to see all the channels between
+%two close bodies have flat faces.  Besides the channels between bodies,
+%we also observe the flat faces on the bodies which are close to the
+%outer wall. For example, we see the flat faces on the top of bodies 1 \&
+%6 and the bottom of bodies 13 \& 15.  
+%
+%Since we use a Barycentric quadrature rule to approximate the velocity
+%of tracers and apply the fourth order Runge Kutta method to find the new
+%locations of tracers in each step, the tracers can be very close to but
+%not penetrate the bodies.  Those body-closed tracers are moving
+%perfectly so we are able to observe the details of the interaction of
+%bodies and fluid.  Although the direction of flow is from left to right,
+%the tracers will not only travel horizontally but also vertically.  In
+%the bottom middle frame of Fig.~\ref{fig:Eroding20tracer}, some tracers
+%climb up from right to left around the body.  There is a zoom windows of
+%the climbing tracers trajectories in the bottom right frame of Fig.~\ref{fig:Eroding20tracer} and
+%they are taken from the bottom middle frame of
+%Fig.~\ref{fig:Eroding20tracer} with more tracers.  In the bottom right frame of 
+%Fig.~\ref{fig:Eroding20tracer} the tracers around the center body first go
+%from the channel below the body, climb up to the left, then go to the
+%right and join another tracers in the channel above the body. 
+%}
+%\begin{figure}[H]
+%\begin{center}
+%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
+%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
+%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
+%\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
+%  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
+%  tracers around the bodies. Since we use a Barycentric quadrature rule
+ % and the fourth order Runge Kutta method, the tracers can be very close
+ % to but not penetrate the bodies.}
+%\end{center}
+%\end{figure}
+%{\color{red}
+%In Fig.~\ref{fig:Eroding20tort} we release 1000 tracers 
+%from the starting cross section x = -1 to 
+%the end cross section x = 1 and 
+%use the local tortuosity to analysis the effect
+%of the geometrical structure on fluid velocity field when the porosity is 62.9 \%.
+%In Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
+%x-component velocity u(-1, y) to its maximum velocity $u_{max}=2.9828
+%\times 10^{-3}$ at equal spreading tracers on the starting cross section.
+%The velocity is continuous along the starting cross section and
+%acting as several Poiseuille flows. This velocity graph is different
+%from the one in~\cite{matyka2008tortuosity} since we choose our cross
+%section to be the beginning of the flow before the fluid touches any
+%body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuosity
+%$\tau(y)=\lambda(y)/d$
+%of the tracers at $y$ on the starting cross section x = -1 
+%where $d = 2$.
+%This graph is not continuous 
+%and the jumps in $\tau$ mean that the initial neighboring tracers have been
+%seperated by the bodies. 
+%The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
+%}
+%{\color{red}
+%In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of 
+%$\tau$ at two neighboring tracers 
+%and draw the trajectories of neighboring tracers
+%if the difference of $\tau$ at the neighboring tracers is large. 
+%From Fig.~\ref{fig:Eroding20tort}(c), we collect the 10 largest difference of $\tau$ 
+%at the neighboring tracers and 
+%draw the pair of trajectories in the same color and 
+%are able to tell the neighboring trajectories will be very 
+%different if they are separated by bodies.
+%For each pair of trajectories, 
+%they are splitted by the body at the left side of the body, then
+%one of them goes up and the other one goes down along the body 
+%until they rejoin with each other at the right side of body.  
+%Furthermore, the pair trajectories could be splitted by more than one body, 
+%for example in Fig.~\ref{fig:Eroding20tort}(c) the toppest red pair trajectories 
+%are splitted by two close bodies.
+%}
+
+
+
+
+
+
 
 \end{document}
 
