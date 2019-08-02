@@ -1,7 +1,7 @@
 # Parameters
 
 # The data file for the initial geometry
-input_geos/10circ4_128.thlen
+input_geos/thlen50den1024_347.in
 
 # Varied computational parameters
 1	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
@@ -11,7 +11,7 @@ input_geos/10circ4_128.thlen
 15	# epsfac: epsilon = epsfac/npts
 10	# sigfac: sigma = sigfac/npts
 1e-4	# dt
-4e-4	# dtout: if zero, will round up to output at every step. 
+0	# dtout: if zero, will round up to output at every step. 
 
 # Fixed physical parameters
 1	# fixpdrop: 1 to keep pressure drop fixed.

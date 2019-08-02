@@ -80,11 +80,11 @@ function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::B
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
-	elseif (rotation == true && length(thlenden.denrot) == 0)
-		println("Computing the rotated density function.")
-		npts,nbods,xv,yv = getnxy(thlenden)
-		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
+#	elseif (rotation == true && length(thlenden.denrot) == 0)
+#		println("Computing the rotated density function.")
+#		npts,nbods,xv,yv = getnxy(thlenden)
+#		xrot,yrot = xyrot(xv,yv)
+#		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
 	end
 	return
 end
