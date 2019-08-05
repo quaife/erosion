@@ -862,42 +862,45 @@ mixing~\cite{leb-den-dav-bol-car-dec-bou2011}.
 \subsection{Anomalous Diffusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The dynamics of fluid in porous media is often characterized in terms of
-anomalous diffusion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}, and the
-anomalous diffusion rate depends on the properties of the geometry.  The
+anomalous diffusion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.  The
 anomalous diffusion depends on the porosity and
 permeability~\cite{koc-bra1988}, but the distribution of the bodies also
 affects the anomalous diffusion rates.  Since erosion causes certain
 structure in porous media, calculating the anomalous diffusion rates in
 these geometries is important.
 
-One way to define the anomalous diffusion rate is by using tracer
-trajectories that are governed by equation~\eqref{eqn:trajectories}.
-Given a set of trajectories, we define $\lambda_j(t)$ to be the distance
-travelled by the particle
+We calculate the anomalous diffusion rates by analyzing the tracer
+trajectories governed by equation~\eqref{eqn:trajectories} for
+geometries that are formed by erosion.  Given a set of trajectories, we
+define $\lambda_j(t)$ to be the arclength of the trajectory
 \begin{align}
   \lambda_j(t) = \int_{0}^t \|\ss'_j(\tau)\|\, d\tau, 
     \quad j=1,\ldots,N_p.
 \end{align}
-Having formed $N_p$ trajectories, the first and second ensemble moments
-are
+Then, the first and second ensemble moments are
 \begin{align}
   \langle \lambda \rangle (t) = 
     \frac{1}{N_p} \sum_{j=1}^{N_p} \lambda_j(t), \quad 
     \sigma_\lambda^2(t) = \frac{1}{N_p} 
     \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
 \end{align}
+Then, particle dispersion is characterized as $\sqrt{\sigma_\lambda^2}$.
 At early times, the particles have not explored much of the geometry,
 and we expect a ballistic motion $\sigma_\lambda^2 \sim t^2$.  However,
 as the particles pass the grains, their trajectories are altered, and we
-expect that $\sigma_\lambda^2 \sim t^\alpha$, with $\alpha < 1$, which
-would indicate that the flow is sub-diffusive.  With respect to erosion,
-as the bodies erode, we expect that the channelization of the geometry
+expect that $\sigma_\lambda^2 \sim t^\alpha$, with $\alpha < 1$,
+indicating that the flow is sub-diffusive.  With respect to erosion, as
+the bodies erode, we expect that the channelization of the geometry
 results in more trajectories undergoing a ballistic motion, and this
-would indicate a larger anomalous diffusion rate.
+would indicate decrease particle dispersion, meaning a larger anomalous
+diffusion rate.
 
-Towards the end of the erosion simulation, the porosity is low, and we
-expect that the ensemble moments behave similarly to transport in a
-pipe.  In a grainless geometry, the trajectory originating at
+At early times, the geometry has not been altered by erosion, and we
+expect large amounts of dispersion.  However, as the bodies erode, the
+porosity increases and the trajectories behave more closely to laminar
+trajectories in an open channel.  To be able to compare the dispersion
+of an eroded geometry with that of an open channel, we consider
+trajectories in an open channel.  The trajectory originating at
 $(s_1(0),s_2(0))$ is
 \begin{align}
   s_1(t) &= (1-s_2(0)^2)t + s_1(0), \\
@@ -909,62 +912,70 @@ moments are
   \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
     \sigma_\lambda^2(t) = \frac{4}{45}t^2.
 \end{align}
+In Section~\ref{sec:results}, we compare these moments in an open
+channel with the trajectories in an eroding geometry.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The tortuosity of a geometry quantifies the average amount of turning
-made by a streamline.  The choice of how to average is not universal,
-and Duda et al.~\cite{dud-koz-mat2011} summarize several options for
-averaging.  One particular choice, which we shall adopt, allows us to
-compute the tortuosity in terms of trajectories, or by using an area
-integral over the fluid geometry.  Another advantage of this choice is
-that it is not affected by regions of recirculation.  Mathematically,
-the definition of tortuosity that we use is
+The tortuosity of a geometry, denoted by $T \geq 1$, is a dimensionless
+number that quantifies the average amount of turning made by
+trajectories passing through the geometry.  The local tortuosity
+\begin{align}
+  \tau(y) = \frac{\lambda(y)}{d}.
+  \label{eqn:localTort}
+\end{align}
+considers the length of a single trajectory, $\lambda$ whose initial
+$y$-coordinate is a value $y$ on a cross-section of length $d$.  Taking
+the average over all points on the cross-section defines the hydraulic
+tortuosity
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
   {\displaystyle\int_{S}u_x(y)\,dy},
   \label{eqn:tortuosity1}
 \end{align}
-where $S$ is an cross-section perpendicular to the $x$ axis with length
-$d$, $\lambda(y)$ is the length of the streamline that is initialized at
+where $S$ is a cross-section perpendicular to the $x$-axis with length
+$d$, $\lambda(y)$ is the length of the trajectory that is initialized at
 the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of the
 velocity at the $y$-coordinate along $S$.  Since the flow is laminar in
 the absence of grains, the tortuosity of a straight channel is $T=1$.
-Following~\cite{dud-koz-mat2011}, two parallel cross-sections are
-chosen, and the trajectories that pass between them are formed.  In our
-work, we initialize the trajectories at $x=-1$ and terminate them at
-$x=1$.
-
-Under the assumptions that the flow is incompressible and not reentrant,
-meaning that all streamlines connect the two cross-sections, the
-tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
+The choice for the trajectory with length $\lambda(y)$ is not universal,
+and Duda et al.~\cite{dud-koz-mat2011} summarize several options. One
+choice, which we adopt, considers trajectories that originate at $S$ and
+terminate at a parallel cross-section.  We use the cross-sections $x=-1$
+and $x=1$.  This choice of averaging allows us to also compute the
+tortuosity in terms of an area integral.  Under the assumptions that the
+flow is incompressible and not reentrant, meaning that all streamlines
+connect the two cross-sections, the tortuosity in
+equation~\eqref{eqn:tortuosity1} is equivalent to~\cite{dud-koz-mat2011}
 \begin{align}
   T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
-           {\displaystyle\int_\Omega u_x(\yy)\, d\yy}.
+           {\displaystyle\int_\Omega u_x(\yy)\, d\yy},
   \label{eqn:tortuosity2}
 \end{align}
-Recirculation zones are possible in viscous fluids, but they only
-constitute a small fraction of the total porous media, and in our
-examples, their velocities are very small.  Therefore, the tortuosity
-defined in equation~\eqref{eqn:tortuosity2} is an upper bound for the
-definition in equation~\eqref{eqn:tortuosity1}, but for the geometries
-we consider, we will show that their difference is negligible (see
+where $\Omega$ is the region between the inlet and outlet
+cross-sections.  Recirculation zones are possible in viscous
+fluids~\cite{hig1985}, but they only constitute a small fraction of the
+total porous media, and in our examples, their velocities are very
+small.  Therefore, the tortuosity defined in
+equation~\eqref{eqn:tortuosity2} is a tight upper bound for the
+definition in equation~\eqref{eqn:tortuosity1}.  For the geometries we
+consider, we will show that their difference is negligible (see
 Figure~\ref{fig:Eroding20tort_all}).  Since
 equation~\eqref{eqn:tortuosity2} does not require the additional work of
-computing particle trajectories, we use this definition for the
-majority of the tortuosity calculations.
+computing particle trajectories, we use this definition for the majority
+of the tortuosity calculations.
 
 The first method to numerically compute the tortuosity uses $N_p$
-trajectories that are initially at $(-1,y_i)$, $i=1,\ldots,N_p$, and
+trajectories that are initialized at $(-1,y_i)$, $i=1,\ldots,N_p$, and
 stopped when their $x$ coordinate is 1.  We choose $y_i$ so that the
 trajectories are initially uniformly spaced in $(-1,1)$.  Having
 computed these trajectories, the tortuosity is approximated as
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
     u_x(y_i) \lambda(y_i) \Delta y}
-  {\displaystyle\sum_{i=1}^{N_p} u_x(y_i) \Delta y_i}, 
+  {\displaystyle\sum_{i=1}^{N_p} u_x(y_i) \Delta y}, 
 \end{align}
 where $\Delta y = 2/(N_p + 1)$ and $y_i = -1 + i \Delta y$,
 $i=1,\ldots,N_p$.  Alternatively, to compute the tortuosity in terms of
@@ -978,21 +989,16 @@ assigned a value of 0.  Then, the tortuosity is approximated as
 \end{align}
 
 There have been efforts to relate the tortuosity to the
-porosity~\cite{matyka2008tortuosity}, but these results can not be
-universal since the porosity which depends on only a single number, the
-tortuosity is affected by the distribution of pores within the porous
-network.  In addition to the hydraulic tortuosity, a local tortuosity
-can be used to analyze the local behavior of a streamline near a
-body~\cite{matyka2008tortuosity}.  The local tortuosity of a streamline
-initialized at $y$ along $S$ is
+porosity~\cite{matyka2008tortuosity}.  For example, Matyka et
+al.~\cite{matyka2008tortuosity} propose the models
 \begin{align}
-  \tau(y) = \frac{\lambda(y)}{d}.
-  \label{eqn:localTort}
+  T(\phi) &= \phi^{-p}, \\
+  T(\phi) &= 1-p \log \phi, \\
+  T(\phi) &= 1+p (1-\phi), \\
+  T(\phi) &= (1+p (1-\phi))^2, 
 \end{align}
-\todo[inline]{Need to flesh this out more}
-\todo[inline]{Talk about the different relationships between tortuosity
-and porosity from the literature}
-
+where $p>0$ is a fitting parameter.  In Section~\ref{sec:results}, we
+compare these four models with the tortuosity of eroding geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pore Throat Size}
