@@ -898,13 +898,13 @@ would indicate a larger anomalous diffusion rate.
 Towards the end of the erosion simulation, the porosity is low, and we
 expect that the ensemble moments behave similarly to transport in a
 pipe.  In a grainless geometry, the trajectory originating at
-$(x_0,y_0)$ is
+$(s_1(0),s_2(0))$ is
 \begin{align}
-  s_1(t) &= (1-y_0^2)t + x_0, \\
-  s_2(t) &= y_0.
+  s_1(t) &= (1-s_2(0)^2)t + s_1(0), \\
+  s_2(t) &= s_2(0).
 \end{align}
-Averaging over $y_0 \in [-1,1]$, the first and second ensemble moments
-are
+Averaging over $s_2(0) \in [-1,1]$, the first and second ensemble
+moments are
 \begin{align}
   \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
     \sigma_\lambda^2(t) = \frac{4}{45}t^2.
@@ -928,35 +928,37 @@ the definition of tortuosity that we use is
   \label{eqn:tortuosity1}
 \end{align}
 where $S$ is an cross-section perpendicular to the $x$ axis with length
-$d$, $\lambda(y)$ is the length of the streamline that is initialized
-at the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of
-the velocity at the $y$-coordinate along $S$.
-Following~\cite{dud-koz-mat2011}, the trajectories are formed until they
-cross a second cross-section that is parallel to the initial
-cross-section.  In our work, we always initialize the trajectories at
-$x=-1$ and stop them when they reach $x=1$.
+$d$, $\lambda(y)$ is the length of the streamline that is initialized at
+the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of the
+velocity at the $y$-coordinate along $S$.  Since the flow is laminar in
+the absence of grains, the tortuosity of a straight channel is $T=1$.
+Following~\cite{dud-koz-mat2011}, two parallel cross-sections are
+chosen, and the trajectories that pass between them are formed.  In our
+work, we initialize the trajectories at $x=-1$ and terminate them at
+$x=1$.
 
 Under the assumptions that the flow is incompressible and not reentrant,
-the tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
+meaning that all streamlines connect the two cross-sections, the
+tortuosity can be equivalently measured as~\cite{dud-koz-mat2011}
 \begin{align}
   T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
            {\displaystyle\int_\Omega u_x(\yy)\, d\yy}.
   \label{eqn:tortuosity2}
 \end{align}
-The flow is reentrant if all streamlines connect the inlet to the
-outlet.  Recirculation zones are possible in viscous fluids, but they
-only constitute a small fraction of the total porous media and tend to
-have very small velocities.  Therefore, the tortuosity defined in
-equation~\eqref{eqn:tortuosity2} is an upper bound for the definition in
-equation~\eqref{eqn:tortuosity1}, but for the geometries we consider, we
-will show that their difference is negligible.  Since
+Recirculation zones are possible in viscous fluids, but they only
+constitute a small fraction of the total porous media, and in our
+examples, their velocities are very small.  Therefore, the tortuosity
+defined in equation~\eqref{eqn:tortuosity2} is an upper bound for the
+definition in equation~\eqref{eqn:tortuosity1}, but for the geometries
+we consider, we will show that their difference is negligible (see
+Figure~\ref{fig:Eroding20tort_all}).  Since
 equation~\eqref{eqn:tortuosity2} does not require the additional work of
 computing particle trajectories, we use this definition for the
-tortuosity.
+majority of the tortuosity calculations.
 
-The first method to compute numerically compute the tortuosity uses
-$N_p$ trajectories that are initially at $(1,y_i)$, $i=1,\ldots,N_p$,
-and stopped when their $x$ coordinate is 1.  We choose $y_i$ so that the
+The first method to numerically compute the tortuosity uses $N_p$
+trajectories that are initially at $(-1,y_i)$, $i=1,\ldots,N_p$, and
+stopped when their $x$ coordinate is 1.  We choose $y_i$ so that the
 trajectories are initially uniformly spaced in $(-1,1)$.  Having
 computed these trajectories, the tortuosity is approximated as
 \begin{align}
@@ -972,9 +974,8 @@ the Eulerian velocity field, we first compute the velocity at $(x_i,y_j)
 assigned a value of 0.  Then, the tortuosity is approximated as
 \begin{align}
   T = \frac{\sum\limits_{i,j=1}^N \|\uu(x_i,y_j)\|\Delta x \Delta y}
-      {\sum\limits_{i,j=1}^N u(x_i,y_j) \Delta x \Delta y},
+      {\sum\limits_{i,j=1}^N u_x(x_i,y_j) \Delta x \Delta y}.
 \end{align}
-where $\uu = (u,v)$.
 
 There have been efforts to relate the tortuosity to the
 porosity~\cite{matyka2008tortuosity}, but these results can not be
@@ -989,6 +990,8 @@ initialized at $y$ along $S$ is
   \label{eqn:localTort}
 \end{align}
 \todo[inline]{Need to flesh this out more}
+\todo[inline]{Talk about the different relationships between tortuosity
+and porosity from the literature}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
