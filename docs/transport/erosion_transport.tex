@@ -858,7 +858,6 @@ Resolving the flow in these small velocity regions is essential to
 accurately describe anomalous diffusion and
 mixing~\cite{leb-den-dav-bol-car-dec-bou2011}.
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Diffusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -875,7 +874,7 @@ trajectories that are governed by equation~\eqref{eqn:trajectories}.
 Given a set of trajectories, we define $\lambda_j(t)$ to be the distance
 travelled by the particle
 \begin{align}
-  \lambda_j(t) = \int_{0}^t \|\ss_j(\tau)\|\, d\tau, 
+  \lambda_j(t) = \int_{0}^t \|\ss'_j(\tau)\|\, d\tau, 
     \quad j=1,\ldots,N_p.
 \end{align}
 Having formed $N_p$ trajectories, the first and second ensemble moments
@@ -894,6 +893,22 @@ would indicate that the flow is sub-diffusive.  With respect to erosion,
 as the bodies erode, we expect that the channelization of the geometry
 results in more trajectories undergoing a ballistic motion, and this
 would indicate a larger anomalous diffusion rate.
+
+Towards the end of the erosion simulation, the porosity is low, and we
+expect that the ensemble moments behave similarly to transport in a
+pipe.  In a grainless geometry, the trajectory originating at
+$(x_0,y_0)$ is
+\begin{align}
+  s_1(t) &= (1-y_0^2)t + x_0, \\
+  s_2(t) &= y_0.
+\end{align}
+Averaging over $y_0 \in [-1,1]$, the first and second ensemble moments
+are
+\begin{align}
+  \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
+    \sigma_\lambda^2(t) = \frac{4}{45}t^2.
+\end{align}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
@@ -1307,28 +1322,51 @@ neighboring trajectories.  Neighboring trajectories have the same
 color.}
 \end{figure}
 
+In Figure~\ref{fig:Eroding20tort_all}, we plot the tortuosity as a
+function of the porosity from the initial porosity of $0.38$ until all
+the bodies have eroded.  The tortuosity is computed with both the
+length of the Lagrangian trackers~\eqref{eqn:tortuosity1} and using the
+spatial average of the velocity on an Eulerian
+grid~\eqref{eqn:tortuosity2}.  The red square mark corresponds to the
+porosity in Figure~\ref{fig:Eroding20tort}(c).  The two methods of
+calculating the tortuosity give similar results with any discrepancy
+being accounted for by slow regions of recirculation.  Computing the
+velocity on an Eulerian grid is computationally easier than simulating
+many trajectories, so we use the Eulerian approach for all future
+examples.  As the bodies erode, this creates wide channels where
+trajectories undergo only minor vertical deflections, and this explains
+why the tortuosity eventually decreases with porosity.  However, at the
+early stages of the erosion, the tortuosity increases with porosity,
+which can be explain as follows.   In the absence of erosion
+(left plot in Figure~\ref{fig:Eroding20vort}), many of the trajectories,
+such as those initialized between bodies 15 \& 18, only perform minor
+deflections to pass through the narrow regions, albeit, very slowly.
+However, as erosion starts to open the channels, the trajectories
+deflect into the fast regions, and this increases the amount of vertical
+deflection, and therefore the tortuosity.
+\todo[inline]{BQ: Need to work on this paragraph}
+
+
 \begin{figure}[H]
 \center
 \includegraphics*[width =0.5\linewidth]{./figs/tort_eulerian}
-\caption{\label{fig:Eroding20tort_all} The Eulerian and Lagrangian approach of tortuosity. 
-The blue dots are Eulerian approach of tortuosity and the red stars and 
-square are Lagrangian approach of tortuosity.}
+\caption{\label{fig:Eroding20tort_all} The tortuosity inside of an
+eroding geometry initialized with 20 bodies.  The tortuosity is
+calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue dots)
+and Lagrangian method~\eqref{eqn:tortuosity1} (red stars).  The red
+square correspond to the geometry in Figure~\ref{fig:Eroding20tort}(c).}
 \end{figure}
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.5\linewidth]{./figs/tort_diff_top10_268}
-%\caption{\label{fig:Eroding20tort_traj} The largest 10 difference of 
-%local tortuosity $\tau$ at two neighboring tracers in
-% 20 nearly touching bodies eroding when the porosity is 62.9 \% 
-%and the tortuosity is 1.0979. The same color of a pair of trajectories 
-%means they are from two neighboring tracers.}
-%\end{figure}
+
+
 
 \begin{figure}[H]
 \center
 \includegraphics*[width =0.5\linewidth]{./figs/anomalous_diffusion20d_new}
-\caption{\label{fig:Eroding20anomalous} The analysis of anomalous diffusion in
- 20 nearly touching bodies with respect to six porosities.}
+%\caption{\label{fig:Eroding20anomalous} The
+%mean squared displacement of the tracer trajectories  at several
+%different stages of the erosion process.  As the porosity increases, the
+%mean squared displacement tends towards $\sigma^2_\lambda(t) \sim t^$
+%}
 \end{figure}
 
 
