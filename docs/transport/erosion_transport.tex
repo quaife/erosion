@@ -1444,15 +1444,19 @@ as $p=0.1669$ and the root mean square deviation is $1.13 \times
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{50 nearly touching bodies}
+\subsection{50 eroding bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {\color{red}
 The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{100 bodies}
+\subsection{100 eroding bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As a final example, we consider 100 eroding bodies with an initial
+porosity near 55\%.  Snapshots of the configurations and vorticity are
+in Figure~\ref{fig:Eroding100vort}.
+
 \begin{figure}[H]
  \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =0.9\linewidth]{./figs/100b_50}
@@ -1477,6 +1481,56 @@ The second nearly touching bodies case is 50 bodies in a Hagen-Poiseuille flow.
   $\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
   $\sigma=10/256$.}
 \end{figure}
+
+To quantify the tortuosity, we compute the relative velocity
+(Figure~\ref{fig:Eroding100tort}(a)) and the local tortuosity
+(Figure~\ref{fig:Eroding100tort}(b)) of 1000 tracers placed immediately
+to the left of the porous region at $x=-1$.  The porosity at this
+instance in time is $62.98\%$ and the maximum velocity at $x=-1$ is
+$3.90 \times 10^{-4}$. The initial velocity of the tracers is
+qualitatively similar to the 20 body example
+(Figure~\ref{fig:Eroding20tort}(a)), except with additional maximum and
+minimums because of the additional bodies.  Compared to
+Figure~\ref{fig:Eroding20tort}(b), the local tortuosity is much more
+discontinuous.  These discontinuities can be explained by examining the
+trajectories of tracers in Figure~\ref{fig:Eroding100tort}(c).  Here,
+there are many instances of neighboring trajectories that are deflected
+apart from one another as they tend to a stagnation point in the flow,
+and this results in trajectories with significantly different lengths.
+At this instance in time one the tracers travels 25.5\% farther than it
+would have if the bodies had been absent, and the average tracer
+travelled ???\% farther than it would have if the bodies were absent.
+Therefore, at this instance in time, the tortuosity is $1.???$
+\todo[inline]{S-H: Fill in the numbers in this paragraph}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{\textwidth}
+\includegraphics*[width =\linewidth]{./figs/velocity_loc100}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{\textwidth}
+\includegraphics*[width =\linewidth]{./figs/tort_local100}
+\caption{}
+\end{subfigure}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width = \textwidth]{./figs/100b_t100tracer}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100tort} The tortuosity study in the fluid
+with 100 bodies when the porosity is 62.98\%.  (a) The x-component
+velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.9021
+\times 10^{-4}$ at equal spreading tracers on the cross section x = -1.
+(b) The local tortuosity $\tau(y)$ on the cross section x = -1. (c) The
+trajectories of 200 tracers released at $x = -1$ in the fluid with
+multiple bodies.}
+\end{figure}
+
+
+
+
+
 
 {\color{red}
 This case is 100 bodies in a Hagen-Poiseuille flow. The background
@@ -1541,41 +1595,6 @@ the streamlines have been push up and down by the bodies and
 some of them are close together. 
 
 
-
-
-To measure the local behavior of fluid quantitatively, 
-we use the velocities and local tortuosities at the starting cross section 
-to analysis the interaction of fluid and bodies until the end cross section 
-in Fig.~\ref{fig:Eroding100tort}(b) and (c).
-In Fig.~\ref{fig:Eroding100tort}(b) the graph represents the ratio of the
-x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
-\times 10^{-4}$ at equal spreading tracers on the strating cross section.
-As in the case of 20 nearly touching bodies, the velocity is continuous along
-the starting cross section and acting as a Poiseuille flow in the channel between
-bodies. When the fluid is close to bodies
-the speed of fluid will be slow down because of the no-slip condition on the bodies
-and this causes the separated branches of the inlet flow.
-The maximum velocity of the fluid with 100 bodies on the starting cross 
-section is slower than the maximum velocity of the fluid with 20 bodies
-but the velocity in the case of 100 bodies 
-changes more rapidly than the velocity of the fluid with 20 bodies.
-The reason of the rapid change on the starting cross section of 
-100-body case is because there are 
-more bodies near the starting cross section in
-100-body case than in the 20-body case. 
-so the inlet flow in 100-body case
-will be separated into more branches than the flow in 20-body case. 
-
-In Fig.~\ref{fig:Eroding100tort}(c) we record the 
-local tortuosity $\tau(y)$ for $y$ on the starting cross section x = -1.
-It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies
-is 1.2547 and the minimum is 1.0003. This function $\tau$
-has more jumps than the one in the case of 20 bodies but its maximum 
-is smaller than the maximum in the case of 20 bodies. 
-The jump in this graph means the neighboring trajectories are splitted by bodies
-so it is reasonable to have more jumps in the case of 100-body than the case of 20-body
-since there are more bodies in the former case. 
-
 %To understand the meaning of jump 
 %of $\tau$, we use the data we got from local tortuosity $\tau(y)$
 %to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
@@ -1599,34 +1618,6 @@ since there are more bodies in the former case.
 %\end{center}
 %\end{figure}
 
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics[width = \textwidth]{./figs/100b_t100tracer}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.45\textwidth}
-\begin{subfigure}[b]{\textwidth}
-\includegraphics*[width =\linewidth]{./figs/velocity_loc100}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{\textwidth}
-\includegraphics*[width =\linewidth]{./figs/tort_local100}
-\caption{}
-\end{subfigure}
-\end{subfigure}
-
-\caption{\label{fig:Eroding100tort} The tortuosity study in the fluid with 100 bodies 
-when the porosity is 62.98 \%.
-(a) The historical trajectories of 
-200 tracers released at x = -1 in the fluid with multiple bodies.
-(b) The 
-x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.9021
-\times 10^{-4}$ at equal spreading tracers on the cross section x = -1. 
-(c) The local tortuosity $\tau(y)$ on the cross section x = -1. 
-}
-%(c) The difference of $\tau(y)$ at two neighboring tracers on the cross section x = -1.
-%(d) The ratio of the minimum to maximum speeds along the trajectories of tracers.}
-\end{figure}
 
 \begin{figure}[H]
 \center
@@ -1643,9 +1634,12 @@ deviation is $5.2 \times 10^{-3}$.}
 \center
 \includegraphics*[width =0.45\linewidth]{./figs/100b_first_moment}
 \includegraphics*[width =0.45\linewidth]{./figs/100b_second_moment}
-\caption{\label{fig:Eroding100anomalous} The analysis of anomalous diffusion in
- 100 bodies with respect to five porosities and the reference line of 100\% porosity.
-The first moment (left) is the mean length of streamlines and the second moment (right) is the }
+\caption{\label{fig:Eroding100anomalous} The analysis of anomalous
+diffusion in 100 bodies with respect to five porosities and the
+reference line of 100\% porosity.  The first moment (left) is the mean
+length of streamlines and the second moment (right) is the 
+\todo[inline]{Slope of the top black line is 0.8715}
+}
 \end{figure}
 
 
@@ -2248,6 +2242,39 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %for example in Fig.~\ref{fig:Eroding20tort}(c) the toppest red pair trajectories 
 %are splitted by two close bodies.
 %}
+
+%To measure the local behavior of fluid quantitatively, 
+%we use the velocities and local tortuosities at the starting cross section 
+%to analysis the interaction of fluid and bodies until the end cross section 
+%in Fig.~\ref{fig:Eroding100tort}(b) and (c).
+%In Fig.~\ref{fig:Eroding100tort}(b) the graph represents the ratio of the
+%x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
+%\times 10^{-4}$ at equal spreading tracers on the strating cross section.
+%As in the case of 20 nearly touching bodies, the velocity is continuous along
+%the starting cross section and acting as a Poiseuille flow in the channel between
+%bodies. When the fluid is close to bodies
+%the speed of fluid will be slow down because of the no-slip condition on the bodies
+%and this causes the separated branches of the inlet flow.
+%The maximum velocity of the fluid with 100 bodies on the starting cross 
+%section is slower than the maximum velocity of the fluid with 20 bodies
+%but the velocity in the case of 100 bodies 
+%changes more rapidly than the velocity of the fluid with 20 bodies.
+%The reason of the rapid change on the starting cross section of 
+%100-body case is because there are 
+%more bodies near the starting cross section in
+%100-body case than in the 20-body case. 
+%so the inlet flow in 100-body case
+%will be separated into more branches than the flow in 20-body case. 
+%
+%In Fig.~\ref{fig:Eroding100tort}(c) we record the 
+%local tortuosity $\tau(y)$ for $y$ on the starting cross section x = -1.
+%It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies
+%is 1.2547 and the minimum is 1.0003. This function $\tau$
+%has more jumps than the one in the case of 20 bodies but its maximum 
+%is smaller than the maximum in the case of 20 bodies. 
+%The jump in this graph means the neighboring trajectories are splitted by bodies
+%so it is reasonable to have more jumps in the case of 100-body than the case of 20-body
+%since there are more bodies in the former case. 
 
 
 
