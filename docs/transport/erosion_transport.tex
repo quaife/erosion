@@ -1,7 +1,7 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
 \input{preambles.tex}
-\usepackage{showkeys}
+%\usepackage{showkeys}
 \begin{document}
 
 \title{Viscous Transport in Eroding Porous Media}
@@ -888,7 +888,7 @@ Then, particle dispersion is characterized as $\sqrt{\sigma_\lambda^2}$.
 At early times, the particles have not explored much of the geometry,
 and we expect a ballistic motion $\sigma_\lambda^2 \sim t^2$.  However,
 as the particles pass the grains, their trajectories are altered, and we
-expect that $\sigma_\lambda^2 \sim t^\alpha$, with $\alpha < 1$,
+expect that $\sigma_\lambda \sim t^\alpha$, with $\alpha < 1$,
 indicating that the flow is sub-diffusive.  With respect to erosion, as
 the bodies erode, we expect that the channelization of the geometry
 results in more trajectories undergoing a ballistic motion, and this
@@ -1500,7 +1500,7 @@ and this results in trajectories with significantly different lengths.
 At this instance in time one the tracers travels 25.5\% farther than it
 would have if the bodies had been absent, and the average tracer
 travelled ???\% farther than it would have if the bodies were absent.
-Therefore, at this instance in time, the tortuosity is $1.???$
+Therefore, at this instance in time, the tortuosity is $1.???$.
 \todo[inline]{S-H: Fill in the numbers in this paragraph}
 
 \begin{figure}[H]
@@ -1527,36 +1527,84 @@ trajectories of 200 tracers released at $x = -1$ in the fluid with
 multiple bodies.}
 \end{figure}
 
+The tortuosity at all porosities from the initial condition until all
+the bodies have eroded is in Figure~\ref{fig:Eroding100tort_all}.  The
+initial tortuosity is around $T=1.2$ and decays towards $T=1$.  The
+tortuosities indicated by the blue dots are calculated using the
+Eulerian approach~\eqref{eqn:tortuosity2}, while the red marks use the
+Lagrangian approach~\eqref{eqn:tortuosity1}.  Again, the two methods
+give comparable results indicating that any recirculation is small and
+negligible.  As in the previous examples, the tortuosity depends on the
+porosity through a power law model with a small root-mean-squared error
+of $5.2 \times 10^{-3}$.  For this example, the logarithm tortuosity
+model $\hat{T}(\phi) = 1 - p \ln(\phi)$ achieves a similar
+root-mean-squared error.  The tortuosity has one interesting feature
+near the end of the simulation where it suddenly increases.  This
+behavior can be explained by ... \todo[inline]{S-H: Show me what is
+going on here as we discussed.} 
+
+\begin{figure}[H]
+\center
+\includegraphics*[width =0.5\linewidth]{./figs/tort_eulerian100}
+\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian
+approach of tortuosity.  The blue dots are Eulerian approach of
+tortuosity and the red stars and square are Lagrangian approach of
+tortuosity.  The dash line is the fitting line
+$\widehat{T}(\phi)=\phi^{-p}$ as $p=0.2459$ and the root-mean-square
+error is $5.5 \times 10^{-3}$.  We note that the model
+$\widehat{T}(\phi) = 1-p\ln(\phi)$, with $p=0.2631$ has a comparable
+root-mean-square error of $5.2 \times 10^{-3}$.}
+\end{figure}
 
 
 
 
+Next, we use the 1000 tracer trajectories to compute the first
+(Figure~\ref{fig:Eroding100anomalous}(a)) and second
+(Figure~\ref{fig:Eroding100anomalous}(b)) moments of the streamlines at
+various porosities.  At high porosities, the first moment is similar to
+the first-moment of trajectories in a empty channel (black dashed line).
+At smaller porosities, the first moment is always linear, but larger
+slopes indicate that the length of the trajectories are longer at lower
+porosities \todo[inline]{Don't understand how this is the case}.  The
+onset of anomalous diffusion is observed in
+Figure~\ref{fig:Eroding100anomalous}(b). At early times, the particle
+spreading is comparable to that of an open channel (dashed curve)
+corresponding to the ballistic regime.  However, as the trajectories
+traverse the geometry, a transition to a sub-diffusion case, especially
+at low porosities, is evident.  The dashed-dotted line corresponds has a
+slope less than 1 indicating the long time behavior of the trajectories
+\begin{align*}
+  \sigma_\lambda \sim t^{0.8715}.
+\end{align*}
 
-{\color{red}
-This case is 100 bodies in a Hagen-Poiseuille flow. The background
-flow is 
-\begin{align}
-  \UU(\xx)=U \left[
-  \begin{array}{c}
-    1-y^2 \\ 0
-  \end{array}
-  \right]
-\end{align}
-with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
-We record the vorticity of 
-fluid in colormap during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
-measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four equispaced times.
-Since the vorticity is equivalent to the shear stress and the erosion is faster in the regions where
-the magnitude of the vorticity is larger 
-so the erosion is getting faster and faster 
-from the first snapshot to the forth one in Fig.~\ref{fig:Eroding100vort}.
-At t = 0.005 the porosity is 55.54\% and the most gap sizes between bodies are less than 0.015 in 
-Fig.~\ref{fig:Eroding100gap}(a). Since some of the bodies are vanished in the fluid, the numner of gaps 
-decreases and the gap sizes get larger and larger between the remaining bodies. 
-In Fig.~\ref{fig:Eroding100gap}(b) and (c) we still can see small gap sizes are in the majority but 
-it is not as concentrated as the one we see in Fig.~\ref{fig:Eroding100gap}(a). 
-In Fig.~\ref{fig:Eroding100gap}(d) there are only 254 gaps between 82 bodies and 
-the distribution of gap sizes spreads over without any major pack.  
+\begin{figure}[H]
+\center
+\includegraphics*[width =0.45\linewidth]{./figs/100b_first_moment}
+\includegraphics*[width =0.45\linewidth]{./figs/100b_second_moment}
+\caption{\label{fig:Eroding100anomalous} The first and second moments of
+trajectories passing through an eroding geometry at several porosities.
+The dashed black line corresponds to a porosity of 100\%, and the
+dashed-dotted line is a line of best fit with slope 0.8715.}
+\end{figure}
+
+Finally, using network models for flow in porous media~\cite{}, the
+anomalous diffusion rate can be linked to channel widths between solid
+bodies.  We construct a Delaunay triangulation with the centers of the
+eroding bodies corresponding to the vertices of the triangles.  Then, if
+the side of a triangle connects two vertices, we call the bodies
+neighbors.  Then, for each pair of neighbors, we measure the distance
+between the bodies.  Once a Delaunay triangulation is formed, it is used
+for all subsequent time steps until a body completely disappears.  At
+this point, a new Delaunay triangulation is formed.  
+
+We plot the distribution of the gap sizes at four equally spaced points
+in time in Figure~\ref{fig:Eroding100gap}.  At the initial configuration, there
+are 100 bodies and 318 pairs of neighbors.  The mean distance between
+these neighbors is $???  \times 10^{-???}$ and the variance is $???
+\times 10^{???}$.  As the bodies erode, the mean and variance of the
+distance between the bodies increases.  Finally, at the final time step,
+there are only 82 bodies and 254 pairs of neighbors.
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[width =\linewidth]{./figs/gap_hist100_50}
@@ -1574,39 +1622,13 @@ the distribution of gap sizes spreads over without any major pack.
 \includegraphics*[width =\linewidth]{./figs/gap_hist100_200}
 \caption{82 bodies with 254 gaps at t= 0.02}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap} The histograms of gaps in the case of erosion of 100 bodies at four time steps.}
+\caption{\label{fig:Eroding100gap} The distribution of the gaps in the
+case of erosion of 100 bodies at four time steps.}
 \end{figure}
 
-To study the behavior of fluid in the porous media with multiple bodies, 
-we release 1000 tracers equispaced in $y$ from the 
-cross section x = -1 and record their trajectories and velocities
-until they arrive the end cross section x = 1 
-and the porosity of this geometric structure is 62.98 \%. 
-To understand the global action of fluid qualitatively, 
-we only draw 200 historical trajectories from x = -1 to x = 1 
-in Fig.~\ref{fig:Eroding100tort}(a). 
-When equispaced tracers are released in a 2D tube without any grains, 
-the streamlines are straight 
-and the intersection points of streamlines and any cross section are equispaced. 
-But it is not the same when there are bodies in the fluid. 
-In Fig.~\ref{fig:Eroding100tort}(a)
-even the tracers are equispaced in $y$ on the cross section $S$, 
-the streamlines have been push up and down by the bodies and
-some of them are close together. 
 
 
-%To understand the meaning of jump 
-%of $\tau$, we use the data we got from local tortuosity $\tau(y)$
-%to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
-%and draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
-%in Fig.~\ref{fig:Eroding100tort_traj}. These pairs of two neighboring trajectories are splitted by bodies
-%then rejoin with each other and the splitting-rejoining behavior causes the difference of $\tau$ with respect to the neighboring trajectories.   
-%We also can get the idea why the maximum value of $\tau$ is smaller 
-%than the one in the case of 20 bodies . 
-%The most of the bodies in this case are smaller than those in the case of 20 bodies.
-%So when two neighboring trajectories are splitted on the left side by a smaller body they do not
-%travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
-}
+
 
 
 
@@ -1617,30 +1639,6 @@ some of them are close together.
 %200 tracers released at x = -1 in the fluid with multiple bodies.}
 %\end{center}
 %\end{figure}
-
-
-\begin{figure}[H]
-\center
-\includegraphics*[width =0.5\linewidth]{./figs/tort_eulerian100}
-\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian
-approach of tortuosity.  The blue dots are Eulerian approach of
-tortuosity and the red stars and square are Lagrangian approach of
-tortuosity.  The dash line is the fitting line
-$\widehat{T}(\phi)=1-p\ln\phi$ as $p=0.2631$ and the root mean square
-deviation is $5.2 \times 10^{-3}$.}
-\end{figure}
-
-\begin{figure}[H]
-\center
-\includegraphics*[width =0.45\linewidth]{./figs/100b_first_moment}
-\includegraphics*[width =0.45\linewidth]{./figs/100b_second_moment}
-\caption{\label{fig:Eroding100anomalous} The analysis of anomalous
-diffusion in 100 bodies with respect to five porosities and the
-reference line of 100\% porosity.  The first moment (left) is the mean
-length of streamlines and the second moment (right) is the 
-\todo[inline]{Slope of the top black line is 0.8715}
-}
-\end{figure}
 
 
 %\begin{figure}[H]
@@ -2276,9 +2274,64 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %so it is reasonable to have more jumps in the case of 100-body than the case of 20-body
 %since there are more bodies in the former case. 
 
+%To study the behavior of fluid in the porous media with multiple bodies, 
+%we release 1000 tracers equispaced in $y$ from the 
+%cross section x = -1 and record their trajectories and velocities
+%until they arrive the end cross section x = 1 
+%and the porosity of this geometric structure is 62.98 \%. 
+%To understand the global action of fluid qualitatively, 
+%we only draw 200 historical trajectories from x = -1 to x = 1 
+%in Fig.~\ref{fig:Eroding100tort}(a). 
+%When equispaced tracers are released in a 2D tube without any grains, 
+%the streamlines are straight 
+%and the intersection points of streamlines and any cross section are equispaced. 
+%But it is not the same when there are bodies in the fluid. 
+%In Fig.~\ref{fig:Eroding100tort}(a)
+%even the tracers are equispaced in $y$ on the cross section $S$, 
+%the streamlines have been push up and down by the bodies and
+%some of them are close together. 
+%
+%
+%%To understand the meaning of jump 
+%%of $\tau$, we use the data we got from local tortuosity $\tau(y)$
+%%to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
+%%and draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
+%%in Fig.~\ref{fig:Eroding100tort_traj}. These pairs of two neighboring trajectories are splitted by bodies
+%%then rejoin with each other and the splitting-rejoining behavior causes the difference of $\tau$ with respect to the neighboring trajectories.   
+%%We also can get the idea why the maximum value of $\tau$ is smaller 
+%%than the one in the case of 20 bodies . 
+%%The most of the bodies in this case are smaller than those in the case of 20 bodies.
+%%So when two neighboring trajectories are splitted on the left side by a smaller body they do not
+%%travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
 
 
-
+%{\color{red}
+%This case is 100 bodies in a Hagen-Poiseuille flow. The background
+%flow is 
+%\begin{align}
+%  \UU(\xx)=U \left[
+%  \begin{array}{c}
+%    1-y^2 \\ 0
+%  \end{array}
+%  \right]
+%\end{align}
+%with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
+%We record the vorticity of 
+%fluid in colormap during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
+%measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four equispaced times.
+%Since the vorticity is equivalent to the shear stress and the erosion is faster in the regions where
+%the magnitude of the vorticity is larger 
+%so the erosion is getting faster and faster 
+%from the first snapshot to the forth one in Fig.~\ref{fig:Eroding100vort}.
+%At t = 0.005 the porosity is 55.54\% and the most gap sizes between bodies are less than 0.015 in 
+%Fig.~\ref{fig:Eroding100gap}(a). Since some of the bodies are vanished in the fluid, the numner of gaps 
+%decreases and the gap sizes get larger and larger between the remaining bodies. 
+%In Fig.~\ref{fig:Eroding100gap}(b) and (c) we still can see small gap sizes are in the majority but 
+%it is not as concentrated as the one we see in Fig.~\ref{fig:Eroding100gap}(a). 
+%In Fig.~\ref{fig:Eroding100gap}(d) there are only 254 gaps between 82 bodies and 
+%the distribution of gap sizes spreads over without any major pack.  
+%}
+%
 
 
 
