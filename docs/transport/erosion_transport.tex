@@ -991,12 +991,15 @@ assigned a value of 0.  Then, the tortuosity is approximated as
 There have been efforts to relate the tortuosity to the
 porosity~\cite{matyka2008tortuosity}.  For example, Matyka et
 al.~\cite{matyka2008tortuosity} propose the models
-\begin{align}
-  T(\phi) &= \phi^{-p}, \\
-  T(\phi) &= 1-p \log \phi, \\
-  T(\phi) &= 1+p (1-\phi), \\
-  T(\phi) &= (1+p (1-\phi))^2, 
-\end{align}
+\begin{subequations}
+  \label{eqn:tortuosityModels}
+  \begin{align}
+    \widehat{T}(\phi) &= \phi^{-p}, \\
+    \widehat{T}(\phi) &= 1-p \log \phi, \\
+    \widehat{T}(\phi) &= 1+p (1-\phi), \\
+    \widehat{T}(\phi) &= (1+p (1-\phi))^2, 
+  \end{align}
+\end{subequations}
 where $p>0$ is a fitting parameter.  In Section~\ref{sec:results}, we
 compare these four models with the tortuosity of eroding geometries.
 
@@ -1364,8 +1367,8 @@ eroding geometry initialized with 20 bodies.  The tortuosity is
 calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue dots)
 and Lagrangian method~\eqref{eqn:tortuosity1} (red stars).  The red
 square correspond to the geometry in Figure~\ref{fig:Eroding20tort}(c).
-The dash line is the fitting line $\hat{T}(\phi)=\phi^p$ as $p=-0.2064$ and 
-the root mean square deviation is $5.9 \times 10^{-3}$.}
+The dash line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$ as
+$p=0.2064$ and the root-mean-square error is $5.9 \times 10^{-3}$.}
 \end{figure}
 
 
@@ -1378,36 +1381,64 @@ the root mean square deviation is $5.9 \times 10^{-3}$.}
 %}
 \includegraphics*[width =0.45\linewidth]{./figs/20b_first_moment}
 \includegraphics*[width =0.45\linewidth]{./figs/20b_second_moment}
-\caption{\label{fig:Eroding20anomalous} The analysis of anomalous diffusion in
- 20 nearly touching bodies with respect to six porosities and the reference line of 100\% porosity.
-The first moment (left) is the mean length of streamlines and the second moment (right) is the }
+\caption{\label{fig:Eroding20anomalous} The analysis of anomalous
+diffusion in 20 nearly touching bodies with respect to six porosities
+and the reference line of 100\% porosity.  The first moment (left) is
+the mean length of streamlines and the second moment (right) is the }
 \end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 Bodies at a Low Porosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We consider a second example with 20 eroding bodies, but with a smaller
+initial porosity.  In Figure~\ref{fig:ErodingLow20vort}, we plot the
+eroding geometry and porosity at four evenly spaced instances in time.
+Again, the color is the vorticity in the bulk whose magnitude is
+equivalent to the erosion rate.  Each body is discretized with $N_\iin =
+256$, and the smallest distance between two bodies at the initial
+condition is ???\todo[inline]{SH: Fill in this number}.  At this
+resolution, this corresponds to a spacing of ???$h$ which is much
+too small for the trapezoid rule.  By applying the Barycentric
+quadrature rule, there is no issue simulating the erosion until all the
+bodies have eroded.
+
 \begin{figure}[H]
 \begin{center}
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort1}
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort150}
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort300}
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort450}
-\caption{\label{fig:ErodingLow20vort} Erosion of 20 nearly touching bodies
-with the fixed pressure drop condition. The color is the vorticity of
-the fluid. The 4 snapshots are evenly spaced in time. We use $N_\iin =
-256$ discretization points on the body, a time-step of $\Dt=10^{-4}$,
-and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. }
 \end{center}
+\caption{\label{fig:ErodingLow20vort} Erosion of 20 nearly touching
+bodies with the fixed pressure drop condition. The color is the
+vorticity of the fluid. The 4 snapshots are evenly spaced in time. We
+use $N_\iin = 256$ discretization points on the body, a time-step of
+$\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
+$\sigma=10/256 $. }
 \end{figure}
+
+We compute the tortuosity using the Eulerian
+method~\eqref{eqn:tortuosity2}. In Figure~\ref{fig:ErodingLow20tort}, we
+plot the tortuosity with respect to the porosity (blue) and a line of
+best fit (black) using the power law $\widehat{T}(\phi) =
+\phi^{-p}$~\cite{matyka2008tortuosity}.  This model outperformed the
+other three models described in equation~\eqref{eqn:tortuosityModels}.
+The root-mean-squared error of the power law is $1.13 \times 10^{-2}$.
+
+Unlike the previous 20 body simulation, the tortuosity decreases
+monotonically with the porosity. \todo[inline]{BQ: Why is this the case?
+What is special about the last example?}
 
 \begin{figure}[H]
 \center
 \includegraphics*[width =0.5\linewidth]{./figs/tort_eulerian20b}
 \caption{\label{fig:ErodingLow20tort} The tortuosity inside of an
 eroding geometry initialized with 20 bodies.  The tortuosity is
-calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue dots).
-The dash line is the fitting line $\hat{T}(\phi)=\phi^p$ as $p=-0.1669$ and 
-the root mean square deviation is $1.13 \times 10^{-2}$.}
+calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue
+dots).  The dash line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$
+as $p=0.1669$ and the root mean square deviation is $1.13 \times
+10^{-2}$.}
 \end{figure}
 
 
@@ -1600,11 +1631,12 @@ x-component velocity u(-1, y) with respect to its maximum velocity $u_{max}=3.90
 \begin{figure}[H]
 \center
 \includegraphics*[width =0.5\linewidth]{./figs/tort_eulerian100}
-\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian approach of tortuosity. 
-The blue dots are Eulerian approach of tortuosity and the red stars and 
-square are Lagrangian approach of tortuosity. 
-The dash line is the fitting line $\hat{T}(\phi)=1-p\ln\phi$ as $p=0.2631$ and 
-the root mean square deviation is $5.2 \times 10^{-3}$.}
+\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian
+approach of tortuosity.  The blue dots are Eulerian approach of
+tortuosity and the red stars and square are Lagrangian approach of
+tortuosity.  The dash line is the fitting line
+$\widehat{T}(\phi)=1-p\ln\phi$ as $p=0.2631$ and the root mean square
+deviation is $5.2 \times 10^{-3}$.}
 \end{figure}
 
 \begin{figure}[H]
