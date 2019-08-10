@@ -1221,9 +1221,8 @@ resolved at the prescribed resolution.
   \includegraphics[height=0.225\textwidth]{./figs/20b_dense301}
 \caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies
 with the fixed pressure drop condition. The color is the vorticity of
-the fluid. The 4 snapshots are evenly spaced in time. We use $N_\iin =
-256$ discretization points on the body, a time-step of $\Dt=10^{-4}$,
-and smoothing parameters of $\eps= 15/256$ and $\sigma=10/256 $. In the
+the fluid. The four snapshots are evenly spaced in time. We use $N_\iin
+= 256$ discretization points on the bodies and $\Dt=10^{-4}$.  In the
 forth frame, bodies 4, 12, and 17 have vanished completely, and body 19
 has almost completely eroded.}
 \end{center}
@@ -1244,19 +1243,19 @@ the openings between the pair of bodies 1 \& 6, 3 \& 9, and 5 \& 13.
 
 In this example, we also observe that erosion creates a network of
 channels from the inlet to outlet where the velocity and vorticity, and
-therefore erosion rate, are much larger than the other regions.  These
+therefore erosion rate, are much larger than in other regions.  These
 channels can be further visualized by considering the streamlines.  In
 Figure~\ref{fig:Eroding20tracer}, we freeze the geometry at the second
-time step from Figure~\ref{fig:Eroding20vort}, and we simulate 200
-tracers.  The tracers are initially placed at $x=-1$ and are equispaced
-in $y$.  The trajectories are shown at 5 different times, and the final
-plot is a zoom in of the lower right quadrant of the fifth time step.
-There are three clear regions where the tracers pass through the
-geometry fastest.  Two of these regions are located between the bodies
-and the solid walls at $y=\pm 1$, and the third cuts through the porous
-region with the upper part of the channel formed by bodies 1, 4, 6, and
-8.  Since the flow is fastest in these regions, the shearing is largest,
-and this causes these openings to grow fastest which can be observed in
+time step from Figure~\ref{fig:Eroding20vort}, and we plot 200
+trajectories that are initialized at $x=-1$ and equispaced in $y$.  The
+trajectories are shown at 5 different times, and the final plot is a
+zoom in of the lower right quadrant of the fifth time step.  There are
+three clear regions where the tracers pass through the geometry fastest.
+Two of these regions are located between the bodies and the solid walls
+at $y=\pm 1$, and the third cuts through the porous region with the
+upper part of the channel formed by bodies 1, 4, 6, and 8.  Since the
+flow is fastest in these regions, the shearing is largest, and this
+causes these openings to grow fastest which can be observed in
 Figure~\ref{fig:Eroding20vort}.
 
 \begin{figure}[H]
@@ -1267,9 +1266,9 @@ Figure~\ref{fig:Eroding20vort}.
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b210}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270_zoom}
-\caption{\label{fig:Eroding20tracer}The trajectories of 200 tracers in
-the second geometry from Figure~\ref{fig:Eroding20vort}. The tracers are
-initialized at $x=-1$ and are evenly spaced in the $y$-direction. The
+\caption{\label{fig:Eroding20tracer}200 trajectories in the second
+geometry from Figure~\ref{fig:Eroding20vort}. The trajectories are
+initialized at $x=-1$ and are equally spaced in the $y$-direction. The
 first five snapshots are evenly spaced in time.  The bottom right frame
 is a zoom window of the fifth snapshot.  Since we use a Barycentric
 quadrature rule and the fourth-order Runge-Kutta method, the tracers can
@@ -1336,27 +1335,23 @@ color.}
 
 In Figure~\ref{fig:Eroding20tort_all}, we plot the tortuosity as a
 function of the porosity from the initial porosity of $0.38$ until all
-the bodies have eroded.  The tortuosity is computed with both the
-length of the Lagrangian trackers~\eqref{eqn:tortuosity1} and using the
+the bodies have eroded.  The tortuosity is computed with both the length
+of the trajectories~\eqref{eqn:tortuosity1} (red marks) and using the
 spatial average of the velocity on an Eulerian
-grid~\eqref{eqn:tortuosity2}.  The red square mark corresponds to the
-porosity in Figure~\ref{fig:Eroding20tort}(c).  The two methods of
-calculating the tortuosity give similar results with any discrepancy
-being accounted for by slow regions of recirculation.  Computing the
-velocity on an Eulerian grid is computationally easier than simulating
-many trajectories, so we use the Eulerian approach for all future
-examples.  As the bodies erode, this creates wide channels where
+grid~\eqref{eqn:tortuosity2}.  The red square corresponds to the
+porosity in Figure~\ref{fig:Eroding20tort}(c).  The methods give similar
+results with any discrepancy being accounted for by slow regions of
+recirculation.  As the bodies erode, this creates wide channels where
 trajectories undergo only minor vertical deflections, and this explains
-why the tortuosity eventually decreases with porosity.  However, at the
-early stages of the erosion, the tortuosity increases with porosity,
-which can be explain as follows.   In the absence of erosion
+why the tortuosity eventually decreases with porosity.  The increase in
+tortuosity for small porosities occurs because in the absence of erosion
 (left plot in Figure~\ref{fig:Eroding20vort}), many of the trajectories,
 such as those initialized between bodies 15 \& 18, only perform minor
 deflections to pass through the narrow regions, albeit, very slowly.
 However, as erosion starts to open the channels, the trajectories
-deflect into the fast regions, and this increases the amount of vertical
-deflection, and therefore the tortuosity.
-\todo[inline]{BQ: Need to work on this paragraph}
+deflect into the fast regions, such as the region above body 11, and
+this increases the amount of vertical deflection, and therefore the
+tortuosity.
 
 
 \begin{figure}[H]
