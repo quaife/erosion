@@ -33,6 +33,61 @@ University, Tallahassee, FL, 32306.}
 \section{Introduction}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Flow in many natural occurring geometries involves flows that vary over
+many orders of magnitude.  Porous media are one such geometry where the
+length scales in a single geometry can vary from $10^{-6}m$ to
+$10^{-1}m$~\cite{mil-chr-imh-mob-ped1998}.  Simulating such a wide range
+of length scales is impractical, and constitutive laws that link the
+microscopic scale to macroscopic scale must be
+developed~\cite{mil-chr-imh-mob-ped1998}.  However, to find closure
+formulas, accurate simulations at microscopic scales must be performed
+and analyzed.
+\todo[inline]{Talk about aquifers here}
+
+At microscopic scales, the Reynolds number is small, and the fluid is
+governed by the incompressible Stokes equations (for example, see
+~\cite{hym-den-hag-kan2019, den-ica-hid2018, bar-mar-vee-zha2018})
+\begin{align}
+  \mu \Delta \uu = \nabla p, \quad \nabla \cdot \uu = 0,
+\end{align}
+where $\uu$ is the velocity, $p$ is the pressure, and $\mu$ is the fluid
+viscosity.  Even though the pore-scale geometry can be complex, the
+Stokes equations can be accurately solved in these complex geometries by
+using an integral equation method.  In addition to being accurate and
+able to resolve complex geometries, integral equation methods
+automatically satisfy mass conservation, result in a dimension
+reduction, and can be solved in optimal time by using a fast summation
+method.
+
+Once the governing equations are solved, the flow can characterized
+statistically~\cite{}.  For example, dispersion is described by the
+second moment of particle trajectories.  Other measures of the flow
+involve computing distributions of the velocity on Eulerian
+grids~\cite{} and Lagrangian grids~\cite{}, calculating the
+distribution of the time required for a trajectory to pass from the
+inlet to the outlet of the geometry, and by computing the length of
+streamlines passing from the inlet to the outlet.  
+
+A common necessity to describe the microscopic scale is describe
+transport through the complex geometry.  Depending on the application,
+the transport may be passive and be described by pure
+advection~\cite{}, it may describe a concentration field, such as a
+contaminant, and be governed by a finite Peclet number
+advection-diffusion equation, or they may stochastic and be described
+using a random walk~\cite{}.  In this work, we focus on pure
+advection so that we are interested in passive tracers whose
+trajectories, or equivalently, the streamlines, are governed by
+\begin{align}
+  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
+\end{align}
+
+In many applications, the fluid transport continuously changes the
+pore structure.  This is particularly common in geophysical flows where
+erosion alters the porous matrix.
+
+
+
+
 Flow-induced erosion deteriorates and reshapes solid material over a
 range of scales.  At small scales, such as in groundwater flow,
 fluid-mechanical erosion significantly alters the geometry, and
