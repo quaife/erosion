@@ -420,8 +420,14 @@ Below we will set $\mu=1$. The Stokes equation is
 \end{equation}
 By the divergence theorem we have
 \begin{equation}
-0 = \int_{\Omega} \grad \cdot \bvec{\sigma} = \int_{\partial \Omega}
+\label{divthm}
+0 = \int_{\Omega} \grad \cdot \bvec{\sigma} \, dV 
+= \int_{\partial \Omega} \bvec{\sigma} \cdot \nhat \, dS
 \end{equation}
-
+for any domain $\Omega$. Now consider $\Omega$ to be a section of the channel $-x_0 < x < x_0$ and spanning the entire width $-w < y < w$. Then the integral on the right-hand-side of \eqref{divthm} has two contributions: first, the total drag arising from all immersed bodies as well as from the top and bottom walls, and second, the difference between the upstream and downstream pressures (we have implicitly assumed that $x_0$ is sufficiently distant from the bodies so that $\grad \bvec{u}$ is nearly zero). Since the total integral above vanishes, we have
+\begin{equation}
+F_D = \pup - \pdn
+\end{equation}
+where $F_D$ is the total drag force from all bodies and from the top and bottom walls.
 
 \end{document}
