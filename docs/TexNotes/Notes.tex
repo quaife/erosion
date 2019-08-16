@@ -379,9 +379,9 @@ Then we can calculate the discharge as
 \end{equation}
 so that the permeability due to the channel walls is $k_w = w^2/3$ and the resistivity is $r_w = 3/w^2$.
 
-If we define $u(z) = U(w^2 - z^2)$, then $U = -p_x / (2 \mu)$, so that we get
+If we define $u(z) = U(w^2 - z^2)/w^2$, then $U = -w^2 p_x / (2 \mu)$ and $U$ is the maximum velocity that is obtained. Calculation gives
 \begin{align}
-\qavg = \frac{2}{3} U w^2
+\qavg = \frac{2}{3} U
 \end{align}
 
 Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensionalization). Measure the pressure and velocity along two vertical lines, one upstream at $x = -x_0$ and another at the symmetric downstream location $x = x_0$. Average to get $\pup = \left<p(-x_0) \right>$ and $\pdn = \left< p(x_0) \right>$, and the same for $q$. Then the {\em total} resistivity (that of the porous matrix and the channel walls together) is 
@@ -434,6 +434,13 @@ k_{tot} = \frac{2 x_0 \, \qavg}{\pup-\pdn} \approx 4 x_0 w \qavg F_D^{-1}
 \end{equation}
 and the resistivity
 \begin{equation}
-r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg}
+r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg} = \frac{3 F_D}{8 x_0 w U}
 \end{equation}
+Where we have used $\qavg = \frac{2}{3} U$. Thus, with $w=1$ we have
+\begin{equation}
+r_{tot} = \frac{3}{8 x_0} \frac{F_D}{U}
+\end{equation}
+In the code I set $x_0 = 2$.
+
+
 \end{document}
