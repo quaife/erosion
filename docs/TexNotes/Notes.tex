@@ -57,6 +57,10 @@
 \newcommand{\elfun}{\zeta}
 \newcommand{\thhat}{\hat{\theta}}
 \newcommand{\dt}{\Delta t}
+% New
+\newcommand{\pup}{p_{1}}
+\newcommand{\pdn}{p_{2}}
+\newcommand{\qavg}{q_{avg}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TITLE
@@ -353,6 +357,7 @@ A = \int x n_x ds = \int y n_y ds
 
 \section{Permeability, conductivity, drag, resistance, and all that}
 
+\subsection{Permeability and resistivity}
 Darcy's law is
 \begin{equation}
 \bq = - \bvec{K} \grad \phi
@@ -370,20 +375,22 @@ u(z) = -\frac{p_x}{2 \mu} (w^2 - z^2)
 \end{equation}
 Then we can calculate the discharge as
 \begin{equation}
-q = \frac{1}{2w} \int_{-w}^{w} u(z) dz = - \frac{ p_x w^2}{3 \mu} 
+\qavg = \frac{1}{2w} \int_{-w}^{w} u(z) dz = - \frac{ p_x w^2}{3 \mu} 
 \end{equation}
 so that the permeability due to the channel walls is $k_w = w^2/3$ and the resistivity is $r_w = 3/w^2$.
 
 If we define $u(z) = U(w^2 - z^2)$, then $U = -p_x / (2 \mu)$, so that we get
 \begin{align}
-q = \frac{2}{3} U w^2
+\qavg = \frac{2}{3} U w^2
 \end{align}
 
-Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensionalization). Measure the pressure and velocity along two vertical lines, one at $x = x_0$ and another at $x = -x_0$, and average to get $p^+ = \left< p(x_0) \right>$, $p^- = \left<p(-x_0) \right>$ and the same for $q$. Then the {\em total} resistivity (that of the porous matrix and the channel walls together) is 
+Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensionalization). Measure the pressure and velocity along two vertical lines, one upstream at $x = -x_0$ and another at the symmetric downstream location $x = x_0$. Average to get $\pup = \left<p(-x_0) \right>$ and $\pdn = \left< p(x_0) \right>$, and the same for $q$. Then the {\em total} resistivity (that of the porous matrix and the channel walls together) is 
 \begin{equation}
-r_{tot} = \frac{p^- - p^+}{2 x_0 q_{avg}}
+r_{tot} = \frac{\pup - \pdn}{2 x_0 \, \qavg}
 \end{equation}
-This total resistivity reflects the resistivity from the porous matrix as well as the channel walls. There is a buffer region that lies outside the porous-matrix region ($x_0$ lies in the bugger region), and we would like to remove the contribution from this region. Lets regard the total resistivity as an area-integral of resistivity-density, so that we can write the total in terms of the areas of the regions
+
+\subsection{Removing the contribution of channel walls}
+The above total resistivity reflects the resistivity from the porous matrix as well as the channel walls. There is a buffer region that lies outside the porous-matrix region ($x_0$ lies in the bugger region), and we would like to remove the contribution from this region. Lets regard the total resistivity as an area-integral of resistivity-density, so that we can write the total in terms of the areas of the regions
 \begin{equation}
 A_{t} r_{t} = A_{b} r_{b} + A_{m} r_{m}
 \end{equation}
@@ -401,7 +408,20 @@ Putting everything together, the final formula is
 \end{equation}
 As convoluted as this calculation seems, it does appear to give convergent numerical results that are {\em independent of the choice of $x_0$} (to the expected order of accuracy).
 
+\subsection{Relationship to total drag}
 
+Consider the stress tensor
+\begin{equation}
+\bvec{\sigma} = -p \bvec{I} + \mu \left( \grad \bu + \grad \bu^T \right)
+\end{equation}
+Below we will set $\mu=1$. The Stokes equation is
+\begin{equation}
+\grad \cdot \bvec{\sigma} = 0
+\end{equation}
+By the divergence theorem we have
+\begin{equation}
+0 = \int_{\Omega} \grad \cdot \bvec{\sigma} = \int_{\partial \Omega}
+\end{equation}
 
 
 \end{document}
