@@ -357,7 +357,7 @@ A = \int x n_x ds = \int y n_y ds
 
 \section{Permeability, conductivity, drag, resistance, and all that}
 
-\subsection{Permeability and resistivity}
+\subsection{Total permeability and resistivity}
 Darcy's law is
 \begin{equation}
 \bq = - \bvec{K} \grad \phi
@@ -389,8 +389,8 @@ Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensio
 r_{tot} = \frac{\pup - \pdn}{2 x_0 \, \qavg}
 \end{equation}
 
-\subsection{Removing the contribution of channel walls}
-The above total resistivity reflects the resistivity from the porous matrix as well as the channel walls. There is a buffer region that lies outside the porous-matrix region ($x_0$ lies in the bugger region), and we would like to remove the contribution from this region. Lets regard the total resistivity as an area-integral of resistivity-density, so that we can write the total in terms of the areas of the regions
+\subsection{Isolating the resistivity due to the bodies}
+The above total resistivity reflects the resistivity from the porous matrix as well as the channel walls. There is a buffer region that lies outside the porous-matrix region ($x_0$ lies in the buffer region), and we would like to remove the contribution from this region. Lets regard the total resistivity as an area-integral of resistivity-density, so that we can write the total in terms of the areas of the regions
 \begin{equation}
 A_{t} r_{t} = A_{b} r_{b} + A_{m} r_{m}
 \end{equation}
@@ -398,7 +398,7 @@ Here, the subscripts are as follows: $t$ stands for total, $b$ for buffer, and $
 \begin{equation}
 r_m = \frac{A_t r_t - A_b r_b}{A_m}
 \end{equation}
-In the buffer region, resistivity is only due to channel walls so that $r_b = 3$. The area of the included buffer region depends on $x_0$ via $A_b = 4(x_0 - 1)$. The area of the matrix region is always $A_m = 4$, and $A_t = A_b + A_m$. The resulting resistivity in the matrix, $r_m$, includes the contribution from the bodies as well as the channel walls. We can then subtract the contribution from the walls, to get $\tilde{r}_m$, the resistivity due to the bodies alone as
+In the buffer region, resistivity is only due to channel walls so that $r_b = 3$. The area of the included buffer region depends on $x_0$ via $A_b = 4(x_0 - 1)$. The area of the matrix region is always $A_m = 4$, and $A_t = A_b + A_m = 4 x_0$. The resulting resistivity in the matrix, $r_m$, includes the contribution from the bodies as well as the channel walls. We can then subtract the contribution from the walls, to get $\tilde{r}_m$, the resistivity due to the bodies alone as
 \begin{equation}
 \tilde{r}_m = r_m - 3 \, .
 \end{equation}
@@ -408,7 +408,7 @@ Putting everything together, the final formula is
 \end{equation}
 As convoluted as this calculation seems, it does appear to give convergent numerical results that are {\em independent of the choice of $x_0$} (to the expected order of accuracy).
 
-\subsection{Relationship to total drag}
+\subsection{Relationship between resistivity and total drag}
 
 Consider the stress tensor
 \begin{equation}
@@ -424,10 +424,16 @@ By the divergence theorem we have
 0 = \int_{\Omega} \grad \cdot \bvec{\sigma} \, dV 
 = \int_{\partial \Omega} \bvec{\sigma} \cdot \nhat \, dS
 \end{equation}
-for any domain $\Omega$. Now consider $\Omega$ to be a section of the channel $-x_0 < x < x_0$ and spanning the entire width $-w < y < w$. Then the integral on the right-hand-side of \eqref{divthm} has two contributions: first, the total drag arising from all immersed bodies as well as from the top and bottom walls, and second, the difference between the upstream and downstream pressures (we have implicitly assumed that $x_0$ is sufficiently distant from the bodies so that $\grad \bvec{u}$ is nearly zero). Since the total integral above vanishes, we have
+for any domain $\Omega$. Now consider $\Omega$ to be a section of the channel $-x_0 < x < x_0$ and spanning the entire width $-w < y < w$. Then the integral on the right-hand-side of \eqref{divthm} has two contributions: first, the total drag arising from all immersed bodies as well as from the top and bottom walls, and second, the difference between the upstream and downstream pressures (we have implicitly assumed that $x_0$ is sufficiently distant from the bodies so that $\grad \bvec{u}$ is nearly zero). Since the total integral above vanishes, we have the approximate relationship
 \begin{equation}
-F_D = \pup - \pdn
+F_D \approx 2 w \left( \pup - \pdn \right)
 \end{equation}
-where $F_D$ is the total drag force from all bodies and from the top and bottom walls.
-
+where $F_D$ is the total drag force from all bodies and from the top and bottom walls. The error in this approximation is due to neglecting the contribution of $\grad \bvec{u}$ in the stress tensor at the upstream and downstream positions. We thus have for the permeability
+\begin{equation}
+k_{tot} = \frac{2 x_0 \, \qavg}{\pup-\pdn} \approx 4 x_0 w \qavg F_D^{-1}
+\end{equation}
+and the resistivity
+\begin{equation}
+r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg}
+\end{equation}
 \end{document}
