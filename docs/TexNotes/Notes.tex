@@ -436,15 +436,10 @@ and the resistivity
 \begin{equation}
 r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg} = \frac{3 F_D}{8 x_0 w U}
 \end{equation}
-Where we have used $\qavg = \frac{2}{3} U$. 
-
-
-\vsp{5}
-Thus, with $w=1$ we have
+Where we have used $\qavg = \frac{2}{3} U$. These are the permeability and resistivity for the entire region $-x_0 < x < x_0$. In particular, the resistivity of the porous matrix will be averaged with the much lower permeability of the buffer region. To remove the contribution from the buffer region, and thus isolate the resistivity due to the porous matrix of bodies, we can simply set $x_0 = 1$ above. With also setting $w=1$, we get
 \begin{equation}
-r_{tot} = \frac{3}{8 x_0} \frac{F_D}{U}
+r_{tot} = \frac{3}{8} \frac{F_D}{U}
 \end{equation}
-In the code I set $x_0 = 2$.
 
 
 \end{document}
