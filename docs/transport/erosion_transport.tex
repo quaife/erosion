@@ -16,8 +16,10 @@
 
 \address[SH]{Department of Scientific Computing, Florida State
 University, Tallahassee, FL, 32306.}
-\address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
-\address[Bryan]{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+\address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics
+Institute, Florida State University, Tallahassee, FL, 32306.}
+\address[Bryan]{Department of Scientific Computing and Geophysical Fluid
+Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
   An abstract
@@ -34,82 +36,115 @@ University, Tallahassee, FL, 32306.}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Flow in many natural occurring geometries involves flows that vary over
-many orders of magnitude.  Porous media are one such geometry where the
-length scales in a single geometry can vary from $10^{-6}m$ to
-$10^{-1}m$~\cite{mil-chr-imh-mob-ped1998}.  Simulating such a wide range
-of length scales is impractical, and constitutive laws that link the
-microscopic scale to macroscopic scale must be
-developed~\cite{mil-chr-imh-mob-ped1998}.  However, to find closure
+many orders of magnitude.  For example, the length scales of a porous
+media can vary from $10^{-6}m$ to
+$10^{-1}m$~\cite{mil-chr-imh-mcb-ped1998}.  Porous media flow plays an
+important role in several environmental and industrial applications.
+Therefore, understanding the dynamics of pore-scale flow is central to
+upscale the governing fluid equations, characterize
+dispersion~\cite{saf1959}, and quantify mixing. However, because of the
+large disparity of length and velocity scales, constitutive laws that
+link the microscopic scale to macroscopic scale must be
+developed~\cite{mil-chr-imh-mcb-ped1998}.  Therefore, to find closure
 formulas, accurate simulations at microscopic scales must be performed
-and analyzed.
-\todo[inline]{Talk about aquifers here}
+and analyzed.  A few examples of closure formulas and coarse-grained
+variables include
+pressure-saturation-permeability~\cite{mil-chr-imh-mcb-ped1998}, first
+passage time distribution~\cite{ber-sch-sil2000, hym-den-hag-kan2019,
+cve-che-wen1996}, tortuosity~\cite{hak-com-den2019,
+matyka2008tortuosity, dud-koz-mat2011, kop-kat-tim1996}, concentration
+distributions~\cite{ica-den2019, bel-sal-rin1992}, flow
+distributions~\cite{ali-par-wei-bre2017}, geometry
+connectivity~\cite{knu-car2005, wes-blo-gra2001}, pore
+distributions~\cite{ali-par-wei-bre2017}, and anomalous
+diffusion~\cite{dea-qua-bir-jua2018, den-cor-sch-ber2004,
+sie-ili-pri-riv-gua2019}.
 
-At microscopic scales, the Reynolds number is small, and the fluid is
-governed by the incompressible Stokes equations (for example, see
-~\cite{hym-den-hag-kan2019, den-ica-hid2018, bar-mar-vee-zha2018})
+In many applications, the fluid transport continuously changes the pore
+structure.  This is particularly common in geophysical flows where
+erosion alters the porous matrix.  In this work, we investigate flow in
+eroded porous media.  By introducing erosion, there is a two-way
+coupling between the hydrodynamics and the mechanical alteration of the
+complex porous geometry.  Transport in porous geometries that have
+undergone erosion finds applications in aquifers~\cite{cve-che-wen1996,
+sud1986}, solute transport in groundwater flow~\cite{dag1987,
+kon-bre1978}.  Porous geometries that have undergone erosion have
+certain characteristics.  For example, the geometry often has regions of
+high porosity that connect the inlet to the outlet.  This channelization
+results in velocity scales that can vary over several orders of
+magnitude~\cite{}.  Moreover, the channelization results in a geometry
+that is largely heterogeneous and anisotropic.  Others have studied
+transport in heterogeneous geometries (for example,
+see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000, hak-com-den2019,
+suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996, leb-ded-dav-bou2007,
+knu-car2005, bel-sal-rin1992}). However, to the best of our knowledge, a
+detailed study of transport in eroded geometries has not been performed.
+
+To describe the relevant hydrodynamics, we model two-dimensional
+microscopic scales where the fluid is governed by the incompressible
+Stokes equations (for example, see~\cite{hym-den-hag-kan2019,
+den-ica-hid2018, bar-mar-vee-zha2018}).  To couple the erosion and the
+hydrodynamics, the grains of the porous media are eroded at a rate that
+is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
+ris-moo-chi-she-zha2012, qua-moo2018}.  The incompressible Stokes
+equation are solved by first recasting them as a boundary integral
+equation (BIE).  The BIE is discretized with a high-order quadrature
+method that resolves nearly touching bodies with a near-singular
+integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
+simulated by applying a stable second-order time stepping Runge-Kutta
+method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
+bodies.  Given the solution of the incompressible Stokes equations are
+solved in an eroded porous geometry, we investigate different metrics to
+characterize transport.  We focus on three metrics: the tortuosity, the
+anomalous diffusion, and the distribution of geometrical channels.  
+
+The first two of these metrics can be defined in terms of statistical
+moments of trajectories.  Depending on the application, transport at the
+microscale can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
+leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019}, and advection
+diffusion equation~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
+with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
+this work, we assume that the trajectories are governed purely by
+advection (ie.~no diffusion).  Therefore, a trajectory $\ss(t)$
+initialized at $\ss_0$ is governed by
 \begin{align}
-  \mu \Delta \uu = \nabla p, \quad \nabla \cdot \uu = 0,
+  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
 \end{align}
-where $\uu$ is the velocity, $p$ is the pressure, and $\mu$ is the fluid
-viscosity.  Even though the pore-scale geometry can be complex, the
-Stokes equations can be accurately solved in these complex geometries by
-using an integral equation method.  In addition to being accurate and
-able to resolve complex geometries, integral equation methods
-automatically satisfy mass conservation, result in a dimension
-reduction, and can be solved in optimal time by using a fast summation
-method.
+where $\uu$ is the fluid velocity.  Since there is no diffusion, all
+dispersion is a result of the particle spreading induced by the porous
+geometry.
 
-Once the governing equations are solved, the flow can characterized
-statistically~\cite{}.  For example, dispersion is described by the
-second moment of particle trajectories.  Other measures of the flow
-involve computing distributions of the velocity on Eulerian
-grids~\cite{} and Lagrangian grids~\cite{}, calculating the
-distribution of the time required for a trajectory to pass from the
-inlet to the outlet of the geometry, and by computing the length of
-streamlines passing from the inlet to the outlet.  
+In a porous geometry, the length of a particle path is larger than the
+distance travelled if the grains were absent.  To quantify the amount of
+winding a particle takes, we use the tortuosity that is defined as the
+ratio of the particle paths length to the distance between the inlet and
+outlet.  In fractured media, the local tortuosity can be over
+2.5~\cite{hym-den-hag-kan2019}, and in porous media, depending on the
+porosity, the local tortuosity can be greater than
+1.5~\cite{kop-kat-tim1996, matyka2008tortuosity}, or greater than
+2~\cite{dud-koz-mat2011}.  The tortuosity of the geometry is defined by
+averaging over the entire inlet.  Therefore, the geometry's tortuosity
+can be used to characterize average particle
+motions~\cite{hak-com-den2019}.
 
-A common necessity to describe the microscopic scale is describe
-transport through the complex geometry.  Depending on the application,
-the transport may be passive and be described by pure
-advection~\cite{}, it may describe a concentration field, such as a
-contaminant, and be governed by a finite Peclet number
-advection-diffusion equation, or they may stochastic and be described
-using a random walk~\cite{}.  In this work, we focus on pure
-advection so that we are interested in passive tracers whose
-trajectories, or equivalently, the streamlines, are governed by
-\begin{align}
-  \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0.
-\end{align}
-
-In many applications, the fluid transport continuously changes the
-pore structure.  This is particularly common in geophysical flows where
-erosion alters the porous matrix.
+Anomalous diffusion  ...
+\cite{cus-hu-den1995}
 
 
+Gap sizes are important for network models ...
 
-
-Flow-induced erosion deteriorates and reshapes solid material over a
-range of scales.  At small scales, such as in groundwater flow,
-fluid-mechanical erosion significantly alters the geometry, and
-ultimately changes the process of transport through the media.  This
-paper extends a quadrature method first outlined by Barnett, Wu, and
-Veerapaneni~\cite{bar-wu-vee2015} to simulate dense packings of eroding
-bodies, and then studies coarse-grained variables to characterize
-transport in eroded geometries.
-
-The authors previous work~\cite{qua-moo2018} developed numerical methods
-to simulate erosion of multiple bodies suspended in a Stokes flow.  The
-numerical methods can be broadly separated into two classes---a
-high-order method to solve the Stokes equations and the erosion rate in
-a complex geometry, and a time stepping method to evolve the eroding
-bodies.  The fluid solver uses a second-kind integral equation that is
-discretized with the trapezoid rule and solved iteratively with fast
-multipole accelerated GMRES, and then the trapezoid rule is used to
-compute the shear stress which is required to find the erosion rate.
-Once the erosion rate is computed, the bodies are eroded using a {\thL}
-coordinate system.  This allows us to maintain a discretization of the
-eroding bodies that is equally spaced in arclength, and is guaranteed to
-not tangle.
+The numerical methods to solve the governing fluid and erosion equations
+are based on previous work of the authors~\cite{qua-moo2018}.  The fluid
+solver uses a second-kind integral equation that is discretized with the
+trapezoid rule and solved iteratively with fast multipole accelerated
+GMRES, and then the trapezoid rule is used to compute the shear stress
+which is required to find the erosion rate.  The integral
+equation formulation only requires discretizing the boundary of the
+geometry, the complex porous matrix can be easily resolved.  Once the
+erosion rate is computed, the bodies are eroded using a
+{\thL}~\cite{hou-low-she1994} coordinate system.  This allows us to
+maintain a discretization of the eroding bodies that is equally spaced
+in arclength, and is guaranteed to not tangle.
 
 The trapezoid rule is spectrally accurate discretization of integral
 equation formulations of the two-dimensional Stokes equation.  However,
@@ -126,22 +161,6 @@ evaluate the Stokes double-layer potential~\cite{bar-wu-vee2015}.
 However, to compute derivatives of the flow, such as the vorticity and
 the shear stress, we extend this work to compute the required
 derivatives of the double-layer potential.
-
-Since erosion alters the geometry, it also affects coarse-grained
-variables.  In this paper, we examine two particular variables that can
-be used to understand transport in porous media---the tortuosity and the
-anomalous diffusion rates.   The tortuosity quantifies the twisting of
-particle trajectories in a medium, and in laminar flow, the tortuosity
-is one.  While a porous media often has a large tortuosity, as erosion
-increases the gaps between bodies, preferential channels are created,
-large numbers of particles become more laminar, and we expect the
-tortuosity to decrease.  Anomalous diffusion is often used to describe
-transport in a porous media, and it quantifies the dispersion of
-particles in the flow.  Again, as the geometry erodes, particles behave
-more as a ballistic particle, and we expect less dispersion.  In this
-paper, we compute both the tortuosity and the anomalous diffusion rates
-of several geometries that form via erosion.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
