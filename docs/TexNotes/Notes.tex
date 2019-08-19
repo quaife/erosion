@@ -386,6 +386,7 @@ If we define $u(z) = U(w^2 - z^2)/w^2$, then $U = -w^2 p_x / (2 \mu)$ and $U$ is
 
 Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensionalization). Measure the pressure and velocity along two vertical lines, one upstream at $x = -x_0$ and another at the symmetric downstream location $x = x_0$. Average to get $\pup = \left<p(-x_0) \right>$ and $\pdn = \left< p(x_0) \right>$, and the same for $q$. Then the {\em total} resistivity (that of the porous matrix and the channel walls together) is 
 \begin{equation}
+\label{rtot}
 r_{tot} = \frac{\pup - \pdn}{2 x_0 \, \qavg}
 \end{equation}
 
@@ -404,6 +405,7 @@ In the buffer region, resistivity is only due to channel walls so that $r_b = 3$
 \end{equation}
 Putting everything together, the final formula is
 \begin{equation}
+\label{resmatrix}
 \tilde{r}_m = x_0 (r_t - 3) \, .
 \end{equation}
 As convoluted as this calculation seems, it does appear to give convergent numerical results that are {\em independent of the choice of $x_0$} (to the expected order of accuracy).
@@ -438,8 +440,9 @@ r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg} = \
 \end{equation}
 Where we have used $\qavg = \frac{2}{3} U$. These are the permeability and resistivity for the entire region $-x_0 < x < x_0$. In particular, the resistivity of the porous matrix will be averaged with the much lower permeability of the buffer region. To remove the contribution from the buffer region, and thus isolate the resistivity due to the porous matrix of bodies, we can simply set $x_0 = 1$ above. With also setting $w=1$, we get
 \begin{equation}
+\label{resdrag}
 r_{tot} = \frac{3}{8} \frac{F_D}{U}
 \end{equation}
-
+With this simplification, I see a match between measuring resistivity via the drag \eqref{resdrag} versus measuring resistivity directly via \eqref{rtot} and \eqref{resmatrix}.
 
 \end{document}
