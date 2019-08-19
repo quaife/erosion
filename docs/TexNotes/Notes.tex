@@ -405,10 +405,17 @@ In the buffer region, resistivity is only due to channel walls so that $r_b = 3$
 \end{equation}
 Putting everything together, the final formula is
 \begin{equation}
-\label{resmatrix}
+\label{resmatrix0}
 \tilde{r}_m = x_0 (r_t - 3) \, .
 \end{equation}
 As convoluted as this calculation seems, it does appear to give convergent numerical results that are {\em independent of the choice of $x_0$} (to the expected order of accuracy).
+
+Using \eqref{rtot} and $\qavg = \frac{2}{3} U$ gives
+\begin{equation}
+\label{resmatrix}
+\tilde{r}_m = \frac{\pup - \pdn}{2 \qavg} - 3 x_0 = \frac{3}{4} \frac{\pup-\pdn}{U} - 3 x_0
+\end{equation}
+
 
 \subsection{Relationship between resistivity and total drag}
 
@@ -443,6 +450,6 @@ Where we have used $\qavg = \frac{2}{3} U$. These are the permeability and resis
 \label{resdrag}
 r_{tot} = \frac{3}{8} \frac{F_D}{U}
 \end{equation}
-With this simplification, I see a match between measuring resistivity via the drag \eqref{resdrag} versus measuring resistivity directly via \eqref{rtot} and \eqref{resmatrix}.
+With this simplification, I see a match between measuring resistivity via the drag \eqref{resdrag} versus measuring resistivity directly via \eqref{resmatrix}.
 
 \end{document}
