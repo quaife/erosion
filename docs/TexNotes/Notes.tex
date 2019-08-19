@@ -396,7 +396,7 @@ A_{t} r_{t} = A_{b} r_{b} + A_{m} r_{m}
 \end{equation}
 Here, the subscripts are as follows: $t$ stands for total, $b$ for buffer, and $m$ for matrix. Then we can solve for the resistivity in the matrix region
 \begin{equation}
-r_m = \frac{A_t r_t - A_b r_b}{A_m}
+r_m = \frac{A_t r_t - A_b r_b}{A_m} = x_0(r_t - 3) + 3
 \end{equation}
 In the buffer region, resistivity is only due to channel walls so that $r_b = 3$. The area of the included buffer region depends on $x_0$ via $A_b = 4(x_0 - 1)$. The area of the matrix region is always $A_m = 4$, and $A_t = A_b + A_m = 4 x_0$. The resulting resistivity in the matrix, $r_m$, includes the contribution from the bodies as well as the channel walls. We can then subtract the contribution from the walls, to get $\tilde{r}_m$, the resistivity due to the bodies alone as
 \begin{equation}
@@ -436,7 +436,11 @@ and the resistivity
 \begin{equation}
 r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg} = \frac{3 F_D}{8 x_0 w U}
 \end{equation}
-Where we have used $\qavg = \frac{2}{3} U$. Thus, with $w=1$ we have
+Where we have used $\qavg = \frac{2}{3} U$. 
+
+
+\vsp{5}
+Thus, with $w=1$ we have
 \begin{equation}
 r_{tot} = \frac{3}{8 x_0} \frac{F_D}{U}
 \end{equation}
