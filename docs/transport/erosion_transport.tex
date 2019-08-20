@@ -86,17 +86,18 @@ Stokes equations (for example, see~\cite{hym-den-hag-kan2019,
 den-ica-hid2018, bar-mar-vee-zha2018}).  To couple the erosion and the
 hydrodynamics, the grains of the porous media are eroded at a rate that
 is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
-ris-moo-chi-she-zha2012, qua-moo2018}.  The incompressible Stokes
-equation are solved by first recasting them as a boundary integral
-equation (BIE).  The BIE is discretized with a high-order quadrature
-method that resolves nearly touching bodies with a near-singular
-integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
-simulated by applying a stable second-order time stepping Runge-Kutta
-method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
-bodies.  Given the solution of the incompressible Stokes equations are
-solved in an eroded porous geometry, we investigate different metrics to
-characterize transport.  We focus on three metrics: the tortuosity, the
-anomalous diffusion, and the distribution of geometrical channels.  
+ris-moo-chi-she-zha2012, qua-moo2018, par-izu2000}.  The incompressible
+Stokes equation are solved by first recasting them as a boundary
+integral equation (BIE).  The BIE is discretized with a high-order
+quadrature method that resolves nearly touching bodies with a
+near-singular integration scheme~\cite{bar-wu-vee2015}.  The erosion
+dynamics are simulated by applying a stable second-order time stepping
+Runge-Kutta method to the {\thL} formulation~\cite{hou-low-she1994} of
+the eroding bodies.  Given the solution of the incompressible Stokes
+equations are solved in an eroded porous geometry, we investigate
+different metrics to characterize transport.  We focus on three metrics:
+the tortuosity, the anomalous diffusion, and the distribution of
+geometrical channels.  
 
 The first two of these metrics can be defined in terms of statistical
 moments of trajectories.  Depending on the application, transport at the
@@ -130,37 +131,37 @@ motions~\cite{hak-com-den2019}.
 Anomalous diffusion  ...
 \cite{cus-hu-den1995}
 
-
-Gap sizes are important for network models ...
+Rather than solving the fluid equations in a complex porous matrix,
+network models can be used to describe the flow.  Here, the pores
+between neighboring grains are thought of as small channels, and the
+geometry consists of a connected network of these
+channels~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006} with the
+flow resembling a Hagen-Poiseuille profile in each channel.  So that
+network models can be applied to an eroding geometry, we characterize
+the pore sizes between neighboring grains as a function of the
+geometry's porosity.  The pore size distribution can be used to quantify
+velocity distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018},
+channelization~\cite{sie-ili-pri-riv-gua2019}, and
+connectivity~\cite{knu-car2005, wes-blo-gra2001}.
 
 The numerical methods to solve the governing fluid and erosion equations
-are based on previous work of the authors~\cite{qua-moo2018}.  The fluid
-solver uses a second-kind integral equation that is discretized with the
-trapezoid rule and solved iteratively with fast multipole accelerated
-GMRES, and then the trapezoid rule is used to compute the shear stress
-which is required to find the erosion rate.  The integral
-equation formulation only requires discretizing the boundary of the
-geometry, the complex porous matrix can be easily resolved.  Once the
-erosion rate is computed, the bodies are eroded using a
-{\thL}~\cite{hou-low-she1994} coordinate system.  This allows us to
-maintain a discretization of the eroding bodies that is equally spaced
-in arclength, and is guaranteed to not tangle.
-
-The trapezoid rule is spectrally accurate discretization of integral
-equation formulations of the two-dimensional Stokes equation.  However,
-at a fixed resolution, the quadrature error of the trapezoid rule is
-arbitrarily large near the eroding bodies.  Therefore, simply upsampling
-to evaluate the velocity near the eroding bodies is not sufficient.  In
-our previous work~\cite{qua-moo2018}, we restrict the proximity between
-eroding bodies.  In addition, since we only visualized the velocity and
-vorticity in the fluid bulk once per time step, we used an expensive
-upsampling scheme.  However, upsampling is not practical when if it is
-required at each GMRES iteration or when simulating tracers in the flow.
-Therefore, in this paper, we apply a Barycentric quadrature rule to
-evaluate the Stokes double-layer potential~\cite{bar-wu-vee2015}.
-However, to compute derivatives of the flow, such as the vorticity and
-the shear stress, we extend this work to compute the required
-derivatives of the double-layer potential.
+are based on previous work of the authors~\cite{qua-moo2018}.  We
+continue to use a boundary integral equation (BIE) formulation of the
+incompressible Stokes equations and a second-order Runge-Kutta method
+applied to a smoothed version of the magnitude of the shear stress.  In
+our previous work, we discretized the BIE with the trapezoid rule whose
+accuracy grows when evaluating layer potentials close to the fluid
+boundary.  Therefore, given a fixed resolution, our previous work
+required a minimum separation distance between all bodies to maintain
+stability.  In recent years, many near-singular integration schemes have
+been developed~\cite{oja-tor2015, kli-tor2018, hel-oja2008a,
+bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  In this work, we
+use a Barycentric quadrature method~\cite{bar2014, bar-wu-vee2015} since
+it is a non-intrusive modification of the trapezoid rule, and the error
+is guaranteed to be uniformly bounded.  In this work, we extend this
+quadrature method so that it can be used to compute the gradient of the
+velocity which is required to compute the shear stress and the fluid
+vorticity.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
@@ -960,16 +961,17 @@ Then, the first and second ensemble moments are
     \sigma_\lambda^2(t) = \frac{1}{N_p} 
     \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
 \end{align}
-Then, particle dispersion is characterized as $\sqrt{\sigma_\lambda^2}$.
-At early times, the particles have not explored much of the geometry,
-and we expect a ballistic motion $\sigma_\lambda^2 \sim t^2$.  However,
-as the particles pass the grains, their trajectories are altered, and we
-expect that $\sigma_\lambda \sim t^\alpha$, with $\alpha < 1$,
-indicating that the flow is sub-diffusive.  With respect to erosion, as
-the bodies erode, we expect that the channelization of the geometry
-results in more trajectories undergoing a ballistic motion, and this
-would indicate decrease particle dispersion, meaning a larger anomalous
-diffusion rate.
+Since we compute second-order statistics, we use 1000 tracers so that
+the statistics have converged~\cite{bel-sal-rin1992}.  Then, particle
+dispersion is characterized as $\sqrt{\sigma_\lambda^2}$.  At early
+times, the particles have not explored much of the geometry, and we
+expect a ballistic motion $\sigma_\lambda^2 \sim t^2$.  However, as the
+particles pass the grains, their trajectories are altered, and we expect
+that $\sigma_\lambda \sim t^\alpha$, with $\alpha < 1$, indicating that
+the flow is sub-diffusive.  With respect to erosion, as the bodies
+erode, we expect that the channelization of the geometry results in more
+trajectories undergoing a ballistic motion, and this would indicate
+decrease particle dispersion, meaning a larger anomalous diffusion rate.
 
 At early times, the geometry has not been altered by erosion, and we
 expect large amounts of dispersion.  However, as the bodies erode, the
