@@ -183,26 +183,38 @@ vorticity.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
-\begin{itemize}
-  \item Use novel near-singular Barycentric integration scheme for
-    Stokes equation outlined in~\cite{bar-wu-vee2015}. (Remember to
-    include historically significant reference Shelley
-    \cite{bak-she1986}).
-  \item Need to compute one additional derivative since we need the
-    derivative of the velocity to find the vorticity and stress tensor
-  \item Annealing algorithm to create initial body configurations of
-  \item Tracer trajectories at different time steps
-  \item Compute the anomalous dispersion rate using similar techniques
-  as the paper with Pietro~\cite{dea-qua-bir-jua2018}
-  \item Need a novel way to do time stepping through the complex
-    geometry
-\end{itemize}
+Our first main contribution is extending the work of Barnett et
+al.~\cite{bar-wu-vee2015} so that high-order accurate derivatives of
+solutions of the Stokes equations can be computed.  Using this new
+quadrature method, we can accurately compute erosion rates, and
+therefore stably simulate erosion.  Moreover, we use the quadrature
+method to visualize the vorticity in the fluid bulk.  The vorticity is
+convenient to visualize since, in the zero Reynolds number limit, it is
+equivalent to the shear stress on the eroding bodies, and therefore its
+magnitude is the erosion rate.
 
+Our second contribution is computing trajectories in the eroded
+geometries.  These trajectories are used to characterize the transport
+by computing local tortuosities of the trajectories, the tortuosity of
+the eroded geometry, and the anomalous dispersion rates in the geometry.
+Again, by using an appropriate quadrature method~\cite{bar-wu-vee2015},
+and a fourth-order Runge-Kutta method, we are able to stably compute
+trajectories that spend large amounts of time in the slow velocity
+regions near the eroding bodies, and computing these trajectories
+reliably is essential to characterize the flow.  We compare our
+tortuosity and dispersion rates with models available in the literature.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations}
-\begin{itemize}
-  \item Bodies are still pinned
-  \item Bodies are still two dimensional
-\end{itemize}
+As in our previous work~\cite{qua-moo2018}, this work considers
+two-dimensional immobile bodies. However, this new work does not have a
+limitation on the packing of the bodies. Compared to our previous work,
+we are able to simulate much denser suspensions with a comparable number
+of discretization points.  While we do investigate transport in this
+work, we only consider passive particles that are undergoing only
+advection. To model other physical processes, such as contaminant
+transport, we plan to simulate a finite Peclet number
+advection-diffusion equation in eroded geometries.
 
 \paragraph{Related Work}
 
@@ -237,6 +249,8 @@ Storesletten~\cite{ree-sto1995}.
 \section{Governing Equations}
 \label{sec:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cite{bak-she1986}
+
 We start by defining the main variables used to model erosion.  A more
 detailed description is in our previous work~\cite{qua-moo2018}.  We
 consider flows inside a confined geometry $\Omega$ that contains $M$
@@ -1559,9 +1573,8 @@ apart from one another as they tend to a stagnation point in the flow,
 and this results in trajectories with significantly different lengths.
 At this instance in time one the tracers travels 25.5\% farther than it
 would have if the bodies had been absent, and the average tracer
-travelled ???\% farther than it would have if the bodies were absent.
-Therefore, at this instance in time, the tortuosity is $1.???$.
-\todo[inline]{S-H: Fill in the numbers in this paragraph}
+travelled 12\% farther than it would have if the bodies were absent.
+Therefore, at this instance in time, the tortuosity is $1.12$.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.45\textwidth}
