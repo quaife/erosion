@@ -57,7 +57,7 @@ distributions~\cite{ica-den2019, bel-sal-rin1992}, flow
 distributions~\cite{ali-par-wei-bre2017}, geometry
 connectivity~\cite{knu-car2005, wes-blo-gra2001}, pore
 distributions~\cite{ali-par-wei-bre2017}, and anomalous
-diffusion~\cite{dea-qua-bir-jua2018, den-cor-sch-ber2004,
+dispersion~\cite{dea-qua-bir-jua2018, den-cor-sch-ber2004,
 sie-ili-pri-riv-gua2019}.
 
 In many applications, the fluid transport continuously changes the pore
@@ -96,14 +96,14 @@ Runge-Kutta method to the {\thL} formulation~\cite{hou-low-she1994} of
 the eroding bodies.  Given the solution of the incompressible Stokes
 equations are solved in an eroded porous geometry, we investigate
 different metrics to characterize transport.  We focus on three metrics:
-the tortuosity, the anomalous diffusion, and the distribution of
+the tortuosity, the anomalous dispersion, and the distribution of
 geometrical channels.  
 
 The first two of these metrics can be defined in terms of statistical
 moments of trajectories.  Depending on the application, transport at the
 microscale can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
 leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019}, and advection
-diffusion equation~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
+dispersion equation~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
 this work, we assume that the trajectories are governed purely by
 advection (ie.~no diffusion).  Therefore, a trajectory $\ss(t)$
@@ -128,9 +128,15 @@ averaging over the entire inlet.  Therefore, the geometry's tortuosity
 can be used to characterize average particle
 motions~\cite{hak-com-den2019}.
 
-Anomalous diffusion  ...
-\cite{cus-hu-den1995}
-\cite{kan-dea-nun-bij-blu-jua2014}
+The tortuosity is a first statistical moment of the tracer trajectories.
+However, to measure spread of trajectories, second-order moments are
+computed. By computing the variance of the lengths of trajectories in a
+porous media, non-local anomalous dispersion is
+observed~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
+dea-leb-den-tar-bol-dav2013}, resulting in super-diffusive dispersion.
+Anomalous dispersion has been investigated for a variety of porous
+geometries, but the effect of erosion on the anomalous dispersion rate
+is lacking.
 
 Rather than solving the fluid equations in a complex porous matrix,
 network models can be used to describe the flow.  Here, the pores
@@ -176,8 +182,8 @@ vorticity.
     derivative of the velocity to find the vorticity and stress tensor
   \item Annealing algorithm to create initial body configurations of specified area fraction specified size distribution (NM can do the writing for this).
   \item Tracer trajectories at different time steps
-  \item Compute the anomalous diffusion rate using similar techniques as
-    the paper with Pietro~\cite{dea-qua-bir-jua2018}
+  \item Compute the anomalous dispersion rate using similar techniques
+  as the paper with Pietro~\cite{dea-qua-bir-jua2018}
   \item Need a novel way to do time stepping through the complex
     geometry
 \end{itemize}
@@ -923,7 +929,7 @@ Erosion leads to interesting porous geometries, and we are interested in
 characterizing transport in these geometries.  For porous media, two of
 the most important variables are the porosity and the permeability.
 However, additional properties of the flow are revealed by computing
-the anomalous diffusion rate, the tortuosity, and the distribution the
+the anomalous dispersion rate, the tortuosity, and the distribution the
 gap sizes.
 
 Having developed numerically accurate methods to compute the velocity
@@ -933,21 +939,21 @@ trajectories are computed with high-order methods in both space and
 time,  we are able to simulate dynamics very close to the eroding bodies
 (see Figures~\ref{fig:Eroding20tracer} and~\ref{fig:Eroding100tort}.
 Resolving the flow in these small velocity regions is essential to
-accurately describe anomalous diffusion and
+accurately describe anomalous dispersion and
 mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Diffusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The dynamics of fluid in porous media is often characterized in terms of
-anomalous diffusion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.  The
-anomalous diffusion depends on the porosity and
+anomalous dispersion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.  The
+anomalous dispersion depends on the porosity and
 permeability~\cite{koc-bra1988}, but the distribution of the bodies also
-affects the anomalous diffusion rates.  Since erosion causes certain
-structure in porous media, calculating the anomalous diffusion rates in
+affects the anomalous dispersion rates.  Since erosion causes certain
+structure in porous media, calculating the anomalous dispersion rates in
 these geometries is important.
 
-We calculate the anomalous diffusion rates by analyzing the tracer
+We calculate the anomalous dispersion rates by analyzing the tracer
 trajectories governed by equation~\eqref{eqn:trajectories} for
 geometries that are formed by erosion.  Given a set of trajectories, we
 define $\lambda_j(t)$ to be the arclength of the trajectory
@@ -972,7 +978,8 @@ that $\sigma_\lambda \sim t^\alpha$, with $\alpha < 1$, indicating that
 the flow is sub-diffusive.  With respect to erosion, as the bodies
 erode, we expect that the channelization of the geometry results in more
 trajectories undergoing a ballistic motion, and this would indicate
-decrease particle dispersion, meaning a larger anomalous diffusion rate.
+decrease particle dispersion, meaning a larger anomalous dispersion
+rate.
 
 At early times, the geometry has not been altered by erosion, and we
 expect large amounts of dispersion.  However, as the bodies erode, the
@@ -1134,21 +1141,21 @@ perform are:
 
   \item{\bf 20 Bodies at a Medium Porosity}: We consider 20 eroding
   bodies with a medium initial porosity.  After computing accurate
-  tracer trajectories, the tortuosity and anomalous diffusion rates are
+  tracer trajectories, the tortuosity and anomalous dispersion rates are
   computed and compared to those of an open channel.
 
   \item{\bf 20 Bodies at a Low Porosity}: We consider 20 eroding bodies
   with a low initial porosity.  We examine the effect of the lower
-  porosity on the tortuosity and anomalous diffusion rates.
+  porosity on the tortuosity and anomalous dispersion rates.
 
   \item{\bf 50 Bodies at a Low Porosity}: We consider 50 eroding bodies
   with a low initial porosity.  In addition to the tortuosity and
-  anomalous diffusion rates, we compute distributions of the pore throat
-  sizes and examine their response to erosion.
+  anomalous dispersion rates, we compute distributions of the pore
+  throat sizes and examine their response to erosion.
 
   \item{\bf 100 Bodies at a Medium Porosity}: We consider 100 eroding
   bodies with a medium porosity.  We compute the tortuosity, anomalous
-  diffusion rates, and the pore throat distributions.
+  dispersion rates, and the pore throat distributions.
 \end{itemize}
 
 
@@ -1355,7 +1362,7 @@ be very close to but not penetrate the bodies.}
 \end{center}
 \end{figure}
 
-Next, we use the tracer trajectories to compute the anomalous diffusion
+Next, we use the tracer trajectories to compute the anomalous dispersion
 rates and the tortuosities in the eroding geometry.  Since these
 calculations use a statistical analysis of the tracer trajectories, we
 increase the number of trajectories to $N_p = 1000$.  Again, the tracers
@@ -1457,9 +1464,10 @@ $p=0.2064$ and the root-mean-square error is $5.9 \times 10^{-3}$.}
 \center
 \includegraphics*[width =0.45\linewidth]{./figs/20b_second_moment_long}
 \caption{\label{fig:Eroding20anomalous} The analysis of anomalous
-diffusion in 20 nearly touching bodies with respect to initial porosity (37.68\%) and another six porosities
-during the eroding. The dashed line correspondes to a porosity of 100\% and the dashed-dotted line is a 
-line of best fit with slope 0.5742.}
+dispersion in 20 nearly touching bodies with respect to initial porosity
+(37.68\%) and another six porosities during the eroding. The dashed line
+correspondes to a porosity of 100\% and the dashed-dotted line is a line
+of best fit with slope 0.5742.}
 \end{figure}
 
 
@@ -1642,13 +1650,14 @@ the first-moment of trajectories in a empty channel (black dashed line).
 At smaller porosities, the first moment is always linear, but larger
 slopes indicate that the length of the trajectories are longer at lower
 porosities \todo[inline]{Don't understand how this is the case}.  The
-onset of anomalous diffusion is observed in
+onset of anomalous dispersion is observed in
 Figure~\ref{fig:Eroding100anomalous}(b). At early times, the particle
 spreading is comparable to that of an open channel (dashed curve)
 corresponding to the ballistic regime.  However, as the trajectories
-traverse the geometry, a transition to a sub-diffusion case, especially
-at low porosities, is evident.  The dashed-dotted line corresponds has a
-slope less than 1 indicating the long time behavior of the trajectories
+traverse the geometry, a transition to a super-dispersive case,
+especially at low porosities, is evident.  The dashed-dotted line
+corresponds has a slope less than 1 indicating the long time behavior of
+the trajectories
 \begin{align*}
   \sigma_\lambda \sim t^{0.8715}.
 \end{align*}
@@ -1664,7 +1673,7 @@ dashed-dotted line is a line of best fit with slope 0.8715.}
 \end{figure}
 
 Finally, using network models for flow in porous media~\cite{}, the
-anomalous diffusion rate can be linked to channel widths between solid
+anomalous dispersion rate can be linked to channel widths between solid
 bodies.  We construct a Delaunay triangulation with the centers of the
 eroding bodies corresponding to the vertices of the triangles.  Then, if
 the side of a triangle connects two vertices, we call the bodies
