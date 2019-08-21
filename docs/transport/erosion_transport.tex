@@ -74,12 +74,14 @@ certain characteristics.  For example, the geometry often has regions of
 high porosity that connect the inlet to the outlet.  This channelization
 results in velocity scales that can vary over several orders of
 magnitude~\cite{all-hea-lab-rei2002}.  Moreover, the channelization
-results in a geometry that is largely heterogeneous and anisotropic.
-Others have studied transport in heterogeneous geometries (for example,
-see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000, hak-com-den2019,
-suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996, leb-ded-dav-bou2007,
-knu-car2005, bel-sal-rin1992}). However, to the best of our knowledge, a
-detailed study of transport in eroded geometries has not been performed.
+results in a geometry that is largely heterogeneous and anisotropic, and
+this affects heat transfer through the medium~\cite{nil-sto1990,
+ree-sto1995}.  Others have studied transport in heterogeneous geometries
+(for example, see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000,
+hak-com-den2019, suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996,
+leb-ded-dav-bou2007, knu-car2005, bel-sal-rin1992}). However, to the
+best of our knowledge, a detailed study of transport in eroded
+geometries has not been performed.
 
 To describe the relevant hydrodynamics, we model two-dimensional
 microscopic scales where the fluid is governed by the incompressible
@@ -89,7 +91,8 @@ hydrodynamics, the grains of the porous media are eroded at a rate that
 is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
 ris-moo-chi-she-zha2012, qua-moo2018, par-izu2000}.  A variety of
 numerical methods can be applied to solve the incompressible Stokes
-equations such as a lattice-gas model~\cite{kop-kat-tim1996}, finite
+equations such as a lattice-gas or lattice Boltzmann
+model~\cite{kop-kat-tim1996, dar-mcc1998}, finite
 volume~\cite{suo-liu-gan2019, den-ica-hid2018, sie-ili-pri-riv-gua2019},
 finite differences~\cite{leb-ded-dav-bou2007, knu-car2005}, and cellular
 automata~\cite{rot1988}. In this work, we instead solve an equivalent
@@ -171,12 +174,14 @@ our previous work, we discretized the BIE with the trapezoid rule whose
 accuracy grows when evaluating layer potentials close to the fluid
 boundary.  Therefore, given a fixed resolution, our previous work
 required a minimum separation distance between all bodies to maintain
-stability.  In recent years, many near-singular integration schemes have
-been developed~\cite{oja-tor2015, kli-tor2018, hel-oja2008a,
-bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  In this work, we
-use a Barycentric quadrature method~\cite{bar2014, bar-wu-vee2015} since
-it is a non-intrusive modification of the trapezoid rule, and the error
-is guaranteed to be uniformly bounded.  In this work, we extend this
+stability.  One of the earliest works on near-singular integration was
+developed by Baker and Shelley~\cite{bak-she1986}, and in recent years,
+many other near-singular integration schemes have been
+developed~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
+bea-lai2001, klo-bar-gre-one2013}.  In this work, we use a Barycentric
+quadrature method~\cite{bar2014, bar-wu-vee2015} since it is a
+non-intrusive modification of the trapezoid rule, and the error is
+guaranteed to be uniformly bounded.  In this work, we extend this
 quadrature method so that it can be used to compute the gradient of the
 velocity which is required to compute the shear stress and the fluid
 vorticity.
@@ -216,41 +221,25 @@ advection. To model other physical processes, such as contaminant
 transport, we plan to simulate a finite Peclet number
 advection-diffusion equation in eroded geometries.
 
-\paragraph{Related Work}
-
-\begin{itemize}
-\item \cite{dar-mcc1998} show that if there is a region with high
-porosity, this greatly affects the relationships between the porosity
-and permeability.  Uses a Lattice-Boltzmann method.
-
-\item Rothman in 1988 did CA for flow in 2D porous media
-
-\item ``Canductivity and permeability af rocks" 1984
-
-\item ``An Analytical Study on Natural Convection in Isotropic and .
-Anisotropic Porous Channels" shows how anisotropy affects heat transfer
-in porous media.
-
-\item "The Effect of Anisotropic Permeability on Free Convective
-Boundary Layer Flow in Porous Media" is the same as last bullet
-
-\item Thermal boundary layer flow in anisotropic porous media is
-investigated by Nilsen and Storesletten~\cite{nil-sto1990} and Rees and
-Storesletten~\cite{ree-sto1995}.
-
-\end{itemize}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
+In Section~\ref{sec:formulation}, we briefly summarize the model that we
+describe in detail in our previous work~\cite{qua-moo2018}.  In
+Section~\ref{sec:DLP}, we recast all the governing equations as layer
+potentials defined in both $\RR^2$ and in $\CC$.
+Section~\ref{sec:method} describes the numerical methods, with special
+attention paid to the new quadrature method to compute the shear stress
+and vorticity.  Section~\ref{sec:transport} describes measures for
+characterizing the geometry, transport, and dispersion.
+Section~\ref{sec:results} presents numerical examples for a variety of
+dense packings of bodies.  Finally, concluding remarks are made in
+Section~\ref{sec:conclusions}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Governing Equations}
 \label{sec:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\cite{bak-she1986}
-
 We start by defining the main variables used to model erosion.  A more
 detailed description is in our previous work~\cite{qua-moo2018}.  We
 consider flows inside a confined geometry $\Omega$ that contains $M$
@@ -303,6 +292,7 @@ is applied to the erosion rate.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
+\label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Using the same approach as
 our previous work~\cite{qua-moo2018}, we use a double-layer potential
