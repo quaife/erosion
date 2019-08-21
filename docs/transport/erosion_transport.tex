@@ -49,9 +49,10 @@ developed~\cite{mil-chr-imh-mcb-ped1998}.  Therefore, to find closure
 formulas, accurate simulations at microscopic scales must be performed
 and analyzed.  A few examples of closure formulas and coarse-grained
 variables include
-pressure-saturation-permeability~\cite{mil-chr-imh-mcb-ped1998}, first
-passage time distribution~\cite{ber-sch-sil2000, hym-den-hag-kan2019,
-cve-che-wen1996}, tortuosity~\cite{hak-com-den2019,
+pressure-saturation-permeability~\cite{mil-chr-imh-mcb-ped1998},
+permeability-porosity~\cite{dar-mcc1998, car1937, won-kop-tom1984},
+first passage time distribution~\cite{ber-sch-sil2000,
+hym-den-hag-kan2019, cve-che-wen1996}, tortuosity~\cite{hak-com-den2019,
 matyka2008tortuosity, dud-koz-mat2011, kop-kat-tim1996}, concentration
 distributions~\cite{ica-den2019, bel-sal-rin1992}, flow
 distributions~\cite{ali-par-wei-bre2017}, geometry
@@ -86,18 +87,22 @@ Stokes equations (for example, see~\cite{hym-den-hag-kan2019,
 den-ica-hid2018, bar-mar-vee-zha2018}).  To couple the erosion and the
 hydrodynamics, the grains of the porous media are eroded at a rate that
 is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
-ris-moo-chi-she-zha2012, qua-moo2018, par-izu2000}.  The incompressible
-Stokes equation are solved by first recasting them as a boundary
-integral equation (BIE).  The BIE is discretized with a high-order
-quadrature method that resolves nearly touching bodies with a
-near-singular integration scheme~\cite{bar-wu-vee2015}.  The erosion
-dynamics are simulated by applying a stable second-order time stepping
-Runge-Kutta method to the {\thL} formulation~\cite{hou-low-she1994} of
-the eroding bodies.  Given the solution of the incompressible Stokes
-equations are solved in an eroded porous geometry, we investigate
-different metrics to characterize transport.  We focus on three metrics:
-the tortuosity, the anomalous dispersion, and the distribution of
-geometrical channels.  
+ris-moo-chi-she-zha2012, qua-moo2018, par-izu2000}.  A variety of
+numerical methods can be applied to solve the incompressible Stokes
+equations such as a lattice-gas model~\cite{kop-kat-tim1996}, finite
+volume~\cite{suo-liu-gan2019, den-ica-hid2018, sie-ili-pri-riv-gua2019},
+finite differences~\cite{leb-ded-dav-bou2007, knu-car2005}, and cellular
+automata~\cite{rot1988}. In this work, we instead solve an equivalent
+boundary integral equation (BIE) formulation of the incompressible
+Stokes equation.  The BIE is discretized with a high-order quadrature
+method that resolves nearly touching bodies with a near-singular
+integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
+simulated by applying a stable second-order time stepping Runge-Kutta
+method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
+bodies.  Given the solution of the incompressible Stokes equations are
+solved in an eroded porous geometry, we investigate different metrics to
+characterize transport.  We focus on three metrics: the tortuosity, the
+anomalous dispersion, and the distribution of geometrical channels.  
 
 The first two of these metrics can be defined in terms of statistical
 moments of trajectories.  Depending on the application, transport at the
@@ -110,10 +115,15 @@ advection (ie.~no diffusion).  Therefore, a trajectory $\ss(t)$
 initialized at $\ss_0$ is governed by
 \begin{align}
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
+  \label{eqn:tracers}
 \end{align}
 where $\uu$ is the fluid velocity.  Since there is no diffusion, all
 dispersion is a result of the particle spreading induced by the porous
-geometry.
+geometry.  Since there is no diffusion, we apply a high-order explicit
+Runge-Kutta time stepping method to compute tracer trajectories.
+However, other groups have simulated trajectories using continuous time
+random walks~\cite{mon-wei1965, den-cor-sch-ber2004, leb-den-car2008,
+ber-cor-den-sch2006} and a Fokker-Planck equation~\cite{ica-den2019}.
 
 In a porous geometry, the length of a particle path is larger than the
 distance travelled if the grains were absent.  To quantify the amount of
@@ -134,9 +144,10 @@ computed. By computing the variance of the lengths of trajectories in a
 porous media, non-local anomalous dispersion is
 observed~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
 dea-leb-den-tar-bol-dav2013}, resulting in super-diffusive dispersion.
-Anomalous dispersion has been investigated for a variety of porous
-geometries, but the effect of erosion on the anomalous dispersion rate
-is lacking.
+The dispersion depends on the amount of time trajectories spend in low
+and high velocity regimes~\cite{ber-sch2001}.  Anomalous dispersion has
+been investigated for a variety of porous geometries, but not in the
+context of eroding porous geometries.
 
 Rather than solving the fluid equations in a complex porous matrix,
 network models can be used to describe the flow.  Here, the pores
@@ -176,11 +187,10 @@ vorticity.
   \item Use novel near-singular Barycentric integration scheme for
     Stokes equation outlined in~\cite{bar-wu-vee2015}. (Remember to
     include historically significant reference Shelley
-    \cite{baker1986boundary}).  Also need discuss Helsing and Ojala who
-    did a similar panel-based quadrature~\cite{hel-oja2008}
+    \cite{bak-she1986}).
   \item Need to compute one additional derivative since we need the
     derivative of the velocity to find the vorticity and stress tensor
-  \item Annealing algorithm to create initial body configurations of specified area fraction specified size distribution (NM can do the writing for this).
+  \item Annealing algorithm to create initial body configurations of
   \item Tracer trajectories at different time steps
   \item Compute the anomalous dispersion rate using similar techniques
   as the paper with Pietro~\cite{dea-qua-bir-jua2018}
@@ -197,13 +207,9 @@ vorticity.
 \paragraph{Related Work}
 
 \begin{itemize}
-\item Porous aquifers are a good application of our work
-
 \item \cite{dar-mcc1998} show that if there is a region with high
 porosity, this greatly affects the relationships between the porosity
 and permeability.  Uses a Lattice-Boltzmann method.
-
-\item Continuous Time Random Walks~\cite{ber-cor-den-sch2006}
 
 \item Rothman in 1988 did CA for flow in 2D porous media
 
@@ -216,40 +222,9 @@ in porous media.
 \item "The Effect of Anisotropic Permeability on Free Convective
 Boundary Layer Flow in Porous Media" is the same as last bullet
 
-\item Near-singular integration such as regularization, QBX, Lagrange
-interpolation, panel-based quadrature, etc.
-
-\item The classic work of Carman~\cite{car1937} reviews early work on
-granular flow.
-
 \item Thermal boundary layer flow in anisotropic porous media is
 investigated by Nilsen and Storesletten~\cite{nil-sto1990} and Rees and
 Storesletten~\cite{ree-sto1995}.
-
-\item \cite{won-kop-tom1984} investigates relationships between the
-porosity of a rock to its permeability, surface area, and the electrical
-conductivity of salt water within the rock.  They show that the pore
-size distribution influences both the conductivity and permeability.
-
-\item In~\cite{rot1988}, Rothman applies a cellular automaton method to
-simulate flow in porous media.  The method is probabilistic and agrees
-well with analytic solutions.  However, the resulting flow is not
-smooth, so quantities such as the shear stress is challenging to stably
-compute.
-
-\item In~\cite{leb-den-car2008}, a statistical model is used to describe
-transport in a high heterogeneous porous media.
-
-\item In~\cite{bar2014}, a local expansion technique similar to QBX is
-used.  The advantage is that this extends naturally to 3D.  Also,
-Barnett analyzed the error of the Laplace DLP and SLP and compared the
-numerical results to the theory.
-
-\item Suite of near-singular integration methods such as QBX,
-panel-based quadrature, other local interpolants, regularization.
-
-\item \cite{ioa-pap-per1991} were the first to develop quadrature for
-analytic functions in the interior case.
 
 \end{itemize}
 
@@ -1098,9 +1073,6 @@ compare these four models with the tortuosity of eroding geometries.
 \end{itemize}
 
 
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Results}
 \label{sec:results}
@@ -1108,14 +1080,19 @@ compare these four models with the tortuosity of eroding geometries.
 In this section, we apply our new quadrature method to simulate erosion
 of several different configurations of eroding bodies.  The fluid domain
 is $\Omega$ whose outer solid walls is a rectangle $[-3,3] \times
-[-1,1]$ with rounded off corners.  We only place bodies only in $[-1,1]
-\times [-1,1]$.  For all simulations, we discretize $\Gamma = \bd
-\Omega$ with $N_\out=1024$ points.  For all but the first example, the
-Dirichlet boundary condition on $\Gamma$ is a hagen-poiseuille flow.  As
-the bodies erode, the flow rate is adjusted to maintain the physical
-constant pressure drop boundary condition.  To maintain this pressure
-drop, we compute the pressure at near the inlet and outlet at each time
-step as described in our previous work~\cite{qua-moo2018}.
+[-1,1]$ with rounded off corners.  We initialize the bodies randomly in
+$[-1,1] \times [-1,1]$ using a randomized method that chooses a random
+center and radii, and then accepts the new body if it is sufficiently
+separated from all other bodies.  Since the error of our quadrature
+method is bounded independent of the geometry, we consider bodies that
+are separated by less than 10\% of an arclength spacing.  For all
+simulations, we discretize $\Gamma = \bd \Omega$ with $N_\out=1024$
+points.  For all but the first example, the Dirichlet boundary condition
+on $\Gamma$ is a hagen-poiseuille flow.  As the bodies erode, the flow
+rate is adjusted to maintain the physical constant pressure drop
+boundary condition.  To maintain this pressure drop, we compute the
+pressure at near the inlet and outlet at each time step as described in
+our previous work~\cite{qua-moo2018}.
 
 The initial shape of the eroding body $\gamma_i$ is a circle centered at
 $\cc_i$ with radius $r_i$ and length $L_i = 2\pi r_i$, and each
