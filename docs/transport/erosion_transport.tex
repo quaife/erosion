@@ -1,7 +1,7 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
 \input{preambles.tex}
-\usepackage{showkeys}
+%\usepackage{showkeys}
 \begin{document}
 
 \title{Viscous Transport in Eroding Porous Media}
@@ -36,7 +36,8 @@ Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Flow in many natural occurring geometries involves flows that vary over
-many orders of magnitude.  For example, the length scales of a porous
+many orders of magnitude.  \todo[]{The grammar in the first sentence is awkward: Flow in ... involves flows?}
+For example, the length scales of a porous
 media can vary from $10^{-6}m$ to
 $10^{-1}m$~\cite{mil-chr-imh-mcb-ped1998}.  Porous media flow plays an
 important role in several environmental and industrial applications.
@@ -325,7 +326,7 @@ double-layer potential is
   \frac{1}{\pi}\int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
-  \label{eqn:stokesDLP}
+  \label{eqn:velocityDLP}
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
@@ -335,7 +336,8 @@ we complete the integral equation formulation by adding the Stokeslets
 and rotlets~\cite{pow-mir1987}
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
-    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2} \right), \quad
+    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
+    \right)\llambda_\ell, \quad
   R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
 \end{align}
 where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
@@ -349,6 +351,8 @@ condition $\ff$ is
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx),
 \end{align}
 where the density function, Stokeslets, and rotlets satisfy
+\begin{subequations}
+\label{eqn:BIE}
 \begin{align}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
@@ -360,31 +364,42 @@ where the density function, Stokeslets, and rotlets satisfy
     (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
     \quad \ell = 1,\ldots,M.
 \end{align}
-The operator $\NN_0$ is the integral operator with kernel $\nn(\xx)
-\otimes \nn(\yy)$, $\xx,\yy \in \Gamma$, which removes the rank one null
-space resulting from the flux-free requirement of $\ff$.  In this work,
-$\ff$ is the prescribed velocity, $\UU$, on the outer wall, $\Gamma$,
-and is zero on the eroding bodies, $\gamma_\ell$, $\ell=1,\ldots,M$.  
+\end{subequations}
+The operator $\NN_0$ is the integral operator with kernel
+$N_(0)(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$,
+which removes the rank one null space resulting from the flux-free
+requirement of $\ff$.  In this work, $\ff$ is the prescribed velocity,
+$\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
+$\gamma_\ell$, $\ell=1,\ldots,M$.  
 
 The deformation tensor, pressure, and vorticity of the double-layer
 potential, Stokeslets, and rotlets, can all be computed analytically in
 terms of the density function and the strengths of the Stokeslets and
 rotlets.  For $\xx \in \Omega$, the deformation tensor, pressure, and
-vorticity of the double-layer potential~\eqref{eqn:stokesDLP} are
+vorticity of the double-layer potential~\eqref{eqn:velocityDLP} are
 \begin{align}
   \label{eqn:deformationDLP} 
-  \ssigma^\DD(\xx) &= \frac{1}{2\pi}\int_{\bd\Omega} \left(
+  \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
+      \eeta(\yy) ds_{\yy} 
+  = \frac{1}{2\pi}\int_{\bd\Omega} \left(
     2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
     \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
     \right. \nonumber \\
-    & \qquad\qquad \left.
+    & \qquad\qquad\qquad\qquad\qquad\qquad \left.
     +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
     \right) \, ds_\yy, \\
-  p^\DD(\xx) &= -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
+%
+  p(\xx) &= \int_{\bd\Omega} D_{p}(\xx,\yy) 
+      \eeta(\yy) ds_{\yy} 
+  = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
     \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) \nn \cdot
       \eeta(\yy)\,ds_\yy, \\
-  \omega^\DD(\xx) &= -\frac{1}{\pi} \int_{\bd\Omega}
+%
+  \label{eqn:vorticityDLP} 
+  \omega(\xx) &= \int_{\bd\Omega} D_{\omega}(\xx,\yy) 
+      \eeta(\yy) ds_{\yy} 
+  = -\frac{1}{\pi} \int_{\bd\Omega}
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
       (\rr \cdot \eeta) \, ds_\yy,
 \end{align}
@@ -397,9 +412,9 @@ potential is discontinuous across $\bd\Omega$, the jump term
       s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
     \end{array}
   \right],
-  \label{eqn:defJump}
+  \label{eqn:deformationJump}
 \end{align}
-must be added to $\ssigma^\DD(\xx)$ for $\xx \in \gamma$.  Finally, the
+must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
 Stokeslets and rotlets do not have any jumps on $\gamma$, so the
 deformation tensor, pressure, and vorticity due to the Stokeslets and
 rotlets are straightforward to compute~\cite{poz1992} \todo[inline]{BQ:
@@ -412,11 +427,12 @@ equation~\eqref{eqn:shearStress}.
 Potential}
 \label{sec:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In equations~\eqref{eqn:stokesDLP} and~\eqref{eqn:deformationDLP}, $\uu$
-and its deformation tensor are written as a contour integral in $\RR^2$.
-However, so that we can apply a particular quadrature method, we need to
-write these layer potentials in terms of Cauchy integrals in $\CC$ and
-their derivatives.  The first step is to write the Laplace double-layer potential as the complex integral
+In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
+$\uu$ and its deformation tensor are written as a contour integral in
+$\RR^2$.  However, so that we can apply a particular quadrature method,
+we need to write these layer potentials in terms of Cauchy integrals in
+$\CC$ and their derivatives.  The first step is to write the Laplace
+double-layer potential as the complex integral
 \begin{align}
   \DD[\eta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\, ds_\yy = \Re (v(x)) \quad 
@@ -454,7 +470,7 @@ for $x \in \Omega$.  Since $v(x)$ depends on the density function $\eta
 function defined in equation~\eqref{eqn:laplaceComplex}, and its first
 two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
   
-To rewrite the Stokes double-layer potential~\eqref{eqn:stokesDLP} in
+To rewrite the Stokes double-layer potential~\eqref{eqn:velocityDLP} in
 terms of Cauchy integrals and their derivatives, we write it in terms of
 Laplace layer potentials
 \begin{equation}
@@ -494,6 +510,7 @@ $\nn \in \RR^2$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation for the Gradient of the
 Double-Layer Potential}
+\label{sec:gradDLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In addition to the velocity, we require a complex-valued representation
 of the gradient of the velocity so that we can compute the shear stress
@@ -518,10 +535,11 @@ equation~\eqref{eqn:cauchyVelocity}
   \end{aligned}
 \end{equation}
 The same expressions are used to compute the deformation tensor for $x
-\in \bd\Omega$, except that the jump condition~\eqref{eqn:defJump} is
-included.  Finally, to compute the shear stress, the deformation tensor
-on $\bd\Omega$ is applied to the normal and tangent vectors as defined
-in equation~\eqref{eqn:shearStress}.
+\in \bd\Omega$, except that the jump
+condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
+the shear stress, the deformation tensor on $\bd\Omega$ is applied to
+the normal and tangent vectors as defined in
+equation~\eqref{eqn:shearStress}.
 
 In a shear flow, the vorticity is equivalent to the shear stress.  Since
 the erosion rate is proportional to the magnitude of the shear stress,
@@ -659,12 +677,12 @@ equation~\eqref{eqn:tortuosity1} is equivalent to~\cite{dud-koz-mat2011}
 where $\Omega$ is the fluid region between the inlet and outlet
 cross-sections.  Recirculation zones are possible in viscous
 fluids~\cite{hig1985}, but they are very small in the examples we
-consider and have a negligible effect on the tortuosity (for example,
-see Figure~\ref{fig:Eroding20tort_all}).  Since
+consider and have a negligible effect on the tortuosity.  Since
 equation~\eqref{eqn:tortuosity2} does not require the additional work of
 computing particle trajectories at every time step, we use this
-definition for the majority of the tortuosity calculations.
-
+definition for the majority of the tortuosity calculations.  However, we
+do compare the two formulas for the tortuosity at several time steps in
+Section~\ref{sec:results}.
 
 There have been efforts to relate the tortuosity to the
 porosity~\cite{matyka2008tortuosity}.  For example, Matyka et
@@ -696,17 +714,19 @@ compare these four models with the tortuosity of eroding geometries.
 \label{sec:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In line with our previous work~\cite{qua-moo2018}, we use two meshes to
-simulate erosion.   The integral equation is solved with a collocation
-method (Section~\ref{sec:spatialDiscretization}).  Depending on the
-proximity of the target and source points, either the trapezoid rule or
-the Barycentric quadrature rule (Section~\ref{sec:bary}) is applied.  A
-selection algorithm that determines which quadrature method is applied
-is described in Section~\ref{sec:fmm}.  Once the shear stress is
-computed, the bodies are converted to a {\thL}
-framework~\cite{hou-low-she1994}.  Then, the erosion model is integrated
-forward a single time step.  By using a {\thL} formulation, the stiff
-curvature term is linear and the discretization points remain equispaced
-in arclength.
+simulate erosion. The integral equation is solved by discretizing the
+boundary of the geometry at a set of points distributed equally in
+arclength, and then applying a collocation method
+(Section~\ref{sec:spatialDiscretization}).  The quadrature rule is
+either the trapezoid rule or the Barycentric quadrature rule
+(Section~\ref{sec:bary}).  The selection algorithm that determines which
+quadrature method is applied is described in Section~\ref{sec:fmm}.
+Once the shear stress is computed, the bodies are eroded a single time
+step by using a {\thL} discretization~\cite{hou-low-she1994}.  By using
+a {\thL} formulation, the stiff curvature term is linear and the
+discretization points remain equispaced in arclength.  Finally, time
+stepping methods for the eroding bodies and passive particles are
+described in Section~\ref{sec:time}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Spatial Discretization}
@@ -714,132 +734,144 @@ in arclength.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 By using an integral equation formulation, we only have to discretize
 the one-dimensional boundary of the domain.  Therefore, we easily
-resolve complex geometries, and differentiation can be performed with
+resolve complex geometries, and differentiation is performed with
 spectral accuracy in Fourier space.  We discretize each eroding body
 $\gamma_k$ with $N_\iin$ points and discretize the outer wall $\Gamma$
-with $N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ is
-denoted by $\yy_j^0$, and the $j^{th}$ discretization point on
-$\gamma_k$ is denoted by $\yy^k_j$.  The discretization points are
-initially distributed evenly in arclength, and this equispacing is
-maintained for the entire simulation by using a {\thL}
-formulation~\cite{hou-low-she1994}.  In addition, we apply mild
-smoothing strategies~\cite{qua-moo2018} to avoid the corners that
-erosion inevitably develop.  
+with $N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ and
+$\gamma_k$ are denoted by $\yy_j^0$ and $\yy^k_j$, respectively.  The
+discretization points are initially distributed evenly in arclength, and
+this equispacing is maintained for the entire simulation by using the
+{\thL} formulation.  In addition, we apply mild smoothing
+strategies~\cite{qua-moo2018} to avoid the corners that erosion
+inevitably develop.
 
-Given these discretization points, the velocity at $\xx$ can be
-approximated with the quadrature formula
-\begin{align}
-  \label{eqn:trap}
-  \uu(\xx) \approx \sum_{j=1}^{N_\out} w^0_j D(\xx,\yy^0_j) \eeta_j +
-  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D(\xx,\yy^k_j) \eeta^k_j,
-\end{align}
-$w^k_j$ are quadrature weights (which depend on $N_\iin$, $N_\out$, and
-the lengths of $\gamma^k$), and $D$ is the kernel of the Stokes
-double-layer potential defined in Equation~\eqref{eqn:stokesDLP}.
-Matching the limiting behavior of the velocity with the boundary
-condition, the density function at the quadrature point solves
-\begin{align}
+Given the discretization points of $\bd\Omega$, applying the trapezoid
+rule results in the collocation method for~\eqref{eqn:BIE} 
+\begin{subequations}
+\label{eqn:trapLinearSystem}
+  \begin{alignat}{3}
   \UU_\ell &= \sum_{j=1}^{N_\out} 
     w^0_j D(\yy^0_\ell,\yy^0_j) \eeta_j +
   \sum_{k=1}^M \sum_{j=1}^{N_\iin}
-    w^k_j D(\yy^0_\ell,\yy^k_j) \eeta^k_j, 
-    \quad \ell = 1,\ldots,N_\out \\
-  0 &= \sum_{j=1}^{N_\out} 
+    w^k_j D(\yy^0_\ell,\yy^k_j) \eeta^k_j +
+  \sum_{j=1}^{N_\out} w^0_j N_0(\yy^0_\ell,\yy^0_j) \nonumber \\
+  &\quad+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^0_\ell) + 
+  \sum_{k=1}^M R[\xi_k,\cc_k](\yy^0_\ell),
+    &&\hspace{-60pt} \ell = 1,\ldots,N_\out, \\
+%
+  \mathbf{0} &= \sum_{j=1}^{N_\out} 
     w^0_j D(\yy^m_\ell,\yy^0_j) \eeta_j +
-  \sum_{k=1}^M \sum_{j=1}^{N_\iin} 
-    w^k_j D(\yy^m_\ell,\yy^k_j) \eeta^k_j, 
-    \quad \ell = 1,\ldots,N_\iin, \: m=1,\ldots,M. 
-\end{align}
-
-Once the density function is found at the quadrature points, the shear
-stress and vorticity can be approximated.  In particular,
-the deformation tensor is
+  \sum_{k=1}^M \sum_{j=1}^{N_\iin}
+    w^k_j D(\yy^m_\ell,\yy^k_j) \eeta^k_j \nonumber \\
+  &\quad+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^m_\ell) + 
+  \sum_{k=1}^M R[\xi_k,\cc_k](\yy^m_\ell),
+    &&\hspace{-60pt}\ell = 1,\ldots,N_\iin, \: m=1,\ldots,M, \\
+%
+  \llambda_m &= \frac{1}{2\pi} \sum_{j=1}^{N_\iin} \eeta^m_j,  \quad
+  \xi_m = \frac{1}{2\pi} \sum_{j=1}^{N_\iin}
+    (\yy^m_j - \cc_m)^\perp \cdot \eeta^m_j,
+    &&\hspace{-60pt} m=1,\ldots,M,
+\end{alignat}
+\end{subequations}
+where $w^k_j$ are quadrature weights (which depend on $N_\iin$,
+$N_\out$, and the lengths of $\gamma^k$), and $D$ is the kernel of the
+Stokes double-layer potential defined in
+Equation~\eqref{eqn:velocityDLP}.  The linear
+system~\eqref{eqn:trapLinearSystem} is a well-conditioned second-kind
+integral equation that is solved iteratively with GMRES.  If the number
+of discretization points is sufficiently large, then the solution
+of~\eqref{eqn:trapLinearSystem} is an accurate approximation of the
+density function, Stokeslets, and rotlets.   Then, if $\xx \in \Omega$
+is sufficiently far from $\bd\Omega$, an approximation of the velocity,
+deformation tensor, and vorticity due to the double-layer potential is
+found by applying the trapezoid rule to \eqref{eqn:velocityDLP},
+\eqref{eqn:deformationDLP}, and~\eqref{eqn:vorticityDLP}, respectively.
+In particular,
 \begin{align}
-  \ssigma(\xx) = \frac{1}{2}(\nabla \uu + \nabla \uu^T) = 
+  \label{eqn:trap}
+  \uu(\xx) &= \sum_{j=1}^{N_\out} w^0_j D(\xx,\yy^0_j) \eeta_j +
+  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D(\xx,\yy^k_j) \eeta^k_j, \\
+%
+  \ssigma(\xx) &= \sum_{j=1}^{N_\out} w^0_j \mathbf{D}_\ssigma(\xx,\yy^0_j) \eeta_j +
+  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j \mathbf{D}_\ssigma(\xx,\yy^k_j)
+  \eeta^k_j, \\
+%
+  w(\xx) &= \sum_{j=1}^{N_\out} w^0_j D_\omega(\xx,\yy^0_j) \eeta_j +
+  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D_\omega(\xx,\yy^k_j)
+  \eeta^k_j.
 \end{align}
-and the vorticity is
-\begin{align}
-  w(\xx) = 
-\end{align}
+The contributions due to the Stokeslets and rotlets require no
+quadrature and are easily included in the velocity, deformation tensor,
+and vorticity.  Finally, to compute the shear stress, we apply the
+trapezoid rule with Fourier differentiation to approximate the jump
+term~\eqref{eqn:deformationJump} of the deformation tensor, and then the
+tensor is applied to the normal and tangent vectors as defined in
+equation~\eqref{eqn:shearStress}.
 
-The choice of the quadrature rule determines the overall accuracy of the
-method.  To simulate dense suspensions of eroding bodies, it is
-imperative that the error of the chosen quadrature rule is bounded for
-independent of the configuration of the bodies.  To achieve this goal,
-we apply a Barycentric quadrature rule
+Once the velocity is computed in $\Omega$, the tortuosity can be
+computed with the Eulerian velocity field~\eqref{eqn:tortuosity2}.  We
+first compute the velocity at $\xx_{ij} = (-1 + i\Delta x, -1 + j\Delta
+y)$, $i,j=1,\ldots,N$, where $\Delta x = \Delta y = 2/N$, and the
+velocity at points inside an eroding body are assigned a value of 0.
+Then, the tortuosity is approximated as
+\begin{align}
+  T = \frac{\sum\limits_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y}
+      {\sum\limits_{i,j=1}^N u_x(\xx_{ij}) \Delta x \Delta y}.
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature Formulas}
 \label{sec:bary}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Since the error of the trapezoid rule applied to periodic functions
+depends on the derivative of the integrand~\cite{tre-wei2014}, the
+trapezoid rule applied in Section~\ref{sec:spatialDiscretization} is
+only appropriate if the target point is sufficiently separated from all
+eroding bodies and the outer wall.  Therefore, if the trapezoid rule is
+applied when bodies are in near-contact, or when a layer potential is
+evaluated at a point close to $\bd\Omega$, then the results become
+unreliable and ultimately unusable.  Hence, we require a quadrature
+method whose error is bounded independent of the target location.
 
-\todo[inline]{Dump of text}
-Having developed numerically accurate methods to compute the velocity
-$\uu$ at points close to the bodies, we are able to compute the
-trajectories of particles passing through an eroded body.  Since the
-trajectories are computed with high-order methods in both space and
-time,  we are able to simulate dynamics very close to the eroding bodies
-(see Figures~\ref{fig:Eroding20tracer} and~\ref{fig:Eroding100tort}.
-
-
-
-We have shown that the velocity, shear stress, and vorticity of the
-double-layer representation can all be written in terms of Cauchy
-integrals and its first two derivatives.  Therefore, we require
-quadrature methods to evaluate the expressions in
-equation~\eqref{eqn:cauchy}.  Since the integrands are all smooth and
-periodic, the trapezoid rule has spectral accuracy.  However, the
-integrand becomes nearly singular as $x$ approaches $\bd\Omega$, and the
-quadrature error is arbitrarily large at a fixed resolution.  There have
-been a variety of near-singular integration schemes developed.   We opt
-to use a method first outlined by Barnett et al.~\cite{bar-wu-vee2015}
-which we call the {\em Barycentric quadrature rule}.  Quadrature rules
-for only the Cauchy integral and its first derivative are presented, and
-we extend this result to include the second derivative.
-\todo[inline]{Dump of text}
-
-
-
-Equations~\eqref{eqn:cauchyVelocity} and~\eqref{eqn:cauchyGradient} show
-that computing the Stokes velocity, shear stress, and vorticity hinge on
-accurate quadrature methods for the Cauchy integral and its first two
-derivatives as defined in equation~\eqref{eqn:cauchy}.  Even though the
-trapezoid rule is spectrally accurate for a fixed $x \in
-\Omega$~\cite{tre-wei2014}, its error depends on bounds of the
-derivative of the integrand.  Therefore for a fixed resolution, as $x$
-approaches $\bd\Omega$, causing the integrands to become more singular,
-the error grows without bound.  Ioakimidis et al.~\cite{ioa-pap-per1991}
-developed quadrature methods to compute Cauchy integrals and their
-derivatives with an error bound that is independent of $x$.  Then,
-Barnett et al.~\cite{bar-wu-vee2015} applied these quadratur emethods to
-compute the Stokes double-layer potential representation of the
-velocity~\eqref{eqn:stokesDLP}.  To compute the shear stress and
-vorticity with the same accuracy, we extend the method by using
-Barycentric quadrature methods for the second derivative of a Cauchy
-integral.  
+We showed in Sections~\ref{sec:DLPcomplex} and
+Section~\ref{sec:gradDLPcomplex} that the velocity, shear stress, and
+vorticity of the double-layer representation can all be written in terms
+of Cauchy integrals and its first two derivatives.  Therefore, if we
+develop quadrature rules with a uniformly bounded error for Cauchy
+integrals and its derivatives~\eqref{eqn:cauchy}, then the quadrature
+method can be used to accurately compute the velocity, shear stress, and
+vorticity.  Ioakimidis et al.~\cite{ioa-pap-per1991} developed
+quadrature methods, that we call {\em Barycentric quadrature rules}, to
+compute Cauchy integrals and their derivatives with an error bound that
+is independent of $x$.  Then, Barnett et al.~\cite{bar-wu-vee2015}
+applied these quadrature methods to compute the Stokes double-layer
+potential representation of the velocity~\eqref{eqn:velocityDLP}.  We
+build on this method so that the shear stress and vorticity can be
+computed with a uniform error bound.
 
 We briefly summarize the Baryncentric quadrature method for computing
-the velocity~\cite{bar-wu-vee2015}.  Then, we apply additional
-quadrature methods to compute the gradient of the velocity so that we
-can simulate erosion.  We present the quadrature for a simply-connected
-interior domain $\Omega$, and we consider the target points $x \in
-\Omega$ and $x \in \Omega^c$. Then, the method naturally extends to the
-eroding geometry by applying the quadrature to each of its connected
-component.  The method starts with an underlying quadrature rule, and we
-use the spectrally accurate trapezoid rule.  Since the quadrature points
-are uniformly distributed, the quadrature weights are $w_j = L/N$,
-$j=1,\ldots,N$, where $L$ is the length of $\bd\Omega$.
+the velocity~\cite{bar-wu-vee2015}.  Then, so that we can simulate and
+visualize erosion, we apply similar techniques to compute Barycentric
+quadrature rules for the gradient of the velocity.  We present the
+quadrature for a simply-connected interior domain $\Omega$, and we
+consider the target points $x \in \Omega$ and $x \in \Omega^c$. Then,
+the method naturally extends to the eroding geometry by applying the
+quadrature to each of its connected component.  The method starts with
+an underlying quadrature rule, and we use the spectrally accurate
+trapezoid rule.  Since the quadrature points are uniformly distributed,
+the quadrature weights are $w_j = L/N$, $j=1,\ldots,N$, where $L$ is the
+length of $\bd\Omega$.
 
-Again, given a density function $\tau$, the boundary data of $v$ as
-defined in equation~\eqref{eqn:laplaceComplex} can be found by applying
-the Sokhotski-Plemelj jump relation~\eqref{eqn:SPrelation}.  The
-boundary data differs if we are considering the interior problem ($x \in
-\Omega$) or the exterior problem ($x \in \Omega^c$).  Therfore, for the
-boundary data we use the notation $v^-$ for the interior problem and
-$v^+$ for the exterior problem.  Rather than directly applying the
+Again, given a density function $\eta$, the boundary data of
+$v[\eta](\xx)$, as defined in equation~\eqref{eqn:laplaceComplex},
+satisfies the Sokhotski-Plemelj jump relation~\eqref{eqn:SPrelation}.
+Since the boundary data of $v$ differs when considering $x \in \Omega$
+and $x \in \Omega^c$, we denote the boundary data as $v^-$ for $x \in
+\Omega$, and as $v^+$ otherwise.  Rather than directly applying the
 trapezoid rule to $v(x)$, we start with the identity
 \begin{align}
   \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0,
+    \quad x \in \Omega,
 \end{align}
 where we are considering the interior problem.  Since the integrand is
 bounded as $x$ approaches $\bd\Omega$, we can apply the trapezoid rule
@@ -847,7 +879,7 @@ bounded as $x$ approaches $\bd\Omega$, we can apply the trapezoid rule
   \sum_{j=1}^{N} \frac{v^{-}(y_j) - v(x)}{y_j - x} w_j \approx 0,
 \end{align}
 and the error is independent of $x$.  Rearranging for $v(x)$, we have
-the interior Barycentric quadrature formula 
+the interior Barycentric quadrature rule
 \begin{align}
   v(x) = \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
   {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}, \quad x \in \Omega.
@@ -868,8 +900,8 @@ for $v'(x)$.  For $x \in \Omega$, we have the identity
 \begin{align}
   \int_{\bd\Omega} \frac{v^-(y) - v(x) + (y-x)v'(x)}{(y - x)^2} = 0,
 \end{align}
-and the integrand is bounded for all $x \in \Omega$.  Therefore, upon
-applying the quadrature rule and rearranging for $v'(x)$, we have the
+and the integrand is bounded for all $x \in \Omega$.  Therefore, after
+applying the trapezoid rule and rearranging for $v'(x)$, we have the
 interior Barycentric quadrature rule
 \begin{align}
   v'(x) = \frac{\sum\limits_{j=1}^{N}
@@ -888,15 +920,13 @@ for the the first derivative is
   \label{eqn:BaryvprimeExterior}
 \end{align}
 Note that the value $v(x)$ is required to compute $v'(x)$ for both the
-interior and exterior case.  These are computed using the quadrature
-methods in equations~\eqref{eqn:BaryvInterior}
-and~\eqref{eqn:BaryvExterior}.
+interior and exterior case, and these are available using the quadrature
+rules~\eqref{eqn:BaryvInterior} and~\eqref{eqn:BaryvExterior}.
 
 To compute the shear stress and vorticity, we require a Barycentric
-quadrature rule for $v''(x)$.  Following the work of Ioakimidis et
-al~\cite{ioa-pap-per1991} (see equation (2.12)), we mimick the
-construction of the quadrature rule for $v(x)$ and $v'(x)$. We start
-with the second derivative of the Cauchy integral theorem
+quadrature rule for $v''(x)$.  The derivation is largely based on the
+work of Ioakimidis et al.~\cite{ioa-pap-per1991} (see equation (2.12)).
+We start with the second derivative of the Cauchy integral theorem
 \begin{align}
   0 = \frac{1}{2\pi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x).
@@ -947,14 +977,14 @@ $v''(x)$, we have
 As in the interior case, the integrand is chosen so that it is bounded
 for all $x \in \Omega^c$.  Therefore, after applying the trapezoid rule
 and solving for $v''(x)$, we have the Barycentric quadrature rule for
-the exterior second derivate
+the exterior second derivative
 \begin{align}
   v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
     \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
     {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
     \quad x \in \Omega^c.
 \end{align}
-Similar to the quadrature rule for $v'(x)$ requring the value $v(x)$,
+Similar to the quadrature rule for $v'(x)$ requiring the value $v(x)$,
 the quadrature rule for $v''(x)$ requires the values $v(x)$ and $v'(x)$.
 Both these quantities are computed using the quadrature rules in
 equations~\eqref{eqn:BaryvInterior},~\eqref{eqn:BaryvExterior},~\eqref{eqn:BaryvprimeInterior},
@@ -969,53 +999,66 @@ and~\eqref{eqn:BaryvprimeExterior}.
 The Barycentric quadrature rule achieves acceptable accuracy for
 computing the velocity, shear stress, and vorticity.  However, applied
 directly, it requires $\mathcal{O}(N^2)$ operations.  By using a fast
-algorithm such as the fast multipole method~\cite{gre-rok1987}, this
-cost can be reduced to $\mathcal{O}(N)$ operations.  However, the
-Barycentric quadrature formulas require several $N$-body calculations
-which we would like to avoid.  Instead, we use a hybrid method where the
-fast multipole accelerate trapezoid rule is used to compute the velocity
-at most of the discretization points, and the non-accelerated
-Barycentric quadrature rule is used to locally correct the trapezoid
-rule.
+summation method, such as the fast multipole method~\cite{gre-rok1987},
+this cost can be reduced to $\mathcal{O}(N)$ operations.  However, the
+Barycentric quadrature formulas require several $N$-body calculations,
+and they must be done for each component of $\bd\Omega$ individually.
+The resulting cost would be prohibitive, so we use a hybrid method that
+combines the Barycentric quadrature rules and the trapezoid rule.  In
+short, the fast multipole accelerated trapezoid rule is used to compute
+the velocity at most of the discretization points, and the
+non-accelerated Barycentric quadrature rule is used to locally correct
+the trapezoid rule.  Note that for the source points of the layer
+potential is always one of the eroding bodies or the outer wall, but the
+target point can either be on another component of $\bd\Omega$ or it can
+be in the fluid bulk $\Omega$.
 
-We start by using the trapezoid rule~\eqref{eqn:trap} accelerated with
-the FMM, which requires $\mathcal{O}(N)$ operations, and we call this
-velocity $\vv_\trap(\xx)$.  For target points that are sufficiently far
-from $\bd\Omega$, $\vv_\trap(\xx)$ is sufficiently accurate.  However,
-if $\xx$ is sufficiently close to one of the eroding bodies $\gamma_k$,
-or the outer wall $\Gamma$, the velocity contribution from that
-particular component of $\bd\Omega$ is inaccurate and it must be
-corrected.  Assuming that $\xx$ is too close to $\gamma_k$, we first
-subtract the velocity contribution of $\vv(\xx)$ due to $\gamma_k$.
-Then, the Barycentric quadrature rule is used to compute the velocity
-due to $\gamma_k$ with more accuracy.  That is, the final velocity is
+To compute the velocity double-layer potential, we start by applying the
+trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
+calculation requires $\mathcal{O}(N)$ operations, and we call the
+resulting velocity $\vv_\trap(\xx)$.  Depending on the number of
+discretization points $N_\iin$ and $N_\out$, there is a region separated
+from $\bd\Omega$ where the error of $\vv_\trap(\xx)$ is less than a
+user-specified tolerance.  However, for the other points in $\Omega$,
+the trapezoid rule needs to be replaced with a more accurate quadrature
+rule.  Note, however, that since a point is typically only close to one
+or two components of $\bd\Omega$, only the contribution of these nearby
+bodies need to be replaced.  Assuming that $\xx$ is too close to
+$\gamma_k$, we first subtract the inaccurate approximation of the
+double-layer potential due to $\gamma_k$.  Then, the Barycentric
+quadrature rule is used to compute the velocity due to $\gamma_k$ with
+more accuracy.  That is, the final velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
   \label{eqn:velocityDecomp}
 \end{align}
 where $\vv^k_\bary(\xx)$ is the velocity at $\xx$ resulting from
-applying the Barycentric quadrature rule due to $\gamma_k$.  This
-strategy naturally extends to points that are close to $\Gamma$, and to
-the scenario when $\xx$ is simultaneously close to multiple components
-of $\bd\Omega$.  While the term $\vv_\trap(\xx)$ in
-equation~\eqref{eqn:velocityDecomp} is computed for all target points
-using the FMM, the other two terms are computed with a direct summation.
-However, these terms are only required for target points near an eroding
-body or the outer wall, and the number of such points is much less than
-$N$.  An identical quadrature method is used to compute the vorticity
-and shear stress.  That is, these quantities are computed using the
-trapezoid rule, and then updates due to inaccuracies of the trapezoid
-rule are made.  However, since the shear stress and vorticity are only
-computed once per time step, the trapezoid rule is applied with a direct
-summation rather than the FMM.  Relative to the cost of applying GMRES
-with the FMM, the additional once-per-time-step cost is minimal.
+applying the Barycentric quadrature rule to the double-layer potential
+due to $\gamma_k$.  This strategy naturally extends to points that are
+close to $\Gamma$, and to the scenario when $\xx$ is simultaneously
+close to multiple components of $\bd\Omega$.  While the term
+$\vv_\trap(\xx)$ in equation~\eqref{eqn:velocityDecomp} is computed for
+all target points using the FMM, the other two terms are computed with a
+direct summation.  However, these terms are only required for target
+points near an eroding body or the outer wall, and these points make up
+only a small fraction of the total number of points.  
 
-Per grid point, evaluating the Barycentric quadrature rules dominates
-the computational cost. Therefore, it is imperative that we only apply
-the Barycentric quadrature when the trapezoid rule is inaccurate.  As a
-rule of thumb, the trapezoid rule due to $\gamma_k$ is
-accurate~\cite{bar2014} if
+An identical strategy is used to compute the vorticity and the
+deformation tensor.  That is, the trapezoid rule is used as a first pass
+to form the vorticity and deformation tensor, and then local corrections
+are made to replace the inaccuracies of the trapezoid rule.  However,
+since the shear stress and vorticity are only computed once per time
+step, the trapezoid rule is applied with a direct summation rather than
+the FMM.  Relative to the cost of computing the velocity at each
+iteration of GMRES with the FMM, the additional once-per-time-step cost
+to compute the vorticity and deformation tensor is minimal.
+
+Per grid point, applying the Barycentric quadrature rules dominates the
+computational cost. Therefore, it is imperative that we only apply the
+Barycentric quadrature when the trapezoid rule is inaccurate.  As a rule
+of thumb, the trapezoid rule due to $\gamma_k$ achieves machine epsilon
+accuracy if~\cite{bar2014}
 \begin{align}
   \label{eqn:TrapCutoff}
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
@@ -1024,8 +1067,7 @@ accurate~\cite{bar2014} if
 To avoid checking if all target point $\xx$
 satisfy~\eqref{eqn:TrapCutoff}, we make use of the {\thL} variables.
 First, given the two eroding bodies $\gamma_i$ and $\gamma_j$ with
-lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we first check
-if
+lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we check if
 \begin{align}
   \label{eqn:BodyCutoff}
   \|\cc_i - \cc_j\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi} + 
@@ -1047,8 +1089,9 @@ $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 + \alpha_\iin \left(\frac{L_i}{N_\iin} \right).
 \end{align}
 To determine if points on $\gamma_i$ are too close to the outer wall, we
-use the fact that the outer wall is bounded in $[-3,3] \times [-1,1]$,
-and that the bodies are all contained in $[-1,1] \times [-1,1]$.  We
+recall that the outer wall is bounded in $[-3,3] \times [-1,1]$, and
+that the bodies are all contained in $[-1,1] \times [-1,1]$.  Therefore,
+a target point can only be too close to the lines $y = \pm 1$, so we
 first check if
 \begin{align}
   \left\|\cc_i - \left[
@@ -1056,8 +1099,9 @@ first check if
       x_i \\ \pm 1
     \end{array}
     \right]
-  \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out}
+  \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out},
 \end{align}
+\todo[inline]{Bryan is here}
 where $x_i$ is the x coordinate of $\cc_i$. If body $\gamma_i$ satisfies
 this condition, for each point $\xx=(x,y) \in \gamma_i$, we apply the
 Barycentric rule to points that satisfy
@@ -1128,17 +1172,19 @@ computed these trajectories, the tortuosity is approximated as
   {\displaystyle\sum_{i=1}^{N_p} u_x(y_i) \Delta y}, 
 \end{align}
 where $\Delta y = 2/(N_p + 1)$ and $y_i = -1 + i \Delta y$,
-$i=1,\ldots,N_p$.  Alternatively, to compute the tortuosity in terms of
-the Eulerian velocity field, we first compute the velocity at $(x_i,y_j)
-= (-1 + i\Delta x, -1 + j\Delta y)$, $i,j=1,\ldots,N$, where $\Delta x =
-\Delta y = 2/N$, and the velocity at points inside an eroding body are
-assigned a value of 0.  Then, the tortuosity is approximated as
-\begin{align}
-  T = \frac{\sum\limits_{i,j=1}^N \|\uu(x_i,y_j)\|\Delta x \Delta y}
-      {\sum\limits_{i,j=1}^N u_x(x_i,y_j) \Delta x \Delta y}.
-\end{align}
-\todo[inline]{Dump of text}
+$i=1,\ldots,N_p$.  
 
+Having developed numerically accurate methods to compute the velocity
+$\uu$ at points close to the bodies, we are able to compute the
+trajectories of particles passing through an eroded body.  Since the
+trajectories are computed with high-order methods in both space and
+time,  we are able to simulate dynamics very close to the eroding bodies
+(see Figures~\ref{fig:Eroding20tracer} and~\ref{fig:Eroding100tort}.
+
+
+
+
+\todo[inline]{Dump of text}
 
 
 
