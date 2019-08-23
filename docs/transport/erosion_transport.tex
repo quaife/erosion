@@ -743,7 +743,7 @@ rule results in the collocation method for~\eqref{eqn:BIE}
   \sum_{j=1}^{N_\out} w^0_j N_0(\yy^0_\ell,\yy^0_j) \nonumber \\
   &\quad+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^0_\ell) + 
   \sum_{k=1}^M R[\xi_k,\cc_k](\yy^0_\ell),
-    &&\hspace{-30pt} \ell = 1,\ldots,N_\out, \\
+    &&\hspace{-60pt} \ell = 1,\ldots,N_\out, \\
 %
   \mathbf{0} &= \sum_{j=1}^{N_\out} 
     w^0_j D(\yy^m_\ell,\yy^0_j) \eeta_j +
@@ -751,12 +751,12 @@ rule results in the collocation method for~\eqref{eqn:BIE}
     w^k_j D(\yy^m_\ell,\yy^k_j) \eeta^k_j \nonumber \\
   &\quad+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^m_\ell) + 
   \sum_{k=1}^M R[\xi_k,\cc_k](\yy^m_\ell),
-    &&\hspace{-30pt}\ell = 1,\ldots,N_\iin, \: m=1,\ldots,M, \\
+    &&\hspace{-60pt}\ell = 1,\ldots,N_\iin, \: m=1,\ldots,M, \\
 %
   \llambda_m &= \frac{1}{2\pi} \sum_{j=1}^{N_\iin} \eeta^m_j,  \quad
   \xi_m = \frac{1}{2\pi} \sum_{j=1}^{N_\iin}
     (\yy^m_j - \cc_m)^\perp \cdot \eeta^m_j,
-    &&\hspace{-30pt} m=1,\ldots,M,
+    &&\hspace{-60pt} m=1,\ldots,M,
 \end{alignat}
 \end{subequations}
 where $w^k_j$ are quadrature weights (which depend on $N_\iin$,
@@ -994,46 +994,57 @@ combines the Barycentric quadrature rules and the trapezoid rule.  In
 short, the fast multipole accelerated trapezoid rule is used to compute
 the velocity at most of the discretization points, and the
 non-accelerated Barycentric quadrature rule is used to locally correct
-the trapezoid rule.
+the trapezoid rule.  Note that for the source points of the layer
+potential is always one of the eroding bodies or the outer wall, but the
+target point can either be on another component of $\bd\Omega$ or it can
+be in the fluid bulk $\Omega$.
 
-We start by using the trapezoid rule~\eqref{eqn:trap} accelerated with
-the FMM, which requires $\mathcal{O}(N)$ operations, and we call this
-velocity $\vv_\trap(\xx)$.  For target points that are sufficiently far
-from $\bd\Omega$, $\vv_\trap(\xx)$ is sufficiently accurate.  However,
-if $\xx$ is sufficiently close to one of the eroding bodies $\gamma_k$,
-or the outer wall $\Gamma$, the velocity contribution from that
-particular component of $\bd\Omega$ is inaccurate and it must be
-corrected.  Assuming that $\xx$ is too close to $\gamma_k$, we first
-subtract the velocity contribution of $\vv(\xx)$ due to $\gamma_k$.
-Then, the Barycentric quadrature rule is used to compute the velocity
-due to $\gamma_k$ with more accuracy.  That is, the final velocity is
+To compute the velocity double-layer potential, we start by applying the
+trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
+calculation requires $\mathcal{O}(N)$ operations, and we call the
+resulting velocity $\vv_\trap(\xx)$.  Depending on the number of
+discretization points $N_\iin$ and $N_\out$, there is a region separated
+from $\bd\Omega$ where the error of $\vv_\trap(\xx)$ is less than a
+user-specified tolerance.  However, for the other points in $\Omega$,
+the trapezoid rule needs to be replaced with a more accurate quadrature
+rule.  Note, however, that since a point is typically only close to one
+or two components of $\bd\Omega$, only the contribution of these nearby
+bodies need to be replaced.  Assuming that $\xx$ is too close to
+$\gamma_k$, we first subtract the inaccurate approximation of the
+double-layer potential due to $\gamma_k$.  Then, the Barycentric
+quadrature rule is used to compute the velocity due to $\gamma_k$ with
+more accuracy.  That is, the final velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
   \label{eqn:velocityDecomp}
 \end{align}
 where $\vv^k_\bary(\xx)$ is the velocity at $\xx$ resulting from
-applying the Barycentric quadrature rule due to $\gamma_k$.  This
-strategy naturally extends to points that are close to $\Gamma$, and to
-the scenario when $\xx$ is simultaneously close to multiple components
-of $\bd\Omega$.  While the term $\vv_\trap(\xx)$ in
-equation~\eqref{eqn:velocityDecomp} is computed for all target points
-using the FMM, the other two terms are computed with a direct summation.
-However, these terms are only required for target points near an eroding
-body or the outer wall, and the number of such points is much less than
-$N$.  An identical quadrature method is used to compute the vorticity
-and shear stress.  That is, these quantities are computed using the
-trapezoid rule, and then updates due to inaccuracies of the trapezoid
-rule are made.  However, since the shear stress and vorticity are only
-computed once per time step, the trapezoid rule is applied with a direct
-summation rather than the FMM.  Relative to the cost of applying GMRES
-with the FMM, the additional once-per-time-step cost is minimal.
+applying the Barycentric quadrature rule to the double-layer potential
+due to $\gamma_k$.  This strategy naturally extends to points that are
+close to $\Gamma$, and to the scenario when $\xx$ is simultaneously
+close to multiple components of $\bd\Omega$.  While the term
+$\vv_\trap(\xx)$ in equation~\eqref{eqn:velocityDecomp} is computed for
+all target points using the FMM, the other two terms are computed with a
+direct summation.  However, these terms are only required for target
+points near an eroding body or the outer wall, and these points make up
+only a small fraction of the total number of points.  
 
-Per grid point, evaluating the Barycentric quadrature rules dominates
-the computational cost. Therefore, it is imperative that we only apply
-the Barycentric quadrature when the trapezoid rule is inaccurate.  As a
-rule of thumb, the trapezoid rule due to $\gamma_k$ is
-accurate~\cite{bar2014} if
+An identical strategy is used to compute the vorticity and the
+deformation tensor.  That is, the trapezoid rule is used as a first pass
+to form the vorticity and deformation tensor, and then local corrections
+are made to replace the inaccuracies of the trapezoid rule.  However,
+since the shear stress and vorticity are only computed once per time
+step, the trapezoid rule is applied with a direct summation rather than
+the FMM.  Relative to the cost of computing the velocity at each
+iteration of GMRES with the FMM, the additional once-per-time-step cost
+to compute the vorticity and deformation tensor is minimal.
+
+Per grid point, applying the Barycentric quadrature rules dominates the
+computational cost. Therefore, it is imperative that we only apply the
+Barycentric quadrature when the trapezoid rule is inaccurate.  As a rule
+of thumb, the trapezoid rule due to $\gamma_k$ achieves machine epsilon
+accuracy if~\cite{bar2014}
 \begin{align}
   \label{eqn:TrapCutoff}
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
@@ -1042,8 +1053,7 @@ accurate~\cite{bar2014} if
 To avoid checking if all target point $\xx$
 satisfy~\eqref{eqn:TrapCutoff}, we make use of the {\thL} variables.
 First, given the two eroding bodies $\gamma_i$ and $\gamma_j$ with
-lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we first check
-if
+lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we check if
 \begin{align}
   \label{eqn:BodyCutoff}
   \|\cc_i - \cc_j\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi} + 
@@ -1065,8 +1075,9 @@ $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 + \alpha_\iin \left(\frac{L_i}{N_\iin} \right).
 \end{align}
 To determine if points on $\gamma_i$ are too close to the outer wall, we
-use the fact that the outer wall is bounded in $[-3,3] \times [-1,1]$,
-and that the bodies are all contained in $[-1,1] \times [-1,1]$.  We
+recall that the outer wall is bounded in $[-3,3] \times [-1,1]$, and
+that the bodies are all contained in $[-1,1] \times [-1,1]$.  Therefore,
+a target point can only be too close to the lines $y = \pm 1$, so we
 first check if
 \begin{align}
   \left\|\cc_i - \left[
@@ -1074,8 +1085,9 @@ first check if
       x_i \\ \pm 1
     \end{array}
     \right]
-  \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out}
+  \right\| < \frac{L_i}{2 \pi} + \alpha_\out \frac{L_\out}{N_\out},
 \end{align}
+\todo[inline]{Bryan is here}
 where $x_i$ is the x coordinate of $\cc_i$. If body $\gamma_i$ satisfies
 this condition, for each point $\xx=(x,y) \in \gamma_i$, we apply the
 Barycentric rule to points that satisfy
