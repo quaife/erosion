@@ -1341,13 +1341,12 @@ the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \end{figure}
 
 
-\todo[inline]{Bryan is here}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 Bodies at a Medium Porosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We consider 20 eroding bodies that are discretized with $N_\iin=256$
-points and are initially placed in $[-1,1] \times [-1,1]$.  The
-background flow is the Hagen-Poiseuille flow
+points and a time step size of $\Delta t = 10^{-4}$.  The background
+flow is the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx)=U \left[
   \begin{array}{c}
@@ -1363,15 +1362,15 @@ function of normalized time.  Initially, 62\% of the geometry is eroded
 bodies corresponding to a porosity of $0.38$, and the area fraction
 decreases to 0 as the bodies erode.  The trend of the area fraction
 resembles that of our previous work~\cite{qua-moo2018} (Figure 10(a)),
-but with a larger initial area fraction.  We also compute the flow rate
-$U$ required to maintain a constant pressure drop across the channel in
-Figure~\ref{fig:Eroding20flowrate}(b).  Again, the trend of $U$
-resembles that of our previous work~\cite{qua-moo2018} (Figure 10(b)),
-except that the initial flow rate is an order of magnitude smaller
-because of the larger initial area fraction.  Starting around normalized
-time $0.2$, Figure~\ref{fig:Eroding20flowrate}(b) is roughly linear
-which indicates that the flow rate can be written as a power law.  Using
-a line of best fit, the flow rate is approximately 
+but with a larger initial area fraction.  In
+Figure~\ref{fig:Eroding20flowrate}(b), we plot flow rate $U$ required to
+maintain a constant pressure drop across the channel.  Again, the trend
+of $U$ resembles that of our previous work~\cite{qua-moo2018} (Figure
+10(b)), except that the initial flow rate is an order of magnitude
+smaller because of the larger initial area fraction.  Starting around
+normalized time $0.2$, Figure~\ref{fig:Eroding20flowrate}(b) is roughly
+linear which indicates that the flow rate can be written as a power law.
+Using a line of best fit, the flow rate is approximately 
 \begin{align} 
   U \approx \left(\frac{t}{t_f}\right)^{3.43},
 \end{align}
@@ -1387,8 +1386,8 @@ which is the dashed line in Figure~\ref{fig:Eroding20flowrate}(b).
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding20flowrate}(a): The area fraction of 20
-nearly touching eroding bodies versus normalized time. (b): The incoming
-flow rate, $U$, for a fixed pressure drop across the channel versus
+nearly touching eroding bodies versus normalized time. (b): The flow
+rate, $U$, for a fixed pressure drop across the channel versus
 normalized time.  The flow rate is initially very small, but it
 eventually increases as a power law (dashed line) towards the flow rate
 $U=1$ that occurs once all the bodies have eroded.}
@@ -1399,16 +1398,16 @@ Figure~\ref{fig:Eroding20vort}.  The color is the vorticity which is
 equivalent to the shear stress when restricted to the eroding bodies.
 Therefore, erosion is fastest in regions where the magnitude of the
 vorticity is largest.  Initially, several of the eroding bodies are
-closer to the outer wall than the $5h$ threshold required to guarantee
-sufficiently accurate quadrature with the trapezoid rule.  In
+closer to the outer wall than the $5h$ threshold required to guarantee a
+machine precision quadrature error for the trapezoid rule.  In
 particular, with $h=L_2/N_\out$, the distance between bodies 1, 6, 13,
-and 15 are $1.3h$, $2.9h$, $2.8h$, and $1.3h$, respectively.  In
-addition, the distance between several pairs of eroding bodies is too
-small to be accurately resolved with the trapezoid rule at the
-prescribed resolution.  Particular pairs include bodies 1 \& 6, 3 \& 9,
-6 \& 8, and 14 \& 18.  By using the Barycentric quadrature rule, the
-interaction between these nearly-touching bodies can be accurately
-resolved at the prescribed resolution.
+and 15 and the outer wall are $1.3h$, $2.9h$, $2.8h$, and $1.3h$,
+respectively.  In addition, the distance between several pairs of
+eroding bodies is too small to be accurately resolved with the trapezoid
+rule at the prescribed resolution.  Particular pairs include bodies 1 \&
+6, 3 \& 9, 6 \& 8, and 14 \& 18.  By using the Barycentric quadrature
+rule, the interaction between these nearly-touching bodies can be
+accurately resolved at the prescribed resolution.
 
 \begin{figure}[H]
 \begin{center}
@@ -1419,9 +1418,9 @@ resolved at the prescribed resolution.
 \caption{\label{fig:Eroding20vort} Erosion of 20 nearly touching bodies
 with the fixed pressure drop condition. The color is the vorticity of
 the fluid. The four snapshots are evenly spaced in time. We use $N_\iin
-= 256$ discretization points on the bodies and $\Dt=10^{-4}$.  In the
-forth frame, bodies 4, 12, and 17 have vanished completely, and body 19
-has almost completely eroded.}
+= 256$ discretization points on the bodies.  In the fourth frame, bodies
+4, 12, and 17 have vanished completely, and body 19 has almost
+completely eroded.}
 \end{center}
 \end{figure}
 
