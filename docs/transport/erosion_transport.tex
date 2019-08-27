@@ -1512,11 +1512,25 @@ into the fast regions, such as the region above body 11, and this
 increases the amount of vertical deflection, and therefore the
 tortuosity.
 
-\todo[inline]{Nothing about the anomalous dispersion rate here}
-At high porosities, the dispersion rate is close to 1, and this can be
-caused by one of two reasons.  1) There is no measurable anomalous
-dispersion; or, 2) The streamlines are too short to see the anomalous
-dispersion.
+In Figure~\ref{fig:Eroding20Transport}(b), we plot the temporal
+evolution of the particle spreading $\sigma_\lambda$.  The spreading is
+computed at several geometries that are formed during the erosion
+process.  So that the spreading reaches a statistical equilibrium, we
+use the reinsertion algorithm described in Section~\ref{sec:dispersion}
+to form sufficiently long trajectories.  For all the reported
+porosities, the particle dispersion exhibits two power low regimes.
+Initially, the dispersion is ballistic ($\sigma_\lambda \sim t$) since
+individual fluid particles have not yet explored enough space to
+significantly alter their velocity.  However, once the particles have
+been subjected to a range of velocities, their dispersion slows down,
+and we observe super-diffusive ($\sigma_\lambda \sim t^\alpha$, $\alpha
+\in (1/2,1)$) behavior over at least one order of magnitude in time.
+Before any erosion takes place, the anomalous dispersion coefficient is
+$\alpha = 0.56$.  Then, as the bodies begin to erode, the dispersion
+rate grows towards the ballistic regime that corresponds to the absence
+of bodies.  The monotonic increase in dispersion with respect to the
+porosity is explained by the onset of channels where many tracers
+experience less variability in their velocities.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1536,13 +1550,16 @@ The dash line is the line of best fit $\widehat{T}(\phi)=\phi^{-p}$ with
 $p=0.2064$, and the corresponding root-mean-square error is $5.9 \times
 10^{-3}$. (b): The temporal evolution of $\sigma_\lambda$ as a function
 of time at seven different porosities.  The dashed, which has slope one,
-corresponds to $\sigma_\lambda$ if no bodies were present.  At early
-times, the particles undergo a ballistic motion, but once they have
-traversed a few grains, the dispersion becomes super-dispersive.  The
-dashed-dotted lines are lines of best fit with slopes $1.0644$
-($\phi=95.1\%$), $1.0673$ ($\phi=85.09\%$), $1.0594$ ($\phi=75.15\%$),
-$0.9664$ ($\phi=65.09\%$), $0.7766$ ($\phi=55.10\%$), $0.7475$
-($\phi=45.08\%$), and $0.5607$ ($\phi=37.68\%$).}
+corresponds to $\sigma_\lambda \sim t$ if no bodies were present.  At
+early times, the particles undergo a ballistic motion, but once they
+have traversed a few grains, the dispersion becomes super-dispersive
+with $\sigma_\lambda \sim t^\alpha$, $\alpha \in (1/2,1)$.  The
+dashed-dotted lines are lines of best fit with slopes $\alpha = 1.06$
+($\phi=95.1\%$), $\alpha = 1.07$ ($\phi=85.09\%$), $\alpha = 1.06$
+($\phi=75.15\%$), $\alpha = 0.97$ ($\phi=65.09\%$), $\alpha = 0.78$
+($\phi=55.10\%$), $\alpha = 0.75$ ($\phi=45.08\%$), and $\alpha = 0.56$
+($\phi=37.68\%$).  Values greater than 1 are a result of using a
+least-squares fit for the tails of the particle spreading.}
 \end{figure}
 
 Finally, following our previous work~\cite{qua-moo2018}, we analyze the
