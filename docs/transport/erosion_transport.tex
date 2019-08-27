@@ -1120,13 +1120,9 @@ velocity field with the trapezoid rule for all points that do not
 satisfy conditions~\eqref{eqn:PointsBodyCutoff}
 and~\eqref{eqn:PointsWallCutoff}.  By comparing these two velocities, we
 find that $\alpha_\iin = 4$ and $\alpha_\out = 4$ give sufficient
-accuracy while keeping the number of points that require the expensive
-Barycentric quadrature rule to a minimum.  We use these values for all
-of our numerical simulations.
-\todo[inline]{S-H: What kind of accuracy did this give?  This is less
-than the value used by Barnett in his single author quadrature paper.
-He said that 5 arclength spacings is the right amount to guarantee
-machine precision.}
+accuracy to maintain stability while keeping the number of points that
+require the expensive Barycentric quadrature rule to a minimum.  We use
+these values for all of our numerical simulations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Time Integration}
@@ -1598,11 +1594,11 @@ eroding geometry and porosity at four evenly spaced instances in time.
 Again, the color is the vorticity in the bulk whose magnitude is
 equivalent to the erosion rate.  Each body is discretized with $N_\iin =
 256$, and the smallest distance between two bodies at the initial
-condition is 0.0216\todo[inline]{SH: Fill in this number}.  At this
-resolution, this corresponds to a spacing of $3.0814h$ which is much
-too small for the trapezoid rule.  By applying the Barycentric
-quadrature rule, there is no issue simulating the erosion until all the
-bodies have eroded.
+condition is $2.16 \times 10^{-2}$.  At this resolution, this
+corresponds to a spacing of $3.0814h$ which is too small for the
+trapezoid rule to guarantee a sufficiently small quadrature error.  By
+applying the Barycentric quadrature rule, there is no issue simulating
+the erosion until all the bodies have eroded.
 
 \begin{figure}[H]
 \begin{center}
