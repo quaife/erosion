@@ -1614,10 +1614,9 @@ equivalent to the erosion rate.  Each body is discretized with $N_\iin =
 condition is $3.29 \times 10^{-4}$. 
 {\color{red} Besides close bodies, we also place some bodies to be close to wall 
 and the smallest distance between wall and bodies is $4.5 \times 10^{-3}$.} 
-At this resolution, this
-corresponds to a spacing of $0.0471h$ 
-{\color{red}(between two bodies) and $0.8297h$ (between wall and body)
-} which is too small for the
+At this resolution, {\color{red} these two minimum distances correspond to a spacing of $0.0471h$ 
+(between two bodies) and $0.8297h$ (between wall and body)
+} which are too small for the
 trapezoid rule to guarantee a sufficiently small quadrature error.  By
 applying the Barycentric quadrature rule, there is no issue simulating
 the erosion until all the bodies have eroded.
