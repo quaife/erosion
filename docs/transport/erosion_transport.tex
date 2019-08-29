@@ -1598,8 +1598,7 @@ nearly touching eroding bodies versus normalized time. (b): The flow
 rate, $U$, for a fixed pressure drop across the channel versus
 normalized time.  The flow rate is initially very small, but it
 eventually increases as a power law (dashed line) towards the flow rate
-$U=1$ that occurs once all the bodies have eroded. \todo[inline]{S-H:
-Let's bring the black dashed line closer to the blue line}}
+$U=1$ that occurs once all the bodies have eroded.}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1609,17 +1608,15 @@ We consider a second example with 20 eroding bodies, but with a smaller
 initial porosity.  In Figure~\ref{fig:ErodingLow20vort}, we plot the
 eroding geometry and porosity at four evenly spaced instances in time.
 Again, the color is the vorticity in the bulk whose magnitude is
-equivalent to the erosion rate.  Each body is discretized with $N_\iin =
-256$, and the smallest distance between two bodies at the initial
-condition is $3.29 \times 10^{-4}$. 
-{\color{red} Besides close bodies, we also place some bodies to be close to wall 
-and the smallest distance between wall and bodies is $4.5 \times 10^{-3}$.} 
-At this resolution, {\color{red} these two minimum distances correspond to a spacing of $0.0471h$ 
-(between two bodies) and $0.8297h$ (between wall and body)
-} which are too small for the
-trapezoid rule to guarantee a sufficiently small quadrature error.  By
-applying the Barycentric quadrature rule, there is no issue simulating
-the erosion until all the bodies have eroded.
+equivalent to the erosion rate.   Initially, the smallest distance
+between pairs of bodies is $3.29 \times 10^{-4}$, and the smallest
+distance between the bodies and solid wall is $4.50 \times 10^{-3}$.  At
+these distances, a resolution of approximately $N_\iin = 27,000$ and
+$N_\out = 18,000$ discretization points is required to satisfy the $5h$
+rule of thumb that is required for the trapezoid rule to achieve machine
+epsilon accuracy.  By applying the Barycentric quadrature rule, we
+stably simulate erosion at the much coarser resolution of $N_\iin = 256$
+and $N_\out = 1024$ discretization points.
 
 \begin{figure}[H]
 \begin{center}
