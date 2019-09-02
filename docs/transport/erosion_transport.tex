@@ -1502,7 +1502,7 @@ Figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
 \begin{align}
   \widehat{T}(\phi) = \phi^{-0.2064}
 \end{align}
-with a root-mean-square error of $5.9 \times 10^{-3}$.  The initial
+with a root-mean-square error of $5.90 \times 10^{-3}$.  The initial
 increase in tortuosity occurs because in the absence of erosion (left
 plot in Figure~\ref{fig:Eroding20vort}), many of the streamlines, such
 as those initialized between bodies 15 \& 18, only perform minor
@@ -1541,25 +1541,26 @@ experience less variability in their velocities.
 \includegraphics*[height = 0.8\linewidth]{./figs/20b_second_moment_long_ref}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20Transport} (a): The tortuosity inside of an
+\caption{\label{fig:Eroding20Transport} (a): The tortuosity of an
 eroding geometry initialized with 20 bodies.  The tortuosity is
 calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue dots)
 and Lagrangian method~\eqref{eqn:tortuosity1} (red stars).  The red
 square correspond to the geometry in Figure~\ref{fig:Eroding20tort}(c).
 The dash line is the line of best fit $\widehat{T}(\phi)=\phi^{-p}$ with
-$p=0.2064$, and the corresponding root-mean-square error is $5.9 \times
+$p=0.2064$, and the corresponding root-mean-square error is $5.90 \times
 10^{-3}$. (b): The temporal evolution of $\sigma_\lambda$ as a function
-of time at seven different porosities.  The dashed, which has slope one,
-corresponds to $\sigma_\lambda \sim t$ if no bodies were present.  At
-early times, the particles undergo a ballistic motion, but once they
-have traversed a few grains, the dispersion becomes super-dispersive
-with $\sigma_\lambda \sim t^\alpha$, $\alpha \in (1/2,1)$.  The
-dashed-dotted lines are lines of best fit with slopes $\alpha = 1.06$
-($\phi=95.1\%$), $\alpha = 1.07$ ($\phi=85.09\%$), $\alpha = 1.06$
-($\phi=75.15\%$), $\alpha = 0.97$ ($\phi=65.09\%$), $\alpha = 0.78$
-($\phi=55.10\%$), $\alpha = 0.75$ ($\phi=45.08\%$), and $\alpha = 0.56$
-($\phi=37.68\%$).  Values greater than 1 are a result of using a
-least-squares fit for the tails of the particle spreading.}
+of time at seven different porosities.  The dashed line, which has slope
+one, corresponds to the ballistic dispersion $\sigma_\lambda \sim t$ if
+no bodies were present. At early times, the particles undergo a
+ballistic motion, but once they have traversed a few grains, the
+dispersion becomes super-dispersive with $\sigma_\lambda \sim t^\alpha$,
+$\alpha \in (1/2,1)$.  The dashed-dotted lines are lines of best fit
+with slopes $\alpha = 1.06$ ($\phi=95.10\%$), $\alpha = 1.07$
+($\phi=85.09\%$), $\alpha = 1.06$ ($\phi=75.15\%$), $\alpha = 0.97$
+($\phi=65.09\%$), $\alpha = 0.78$ ($\phi=55.10\%$), $\alpha = 0.75$
+($\phi=45.08\%$), and $\alpha = 0.56$ ($\phi=37.68\%$).  Values greater
+than 1 are a result of using a least-squares fit for the tails of the
+particle spreading.}
 \end{figure}
 
 Finally, following our previous work~\cite{qua-moo2018}, we analyze the
@@ -1613,10 +1614,10 @@ between pairs of bodies is $3.29 \times 10^{-4}$, and the smallest
 distance between the bodies and solid wall is $4.50 \times 10^{-3}$.  At
 these distances, a resolution of approximately $N_\iin = 27,000$ and
 $N_\out = 18,000$ discretization points is required to satisfy the $5h$
-rule of thumb that is required for the trapezoid rule to achieve machine
-epsilon accuracy.  By applying the Barycentric quadrature rule, we
-stably simulate erosion at the much coarser resolution of $N_\iin = 256$
-and $N_\out = 1024$ discretization points.
+rule of thumb for the trapezoid rule to achieve machine epsilon
+accuracy.  By applying the Barycentric quadrature rule, we stably
+simulate erosion at the much coarser resolution of $N_\iin = 256$ and
+$N_\out = 1024$ discretization points.
 
 \begin{figure}[H]
 \begin{center}
@@ -1628,46 +1629,77 @@ and $N_\out = 1024$ discretization points.
 \caption{\label{fig:ErodingLow20vort} Erosion of 20 nearly touching
 bodies with the fixed pressure drop condition. The color is the
 vorticity of the fluid. The 4 snapshots are evenly spaced in time. We
-use $N_\iin = 256$ discretization points on the body, a time-step of
-$\Dt=10^{-4}$, and smoothing parameters of $\eps= 15/256$ and
-$\sigma=10/256 $. }
+use $N_\iin = 256$ discretization points on the bodies.  In
+addition to the channels that develop between the bodies and the solid
+walls, Erosion leads to two main channels through the geometry---one in
+the top half and one near the middle.}
 \end{figure}
 
 We compute the tortuosity using the Eulerian
-method~\eqref{eqn:tortuosity2}. In Figure~\ref{fig:ErodingLow20tort}, we
-plot the tortuosity with respect to the porosity (blue) and a line of
-best fit (black) using the power law $\widehat{T}(\phi) =
-\phi^{-p}$~\cite{mat-kha-koz2008}.  This model outperformed the other
-three models described in equation~\eqref{eqn:tortuosityModels}.  The
-root-mean-squared error of the power law is $1.13 \times 10^{-2}$.
+method~\eqref{eqn:tortuosity2}. In
+Figure~\ref{fig:ErodingLow20Transport}(a), we plot the tortuosity with
+respect to the porosity (blue) and the line of best fit (black) using
+the power law 
+\begin{align}
+  \widehat{T}(\phi) = \phi^{-0.1669}.
+\end{align}
+This model outperformed the other three models in
+equation~\eqref{eqn:tortuosityModels} that were proposed by Matyka et
+al.~\cite{mat-kha-koz2008}.  The root-mean-squared error of the power
+law is $1.13 \times 10^{-2}$.  As the bodies erode, the number of
+streamlines that take a direct path through the geometry increases,
+and this decreases the tortuosity.  However, there is also an increase
+in the number of streamlines that increase their length since they
+deflect their trajectory to move from a low porosity region (high
+pressure) to a high porosity region (low pressure), and this decreases
+the tortuosity. For this example, we see that the net effect is a
+decrease in the tortuosity for all time.
 
-Unlike the previous 20 body simulation, the tortuosity decreases
-monotonically with the porosity. \todo[inline]{BQ: Why is this the case?
-What is special about the last example?}
+In Figure~\ref{fig:ErodingLow20Transport}(b), we plot the temporal
+evolution of the particle spreading $\sigma_\lambda$.  As in the last
+example, we analyze the spreading at several different
+porosities and we use the reinsertion algorithm described in Section~\ref{sec:dispersion}
+to form sufficiently long trajectories.  For all the reported
+porosities, the particle dispersion exhibits two power low regimes, with
+the lowest porosity geometry, $\phi=37.68\%$ having the clearest
+transition.  Again, the dispersion transforms from a ballistic to
+super-diffusive, and the anomalous disperion rate increases with the
+porosity.  For this example, the dispersion is nearly Fickean at the
+smallest porosity.
+\todo[inline]{BQ: This paragraph has some false statements.  Need to
+look closer at the data.  Might have accidently been looking at the
+other 20 body example ie. Fickean dispersion}
 
 \begin{figure}[H]
-\center
-\includegraphics*[width =0.55\linewidth]{./figs/tort_eulerian20b}
-\caption{\label{fig:ErodingLow20tort} The tortuosity inside of an
-eroding geometry initialized with 20 bodies.  The tortuosity is
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height = 0.8\linewidth]{./figs/tort_eulerian20b}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height=0.8\linewidth]{./figs/20b_dense_second_moment_ref}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:ErodingLow20Transport} (a): The tortuosity of an
+eroding geometry initialized with 20 bodies.  When compared to the last
+example, the bodies are initially much closer together, and the porosity
+is smaller.  The tortuosity is
 calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue
 dots).  The dash line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$
-as $p=0.1669$ and the root mean square deviation is $1.13 \times
-10^{-2}$.}
+with $p=0.1669$, and the root mean square deviation is $1.13 \times
+10^{-2}$.  (b): The temporal evolution of $\sigma_\lambda$ as a function
+of time at eight different porosities.  The dashed line, which has slope
+one, corresponds to the ballistic dispersion $\sigma_\lambda \sim t$ if
+no bodies were present.  At early times, the particles undergo a
+ballistic motion, but once they have traveresd a few grains, the
+dispersion becomes super-dispersive with $\sigma_\lambda \sim
+t^{\alpha}$, $\alpha \in (1/2,1)$.  The dashed-dotted lines are lines of
+best fit with slope $0.92$ ($\phi=95.00\%$), $0.87$ ($\phi=85.17\%$),
+$0.87$ ($\phi=75.10\%$), $0.91$ ($\phi=65.02\%$), $0.91$
+($\phi=55.08\%$), $0.72$ ($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and
+$0.92$ ($\phi=30.67\%$).}
 \end{figure}
 
-\begin{figure}[H]
-\center
-\includegraphics*[width =0.55\linewidth]{./figs/20b_dense_second_moment_ref}
-\caption{\label{fig:Eroding20anomalousLow} The analysis of anomalous
-dispersion in 20 nearly touching bodies with respect to initial porosity
-(as p=30.67\%) and another seven porosities during the eroding. The dashed line
-correspondes to a porosity of 100\% and the dashed-dotted lines are lines
-of best fit with slope 0.9194 (as p=95\%), 0.8666 (as p=85.17\%), 
-0.8682 (as p=75.10\%), 0.9087 (as p=65.02\%), 
-0.9054 (as p=55.08\%), 0.7234 (as p=45.03\%), 
-0.6895 (as p=35.05\%), and 0.9225 (as p=30.67\%).}
-\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{100 eroding bodies}
@@ -2576,6 +2608,29 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %\end{figure}
 %
 
+%\begin{figure}[H]
+%\center
+%\includegraphics*[width =0.55\linewidth]{./figs/tort_eulerian20b}
+%\caption{\label{fig:ErodingLow20tort} The tortuosity inside of an
+%eroding geometry initialized with 20 bodies.  The tortuosity is
+%calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue
+%dots).  The dash line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$
+%as $p=0.1669$ and the root mean square deviation is $1.13 \times
+%10^{-2}$.}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\center
+%\includegraphics*[width =0.55\linewidth]{./figs/20b_dense_second_moment_ref}
+%\caption{\label{fig:Eroding20anomalousLow} The analysis of anomalous
+%dispersion in 20 nearly touching bodies with respect to initial porosity
+%(as p=30.67\%) and another seven porosities during the eroding. The
+%dashed line correspondes to a porosity of 100\% and the dashed-dotted
+%lines are lines of best fit with slope 0.9194 (as p=95\%), 0.8666 (as
+%p=85.17\%), 0.8682 (as p=75.10\%), 0.9087 (as p=65.02\%), 0.9054 (as
+%p=55.08\%), 0.7234 (as p=45.03\%), 0.6895 (as p=35.05\%), and 0.9225 (as
+%p=30.67\%).}
+%\end{figure}
 
 
 \end{document}
