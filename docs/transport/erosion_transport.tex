@@ -1860,32 +1860,59 @@ between the bodies.  Once a Delaunay triangulation is formed, it is used
 for all subsequent time steps until a body completely disappears.  At
 this point, a new Delaunay triangulation is formed.  
 
-We plot the distribution of the gap sizes at four equally spaced points
-in time in Figure~\ref{fig:Eroding100gap}.  At the initial configuration, there
-are 100 bodies and 318 pairs of neighbors.  The mean distance between
-these neighbors is $???  \times 10^{-???}$ and the variance is $???
-\times 10^{???}$.  As the bodies erode, the mean and variance of the
-distance between the bodies increases.  Finally, at the final time step,
-there are only 82 bodies and 254 pairs of neighbors.
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_50}
-\caption{100 bodies with 318 gaps at t= 0.005}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_100}
-\caption{99 bodies with 312 gaps at t= 0.01}
+\includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
+\caption{}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_150}
-\caption{94 bodies with 294 gaps at t= 0.015}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =\linewidth]{./figs/gap_hist100_200}
-\caption{82 bodies with 254 gaps at t= 0.02}
+\includegraphics*[height=0.8\linewidth]{./figs/gap_variance}
+\caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap} The distribution of the gaps in the
-case of erosion of 100 bodies at four time steps.}
+\caption{\label{fig:Eroding100gap_mean_var} (a): The mean of gaps with respect to porosity $\phi$.  
+(b): The variance of gaps with respect to porosity $\phi$.}
+\end{figure}
+
+We plot the distribution of the gap sizes at six porosities
+in Figure~\ref{fig:Eroding100gap_hist}.  At the initial configuration, there
+are 100 bodies and 258 pairs of neighbors.  The mean distance between
+these neighbors is $???  \times 10^{-???}$ and the variance is $???
+\times 10^{???}$.  As the bodies erode, the mean and variance of the
+distance between the bodies increases.  Finally, when the porosity reaches $95.12\%$
+there are only 34 bodies and 74 pairs of neighbors.
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics*[width =\linewidth]{./figs/hist100b_1}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics*[width =\linewidth]{./figs/hist100b_46}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics*[width =\linewidth]{./figs/hist100b_112}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics*[width =\linewidth]{./figs/hist100b_164}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics*[width =\linewidth]{./figs/hist100b_207}
+\caption{}
+\end{subfigure}%
+\begin{subfigure}[b]{0.3\textwidth}
+\includegraphics*[width =\linewidth]{./figs/hist100b_246}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap_hist} The distribution of the gaps in the
+case of erosion of 100 bodies at six porosities. (a) 100 bodies with 258 gaps as porosity $\phi = 50.09 \%$. 
+(b) 100 bodies with 258 gaps as porosity $\phi = 55.02 \%$. 
+(c) 97 bodies with 249 gaps as porosity $\phi = 65.03 \%$. 
+(d) 92 bodies with 234 gaps as porosity $\phi = 75.14 \%$. 
+(e) 75 bodies with 189 gaps as porosity $\phi = 85.07 \%$. 
+(f)} 34 bodies with 74 gaps as porosity $\phi = 95.12 \%$. 
 \end{figure}
 
 
