@@ -1858,8 +1858,11 @@ the side of a triangle connects two vertices, we call the bodies
 neighbors.  Then, for each pair of neighbors, we measure the distance
 between the bodies.  Once a Delaunay triangulation is formed, it is used
 for all subsequent time steps until a body completely disappears.  At
-this point, a new Delaunay triangulation is formed.  
-
+this point, a new Delaunay triangulation is formed. 
+{\color{red}In Figure~\ref{fig:Eroding100gap_mean_var}, 
+we record the distances between bodies neighbors and
+calculate the mean and variance with respect to porosities. 
+}
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
@@ -1912,7 +1915,7 @@ case of erosion of 100 bodies at six porosities. (a) 100 bodies with 258 gaps as
 (c) 97 bodies with 249 gaps as porosity $\phi = 65.03 \%$. 
 (d) 92 bodies with 234 gaps as porosity $\phi = 75.14 \%$. 
 (e) 75 bodies with 189 gaps as porosity $\phi = 85.07 \%$. 
-(f)} 34 bodies with 74 gaps as porosity $\phi = 95.12 \%$. 
+(f) 34 bodies with 74 gaps as porosity $\phi = 95.12 \%$. }
 \end{figure}
 
 
