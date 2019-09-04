@@ -715,7 +715,7 @@ compare these four models with the tortuosity of eroding geometries.
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100gap} (a): The Delaunay triangulation of the porous media. 
-(b): The distribution of gaps from (a).}
+(b): The distribution of gaps from (a) with the fitting curve of Weibull distribution.}
 \end{figure}
 
 
@@ -1860,9 +1860,11 @@ between the bodies.  Once a Delaunay triangulation is formed, it is used
 for all subsequent time steps until a body completely disappears.  At
 this point, a new Delaunay triangulation is formed. 
 {\color{red}In Figure~\ref{fig:Eroding100gap_mean_var}, 
-we record the distances between bodies neighbors and
+we record the gap distances between bodies neighbors and
 calculate the mean and variance with respect to porosities. 
-}
+For the mean of gap distances, it is linearly increacing until $\phi = 85\%$ 
+which means the eroding . 
+For the variance of gap distances, it is almost a constant function until $\phi= 85\%$  }
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
@@ -1910,12 +1912,20 @@ there are only 34 bodies and 74 pairs of neighbors.
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100gap_hist} The distribution of the gaps in the
-case of erosion of 100 bodies at six porosities. (a) 100 bodies with 258 gaps as porosity $\phi = 50.09 \%$. 
-(b) 100 bodies with 258 gaps as porosity $\phi = 55.02 \%$. 
-(c) 97 bodies with 249 gaps as porosity $\phi = 65.03 \%$. 
-(d) 92 bodies with 234 gaps as porosity $\phi = 75.14 \%$. 
-(e) 75 bodies with 189 gaps as porosity $\phi = 85.07 \%$. 
-(f) 34 bodies with 74 gaps as porosity $\phi = 95.12 \%$. }
+case of erosion of 100 bodies at six porosities and the fitting curves of Weibull distribution 
+described by the shape parameter $k > 0$ and the scale parameter $\lambda > 0$. 
+(a) 100 bodies with 258 gaps as porosity $\phi = 50.09 \%$ 
+and $(k, \lambda)=(1 .4650, 0.0605)$ for Weibull distribution. 
+(b) 100 bodies with 258 gaps as porosity $\phi = 55.02 \%$ 
+and $(k, \lambda)=( 1.9485, 0.0737)$ for Weibull distribution. 
+(c) 97 bodies with 249 gaps as porosity $\phi = 65.03 \%$ 
+and $(k, \lambda)=( 2.5682, 0.0965)$ for Weibull distribution. 
+(d) 92 bodies with 234 gaps as porosity $\phi = 75.14 \%$ 
+and $(k, \lambda)=( 2.7771, 0.1255)$ for Weibull distribution. 
+(e) 75 bodies with 189 gaps as porosity $\phi = 85.07 \%$ 
+and $(k, \lambda)=( 2.6235, 0.1713)$ for Weibull distribution. 
+(f) 34 bodies with 74 gaps as porosity $\phi = 95.12 \%$ 
+and $(k, \lambda)=( 1.9840, 0.3194)$ for Weibull distribution. }
 \end{figure}
 
 
