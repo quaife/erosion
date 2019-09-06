@@ -1807,8 +1807,8 @@ multiple bodies.}
 \end{figure}
 
 The tortuosity at all porosities from the initial condition until all
-the bodies have eroded is in Figure~\ref{fig:Eroding100tort_all}.  The
-initial tortuosity is around $T=1.2$ and decays towards $T=1$.  The
+the bodies have eroded is in Figure~\ref{fig:Eroding100Transport}(a).
+The initial tortuosity is around $T=1.2$ and decays towards $T=1$.  The
 tortuosities indicated by the blue dots are calculated using the
 Eulerian approach~\eqref{eqn:tortuosity2}, while the red marks use the
 Lagrangian approach~\eqref{eqn:tortuosity1}.  Again, the two methods
@@ -1822,53 +1822,8 @@ near the end of the simulation where it suddenly increases.  This
 behavior can be explained by ... \todo[inline]{S-H: Show me what is
 going on here as we discussed.} 
 
-
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height = 0.8\linewidth]{./figs/tort_eulerian100}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height=0.8\linewidth]{./figs/100b_second_moment_long_ref}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding100Transport} (a): The tortuosity of an
-eroding geometry initialized with 20 bodies.  When compared to the last
-example, the bodies are initially much closer together, and the porosity
-is smaller.  The tortuosity is calculated using the Eulerian
-method~\eqref{eqn:tortuosity2} (blue dots).  The dash line is the
-fitting line $\widehat{T}(\phi)=\phi^{-p}$ with $p=0.1669$, and the root
-mean square deviation is $1.13 \times 10^{-2}$.  (b): The temporal
-evolution of $\sigma_\lambda$ as a function of time at eight different
-porosities.  The dashed line, which has slope one, corresponds to the
-ballistic dispersion $\sigma_\lambda \sim t$ if no bodies were present.
-At early times, the particles undergo a ballistic motion, but once they
-have traversed a few grains, the dispersion becomes super-dispersive
-with $\sigma_\lambda \sim t^{\alpha}$, $\alpha \in (1/2,1)$.  The
-dashed-dotted lines are lines of best fit with slope $0.92$
-($\phi=95.00\%$), $0.87$ ($\phi=85.17\%$), $0.87$ ($\phi=75.10\%$),
-$0.91$ ($\phi=65.02\%$), $0.91$ ($\phi=55.08\%$), $0.72$
-($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and $0.92$ ($\phi=30.67\%$).}
-\caption[inline]{Fix this caption}
-\end{figure}
-
-
-\begin{figure}[H]
-\center
-\includegraphics*[width =0.55\linewidth]{./figs/tort_eulerian100}
-\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian
-approach of tortuosity.  The blue dots are Eulerian approach of
-tortuosity and the red stars and square are Lagrangian approach of
-tortuosity.  The dash line is the fitting line
-$\widehat{T}(\phi)=\phi^{-p}$ as $p=0.2459$ and the root-mean-square
-error is $5.5 \times 10^{-3}$.  We note that the model
-$\widehat{T}(\phi) = 1-p\ln(\phi)$, with $p=0.2631$ has a comparable
-root-mean-square error of $5.2 \times 10^{-3}$.}
-\end{figure}
-
-
 Next, we use the 1000 tracer trajectories to compute the second
-(Figure~\ref{fig:Eroding100anomalous}) moments of the streamlines at
+(Figure~\ref{fig:Eroding100Transport}(b)) moments of the streamlines at
 various porosities.  At high porosities, the first moment is similar to
 the first-moment of trajectories in a empty channel (black dashed line).
 At smaller porosities, the first moment is always linear, but larger
@@ -1886,17 +1841,38 @@ the trajectories
   \sigma_\lambda \sim t^{0.8715}.
 \end{align*}
 
-\begin{figure}
-\center
-\includegraphics*[width =0.55\linewidth]{./figs/100b_second_moment_long_ref}
-\caption{\label{fig:Eroding100anomalous} The analysis of anomalous
-dispersion in 100 bodies with respect to initial porosity
-(as p=50.09\%) and another five porosities during the eroding. The dashed line
-correspondes to a porosity of 100\% and the dashed-dotted lines are lines
-of best fit with slope 1.1135 (as p=95.12\%), 0.6825 (as p=85.07\%), 
-0.7347 (as p=75.14\%), 0.5915 (as p=65.03\%), 
-0.6107 (as p=55.02\%), and 0.7 (as p=50.09\%).}
+
+
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height = 0.8\linewidth]{./figs/tort_eulerian100}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height=0.8\linewidth]{./figs/100b_second_moment_long_ref}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100Transport} (a): The tortuosity of an
+eroding geometry initialized with 100 bodies.  The tortuosity is calculated using the Eulerian
+method~\eqref{eqn:tortuosity2} (blue dots).  The dash line is the
+fitting line $\widehat{T}(\phi)=\phi^{-p}$ with $p=0.2459$, and the root
+mean square deviation is $5.50 \times 10^{-3}$.  We note that the model
+$\widehat{T}(\phi) = 1 - p \ln (\phi)$, with $p=0.2631$ has a comparable
+root-mean-square error of $5.20 \times 10^{-3}$.  (b): The temporal
+evolution of $\sigma_\lambda$ as a function of time at six different
+porosities.  The dashed line, which has slope one, corresponds to the
+ballistic dispersion $\sigma_\lambda \sim t$ if no bodies were present.
+At early times, the particles undergo a ballistic motion, but once they
+have traversed a few grains, the dispersion becomes super-dispersive
+with $\sigma_\lambda \sim t^{\alpha}$, $\alpha \in (1/2,1)$.  The
+dashed-dotted lines are lines of best fit with slope $1.11$
+($\phi=95.12\%$), $0.68$ ($\phi=85.07\%$), $0.73$ ($\phi=75.14\%$),
+$0.59$ ($\phi=65.03\%$), $0.61$ ($\phi=55.02\%$), and $0.70$
+($\phi=50.09\%$).}
 \end{figure}
+
+
 
 Finally, using network models for flow in porous media~\cite{}, the
 anomalous dispersion rate can be linked to channel widths between solid
@@ -2735,7 +2711,31 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %p=55.08\%), 0.7234 (as p=45.03\%), 0.6895 (as p=35.05\%), and 0.9225 (as
 %p=30.67\%).}
 %\end{figure}
-
+%
+%\begin{figure}[H]
+%\center
+%\includegraphics*[width =0.55\linewidth]{./figs/tort_eulerian100}
+%\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian
+%approach of tortuosity.  The blue dots are Eulerian approach of
+%tortuosity and the red stars and square are Lagrangian approach of
+%tortuosity.  The dash line is the fitting line
+%$\widehat{T}(\phi)=\phi^{-p}$ as $p=0.2459$ and the root-mean-square
+%error is $5.5 \times 10^{-3}$.  We note that the model
+%$\widehat{T}(\phi) = 1-p\ln(\phi)$, with $p=0.2631$ has a comparable
+%root-mean-square error of $5.2 \times 10^{-3}$.}
+%\end{figure}
+%
+%\begin{figure}
+%\center
+%\includegraphics*[width =0.55\linewidth]{./figs/100b_second_moment_long_ref}
+%\caption{\label{fig:Eroding100anomalous} The analysis of anomalous
+%dispersion in 100 bodies with respect to initial porosity
+%(as p=50.09\%) and another five porosities during the eroding. The dashed line
+%correspondes to a porosity of 100\% and the dashed-dotted lines are lines
+%of best fit with slope 1.1135 (as p=95.12\%), 0.6825 (as p=85.07\%), 
+%0.7347 (as p=75.14\%), 0.5915 (as p=65.03\%), 
+%0.6107 (as p=55.02\%), and 0.7 (as p=50.09\%).}
+%\end{figure}
 
 \end{document}
 
