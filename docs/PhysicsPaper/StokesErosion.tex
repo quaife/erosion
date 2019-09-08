@@ -1,4 +1,3 @@
-% Journal of Computational Sciences
 %\documentclass[3p]{elsarticle}
 
 % APS journals: PRL and PRF
@@ -9,7 +8,7 @@
 \usepackage{graphicx, amsmath, amssymb, amsfonts, mathtools, mathrsfs, color}
 \usepackage{comment, enumerate, tabularx, multirow}
 \usepackage{natbib, hyperref, url}
-\usepackage{algorithm, algpseudocode, pifont, longtable}
+\usepackage{algorithm, algpseudocode, pifont, longtable, subfigure}
 %\usepackage[justification=RaggedRight]{caption}
 
 
@@ -73,25 +72,35 @@ Our method merges highly-efficient and highly-accurate boundary-integral methods
 %Stuff to cite \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017} and other stuff \cite{Rycroft2016, Mitchell2016}.
 
 
-\begin{comment}
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
-\begin{center}
-\includegraphics[width = 0.9 \textwidth]{./Figs/fig1.pdf}
-\caption{caption}
-\label{fig1}
-\end{center}
-\end{figure}
- %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
-\begin{center}
-\includegraphics[width = 0.9 \textwidth]{./Figs/fig2.pdf}
+\begin{figure*}[] %\centering
+        \subfigure[stuff]{ \label{fig:first}
+            \includegraphics[width=0.9 \textwidth]{figs/80circ8vort.pdf} } \\
+        \subfigure[stuff]{ \label{fig:third}
+            \includegraphics[width=0.9 \textwidth]{figs/80circ8vel.pdf} }
+   \caption{stuff}
+   \label{fig:subfigures}
+\end{figure*}
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% Data from 80circ8
+
+
+
+
+
+
+
+
+
+
+\begin{comment}
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure*}%[htbp]
+\centering \label{fig1}
+\includegraphics[width = 0.9 \textwidth]{./figs/80circ8vel.pdf}
 \caption{caption}
-\label{fig2}
-\end{center}
-\end{figure}
+\end{figure*}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \end{comment}
 
