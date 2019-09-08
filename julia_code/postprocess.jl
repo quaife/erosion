@@ -157,7 +157,7 @@ end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64=2.0; rotation::Bool=false)
 	# Retrieve the pressure drop and flux (assuming umax = 1)
-	pdrop,qavg = getpdrop(thlenden,nouter,ibary,x0,rotation=rotation)
+	pdrop,qavg = getpdrop(thlenden,nouter,ibary,x0,rotation=rotation)	
 	# Calculate the total resistivity
 	rtot = pdrop/(2*x0*qavg)
 	# Calculate the resisitvity due only to the bodies.
