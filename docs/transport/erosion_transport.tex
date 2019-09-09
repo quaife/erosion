@@ -1677,21 +1677,22 @@ to form sufficiently long trajectories to observe an asymptotic
 dispersion rate.  For all the porosities, the dispersion is much closer
 to ballistic when compared to the results in
 Figure~\ref{fig:Eroding20Transport}.  However, there are still clear
-transitions from ballistic dynamics at early times to asymptotic
-super-diffusive dynamics.  In contrast to the lower porosity initial
-condition (Section~\ref{sec:Eroding20}), at early times the erosion
-results in a decrease in particle spreading. In particular, once erosion
-has eroded the first 5\% of the bodies, the particle spreading
-transitions from $\sigma_\lambda \sim t^{0.92}$ to $\sigma_\lambda \sim
-t^{0.69}$.  To explain this behavior, note that the velocity is fairly
-uniform, albeit small, at the initial configuration (see
-Figure~\ref{fig:ErodingLow20vort}).  Then as the geometry erodes, the
-ratio of the fast and slow regions increases.  Since super-diffusive
-dispersion results from a tracers spending times in a both slow and fast
-regions, this results in an increase in the rate of super-dispersion.
-\todo[inline]{Still need to work on this and explain how it contrasts
-from the other 20 body example}
-\todo[inline]{Need a reference for last sentence}
+transitions from ballistic dynamics to asymptotic super-diffusive
+dynamics.  In contrast to the lower porosity initial condition
+(Section~\ref{sec:Eroding20}), at early times the erosion results in a
+decrease in dispersion rate. In particular, once erosion has eroded the
+first 5\% of the bodies, the particle spreading transitions from
+$\sigma_\lambda \sim t^{0.92}$ to $\sigma_\lambda \sim t^{0.69}$.  To
+explain this behavior, recall that anomalous dispersion is caused by
+tracers spending time in both the fast and slow regimes.  Since the
+initial configuration has a reasonably uniform velocity (see
+Figure~\ref{fig:ErodingLow20vort}), albeit a small one, the dispersion
+is nearly ballistic. However, as the geometry erodes, the flow becomes
+more intermittent, and this results in an increased anomalous dispersion
+rate~\cite{dea-leb-den-tar-bol-dav2013}.  Then, as the bodies continue
+to erode, the geometry channelizes, and most tracers are transported
+with a large velocity through the channels, again resulting in a nearly
+ballistic motion~\cite{sie-ili-pri-riv-gua2019}.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1834,21 +1835,19 @@ possible with the model
   \widehat{T}(\phi) = 1 - 0.2631 \ln(\phi).
 \end{align}
 
-\todo[inline]{do better job of explaining why diesperions does what it
-does.  For this problem, there are lots more of small bodies rather than
-a few big ones.  Therefore, after reinsertion, many of the bodies are
-placed in a ballistic regime which means that anoamlous dispersion is no
-longer observed.}
-Next, we use the 1000 tracer trajectories to compute the second
-(Figure~\ref{fig:Eroding100Transport}(b)) moments of the streamlines at
-various porosities.  At high porosities, the first moment is similar to
-the first-moment of trajectories in a empty channel (black dashed line).
-Similar to the other previous examples, we initially observe ballistic
-motion, and then super-diffusive dispersion.  However, similar to the
-example in Figure~\ref{fig:ErodingLow20Transport}(b), the anomalous
-dispersion rate is not growing with the porosity.  Therefore, it appears
-that the dispersion rate in an eroding geometry depends not only the
-porosity, but also the location and shape of the bodies.
+In Figure~\ref{fig:Eroding100Transport}(b), we use the 1000 tracer
+trajectories to compute the asymptotic dispersion rates at various
+porosities.  Again, we initially observe ballistic motion (black dashed
+line), and then super-diffusive dispersion.  Similar to the example in
+Figure~\ref{fig:ErodingLow20Transport}(b), the anomalous dispersion rate
+is not growing with the porosity.  Therefore, it appears that the
+dispersion rate in an eroding geometry depends not only the porosity,
+but also the location and shape of the bodies.  Finally, at the highest
+porosity, anomalous dispersion is only observed briefly in the time
+interval $(0.5,1)$, and then transitions back to a ballistic regime.
+Since the bodies are so small at this high porosity, after reinsertion,
+the streamline is not significantly deflected by any of the bodies, and
+this results in a ballistic regime.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1878,75 +1877,70 @@ lines of best fit with slope $1.11$ ($\phi=95.12\%$), $0.68$
 $0.61$ ($\phi=55.02\%$), and $0.70$ ($\phi=50.09\%$).}
 \end{figure}
 
+Finally, we investigate the effects of erosion on pore sizes.  The
+distribution of the pore sizes can be directly related to the
+distribution of the velocity, and thus effects the
+tortuosity~\cite{den-ica-hid2018} and anomalous
+dispersion~\cite{dea-qua-bir-jua2018}. In addition, the pore sizes are
+required in network models~\cite{bry-mel-cad1993, bry-kin-mel1993}.  As
+described in Section~\ref{sec:throats}, we use a Delaunay triangulation
+to define neighboring eroding bodies, and we compute the throat size by
+finding the closest distance between all neighboring bodies.  Once all
+throat sizes are computed, we analyze their distribution as a function
+of the porosity.
 
-Finally, using network models for flow in porous media~\cite{}, the
-anomalous dispersion rate can be linked to channel widths between solid
-bodies.  As described in Section~\ref{sec:throats}, we use a Delaunay
-triangulation to define neighboring eroding bodies, and we compute the
-throat size by finding the closest distance between all neighboring
-bodies.  Once all throat sizes are computed, we analyze their
-distribution as a function of the porosity.  In
-Figure~\ref{fig:Eroding100gap_hist}, we plot histograms of the throat
-sizes at six porosities throughout the erosion process.
+In Figure~\ref{fig:Eroding100gap_hist}, we plot histograms of the pore
+throat sizes at six porosities of the erosion process. These
+distributions have been modelled with Weibull
+distributions~\cite{ioa-cha1993}, and we superimpose the Weibull
+distribution with the same first two moments as the data.  The
+parameters that parameterize the distribution, $(k,\lambda)$, are
+included in the caption of Figure~\ref{fig:Eroding100gap_hist}.  In
+Figure~\ref{fig:Eroding100gap_mean_var}, we plot the mean and variance
+of the throat sizes as a function of the porosity.  At low porosities,
+the mean grows roughly linearly and the variance is roughly constant
+until about porosity $\phi = 0.85$.  At this point, both the mean and
+variance of the gap sizes quickly grow.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_1}
-\caption{}
+\caption{100 bodies, 258 gaps}
 \end{subfigure}%
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_46}
-\caption{}
+\caption{100 gaps, 258 gaps}
 \end{subfigure}%
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_112}
-\caption{}
+\caption{97 bodies, 249 gaps}
 \end{subfigure}
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_164}
-\caption{}
+\caption{92 bodies, 234 gaps}
 \end{subfigure}%
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_207}
-\caption{}
+\caption{75 bodies, 189 gaps}
 \end{subfigure}%
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_246}
-\caption{}
+\caption{34 bodies, 74 gaps}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap_hist} The distribution of the gaps in the
-case of erosion of 100 bodies at six porosities and the fitting curves of Weibull distribution 
-described by the shape parameter $k > 0$ and the scale parameter $\lambda > 0$. 
-(a) 100 bodies with 258 gaps as porosity $\phi = 50.09 \%$ 
-and $(k, \lambda)=(1 .4650, 0.0605)$ for Weibull distribution. 
-(b) 100 bodies with 258 gaps as porosity $\phi = 55.02 \%$ 
-and $(k, \lambda)=( 1.9485, 0.0737)$ for Weibull distribution. 
-(c) 97 bodies with 249 gaps as porosity $\phi = 65.03 \%$ 
-and $(k, \lambda)=( 2.5682, 0.0965)$ for Weibull distribution. 
-(d) 92 bodies with 234 gaps as porosity $\phi = 75.14 \%$ 
-and $(k, \lambda)=( 2.7771, 0.1255)$ for Weibull distribution. 
-(e) 75 bodies with 189 gaps as porosity $\phi = 85.07 \%$ 
-and $(k, \lambda)=( 2.6235, 0.1713)$ for Weibull distribution. 
-(f) 34 bodies with 74 gaps as porosity $\phi = 95.12 \%$ 
-and $(k, \lambda)=( 1.9840, 0.3194)$ for Weibull distribution. }
+\caption{\label{fig:Eroding100gap_hist} The distribution of the gaps in
+the case of 100 bodies eroding at six porosities. The black curves are
+Weibull distributions whose first and second moments agree with the
+data. The porosities and Weibull distribution parameters $(k,\lambda)$
+at each of the porosities are: (a) $\phi = 50.09\%$ and
+$(k,\lambda)=(1.4650,0.0605)$; (b) $\phi = 55.02\%$ and
+$(k,\lambda)=(1.9485,0.0737)$; (c) $\phi = 65.03\%$ and
+$(k,\lambda)=(2.5682,0.0965)$; (d) $\phi = 75.14\%$ and
+$(k,\lambda)=(2.7771,0.1255)$; (e) $\phi = 85.07\%$ and
+$(k,\lambda)=(2.6235,0.1713)$; (f) $\phi = 95.12\%$ and
+$(k,\lambda)=(1.9840, 0.3194)$.}
 \end{figure}
 
 
-
-
-
-
-In Figure~\ref{fig:Eroding100gap_mean_var},
-we plot the mean and variance of the throat sizes as a function of the
-porosity.  While the mean steadily grows with the porosity, the variance
-remains relatively flat for a wide range of porosities. 
-
-In Figure~\ref{fig:Eroding100gap_mean_var}, 
-we record the gap distances between bodies neighbors and
-calculate the mean and variance with respect to porosities. 
-For the mean of gap distances, it is linearly increacing until $\phi = 85\%$ 
-which means the eroding . 
-For the variance of gap distances, it is almost a constant function until $\phi= 85\%$  
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
@@ -1956,42 +1950,10 @@ For the variance of gap distances, it is almost a constant function until $\phi=
 \includegraphics*[height=0.8\linewidth]{./figs/gap_variance}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap_mean_var}  The mean of gaps in (a) and
-the variance with of gaps in (b) with respect to porosity $\phi$.  Red
-stars are six selected porosities to have the details of  the
-distribution of gaps and fitting curves of the distributions in
-Figure~\ref{fig:Eroding100gap_hist}.}
+\caption{\label{fig:Eroding100gap_mean_var} The mean (a) and variance
+(b) of the gap sizes of an eroding geometry.  The red stars correspond
+to the six porosities in Figure~\ref{fig:Eroding100gap_hist}.}
 \end{figure}
-
-We plot the distribution of the gap sizes at six porosities
-in Figure~\ref{fig:Eroding100gap_hist}.  At the initial configuration, there
-are 100 bodies and 258 pairs of neighbors.  The mean distance between
-these neighbors is $???  \times 10^{-???}$ and the variance is $???
-\times 10^{???}$.  As the bodies erode, the mean and variance of the
-distance between the bodies increases.  Finally, when the porosity reaches $95.12\%$
-there are only 34 bodies and 74 pairs of neighbors.
-
-
-
-
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
-%\caption{\label{fig:Eroding100tracer} The historical trajectories of 
-%200 tracers released at x = -1 in the fluid with multiple bodies.}
-%\end{center}
-%\end{figure}
-
-
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.5\linewidth]{./figs/tort100b_diff_top50}
-%\caption{\label{fig:Eroding100tort_traj} The largest 50 difference of 
-%local tortuosity $\tau$ at two neighboring tracers in
-%100 bodies eroding when the porosity is 62.98 \%
-%and the tortuosity is 1.1182. The same color of a pair of trajectories 
-%means they are from two neighboring tracers.}
-%\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
@@ -2747,6 +2709,25 @@ Physical Sciences-Collaboration Grants for Mathematicians.
 %of best fit with slope 1.1135 (as p=95.12\%), 0.6825 (as p=85.07\%), 
 %0.7347 (as p=75.14\%), 0.5915 (as p=65.03\%), 
 %0.6107 (as p=55.02\%), and 0.7 (as p=50.09\%).}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\begin{center}
+%\includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
+%\caption{\label{fig:Eroding100tracer} The historical trajectories of 
+%200 tracers released at x = -1 in the fluid with multiple bodies.}
+%\end{center}
+%\end{figure}
+
+
+%\begin{figure}[H]
+%\center
+%\includegraphics*[width =0.5\linewidth]{./figs/tort100b_diff_top50}
+%\caption{\label{fig:Eroding100tort_traj} The largest 50 difference of 
+%local tortuosity $\tau$ at two neighboring tracers in
+%100 bodies eroding when the porosity is 62.98 \%
+%and the tortuosity is 1.1182. The same color of a pair of trajectories 
+%means they are from two neighboring tracers.}
 %\end{figure}
 
 \end{document}
