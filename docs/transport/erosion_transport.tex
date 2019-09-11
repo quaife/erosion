@@ -1,7 +1,7 @@
 \documentclass[preprint, 10pt]{elsarticle}
 
 \input{preambles.tex}
-\usepackage{showkeys}
+%\usepackage{showkeys}
 \begin{document}
 
 \title{Viscous Transport in Eroding Porous Media}
@@ -35,48 +35,51 @@ Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \section{Introduction}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Flow in many natural occurring geometries involves flows that vary over
-many orders of magnitude.  \todo[]{The grammar in the first sentence is awkward: Flow in ... involves flows?}
-For example, the length scales of a porous
-media can vary from $10^{-6}m$ to
-$10^{-1}m$~\cite{mil-chr-imh-mcb-ped1998}.  Porous media flow plays an
-important role in several environmental and industrial applications.
-Therefore, understanding the dynamics of pore-scale flow is central to
-upscale the governing fluid equations, characterize
-dispersion~\cite{saf1959}, and quantify mixing. However, because of the
-large disparity of length and velocity scales, constitutive laws that
-link the microscopic scale to macroscopic scale must be
-developed~\cite{mil-chr-imh-mcb-ped1998}.  Therefore, to find closure
-formulas, accurate simulations at microscopic scales must be performed
-and analyzed.  A few examples of closure formulas and coarse-grained
-variables include
-pressure-saturation-permeability~\cite{mil-chr-imh-mcb-ped1998},
-permeability-porosity~\cite{dar-mcc1998, car1937, won-kop-tom1984},
-first passage time distribution~\cite{ber-sch-sil2000,
-hym-den-hag-kan2019, cve-che-wen1996}, tortuosity~\cite{hak-com-den2019,
-mat-kha-koz2008, dud-koz-mat2011, kop-kat-tim1996}, concentration
+Porous media flow plays an important role in several environmental and
+industrial applications.  To understand flow in a porous media, it is
+important to accurately characterize the length scales and velocity
+scales. However, this is very challenging since for a single porous
+geometry, the length scales that can vary from $10^{-6}m$ to
+$10^{-1}m$~\cite{mil-chr-imh-mcb-ped1998}, and the velocity scales that
+can vary from $10^{-1}m/$day to $10m/$day~\cite{kut-scr-dav-ham1995}.
+However, resolving all these scales is fundamental to develop meaningful
+constitutive relationships that link the microscopic to the macroscopic
+scale~\cite{mil-chr-imh-mcb-ped1998}, characterize
+dispersion~\cite{saf1959}, and quantify
+mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}.
+Coarse-grained variables are often used to study flow in a porous media,
+and examples include pressure-saturation-permeability
+relationships~\cite{mil-chr-imh-mcb-ped1998}, permeability-porosity
+relationships~\cite{dar-mcc1998, car1937, won-kop-tom1984}, first
+passage time distributions~\cite{ber-sch-sil2000, hym-den-hag-kan2019,
+cve-che-wen1996}, tortuosities~\cite{hak-com-den2019, mat-kha-koz2008,
+dud-koz-mat2011, kop-kat-tim1996}, concentration
 distributions~\cite{ica-den2019, bel-sal-rin1992}, flow
 distributions~\cite{ali-par-wei-bre2017}, geometry
 connectivity~\cite{knu-car2005, wes-blo-gra2001}, pore
-distributions~\cite{ali-par-wei-bre2017}, and anomalous
+distributions~\cite{ali-par-wei-bre2017}, anomalous
 dispersion~\cite{dea-qua-bir-jua2018, den-cor-sch-ber2004,
-sie-ili-pri-riv-gua2019}.
+sie-ili-pri-riv-gua2019}, and more.
 
-In many applications, the fluid transport continuously changes the pore
-structure.  This is particularly common in geophysical flows where
-erosion alters the porous matrix.  In this work, we investigate flow in
-eroded porous media.  By introducing erosion, there is a two-way
-coupling between the hydrodynamics and the mechanical alteration of the
-complex porous geometry.  Transport in porous geometries that have
-undergone erosion finds applications in aquifers~\cite{cve-che-wen1996,
-sud1986}, solute transport in groundwater flow~\cite{dag1987,
-kon-bre1978}.  Porous geometries that have undergone erosion have
+Flow in porous media is often studied for a fixed geometry, but for many
+physical processes, the geometry evolves with the flow. For example,
+melting~\cite{}\todo[inline]{Natural convection solid/liquid phase
+change in porous media}, dissolution~\cite{kan-zha-che-he2002},
+deposition~\cite{joh-eli1995}, and biofilm
+growth~\cite{tan-val-wer2015}.  Here, we focus on erosion which is
+fluid-mechanical process that is prevalent in many geophysical and
+hydrological applications.  For example, contaminant transport through
+aquifers~\cite{cve-che-wen1996} and groundwater~\cite{dag1987,
+kon-bre1978} is largely effected by the nature of the eroded porous
+geometry.  Porous geometries that have undergone erosion have
 certain characteristics.  For example, the geometry often has regions of
 high porosity that connect the inlet to the outlet.  This channelization
-results in velocity scales that can vary over several orders of
-magnitude~\cite{all-hea-lab-rei2002}.  Moreover, the channelization
-results in a geometry that is largely heterogeneous and anisotropic, and
-this affects heat transfer through the medium~\cite{nil-sto1990,
+results in velocity scales that vary over several orders of
+magnitude~\cite{all-hea-lab-rei2002} (see
+Figure~\ref{fig:Eroding50vel}).  Moreover, the channelization results in
+a geometry that is largely heterogeneous and anisotropic, and this
+affects the transfer other other quantities such as a contaminant or
+heat~\cite{nil-sto1990,
 ree-sto1995}.  Others have studied transport in heterogeneous geometries
 (for example, see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000,
 hak-com-den2019, suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996,
@@ -88,7 +91,7 @@ To describe the relevant hydrodynamics, we model two-dimensional
 microscopic scales where the fluid is governed by the incompressible
 Stokes equations (for example, see~\cite{hym-den-hag-kan2019,
 den-ica-hid2018, bar-mar-vee-zha2018}).  To couple the erosion and the
-hydrodynamics, the grains of the porous media are eroded at a rate that
+fluid, the grains of the porous media are eroded at a rate that
 is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
 ris-moo-chi-she-zha2012, qua-moo2018, par-izu2000}.  A variety of
 numerical methods can be applied to solve the incompressible Stokes
@@ -103,8 +106,9 @@ method that resolves nearly touching bodies with a near-singular
 integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
 simulated by applying a stable second-order time stepping Runge-Kutta
 method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
-bodies.  Given the solution of the incompressible Stokes equations are
-solved in an eroded porous geometry, we investigate different metrics to
+bodies.  Given the solution of the incompressible Stokes equations in
+an eroded porous geometry, we investigate different different but
+related metrics to
 characterize transport.  We focus on three metrics: the tortuosity, the
 anomalous dispersion, and the distribution of geometrical channels.  
 
@@ -112,7 +116,7 @@ The first two of these metrics can be defined in terms of statistical
 moments of trajectories.  Depending on the application, transport at the
 microscale can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
 leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019}, and advection
-dispersion equation~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
+diffusion equation~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
 this work, we assume that the trajectories are governed purely by
 advection (ie.~no diffusion).  Therefore, a trajectory $\ss(t)$
@@ -121,20 +125,14 @@ initialized at $\ss_0$ is governed by
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
   \label{eqn:tracers}
 \end{align}
-where $\uu$ is the fluid velocity.  Since there is no diffusion, all
-dispersion is a result of the particle spreading induced by the porous
-geometry.  Since there is no diffusion, we apply a high-order explicit
-Runge-Kutta time stepping method to compute streamlines.  However, other
-groups have simulated trajectories using continuous time random
-walks~\cite{mon-wei1965, den-cor-sch-ber2004, leb-den-car2008,
-ber-cor-den-sch2006} and a Fokker-Planck equation~\cite{ica-den2019}.
+where $\uu$ is the fluid velocity.  Tracer trajectories can be simulated
+with a continuous time random walks~\cite{mon-wei1965,
+den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006} or with a
+Fokker-Planck equation~\cite{ica-den2019}.  Instead, since there is no
+stiff diffusive term in~\eqref{eqn:tracers}, we compute streamlines by
+applying a high-order explicit Runge-Kutta time stepping method.
 
-\todo[inline]{Dump of text}
-Resolving the flow in these small velocity regions is essential to
-accurately describe anomalous dispersion and
-mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}.
-\todo[inline]{Dump of text}
-
+\todo[inline]{Bryan left off here}
 
 In a porous geometry, the length of a particle path is larger than the
 distance travelled if the grains were absent.  To quantify the amount of
@@ -193,6 +191,18 @@ guaranteed to be uniformly bounded.  In this work, we extend this
 quadrature method so that it can be used to compute the gradient of the
 velocity which is required to compute the shear stress and the fluid
 vorticity. 
+
+\begin{figure}[H]
+\begin{center}
+\todo[inline]{plots of the magnitude of the velocity on a log based 10
+scale}
+\caption{\label{fig:Eroding50vel} Erosion of 50 nearly touching bodies
+with the fixed pressure drop condition. The color is the vorticity of
+the fluid. The 6 snapshots are evenly spaced in time.}
+\end{center}
+\end{figure}
+
+
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width = 0.3 \textwidth]{./figs/vort_50b1}
