@@ -77,15 +77,14 @@ high porosity that connect the inlet to the outlet.  This channelization
 results in velocity scales that vary over several orders of
 magnitude~\cite{all-hea-lab-rei2002} (see
 Figure~\ref{fig:Eroding50vel}).  Moreover, the channelization results in
-a geometry that is largely heterogeneous and anisotropic, and this
+a geometries that are largely heterogeneous and anisotropic, and this
 affects the transfer other other quantities such as a contaminant or
-heat~\cite{nil-sto1990,
-ree-sto1995}.  Others have studied transport in heterogeneous geometries
-(for example, see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000,
-hak-com-den2019, suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996,
-leb-ded-dav-bou2007, knu-car2005, bel-sal-rin1992}). However, to the
-best of our knowledge, a detailed study of transport in eroded
-geometries has not been performed.
+heat~\cite{nil-sto1990, ree-sto1995}.  Others have studied transport in
+heterogeneous geometries (for example,
+see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000, hak-com-den2019,
+suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996, leb-ded-dav-bou2007,
+knu-car2005, bel-sal-rin1992}). However, to the best of our knowledge, a
+detailed study of transport in eroded geometries has not been performed.
 
 To describe the relevant hydrodynamics, we model two-dimensional
 microscopic scales where the fluid is governed by the incompressible
@@ -93,25 +92,18 @@ Stokes equations (for example, see~\cite{hym-den-hag-kan2019,
 den-ica-hid2018, bar-mar-vee-zha2018}).  To couple the erosion and the
 fluid, the grains of the porous media are eroded at a rate that
 is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
-ris-moo-chi-she-zha2012, qua-moo2018, par-izu2000}.  A variety of
-numerical methods can be applied to solve the incompressible Stokes
-equations such as a lattice-gas or lattice Boltzmann
-model~\cite{kop-kat-tim1996, dar-mcc1998}, finite
-volume~\cite{suo-liu-gan2019, den-ica-hid2018, sie-ili-pri-riv-gua2019},
-finite differences~\cite{leb-ded-dav-bou2007, knu-car2005}, and cellular
-automata~\cite{rot1988}. In this work, we instead solve an equivalent
-boundary integral equation (BIE) formulation of the incompressible
-Stokes equation.  The BIE is discretized with a high-order quadrature
-method that resolves nearly touching bodies with a near-singular
-integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
-simulated by applying a stable second-order time stepping Runge-Kutta
-method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
-bodies.  Given the solution of the incompressible Stokes equations in
-an eroded porous geometry, we investigate different different but
-related metrics to
-characterize transport.  We focus on three metrics: the tortuosity, the
-anomalous dispersion, and the distribution of geometrical channels.  
+ris-moo-chi-she-zha2012, par-izu2000}.  Porous geometries
+that have undergone erosion differ from standard porous geometry because
+of large amounts of anisotropy and channelization. This work
+addresses the effects that erosion has on the transport through a porous
+media.  Our contributions are two-fold. First, starting with our
+previous work~\cite{qua-moo2018}, we develop new numerical methods to
+simulate erosion of geometries with low porosities and nearly-touching
+grains. Second, we compute and analyze three different metrics of
+transport throughout the erosion process: the tortuosity, the anomalous
+dispersion, and the pore size distribution.
 
+To calculate the tortuosity and dispersion
 The first two of these metrics can be defined in terms of statistical
 moments of trajectories.  Depending on the application, transport at the
 microscale can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
@@ -131,8 +123,6 @@ den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006} or with a
 Fokker-Planck equation~\cite{ica-den2019}.  Instead, since there is no
 stiff diffusive term in~\eqref{eqn:tracers}, we compute streamlines by
 applying a high-order explicit Runge-Kutta time stepping method.
-
-\todo[inline]{Bryan left off here}
 
 In a porous geometry, the length of a particle path is larger than the
 distance travelled if the grains were absent.  To quantify the amount of
@@ -170,6 +160,24 @@ geometry's porosity.  The pore size distribution can be used to quantify
 velocity distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018},
 channelization~\cite{sie-ili-pri-riv-gua2019}, and
 connectivity~\cite{knu-car2005, wes-blo-gra2001}.
+
+
+
+A variety of
+numerical methods can be applied to solve the incompressible Stokes
+equations such as a lattice-gas or lattice Boltzmann
+model~\cite{kop-kat-tim1996, dar-mcc1998}, finite
+volume~\cite{suo-liu-gan2019, den-ica-hid2018, sie-ili-pri-riv-gua2019},
+finite differences~\cite{leb-ded-dav-bou2007, knu-car2005}, and cellular
+automata~\cite{rot1988}. In this work, we instead solve an equivalent
+boundary integral equation (BIE) formulation of the incompressible
+Stokes equation.  The BIE is discretized with a high-order quadrature
+method that resolves nearly touching bodies with a near-singular
+integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
+simulated by applying a stable second-order time stepping Runge-Kutta
+method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
+bodies.  
+
 
 The numerical methods to solve the governing fluid and erosion equations
 are based on previous work of the authors~\cite{qua-moo2018}.  We
