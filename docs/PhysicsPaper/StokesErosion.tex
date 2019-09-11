@@ -64,23 +64,22 @@ We numerically simulate the erosion of a porous medium due to an internally flow
 
 \section{Introduction}
 
-Effects of flow-induced erosion are visible across a range of scales in nature, from massive geological structures, to mesoscopic patterns, and finally down to the tiny granular constituents that comprise a porous medium. In the case of a porous medium specifically, it has been long recognized that bulk properties of mediums encountered in nature are typically anisotropic, so that the medium allows flow in a preferred direction more easily. This anisotropy is commonly attributed to how grains are deposited, with their longest dimension parallel to the settling bed, so that they allow flow preferentially in the horizontal direction. Controlled experiments, however, have not been performed to test this hypothesis. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
+Effects of flow-induced erosion are visible across a range of scales in nature, from massive geological structures, to mesoscopic patterns, and down to the tiny granular constituents that comprise a porous medium. In the case of a porous medium specifically, it has been long recognized that bulk properties of mediums encountered in nature are typically anisotropic, so that the medium allows flow in a preferred direction more easily. This anisotropy is commonly attributed to how grains are deposited, with their longest dimension parallel to the settling bed, so that they allow flow preferentially in the horizontal direction. Controlled experiments, however, have not been performed to test this hypothesis. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
-Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in Stokes flow---the regime of groundwater flow. This method is documented, validated, benchmarked in \cite{Quaife2018}, and can practically simulate the erosion of order hundreds of solid bodies.
+Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{Quaife2018}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{Quaife2018}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations (cite new paper with Shang). 
 
-
-%Stuff to cite \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017} and other stuff \cite{Rycroft2016, Mitchell2016}.
+Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 
 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure*}[] %\centering
-        \subfigure[ Vorticity field]{ \label{fig:first}
+        \subfigure[ Vorticity field]{ \label{FigVort}
             \includegraphics[width=0.9 \textwidth]{figs/80circ8vort.pdf} } \\
-        \subfigure[ Velocity magnitude]{ \label{fig:third}
+        \subfigure[ Velocity magnitude]{ \label{FigVel}
             \includegraphics[width=0.9 \textwidth]{figs/80circ8vel.pdf} }
    \caption{80 eroding bodies}
-   \label{fig:subfigures}
+   \label{FigVortVel}
 \end{figure*}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Data from 80circ8
@@ -93,6 +92,7 @@ Our method merges highly-efficient and highly-accurate boundary-integral methods
 
 
 
+%Maybe cite: \cite{Rycroft2016}
 
 \begin{comment}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
