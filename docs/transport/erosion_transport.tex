@@ -35,20 +35,32 @@ Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \section{Introduction}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Porous media flow plays an important role in several environmental and
-industrial applications.  To understand flow in a porous media, it is
-important to accurately characterize the length scales and velocity
-scales. However, this is very challenging since for a single porous
-geometry, the length scales that can vary from $10^{-6}m$ to
-$10^{-1}m$~\cite{mil-chr-imh-mcb-ped1998}, and the velocity scales that
-can vary from $10^{-1}m/$day to $10m/$day~\cite{kut-scr-dav-ham1995}.
-However, resolving all these scales is fundamental to develop meaningful
-constitutive relationships that link the microscopic to the macroscopic
+Porous media flow plays an important role in many environmental and
+industrial applications.  Depending on the application,
+length scales can vary from $10^{-6}m$ to
+$10^{-1}m$~\cite{mil-chr-imh-mcb-ped1998}, and velocity scales can be as
+small as $10m/$day or $10^{-1}m/$day~\cite{kut-scr-dav-ham1995}.
+Moreover, the scales of a single porous media can range over several
+orders of magnitude. Additional challenges arise when the geometry is
+channelized, anisotropic, and contains grains with large aspect ratios.
+However, accurate numerical simulations that address each of these
+challenges is essential to develop meaningful constitutive relationships
+that link the microscopic to the macroscopic
 scale~\cite{mil-chr-imh-mcb-ped1998}, characterize
 dispersion~\cite{saf1959}, and quantify
 mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}.
-Coarse-grained variables are often used to study flow in a porous media,
-and examples include pressure-saturation-permeability
+Flow in porous media is complicated further when there is a two-way
+coupling between the flow and the geometry. For example, the grains of a
+porous media evolve in applications involving
+melting~\cite{bec-vis1998}, dissolution~\cite{kan-zha-che-he2002},
+deposition~\cite{joh-eli1995}, and biofilm
+growth~\cite{tan-val-wer2015}.  Here, we focus on erosion which is a
+fluid-mechanical process that is prevalent in many geophysical and
+hydrological applications.  
+
+In this paper, we characterize transport in eroded geometries by
+computing and analyzing certain coarse-grained variables. Examples of
+simplified models include pressure-saturation-permeability
 relationships~\cite{mil-chr-imh-mcb-ped1998}, permeability-porosity
 relationships~\cite{dar-mcc1998, car1937, won-kop-tom1984}, first
 passage time distributions~\cite{ber-sch-sil2000, hym-den-hag-kan2019,
@@ -59,56 +71,75 @@ distributions~\cite{ali-par-wei-bre2017}, geometry
 connectivity~\cite{knu-car2005, wes-blo-gra2001}, pore
 distributions~\cite{ali-par-wei-bre2017}, anomalous
 dispersion~\cite{dea-qua-bir-jua2018, den-cor-sch-ber2004,
-sie-ili-pri-riv-gua2019}, and more.
-
-Flow in porous media is often studied for a fixed geometry, but for many
-physical processes, the geometry evolves with the flow. For example,
-melting~\cite{}\todo[inline]{Natural convection solid/liquid phase
-change in porous media}, dissolution~\cite{kan-zha-che-he2002},
-deposition~\cite{joh-eli1995}, and biofilm
-growth~\cite{tan-val-wer2015}.  Here, we focus on erosion which is
-fluid-mechanical process that is prevalent in many geophysical and
-hydrological applications.  For example, contaminant transport through
-aquifers~\cite{cve-che-wen1996} and groundwater~\cite{dag1987,
-kon-bre1978} is largely effected by the nature of the eroded porous
-geometry.  Porous geometries that have undergone erosion have
-certain characteristics.  For example, the geometry often has regions of
-high porosity that connect the inlet to the outlet.  This channelization
-results in velocity scales that vary over several orders of
-magnitude~\cite{all-hea-lab-rei2002} (see
-Figure~\ref{fig:Eroding50vel}).  Moreover, the channelization results in
-a geometries that are largely heterogeneous and anisotropic, and this
-affects the transfer other other quantities such as a contaminant or
-heat~\cite{nil-sto1990, ree-sto1995}.  Others have studied transport in
-heterogeneous geometries (for example,
-see~\cite{mil-chr-imh-mcb-ped1998, ber-sch-sil2000, hak-com-den2019,
-suo-liu-gan2019, cus-hu-den1995, cve-che-wen1996, leb-ded-dav-bou2007,
-knu-car2005, bel-sal-rin1992}). However, to the best of our knowledge, a
+sie-ili-pri-riv-gua2019}, and more.  Some of these works consider
+heterogeneous porous geometries, but to the best of our knowledge, a
 detailed study of transport in eroded geometries has not been performed.
 
-To describe the relevant hydrodynamics, we model two-dimensional
-microscopic scales where the fluid is governed by the incompressible
-Stokes equations (for example, see~\cite{hym-den-hag-kan2019,
-den-ica-hid2018, bar-mar-vee-zha2018}).  To couple the erosion and the
-fluid, the grains of the porous media are eroded at a rate that
-is proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
-ris-moo-chi-she-zha2012, par-izu2000}.  Porous geometries
-that have undergone erosion differ from standard porous geometry because
-of large amounts of anisotropy and channelization. This work
-addresses the effects that erosion has on the transport through a porous
-media.  Our contributions are two-fold. First, starting with our
-previous work~\cite{qua-moo2018}, we develop new numerical methods to
-simulate erosion of geometries with low porosities and nearly-touching
-grains. Second, we compute and analyze three different metrics of
-transport throughout the erosion process: the tortuosity, the anomalous
-dispersion, and the pore size distribution.
+Eroded porous geometries have certain unique qualitative
+characteristics.  For example, they often contain channels of high
+porosity that connect the inlet to the outlet, and this results in
+velocities that vary over several orders of
+magnitude~\cite{all-hea-lab-rei2002}.  Moreover, the channelization
+results in geometries that are largely heterogeneous and anisotropic,
+and this affects the transfer of other quantities such as a
+contaminant~\cite{cve-che-wen1996, dag1987, kon-bre1978} and
+heat~\cite{nil-sto1990, ree-sto1995}.  To characterize the transport in
+eroding geometries, we must complete three main tasks. First, high-order
+solutions of the fluid equations must be efficiently formed. Second,
+based on the flow, the bodies must be eroded. And, finally, the
+transport in the porous geometries must be characterized. The first two
+tasks are performed using our previous work~\cite{qua-moo2018}, but we
+improve our numerical results so that simulations of more realistic
+dense suspensions of eroding grains is possible
+(Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}). 
 
-To calculate the tortuosity and dispersion
-The first two of these metrics can be defined in terms of statistical
-moments of trajectories.  Depending on the application, transport at the
-microscale can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
-leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019}, and advection
-diffusion equation~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
+\begin{figure}[H]
+\begin{center}
+\includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b1}
+\includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b80}
+\includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b160}\\
+\includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b240}
+\includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b320}
+\includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b400}
+\caption{\label{fig:Eroding50vel} The erosion of 50 bodies. The
+individual snapshots are evenly spaced in time.  The background velocity
+is a Hagen-Poiseuille flow from left to right. The color is the
+magnitude of the velocity on a logarithmic scale.  We see that the flow
+velocity varies over several orders of magnitude, the grains form
+irregular shapes with large aspect ratios, and the geometry becomes
+channelized.}
+\end{center}
+\end{figure}
+
+To characterize transport in an eroded porous geometry, we first must
+form realistic eroded geometries. Like others~\cite{hym-den-hag-kan2019,
+den-ica-hid2018, bar-mar-vee-zha2018}), we model the hydrodynamics with the
+two-dimensional incompressible Stokes equations.  To couple erosion with
+the fluid, the porous media grains are eroded at a rate that is
+proportional to the hydrodynamic shear stress~\cite{wan-fel2004,
+ris-moo-chi-she-zha2012, par-izu2000}.  A variety of numerical methods
+can be applied to solve the incompressible Stokes equations such as a
+lattice-gas or lattice Boltzmann model~\cite{kop-kat-tim1996,
+dar-mcc1998}, a finite volume method~\cite{suo-liu-gan2019, den-ica-hid2018,
+sie-ili-pri-riv-gua2019}, a finite difference method~\cite{leb-ded-dav-bou2007,
+knu-car2005}, and cellular automata~\cite{rot1988}.  However, to
+accurately simulate erosion and transport, we require a high-order
+method that is able to resolve geometries with nearly-touching grains.
+Therefore, we solve the incompressible Stokes equations in terms of a
+boundary integral equation (BIE).  Once the fluid equations are solved, we
+compute the erosion rate and apply a stable second-order time stepping
+Runge-Kutta method to erode the grains.  The rate of erosion can be
+easily visualized using the fluid vorticity (Figure~\ref{Eroding50vort})
+whose magnitude is proportional to the erosion rate along the grains.
+
+Once eroded geometries are computed, we characterize the transport by
+computing and analyzing three different metrics: the tortuosity, the
+anomalous dispersion, and the pore size distribution.  The tortuosity
+and dispersion are defined in terms of statistical moments of streamline
+trajectories.  Depending on the application, transport at the microscale
+can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
+leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019},
+advection-diffusion~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
 this work, we assume that the trajectories are governed purely by
 advection (ie.~no diffusion).  Therefore, a trajectory $\ss(t)$
@@ -117,117 +148,78 @@ initialized at $\ss_0$ is governed by
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
   \label{eqn:tracers}
 \end{align}
-where $\uu$ is the fluid velocity.  Tracer trajectories can be simulated
-with a continuous time random walks~\cite{mon-wei1965,
-den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006} or with a
-Fokker-Planck equation~\cite{ica-den2019}.  Instead, since there is no
-stiff diffusive term in~\eqref{eqn:tracers}, we compute streamlines by
-applying a high-order explicit Runge-Kutta time stepping method.
+where $\uu$ is the fluid velocity.  Trajectories governed by
+equation~\eqref{eqn:tracers} can be formed with a continuous time random
+walk~\cite{mon-wei1965, den-cor-sch-ber2004, leb-den-car2008,
+ber-cor-den-sch2006} or with a Fokker-Planck
+equation~\cite{ica-den2019}.  Instead, since there is no stiff diffusive
+term in~\eqref{eqn:tracers}, we compute streamlines by applying a
+high-order explicit Runge-Kutta time stepping method.
 
-In a porous geometry, the length of a particle path is larger than the
-distance travelled if the grains were absent.  To quantify the amount of
-winding a particle takes, we use the tortuosity that is defined as the
-ratio of the particle paths length to the distance between the inlet and
-outlet.  In fractured media, the local tortuosity can be over
+The local tortuosity of a streamline connecting the inlet to the outlet
+is the streamline's length normalized by the distance between the inlet
+and the outlet.  In fractured media, the local tortuosity can be over
 2.5~\cite{hym-den-hag-kan2019}, and in porous media, depending on the
 porosity, the local tortuosity can be greater than
-1.5~\cite{kop-kat-tim1996, mat-kha-koz2008}, or greater than
-2~\cite{dud-koz-mat2011}.  The tortuosity of the geometry is defined by
-averaging over the entire inlet.  Therefore, the geometry's tortuosity
-can be used to characterize average particle
-motions~\cite{hak-com-den2019}.
-
-The tortuosity is a first statistical moment of the streamlines.
-However, to measure spread of trajectories, second-order moments are
-computed. By computing the variance of the lengths of trajectories in a
-porous media, non-local anomalous dispersion is
-observed~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
-dea-leb-den-tar-bol-dav2013}, resulting in super-dispersion.  The
-dispersion depends on the amount of time trajectories spend in low and
-high velocity regimes~\cite{ber-sch2001}.  Anomalous dispersion has been
-investigated for a variety of porous geometries, but not in the context
-of eroding porous geometries.
-
-Rather than solving the fluid equations in a complex porous matrix,
-network models can be used to describe the flow.  Here, the pores
-between neighboring grains are thought of as small channels, and the
-geometry consists of a connected network of these
-channels~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006} with the
-flow resembling a Hagen-Poiseuille profile in each channel.  So that
-network models can be applied to an eroding geometry, we characterize
-the pore sizes between neighboring grains as a function of the
-geometry's porosity.  The pore size distribution can be used to quantify
-velocity distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018},
+1.5~\cite{kop-kat-tim1996, mat-kha-koz2008}, or even
+2~\cite{dud-koz-mat2011}.  The tortuosity of a geometry is defined by
+averaging the local tortuosity over all streamlines that are initialized
+at the inlet.  Therefore, the geometry's tortuosity can be used to
+characterize average particle motions~\cite{hak-com-den2019}.  To
+characterize spreading, the fluid dispersion is computed in terms of the
+variance of the streamline lengths. In porous media, this spreading can
+often be characterized with a super-diffusive anomalous dispersion
+rate~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
+dea-leb-den-tar-bol-dav2013}.  Finally, the third metric, pore size
+distribution, is useful to quantify velocity
+distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018},
 channelization~\cite{sie-ili-pri-riv-gua2019}, and
-connectivity~\cite{knu-car2005, wes-blo-gra2001}.
+connectivity~\cite{knu-car2005, wes-blo-gra2001}.  Moreover, they can be
+used to develop network models~\cite{bry-kin-mel1993, bry-mel-cad1993,
+bij-blu2006}.
 
-
-
-A variety of
-numerical methods can be applied to solve the incompressible Stokes
-equations such as a lattice-gas or lattice Boltzmann
-model~\cite{kop-kat-tim1996, dar-mcc1998}, finite
-volume~\cite{suo-liu-gan2019, den-ica-hid2018, sie-ili-pri-riv-gua2019},
-finite differences~\cite{leb-ded-dav-bou2007, knu-car2005}, and cellular
-automata~\cite{rot1988}. In this work, we instead solve an equivalent
-boundary integral equation (BIE) formulation of the incompressible
-Stokes equation.  The BIE is discretized with a high-order quadrature
-method that resolves nearly touching bodies with a near-singular
-integration scheme~\cite{bar-wu-vee2015}.  The erosion dynamics are
-simulated by applying a stable second-order time stepping Runge-Kutta
-method to the {\thL} formulation~\cite{hou-low-she1994} of the eroding
-bodies.  
-
-
-The numerical methods to solve the governing fluid and erosion equations
-are based on previous work of the authors~\cite{qua-moo2018}.  We
-continue to use a boundary integral equation (BIE) formulation of the
-incompressible Stokes equations and a second-order Runge-Kutta method
-applied to a smoothed version of the magnitude of the shear stress.  In
-our previous work, we discretized the BIE with the trapezoid rule whose
-accuracy grows when evaluating layer potentials close to the fluid
-boundary.  Therefore, given a fixed resolution, our previous work
-required a minimum separation distance between all bodies to maintain
-stability.  One of the earliest works on near-singular integration was
-developed by Baker and Shelley~\cite{bak-she1986}, and in recent years,
-many other near-singular integration schemes have been
-developed~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
-bea-lai2001, klo-bar-gre-one2013}.  In this work, we use a Barycentric
-quadrature method~\cite{bar2014, bar-wu-vee2015} since it is a
-non-intrusive modification of the trapezoid rule, and the error is
-guaranteed to be uniformly bounded.  In this work, we extend this
-quadrature method so that it can be used to compute the gradient of the
-velocity which is required to compute the shear stress and the fluid
-vorticity. 
+To be able to compute stable simulations of erosion and accurate
+streamline trajectories, we use high-order methods in both space and
+time. The erosion rate is singular at stagnation points, so we apply a
+mild regularization and smoothing terms to eliminate numerical
+instabilities.  As described in our previous work~\cite{qua-moo2018}, we
+apply a second-order Runge-Kutta method is applied to the {\thL}
+coordinates~\cite{hou-low-she1994} of the eroding bodies.  In these
+coordinates, the stiff term is linear, so we are able to take a large
+time step size by treating the stiff term implicitly. In our previous
+work, after discretizing the BIE, the trapezoid rule is used to
+approximate the integrals. The accuracy of the trapezoid rule is
+sufficiently accurate if all the bodies are sufficiently
+separated~\cite{tre-wei2014}, but nearly-singular integrals must be
+computed when two grains are nearly-touching or when evaluating the
+velocity or vorticity near an eroding grain.  One of the earliest works
+on near-singular integration was developed by Baker and
+Shelley~\cite{bak-she1986}, and in recent years, many other
+near-singular integration schemes have been developed~\cite{oja-tor2015,
+kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001,
+klo-bar-gre-one2013}.  In this work, we use a Barycentric quadrature
+method~\cite{bar2014, bar-wu-vee2015} since it is a non-intrusive
+modification of the trapezoid rule, and the error is guaranteed to be
+uniformly bounded.  In this work, we extend this quadrature method so
+that it can be used to compute the gradient of the velocity which is
+required to compute the shear stress and the fluid vorticity. In
+addition, this quadrature method is used to accurately compute
+streamline trajectories that pass through the very slow regions close to
+the eroding grains.  Such accuracy is crucial since the anomalous
+dispersion is caused by the streamlines spending time in both the high
+and low velocity regimes~\cite{ber-sch2001}.
 
 \begin{figure}[H]
 \begin{center}
-\todo[inline]{plots of the magnitude of the velocity on a log based 10
-scale}
-\includegraphics[width = 0.3 \textwidth]{./figs/vel_log_50b1}
-\includegraphics[width = 0.3 \textwidth]{./figs/vel_log_50b80}
-\includegraphics[width = 0.37 \textwidth]{./figs/vel_log_50b160}\\
-\includegraphics[width = 0.3 \textwidth]{./figs/vel_log_50b240}
-\includegraphics[width = 0.3 \textwidth]{./figs/vel_log_50b320}
-\includegraphics[width = 0.37 \textwidth]{./figs/vel_log_50b400}
-\caption{\label{fig:Eroding50vel} Erosion of 50 nearly touching bodies
-with the fixed pressure drop condition. The color is the velocity of
-the fluid in log scale. The 6 snapshots are evenly spaced in time.}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.3 \textwidth]{./figs/vort_50b1}
-\includegraphics[width = 0.3 \textwidth]{./figs/vort_50b80}
-\includegraphics[width = 0.38 \textwidth]{./figs/vort_50b160}\\
-\includegraphics[width = 0.3 \textwidth]{./figs/vort_50b240}
-\includegraphics[width = 0.3 \textwidth]{./figs/vort_50b320}
-\includegraphics[width = 0.38 \textwidth]{./figs/vort_50b400}
-\caption{\label{fig:Eroding50vort} Erosion of 50 nearly touching
-bodies with the fixed pressure drop condition. The color is the
-vorticity of the fluid. The 6 snapshots are evenly spaced in time.}
+\includegraphics[height = 0.3 \textwidth]{./figs/vort_50b1}
+\includegraphics[height = 0.3 \textwidth]{./figs/vort_50b80}
+\includegraphics[height = 0.3 \textwidth]{./figs/vort_50b160}\\
+\includegraphics[height = 0.3 \textwidth]{./figs/vort_50b240}
+\includegraphics[height = 0.3 \textwidth]{./figs/vort_50b320}
+\includegraphics[height = 0.3 \textwidth]{./figs/vort_50b400}
+\caption{\label{fig:Eroding50vort} The same snapshots from
+Figure~\ref{fig:Eroding50vel}.  The color is the vorticity of the fluid
+whose magnitude is proportional to the rate of erosion.}
 \end{center}
 \end{figure}
 
@@ -273,10 +265,10 @@ In Section~\ref{sec:formulation}, we briefly summarize the model that we
 describe in detail in our previous work~\cite{qua-moo2018}.  In
 Section~\ref{sec:DLP}, we recast all the governing equations as layer
 potentials defined in both $\RR^2$ and in $\CC$.
-Section~\ref{sec:method} describes the numerical methods, with special
-attention paid to the new quadrature method to compute the shear stress
-and vorticity.  Section~\ref{sec:transport} describes measures for
-characterizing the geometry, transport, and dispersion.
+Section~\ref{sec:transport} describes measures for characterizing the
+geometry, transport, and dispersion. Section~\ref{sec:method} describes
+the numerical methods, with special attention paid to the new quadrature
+method to compute the shear stress and vorticity.
 Section~\ref{sec:results} presents numerical examples for a variety of
 dense packings of bodies.  Finally, concluding remarks are made in
 Section~\ref{sec:conclusions}.
