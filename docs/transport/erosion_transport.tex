@@ -221,7 +221,7 @@ models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
-Our first main contribution is extending the work of Barnett et
+Our first contribution is extending the work of Barnett et
 al.~\cite{bar-wu-vee2015} so that high-order accurate derivatives of
 solutions of the Stokes equations can be computed.  Using this new
 quadrature method, we accurately compute erosion rates and stably
@@ -239,15 +239,16 @@ the geometry.  By using the same quadrature rule and a fourth-order
 Runge-Kutta method, we are able to accurately compute trajectories that
 spend large amounts of time in the slow velocity regions near the
 eroding bodies, and computing these trajectories reliably is essential
-to characterize the flow.  We compare our tortuosity and dispersion
-rates with models available in the literature.  Finally, we analyze the
-effect of erosion on the pore size distribution.
+to characterize the flow~\cite{dea-leb-den-tar-bol-dav2013}.  We compare
+our tortuosity and dispersion rates with models available in the
+literature.  Finally, we analyze the effect of erosion on the pore size
+distribution.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations}
 As in our previous work~\cite{qua-moo2018}, we consider two-dimensional
 immobile eroding grains. However, this new work does not have a limitation on
-the packing of the bodies. Compared to our previous work, we are able to
+the proximity of the bodies. Compared to our previous work, we are able to
 simulate much denser suspensions with a comparable number of
 discretization points and without upsampling.  While we do investigate
 transport in this work, we only consider passive particles that are only
@@ -274,17 +275,19 @@ Section~\ref{sec:conclusions}.
 \section{Governing Equations}
 \label{sec:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We start by defining the main variables used to model erosion.  A more
-detailed description is in our previous work~\cite{qua-moo2018}.  We
-consider flows inside a confined geometry $\Omega$ that contains $M$
-eroding bodies with boundary $\gamma_\ell$, $\ell = 1,\ldots,M$.  The
-boundary of the bounding geometry is $\Gamma$, and the fluid domain is
-bounded by $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup
-\gamma_M$.  On each eroding body, $\nn$ is the normal vector pointing
-into the body, and $\ss$ is the unit tangent vector pointing in the
-counterclockwise direction.  The normal vector on $\Gamma$ is the
-outward unit normal.  Neglecting inertial forces, the governing
-equations are
+We start by defining the main variables used to model erosion.  We only
+summarize the model, and a more detailed description is in our previous
+work~\cite{qua-moo2018}.  We consider flows inside a confined geometry
+$\Omega$ that contains $M$ eroding bodies with boundaries $\gamma_\ell$,
+$\ell = 1,\ldots,M$.  The boundary of the bounding geometry is $\Gamma$,
+so the fluid domain is bounded by $\bd \Omega = \Gamma \cup \gamma_1
+\cup \cdots \cup \gamma_M$.  In all examples, we let $\Gamma$ be a
+slightly rounded-off version of $[-3,3] \times [-1,1]$, and we only
+place eroding bodies in the region $[-1,1] \times [-1,1]$.  On each
+eroding body, $\nn$ is the normal vector pointing into the body, and
+$\ss$ is the unit tangent vector pointing in the counterclockwise
+direction.  The normal vector on $\Gamma$ is the outward unit normal.
+Neglecting inertial forces, the governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
   \begin{split}
@@ -307,31 +310,41 @@ of $\gamma$, and
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
-is the shear stress on $\gamma$.
+is the shear stress on $\gamma$.  The erosion process is simulated by
+alternating between solving the fluid equations and adancing the grains
+according to the erosion rate for a small time step.
 
 The erosion rate loses differentiability if the shear stress changes
 sign, and this leads to corners developing on $\gamma$ and numerical
-instabilities.  Therefore, we modify the erosion rate by adding a
-curvature penalization. That is, the erosion model
-in~\eqref{eqn:erosionModel} is replaced with 
+instabilities.  Therefore, we modify the erosion rate, $V_\nn$ in
+equation~\eqref{eqn:erosionModel}, with
 \begin{align}
   \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
     \frac{L}{2\pi} \kappa - 1 \right),
 \end{align}
 where $\epsilon \ll 1,$ $\langle \cdot \rangle$ is the spatial average,
 $L$ is the length of $\gamma$, and $\kappa$ is the curvature of
-$\gamma$.  The normalization term guarantees that the regularization
-only changes the body's shape, but not its total length.  Finally, to
-increase the overall stability of the method, a narrow Gaussian filter
-is applied to the erosion rate.
+$\gamma$.  This new term penalizations regions of high curvature, and
+the normalization term guarantees that the regularization only changes
+the body's shape, but not its total length.  Finally, to increase the
+overall stability of the method, a narrow Gaussian filter is applied to
+the erosion rate at each time step.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
 \label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Since require a method to solve the incompressible Stokes equations in
+complex two-dimensional porous geometries, we reformulated the governing
+PDE as a boundary integral equation. This has the advantage that only
+the one-dimensional boundary of the domain must be discretized, and if
+appropriate quadrature formula and fast summation methods are used, the
+result is a high-fidelity numerical simulation that is computed with
+near-optimal complexity.
+
+\subsection{Double-Layer Potential Fromulation in $\RR^2$}
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
-use a double-layer potential formulation for the velocity $\uu$.  The
-double-layer potential is
+write the velocity $\uu$ as a double-layer potential 
 \begin{align}
   \DDD[\eeta](\xx) = \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
   \frac{1}{\pi}\int_{\bd\Omega} 
@@ -341,10 +354,10 @@ double-layer potential is
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  Since the Stokes double-layer potential
-can not represent all solutions of the incompressible Stokes equations,
-we complete the integral equation formulation by adding the Stokeslets
-and rotlets~\cite{pow-mir1987}
+is an unknown density function.  The double-layer potential can not
+represent all solutions of the incompressible Stokes equations, so we
+complete the integral equation formulation by adding the Stokeslets and
+rotlets~\cite{pow-mir1987}
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
     -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
@@ -359,35 +372,37 @@ condition $\ff$ is
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
-    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx),
+    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx), \quad \xx \in \Omega,
 \end{align}
 where the density function, Stokeslets, and rotlets satisfy
 \begin{subequations}
 \label{eqn:BIE}
-\begin{align}
+\begin{alignat}{3}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
-    \NN_0[\eeta](\xx), \quad \xx \in \bd\Omega, \\
+    \NN_0[\eeta](\xx), \quad &&\xx \in \bd\Omega, \\
   \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-    \eeta(\yy)\, ds_\yy \quad \ell = 1,\ldots,M, \\
+    \eeta(\yy)\, ds_\yy &&\ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
     (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
-    \quad \ell = 1,\ldots,M.
-\end{align}
+    &&\ell = 1,\ldots,M.
+\end{alignat}
 \end{subequations}
 The operator $\NN_0$ is the integral operator with kernel
-$N_(0)(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$,
+$N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$,
 which removes the rank one null space resulting from the flux-free
 requirement of $\ff$.  In this work, $\ff$ is the prescribed velocity,
 $\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
 $\gamma_\ell$, $\ell=1,\ldots,M$.  
 
-The deformation tensor, pressure, and vorticity of the double-layer
-potential, Stokeslets, and rotlets, can all be computed analytically in
-terms of the density function and the strengths of the Stokeslets and
-rotlets.  For $\xx \in \Omega$, the deformation tensor, pressure, and
-vorticity of the double-layer potential~\eqref{eqn:velocityDLP} are
+
+Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
+Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, the deformation
+tensor, pressure, and vorticity of the double-layer potential can all be
+computed analytically.  For $\xx \in \Omega$, the deformation tensor,
+pressure, and vorticity of the double-layer
+potential~\eqref{eqn:velocityDLP} are
 \begin{align}
   \label{eqn:deformationDLP} 
   \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
@@ -441,7 +456,7 @@ Potential}
 In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
 $\uu$ and its deformation tensor are written as a contour integral in
 $\RR^2$.  However, so that we can apply a particular quadrature method,
-we need to write these layer potentials in terms of Cauchy integrals in
+we write these layer potentials as Cauchy integrals in
 $\CC$ and their derivatives.  The first step is to write the Laplace
 double-layer potential as the complex integral
 \begin{align}
@@ -452,9 +467,9 @@ double-layer potential as the complex integral
   \label{eqn:laplaceComplex}
 \end{align}
 where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$.
-Equation~\eqref{eqn:laplaceComplex} can be converted to a Cauchy
-integral by first finding the boundary data of $v$.  We assume that
-$\Omega$ is a simply-connected interior domain. Then, the boundary data
+Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy
+integral by first finding the boundary data of $v$.  Assuming that
+$\Omega$ is a simply-connected interior domain, the boundary data
 of $v$ satisfies the Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
@@ -483,7 +498,7 @@ two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.
   
 To rewrite the Stokes double-layer potential~\eqref{eqn:velocityDLP} in
 terms of Cauchy integrals and their derivatives, we write it in terms of
-Laplace layer potentials
+Laplace layer potentials~\cite{bar-wu-vee2015}
 \begin{equation}
   \label{eqn:Stokes2Laplace}
   \begin{aligned}
@@ -499,7 +514,7 @@ Laplace layer potentials
   \end{aligned}
 \end{equation}
 Therefore, the Stokes double-layer potential can be written in terms of
-Cauchy integrals and their first derivative  as~\cite{bar-wu-vee2015}
+Cauchy integrals and their first derivative as
 \begin{equation}
   \begin{aligned}
     u_1(x) &= \Re (v[\tau_1](x)) + \Re (v'[y\cdot\eta](x)) 
@@ -523,7 +538,7 @@ $\nn \in \RR^2$.
 Double-Layer Potential}
 \label{sec:gradDLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In addition to the velocity, we require a complex-valued representation
+In addition to the velocity, we require a complex-valued layer potential representation
 of the gradient of the velocity so that we can compute the shear stress
 and the vorticity.  The deformation tensor at $x \in \Omega$ is found by
 computing the derivatives of $u_1$ and $u_2$ as defined in
@@ -552,10 +567,12 @@ the shear stress, the deformation tensor on $\bd\Omega$ is applied to
 the normal and tangent vectors as defined in
 equation~\eqref{eqn:shearStress}.
 
-In a shear flow, the vorticity is equivalent to the shear stress.  Since
-the erosion rate is proportional to the magnitude of the shear stress,
-it is constructive to visualize the vorticity of the fluid.  For $x \in
-\Omega$, the Cauchy integral representation of the vorticity is
+The gradient of the velocity field can also be used to compute the
+vorticity in the fluid bulk. Since the vorticity of a Stokes flow on
+no-slip walls is equivalent to the shear stress, we make use of the
+vorticity to better understand where the porous media will undergo large
+and small amounts of erosion.  For $x \in \Omega$, the Cauchy integral
+representation of the vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
@@ -567,36 +584,34 @@ it is constructive to visualize the vorticity of the fluid.  For $x \in
 \section{Transport, Tracers, and Tortuosity}
 \label{sec:transport}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Erosion leads to interesting porous geometries, and we are interested in
-characterizing transport in these geometries.  In our previous
-work~\cite{qua-moo2018}, we examined the effect of erosion on the area
-fraction, flow rate, and the total drag.  However, to characerize
-transport, other quantities must be examined.  Here, we compute the
-anomalous dispersion rate, the tortuosity, and the distribution of the
-gap sizes.  The first two metrics can be defined in terms of streamline
-governed by an advection autonomous equation~\eqref{eqn:tracers}.
+Erosion in porous geometries leads to particular phenomena such as
+channelization, and we are interested in characterizing transport in
+such geometries.  In our previous work~\cite{qua-moo2018}, we examined
+the effect of erosion on the area fraction, flow rate, and the total
+drag.  However, to characterize transport, other quantities must be
+examined.  Here, we compute the anomalous dispersion rate, the
+tortuosity, and the distribution of the gap sizes.  The first two
+metrics can be defined in terms of streamline governed by an advection
+autonomous equation~\eqref{eqn:tracers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Anomalous Disperision}
+\subsection{Anomalous Dispersion}
 \label{sec:dispersion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The dynamics of fluid in porous media is often characterized in terms of
-anomalous dispersion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.  The
-anomalous dispersion rate depends on the porosity and
-permeability~\cite{koc-bra1988}, but the distribution of the bodies also
-affects the anomalous dispersion rates.  Since erosion causes certain
-structure in porous media, calculating the anomalous dispersion rates in
-these geometries is important.
-
-We calculate the anomalous dispersion rates by analyzing the streamlines
-governed by equation~\eqref{eqn:tracers} for geometries that are formed
-by erosion.  Given a set of trajectories, we define $\lambda_j(t)$ to be
-the arclength of the trajectory
+The dynamics of fluid in a porous media is often characterized in terms
+of anomalous dispersion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.
+The anomalous dispersion rate depends on the porosity and
+permeability~\cite{koc-bra1988}, but it is also affected by the
+distribution and shape of the grains. We calculate the anomalous
+dispersion rates by analyzing the streamlines governed by
+equation~\eqref{eqn:tracers} in eroded geometries. Given a set of $N_p$
+trajectories, we define $\lambda_j(t)$ to be the arclength of the
+trajectory
 \begin{align}
   \lambda_j(t) = \int_{0}^t \|\ss'_j(\tau)\|\, d\tau, 
-    \quad j=1,\ldots,N_p.
+    \quad j=1,\ldots,N_p,
 \end{align}
-Then, the first and second ensemble moments are
+and the first and second ensemble moments
 \begin{align}
   \label{eqn:moments}
   \langle \lambda \rangle (t) = 
@@ -604,8 +619,7 @@ Then, the first and second ensemble moments are
     \sigma_\lambda^2(t) = \frac{1}{N_p} 
     \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
 \end{align}
-Since we compute second-order statistics, we use 1000 streamlines so
-that the statistics have converged~\cite{bel-sal-rin1992}.  Then,
+Then,
 particle dispersion is characterized as $\sigma_\lambda$.  At early
 times, the particles have not explored much of the geometry, and we
 expect a ballistic motion $\sigma_\lambda \sim t$.  However, as the
@@ -1208,6 +1222,11 @@ $i=1,\ldots,N_p$.
 \section{Numerical Results}
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Dump of text}
+In the numerical simulations, we use $N_p = 1000$ streamlines so
+that the statistics have converged~\cite{bel-sal-rin1992}.  
+\todo[inline]{Dump of text}
+
 In this section, we apply our new quadrature method to (1) simulate
 erosion of several different configurations of eroding bodies, and (2)
 characterize transport inside eroded geometries.  Each eroding body is
@@ -1890,11 +1909,8 @@ lines of best fit with slope $1.11$ ($\phi=95.12\%$), $0.68$
 $0.61$ ($\phi=55.02\%$), and $0.70$ ($\phi=50.09\%$).}
 \end{figure}
 
-<<<<<<< HEAD
-
 Finally, using network models for flow in porous media~\cite{}, the
 anomalous dispersion rate can be linked to channel widths between solid
-<<<<<<< HEAD
 bodies.  We construct a Delaunay triangulation with the centers of the
 eroding bodies corresponding to the vertices of the triangles.  Then, if
 the side of a triangle connects two vertices, we call the bodies
