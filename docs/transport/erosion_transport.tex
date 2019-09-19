@@ -1,4 +1,4 @@
-\documentclass[preprint, 10pt]{elsarticle}
+\documentclass[preprint,10pt]{elsarticle}
 
 \input{preambles.tex}
 %\usepackage{showkeys}
@@ -22,11 +22,24 @@ Institute, Florida State University, Tallahassee, FL, 32306.}
 Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-  An abstract
+  We extend our previous work, [Journal of Computational Physics, {\bf
+  375}:1--21, 2018], to simulate dense suspensions of fluid-mechanical
+  erosion of two-dimensional erosion of porous media. By using a
+  Barycentric quadrature rule, we resolve interactions
+  between nearly touching bodies without requiring an unfeasible number
+  of discretization points.  Since the Barycentric quadrature rule is
+  computationally expensive, it is only used when necessary, and the
+  spectrally accurate trapezoid rule is used otherwise. Our final fluid
+  solver only requires $\mathcal{O}(N)$ iterations per time step. Next,
+  we simulate and analyze transport through eroded porous geometries.
+  Our results demonstrate the effects of erosion on tortuosity,
+  dispersion, and pore size distributions.
 \end{abstract}
 
 \begin{keyword}
-  Keyword 1 \sep Keyword 2 \sep Keyword 3 
+  Porous media \sep Stokes flow \sep Erosion \sep Quadrature \sep
+  Transport \sep Tortuosity \sep Anomalous dispersion \sep Pore size
+  distributions
 \end{keyword}
 
 \maketitle
@@ -1926,37 +1939,6 @@ lines of best fit with slope $1.11$ ($\phi=95.12\%$), $0.68$
 $0.61$ ($\phi=55.02\%$), and $0.70$ ($\phi=50.09\%$).}
 \end{figure}
 
-Finally, using network models for flow in porous media~\cite{}, the
-anomalous dispersion rate can be linked to channel widths between solid
-bodies.  We construct a Delaunay triangulation with the centers of the
-eroding bodies corresponding to the vertices of the triangles.  Then, if
-the side of a triangle connects two vertices, we call the bodies
-neighbors.  Then, for each pair of neighbors, we measure the distance
-between the bodies.  Once a Delaunay triangulation is formed, it is used
-for all subsequent time steps until a body completely disappears.  At
-this point, a new Delaunay triangulation is formed.  {\color{red}In
-Figure~\ref{fig:Eroding100gap_mean_var}, we record the gap distances
-between bodies neighbors and calculate the mean and variance with
-respect to porosities.  For the mean of gap distances, it is linearly
-increacing until $\phi = 85\%$ which means the eroding .  For the
-variance of gap distances, it is almost a constant function until $\phi=
-85\%$  }
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height=0.8\linewidth]{./figs/gap_variance}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding100gap_mean_var}  The mean of gaps in (a) and 
-the variance of gaps in (b) with respect to porosity $\phi$ of an
-eroding geometry initialized with 100 bodies . 
-Red stars are six selected porosities to have the details of  
-the disturbutions of gaps and fitting curves of the disturbutions 
-in Figure~\ref{fig:Eroding100gap_hist}.}
-\end{figure}
 
 Finally, we investigate the effects of erosion on pore sizes.  The
 distribution of the pore sizes can be directly related to the
@@ -1965,21 +1947,24 @@ tortuosity~\cite{den-ica-hid2018} and anomalous
 dispersion~\cite{dea-qua-bir-jua2018}. In addition, the pore sizes are
 required in network models~\cite{bry-mel-cad1993, bry-kin-mel1993}.  As
 described in Section~\ref{sec:throats}, we use a Delaunay triangulation
-to define neighboring eroding bodies, and we compute the throat size by
+to define neighboring eroding bodies, and we compute the pore size by
 finding the closest distance between all neighboring bodies.  Once all
-throat sizes are computed, we analyze their distribution as a function
+pore sizes are computed, we analyze their distribution as a function
 of the porosity.  In Figure~\ref{fig:Eroding100gap_hist}, we plot
-histograms of the pore throat sizes at six porosities of the erosion
+histograms of the pore pore sizes at six porosities of the erosion
 process. These distributions have been modelled with Weibull
 distributions~\cite{ioa-cha1993}, and we superimpose the Weibull
 distribution with the same first two moments as the data.  The
 parameters that parameterize the distribution, $(k,\lambda)$, are
 included in the caption of Figure~\ref{fig:Eroding100gap_hist}.  In
 Figure~\ref{fig:Eroding100gap_mean_var}, we plot the mean and variance
-of the throat sizes as a function of the porosity.  At low porosities,
-the mean grows roughly linearly and the variance is roughly constant
-until about porosity $\phi = 0.85$.  At this point, both the mean and
-variance of the gap sizes quickly grow.
+of the pore sizes as a function of the porosity.  Interestingly, for
+porosities less than $\phi = 85\%$, the mean pore size grows linearly
+and the variance remains nearly flat. Since a channelized geometry has
+large variance, this indicates that channelization is less prevalent at
+low porosities.
+
+
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.3\textwidth}
@@ -2019,7 +2004,6 @@ $(k,\lambda)=(2.6235,0.1713)$; (f) $\phi = 95.12\%$ and
 $(k,\lambda)=(1.9840, 0.3194)$.}
 \end{figure}
 
-
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
@@ -2029,10 +2013,12 @@ $(k,\lambda)=(1.9840, 0.3194)$.}
 \includegraphics*[height=0.8\linewidth]{./figs/gap_variance}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap_mean_var} The mean (a) and variance
-(b) of the gap sizes of an eroding geometry.  The red stars correspond
-to the six porosities in Figure~\ref{fig:Eroding100gap_hist}.}
+\caption{\label{fig:Eroding100gap_mean_var} The effect of erosion on the
+mean (a) and the variance (b) of the pore sizes. The geometry initially
+contains 100 eroding bodies.  The distributions of the pore sizes in
+Figure~\ref{fig:Eroding100gap_hist} are indicated by the red stars.}
 \end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
