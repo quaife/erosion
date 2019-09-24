@@ -633,47 +633,43 @@ moments are
 In Section~\ref{sec:results}, we compare these moments in an open
 channel with the trajectories in an eroded geometry.
 
-
-\todo[inline]{left off here}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The tortuosity of a geometry, denoted by $T \geq 1$, is a dimensionless
-number that quantifies the average amount of turning made by
-trajectories passing through the geometry.  Unlike the for the
-dispersion, we do not use reinsertion to form long trajectories.  The
-local tortuosity
+The tortuosity is a dimensionless number that quantifies the amount of
+twisting of streamlines. Unlike the dispersion calculations, we do not
+use reinsertion to form long trajectories.  The local tortuosity is
 \begin{align}
-  \tau(y) = \frac{\lambda(y)}{d},
+  \tau(y_0) = \frac{\lambda(y_0)}{d}.
   \label{eqn:localTort}
 \end{align}
-is the length of a single trajectory, $\lambda(y)$, whose initial
-$y$-coordinate is a value $y$ on a cross-section of length $d$.  Taking
-the average over all points on the cross-section defines the hydraulic
-tortuosity
+Here, the streamline is initialized at the point $(x_0,y_0)$ on a
+vertical cross-section of length $d$.  The hydraulic tortuosity is
+defined by taking the average over all points on the cross-section
 \begin{align}
-  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_x(y)\lambda(y)\,dy}
-  {\displaystyle\int_{S}u_x(y)\,dy},
+  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0}
+  {\displaystyle\int_{S}u_1(x_0,y_0)\,dy_0},
   \label{eqn:tortuosity1}
 \end{align}
-where $S$ is a cross-section perpendicular to the $x$-axis with length
-$d$, $\lambda(y)$ is the length of the trajectory that is initialized at
-the $y$-coordinate along $S$, and $u_x(y)$ is the $x$ component of the
-velocity at the $y$-coordinate along $S$.  Therefore, the tortuosity
-satisfies $T \geq 1$, and $T=1$ only if no grains are present.  
+where $S$ is the cross-section $x = x_0$ that is perpendicular to the
+$x$-axis with length $d$, and $u_1(y_0)$ is the $x$ component of the
+velocity at the initial point of the streamline. Therefore, the
+tortuosity satisfies $T \geq 1$, and $T=1$ only if no grains are
+present.  
 
-The definition for the tortuosity depends on how the streamlines are
+The tortuosity definition depends on how the streamlines are
 defined, and Duda et al.~\cite{dud-koz-mat2011} summarize several
-options. One choice, that we adopt, considers streamlines that originate
-at $S$ and terminate at a parallel cross-section.  We use the
-cross-sections $x=-1$ and $x=1$.  This choice of averaging allows us to
-also compute the tortuosity in terms of an area integral.  Under the
-assumptions that the flow is incompressible and not re-entrant, meaning
-that all streamlines connect the two cross-sections, the tortuosity in
+options. One choice, that we adopt, uses streamlines that originate at
+$S$ and terminate at a parallel cross-section.  We use the
+cross-sections $x=-1$ and $x=1$ that are at the start and end of the
+porous region.  This choice of averaging allows us to also compute the
+tortuosity in terms of an area integral.  Assuming that the flow is
+incompressible and not re-entrant, meaning that all streamlines connect
+the two cross-sections, the tortuosity in
 equation~\eqref{eqn:tortuosity1} is equivalent to~\cite{dud-koz-mat2011}
 \begin{align}
   T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
-           {\displaystyle\int_\Omega u_x(\yy)\, d\yy},
+           {\displaystyle\int_\Omega u_1(\yy)\, d\yy},
   \label{eqn:tortuosity2}
 \end{align}
 where $\Omega$ is the fluid region between the inlet and outlet
@@ -683,7 +679,7 @@ consider and have a negligible effect on the tortuosity.  Since
 equation~\eqref{eqn:tortuosity2} does not require the additional work of
 computing particle trajectories at every time step, we use this
 definition for the majority of the tortuosity calculations.  However, we
-do compare the two definitions for the tortuosity at several time steps
+do compare the two definitions for the tortuosity at several porosities
 in Section~\ref{sec:results}.
 
 There have been efforts to relate the tortuosity to the porosity.  For
@@ -699,7 +695,7 @@ example, Matyka et al.~\cite{mat-kha-koz2008} propose the models
 \end{subequations}
 where $\phi$ is the porosity and $p>0$ is a fitting parameter.  In
 Section~\ref{sec:results}, we compare these four models with the
-tortuosity of eroding geometries.
+tortuosity of eroding porous geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pore Throat Size}
@@ -711,23 +707,24 @@ placement affects velocity scales~\cite{ali-par-wei-bre2017},
 correlation structures~\cite{leb-ded-dav-bou2007}, contaminant
 transport~\cite{knu-car2005},
 channelization~\cite{sie-ili-pri-riv-gua2019}, and more. In addition,
-pore network models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}
-rely on descriptions of the pore throat sizes. To characterize the grain
-placement, we compute distributions of gap sizes between neighboring
+the grain configuration is important for pore network
+models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006} that rely on
+descriptions of the pore throat sizes. To characterize the grain
+placement, we compute distributions of pore sizes between neighboring
 grains.  To define neighboring grains, we form a Delaunay triangulation
-of nodes placed at the center of each eroding grain and at a collection
+using nodes placed at the center of each eroding grain and at a collection
 of points around the boundary of the porous region.  Then, we say that
 two grains are neighbors if their centers share an edge of the
 triangulation~\cite{dea-qua-bir-jua2018}.  Finally, we compute the
 minimum distance between all pairs of neighboring grains.  In
 Figure~\ref{fig:Eroding100gap}(a), we plot a histogram of the pore size
-of 100 eroded bodies.  The black curve is an un-normalized Weibull
+of 100 eroded bodies.  The black curve is an unnormalized Weibull
 distribution with the same mean and variance as the measured data.  In
-Figure~\ref{fig:Eroding100gap}(b), we plot lines connected the two
-closest points of all neighboring gaps. We do not consider pores between
-eroding bodies and the solid and the artificial points placed around the
-porous region, so some of the grains near the porous region boundary
-only have two neighbors.
+Figure~\ref{fig:Eroding100gap}(b), we plot illustrate the pore throat
+sizes by drawing the shortest lines between neighboring grains.  We do
+not consider pores between eroding bodies and the solid and the
+artificial points placed around the porous region, so some of the grains
+near the porous region boundary only have two neighbors.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -739,17 +736,18 @@ only have two neighbors.
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100gap} (a): The distribution of the pore
-sizes of an eroded geometry. The pores are defined as the space between
-neighboring grains.  The black curve is the Weibull distribution with
-the same first two moments as the data. (b): Two grains are neighbors if
-they share a edge in a Delaunay triangulation of the centers of the
-grains.}
+sizes of an eroded geometry. The black curve is the Weibull distribution
+with the same first two moments as the data. (b): We only consider pore
+sizes between neighboring grains, where two grains are neighbors if they
+share a edge in a Delaunay triangulation using nodes placed at the
+center of each eroding grain.}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
 \label{sec:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{left off here}
 In line with our previous work~\cite{qua-moo2018}, we use two meshes to
 simulate erosion. The integral equation is solved by discretizing the
 boundary of the geometry at a set of points distributed equally in
@@ -855,7 +853,7 @@ points inside an eroding body are assigned a value of 0.  Then, the
 tortuosity is approximated as
 \begin{align}
   T = \frac{\sum\limits_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y}
-      {\sum\limits_{i,j=1}^N u_x(\xx_{ij}) \Delta x \Delta y}.
+      {\sum\limits_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y}.
 \end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1229,8 +1227,8 @@ cross-sections $x=-1$ and $x=1$.  Then, we discretize
 equation~\eqref{eqn:tortuosity1} as
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
-    u_x(y_i) \lambda(y_i) \Delta y}
-  {\displaystyle\sum_{i=1}^{N_p} u_x(y_i) \Delta y}, 
+    u_1(y_i) \lambda(y_i) \Delta y}
+  {\displaystyle\sum_{i=1}^{N_p} u_1(y_i) \Delta y}, 
 \end{align}
 where $\Delta y = 2/(N_p + 1)$ and $y_i = -1 + i \Delta y$,
 $i=1,\ldots,N_p$.  
@@ -1862,7 +1860,7 @@ porosities.  However, the tortuosity undergoes a sudden increase near
 the end of the simulation.  The increase is caused by a single small
 body near the middle of the channel being completely eroded.  While this
 results in straighter streamlines, therefore reducing $\lambda$, the
-horizontal flow, $u_x(y)$ increases since there is no longer a no-slip
+horizontal flow, $u_1(y)$ increases since there is no longer a no-slip
 boundary.  At the very late stages of erosion, we have observed that
 when a single small body finishes eroding, this can result in a sudden
 increase in the tortuosity.  We also computed the lines of best fit
