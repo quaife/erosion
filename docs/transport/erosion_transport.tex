@@ -54,12 +54,14 @@ can vary from $10^{-6}\mathrm{m}$ to
 $10^{-1}\mathrm{m}$~\cite{mil-chr-imh-mcb-ped1998}, velocity scales can
 be as small as $10^{-1}\mathrm{m/day}$~\cite{kut-scr-dav-ham1995}, \nick{and
 the scales of a single porous media can range over several orders of
-magnitude.}\todo[inline]{Nick: I am confused by the last part of the sentence. What 'scale' are you referring to? Length? You already described the length scales in the first part of the sentence. Maybe you mean to distinguish between the grain length scales and the overall length scales of the system. If so, you can use adjectives like `grain' and `macroscopic' or `overall' to clarify that.} 
-Numerical methods that accurately address all of these scales
-are essential to develop meaningful constitutive relationships between
-the microscopic and macroscopic scales~\cite{mil-chr-imh-mcb-ped1998},
-to characterize dispersion~\cite{saf1959}, and to quantify
-mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}.
+magnitude.}
+%
+\todo[inline]{Nick: I am confused by the last part of the sentence (highlighted in red). What `scale' are you referring to? Length? You already described the length scales in the first part of the sentence. Maybe you mean to distinguish between the grain length scales and the overall length scales of the system. If so, you can use adjectives like `grain' and `macroscopic' or `overall' to clarify that.} 
+%
+Numerical methods that \st{accurately address all of these} \nick{resolve this range of} scales offer the ability to: (i) characterize dispersion~\cite{saf1959}, (ii) quantify mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}, and (iii) potentially develop meaningful constitutive relationships that link the microscopic and macroscopic realms~\cite{mil-chr-imh-mcb-ped1998}. 
+%
+\todo[inline]{Nick: I reworded the above sentence. See if you agree with my changes.}
+%
 Examples of coarse-grained models for porous media flow include
 pressure-saturation-permeability
 relationships~\cite{mil-chr-imh-mcb-ped1998}, permeability-porosity
@@ -77,9 +79,12 @@ sie-ili-pri-riv-gua2019}, and more.
 Flow in porous media is further complicated when there is a two-way
 coupling between the flow and the geometry. For example, the grains of a
 porous media evolve in time in applications involving
-melting~\cite{bec-vis1998}, dissolution~\cite{kan-zha-che-he2002},
-deposition~\cite{joh-eli1995}, and biofilm
-growth~\cite{tan-val-wer2015}.  We focus on erosion, a fluid-mechanical
+melting~\cite{bec-vis1998, rycroft2016asymmetric, morrow2019moving}, dissolution~\cite{kan-zha-che-he2002, mac2015shape, wykes2018self},
+deposition~\cite{joh-eli1995}, biofilm growth~\cite{tan-val-wer2015}, and \nick{crack formation} \cite{cho2019crack}.  
+%
+\todo[inline]{Nick: I added some references. Check out the last one on crack formation in shrinkable, granular packings. It is really cool work done by an excellent experimentalist Sujit Datta. I met him and he voiced a strong interest in our work, so wanted to make you aware.}
+%
+We focus on erosion, a fluid-mechanical
 process that is prevalent in many geophysical and hydrological
 applications.  When a porous geometry erodes, certain qualitative
 characteristics are unveiled that affect transport through the geometry.
