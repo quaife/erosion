@@ -1040,31 +1040,27 @@ reduced to $\mathcal{O}(N)$ operations.  However, the Barycentric
 quadrature rules require several $N$-body calculations, and they must be
 done for each component of $\bd\Omega$ individually.  The resulting cost
 would be prohibitive, so we introduce a hybrid method that combines the
-Barycentric quadrature rule and the trapezoid rule.  In short, the fast
-multipole accelerated trapezoid rule is used to compute the velocity at
-all the discretization points, and the non-accelerated Barycentric
-quadrature rule is used to locally correct the errors introduced by the
-trapezoid rule.  Note that the source points of the layer potential is
-always one of the eroding bodies or the outer wall, but the target point
-can either be on another component of $\bd\Omega$ or it can be in the
-fluid bulk $\Omega$.
+Barycentric quadrature rule and the trapezoid rule.  Note that the
+source points of the layer potential is always one of the eroding bodies
+or the outer wall, but the target point can either be on another
+component of $\bd\Omega$ or it can be in the fluid bulk $\Omega$.
 
-\todo[inline]{left off here}
 To compute the velocity double-layer potential, we start by applying the
 trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
 calculation requires $\mathcal{O}(N)$ operations, and we call the
-resulting velocity $\vv_\trap(\xx)$.  Depending on the number of
-discretization points $N_\iin$ and $N_\out$, there is a region separated
-from $\bd\Omega$ where the error of $\vv_\trap(\xx)$ is less than a
-user-specified tolerance.  However, for the other points in $\Omega$,
-the trapezoid rule needs to be replaced with a more accurate quadrature
-rule.  Note, however, that since a point is typically only close to one
-or two components of $\bd\Omega$, only the contribution of these nearby
-bodies need to be replaced.  Assuming that $\xx$ is too close to
-$\gamma_k$, we first subtract the inaccurate approximation of the
-double-layer potential due to $\gamma_k$.  Then, the Barycentric
-quadrature rule is used to compute the velocity due to $\gamma_k$ with
-more accuracy.  That is, the final velocity is
+resulting velocity $\vv_\trap(\xx)$.  Since the trapezoid rule is
+spectrally accurate, the error of $\vv_\trap(\xx)$ is small for points
+sufficiently far from $\bd\Omega$, and this region depends on the number
+of discretization points $N_\iin$ and $N_\out$.  However, the trapezoid
+rule needs to be replaced with a more accurate quadrature rule for
+points that are too close to $\bd\Omega$.  Note, however, that since a
+point is typically only close to one or two components of $\bd\Omega$,
+only the contribution of these nearby bodies needs to be replaced.
+Assuming that $\xx$ is too close to $\gamma_k$, we first subtract the
+inaccurate trapezoid rule approximation of the double-layer potential
+due to $\gamma_k$.  Then, the Barycentric quadrature rule is used to
+compute the velocity due to $\gamma_k$ with more accuracy.  That is, the
+final velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
@@ -1088,8 +1084,8 @@ are made to replace the inaccuracies of the trapezoid rule.  However,
 since the shear stress and vorticity are only computed once per time
 step, the trapezoid rule is applied with a direct summation rather than
 the FMM.  Relative to the cost of computing the velocity at each
-iteration of GMRES with the FMM, the additional once-per-time-step cost
-to compute the vorticity and deformation tensor is minimal.
+iteration of GMRES with the FMM, the additional once-per-time-step costs
+to compute the vorticity and deformation tensor are minimal.
 
 Per grid point, applying the Barycentric quadrature rules dominates the
 computational cost. Therefore, it is imperative that we only apply the
@@ -1115,7 +1111,7 @@ In this manner, rather than using an expensive all-to-all algorithm to
 compute the distance between all pairs of discretization points, we
 compute the distance between pairs of circle centers.  This criteria
 allows us to quickly determine bodies that contain discretization points
-where the Barycentric quadrature rule may need to be applied, and the
+where the Barycentric quadrature rule might need to be applied, and the
 parameter $\alpha_\iin$ accounts for the fact that the bodies are being
 approximated with circles.  Assuming that the two bodies $\gamma_i$ and
 $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
@@ -1126,10 +1122,9 @@ $\gamma_j$ satisfy condition~\eqref{eqn:BodyCutoff}, for each point $\xx
 + \alpha_\iin \left(\frac{L_i}{N_\iin} \right).
 \end{align}
 To determine if points on $\gamma_i$ are too close to the outer wall, we
-recall that the geometry is contained in a rounded-off version of
-$[-3,3] \times [-1,1]$, and that the bodies are all contained in $[-1,1]
-\times [-1,1]$, so a target point can only be close to the lines $y =
-\pm 1$. Therefore, we first check if
+recall that the eroding bodies are all contained in $[-1,1] \times
+[-1,1]$, so a target point can only be close to the lines $y = \pm 1$.
+Therefore, we first check if
 \begin{align}
   \left\|\cc_i - \left[
     \begin{array}{c}
@@ -1185,14 +1180,14 @@ the body's shape, but not its total length.
 Rather than tracking the $(x,y)$ coordinates, the {\thL} variables are
 tracked. In addition, a tangential velocity field is added to each body
 so that the discretization points remain equispaced in arclength for all
-time.  A second-order Implicit-Explicit Runge-Kutta method is used. In
-particular, the diffusive term corresponding to the curvature
-penalization term is discretized implicitly, and all other terms, which
-are non-stiff, are treated explicitly.  By using this time stepping
-method in conjunction with the Barycentric rule, we stably evolve the
-eroding bodies.  Finally, to increase the overall stability of the
-method, a narrow Gaussian filter is applied to the erosion rate at each
-time step.
+time.  Additionally, to increase the overall stability of the method, a
+narrow Gaussian filter is applied to the erosion rate at each time step.
+Time stepping is performed with a second-order Implicit-Explicit
+Runge-Kutta method. In particular, the diffusive term corresponding to
+the curvature penalization term is discretized implicitly, and all other
+terms, which are non-stiff, are treated explicitly.  By using this time
+stepping method in conjunction with the Barycentric rule, we stably
+evolve the eroding bodies.  
 
 To compute the tortuosity and the anomalous dispersion rates
 (Section~\ref{sec:transport}), we require the streamlines that are
@@ -1213,10 +1208,8 @@ close to the eroding bodies (see Figures~\ref{fig:Eroding20tracer}
 and~\ref{fig:Eroding100tort}).
 
 Once a collection of trajectories are formed, they are used to quantify
-the dispersion and the tortuosity.  The dispersion simply computes the
-second-moment of the trajectories as described in
-equation~\eqref{eqn:moments}.  We use $N_p = 1000$ streamlines so that
-the statistics have converged~\cite{bel-sal-rin1992}.  However, as
+the dispersion and the tortuosity.  We use $N_p = 1000$ streamlines so
+that the statistics have converged~\cite{bel-sal-rin1992}.  However, as
 described in Section~\ref{sec:dispersion}, a reinsertion method is used
 to compute trajectories that are sufficiently long to observe an
 asymptotic anomalous dispersion rate.  To compute the tortuosity using
@@ -1235,6 +1228,7 @@ $i=1,\ldots,N_p$.
 \section{Numerical Results}
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{here}
 In this section, we apply our new quadrature method to (1) simulate
 erosion of several different configurations of eroding bodies, and (2)
 characterize transport inside eroded geometries.  Each eroding body is
