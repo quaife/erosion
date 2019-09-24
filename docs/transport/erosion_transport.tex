@@ -281,9 +281,9 @@ summarize the model, and a more detailed description is in our previous
 work~\cite{qua-moo2018}.  We consider flows inside a confined geometry
 $\Omega$ that contains $M$ eroding bodies with boundaries $\gamma_\ell$,
 $\ell = 1,\ldots,M$.  The boundary of the bounding geometry is $\Gamma$,
-so the fluid domain is bounded by $\bd \Omega = \Gamma \cup \gamma_1
-\cup \cdots \cup \gamma_M$.  In all examples, we let $\Gamma$ be a
-slightly rounded-off version of $[-3,3] \times [-1,1]$, and we only
+so the boundary of the fluid domain is $\bd \Omega = \Gamma \cup
+\gamma_1 \cup \cdots \cup \gamma_M$.  In all examples, we let $\Gamma$
+be a slightly rounded-off version of $[-3,3] \times [-1,1]$, and we only
 place eroding bodies in the region $[-1,1] \times [-1,1]$.  On each
 eroding body, $\nn$ is the normal vector pointing into the body, and
 $\ss$ is the unit tangent vector pointing in the counterclockwise
@@ -293,13 +293,13 @@ Neglecting inertial forces, the governing equations are
 \label{eqn:erosionModel}
   \begin{split}
     \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap 
-      &&\mbox{\em conservation of momentum}\\
+      &&\mbox{\em conservation of momentum}, \\
     \grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap 
-      &&\mbox{\em conservation of mass} \\
+      &&\mbox{\em conservation of mass}, \\
     \uu = 0, &\hspace{20pt} \xx \in \gamma, \gap 
-      &&\mbox{\em no slip on the bodies} \\
+      &&\mbox{\em no slip on the bodies}, \\
     \uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap 
-      &&\mbox{\em outer wall velocity} \\
+      &&\mbox{\em outer wall velocity}, \\
     \Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
       &&\mbox{\em erosion model}.
   \end{split}
@@ -311,23 +311,25 @@ of $\gamma$, and
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
-is the shear stress on $\gamma$.  The erosion process is simulated by
-alternating between solving the fluid equations and adancing the grains
-according to the erosion rate for a small time step.
+is the shear stress on $\gamma$.  The strength of $\UU$ is adjusted at
+each time step so that there is a constant pressure drop across the
+channel.  We simulate erosion by alternating between solving the fluid
+equations and adancing the grains according to the erosion rate for a
+small time step.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
 \label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Since require a method to solve the incompressible Stokes equations in
-complex two-dimensional porous geometries, we reformulated the governing
-PDE as a boundary integral equation. This has the advantage that only
-the one-dimensional boundary of the domain must be discretized, and if
-appropriate quadrature formula and fast summation methods are used, the
-result is a high-fidelity numerical simulation that is computed with
-near-optimal complexity.
+Since we require a method to solve the incompressible Stokes equations in
+complex two-dimensional porous geometries, we reformulated the
+incompressible Stokes equations as a boundary integral equation. This
+has the advantage that only the one-dimensional boundary of the domain
+must be discretized, and if appropriate quadrature formula and fast
+summation methods are used, the result is a high-fidelity numerical
+simulation that is computed with near-optimal complexity.
 
-\subsection{Double-Layer Potential Fromulation in $\RR^2$}
+\subsection{Double-Layer Potential Formulation in $\RR^2$}
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
 write the velocity $\uu$ as a double-layer potential 
 \begin{align}
@@ -337,7 +339,7 @@ write the velocity $\uu$ as a double-layer potential
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
   \label{eqn:velocityDLP}
 \end{align}
-where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
+where $D$ is an kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
 is an unknown density function.  The double-layer potential can not
 represent all solutions of the incompressible Stokes equations, so we
@@ -381,13 +383,9 @@ requirement of $\ff$.  In this work, $\ff$ is the prescribed velocity,
 $\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
 $\gamma_\ell$, $\ell=1,\ldots,M$.  
 
-
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, the deformation
-tensor, pressure, and vorticity of the double-layer potential can all be
-computed analytically.  For $\xx \in \Omega$, the deformation tensor,
-pressure, and vorticity of the double-layer
-potential~\eqref{eqn:velocityDLP} are
+tensor, pressure, and vorticity at $\xx \in \Omega$ are
 \begin{align}
   \label{eqn:deformationDLP} 
   \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
@@ -438,11 +436,11 @@ Potential}
 \label{sec:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
-$\uu$ and its deformation tensor are written as a contour integral in
-$\RR^2$.  However, so that we can apply a particular quadrature method,
-we write these layer potentials as Cauchy integrals in
-$\CC$ and their derivatives.  The first step is to write the Laplace
-double-layer potential as the complex integral
+$\uu$ and its deformation tensor are written as layer potentials in
+$\RR^2$.  However, the quadrature method we introduce in
+Section~\ref{sec:method} requires a complex-valued representation of the
+layer potentials. The first step is to write the Laplace double-layer
+potential as the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
@@ -462,10 +460,9 @@ of $v$ satisfies the Sokhotski-Plemelj jump relation
 \end{align}
 For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
 for multiply-connected domains, such as a porous media, $\bd\Omega$ is
-simply decomposed into its different connected components and the
-appropriate Cauchy integral is evaluated.  Since $v$ is a holomorphic
-function and we have its boundary data, by the Cauchy integral theorem
-we have
+decomposed into its different connected components and the appropriate
+Cauchy integral is evaluated.  Since $v$ is a holomorphic function and
+we have its boundary data, by the Cauchy integral theorem we have
 \begin{align}
   \label{eqn:cauchy}
   v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
@@ -475,14 +472,15 @@ we have
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy,
 \end{align}
-for $x \in \Omega$.  Since $v(x)$ depends on the density function $\eta
-\in \CC$, we use the notation $v[\eta](x)$ to denote the holomorphic
-function defined in equation~\eqref{eqn:laplaceComplex}, and its first
-two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
+for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
+function $\eta$, we use the notation $v[\eta](x)$ to denote the
+holomorphic function defined in equation~\eqref{eqn:laplaceComplex}, and
+its first two derivatives are written as $v'[\eta](x)$ and
+$v''[\eta](x)$.  
   
 To rewrite the Stokes double-layer potential~\eqref{eqn:velocityDLP} in
-terms of Cauchy integrals and their derivatives, we write it in terms of
-Laplace layer potentials~\cite{bar-wu-vee2015}
+terms of Cauchy integrals and their derivatives, we start by converting
+it into a sequence of Laplace layer potentials~\cite{bar-wu-vee2015}
 \begin{equation}
   \label{eqn:Stokes2Laplace}
   \begin{aligned}
@@ -549,14 +547,9 @@ The same expressions are used to compute the deformation tensor for $x
 condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
 the shear stress, the deformation tensor on $\bd\Omega$ is applied to
 the normal and tangent vectors as defined in
-equation~\eqref{eqn:shearStress}.
-
-The gradient of the velocity field can also be used to compute the
-vorticity in the fluid bulk. Since the vorticity of a Stokes flow on
-no-slip walls is equivalent to the shear stress, we make use of the
-vorticity to better understand where the porous media will undergo large
-and small amounts of erosion.  For $x \in \Omega$, the Cauchy integral
-representation of the vorticity is
+equation~\eqref{eqn:shearStress}.  The gradient of the velocity field is
+also used to compute the vorticity in the fluid bulk.  For $x \in
+\Omega$, the Cauchy integral representation of the vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
@@ -574,8 +567,8 @@ such geometries.  In our previous work~\cite{qua-moo2018}, we examined
 the effect of erosion on the area fraction, flow rate, and the total
 drag.  However, to characterize transport, other quantities must be
 examined.  Here, we compute the anomalous dispersion rate, the
-tortuosity, and the distribution of the gap sizes.  The first two
-metrics can be defined in terms of streamline governed by an advection
+tortuosity, and the distribution of the pore sizes.  The first two
+metrics can be defined in terms of streamlines governed by an advection
 autonomous equation~\eqref{eqn:tracers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -585,7 +578,7 @@ autonomous equation~\eqref{eqn:tracers}.
 The dynamics of fluid in a porous media is often characterized in terms
 of anomalous dispersion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.
 The anomalous dispersion rate depends on the porosity and
-permeability~\cite{koc-bra1988}, but it is also affected by the
+permeability~\cite{koc-bra1988}, but is also affected by the
 distribution and shape of the grains. We calculate the anomalous
 dispersion rates by analyzing the streamlines governed by
 equation~\eqref{eqn:tracers} in eroded geometries. Given a set of $N_p$
@@ -593,22 +586,22 @@ trajectories, we define $\lambda_j(t)$ to be the arclength of the
 trajectory
 \begin{align}
   \lambda_j(t) = \int_{0}^t \|\ss'_j(\tau)\|\, d\tau, 
-    \quad j=1,\ldots,N_p,
+    \quad j=1,\ldots,N_p.
 \end{align}
-and the first and second ensemble moments
+Then, the first and second ensemble moments are
 \begin{align}
   \label{eqn:moments}
   \langle \lambda \rangle (t) = 
     \frac{1}{N_p} \sum_{j=1}^{N_p} \lambda_j(t), \quad 
     \sigma_\lambda^2(t) = \frac{1}{N_p} 
-    \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2.
+    \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2,
 \end{align}
-Particle dispersion is characterized as $\sigma_\lambda$.  At early
-times, the particles have not explored much of the geometry, and we
-expect a ballistic motion $\sigma_\lambda \sim t$.  However, as the
-particles pass the grains, their trajectories are altered, and we expect
-that $\sigma_\lambda \sim t^\alpha$, with $\alpha \in (0.5,1)$,
-indicating that the flow is super-dispersive.
+and $\sigma_\lambda$ characterizes particle dispersion.  At early times,
+the particles have not explored much of the geometry, and we expect a
+ballistic motion $\sigma_\lambda \sim t$.  However, as the particles
+pass the grains, their trajectories are altered, and we expect that
+$\sigma_\lambda \sim t^\alpha$, with $\alpha \in (0.5,1)$, indicating
+that the flow is super-dispersive.
 
 To establish an anomalous dispersion rate, the trajectories must pass
 several grains so that an asymptotic regime is reached. The geometries
@@ -641,6 +634,7 @@ In Section~\ref{sec:results}, we compare these moments in an open
 channel with the trajectories in an eroded geometry.
 
 
+\todo[inline]{left off here}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
