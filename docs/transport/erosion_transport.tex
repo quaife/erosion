@@ -193,8 +193,9 @@ trajectories $\ss(t)$ that are initialized at $\ss_0$ by solving
 \end{align}
 where $\uu$ is the fluid velocity.  Since there is no stiff diffusive
 term in~\eqref{eqn:tracers}, we use a fourth-order explicit Runge-Kutta
-time stepping method.  In addition, the Barycentric quadrature rule is used to
-accurately compute trajectories that are close to an eroding grain.
+time stepping method.  In addition, the Barycentric quadrature rule is
+used to accurately compute trajectories that are close to an eroding
+grain.
 
 Once streamlines in an eroded geometry are computed, we characterize the
 transport by computing and analyzing three different metrics: the
@@ -747,33 +748,29 @@ center of each eroding grain.}
 \section{Numerical Methods}
 \label{sec:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{left off here}
 In line with our previous work~\cite{qua-moo2018}, we use two meshes to
 simulate erosion. The integral equation is solved by discretizing the
-boundary of the geometry at a set of points distributed equally in
-arclength, and then applying a collocation method
-(Section~\ref{sec:spatialDiscretization}).  Depending on the proximity
-of the target point to the source points, the quadrature rule is either
-the trapezoid rule or the Barycentric quadrature rule
-(Section~\ref{sec:bary}).  The selection algorithm that determines which
-quadrature method is applied is described in Section~\ref{sec:fmm}.
-Once the shear stress is computed, the bodies are eroded a single time
-step by using a {\thL} discretization~\cite{hou-low-she1994}.  By using
-a {\thL} formulation, the stiff curvature term is linear, treated
-implicitly, and the discretization points remain equispaced in
-arclength.  Finally, time stepping methods for the eroding bodies and
-passive particles are described in Section~\ref{sec:time}
+boundary of the geometry at a set of collocation points distributed
+equally in arclength (Section~\ref{sec:spatialDiscretization}).
+Depending on the proximity of the target point to the source points, the
+quadrature rule is either the trapezoid rule or the Barycentric
+quadrature rule (Section~\ref{sec:bary}).  The selection algorithm that
+determines which quadrature method is applied is described in
+Section~\ref{sec:fmm}.  Once the shear stress is computed, the bodies
+are eroded a single time step by using a {\thL}
+discretization~\cite{hou-low-she1994}.  The time stepping methods for
+erosion and passive particles are described in Section~\ref{sec:time}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Spatial Discretization}
 \label{sec:spatialDiscretization}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-By using an integral equation formulation, we only have to discretize
-the one-dimensional boundary of the domain.  Therefore, we easily
-resolve complex geometries, and differentiation is performed with
-spectral accuracy in Fourier space.  We discretize each eroding body
-$\gamma_k$ with $N_\iin$ points and discretize the outer wall $\Gamma$
-with $N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ and
+Since we use a BIE formulation, we only have to discretize the
+one-dimensional boundary of the domain.  Therefore, we easily resolve
+complex geometries, and differentiation is performed with spectral
+accuracy in Fourier space.  We discretize each eroding body $\gamma_k$
+with $N_\iin$ points and discretize the outer wall $\Gamma$ with
+$N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ and
 $\gamma_k$ are denoted by $\yy_j^0$ and $\yy^k_j$, respectively.  The
 discretization points are initially distributed evenly in arclength, and
 this equispacing is maintained for the entire simulation by using the
@@ -810,8 +807,8 @@ rule results in the collocation method for~\eqref{eqn:BIE}
     &&\hspace{-60pt} m=1,\ldots,M,
 \end{alignat}
 \end{subequations}
-where $w^k_j$ are quadrature weights that depend on $N_\iin$,
-$N_\out$, and the lengths of $\gamma^k$, and $D$ is the kernel of the
+where $w^k_j$ are quadrature weights that depend on $N_\iin$, $N_\out$,
+and the lengths of $\gamma^k$ and $\Gamma$, and $D$ is the kernel of the
 Stokes double-layer potential defined in
 equation~\eqref{eqn:velocityDLP}.  The linear
 system~\eqref{eqn:trapLinearSystem} is a well-conditioned second-kind
@@ -860,34 +857,33 @@ tortuosity is approximated as
 \subsection{Barycentric Quadrature Formulas}
 \label{sec:bary}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Since the error of the trapezoid rule applied to periodic functions
-depends on the derivative of the integrand~\cite{tre-wei2014}, the
-trapezoid rule applied in Section~\ref{sec:spatialDiscretization} is
-only appropriate if the target point is sufficiently separated from all
-eroding bodies and the outer wall.  Therefore, if the trapezoid rule is
-applied when bodies are in near-contact, or when a layer potential is
-evaluated at a point close to $\bd\Omega$, then the results become
-unreliable and the method ultimately becomes unstable.  Therefore, we
-require a quadrature method whose error is bounded independent of the
-target location.
+Since we are applying quadrature to periodic smooth functions, the
+trapezoid rule is spectrally accurate~\cite{tre-wei2014}. However, since
+the derivative of the integrands grows as the target point $\xx$
+approaches $\bd\Omega$, the error bound of the trapezoid rule depends on
+the location of the target point. Therefore, if the trapezoid rule, as
+described in Section~\ref{sec:spatialDiscretization}, is applied when
+bodies are in near-contact, or when a layer potential is evaluated at a
+point close to $\bd\Omega$, then the results become unreliable and the
+method ultimately becomes unstable.  Thus, we require a quadrature
+method with an error bound that is independent of the target location.
 
 We showed in Sections~\ref{sec:DLPcomplex} and~\ref{sec:gradDLPcomplex}
 that the velocity, shear stress, and vorticity of the double-layer
-representation can all be written in terms of Cauchy integrals and its
-first two derivatives.  Therefore, if we develop quadrature rules with a
-uniformly bounded error for Cauchy integrals and its
-derivatives~\eqref{eqn:cauchy}, then the quadrature method can be used
-to accurately compute the velocity, shear stress, and vorticity.
-Ioakimidis et al.~\cite{ioa-pap-per1991} developed quadrature rules,
-that we call {\em Barycentric quadrature rules}, to compute Cauchy
-integrals and their derivatives with an error bound that is independent
-of $x$.  Then, Barnett et al.~\cite{bar-wu-vee2015} applied these
-quadrature methods to compute the Stokes double-layer potential
-representation of the velocity~\eqref{eqn:velocityDLP}.  We build on
-this method so that the shear stress and vorticity can be computed with
-a uniform error bound.  We briefly summarize the Baryncentric quadrature
-method for computing the velocity, and we develop similar quadrature
-rules for the gradient of the Stokes double-layer potential.
+representation can all be written as the sum of Cauchy integrals and its
+first two derivatives.  Therefore, we can accurately compute the
+velocity, shear stress, and vorticity at any target location if we
+develop a quadrature rules with a uniform error bounded for Cauchy
+integrals and its derivatives~\eqref{eqn:cauchy}.  Ioakimidis et
+al.~\cite{ioa-pap-per1991} developed quadrature rules, that we call {\em
+Barycentric quadrature rules}, to compute Cauchy integrals and their
+derivatives with an error bound that is independent of $x \in \CC$.
+Then, Barnett et al.~\cite{bar-wu-vee2015} used these quadrature rules
+to compute the Stokes double-layer potential representation of the
+velocity~\eqref{eqn:velocityDLP}, and we briefly summarize their method.
+Then, we build on this work to accurately compute the gradient of the
+Stokes double-layer potential so that we form the shear stress and
+vorticity.
 
 We present the quadrature rules for a simply-connected interior domain
 $\Omega \subset \CC$, with a point $a \in \Omega$, and we consider the
@@ -902,16 +898,17 @@ $j=1,\ldots,N$, where $L$ is the length of $\bd\Omega$.
 Again, given a complex-valued density function $\eta$, the boundary data
 of $v[\eta](x)$, as defined in equation~\eqref{eqn:laplaceComplex},
 satisfies the Sokhotski-Plemelj jump relation~\eqref{eqn:SPrelation}.
-Since the boundary data of $v$ differs when considering $x \in \Omega$
-and $x \in \Omega^c$, we denote the boundary data as $v^-$ for $x \in
-\Omega$, and as $v^+$ for $x \in \Omega^c$.  Rather than directly
-applying the trapezoid rule to $v(x)$, we start with the identity
+Since the limiting boundary data of $v$ differs when considering $x \in
+\Omega$ and $x \in \Omega^c$, we denote the boundary data as $v^-$ for
+$x \in \Omega$, and as $v^+$ for $x \in \Omega^c$.  Rather than directly
+applying the trapezoid rule to approximate $v(x)$ in
+equation~\eqref{eqn:cauchy}, we start with the identity
 \begin{align}
   \int_{\bd\Omega} \frac{v^{-}(y) - v(x)}{y - x} \,dy = 0,
     \quad x \in \Omega.
 \end{align}
-Since the integrand is bounded as $x$ approaches $\bd\Omega$, we can
-apply the trapezoid rule
+Since the integrand is bounded for all $x \in \Omega$, we can apply the
+trapezoid rule
 \begin{align}
   \sum_{j=1}^{N} \frac{v^{-}(y_j) - v(x)}{y_j - x} w_j \approx 0,
 \end{align}
@@ -1022,9 +1019,8 @@ the exterior second derivative
     {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
     \quad x \in \Omega^c.
 \end{align}
-Similar to the quadrature rule for $v'(x)$ requiring the value $v(x)$,
-the quadrature rule for $v''(x)$ requires the values $v(x)$ and $v'(x)$.
-Both these quantities are computed using the quadrature rules in
+The quadrature rule for $v''(x)$ requires the values $v(x)$ and $v'(x)$,
+and theses are computed using the quadrature rules in
 equations~\eqref{eqn:BaryvInterior},~\eqref{eqn:BaryvExterior},~\eqref{eqn:BaryvprimeInterior},
 and~\eqref{eqn:BaryvprimeExterior}. In Section~\ref{sec:results}, these
 quadrature rules are used to form stable eroding simulations of
@@ -1035,23 +1031,25 @@ arbitrarily close to eroding grains.
 \subsection{Efficiently Applying the Quadrature}
 \label{sec:fmm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The Barycentric quadrature rule achieves acceptable accuracy for
-computing the velocity, shear stress, and vorticity.  However, applied
-directly, it requires $\mathcal{O}(N^2)$ operations.  By using a fast
-summation method, such as the fast multipole method~\cite{gre-rok1987},
-this cost can be reduced to $\mathcal{O}(N)$ operations.  However, the
-Barycentric quadrature rules require several $N$-body calculations, and
-they must be done for each component of $\bd\Omega$ individually.  The
-resulting cost would be prohibitive, so we use a hybrid method that
-combines the Barycentric quadrature rules and the trapezoid rule.  In
-short, the fast multipole accelerated trapezoid rule is used to compute
-the velocity at all the discretization points, and the non-accelerated
-Barycentric quadrature rule is used to locally correct the errors
-introduced by the trapezoid rule.  Note that the source points of the
-layer potential is always one of the eroding bodies or the outer wall,
-but the target point can either be on another component of $\bd\Omega$
-or it can be in the fluid bulk $\Omega$.
+By using the Barycentric quadrature rule, the velocity, shear stress,
+and vorticity are computed with an error that is bounded independent of
+the target location. However, applied directly, it requires
+$\mathcal{O}(N^2)$ operations.  By using a fast summation method, such
+as the fast multipole method~\cite{gre-rok1987}, this cost can be
+reduced to $\mathcal{O}(N)$ operations.  However, the Barycentric
+quadrature rules require several $N$-body calculations, and they must be
+done for each component of $\bd\Omega$ individually.  The resulting cost
+would be prohibitive, so we introduce a hybrid method that combines the
+Barycentric quadrature rule and the trapezoid rule.  In short, the fast
+multipole accelerated trapezoid rule is used to compute the velocity at
+all the discretization points, and the non-accelerated Barycentric
+quadrature rule is used to locally correct the errors introduced by the
+trapezoid rule.  Note that the source points of the layer potential is
+always one of the eroding bodies or the outer wall, but the target point
+can either be on another component of $\bd\Omega$ or it can be in the
+fluid bulk $\Omega$.
 
+\todo[inline]{left off here}
 To compute the velocity double-layer potential, we start by applying the
 trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
 calculation requires $\mathcal{O}(N)$ operations, and we call the
