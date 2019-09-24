@@ -52,11 +52,11 @@ Porous media flow plays an important role in many environmental and
 industrial applications.  Depending on the application, length scales
 can vary from $10^{-6}\mathrm{m}$ to
 $10^{-1}\mathrm{m}$~\cite{mil-chr-imh-mcb-ped1998}, velocity scales can
-be as small as $10^{-1}\mathrm{m/day}$~\cite{kut-scr-dav-ham1995}, \nick{and
+be as small as $10^{-1}\mathrm{m/day}$~\cite{kut-scr-dav-ham1995}, \awk{and
 the scales of a single porous media can range over several orders of
 magnitude.}
 %
-\todo[inline]{Nick: I am confused by the last part of the sentence (highlighted in red). What `scale' are you referring to? Length? You already described the length scales in the first part of the sentence. Maybe you mean to distinguish between the grain length scales and the overall length scales of the system. If so, you can use adjectives like `grain' and `macroscopic' or `overall' to clarify that.} 
+\todo[inline]{Nick: I am confused by the last part of the sentence (highlighted in purple). What `scale' are you referring to? Length? You already described the length scales in the first part of the sentence. Maybe you mean to distinguish between the grain length scales and the overall length scales of the system. If so, you can use adjectives like `grain' and `macroscopic' or `overall' to clarify that.} 
 %
 Numerical methods that \st{accurately address all of these} \nick{resolve this range of} scales offer the ability to: (i) characterize dispersion~\cite{saf1959}, (ii) quantify mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}, and (iii) potentially develop meaningful constitutive relationships that link the microscopic and macroscopic realms~\cite{mil-chr-imh-mcb-ped1998}. 
 %
@@ -78,32 +78,31 @@ sie-ili-pri-riv-gua2019}, and more.
 
 Flow in porous media is further complicated when there is a two-way
 coupling between the flow and the geometry. For example, the grains of a
-porous media evolve in time in applications involving
-melting~\cite{bec-vis1998, rycroft2016asymmetric, morrow2019moving}, dissolution~\cite{kan-zha-che-he2002, mac2015shape, wykes2018self},
-deposition~\cite{joh-eli1995}, biofilm growth~\cite{tan-val-wer2015}, and \nick{crack formation} \cite{cho2019crack}.  
+porous media evolve in time in applications involving melting~\cite{bec-vis1998, rycroft2016asymmetric, favier2019rayleigh, morrow2019moving}, dissolution~\cite{kan-zha-che-he2002, mac2015shape, moore2017riemann, wykes2018self}, deposition~\cite{joh-eli1995, hewett2018modelling}, biofilm growth~\cite{tan-val-wer2015}, and \nick{crack formation} \cite{cho2019crack}.  
 %
 \todo[inline]{Nick: I added some references. Check out the last one on crack formation in shrinkable, granular packings. It is really cool work done by an excellent experimentalist Sujit Datta. I met him and he voiced a strong interest in our work, so wanted to make you aware.}
 %
 We focus on erosion, a fluid-mechanical
-process that is prevalent in many geophysical and hydrological
-applications.  When a porous geometry erodes, certain qualitative
-characteristics are unveiled that affect transport through the geometry.
-For example, an eroded geometry often contains channels of high porosity
-that connect the inlet to the outlet, and this results in velocities
+process that is prevalent in many geophysical, hydrological, \nick{and industrial} 
+applications \cite{berhanu2012shape, hewett2017evolution, lopez2018cfd, allen2019sde, amin2019role}.
+\todo[inline]{Nick: Check out the first reference, Berhanu, Kudrolli, Rothman PRE 2012. Maybe we can cite it a couple more times throughout since it has both the words `erosion' and `granular bed' in the title :)}
+When a porous geometry erodes, certain qualitative characteristics are unveiled that affect transport through the geometry.
+For example, an eroded geometry may contain channels of high porosity, \nick{which, though few in number and modest in volume fraction, transmit a large portion of the flux}. This arrangement results in velocities
 that vary over several orders of magnitude~\cite{all-hea-lab-rei2002}.
-Moreover, channelized geometries are heterogeneous and anisotropic, and
-this affects the transport of quantities such as
+%
+\todo[inline]{Nick: I rearranged the above two sentences. See if you like it.}
+%
+Moreover, \nick{channelization creates a heterogeneous and anisotropic medium properties}, \st{and
+this affects} \nick{affecting} the transport of \st{quantities} \nick{tracers} such as
 contaminants~\cite{cve-che-wen1996, dag1987, kon-bre1978} and
-heat~\cite{nil-sto1990, ree-sto1995}.  To characterize transport in
+heat~\cite{nil-sto1990, ree-sto1995}.  \awk{To characterize transport in
 eroded geometries, we complete two undertakings: forming realistic
 eroded porous geometries and characterizing transport through these
-geometries.  The modelling effort and numerical methods used to simulate
-erosion are largely based on our previous work~\cite{qua-moo2018}.
-However, we improve our numerical methods so that simulations of more
-realistic dense suspensions of eroding grains are possible
-(Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To
-characterize transport in eroded porous geometries, we apply statistical
-methods to develop coarse-grained variables.
+geometries}.  
+\todo[inline]{Nick: The purple sentence is redundant: `To \underline{characterize transport} ... we undertake ... \underline{characterizing transport} through these geometries. Maybe try something like this:}
+\nick{This study consists of two main undertakings: First, high-fidelity simulations of porous-medium erosion, and, second, the characterization of transport through the resulting geometries.}
+Our modeling efforts build on previous work \cite{ris-moo-chi-she-zha2012, moore2013self, moore2017riemann}, in particular recent numerical methods developed to simulate erosion in the regime of Stokes flow \cite{qua-moo2018}. We, however, make a few key improvements to the numerical methods from \cite{qua-moo2018} to enable simulations of more realistic, dense suspensions of eroding grains (Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To characterize transport in the resulting geometries, \st{we apply statistical methods to develop coarse-grained variables} \nick{examine coarse-grained variables through statistical analysis of tracer trajectories}.
+\todo[inline]{I'm not sure about my modification above, but see if it gets across the message that was intended.}
 
 \begin{figure}[H]
 \begin{center}
@@ -123,15 +122,12 @@ and the geometry becomes channelized and anisotropic.}
 \end{center}
 \end{figure}
 
-Because of the length and velocity scales in hydrological applications
-such as groundwater flow~\cite{bea1972}, we model the hydrodynamics with
-the two-dimensional incompressible Stokes equations.  To couple erosion
-with the fluid, the grains are eroded at a rate that is proportional to
-the magnitude of the hydrodynamic shear stress~\cite{wan-fel2004,
-ris-moo-chi-she-zha2012, par-izu2000}.  Since the vorticity and the
-shear stress are equivalent on the grains in the zero Reynolds number
-limit, we also compute the vorticity in the fluid bulk
-(Figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
+\st{Because of the length and velocity scales in hydrological applications
+such as groundwater flow} \nick{Owing to the scales present in groundwater flow} \cite{bea1972}, we model the hydrodynamics with
+the two-dimensional incompressible Stokes equations.  \st{To couple erosion
+with the fluid} Meanwhile, individual grains erode at a rate \st{that is} proportional to \st{the magnitude of} the hydrodynamic shear stress~\cite{wan-fel2004,
+ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the vorticity and the shear stress are equivalent on the grains in the zero Reynolds number
+limit, we also compute the vorticity in the fluid bulk \nick{for visualization purposes} (Figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
 the fluid solver are available including lattice-gas or lattice
 Boltzmann~\cite{kop-kat-tim1996, dar-mcc1998}, finite
 volumes~\cite{suo-liu-gan2019, den-ica-hid2018,
