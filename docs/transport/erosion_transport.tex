@@ -317,7 +317,7 @@ of $\gamma$, and
 is the shear stress on $\gamma$.  The strength of $\UU$ is adjusted at
 each time step so that there is a constant pressure drop across the
 channel.  We simulate erosion by alternating between solving the fluid
-equations and adancing the grains according to the erosion rate for a
+equations and advancing the grains according to the erosion rate for a
 small time step.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -502,17 +502,17 @@ Therefore, the Stokes double-layer potential can be written in terms of
 Cauchy integrals and their first derivative as
 \begin{equation}
   \begin{aligned}
-    u_1(x) &= \Re (v[\tau_1](x)) + \Re (v'[y\cdot\eta](x)) 
+    u_1(x) &= \Re (v[\psi_1](x)) + \Re (v'[y\cdot\eta](x)) 
              -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
-    u_2(x) &= \Re (v[\tau_2](x)) - \Im (v'[y\cdot\eta](x)) 
+    u_2(x) &= \Re (v[\psi_2](x)) - \Im (v'[y\cdot\eta](x)) 
          +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
   \end{aligned}
   \label{eqn:cauchyVelocity}
 \end{equation}
 where $y \cdot \eta = y_1 \eta_1 + i y_2 \eta_2 \in \CC$, 
 \begin{align} 
-  \tau_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad
-  \tau_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
+  \psi_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad
+  \psi_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
 \end{align}
 and $n \in \CC$ is the complex representation of the outward unit normal
 $\nn \in \RR^2$.
@@ -531,16 +531,16 @@ equation~\eqref{eqn:cauchyVelocity}
 \begin{equation}
 \label{eqn:cauchyGradient}
   \begin{aligned}
-    \pderiv{u_1}{x_1} &= +\Re (v'[\tau_1](x)) + 
+    \pderiv{u_1}{x_1} &= +\Re (v'[\psi_1](x)) + 
       \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
       x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
-    \pderiv{u_1}{x_2} &= - \Im (v'[\tau_1](x)) - 
+    \pderiv{u_1}{x_2} &= - \Im (v'[\psi_1](x)) - 
       \Im (v''[y\cdot\eta](x)) + x_1\Im (v''[\eta_1](x)) - 
       \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
-    \pderiv{u_2}{x_1} &= +\Re (v'[\tau_2](x)) - 
+    \pderiv{u_2}{x_1} &= +\Re (v'[\psi_2](x)) - 
       \Im (v''[y\cdot\eta](x)) + \Im (v'[\eta_1](x)) +
       x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
-    \pderiv{u_2}{x_2} &= -\Im (v'[\tau_2](x)) - 
+    \pderiv{u_2}{x_2} &= -\Im (v'[\psi_2](x)) - 
       \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
       \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
   \end{aligned}
@@ -555,7 +555,7 @@ also used to compute the vorticity in the fluid bulk.  For $x \in
 \Omega$, the Cauchy integral representation of the vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
-\Re (v'[\tau_2](x)) + \Im (v'[\tau_1](x)) 
+\Re (v'[\psi_2](x)) + \Im (v'[\psi_1](x)) 
  + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)), \quad x \in \Omega.
 \end{align}
 
@@ -588,7 +588,7 @@ equation~\eqref{eqn:tracers} in eroded geometries. Given a set of $N_p$
 trajectories, we define $\lambda_j(t)$ to be the arclength of the
 trajectory
 \begin{align}
-  \lambda_j(t) = \int_{0}^t \|\ss'_j(\tau)\|\, d\tau, 
+  \lambda_j(t) = \int_{0}^t \|\ss'_j(\tilde{t})\|\, d\tilde{t}, 
     \quad j=1,\ldots,N_p.
 \end{align}
 Then, the first and second ensemble moments are
@@ -646,19 +646,20 @@ use reinsertion to form long trajectories.  The local tortuosity is
   \tau(y_0) = \frac{\lambda(y_0)}{d}.
   \label{eqn:localTort}
 \end{align}
-Here, the streamline is initialized at the point $(x_0,y_0)$ on a
-vertical cross-section of length $d$.  The hydraulic tortuosity is
-defined by taking the average over all points on the cross-section
+Here, the streamline originates at $(x_0,y_0)$ on the inlet and its
+arclength is calculated once it passes the parallel outlet $x = x_0 +
+d$.  The hydraulic tortuosity is defined by taking the average over all
+points on the cross-section
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0}
   {\displaystyle\int_{S}u_1(x_0,y_0)\,dy_0},
   \label{eqn:tortuosity1}
 \end{align}
-where $S$ is the cross-section $x = x_0$ that is perpendicular to the
-$x$-axis with length $d$, and $u_1(y_0)$ is the $x$ component of the
-velocity at the initial point of the streamline. Therefore, the
-tortuosity satisfies $T \geq 1$, and $T=1$ only if no grains are
-present.  
+where $S$ is the inlet cross-section $x = x_0$ that is perpendicular to
+the $x$-axis, $u_1(y_0)$ is the $x$ component of the velocity at the
+initial point of the streamline, and $d$ is still the distance between
+the inlet and outlet. Therefore, the tortuosity satisfies $T \geq 1$,
+and $T=1$ only if no grains are present.  
 
 The tortuosity definition depends on how the streamlines are
 defined, and Duda et al.~\cite{dud-koz-mat2011} summarize several
@@ -725,9 +726,9 @@ of 100 eroded bodies.  The black curve is an unnormalized Weibull
 distribution with the same mean and variance as the measured data.  In
 Figure~\ref{fig:Eroding100gap}(b), we plot illustrate the pore throat
 sizes by drawing the shortest lines between neighboring grains.  We do
-not consider pores between eroding bodies and the solid and the
-artificial points placed around the porous region, so some of the grains
-near the porous region boundary only have two neighbors.
+not consider pores between eroding bodies and the solid wall $\Gamma$,
+so some of the grains near the porous region boundary only have two
+neighbors.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
