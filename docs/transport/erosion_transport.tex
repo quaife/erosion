@@ -22,18 +22,22 @@ Institute, Florida State University, Tallahassee, FL, 32306.}
 Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-  We extend our previous work, [Journal of Computational Physics, {\bf
-  375}:1--21, 2018], to simulate dense suspensions of fluid-mechanical
-  erosion of two-dimensional erosion of porous media. By using a
-  Barycentric quadrature rule, we resolve interactions
-  between nearly touching bodies without requiring an unfeasible number
-  of discretization points.  Since the Barycentric quadrature rule is
-  computationally expensive, it is only used when necessary, and the
-  spectrally accurate trapezoid rule is used otherwise. Our final fluid
-  solver only requires $\mathcal{O}(N)$ iterations per time step. Next,
-  we simulate and analyze transport through eroded porous geometries.
-  Our results demonstrate the effects of erosion on tortuosity,
-  dispersion, and pore size distributions.
+  We extend upon our previous work, [Journal of Computational Physics,
+  {\bf 375}:1--21, 2018], to simulate dense suspensions of
+  fluid-mechanical erosion of two-dimensional erosion of porous media.
+  The method combines a boundary integral equation (BIE) fluid solver
+  and a numerically stable time stepping method for the evolution of the
+  eroding bodies. Originally, the eroding bodies had to be sufficiently
+  separated to guarantee that the trapezoid rule provided a sufficient
+  level of accuracy. In this work, we develop resolve interactions
+  between nearly touching bodies with a Barycentric quadrature rule
+  whose error is independent of the geometry.  Since the Barycentric
+  quadrature rule is computationally expensive, it is only used when
+  necessary, and the spectrally accurate trapezoid rule is used
+  otherwise. Our final fluid solver only requires $\mathcal{O}(N)$
+  iterations per time step. Next, we simulate and analyze transport
+  through eroded porous geometries.  Our results demonstrate the effects
+  of erosion on tortuosity, dispersion, and pore size distributions.
 \end{abstract}
 
 \begin{keyword}
@@ -51,19 +55,17 @@ Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 Porous media flow plays an important role in many environmental and
 industrial applications.  Depending on the application, length scales
 can vary from $10^{-6}\mathrm{m}$ to
-$10^{-1}\mathrm{m}$~\cite{mil-chr-imh-mcb-ped1998}, velocity scales can
-be as small as $10^{-1}\mathrm{m/day}$~\cite{kut-scr-dav-ham1995}, \awk{and
-the scales of a single porous media can range over several orders of
-magnitude.}
-%
-\todo[inline]{Nick: I am confused by the last part of the sentence (highlighted in purple). What `scale' are you referring to? Length? You already described the length scales in the first part of the sentence. Maybe you mean to distinguish between the grain length scales and the overall length scales of the system. If so, you can use adjectives like `grain' and `macroscopic' or `overall' to clarify that.} 
-%
-Numerical methods that \st{accurately address all of these} \nick{resolve this range of} scales offer the ability to: (i) characterize dispersion~\cite{saf1959}, (ii) quantify mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}, and (iii) potentially develop meaningful constitutive relationships that link the microscopic and macroscopic realms~\cite{mil-chr-imh-mcb-ped1998}. 
-%
-\todo[inline]{Nick: I reworded the above sentence. See if you agree with my changes.}
-%
-Examples of coarse-grained models for porous media flow include
-pressure-saturation-permeability
+$10^{-1}\mathrm{m}$~\cite{mil-chr-imh-mcb-ped1998} and velocity scales
+can be as small as $10^{-1}\mathrm{m/day}$~\cite{kut-scr-dav-ham1995}.
+Moreover, for a single porous geometry, the pore sizes and velocities
+can range over several orders of magnitude.  Numerical methods that
+resolve this range of scales offer the ability to: (i) characterize
+dispersion~\cite{saf1959}, (ii) quantify
+mixing~\cite{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}, and
+(iii) potentially develop meaningful constitutive relationships that
+link the microscopic and macroscopic
+realms~\cite{mil-chr-imh-mcb-ped1998}.  Examples of coarse-grained
+models for porous media flow include pressure-saturation-permeability
 relationships~\cite{mil-chr-imh-mcb-ped1998}, permeability-porosity
 relationships~\cite{dar-mcc1998, car1937, won-kop-tom1984}, first
 passage time distributions~\cite{ber-sch-sil2000, hym-den-hag-kan2019,
@@ -78,31 +80,37 @@ sie-ili-pri-riv-gua2019}, and more.
 
 Flow in porous media is further complicated when there is a two-way
 coupling between the flow and the geometry. For example, the grains of a
-porous media evolve in time in applications involving melting~\cite{bec-vis1998, rycroft2016asymmetric, favier2019rayleigh, morrow2019moving}, dissolution~\cite{kan-zha-che-he2002, mac2015shape, moore2017riemann, wykes2018self}, deposition~\cite{joh-eli1995, hewett2018modelling}, biofilm growth~\cite{tan-val-wer2015}, and \nick{crack formation} \cite{cho2019crack}.  
-%
-\todo[inline]{Nick: I added some references. Check out the last one on crack formation in shrinkable, granular packings. It is really cool work done by an excellent experimentalist Sujit Datta. I met him and he voiced a strong interest in our work, so wanted to make you aware.}
-%
-We focus on erosion, a fluid-mechanical
-process that is prevalent in many geophysical, hydrological, \nick{and industrial} 
-applications \cite{berhanu2012shape, hewett2017evolution, lopez2018cfd, allen2019sde, amin2019role}.
-\todo[inline]{Nick: Check out the first reference, Berhanu, Kudrolli, Rothman PRE 2012. Maybe we can cite it a couple more times throughout since it has both the words `erosion' and `granular bed' in the title :)}
-When a porous geometry erodes, certain qualitative characteristics are unveiled that affect transport through the geometry.
-For example, an eroded geometry may contain channels of high porosity, \nick{which, though few in number and modest in volume fraction, transmit a large portion of the flux}. This arrangement results in velocities
-that vary over several orders of magnitude~\cite{all-hea-lab-rei2002}.
-%
-\todo[inline]{Nick: I rearranged the above two sentences. See if you like it.}
-%
-Moreover, \nick{channelization creates a heterogeneous and anisotropic medium properties}, \st{and
-this affects} \nick{affecting} the transport of \st{quantities} \nick{tracers} such as
-contaminants~\cite{cve-che-wen1996, dag1987, kon-bre1978} and
-heat~\cite{nil-sto1990, ree-sto1995}.  \awk{To characterize transport in
-eroded geometries, we complete two undertakings: forming realistic
-eroded porous geometries and characterizing transport through these
-geometries}.  
-\todo[inline]{Nick: The purple sentence is redundant: `To \underline{characterize transport} ... we undertake ... \underline{characterizing transport} through these geometries. Maybe try something like this:}
-\nick{This study consists of two main undertakings: First, high-fidelity simulations of porous-medium erosion, and, second, the characterization of transport through the resulting geometries.}
-Our modeling efforts build on previous work \cite{ris-moo-chi-she-zha2012, moore2013self, moore2017riemann}, in particular recent numerical methods developed to simulate erosion in the regime of Stokes flow \cite{qua-moo2018}. We, however, make a few key improvements to the numerical methods from \cite{qua-moo2018} to enable simulations of more realistic, dense suspensions of eroding grains (Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To characterize transport in the resulting geometries, \st{we apply statistical methods to develop coarse-grained variables} \nick{examine coarse-grained variables through statistical analysis of tracer trajectories}.
-\todo[inline]{I'm not sure about my modification above, but see if it gets across the message that was intended.}
+porous media evolve in time in applications involving
+melting~\cite{bec-vis1998, rycroft2016asymmetric, favier2019rayleigh,
+morrow2019moving}, dissolution~\cite{kan-zha-che-he2002, mac2015shape,
+moo2017, wykes2018self}, deposition~\cite{joh-eli1995,
+hewett2018modelling}, biofilm growth~\cite{tan-val-wer2015}, and crack
+formation~\cite{cho2019crack}. We focus on erosion, a fluid-mechanical
+process that is prevalent in many geophysical, hydrological, and
+industrial applications~\cite{berhanu2012shape, hewett2017evolution,
+lopez2018cfd, allen2019sde, amin2019role}.  When a porous geometry
+erodes, certain qualitative characteristics are unveiled that affect
+transport through the geometry.  For example, an eroded geometry may
+contain channels of high porosity, which, though few in number and
+modest in volume fraction, transmit a large portion of the flux. This
+arrangement results in velocities that vary over several orders of
+magnitude~\cite{all-hea-lab-rei2002}.  Moreover, channelization creates
+a heterogeneous and anisotropic medium properties affecting the
+transport of tracers such as contaminants~\cite{cve-che-wen1996,
+dag1987, kon-bre1978} and heat~\cite{nil-sto1990, ree-sto1995}.
+
+This study consists of two main undertakings: first, high-fidelity
+simulations of eroding porous media, and, second, characterizing
+transport through the resulting geometries. Our modeling efforts build
+on previous work~\cite{ris-moo-chi-she-zha2012, moore2013self, moo2017},
+in particular recent numerical methods developed to simulate erosion in
+the regime of Stokes flow~\cite{qua-moo2018}. We, however, make a few
+key improvements to the numerical methods from~\cite{qua-moo2018} to
+enable simulations of more realistic, dense suspensions of eroding
+grains (Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To
+characterize transport in the resulting geometries, examine
+coarse-grained variables through statistical analysis of tracer
+trajectories.
 
 \begin{figure}[H]
 \begin{center}
@@ -122,15 +130,17 @@ and the geometry becomes channelized and anisotropic.}
 \end{center}
 \end{figure}
 
-\st{Because of the length and velocity scales in hydrological applications
-such as groundwater flow} \nick{Owing to the scales present in groundwater flow} \cite{bea1972}, we model the hydrodynamics with
-the two-dimensional incompressible Stokes equations.  \st{To couple erosion
-with the fluid} Meanwhile, individual grains erode at a rate \st{that is} proportional to \st{the magnitude of} the hydrodynamic shear stress~\cite{wan-fel2004,
-ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the vorticity and the shear stress are equivalent on the grains in the zero Reynolds number
-limit, we also compute the vorticity in the fluid bulk \nick{for visualization purposes} (Figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
-the fluid solver are available including lattice-gas or lattice
-Boltzmann~\cite{kop-kat-tim1996, dar-mcc1998}, finite
-volumes~\cite{suo-liu-gan2019, den-ica-hid2018,
+Owing to the scales present in groundwater flow~\cite{bea1972}, we model
+the hydrodynamics with the two-dimensional incompressible Stokes
+equations.  Meanwhile, individual grains erode at a rate proportional to
+the hydrodynamic shear stress~\cite{wan-fel2004,
+ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the
+vorticity and the shear stress are equivalent on the grains in the zero
+Reynolds number limit, we also compute the vorticity in the fluid bulk
+for visualization purposes (Figure~\ref{fig:Eroding50vort}).  A variety
+of numerical methods for the fluid solver are available including
+lattice-gas or lattice Boltzmann~\cite{kop-kat-tim1996, dar-mcc1998},
+finite volumes~\cite{suo-liu-gan2019, den-ica-hid2018,
 sie-ili-pri-riv-gua2019}, finite differences~\cite{leb-ded-dav-bou2007,
 knu-car2005}, and cellular automata~\cite{rot1988}.  However, simulating
 erosion requires a method that is high-order, can resolve
@@ -565,14 +575,15 @@ also used to compute the vorticity in the fluid bulk.  For $x \in
 \label{sec:transport}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erosion in porous geometries leads to particular phenomena such as
-channelization, and we are interested in characterizing transport in
-such geometries.  In our previous work~\cite{qua-moo2018}, we examined
-the effect of erosion on the area fraction, flow rate, and the total
-drag.  However, to characterize transport, other quantities must be
-examined.  Here, we compute the anomalous dispersion rate, the
-tortuosity, and the distribution of the pore sizes.  The first two
-metrics can be defined in terms of streamlines governed by an advection
-autonomous equation~\eqref{eqn:tracers}.
+channelization~\cite{berhanu2012shape}, and we are interested in
+characterizing transport in such geometries.  In our previous
+work~\cite{qua-moo2018}, we examined the effect of erosion on the area
+fraction, flow rate, and the total drag.  However, to characterize
+transport, other quantities must be examined.  Here, we compute the
+anomalous dispersion rate, the tortuosity, and the distribution of the
+pore sizes.  The first two metrics can be defined in terms of
+streamlines governed by an advection autonomous
+equation~\eqref{eqn:tracers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Dispersion}
@@ -710,15 +721,15 @@ depends on the placement of the grains.  In particular, the grain
 placement affects velocity scales~\cite{ali-par-wei-bre2017},
 correlation structures~\cite{leb-ded-dav-bou2007}, contaminant
 transport~\cite{knu-car2005},
-channelization~\cite{sie-ili-pri-riv-gua2019}, and more. In addition,
-the grain configuration is important for pore network
+channelization~\cite{sie-ili-pri-riv-gua2019,berhanu2012shape}, and
+more. In addition, the grain configuration is important for pore network
 models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006} that rely on
 descriptions of the pore throat sizes. To characterize the grain
 placement, we compute distributions of pore sizes between neighboring
 grains.  To define neighboring grains, we form a Delaunay triangulation
-using nodes placed at the center of each eroding grain and at a collection
-of points around the boundary of the porous region.  Then, we say that
-two grains are neighbors if their centers share an edge of the
+using nodes placed at the center of each eroding grain and at a
+collection of points around the boundary of the porous region.  Then, we
+say that two grains are neighbors if their centers share an edge of the
 triangulation~\cite{dea-qua-bir-jua2018}.  Finally, we compute the
 minimum distance between all pairs of neighboring grains.  In
 Figure~\ref{fig:Eroding100gap}(a), we plot a histogram of the pore size
@@ -728,9 +739,10 @@ Figure~\ref{fig:Eroding100gap}(b), we plot illustrate the pore throat
 sizes by drawing the shortest lines between neighboring grains.  We do
 not consider pores between eroding bodies and the solid wall $\Gamma$,
 so some of the grains near the porous region boundary only have two
-neighbors. 
-{\color{red} Since Delaunary triangulation is not unique, we only regenerate 
-a new triangulation after a body has been eliminated.}
+neighbors.  To analyze the effect of erosion on pore sizes, we use a
+single Delaunay triangulation to define the neighbors up until a body
+has completely eroded. At this point, a new Delanuay triangulation is
+formed.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1267,7 +1279,8 @@ inevitably leads to corners developing on the eroding bodies.
 Therefore, as described in Section~\ref{sec:formulation} and our
 previous work~\cite{qua-moo2018}, we introduce a curvature penalization
 term and a Gaussian smoothing step.  For all examples, we use the
-smoothing parameters $\eps=15/256$ and $\sigma=10/256$.
+smoothing parameters $\eps=15/256$ and $\sigma=10/256$, and the time
+step size is $\Delta t = 10^{-4}$.
 
 The common characteristic of each of the experiments is near-contact
 between the eroding bodies, outer walls, and streamlines. We use our
@@ -1325,8 +1338,7 @@ $h = 2\pi r/N_\iin$.  If we used the trapezoid rule and required an
 error that is comparable to the Barycentric quadrature rule, the body
 with an initial distance of $h/10$ from the solid wall would require
 $6,400$ discretization points, and the outer wall would require $50,000$
-discretization points.  For all three simulations, we use the time step
-size $\Delta t=10^{-4}$.
+discretization points.
 
 In Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
 equispaced time steps.  For the three initial configurations, the shear
@@ -1394,8 +1406,7 @@ the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We consider 20 eroding bodies that are discretized with $N_\iin=256$
-points and a time step size of $\Delta t = 10^{-4}$.  The background
-flow is the Hagen-Poiseuille flow
+points.  The background flow is the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx)=U \left[
   \begin{array}{c}
@@ -1522,13 +1533,13 @@ streamlines are very close to the grains without penetrating them.}
 \end{center}
 \end{figure}
 
-Next, we use the streamlines to compute the local tortuosity and the
-anomalous dispersion rate of eroding geometries.  To achieve statistical
+Next, we use the streamlines to compute the tortuosity and the anomalous
+dispersion rate of eroding geometries.  To achieve statistical
 convergence, we use $N_p = 1000$ streamlines~\cite{bel-sal-rin1992}. To
 compute the tortuosity, we require the velocity at the inlet $x=-1$.
 These normalized velocities are plotted in
-Figure~\ref{fig:Eroding20tort}(a) for the eroded geometry with porosity
-62.9\% (see Figure~\ref{fig:Eroding20tort}(c)).  The velocities are
+Figure~\ref{fig:Eroding20tort}(a) for the eroded geometry at porosity
+$\phi = 62.9\%$ (Figure~\ref{fig:Eroding20tort}(c)).  The velocities are
 similar to the work of Matyka et al.~\cite{mat-kha-koz2008} (see Figure
 4(a)), except that our cross-section, by construction, does not cut
 through any of the grains.  Next, in Figure~\ref{fig:Eroding20tort}(b),
@@ -1679,7 +1690,7 @@ points.
 \end{center}
 \caption{\label{fig:ErodingLow20vort} The erosion of 20 nearly touching
 bodies, each discretized with $N_\iin = 256$ points, in a
-Hagen-Poiseuille flow. The 4 snapshots are evenly spaced in time, and
+Hagen-Poiseuille flow. The four snapshots are evenly spaced in time, and
 the color is the fluid vorticity. In addition to the channels that
 develop between the bodies and the solid walls, erosion leads to two
 main channels through the geometry---one in the top half and one near
@@ -1763,16 +1774,14 @@ $0.72$ ($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and $0.92$
 
 
 
-\todo[inline]{HERE}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{100 eroding bodies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 As a final example, we consider 100 eroding bodies with an initial
-porosity near 50\%.  Snapshots of the configurations and vorticity are in
-Figure~\ref{fig:Eroding100vort}.  Again, by resolving near-contacts with
-the Barycentric quadrature rule, a stable simulation is possible with
-only $N_\iin = 256$ discretization points.  We use a time step size of
-$\Delta t = 10^{-4}.$
+porosity near 50\%.  Snapshots of the configurations and vorticity are
+in Figure~\ref{fig:Eroding100vort}.  Again, by resolving near-contacts
+with the Barycentric quadrature rule, a stable simulation is possible
+with only $N_\iin = 256$ discretization points.
 
 \begin{figure}[H]
  \begin{subfigure}[b]{0.5\textwidth}
@@ -1791,33 +1800,36 @@ $\Delta t = 10^{-4}.$
 \includegraphics*[width =1.1\linewidth]{./figs/100b_200}
 \caption{82 bodies, $\phi = 83.67\%$}
 \end{subfigure}
-\caption{\label{fig:Eroding100vort} Erosion of 100 bodies with the
-  fixed-pressure-drop condition. The color is the vorticity of fluid. In
-  this simulation, we use $N_\iin = 256$ discretization points on the
-  body, $N_\out = 1024$ points on the outer wall, a time-step of
-  $\Dt=10^{-4}$.  Because of the large number of bodies, erosion creates
-  many channels connecting the inlet to the outlet.}
+\caption{\label{fig:Eroding100vort} The erosion of 100 nearly
+touching grains, each discretized with $N_\iin = 256$ points, in a
+Hagen-Poiseuille flow. The color is the vorticity of fluid. The four
+snapshots are evenly spaced in time, and the color is the fluid
+vorticity.  Because of the large number of bodies, erosion creates many
+channels connecting the inlet to the outlet.}
 \end{figure}
 
-To quantify the tortuosity, we compute the relative velocity
-(Figure~\ref{fig:Eroding100tort}(a)) and the local tortuosity
-(Figure~\ref{fig:Eroding100tort}(b)) of 1000 tracers placed immediately
-to the left of the porous region at $x=-1$.  The porosity at this
-time is $62.98\%$ and the maximum velocity at $x=-1$ is
-$3.90 \times 10^{-4}$. The initial velocity of the tracers is
-qualitatively similar to the 20 body example
+We compute the tortuosity using both the
+Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
+methods~\eqref{eqn:tortuosity2}. Therefore, we must compute the velocity
+at $N_p = 1000$ points along the inlet $x=-1$. These normalized
+velocities are plotted in Figure~\ref{fig:Eroding100tort}(a) for the
+eroded geometry at porosity $\phi = 63.0\%$
+(Figure~\ref{fig:Eroding100tort}(c)).  The initial velocity of the
+tracers is qualitatively similar to the 20 body example
 (Figure~\ref{fig:Eroding20tort}(a)), except with additional maximum and
-minimums because of the additional bodies.  Compared to
-Figure~\ref{fig:Eroding20tort}(b), the local tortuosity is much more
-discontinuous.  These discontinuities can be explained by examining the
-trajectories of tracers in Figure~\ref{fig:Eroding100tort}(c).  Here,
-there are many instances of neighboring trajectories that are deflected
-apart from one another as they tend to a stagnation point in the flow,
-and this results in trajectories with significantly different lengths.
-At this time one the tracers travels 25.5\% farther than it would have
-if the bodies had been absent, and the average tracer travelled 12\%
-farther than it would have if the bodies were absent, so the tortuosity
-is $1.12$.
+minimums because of the additional bodies.  Next, in
+Figure~\ref{fig:Eroding100tort}(b), we plot the local tortuosity by
+finding the length of the streamlines as they pass from $x=-1$ to $x=1$.
+Compared to Figure~\ref{fig:Eroding20tort}(b), the local tortuosity is
+much more discontinuous.  These discontinuities can be explained by
+examining the trajectories of tracers in
+Figure~\ref{fig:Eroding100tort}(c).  Here, there are many instances of
+nearby streamlines that are deflected apart from one another as they
+tend to a stagnation point in the flow, and this results in trajectories
+with significantly different lengths.  At this porosity, one of the
+tracers travels 25.5\% farther than it would have if the bodies had been
+absent, and the average tracer travelled 12\% farther than it would have
+if the bodies were absent, so the tortuosity is $1.12$.
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.45\textwidth}
@@ -1837,8 +1849,10 @@ is $1.12$.
 \caption{\label{fig:Eroding100tort} The tortuosity of a porous geometry
 that initially had 100 grains and has eroded to a porosity of 63.0\%.
 (a) The $x$-component of the velocity at the inlet, $u_1(-1, y)$,
-normalized by its maximum velocity $u_{max}=3.90 \times 10^{-4}$.  (b)
-The local tortuosity $\tau(y)$ on the cross section $x = -1$. The
+normalized by its maximum velocity $u_{max}=3.90 \times 10^{-4}$.  Note
+that this maximum velocity is about a order of magnitude smaller than
+when compared to the 20 body example in Figure~\ref{fig:Eroding20tort}.
+(b) The local tortuosity $\tau(y)$ on the cross section $x = -1$. The
 spatially averaged tortuosity through the channel is $1.12$. (c) The
 trajectories of 200 tracers initialized at $x = -1$.  The
 discontinuities in the local tortuosity correspond to nearby streamlines
@@ -1858,16 +1872,14 @@ to the porosity of the geometry in Figure~\ref{fig:Eroding100tort}(c).
 Again, the two tortuosity formulas give similar results.  For this
 geometry, the tortuosity decreases monotonically at almost all
 porosities.  However, the tortuosity undergoes a sudden increase near
-the end of the simulation.  The increase is caused by a single small
-body near the middle of the channel being completely eroded.  While this
-results in straighter streamlines, therefore reducing $\lambda$, the
-horizontal flow, $u_1(y)$ increases since there is no longer a no-slip
-boundary.  At the very late stages of erosion, we have observed that
-when a single small body finishes eroding, this can result in a sudden
-increase in the tortuosity.  We also computed the lines of best fit
-using the porosity-tortuosity models~\eqref{eqn:tortuosityModels}.  The
-black dashed line in Figure~\ref{fig:Eroding100Transport}(a) is the line
-of best fit
+the end of the simulation, and we have observed this behavior in other
+examples.  The increase is caused by a single small body near the middle
+of the channel being completely eroded.  While this results in
+straighter streamlines, therefore reducing $\lambda$, the horizontal
+flow, $u_1(y)$ increases since there is no longer a no-slip boundary.
+We also computed the lines of best fit using the porosity-tortuosity
+models~\eqref{eqn:tortuosityModels}.  The black dashed line in
+Figure~\ref{fig:Eroding100Transport}(a) is the line of best fit
 \begin{align}
   \widehat{T}(\phi) = \phi^{-0.2459}
 \end{align}
@@ -1878,10 +1890,10 @@ possible with the model
   \widehat{T}(\phi) = 1 - 0.2631 \ln(\phi).
 \end{align}
 
-In Figure~\ref{fig:Eroding100Transport}(b), we use the 1000 tracer
-trajectories to compute the asymptotic dispersion rates at various
-porosities.  Again, we initially observe ballistic motion (black dashed
-line), and then super-diffusive dispersion.  Similar to the example in
+In Figure~\ref{fig:Eroding100Transport}(b), we plot the temporal
+evolution of the particle spreading $\sigma_\lambda$ at six different
+porosities. Again, we initially observe ballistic motion (black dashed
+line), and then super-dispersion.  Similar to the example in
 Figure~\ref{fig:ErodingLow20Transport}(b), the anomalous dispersion rate
 is not growing with the porosity.  Therefore, it appears that the
 dispersion rate in an eroding geometry depends not only the porosity,
@@ -1921,7 +1933,6 @@ $1.11$ ($\phi=95.12\%$), $0.68$ ($\phi=85.07\%$), $0.73$
 $0.70$ ($\phi=50.09\%$).}
 \end{figure}
 
-
 Finally, we investigate the effects of erosion on pore sizes.  The
 distribution of the pore sizes can be directly related to the
 distribution of the velocity, and thus effects the
@@ -1931,22 +1942,20 @@ required in network models~\cite{bry-mel-cad1993, bry-kin-mel1993}.  As
 described in Section~\ref{sec:throats}, we use a Delaunay triangulation
 to define neighboring eroding bodies, and we compute the pore size by
 finding the closest distance between all neighboring bodies.  Once all
-pore sizes are computed, we analyze their distribution as a function
-of the porosity.  In Figure~\ref{fig:Eroding100gap_hist}, we plot
-histograms of the pore pore sizes at six porosities of the erosion
-process. These distributions have been modelled with Weibull
+pore sizes are computed, we analyze their distribution as a function of
+the porosity.  In Figure~\ref{fig:Eroding100gap_hist}, we plot
+histograms of the pore pore sizes at six porosities during the erosion
+process. These types of distributions have been described with Weibull
 distributions~\cite{ioa-cha1993}, and we superimpose the Weibull
 distribution with the same first two moments as the data.  The
-parameters that parameterize the distribution, $(k,\lambda)$, are
-included in the caption of Figure~\ref{fig:Eroding100gap_hist}.  In
+parameters of the distribution, $(k,\lambda)$, are included in the
+caption of Figure~\ref{fig:Eroding100gap_hist}.  In
 Figure~\ref{fig:Eroding100gap_mean_var}, we plot the mean and variance
 of the pore sizes as a function of the porosity.  Interestingly, for
 porosities less than $\phi = 85\%$, the mean pore size grows linearly
 and the variance remains nearly flat. Since a channelized geometry has
 large variance, this indicates that channelization is less prevalent at
 low porosities.
-
-
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.3\textwidth}
@@ -1973,8 +1982,8 @@ low porosities.
 \includegraphics*[width =\linewidth]{./figs/hist100b_246}
 \caption{34 bodies, 74 gaps}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap_hist} The distribution of the gaps in
-the case of 100 bodies eroding at six porosities. The black curves are
+\caption{\label{fig:Eroding100gap_hist} The distribution of the pore
+sizes of 100 eroding bodies at six porosities. The black curves are
 Weibull distributions whose first and second moments agree with the
 data. The porosities and Weibull distribution parameters $(k,\lambda)$
 at each of the porosities are: (a) $\phi = 50.09\%$ and
@@ -2006,6 +2015,44 @@ Figure~\ref{fig:Eroding100gap_hist} are indicated by the red stars.}
 \section{Conclusions}
 \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As a continuation of our previous work~\cite{qua-moo2018}, we have
+simulated dense suspensions and characterized transport in viscous
+erosion of porous media. A BIE formulation is used to solve the Stokes
+equations and to compute the shear stress. However, to simulate
+nearly-touching grains and to consider transport, it is necessary to
+integrate near-singular functions. This is achieved by extending a
+Barycentric quadrature rule~\cite{bar-wu-vee2015} to accurately compute
+the erosion rate and vorticity. By using this quadrature rule, we are
+able to form stable simulations of erosion with $N = \mathcal{O}(100)$
+discretization points, while the trapezoid rule would require
+$\mathcal{O}(10^5)$ discretization points.
+
+The transport is characterized in terms of tortuosity and anomalous
+dispersion. The local tortuosity agrees qualitatively with
+other works~\cite{mat-kha-koz2008}. However, the tortuosity of the
+eroded geometries can not be completely described in terms of the
+porosity. In particular, we observe that for certain porous media, the
+tortuosity can increase when the porosity increases under erosion. We
+also observe super-dispersive spreading, and the rate of dispersion
+significantly depends not only on the porosity, but also the number of
+eroding bodies.
+
+To further our understanding of erosion, we are examining other bulk and
+statistical properties of an eroding porous media. In this work, we
+provide preliminary results for the pore throat sizes which affect the
+anomalous dispersion rate~\cite{dea-qua-bir-jua2018}.  At a later date,
+we will report results on the  development of anisotropic effects and
+the distributions of grain sizes, shapes, and opening angles.
+
+As a long term goal, we would like to include the effect of inertia and
+other transport models. Including inertia requires an integral equation
+formulation for the Navier-Stokes equations, and one approach has
+recently been developed~\cite{kli-ask-kro2019}. Regarding other
+transport models, this would involve a diffusive term to consider the
+transport of heat or a contaminant. Forming high-fidelity simulations of
+such an advection-diffusion equation can be accomplished by using time
+splitting methods and recent work on heat solvers in complex
+geometries~\cite{fry-kro-tor2019}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
