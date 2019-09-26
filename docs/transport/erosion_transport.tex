@@ -728,7 +728,9 @@ Figure~\ref{fig:Eroding100gap}(b), we plot illustrate the pore throat
 sizes by drawing the shortest lines between neighboring grains.  We do
 not consider pores between eroding bodies and the solid wall $\Gamma$,
 so some of the grains near the porous region boundary only have two
-neighbors.
+neighbors. 
+{\color{red} Since Delaunary triangulation is not unique, we only regenerate 
+a new triangulation after a body has been eliminated.}
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
