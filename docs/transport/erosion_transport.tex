@@ -903,7 +903,7 @@ Stokes double-layer potential so that we form the shear stress and
 vorticity.
 
 We present the quadrature rules for a simply-connected interior domain
-$\Omega \subset \CC$, with a point $a \in \Omega$, and we consider the
+$\Omega \subset \CC$, with any point $a \in \Omega$, and we consider the
 target points $x \in \Omega$ and $x \in \Omega^c$. Then, these
 quadrature rules can be applied to individual components of a
 multiply-connected domain to compute layer potentials of a porous media.
@@ -1052,7 +1052,7 @@ By using the Barycentric quadrature rule, the velocity, shear stress,
 and vorticity are computed with an error that is bounded independent of
 the target location. However, applied directly, it requires
 $\mathcal{O}(N^2)$ operations.  By using a fast summation method, such
-as the fast multipole method~\cite{gre-rok1987}, this cost can be
+as the fast multipole method (FMM)~\cite{gre-rok1987}, this cost can be
 reduced to $\mathcal{O}(N)$ operations.  However, the Barycentric
 quadrature rules require several $N$-body calculations, and they must be
 done for each component of $\bd\Omega$ individually.  The resulting cost
@@ -1070,14 +1070,14 @@ spectrally accurate, the error of $\vv_\trap(\xx)$ is small for points
 sufficiently far from $\bd\Omega$, and this region depends on the number
 of discretization points $N_\iin$ and $N_\out$.  However, the trapezoid
 rule needs to be replaced with a more accurate quadrature rule for
-points that are too close to $\bd\Omega$.  Note, however, that since a
-point is typically only close to one or two components of $\bd\Omega$,
-only the contribution of these nearby bodies needs to be replaced.
-Assuming that $\xx$ is too close to $\gamma_k$, we first subtract the
-inaccurate trapezoid rule approximation of the double-layer potential
-due to $\gamma_k$.  Then, the Barycentric quadrature rule is used to
-compute the velocity due to $\gamma_k$ with more accuracy.  That is, the
-final velocity is
+points that are too close to $\bd\Omega$.  Note that since a point is
+typically only close to one or two components of $\bd\Omega$, only the
+contribution of these nearby bodies needs to be replaced.  Assuming that
+$\xx$ is too close to $\gamma_k$, we first subtract the inaccurate
+trapezoid rule approximation of the double-layer potential due to
+$\gamma_k$.  Then, the Barycentric quadrature rule is used to compute
+the velocity due to $\gamma_k$ with more accuracy.  That is, the final
+velocity is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
@@ -1116,8 +1116,9 @@ accuracy if~\cite{bar2014}
 \end{align}
 To avoid checking if all target point $\xx$
 satisfy~\eqref{eqn:TrapCutoff}, we make use of the {\thL}
-variables~\cite{hou-low-she1994}.  First, given two eroding bodies $\gamma_i$ and $\gamma_j$ with
-lengths $L_i$ and $L_j$, and centers $\cc_i$ and $\cc_j$, we check if
+variables~\cite{hou-low-she1994}.  First, given two eroding bodies
+$\gamma_i$ and $\gamma_j$ with lengths $L_i$ and $L_j$, and centroids
+$\cc_i$ and $\cc_j$, we check if
 \begin{align}
   \label{eqn:BodyCutoff}
   \|\cc_i - \cc_j\| < \frac{L_i}{2\pi} + \frac{L_j}{2\pi} + 
