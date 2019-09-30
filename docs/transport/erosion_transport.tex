@@ -143,21 +143,14 @@ previous work~\cite{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities caused by changes in
 sign of the shear stress, and we use a stable second-order Runge-Kutta
 method applied to the {\thL} coordinates~\cite{hou-low-she1994} of the
-eroding grains.  In this work, we do introduce a new quadrature method
+eroding grains.  In this work, we \st{do} introduce a new quadrature method
 to resolve dense suspensions of eroding grains.  The accuracy of the
-trapezoid rule, which we used in our previous work, is sufficient for
-bodies that are sufficiently separated~\cite{tre-wei2014}. However, it
-is inaccurate when two grains are nearly-touching.  One of the earliest
-works that addresses quadrature methods for nearly-singular integrands
-was developed by Baker and Shelley~\cite{bak-she1986}, and in recent
-years, many other near-singular integration schemes have been
-developed~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
-bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
-rule~\cite{bar2014, bar-wu-vee2015} since it is a non-intrusive
+trapezoid rule, which we used in our previous work, is \st{sufficient} \nick{adequate} for bodies that are sufficiently separated~\cite{tre-wei2014}. 
+\todo[inline]{I changed the above to `adequate' so that `sufficient' would not be used twice in a row.} 
+However, it \nick{loses accuracy} whenever \st{two} grains are nearly-touching.  One of the earliest works \nick{to address} quadrature methods for nearly-singular integrands was developed by Baker and Shelley~\cite{bak-she1986}, and in recent years, many other near-singular integration schemes have been \nick{followed}~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
+\nick{method}~\cite{bar2014, bar-wu-vee2015} since it is a non-intrusive
 modification of the trapezoid rule, and the error is guaranteed to be
-uniformly bounded.  We extend the original quadrature method so that it
-can be used to compute the gradient of the velocity that is required to
-compute the shear stress and the fluid vorticity.
+uniformly bounded.  We extend the original quadrature method \nick{to compute the velocity gradient, which is needed to evaluate shear stress and fluid vorticity}.
 
 \begin{figure}[H]
 \begin{center}
@@ -175,17 +168,18 @@ in the green regions.}
 \end{center}
 \end{figure}
 
-To characterize the transport, particle trajectories need to be
+To characterize the transport, particle trajectories \nick{must} be
 computed. Depending on the application, microscale transport can be
 modelled as pure advection~\cite{dea-qua-bir-jua2018,
 leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019},
 advection-diffusion~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
-this work, we assume that the trajectories are governed purely by
-advection (ie.~no diffusion). Therefore, the particle trajectories are
+this work, we assume trajectories \nick{to be governed by pure advection} (ie.~no diffusion). Therefore, the particle trajectories are
 identical to the streamlines, and they can be found, for example, with a
 continuous time random walk~\cite{mon-wei1965, den-cor-sch-ber2004,
-leb-den-car2008, ber-cor-den-sch2006}.  Instead,  we compute
+leb-den-car2008, ber-cor-den-sch2006}.  
+\todo[inline]{The logic from the sentence above to the one below seems awkward to me. The above sentence makes me think that a continuous time random-walk will be used in our paper. Then, suddenly, we say we are going to do something else instead. Maybe we can kill the above sentence and dump the references (if you want to keep them) into the earlier sentence that mentions a random walk? Or maybe just a slight rephrasing would make the transition less awkward.}
+Instead,  we compute
 trajectories $\ss(t)$ that are initialized at $\ss_0$ by solving
 \begin{align}
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
