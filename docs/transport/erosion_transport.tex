@@ -333,12 +333,11 @@ small time step.
 \label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Since we require an accurate solution of the incompressible Stokes
-equations in complex two-dimensional porous media, we reformulated the
+equations in complex two-dimensional geometries, we reformulated the
 incompressible Stokes equations as a BIE.  This has the advantage that
 only the one-dimensional boundary of the domain must be discretized, and
-if appropriate quadrature formula and fast summation methods are used,
-the result is a high-fidelity numerical simulation that is computed with
-near-optimal complexity.
+near-optimal complexity can be achieved by using appropriate quadrature
+formula and fast summation methods.
 
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
@@ -354,8 +353,8 @@ where $D$ is an kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
 is an unknown density function.  The double-layer potential can not
 represent all solutions of the incompressible Stokes equations, so we
-complete the integral equation formulation by adding the Stokeslets and
-rotlets~\cite{pow-mir1987}
+complete the integral equation formulation by adding the $M$ Stokeslets
+and rotlets~\cite{pow-mir1987}
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
     -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
@@ -387,12 +386,12 @@ where the density function, Stokeslets, and rotlets satisfy
     &&\ell = 1,\ldots,M.
 \end{alignat}
 \end{subequations}
-The operator $\NN_0$ is the integral operator with kernel
-$N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$,
-which removes the rank one null space resulting from the flux-free
-requirement of $\ff$.  In this work, $\ff$ is the prescribed velocity,
-$\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
-$\gamma_\ell$, $\ell=1,\ldots,M$.  
+Here, the null space associated with the flux-free condition of $\ff$ is
+addressed with the integral operator $\NN_0$ which has the integral
+kernel $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$.
+In this work, $\ff$ is the prescribed velocity, $\UU$, on the outer
+wall, $\Gamma$, and is zero on the eroding bodies, $\gamma_\ell$,
+$\ell=1,\ldots,M$.  
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, the deformation
@@ -423,8 +422,7 @@ tensor, pressure, and vorticity at $\xx \in \Omega$ are
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
       (\rr \cdot \eeta) \, ds_\yy,
 \end{align}
-respectively. We require the deformation tensor of the double-layer potential at
-$\xx \in \bd \Omega$.  Since the deformation tensor of the double-layer
+respectively.  Since the deformation tensor of the double-layer
 potential is discontinuous across $\bd\Omega$, the jump term 
 \begin{align}
   \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
@@ -434,12 +432,12 @@ potential is discontinuous across $\bd\Omega$, the jump term
   \right],
   \label{eqn:deformationJump}
 \end{align}
-must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
-Stokeslets and rotlets do not have any jumps on $\gamma$, so the
-deformation tensor, pressure, and vorticity due to the Stokeslets and
-rotlets are straightforward to compute~\cite{poz1992}.  Having computed
-the deformation tensor on $\gamma$, the shear stress is computed as
-defined in equation~\eqref{eqn:shearStress}.  
+must be added to compute $\ssigma(\xx)$ for $\xx \in \bd\Omega$.
+Finally, the Stokeslets and rotlets do not have any jumps on $\gamma$,
+so the deformation tensor, pressure, and vorticity due to the Stokeslets
+and rotlets are straightforward to compute~\cite{poz1992}.  Having
+computed the deformation tensor on $\gamma$, the shear stress is
+computed as defined in equation~\eqref{eqn:shearStress}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
@@ -448,7 +446,7 @@ Potential}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
 $\uu$ and its deformation tensor are written as layer potentials in
-$\RR^2$.  However, the quadrature method we introduce in
+$\RR^2$, but the quadrature method we introduce in
 Section~\ref{sec:method} requires a complex-valued representation of the
 layer potentials. The first step is to write the Laplace double-layer
 potential as the complex integral
