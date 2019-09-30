@@ -22,22 +22,24 @@ Institute, Florida State University, Tallahassee, FL, 32306.}
 Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-  We extend upon our previous work, [Journal of Computational Physics,
-  {\bf 375}:1--21, 2018], to simulate dense suspensions of
-  fluid-mechanical erosion of two-dimensional erosion of porous media.
-  The method combines a boundary integral equation (BIE) fluid solver
-  and a numerically stable time stepping method for the evolution of the
-  eroding bodies. Originally, the eroding bodies had to be sufficiently
-  separated to guarantee that the trapezoid rule provided a sufficient
-  level of accuracy. In this work, we develop resolve interactions
-  between nearly touching bodies with a Barycentric quadrature rule
-  whose error is independent of the geometry.  Since the Barycentric
-  quadrature rule is computationally expensive, it is only used when
-  necessary, and the spectrally accurate trapezoid rule is used
-  otherwise. Our final fluid solver only requires $\mathcal{O}(N)$
-  iterations per time step. Next, we simulate and analyze transport
-  through eroded porous geometries.  Our results demonstrate the effects
-  of erosion on tortuosity, dispersion, and pore size distributions.
+  We extend our previous work, [{\em Journal of Computational Physics},
+  {\bf 375}:1--21, 2018], to simulate fluid-mechanical erosion of
+  two-dimensional porous media with nearly-touching grains.  The method
+  continues to use a boundary integral equation (BIE) method to solve
+  the fluid equations and to compute the erosion rate, and a stable
+  second-order time stepping method to erode the grains.  In our
+  original work, we required that the eroding grains were sufficiently
+  separated to guarantee that the trapezoid rule provides a sufficient
+  amount of accuracy. We now remove this restriction by introducing a
+  Barycentric quadrature rule whose error is bounded independent of the
+  geometry.  The Barycentric quadrature rule is computationally
+  expensive, so it is only used when necessary, and the spectrally
+  accurate trapezoid rule is used otherwise. We also simulate and
+  analyze transport through eroded porous geometries.  By using the
+  Barycentric quadrature rule, the analysis examines flow both in the
+  fast and slow regions with high-order accuracy. Our results
+  demonstrate the effects of erosion on tortuosity, dispersion, and pore
+  size distributions.
 \end{abstract}
 
 \begin{keyword}
