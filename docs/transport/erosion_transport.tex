@@ -452,11 +452,12 @@ potential as the complex integral
     \frac{\eta(y)}{x - y} \, dy,
   \label{eqn:laplaceComplex}
 \end{align}
-where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$.
-Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy
-integral by first finding the boundary data of $v$.  Assuming that
-$\Omega$ is a simply-connected interior domain, the boundary data
-of $v$ satisfies the Sokhotski-Plemelj jump relation
+where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$,
+and $\eta$ is the complex-valued counterpart of $\eeta$.
+Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
+first finding the boundary data of $v$.  Assuming that $\Omega$ is a
+simply-connected interior domain, the boundary data of $v$ satisfies the
+Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
   v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
@@ -465,8 +466,8 @@ of $v$ satisfies the Sokhotski-Plemelj jump relation
 For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
 for multiply-connected domains, such as a porous media, $\bd\Omega$ is
 decomposed into its different connected components and the appropriate
-Cauchy integral is evaluated.  Since $v$ is a holomorphic function and
-we have its boundary data, by the Cauchy integral theorem we have
+jump relation is applied.  Since $v$ is a holomorphic function and we
+have its boundary data, by the Cauchy integral theorem we have
 \begin{align}
   \label{eqn:cauchy}
   v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
@@ -496,11 +497,11 @@ it into a sequence of Laplace layer potentials~\cite{bar-wu-vee2015}
       &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
         \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
       \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
+        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy,
   \end{aligned}
 \end{equation}
-Therefore, the Stokes double-layer potential can be written in terms of
-Cauchy integrals and their first derivative as
+where $\xx = (x_1,x_2)$. Therefore, the Stokes double-layer potential
+can be written as a sum of Cauchy integrals and its first derivative 
 \begin{equation}
   \begin{aligned}
     u_1(x) &= \Re (v[\psi_1](x)) + \Re (v'[y\cdot\eta](x)) 
