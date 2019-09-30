@@ -218,6 +218,8 @@ our tortuosity and dispersion rates with models available in the
 literature.  Finally, we analyze the effect of erosion on the pore size
 distribution.
 
+\todo[inline]{The above paragraph seems to repeat a lot of what has been mentioned already, but maybe that is okay.}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations}
 As in our previous work~\cite{qua-moo2018}, we consider two-dimensional
@@ -349,8 +351,7 @@ $\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
 $\gamma_\ell$, $\ell=1,\ldots,M$.  
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
-Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, the deformation
-tensor, pressure, and vorticity at $\xx \in \Omega$ are
+Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, \nick{we are able to compute the deformation tensor, pressure, and vorticity, defined respectively as}
 \begin{align}
   \label{eqn:deformationDLP} 
   \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
@@ -377,9 +378,9 @@ tensor, pressure, and vorticity at $\xx \in \Omega$ are
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
       (\rr \cdot \eeta) \, ds_\yy,
 \end{align}
-respectively. We require the deformation tensor of the double-layer potential at
-$\xx \in \bd \Omega$.  Since the deformation tensor of the double-layer
-potential is discontinuous across $\bd\Omega$, the jump term 
+\nick{\st{We require the deformation tensor of the double-layer potential at
+$\xx \in \bd \Omega$.}}
+Since the deformation tensor of the double-layer potential is discontinuous across the boundary $\bd\Omega$, the jump term 
 \begin{align}
   \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
     \begin{array}{cc}
@@ -389,9 +390,7 @@ potential is discontinuous across $\bd\Omega$, the jump term
   \label{eqn:deformationJump}
 \end{align}
 must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
-Stokeslets and rotlets do not have any jumps on $\gamma$, so the
-deformation tensor, pressure, and vorticity due to the Stokeslets and
-rotlets are straightforward to compute~\cite{poz1992}.  Having computed
+Stokeslets and rotlets \nick{do not exhibit such jumps, and so the associated components of the deformation tensor, pressure, and vorticity} are straightforward to compute~\cite{poz1992}.  Having computed
 the deformation tensor on $\gamma$, the shear stress is computed as
 defined in equation~\eqref{eqn:shearStress}.  
 
