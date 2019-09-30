@@ -143,11 +143,10 @@ previous work~\cite{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities caused by changes in
 sign of the shear stress, and we use a stable second-order Runge-Kutta
 method applied to the {\thL} coordinates~\cite{hou-low-she1994} of the
-eroding grains.  In this work, we \st{do} introduce a new quadrature method
-to resolve dense suspensions of eroding grains.  The accuracy of the
+eroding grains.  In this work, we \nick{\st{do}} introduce a new quadrature method to resolve dense suspensions of eroding grains.  The accuracy of the
 trapezoid rule, which we used in our previous work, is \st{sufficient} \nick{adequate} for bodies that are sufficiently separated~\cite{tre-wei2014}. 
 \todo[inline]{I changed the above to `adequate' so that `sufficient' would not be used twice in a row.} 
-However, it \nick{loses accuracy} whenever \st{two} grains are nearly-touching.  One of the earliest works \nick{to address} quadrature methods for nearly-singular integrands was developed by Baker and Shelley~\cite{bak-she1986}, and in recent years, many other near-singular integration schemes have been \nick{followed}~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
+However, it \nick{loses accuracy whenever \st{two} grains come in close contact}.  One of the earliest works \nick{to address} quadrature methods for nearly-singular integrands was developed by Baker and Shelley~\cite{bak-she1986}, and in recent years, many other near-singular integration schemes have been \nick{followed}~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
 \nick{method}~\cite{bar2014, bar-wu-vee2015} since it is a non-intrusive
 modification of the trapezoid rule, and the error is guaranteed to be
 uniformly bounded.  We extend the original quadrature method \nick{to compute the velocity gradient, which is needed to evaluate shear stress and fluid vorticity}.
@@ -249,14 +248,10 @@ Section~\ref{sec:conclusions}.
 \label{sec:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We start by defining the main variables used to model erosion.  We only
-summarize the model, and a more detailed description is in our previous
-work~\cite{qua-moo2018}.  We consider flows inside a confined geometry
-$\Omega$ that contains $M$ eroding bodies with boundaries $\gamma_\ell$,
-$\ell = 1,\ldots,M$.  The boundary of the bounding geometry is $\Gamma$,
-so the boundary of the fluid domain is $\bd \Omega = \Gamma \cup
-\gamma_1 \cup \cdots \cup \gamma_M$.  In all examples, we let $\Gamma$
-be a slightly smoothed version of $[-3,3] \times [-1,1]$, and we only
-place eroding bodies in the region $[-1,1] \times [-1,1]$.  On each
+\nick{briefly summarize the model, since a more detailed description can be found in previous} work~\cite{qua-moo2018}.  We consider flows inside a confined geometry $\Omega$ that contains $M$ eroding bodies with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$.  
+\nick{The boundary of the fluid domain is $\bd \Omega = \Gamma \cup
+\gamma_1 \cup \cdots \cup \gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly smoothed version of $[-3,3] \times [-1,1]$}. 
+\nick{We only place eroding bodies in $[-1,1] \times [-1,1]$ so as to create a buffer region for the flow profile imposed at the inlet to transition to the more complex flow intervening between the bodies}. On each
 eroding body, $\nn$ is the normal vector pointing into the body, and
 $\ss$ is the unit tangent vector pointing in the counterclockwise
 direction.  The normal vector on $\Gamma$ is the outward unit normal.
@@ -284,7 +279,7 @@ of $\gamma$, and
   \label{eqn:shearStress}
 \end{align}
 is the shear stress on $\gamma$.  The strength of $\UU$ is adjusted at
-each time step so that there is a constant pressure drop across the
+each time step \nick{to achieve} a constant pressure drop across the
 channel.  We simulate erosion by alternating between solving the fluid
 equations and advancing the grains according to the erosion rate for a
 small time step.
@@ -293,13 +288,11 @@ small time step.
 \section{Boundary Integral Equation Formulation}
 \label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Since we require an accurate solution of the incompressible Stokes
-equations in complex two-dimensional porous media, we reformulated the
-incompressible Stokes equations as a BIE.  This has the advantage that
-only the one-dimensional boundary of the domain must be discretized, and
-if appropriate quadrature formula and fast summation methods are used,
-the result is a high-fidelity numerical simulation that is computed with
-near-optimal complexity.
+\nick{To solve} the incompressible Stokes
+equations in complex two-dimensional porous media, we \nick{reformulate\st{d}} the incompressible Stokes equations as a BIE.  This has the advantage that
+only the one-dimensional boundary of the domain must be discretized, and,
+\nick{with an appropriate quadrature formula and fast summation methods,
+the result is a high-fidelity numerical simulation of near-optimal computational complexity.}
 
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
@@ -311,7 +304,7 @@ write the velocity $\uu$ as a double-layer potential
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
   \label{eqn:velocityDLP}
 \end{align}
-where $D$ is an kernel of the integral operator, $\rr = \xx - \yy$,
+where $D$ is \nick{\st{an} a} kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
 is an unknown density function.  The double-layer potential can not
 represent all solutions of the incompressible Stokes equations, so we
@@ -350,7 +343,7 @@ where the density function, Stokeslets, and rotlets satisfy
 \end{subequations}
 The operator $\NN_0$ is the integral operator with kernel
 $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$,
-which removes the rank one null space resulting from the flux-free
+which removes the rank one null space \nick{\st{resulting} that results} from the flux-free
 requirement of $\ff$.  In this work, $\ff$ is the prescribed velocity,
 $\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
 $\gamma_\ell$, $\ell=1,\ldots,M$.  
