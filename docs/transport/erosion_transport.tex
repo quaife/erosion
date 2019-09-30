@@ -191,39 +191,21 @@ time stepping method.  In addition, the Barycentric quadrature rule is
 used to accurately compute trajectories that are close to an eroding
 grain.
 
-Once streamlines in an eroded geometry are computed, we characterize the
-transport by computing and analyzing three different metrics: the
-tortuosity, the anomalous dispersion, and the pore size distribution.
-The local tortuosity of a streamline connecting the inlet to the outlet
-is the streamline's length normalized by the distance between the inlet
-and the outlet.  In porous media, depending on several factors including
-the porosity, the local tortuosity can be greater than
-1.5~\cite{kop-kat-tim1996, mat-kha-koz2008}, or even
-2~\cite{dud-koz-mat2011}.  The tortuosity of a geometry is defined by
-averaging the local tortuosity over all streamlines that are initialized
-at the inlet, and the geometry's tortuosity characterizes average
-particle motions~\cite{hak-com-den2019}.  To characterize spreading, the
-fluid dispersion is computed by calculating the variance of the
-streamline lengths. In porous media, this spreading is often
+Once \nick{the streamlines are computed, we characterize
+transport by analyzing} three different metrics: the tortuosity, the anomalous dispersion, and the pore size distribution. 
+The local tortuosity of a streamline \nick{that connects the inlet to the outlet is defined as the streamline's length normalized by the linear inlet-to-outlet distance}.
+In porous media, the local tortuosity can be greater than 1.5~\cite{kop-kat-tim1996, mat-kha-koz2008} or even 2~\cite{dud-koz-mat2011}, \nick{depending on several factors such as the porosity.} 
+The tortuosity of a geometry is defined by averaging the local tortuosity over all streamlines initialized at the inlet, and the geometry's tortuosity characterizes average particle motions~\cite{hak-com-den2019}.  To characterize spreading, the fluid dispersion is computed by calculating the variance of the streamline lengths. In porous media, this spreading is often
 super-dispersive~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
-dea-leb-den-tar-bol-dav2013}. Accurately resolving the streamlines near
-the grains is crucial since the anomalous dispersion is caused by
-streamlines spending time in both the high and low velocity
-regimes~\cite{ber-sch2001}.  Finally, since they are required to
-quantify velocity distributions~\cite{ali-par-wei-bre2017,
-dea-qua-bir-jua2018}, channelization~\cite{sie-ili-pri-riv-gua2019},
-connectivity~\cite{knu-car2005, wes-blo-gra2001}, and to develop network
-models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}, we form the
-pore size distribution throughout the erosion process.
+dea-leb-den-tar-bol-dav2013}. \nick{Since anomalous dispersion results from streamlines spending time in both the high and low velocity}
+regimes~\cite{ber-sch2001}, it is crucial to accurately resolve  streamlines near grain boundaries, as achieved in this work.
+Finally, \nick{the distribution of pore sizes is required to} quantify velocity distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018}, channelization~\cite{sie-ili-pri-riv-gua2019}, connectivity~\cite{knu-car2005, wes-blo-gra2001}, and to develop network models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. \nick{Hence, we construct the pore-size distribution throughout the erosion process.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
 Our first contribution is extending the Barycentric quadrature rule of
-Barnett et al.~\cite{bar-wu-vee2015} so that high-order accurate
-derivatives of solutions of the Stokes equations can be computed.  Using
-this new quadrature rule, we accurately compute erosion rates and stably
-simulate erosion.  Moreover, we use the quadrature method to visualize
-the vorticity in the fluid bulk.
+Barnett et al.~\cite{bar-wu-vee2015} \nick{to accurately compute velocity gradients associated with Stokes flow.}
+\nick{This new quadrature rule permits accurate and stable simulations of erosion, and, moreover, enables visualization of the vorticity field throughout.}
 
 Our second contribution is computing and analyzing trajectories in
 eroded geometries.  These trajectories are used to characterize the
@@ -240,8 +222,7 @@ distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations}
 As in our previous work~\cite{qua-moo2018}, we consider two-dimensional
-immobile eroding grains. However, this work is not limited by the
-proximity of the grains. Compared to our previous work, we are able to
+immobile eroding grains. However, this work \nick{does not limit} the proximity of  grains. Compared to our previous work, we are able to
 simulate much denser suspensions with a comparable number of
 discretization points and without upsampling.  While we do investigate
 transport in this work, we only consider passive particles that are
@@ -252,14 +233,13 @@ advection-diffusion equation in eroded geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
-In Section~\ref{sec:formulation}, we summarize the erosion model that we
-describe in detail in our previous work~\cite{qua-moo2018}.  In
+In Section~\ref{sec:formulation}, we summarize the erosion model \nick{that is described in more detail in} previous work~\cite{qua-moo2018}.  In
 Section~\ref{sec:DLP}, we recast all the governing equations as layer
 potentials defined in both $\RR^2$ and in $\CC$.
 Section~\ref{sec:transport} describes measures for characterizing the
 geometry, transport, and dispersion. Section~\ref{sec:method} describes
 the numerical methods, with special attention paid to the new quadrature
-method to compute the shear stress and vorticity.
+method \nick{for computing} shear stress and vorticity.
 Section~\ref{sec:results} presents numerical examples for a variety of
 dense packings of bodies.  Finally, concluding remarks are made in
 Section~\ref{sec:conclusions}.
