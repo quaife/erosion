@@ -26,20 +26,19 @@ Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
   {\bf 375}:1--21, 2018], to simulate fluid-mechanical erosion of
   two-dimensional porous media with nearly-touching grains.  The method
   continues to use a boundary integral equation (BIE) method to solve
-  the fluid equations and to compute the erosion rate, and a stable
-  second-order time stepping method to erode the grains.  In our
-  original work, we required that the eroding grains were sufficiently
-  separated to guarantee that the trapezoid rule provides a sufficient
-  amount of accuracy. We now remove this restriction by introducing a
-  Barycentric quadrature rule whose error is bounded independent of the
-  geometry.  The Barycentric quadrature rule is computationally
-  expensive, so it is only used when necessary, and the spectrally
-  accurate trapezoid rule is used otherwise. We also simulate and
-  analyze transport through eroded porous geometries.  By using the
-  Barycentric quadrature rule, the analysis examines flow both in the
-  fast and slow regions with high-order accuracy. Our results
-  demonstrate the effects of erosion on tortuosity, dispersion, and pore
-  size distributions.
+  the fluid equations, and a stable second-order time stepping method to
+  erode the grains.  In our previous work, we required that the eroding
+  grains were sufficiently separated to guarantee that the trapezoid
+  rule provides a sufficient amount of accuracy. We now remove this
+  restriction by introducing a Barycentric quadrature rule whose error
+  is bounded independent of the geometry.  The Barycentric quadrature
+  rule is computationally expensive, so it is only used when necessary,
+  and the spectrally accurate fast-multipole-accelerated trapezoid rule
+  is used otherwise. We also simulate and analyze transport through
+  eroded porous media.  By using the Barycentric quadrature rule, the
+  analysis examines flow both in the fast and slow regions with
+  high-order accuracy. Our results reveal several interesting  effects
+  of erosion on the tortuosity, dispersion, and pore size distributions.
 \end{abstract}
 
 \begin{keyword}
@@ -110,7 +109,7 @@ the regime of Stokes flow~\cite{qua-moo2018}. We, however, make a few
 key improvements to the numerical methods from~\cite{qua-moo2018} to
 enable simulations of more realistic, dense suspensions of eroding
 grains (Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To
-characterize transport in the resulting geometries, examine
+characterize transport in the resulting geometries, we examine
 coarse-grained variables through statistical analysis of tracer
 trajectories.
 
@@ -221,51 +220,48 @@ the porosity, the local tortuosity can be greater than
 1.5~\cite{kop-kat-tim1996, mat-kha-koz2008}, or even
 2~\cite{dud-koz-mat2011}.  The tortuosity of a geometry is defined by
 averaging the local tortuosity over all streamlines that are initialized
-at the inlet, and the geometry's tortuosity can be used to characterize
-average particle motions~\cite{hak-com-den2019}.  To characterize
-spreading, the fluid dispersion is computed by calculating the variance
-of the streamline lengths. In porous media, this spreading can often be
-characterized with a super-diffusive anomalous dispersion
-rate~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
-dea-leb-den-tar-bol-dav2013}. An accurate solution near the grains is
-crucial since the anomalous dispersion is caused by streamlines spending
-time in both the high and low velocity regimes~\cite{ber-sch2001}.
-Finally, the third metric, pore size distribution, is useful to quantify
-velocity distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018},
-channelization~\cite{sie-ili-pri-riv-gua2019},
+at the inlet, and the geometry's tortuosity characterizes average
+particle motions~\cite{hak-com-den2019}.  To characterize spreading, the
+fluid dispersion is computed by calculating the variance of the
+streamline lengths. In porous media, this spreading is often
+super-dispersive~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
+dea-leb-den-tar-bol-dav2013}. Accurately resolving the streamlines near
+the grains is crucial since the anomalous dispersion is caused by
+streamlines spending time in both the high and low velocity
+regimes~\cite{ber-sch2001}.  Finally, since they are required to
+quantify velocity distributions~\cite{ali-par-wei-bre2017,
+dea-qua-bir-jua2018}, channelization~\cite{sie-ili-pri-riv-gua2019},
 connectivity~\cite{knu-car2005, wes-blo-gra2001}, and to develop network
-models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}.
+models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}, we form the
+pore size distribution throughout the erosion process.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
-Our first contribution is extending the work of Barnett et
-al.~\cite{bar-wu-vee2015} so that high-order accurate derivatives of
-solutions of the Stokes equations can be computed.  Using this new
-quadrature rule, we accurately compute erosion rates and stably simulate
-erosion.  Moreover, we use the quadrature method to visualize the
-vorticity in the fluid bulk.  The vorticity is convenient to visualize
-since, in the zero Reynolds number limit, it is equivalent to the shear
-stress on the eroding bodies, and therefore its magnitude is the erosion
-rate.
+Our first contribution is extending the Barycentric quadrature rule of
+Barnett et al.~\cite{bar-wu-vee2015} so that high-order accurate
+derivatives of solutions of the Stokes equations can be computed.  Using
+this new quadrature rule, we accurately compute erosion rates and stably
+simulate erosion.  Moreover, we use the quadrature method to visualize
+the vorticity in the fluid bulk.
 
 Our second contribution is computing and analyzing trajectories in
 eroded geometries.  These trajectories are used to characterize the
 transport by computing the local tortuosity of trajectories, and the
-tortuosity and dispersion rate of eroded geometries. By using the same
-quadrature rule and a fourth-order Runge-Kutta method, we are able to
+tortuosity and dispersion rate of eroded geometries. By using the
+Barycentric quadrature rule and a fourth-order Runge-Kutta method, we
 accurately compute trajectories that spend large amounts of time in the
-slow velocity regions near the eroding bodies, and reliably computing
-these trajectories is essential to characterize the
-flow~\cite{dea-leb-den-tar-bol-dav2013}.  We compare our tortuosity and
-dispersion rates with models available in the literature.  Finally, we
-analyze the effect of erosion on the pore size distribution.
+slow velocity regions near the eroding bodies, a necessity to
+characterize the flow~\cite{dea-leb-den-tar-bol-dav2013}.  We compare
+our tortuosity and dispersion rates with models available in the
+literature.  Finally, we analyze the effect of erosion on the pore size
+distribution.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations}
 As in our previous work~\cite{qua-moo2018}, we consider two-dimensional
-immobile eroding grains. However, this work does not have a limitation
-on the proximity of the grains. Compared to our previous work, we are
-able to simulate much denser suspensions with a comparable number of
+immobile eroding grains. However, this work is not limited by the
+proximity of the grains. Compared to our previous work, we are able to
+simulate much denser suspensions with a comparable number of
 discretization points and without upsampling.  While we do investigate
 transport in this work, we only consider passive particles that are
 advected by the flow.  To model other physical processes, such as
@@ -275,7 +271,7 @@ advection-diffusion equation in eroded geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
-In Section~\ref{sec:formulation}, we summarize the model that we
+In Section~\ref{sec:formulation}, we summarize the erosion model that we
 describe in detail in our previous work~\cite{qua-moo2018}.  In
 Section~\ref{sec:DLP}, we recast all the governing equations as layer
 potentials defined in both $\RR^2$ and in $\CC$.
@@ -298,7 +294,7 @@ $\Omega$ that contains $M$ eroding bodies with boundaries $\gamma_\ell$,
 $\ell = 1,\ldots,M$.  The boundary of the bounding geometry is $\Gamma$,
 so the boundary of the fluid domain is $\bd \Omega = \Gamma \cup
 \gamma_1 \cup \cdots \cup \gamma_M$.  In all examples, we let $\Gamma$
-be a slightly rounded-off version of $[-3,3] \times [-1,1]$, and we only
+be a slightly smoothed version of $[-3,3] \times [-1,1]$, and we only
 place eroding bodies in the region $[-1,1] \times [-1,1]$.  On each
 eroding body, $\nn$ is the normal vector pointing into the body, and
 $\ss$ is the unit tangent vector pointing in the counterclockwise
@@ -311,8 +307,8 @@ Neglecting inertial forces, the governing equations are
       &&\mbox{\em conservation of momentum}, \\
     \grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap 
       &&\mbox{\em conservation of mass}, \\
-    \uu = 0, &\hspace{20pt} \xx \in \gamma, \gap 
-      &&\mbox{\em no slip on the bodies}, \\
+    \uu = \mathbf{0}, &\hspace{20pt} \xx \in \gamma, \gap 
+      &&\mbox{\em no slip on the eroding bodies}, \\
     \uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap 
       &&\mbox{\em outer wall velocity}, \\
     \Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
@@ -336,13 +332,13 @@ small time step.
 \section{Boundary Integral Equation Formulation}
 \label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Since we require a method to solve the incompressible Stokes equations in
-complex two-dimensional porous geometries, we reformulated the
-incompressible Stokes equations as a boundary integral equation. This
-has the advantage that only the one-dimensional boundary of the domain
-must be discretized, and if appropriate quadrature formula and fast
-summation methods are used, the result is a high-fidelity numerical
-simulation that is computed with near-optimal complexity.
+Since we require an accurate solution of the incompressible Stokes
+equations in complex two-dimensional porous media, we reformulated the
+incompressible Stokes equations as a BIE.  This has the advantage that
+only the one-dimensional boundary of the domain must be discretized, and
+if appropriate quadrature formula and fast summation methods are used,
+the result is a high-fidelity numerical simulation that is computed with
+near-optimal complexity.
 
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
