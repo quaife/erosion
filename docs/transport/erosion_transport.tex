@@ -79,24 +79,40 @@ distributions~\cite{ali-par-wei-bre2017}, anomalous
 dispersion~\cite{dea-qua-bir-jua2018, den-cor-sch-ber2004,
 sie-ili-pri-riv-gua2019}, and more.  
 
-%Flow in porous media is further complicated when there is a two-way coupling between the flow and the geometry. For example, the grains of a porous media evolve in time in applications involving
-\nick{Flow in porous media is further complicated when boundaries evolve dynamically in response to the fluid flow. This type of coupling between geometry and flow occurs, for example, in applications involving} melting~\cite{bec-vis1998, rycroft2016asymmetric, jambon2018singular, favier2019rayleigh, morrow2019moving}, dissolution~\cite{kan-zha-che-he2002, mac2015shape, moo2017, wykes2018self}, deposition~\cite{joh-eli1995,
-hewett2018modelling}, biofilm growth~\cite{tan-val-wer2015}, and crack
+Flow in porous media is further complicated when boundaries dynamically
+evolve in response to the fluid flow. This type of coupling between the
+geometry and the flow occurs, for example, in applications involving
+melting~\cite{bec-vis1998, rycroft2016asymmetric, jambon2018singular,
+favier2019rayleigh, morrow2019moving},
+dissolution~\cite{kan-zha-che-he2002, mac2015shape, moo2017,
+wykes2018self}, deposition~\cite{joh-eli1995, hewett2018modelling},
+biofilm growth~\cite{tan-val-wer2015}, and crack
 formation~\cite{cho2019crack}. We focus on erosion, a fluid-mechanical
 process that is prevalent in many geophysical, hydrological, and
-industrial applications~\cite{berhanu2012shape, hewett2017evolution, lachaussee2018competitive, lopez2018cfd, allen2019sde, amin2019role}.  When a porous geometry erodes, certain qualitative characteristics are unveiled that affect transport through the geometry.  For example, an eroded geometry may
-contain channels of high porosity, which, though few in number and
-modest in volume fraction, transmit a large portion of the flux. This
-arrangement results in velocities that vary over several orders of
-magnitude~\cite{all-hea-lab-rei2002}.  \nick{Moreover, channelization creates heterogeneous and anisotropic medium properties, which affect the
-transport of tracers} such as contaminants~\cite{cve-che-wen1996,
-dag1987, kon-bre1978} and heat~\cite{nil-sto1990, ree-sto1995}.
+industrial applications~\cite{berhanu2012shape, hewett2017evolution,
+lachaussee2018competitive, lopez2018cfd, allen2019sde, amin2019role}.
+When a porous geometry erodes, certain qualitative characteristics are
+unveiled that affect transport through the geometry.  For example, an
+eroded geometry may contain channels of high porosity, which, though few
+in number and modest in volume fraction, transmit a large portion of the
+flux. This arrangement results in velocities that vary over several
+orders of magnitude~\cite{all-hea-lab-rei2002}.  Moreover,
+channelization creates heterogeneous and anisotropic medium properties,
+which affect the transport of tracers such as
+contaminants~\cite{cve-che-wen1996, dag1987, kon-bre1978} and
+heat~\cite{nil-sto1990, ree-sto1995}.
 
 This study consists of two main undertakings: first, high-fidelity
-simulations of eroding porous media, and, second, \nick{characterization of tracer transport through the dynamic geometries that result}. Our modeling efforts build on previous work~\cite{ris-moo-chi-she-zha2012, moore2013self, moo2017}, in particular recent numerical methods developed to simulate erosion in the regime of Stokes flow~\cite{qua-moo2018}. We, however, make a few
-key improvements to the numerical methods from~\cite{qua-moo2018} to
-enable simulations of more realistic, dense suspensions of eroding
-grains (Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To characterize transport through these \nick{configurations}, we examine
+simulations of eroding porous media, and, second, characterization of
+tracer transport through the resulting eroded geometries. Our modeling
+efforts build on previous work~\cite{ris-moo-chi-she-zha2012,
+moore2013self, moo2017}, in particular recent numerical methods
+developed to simulate erosion in the regime of Stokes flow
+regime~\cite{qua-moo2018}. We, however, make key improvements to the
+numerical methods from~\cite{qua-moo2018} to enable simulations of more
+realistic, dense suspensions of eroding grains
+(Figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  To
+characterize transport through these configurations, we examine
 coarse-grained variables through statistical analysis of tracer
 trajectories.
 
@@ -143,13 +159,21 @@ previous work~\cite{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities caused by changes in
 sign of the shear stress, and we use a stable second-order Runge-Kutta
 method applied to the {\thL} coordinates~\cite{hou-low-she1994} of the
-eroding grains.  In this work, we \nick{\st{do}} introduce a new quadrature method to resolve dense suspensions of eroding grains.  The accuracy of the
-trapezoid rule, which we used in our previous work, is \st{sufficient} \nick{adequate} for bodies that are sufficiently separated~\cite{tre-wei2014}. 
-\todo[inline]{I changed the above to `adequate' so that `sufficient' would not be used twice in a row.} 
-However, it \nick{loses accuracy whenever \st{two} grains come in close contact}.  One of the earliest works \nick{to address} quadrature methods for nearly-singular integrands was developed by Baker and Shelley~\cite{bak-she1986}, and in recent years, many other near-singular integration schemes have been \nick{followed}~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
-\nick{method}~\cite{bar2014, bar-wu-vee2015} since it is a non-intrusive
+eroding grains.  In this work, we introduce a new quadrature method to
+resolve dense suspensions of eroding grains.  The accuracy of the
+trapezoid rule, which we used in our previous work, is adequate for
+bodies that are sufficiently separated~\cite{tre-wei2014}.  However, it
+loses accuracy whenever grains are in close contact.  One of the
+earliest works to address quadrature methods for nearly-singular
+integrands was developed by Baker and Shelley~\cite{bak-she1986}, and in
+recent years, many other near-singular integration schemes have
+followed~\cite{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
+bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
+method~\cite{bar2014, bar-wu-vee2015} since it is a non-intrusive
 modification of the trapezoid rule, and the error is guaranteed to be
-uniformly bounded.  We extend the original quadrature method \nick{to compute the velocity gradient, which is needed to evaluate shear stress and fluid vorticity}.
+uniformly bounded.  We extend the original quadrature method to compute
+the velocity gradient, which is needed to evaluate shear stress and
+fluid vorticity.
 
 \begin{figure}[H]
 \begin{center}
@@ -167,19 +191,16 @@ in the green regions.}
 \end{center}
 \end{figure}
 
-To characterize the transport, particle trajectories \nick{must} be
-computed. Depending on the application, microscale transport can be
-modelled as pure advection~\cite{dea-qua-bir-jua2018,
-leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019},
+To characterize the transport, particle trajectories must be computed.
+Depending on the application, microscale transport can be modelled as
+pure advection~\cite{dea-qua-bir-jua2018, leb-ded-dav-bou2007,
+cve-che-wen1996, puy-gou-den2019},
 advection-diffusion~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
-this work, we assume trajectories \nick{to be governed by pure advection} (ie.~no diffusion). Therefore, the particle trajectories are
-identical to the streamlines, and they can be found, for example, with a
-continuous time random walk~\cite{mon-wei1965, den-cor-sch-ber2004,
-leb-den-car2008, ber-cor-den-sch2006}.  
-\todo[inline]{The logic from the sentence above to the one below seems awkward to me. The above sentence makes me think that a continuous time random-walk will be used in our paper. Then, suddenly, we say we are going to do something else instead. Maybe we can kill the above sentence and dump the references (if you want to keep them) into the earlier sentence that mentions a random walk? Or maybe just a slight rephrasing would make the transition less awkward.}
-Instead,  we compute
-trajectories $\ss(t)$ that are initialized at $\ss_0$ by solving
+this work, we assume trajectories to be governed by pure advection
+(ie.~no diffusion), so the particle trajectories are identical to the
+streamlines. We compute trajectories $\ss(t)$ that are initialized at
+$\ss_0$ by solving the advection equation
 \begin{align}
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
   \label{eqn:tracers}
@@ -188,59 +209,74 @@ where $\uu$ is the fluid velocity.  Since there is no stiff diffusive
 term in~\eqref{eqn:tracers}, we use a fourth-order explicit Runge-Kutta
 time stepping method.  In addition, the Barycentric quadrature rule is
 used to accurately compute trajectories that are close to an eroding
-grain.
+grain. We note that an alternative approach to compute trajectories is
+to form a distribution of velocities $\uu$ and use a continuous time
+random walk~\cite{mon-wei1965, den-cor-sch-ber2004, leb-den-car2008,
+ber-cor-den-sch2006}.  
 
-Once \nick{the streamlines are computed, we characterize
-transport by analyzing} three different metrics: the tortuosity, the anomalous dispersion, and the pore size distribution. 
-The local tortuosity of a streamline \nick{that connects the inlet to the outlet is defined as the streamline's length normalized by the linear inlet-to-outlet distance}.
-In porous media, the local tortuosity can be greater than 1.5~\cite{kop-kat-tim1996, mat-kha-koz2008} or even 2~\cite{dud-koz-mat2011}, \nick{depending on several factors such as the porosity.} 
-The tortuosity of a geometry is defined by averaging the local tortuosity over all streamlines initialized at the inlet, and the geometry's tortuosity characterizes average particle motions~\cite{hak-com-den2019}.  To characterize spreading, the fluid dispersion is computed by calculating the variance of the streamline lengths. In porous media, this spreading is often
+Once the streamlines are computed, we characterize transport by
+analyzing three different metrics: the tortuosity, the anomalous
+dispersion, and the pore size distribution.  The local tortuosity of a
+streamline that connects the inlet to the outlet is defined as the
+streamline's length normalized by the linear inlet-to-outlet distance.
+In porous media, the local tortuosity can be greater than
+1.5~\cite{kop-kat-tim1996, mat-kha-koz2008} or even
+2~\cite{dud-koz-mat2011}, depending on several factors such as the
+porosity. The tortuosity of a geometry is defined by averaging the local
+tortuosity over all streamlines initialized at the inlet, and the
+geometry's tortuosity characterizes average particle
+motions~\cite{hak-com-den2019}.  To characterize spreading, the fluid
+dispersion is computed by calculating the variance of the streamline
+lengths. In porous media, this spreading is often
 super-dispersive~\cite{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
-dea-leb-den-tar-bol-dav2013}. \nick{Since anomalous dispersion results from streamlines spending time in both the high and low velocity}
-regimes~\cite{ber-sch2001}, it is crucial to accurately resolve  streamlines near grain boundaries, as achieved in this work.
-Finally, \nick{the distribution of pore sizes is required to} quantify velocity distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018}, channelization~\cite{sie-ili-pri-riv-gua2019}, connectivity~\cite{knu-car2005, wes-blo-gra2001}, and to develop network models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. \nick{Hence, we construct the pore-size distribution throughout the erosion process.}
+dea-leb-den-tar-bol-dav2013}. Since anomalous dispersion results from
+streamlines spending time in both the high and low velocity
+regimes~\cite{ber-sch2001}, it is crucial to accurately resolve
+streamlines near grain boundaries, as achieved in this work.  Finally,
+the distribution of pore sizes is required to quantify velocity
+distributions~\cite{ali-par-wei-bre2017, dea-qua-bir-jua2018},
+channelization~\cite{sie-ili-pri-riv-gua2019},
+connectivity~\cite{knu-car2005, wes-blo-gra2001}, and to develop network
+models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. Hence, we
+construct the pore-size distribution throughout the erosion process.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Contributions}
 Our first contribution is extending the Barycentric quadrature rule of
-Barnett et al.~\cite{bar-wu-vee2015} \nick{to accurately compute velocity gradients associated with Stokes flow.}
-\nick{This new quadrature rule permits accurate and stable simulations of erosion, and, moreover, enables visualization of the vorticity field throughout.}
+Barnett et al.~\cite{bar-wu-vee2015} to accurately compute velocity
+gradients associated with Stokes flow. This new quadrature rule permits
+accurate and stable simulations of erosion, and, moreover, enables
+visualization of the vorticity field throughout.
 
 Our second contribution is computing and analyzing trajectories in
-eroded geometries.  These trajectories are used to characterize the
-transport by computing the local tortuosity of trajectories, and the
-tortuosity and dispersion rate of eroded geometries. By using the
-Barycentric quadrature rule and a fourth-order Runge-Kutta method, we
-accurately compute trajectories that spend large amounts of time in the
-slow velocity regions near the eroding bodies, a necessity to
-characterize the flow~\cite{dea-leb-den-tar-bol-dav2013}.  We compare
-our tortuosity and dispersion rates with models available in the
-literature.  Finally, we analyze the effect of erosion on the pore size
+eroded geometries.  These trajectories are formed by combining the
+Barycentric quadrature rule and a fourth-order Runge-Kutta method. Then,
+they are used to compute tortuosities and dispersion rates of eroded
+geometries. Finally, we analyze the effect of erosion on the pore size
 distribution.
-
-\todo[inline]{The above paragraph seems to repeat a lot of what has been mentioned already, but maybe that is okay.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Limitations}
 As in our previous work~\cite{qua-moo2018}, we consider two-dimensional
-immobile eroding grains. However, this work \nick{does not limit} the proximity of  grains. Compared to our previous work, we are able to
-simulate much denser suspensions with a comparable number of
-discretization points and without upsampling.  While we do investigate
-transport in this work, we only consider passive particles that are
-advected by the flow.  To model other physical processes, such as
-contaminant transport, we plan to simulate a finite Peclet number
-advection-diffusion equation in eroded geometries.
-
+immobile eroding grains. However, this work does not limit the proximity
+of  grains. Compared to our previous work, we are able to simulate much
+denser suspensions with a comparable number of discretization points and
+without upsampling.  While we do investigate transport in this work, we
+only consider passive particles that are advected by the flow.  To model
+other physical processes, such as contaminant transport, we plan to
+simulate a finite Peclet number advection-diffusion equation in eroded
+geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Outline of the Paper}
-In Section~\ref{sec:formulation}, we summarize the erosion model \nick{that is described in more detail in} previous work~\cite{qua-moo2018}.  In
+In Section~\ref{sec:formulation}, we summarize the erosion model that is
+described in more detail in previous work~\cite{qua-moo2018}.  In
 Section~\ref{sec:DLP}, we recast all the governing equations as layer
 potentials defined in both $\RR^2$ and in $\CC$.
 Section~\ref{sec:transport} describes measures for characterizing the
 geometry, transport, and dispersion. Section~\ref{sec:method} describes
 the numerical methods, with special attention paid to the new quadrature
-method \nick{for computing} shear stress and vorticity.
+method for computing the shear stress and the vorticity.
 Section~\ref{sec:results} presents numerical examples for a variety of
 dense packings of bodies.  Finally, concluding remarks are made in
 Section~\ref{sec:conclusions}.
@@ -250,14 +286,20 @@ Section~\ref{sec:conclusions}.
 \label{sec:formulation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We start by defining the main variables used to model erosion.  We only
-\nick{briefly summarize the model, since a more detailed description can be found in previous} work~\cite{qua-moo2018}.  We consider flows inside a confined geometry $\Omega$ that contains $M$ eroding bodies with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$.  
-\nick{The boundary of the fluid domain is $\bd \Omega = \Gamma \cup
-\gamma_1 \cup \cdots \cup \gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly smoothed version of $[-3,3] \times [-1,1]$}. 
-\nick{We only place eroding bodies in $[-1,1] \times [-1,1]$ so as to create a buffer region for the flow profile imposed at the inlet to transition to the more complex flow intervening between the bodies}. On each
-eroding body, $\nn$ is the normal vector pointing into the body, and
-$\ss$ is the unit tangent vector pointing in the counterclockwise
-direction.  The normal vector on $\Gamma$ is the outward unit normal.
-Neglecting inertial forces, the governing equations are
+briefly summarize the model, and a more detailed description can be
+found in previous work~\cite{qua-moo2018}.  We consider flows inside a
+confined geometry $\Omega$ that contains $M$ eroding bodies with
+boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$.  The boundary of the
+fluid domain is $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup
+\gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly
+smoothed version of $[-3,3] \times [-1,1]$.  We only place eroding
+bodies in $[-1,1] \times [-1,1]$ so as to create a buffer region for the
+flow profile imposed at the inlet to transition to the more complex flow
+intervening between the bodies. On each eroding body, $\nn$ is the
+normal vector pointing into the body, and $\ss$ is the unit tangent
+vector pointing in the counterclockwise direction.  The normal vector on
+$\Gamma$ is the outward unit normal.  Neglecting inertial forces, the
+governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
   \begin{split}
@@ -280,11 +322,11 @@ of $\gamma$, and
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
-is the shear stress on $\gamma$.  The strength of $\UU$ is adjusted at
-each time step \nick{to achieve} a constant pressure drop across the
-channel.  We simulate erosion by alternating between solving the fluid
-equations and advancing the grains according to the erosion rate for a
-small time step.
+is the shear stress on $\gamma$. We simulate erosion by alternating
+between solving the fluid equations nd advancing the grains according to
+the erosion rate for a small time step. The strength of $\UU$ is
+adjusted at each time step to achieve a constant pressure drop across
+the channel.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
@@ -295,7 +337,7 @@ equations in complex two-dimensional geometries, we reformulate the
 incompressible Stokes equations as a BIE.  This has the advantage that
 only the one-dimensional boundary of the domain must be discretized,
 and, with an appropriate quadrature formula and fast summation methods,
-the result is a high-fidelity numerical simulation of near-optimal
+the result is a high-fidelity numerical simulation with near-optimal
 computational complexity.
 
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
@@ -308,17 +350,18 @@ write the velocity $\uu$ as a double-layer potential
     \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
   \label{eqn:velocityDLP}
 \end{align}
-where $D$ is \nick{\st{an} a} kernel of the integral operator, $\rr =
-\xx - \yy$, $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$,
-and $\eeta$ is an unknown density function.  The double-layer potential
-can not represent all solutions of the incompressible Stokes equations,
-so we complete the integral equation formulation by adding the $M$
-Stokeslets and rotlets~\cite{pow-mir1987}
+where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
+$\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
+is an unknown density function.  The double-layer potential can not
+represent all solutions of the incompressible Stokes equations, so we
+complete the integral equation formulation by adding the $M$ Stokeslets
+and rotlets~\cite{pow-mir1987}
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
     -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
     \right)\llambda_\ell, \quad
   R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
+  \quad \ell=1,\ldots,M,
 \end{align}
 where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
 $\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
@@ -346,14 +389,16 @@ where the density function, Stokeslets, and rotlets satisfy
 \end{alignat}
 \end{subequations}
 Here, the null space associated with the flux-free condition of $\ff$ is
-addressed with the integral operator $\NN_0$ which has the integral
-kernel $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$.
-In this work, $\ff$ is the prescribed velocity, $\UU$, on the outer
-wall, $\Gamma$, and is zero on the eroding bodies, $\gamma_\ell$,
-$\ell=1,\ldots,M$.  
+addressed with the integral operator $\NN_0$ which is the integral
+operator with kernel $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$,
+$\xx,\yy \in \Gamma$.  In this work, $\ff$ is the prescribed velocity,
+$\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
+$\gamma_\ell$, $\ell=1,\ldots,M$.  
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
-Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, \nick{we are able to compute the deformation tensor, pressure, and vorticity, defined respectively as}
+Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, we are able to
+compute the deformation tensor, pressure, and vorticity, defined
+respectively as
 \begin{align}
   \label{eqn:deformationDLP} 
   \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
@@ -378,10 +423,10 @@ Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, \nick{we are able to com
       \eeta(\yy) ds_{\yy} 
   = -\frac{1}{\pi} \int_{\bd\Omega}
     \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
-      (\rr \cdot \eeta) \, ds_\yy,
+      (\rr \cdot \eeta) \, ds_\yy.
 \end{align}
-respectively.  Since the deformation tensor of the double-layer
-potential is discontinuous across $\bd\Omega$, the jump term 
+Since the deformation tensor of the double-layer potential is
+discontinuous across $\bd\Omega$, the jump term 
 \begin{align}
   \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
     \begin{array}{cc}
@@ -390,12 +435,13 @@ potential is discontinuous across $\bd\Omega$, the jump term
   \right],
   \label{eqn:deformationJump}
 \end{align}
-must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.
-Finally, the Stokeslets and rotlets do not exhibit any jumps
-across $\gamma$, and so the associated components of the deformation tensor, pressure, and vorticity due to the Stokeslets
-and rotlets are straightforward to compute~\cite{poz1992}.  Having
-computed the deformation tensor on $\gamma$, the shear stress is
-computed as defined in equation~\eqref{eqn:shearStress}.  
+must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
+Stokeslets and rotlets do not exhibit any jumps across $\gamma$, so the
+associated components of the deformation tensor, pressure, and vorticity
+due to the Stokeslets and rotlets are straightforward to
+compute~\cite{poz1992}.  Having computed the deformation tensor on
+$\gamma$, the shear stress is computed as defined in
+equation~\eqref{eqn:shearStress}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
@@ -406,8 +452,8 @@ In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
 $\uu$ and its deformation tensor are written as layer potentials in
 $\RR^2$, but the quadrature method we introduce in
 Section~\ref{sec:method} requires a complex-valued representation of the
-layer potentials. The first step is to write the Laplace double-layer
-potential as the complex integral
+layer potentials. The first step to find such a representation is to
+write the Laplace double-layer potential as the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
@@ -1274,7 +1320,7 @@ shear flow
   \end{array}
   \right],
 \end{align}
-imposed on the outer wall. Mitchell and Spagnolie~\mit{spa-spa2017} did
+imposed on the outer wall. Mitchell and Spagnolie~\cite{mit-spa2017} did
 a similar three-dimensional experiment using a second-order quadrature
 method. Here, they initialized the eroding body so that its center $1.5$
 times the body's radius above the solid wall.  In two dimensions, the
