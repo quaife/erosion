@@ -139,9 +139,12 @@ the hydrodynamics with the two-dimensional incompressible Stokes
 equations.  Meanwhile, individual grains erode at a rate proportional to
 the hydrodynamic shear stress~\cite{wan-fel2004,
 ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the
-vorticity and the shear stress are equivalent on \nick{solid boundaries}, we also compute the fluid vorticity for visualization purposes (Figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for the fluid solver are available including
-lattice-gas or lattice Boltzmann~\cite{kop-kat-tim1996, dar-mcc1998},
-finite volumes~\cite{suo-liu-gan2019, den-ica-hid2018,
+vorticity and the shear stress are equivalent on solid boundaries, we
+also compute the fluid vorticity for visualization purposes
+(Figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
+the fluid solver are available including lattice-gas or lattice
+Boltzmann~\cite{kop-kat-tim1996, dar-mcc1998}, finite
+volumes~\cite{suo-liu-gan2019, den-ica-hid2018,
 sie-ili-pri-riv-gua2019}, finite differences~\cite{leb-ded-dav-bou2007,
 knu-car2005}, and cellular automata~\cite{rot1988}.  However, simulating
 erosion requires a method that is high-order, can resolve
@@ -188,9 +191,10 @@ in the green regions.}
 \end{center}
 \end{figure}
 
-To characterize transport \nick{through the resulting configurations}, particle trajectories must be computed. Depending on the application, microscale transport can be modelled as
-pure advection~\cite{dea-qua-bir-jua2018, leb-ded-dav-bou2007,
-cve-che-wen1996, puy-gou-den2019},
+To characterize transport through the resulting configurations, particle
+trajectories must be computed. Depending on the application, microscale
+transport can be modelled as pure advection~\cite{dea-qua-bir-jua2018,
+leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019},
 advection-diffusion~\cite{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\cite{saf1959, bij-blu2006, ber-sch-sil2000}.  In
 this work, we assume trajectories to be governed by pure advection
@@ -319,8 +323,9 @@ of $\gamma$, and
   \label{eqn:shearStress}
 \end{align}
 is the shear stress on $\gamma$. We simulate erosion by alternating
-between solving the fluid equations \nick{and} advancing the \nick{erodible boundaries}. The strength of $\UU$ is adjusted at each time step to achieve a constant pressure drop across
-the channel.
+between solving the fluid equations and advancing the erodible
+boundaries. The strength of $\UU$ is adjusted at each time step to
+achieve a constant pressure drop across the channel.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
@@ -348,7 +353,7 @@ write the velocity $\uu$ as a double-layer potential
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  The double-layer potential \nick{cannot}
+is an unknown density function.  The double-layer potential cannot
 represent all solutions of the incompressible Stokes equations, so we
 complete the integral equation formulation by adding the $M$ Stokeslets
 and rotlets~\cite{pow-mir1987}
@@ -385,10 +390,11 @@ where the density function, Stokeslets, and rotlets satisfy
 \end{alignat}
 \end{subequations}
 Here, the null space associated with the flux-free condition of $\ff$ is
-addressed with \nick{\st{the integral operator}} $\NN_0$ which is the integral
-operator having kernel $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$,
-$\xx,\yy \in \Gamma$.  In this work, $\ff$ is the prescribed velocity, \nick{which is equal to  $\UU$ on the outer wall, $\Gamma$, and equal to zero on the eroding bodies,
-$\gamma_\ell$, $\ell=1,\ldots,M$.}
+addressed with  $\NN_0$ which is the integral operator having kernel
+$N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$.  In
+this work, $\ff$ is the prescribed velocity, which is equal to $\UU$ on
+the outer wall, $\Gamma$, and equal to zero on the eroding bodies,
+$\gamma_\ell$, $\ell=1,\ldots,M$.
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, we are able to
@@ -528,10 +534,9 @@ Double-Layer Potential}
 \label{sec:gradDLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Computing the shear stress and vorticity requires a complex-valued layer
-potential representation of the \nick{velocity gradient}.  The
-deformation tensor at $x \in \Omega$ is found by computing the
-derivatives of the expressions for $u_1$ and $u_2$ in
-equation~\eqref{eqn:cauchyVelocity}  
+potential representation of the velocity gradient.  The deformation
+tensor at $x \in \Omega$ is found by computing the derivatives of the
+expressions for $u_1$ and $u_2$ in equation~\eqref{eqn:cauchyVelocity}  
 \begin{equation}
 \label{eqn:cauchyGradient}
   \begin{aligned}
@@ -553,10 +558,10 @@ The same expressions are used to compute the deformation tensor for $x
 \in \bd\Omega$, except that the jump
 condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
 the shear stress, the deformation tensor on $\bd\Omega$ is applied to
-the normal and tangent vectors as in
-equation~\eqref{eqn:shearStress}.  The \nick{velocity gradient} is
-also used to compute the vorticity in the fluid bulk.  For $x \in
-\nick{\CC(\Omega)}$, the Cauchy integral representation of the vorticity is
+the normal and tangent vectors as in equation~\eqref{eqn:shearStress}.
+The velocity gradient is also used to compute the vorticity in the fluid
+bulk.  For $x \in \nick{\CC(\Omega)}$, the Cauchy integral
+representation of the vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\psi_2](x)) + \Im (v'[\psi_1](x)) 
@@ -616,11 +621,13 @@ several grains so that an asymptotic regime is reached. The geometries
 that we consider are too short to observe the asymptotic dispersion, so
 we use a reinsertion method to form longer trajectories. Similar to the
 work of others~\cite{dea-qua-bir-jua2018, puy-gou-den2019}, once a
-particle reaches the \nick{outlet} of the porous region, it is reinserted at the \nick{inlet}.  To minimize errors caused by reinsertion, the particle is initialized at the discretization point that has the closest velocity to the particle's velocity at the outlet.  After a
-single trajectory is formed, it has undergone a collection of
-reinsertions.  Therefore, as a post-processing step, the trajectory is
-made continuous by attaching the tail of each segment to the origin of
-the next segment.  
+particle reaches the outlet of the porous region, it is reinserted at
+the inlet.  To minimize errors caused by reinsertion, the particle is
+initialized at the discretization point that has the closest velocity to
+the particle's velocity at the outlet.  After a single trajectory is
+formed, it has undergone a collection of reinsertions.  Therefore, as a
+post-processing step, the trajectory is made continuous by attaching the
+tail of each segment to the origin of the next segment.  
 
 We consider trajectories in an open channel so that they can be compared
 to trajectories in eroded geometries with large permeability.  The
@@ -787,9 +794,9 @@ $N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ and
 $\gamma_k$ are denoted by $\yy_j^0$ and $\yy^k_j$, respectively.  The
 discretization points are initially distributed evenly in arclength, and
 this equispacing is maintained for the entire simulation by using the
-{\thL} formulation.  In addition, we apply regularization~\cite{qua-moo2018} to \nick{\st{avoid} slightly smooth} the corners that inevitably develop during erosion.
-\todo[inline]{Note: We do not want to say that we avoid corners because that makes it sound like our numerical simulation fails to capture the real physical phenomenon of corner formation.}
-
+{\thL} formulation.  In addition, we apply
+regularization~\cite{qua-moo2018} to slightly smooth the corners that
+inevitably develop during erosion.
 
 Given the discretization points of $\bd\Omega$, applying the trapezoid
 rule results in the collocation method for~\eqref{eqn:BIE} 
@@ -870,12 +877,15 @@ tortuosity is approximated as
 \subsection{Barycentric Quadrature Formulas}
 \label{sec:bary}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\st{Since we are applying quadrature to periodic smooth functions, the
-trapezoid rule is spectrally accurate. However, since
-the derivative of the integrands grows as the target point $\xx$
-approaches $\bd\Omega$, the error bound of the trapezoid rule depends on
-the location of the target point.}
-\nick{While the trapezoid rule is spectrally accurate for smooth, periodic functions~\cite{tre-wei2014}, the derivative of the integrands grows as the target point $\xx$ approaches $\bd\Omega$ and so the error bound depends on the location of the target point.} Therefore, if the trapezoid rule is applied when bodies are in near-contact, or when a layer potential is evaluated at a point close to $\bd\Omega$, then the results become unreliable and the \nick{simulation} ultimately becomes unstable.  We thus \nick{desire a quadrature method whose error bound does not depend on the target location}.
+While the trapezoid rule is spectrally accurate for smooth, periodic
+functions~\cite{tre-wei2014}, the derivative of the integrands grows as
+the target point $\xx$ approaches $\bd\Omega$ and so the error bound
+depends on the location of the target point. Therefore, if the trapezoid
+rule is applied when bodies are in near-contact, or when a layer
+potential is evaluated at a point close to $\bd\Omega$, then the results
+become unreliable and the simulation ultimately becomes unstable.  We
+thus desire a quadrature method whose error bound does not depend on the
+target location.
 
 We showed in Sections~\ref{sec:DLPcomplex} and~\ref{sec:gradDLPcomplex}
 that the velocity, shear stress, and vorticity of the double-layer
@@ -1241,14 +1251,15 @@ $i=1,\ldots,N_p$.
 \nick{In this section, we apply our new quadrature method to simulate
 erosion of several different configurations of nearly-touching eroding
 bodies, and to characterize transport inside eroded geometries.}
-\todo[inline]{This opening sentence is awkward and seems like a run-on sentence.}
-Each eroding body is initially a circle with center $\cc_i$ and radius $r_i$.
-The center and radius are chosen at random, and the body is accepted \nick{if} it is contained in $[-1,1] \times [-1,1]$ and is sufficiently
-separated from all other bodies.  Since the error of our quadrature
-method is bounded independent of the geometry, we consider bodies that
-are separated by less than 10\% of an arclength spacing.  The randomized
-method is repeated until the initial geometry reaches a desired initial
-porosity.
+\todo[inline]{This opening sentence is awkward and seems like a run-on
+sentence.} Each eroding body is initially a circle with center $\cc_i$
+and radius $r_i$.  The center and radius are chosen at random, and the
+body is accepted if it is contained in $[-1,1] \times [-1,1]$ and is
+sufficiently separated from all other bodies.  Since the error of our
+quadrature method is bounded independent of the geometry, we consider
+bodies that are separated by less than 10\% of an arclength spacing.
+The randomized method is repeated until the initial geometry reaches a
+desired initial porosity.
 
 Once the geometry is initialized, each body has length $L_i = 2\pi r_i$,
 and they are each discretized with $N_\iin$ points.  A no-slip boundary
@@ -1267,11 +1278,12 @@ bodies, the vorticity is a useful method to visualize the erosion rate.
 In particular, the rate of erosion is largest in regions where the
 magnitude of the vorticity is largest.
 
-The erosion rate \nick{\st{has a loss of regularity} loses regularity at stagnation points, which inevitably leads to corner formation on the bodies.} 
-As described in Section~\ref{sec:formulation} and our
-previous work~\cite{qua-moo2018}, we introduce a curvature penalization
-term and a Gaussian smoothing step in order to ameliorate corner formation.  
-For all examples, we use the smoothing parameters $\eps=15/256$ and $\sigma=10/256$, and the time
+The erosion rate loses regularity at stagnation points, which inevitably
+leads to corner formation on the bodies.  As described in
+Section~\ref{sec:formulation} and our previous work~\cite{qua-moo2018},
+we introduce a curvature penalization term and a Gaussian smoothing step
+in order to ameliorate corner formation.  For all examples, we use the
+smoothing parameters $\eps=15/256$ and $\sigma=10/256$, and the time
 step size is $\Delta t = 10^{-4}$.
 
 The common characteristic of each of the experiments is near-contact
@@ -1280,7 +1292,7 @@ numerical methods to describe and visualize the following examples:
 \begin{itemize}
   \item{\bf Single Body Close to a Wall}: We consider a single eroding
   body close to the outer wall at $y=-1$.  We impose a shear flow
-  centered at $y=-1$ \nick{and} compare the eroding body's shape to a similar
+  centered at $y=-1$ and compare the eroding body's shape to a similar
   experiment of Spagnolie and Mitchell~\cite{mit-spa2017}.
 
   \item{\bf 20 Bodies at a Medium Porosity}: We consider 20 eroding
@@ -1301,7 +1313,7 @@ numerical methods to describe and visualize the following examples:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Single Body Close to a Wall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\nick{\st{We} First,} consider a single eroding body close to a solid wall with the
+First, consider a single eroding body close to a solid wall with the
 shear flow
 \begin{align}
   \UU(\xx)=\left[
@@ -1310,15 +1322,17 @@ shear flow
   \end{array}
   \right],
 \end{align}
-imposed on the outer wall. Mitchell and Spagnolie~\cite{mit-spa2017} \nick{\st{did} performed} a similar three-dimensional experiment using a second-order quadrature
-method. \st{Here} They initialized the \st{eroding} body \st{so that} with its center located $1.5$ \nick{radii} above the solid wall.  In two dimensions, the
-trapezoid rule is spectrally accurate, and an analogous initial
-configuration is possible. However, unless the number of discretization
-points is increased, the trapezoid rule becomes obsolete if the eroding
-body is initialized closer to the solid wall. Therefore, to simulate
-erosion near a solid wall at reasonable levels of discretization, we use
-our hybrid method that combines the trapezoid rule and the Barycentric
-quadrature rule.
+imposed on the outer wall. Mitchell and Spagnolie~\cite{mit-spa2017}
+performed a similar three-dimensional experiment using a second-order
+quadrature method.  They initialized the \st{eroding} body \st{so that}
+with its center located $1.5$ radii above the solid wall.  In two
+dimensions, the trapezoid rule is spectrally accurate, and an analogous
+initial configuration is possible. However, unless the number of
+discretization points is increased, the trapezoid rule becomes obsolete
+if the eroding body is initialized closer to the solid wall. Therefore,
+to simulate erosion near a solid wall at reasonable levels of
+discretization, we use our hybrid method that combines the trapezoid
+rule and the Barycentric quadrature rule.
 
 We consider an eroding body that is initially a circle of radius
 $r=0.4$.  We discretize the eroding body with $N_\iin=256$
@@ -1415,7 +1429,7 @@ precision.  In particular, the distance between bodies 1, 6, 13, and 15
 and the outer wall is $1.3h$, $2.9h$, $2.8h$, and $1.3h$, respectively,
 where $h$ is the arclength spacing of the outer wall $\Gamma$.  In
 addition, the distance between several pairs of eroding bodies,
-including 1 \& 6, 3 \& 9, 6 \& 8, and 14\& 18, is too small to be
+including 1 \& 6, 3 \& 9, 6 \& 8, and 14 \& 18, is too small to be
 accurately resolved with the trapezoid rule.  By using the Barycentric
 quadrature rule, the interaction between these nearly-touching bodies
 can be accurately resolved at the prescribed resolution, and erosion can
@@ -1803,7 +1817,9 @@ Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
 methods~\eqref{eqn:tortuosity2}. Therefore, we must compute the velocity
 at $N_p = 1000$ points along the inlet $x=-1$. These normalized
 velocities are plotted in Figure~\ref{fig:Eroding100tort}(a) for the
-eroded geometry at porosity $\phi = 63.0\%$
+eroded geometry at porosity $\phi = 63.0\%$ \todo[inline]{Make
+consistent with caption in figu 13 and another caption somwhere else in
+this section}
 (Figure~\ref{fig:Eroding100tort}(c)).  The initial velocity of the
 tracers is qualitatively similar to the 20 body example
 (Figure~\ref{fig:Eroding20tort}(a)), except with additional maximum and
