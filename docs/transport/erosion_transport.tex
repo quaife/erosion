@@ -579,11 +579,11 @@ channelization~\cite{berhanu2012shape}, and we are interested in
 characterizing transport in such geometries.  In our previous
 work~\cite{qua-moo2018}, we examined the effect of erosion on the area
 fraction, flow rate, and the total drag.  However, to characterize
-transport, other quantities must be examined.  Here, we compute the
-anomalous dispersion rate, the tortuosity, and the distribution of the
-pore sizes.  The first two metrics can be defined in terms of
-streamlines governed by an advection autonomous
-equation~\eqref{eqn:tracers}.
+macroscopic signatures of the transport, other quantities must be
+examined.  Here, we compute the anomalous dispersion rate, the
+tortuosity, and the distribution of the pore sizes.  The first two
+metrics can be defined in terms of streamlines governed by an advection
+autonomous equation~\eqref{eqn:tracers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Dispersion}
@@ -1334,11 +1334,11 @@ quadrature rule.
 We consider an eroding body that is initially a circle of radius
 $r=0.4$.  We discretize the eroding body with $N_\iin=256$
 discretization points, and its center is chosen so that the distance
-between the body and the solid wall is $h/2$, $h/4$, and $h/10$, where
-$h = 2\pi r/N_\iin$.  If we used the trapezoid rule and required an
-error that is comparable to the Barycentric quadrature rule, the body
-with an initial distance of $h/10$ from the solid wall would require
-$6,400$ discretization points, and the outer wall would require $50,000$
+between the body and the solid wall is $h$, $h/2$, and $h/10$, where $h
+= 2\pi r/N_\iin$.  If we used the trapezoid rule and required an error
+that is comparable to the Barycentric quadrature rule, the body with an
+initial distance of $h/10$ from the solid wall would require $6,400$
+discretization points, and the outer wall would require $50,000$
 discretization points.
 
 In Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
@@ -1416,21 +1416,21 @@ points.  The background flow is the Hagen-Poiseuille flow
   \right],
 \end{align}
 where the flow rate $U$ is chosen so that the pressure drop from $x=-2$
-to $x=2$ is held fixed at 2.  Snapshots of the bodies at four equispaced
-times are shown in Figure~\ref{fig:Eroding20vort}.  The color is the
-vorticity, and the erosion rate is proportional to the vorticity.
-Initially, several of the eroding bodies are closer to the outer wall
-than the $5h$ threshold required to guarantee that the trapezoid rule
-achieves machine precision.  In particular, the distance between bodies
-1, 6, 13, and 15 and the outer wall is $1.3h$, $2.9h$, $2.8h$, and
-$1.3h$, respectively, where $h$ is the arclength spacing of the outer
-wall $\Gamma$.  In addition, the distance between several pairs of
-eroding bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and 14\& 18, is too
-small to be accurately resolved with the trapezoid rule.  By using the
-Barycentric quadrature rule, the interaction between these
-nearly-touching bodies can be accurately resolved at the prescribed
-resolution, and erosion can be simulated until all the bodies have
-vanished.
+to $x=2$ is held fixed at 8. Therefore, $U=1$ once all the bodies have
+vanished.  Snapshots of the bodies at four equispaced times are shown in
+Figure~\ref{fig:Eroding20vort}.  The color is the vorticity, and the
+erosion rate is proportional to the vorticity.  Initially, several of
+the eroding bodies are closer to the outer wall than the $5h$ threshold
+required to guarantee that the trapezoid rule achieves machine
+precision.  In particular, the distance between bodies 1, 6, 13, and 15
+and the outer wall is $1.3h$, $2.9h$, $2.8h$, and $1.3h$, respectively,
+where $h$ is the arclength spacing of the outer wall $\Gamma$.  In
+addition, the distance between several pairs of eroding bodies,
+including 1 \& 6, 3 \& 9, 6 \& 8, and 14\& 18, is too small to be
+accurately resolved with the trapezoid rule.  By using the Barycentric
+quadrature rule, the interaction between these nearly-touching bodies
+can be accurately resolved at the prescribed resolution, and erosion can
+be simulated until all the bodies have vanished.
 
 \begin{figure}[H]
 \begin{center}
@@ -1728,7 +1728,7 @@ dispersion rate.  For all the porosities, the dispersion is much closer
 to ballistic when compared to the results in
 Figure~\ref{fig:Eroding20Transport}.  However, there are still clear
 transitions from ballistic dynamics to asymptotic super-dispersive
-spreading.  In contrast to the lower porosity initial condition
+spreading.  In contrast to the higher porosity initial condition
 (Section~\ref{sec:Eroding20}), at early times the erosion results in a
 decrease in the dispersion rate. In particular, once erosion has eroded
 the first 5\% of the bodies, the particle spreading transitions from
