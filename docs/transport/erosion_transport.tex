@@ -319,9 +319,7 @@ of $\gamma$, and
   \label{eqn:shearStress}
 \end{align}
 is the shear stress on $\gamma$. We simulate erosion by alternating
-between solving the fluid equations \nick{and} advancing the grains according to
-the erosion rate for a small time step. The strength of $\UU$ is
-adjusted at each time step to achieve a constant pressure drop across
+between solving the fluid equations \nick{and} advancing the \nick{erodible boundaries}. The strength of $\UU$ is adjusted at each time step to achieve a constant pressure drop across
 the channel.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -350,7 +348,7 @@ write the velocity $\uu$ as a double-layer potential
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  The double-layer potential can not
+is an unknown density function.  The double-layer potential \nick{cannot}
 represent all solutions of the incompressible Stokes equations, so we
 complete the integral equation formulation by adding the $M$ Stokeslets
 and rotlets~\cite{pow-mir1987}
@@ -387,11 +385,10 @@ where the density function, Stokeslets, and rotlets satisfy
 \end{alignat}
 \end{subequations}
 Here, the null space associated with the flux-free condition of $\ff$ is
-addressed with the integral operator $\NN_0$ which is the integral
-operator with kernel $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$,
-$\xx,\yy \in \Gamma$.  In this work, $\ff$ is the prescribed velocity,
-$\UU$, on the outer wall, $\Gamma$, and is zero on the eroding bodies,
-$\gamma_\ell$, $\ell=1,\ldots,M$.  
+addressed with \nick{\st{the integral operator}} $\NN_0$ which is the integral
+operator having kernel $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$,
+$\xx,\yy \in \Gamma$.  In this work, $\ff$ is the prescribed velocity, \nick{which is equal to  $\UU$ on the outer wall, $\Gamma$, and equal to zero on the eroding bodies,
+$\gamma_\ell$, $\ell=1,\ldots,M$.}
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, we are able to
@@ -438,7 +435,7 @@ Stokeslets and rotlets do not exhibit any jumps across $\gamma$, so the
 associated components of the deformation tensor, pressure, and vorticity
 due to the Stokeslets and rotlets are straightforward to
 compute~\cite{poz1992}.  Having computed the deformation tensor on
-$\gamma$, the shear stress is computed as defined in
+$\gamma$, the shear stress is computed using
 equation~\eqref{eqn:shearStress}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,19 +453,20 @@ write the Laplace double-layer potential as the complex integral
   \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
     \text{where} \quad v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega,
+    \frac{\eta(y)}{x - y} \, dy, \quad x \in \nick{ \CC(\Omega) },
   \label{eqn:laplaceComplex}
 \end{align}
 where $x,y \in \CC$ are the complex counterparts of $\xx,\yy \in \RR^2$,
-and $\eta$ is the complex counterpart of $\eeta$.
+and $\eta$ the complex counterpart of $\eeta$. \nick{We use the notation $\CC(\Omega)$ to denote the physical domain $\Omega$ represented in complex coordinates.}
+\todo[inline]{What do you think of this notation I introduced to distinguish between $\Omega$ as a real versus complex domain? I was skimming over this section and was very confused about what $x$ and $y$ were, having naively assumed they were physical $x$ and $y$ coordinates instead of complex numbers. Hence I wanted to make their definitions more prominent. I realize that you state $x$ and $y$ are complex numbers, but it is in the text and could be missed by the careless reader (i.e. me).}
 Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
-first finding the boundary data of $v$.  Assuming that $\Omega$ is a
+first finding the boundary data of $v$.  Assuming that $\nick{\CC(\Omega)}$ is a
 simply-connected interior domain, the boundary data of $v$ satisfies the
 Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
   v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
+    \frac{\eta(y)}{x-y}\, dy, \quad x \in \nick{\CC(\bd\Omega)}.
 \end{align}
 For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
 for multiply-connected domains, such as a porous media, $\bd\Omega$ is
@@ -484,7 +482,7 @@ have its boundary data, by the Cauchy integral theorem we have
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy,
 \end{align}
-for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
+for $x \in \nick{\CC(\Omega)}$.  Since $v(x)$ depends on the complex-valued density
 function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
 function defined in equation~\eqref{eqn:laplaceComplex}, and its first
 two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
@@ -530,7 +528,7 @@ Double-Layer Potential}
 \label{sec:gradDLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Computing the shear stress and vorticity requires a complex-valued layer
-potential representation of the gradient of the velocity.  The
+potential representation of the \nick{velocity gradient}.  The
 deformation tensor at $x \in \Omega$ is found by computing the
 derivatives of the expressions for $u_1$ and $u_2$ in
 equation~\eqref{eqn:cauchyVelocity}  
@@ -555,10 +553,10 @@ The same expressions are used to compute the deformation tensor for $x
 \in \bd\Omega$, except that the jump
 condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
 the shear stress, the deformation tensor on $\bd\Omega$ is applied to
-the normal and tangent vectors as defined in
-equation~\eqref{eqn:shearStress}.  The gradient of the velocity field is
+the normal and tangent vectors as in
+equation~\eqref{eqn:shearStress}.  The \nick{velocity gradient} is
 also used to compute the vorticity in the fluid bulk.  For $x \in
-\Omega$, the Cauchy integral representation of the vorticity is
+\nick{\CC(\Omega)}$, the Cauchy integral representation of the vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\psi_2](x)) + \Im (v'[\psi_1](x)) 
@@ -618,10 +616,7 @@ several grains so that an asymptotic regime is reached. The geometries
 that we consider are too short to observe the asymptotic dispersion, so
 we use a reinsertion method to form longer trajectories. Similar to the
 work of others~\cite{dea-qua-bir-jua2018, puy-gou-den2019}, once a
-particle reaches the end of the porous region, it is reinserted at the
-start of the porous region.  To minimize errors caused by reinsertion,
-the particle is initialized at the discretization point that has the
-closest velocity to the particle's velocity at the outlet.  After a
+particle reaches the \nick{outlet} of the porous region, it is reinserted at the \nick{inlet}.  To minimize errors caused by reinsertion, the particle is initialized at the discretization point that has the closest velocity to the particle's velocity at the outlet.  After a
 single trajectory is formed, it has undergone a collection of
 reinsertions.  Therefore, as a post-processing step, the trajectory is
 made continuous by attaching the tail of each segment to the origin of
@@ -670,8 +665,10 @@ and $T=1$ only if no grains are present.
 
 The tortuosity definition depends on how the streamlines are
 defined, and Duda et al.~\cite{dud-koz-mat2011} summarize several
-options. One choice, that we adopt, uses streamlines that originate at
-$S$ and terminate at a parallel cross-section.  We use the
+options.  
+\todo[inline]{What does it mean `how streamlines are defined'? I had thought that the definition of a streamline is unambiguous. Do you mean which streamlines are used? i.e.~If there is a bias towards either shorter or longer streamlines?}
+\nick{\st{One choice, that we adopt, uses }} The choice adopted here is to use
+streamlines that originate at $S$ and terminate at a parallel cross-section.  We use the
 cross-sections $x=-1$ and $x=1$ that are at the start and end of the
 porous region.  This choice of averaging allows us to also compute the
 tortuosity in terms of an area integral.  Assuming that the flow is
@@ -739,6 +736,9 @@ neighbors.  To analyze the effect of erosion on pore sizes, we use a
 single Delaunay triangulation to define the neighbors up until a body
 has completely eroded. At this point, a new Delanuay triangulation is
 formed.
+
+\todo[inline]{This figure seemed out of place to me because you do not present in other graphs yet, only the distribution of pores, and it is before the numerical methods are explained. HOWEVER, I think I see what you are driving towards: I think you want to give the reader a little teaser of the results, so that they are more inclined to make it through the methods section without losing interest (is that more or less right?). So perhaps just a few words to indicate our intent would prevent the reader from getting whiplash; maybe phrases like ``As illustration of the statistical results that will be elaborated in Section blah, we show here....''
+}
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
