@@ -340,7 +340,9 @@ and, with an appropriate quadrature formula and fast summation methods,
 the result is a high-fidelity numerical simulation with near-optimal
 computational complexity.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
 write the velocity $\uu$ as a double-layer potential 
 \begin{align}
@@ -452,17 +454,17 @@ In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
 $\uu$ and its deformation tensor are written as layer potentials in
 $\RR^2$, but the quadrature method we introduce in
 Section~\ref{sec:method} requires a complex-valued representation of the
-layer potentials. The first step to find such a representation is to
+layer potentials. The first step to form a complex representation is to
 write the Laplace double-layer potential as the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
     \text{where} \quad v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy,
+    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega,
   \label{eqn:laplaceComplex}
 \end{align}
-where $\xx,\yy \in \RR^2$ are identified with the points $x,y \in \CC$,
-and $\eta$ is the complex-valued counterpart of $\eeta$.
+where $x,y \in \CC$ are the complex counterparts of $\xx,\yy \in \RR^2$,
+and $\eta$ is the complex counterpart of $\eeta$.
 Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
 first finding the boundary data of $v$.  Assuming that $\Omega$ is a
 simply-connected interior domain, the boundary data of $v$ satisfies the
@@ -487,14 +489,12 @@ have its boundary data, by the Cauchy integral theorem we have
     \frac{v(y)}{(y-x)^3} \, dy,
 \end{align}
 for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
-function $\eta$, we use the notation $v[\eta](x)$ to denote the
-holomorphic function defined in equation~\eqref{eqn:laplaceComplex}, and
-its first two derivatives are written as $v'[\eta](x)$ and
-$v''[\eta](x)$.  
+function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
+function defined in equation~\eqref{eqn:laplaceComplex}, and its first
+two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
   
-To rewrite the Stokes double-layer potential~\eqref{eqn:velocityDLP} in
-terms of Cauchy integrals and their derivatives, we start by converting
-it into a sequence of Laplace layer potentials~\cite{bar-wu-vee2015}
+The Stokes double-layer potential~\eqref{eqn:velocityDLP} can be written
+as~\cite{bar-wu-vee2015}
 \begin{equation}
   \label{eqn:Stokes2Laplace}
   \begin{aligned}
@@ -525,19 +525,18 @@ where $y \cdot \eta = y_1 \eta_1 + i y_2 \eta_2 \in \CC$,
   \psi_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad
   \psi_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
 \end{align}
-and $n \in \CC$ is the complex representation of the outward unit normal
+and $n \in \CC$ is the complex counterpart of the outward unit normal
 $\nn \in \RR^2$.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation for the Gradient of the
 Double-Layer Potential}
 \label{sec:gradDLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In addition to the velocity, we require a complex-valued layer potential representation
-of the gradient of the velocity so that we can compute the shear stress
-and the vorticity.  The deformation tensor at $x \in \Omega$ is found by
-computing the derivatives of $u_1$ and $u_2$ as defined in
+Computing the shear stress and vorticity requires a complex-valued layer
+potential representation of the gradient of the velocity.  The
+deformation tensor at $x \in \Omega$ is found by computing the
+derivatives of the expressions for $u_1$ and $u_2$ in
 equation~\eqref{eqn:cauchyVelocity}  
 \begin{equation}
 \label{eqn:cauchyGradient}
