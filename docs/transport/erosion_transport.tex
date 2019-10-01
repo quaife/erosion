@@ -458,7 +458,7 @@ write the Laplace double-layer potential as the complex integral
 \end{align}
 where $x,y \in \CC$ are the complex counterparts of $\xx,\yy \in \RR^2$,
 and $\eta$ the complex counterpart of $\eeta$. \nick{We use the notation $\CC(\Omega)$ to denote the physical domain $\Omega$ represented in complex coordinates.}
-\todo[inline]{What do you think of this notation I introduced to distinguish between $\Omega$ as a real versus complex domain? I was skimming over this section and was very confused about what $x$ and $y$ were, having naively assumed they were physical $x$ and $y$ coordinates instead of complex numbers. Hence I wanted to make their definitions more prominent. I realize that you state $x$ and $y$ are complex numbers, but it is in the text and could be missed by the careless reader (i.e. me).}
+\todo[inline]{What do you think of this notation I introduced to distinguish between $\Omega$ as a real versus complex domain? I was skimming over this section and was very confused about what $x$ and $y$ were, having naively assumed they were physical $x$ and $y$ coordinates instead of complex numbers. Hence I wanted to make their definitions more prominent. I realize that you state $x$ and $y$ are complex numbers, but it is in the text and could be missed by the careless reader (i.e. me). However, I am not married to this notation and could easily be convinced just to leave it as you had it.}
 Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
 first finding the boundary data of $v$.  Assuming that $\nick{\CC(\Omega)}$ is a
 simply-connected interior domain, the boundary data of $v$ satisfies the
@@ -737,7 +737,7 @@ single Delaunay triangulation to define the neighbors up until a body
 has completely eroded. At this point, a new Delanuay triangulation is
 formed.
 
-\todo[inline]{This figure seemed out of place to me because you do not present in other graphs yet, only the distribution of pores, and it is before the numerical methods are explained. HOWEVER, I think I see what you are driving towards: I think you want to give the reader a little teaser of the results, so that they are more inclined to make it through the methods section without losing interest (is that more or less right?). So perhaps just a few words to indicate our intent would prevent the reader from getting whiplash; maybe phrases like ``As illustration of the statistical results that will be elaborated in Section blah, we show here....''
+\todo[inline]{This figure seemed out of place to me because you do not present other graphs yet, only the distribution of pores, and it is before the numerical methods are explained. HOWEVER, I think I see what you are driving towards: I think you want to give the reader a little teaser of the results, so that they are more inclined to make it through the methods section without losing interest (is that more or less right?). So perhaps just a few words to indicate our intent would prevent the reader from getting whiplash; maybe phrases like ``As illustration of the statistical results that will be elaborated in Section blah, we show here....''
 }
 
 \begin{figure}[H]
@@ -787,9 +787,9 @@ $N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ and
 $\gamma_k$ are denoted by $\yy_j^0$ and $\yy^k_j$, respectively.  The
 discretization points are initially distributed evenly in arclength, and
 this equispacing is maintained for the entire simulation by using the
-{\thL} formulation.  In addition, we apply mild smoothing
-strategies~\cite{qua-moo2018} to avoid the corners that inevitably
-develop in erosion.
+{\thL} formulation.  In addition, we apply regularization~\cite{qua-moo2018} to \nick{\st{avoid} slightly smooth} the corners that inevitably develop during erosion.
+\todo[inline]{Note: We do not want to say that we avoid corners because that makes it sound like our numerical simulation fails to capture the real physical phenomenon of corner formation.}
+
 
 Given the discretization points of $\bd\Omega$, applying the trapezoid
 rule results in the collocation method for~\eqref{eqn:BIE} 
@@ -870,16 +870,12 @@ tortuosity is approximated as
 \subsection{Barycentric Quadrature Formulas}
 \label{sec:bary}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Since we are applying quadrature to periodic smooth functions, the
-trapezoid rule is spectrally accurate~\cite{tre-wei2014}. However, since
+\st{Since we are applying quadrature to periodic smooth functions, the
+trapezoid rule is spectrally accurate. However, since
 the derivative of the integrands grows as the target point $\xx$
 approaches $\bd\Omega$, the error bound of the trapezoid rule depends on
-the location of the target point. Therefore, if the trapezoid rule, as
-described in Section~\ref{sec:spatialDiscretization}, is applied when
-bodies are in near-contact, or when a layer potential is evaluated at a
-point close to $\bd\Omega$, then the results become unreliable and the
-method ultimately becomes unstable.  Thus, we require a quadrature
-method with an error bound that is independent of the target location.
+the location of the target point.}
+\nick{While the trapezoid rule is spectrally accurate for smooth, periodic functions~\cite{tre-wei2014}, the derivative of the integrands grows as the target point $\xx$ approaches $\bd\Omega$ and so the error bound depends on the location of the target point.} Therefore, if the trapezoid rule is applied when bodies are in near-contact, or when a layer potential is evaluated at a point close to $\bd\Omega$, then the results become unreliable and the \nick{simulation} ultimately becomes unstable.  We thus \nick{desire a quadrature method whose error bound does not depend on the target location}.
 
 We showed in Sections~\ref{sec:DLPcomplex} and~\ref{sec:gradDLPcomplex}
 that the velocity, shear stress, and vorticity of the double-layer
@@ -1242,12 +1238,12 @@ $i=1,\ldots,N_p$.
 \section{Numerical Results}
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this section, we apply our new quadrature method to simulate
+\nick{In this section, we apply our new quadrature method to simulate
 erosion of several different configurations of nearly-touching eroding
-bodies, and to characterize transport inside eroded geometries.  Each
-eroding body is initially a circle with center $\cc_i$ and radius $r_i$.
-The center and radius are chosen at random, and the body is accepted as
-long as it is contained in $[-1,1] \times [-1,1]$ and is sufficiently
+bodies, and to characterize transport inside eroded geometries.}
+\todo[inline]{This opening sentence is awkward and seems like a run-on sentence.}
+Each eroding body is initially a circle with center $\cc_i$ and radius $r_i$.
+The center and radius are chosen at random, and the body is accepted \nick{if} it is contained in $[-1,1] \times [-1,1]$ and is sufficiently
 separated from all other bodies.  Since the error of our quadrature
 method is bounded independent of the geometry, we consider bodies that
 are separated by less than 10\% of an arclength spacing.  The randomized
@@ -1271,12 +1267,11 @@ bodies, the vorticity is a useful method to visualize the erosion rate.
 In particular, the rate of erosion is largest in regions where the
 magnitude of the vorticity is largest.
 
-The erosion rate has a loss of regularity at stagnation points, and this
-inevitably leads to corners developing on the eroding bodies.
-Therefore, as described in Section~\ref{sec:formulation} and our
+The erosion rate \nick{\st{has a loss of regularity} loses regularity at stagnation points, which inevitably leads to corner formation on the bodies.} 
+As described in Section~\ref{sec:formulation} and our
 previous work~\cite{qua-moo2018}, we introduce a curvature penalization
-term and a Gaussian smoothing step.  For all examples, we use the
-smoothing parameters $\eps=15/256$ and $\sigma=10/256$, and the time
+term and a Gaussian smoothing step in order to ameliorate corner formation.  
+For all examples, we use the smoothing parameters $\eps=15/256$ and $\sigma=10/256$, and the time
 step size is $\Delta t = 10^{-4}$.
 
 The common characteristic of each of the experiments is near-contact
@@ -1285,7 +1280,7 @@ numerical methods to describe and visualize the following examples:
 \begin{itemize}
   \item{\bf Single Body Close to a Wall}: We consider a single eroding
   body close to the outer wall at $y=-1$.  We impose a shear flow
-  centered at $y=-1$, we compare the eroding body's shape to a similar
+  centered at $y=-1$ \nick{and} compare the eroding body's shape to a similar
   experiment of Spagnolie and Mitchell~\cite{mit-spa2017}.
 
   \item{\bf 20 Bodies at a Medium Porosity}: We consider 20 eroding
@@ -1306,7 +1301,7 @@ numerical methods to describe and visualize the following examples:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Single Body Close to a Wall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider a single eroding body close to a solid wall with the
+\nick{\st{We} First,} consider a single eroding body close to a solid wall with the
 shear flow
 \begin{align}
   \UU(\xx)=\left[
@@ -1315,10 +1310,8 @@ shear flow
   \end{array}
   \right],
 \end{align}
-imposed on the outer wall. Mitchell and Spagnolie~\cite{mit-spa2017} did
-a similar three-dimensional experiment using a second-order quadrature
-method. Here, they initialized the eroding body so that its center $1.5$
-times the body's radius above the solid wall.  In two dimensions, the
+imposed on the outer wall. Mitchell and Spagnolie~\cite{mit-spa2017} \nick{\st{did} performed} a similar three-dimensional experiment using a second-order quadrature
+method. \st{Here} They initialized the \st{eroding} body \st{so that} with its center located $1.5$ \nick{radii} above the solid wall.  In two dimensions, the
 trapezoid rule is spectrally accurate, and an analogous initial
 configuration is possible. However, unless the number of discretization
 points is increased, the trapezoid rule becomes obsolete if the eroding
