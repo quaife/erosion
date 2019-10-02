@@ -1588,7 +1588,7 @@ quadrature to compute the tortuosity.  As the bodies erode, wide
 channels form where streamlines undergo only minor vertical deflections,
 and this explains why the tortuosity eventually decreases with porosity.
 We computed lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels}, and the power law model gave the
+models~\eqref{eqn:tortuosityModels} and \nick{found the power law to give} the
 smallest error.  The  black dashed line in
 Figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
 \begin{align}
@@ -1604,18 +1604,20 @@ erosion starts to open the channels, the streamlines deflect into the
 fast regions, such as the region above body 11, and this increases the
 amount of vertical deflection, and therefore the tortuosity.
 
+\todo[inline]{I wonder if this initial increase in the tortuosity is specific to the process of erosion, or if it would also occur if we simply took a collection of circular bodies and changed the porosity by controlling the radii? We don't have to answer this question now, but it would be interesting to consider in the future.}
+
 In Figure~\ref{fig:Eroding20Transport}(b), we plot the temporal
 evolution of the particle spreading $\sigma_\lambda$.  The spreading is
-computed at seven geometries of different porosities that are formed
+computed \nick{\st{at} for} seven geometries of different porosities that are formed
 during the erosion process.  So that the spreading reaches a statistical
 equilibrium, we use the reinsertion algorithm described in
 Section~\ref{sec:dispersion} to form sufficiently long trajectories.
-For all the reported porosities, the particle dispersion exhibits two
-power low regimes.  Initially, the dispersion is ballistic
+For all the reported porosities, the particle dispersion exhibits two \nick{distinct
+power \st{low} law} regimes.  Initially, the dispersion is ballistic
 ($\sigma_\lambda \sim t$) since individual fluid particles have not yet
 explored enough space to significantly alter their velocity.  However,
 once the particles have been subjected to a range of velocities, their
-dispersion slows down, and we observe super-dispersive ($\sigma_\lambda
+dispersion slows \nick{\st{down}}, and we observe super-dispersive ($\sigma_\lambda
 \sim t^\alpha$, $\alpha \in (1/2,1)$) behavior over at least one order
 of magnitude in time.  Before any erosion takes place, the anomalous
 dispersion coefficient is $\alpha = 0.56$.  Then, as the grains begin to
