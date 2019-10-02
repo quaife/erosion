@@ -459,20 +459,23 @@ write the Laplace double-layer potential as the complex integral
   \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
     \text{where} \quad v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy, \quad x \in \nick{ \CC(\Omega) },
+    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega,
   \label{eqn:laplaceComplex}
 \end{align}
-where $x,y \in \CC$ are the complex counterparts of $\xx,\yy \in \RR^2$,
-and $\eta$ the complex counterpart of $\eeta$. \nick{We use the notation $\CC(\Omega)$ to denote the physical domain $\Omega$ represented in complex coordinates.}
-\todo[inline]{What do you think of this notation I introduced to distinguish between $\Omega$ as a real versus complex domain? I was skimming over this section and was very confused about what $x$ and $y$ were, having naively assumed they were physical $x$ and $y$ coordinates instead of complex numbers. Hence I wanted to make their definitions more prominent. I realize that you state $x$ and $y$ are complex numbers, but it is in the text and could be missed by the careless reader (i.e. me). However, I am not married to this notation and could easily be convinced just to leave it as you had it.}
+where $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
+counterparts of $\xx = (x_1,x_2),\yy = (y_1,y_2) \in \RR^2$, and $\eta =
+\eta_1 + i \eta_2$ is the complex counterpart of $\eeta =
+(\eta_1,\eta_2)$. Therefore, depending on the formulation of the layer
+potential, the space $\Omega$ can be interpreted as a subset of $\RR^2$
+or the corresponding subset of $\CC$.
 Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
-first finding the boundary data of $v$.  Assuming that $\nick{\CC(\Omega)}$ is a
+first finding the boundary data of $v$.  Assuming that $\Omega$ is a
 simply-connected interior domain, the boundary data of $v$ satisfies the
 Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
   v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x-y}\, dy, \quad x \in \nick{\CC(\bd\Omega)}.
+    \frac{\eta(y)}{x-y}\, dy, \quad x \in \Omega.
 \end{align}
 For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
 for multiply-connected domains, such as a porous media, $\bd\Omega$ is
@@ -488,7 +491,7 @@ have its boundary data, by the Cauchy integral theorem we have
   v''(x) = \frac{1}{\pi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy,
 \end{align}
-for $x \in \nick{\CC(\Omega)}$.  Since $v(x)$ depends on the complex-valued density
+for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
 function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
 function defined in equation~\eqref{eqn:laplaceComplex}, and its first
 two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
@@ -560,8 +563,8 @@ condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
 the shear stress, the deformation tensor on $\bd\Omega$ is applied to
 the normal and tangent vectors as in equation~\eqref{eqn:shearStress}.
 The velocity gradient is also used to compute the vorticity in the fluid
-bulk.  For $x \in \nick{\CC(\Omega)}$, the Cauchy integral
-representation of the vorticity is
+bulk.  For $x \in \Omega$, the Cauchy integral representation of the
+vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
 \Re (v'[\psi_2](x)) + \Im (v'[\psi_1](x)) 
@@ -670,17 +673,16 @@ initial point of the streamline, and $d$ is still the distance between
 the inlet and outlet. Therefore, the tortuosity satisfies $T \geq 1$,
 and $T=1$ only if no grains are present.  
 
-The tortuosity definition depends on how the streamlines are
-defined, and Duda et al.~\cite{dud-koz-mat2011} summarize several
-options.  
-\todo[inline]{What does it mean `how streamlines are defined'? I had thought that the definition of a streamline is unambiguous. Do you mean which streamlines are used? i.e.~If there is a bias towards either shorter or longer streamlines?}
-\nick{\st{One choice, that we adopt, uses }} The choice adopted here is to use
-streamlines that originate at $S$ and terminate at a parallel cross-section.  We use the
-cross-sections $x=-1$ and $x=1$ that are at the start and end of the
-porous region.  This choice of averaging allows us to also compute the
-tortuosity in terms of an area integral.  Assuming that the flow is
-incompressible and not re-entrant, meaning that all streamlines connect
-the two cross-sections, the tortuosity in
+The tortuosity is defined in terms of the length of streamlines between
+a starting and ending point. The starting point is typically along a
+cross-section $S$, but there are several options for the ending
+point~\cite{dud-koz-mat2011}.  The choice adopted here is to use
+streamlines that originate at $S$ and terminate at a parallel
+cross-section.  We use the cross-sections $x=-1$ and $x=1$ that are at
+the start and end of the porous region.  This choice of averaging allows
+us to also compute the tortuosity in terms of an area integral.
+Assuming that the flow is incompressible and not re-entrant, meaning
+that all streamlines connect the two cross-sections, the tortuosity in
 equation~\eqref{eqn:tortuosity1} is equivalent to~\cite{dud-koz-mat2011}
 \begin{align}
   T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
@@ -716,6 +718,23 @@ tortuosity of eroding porous geometries.
 \subsection{Pore Throat Size}
 \label{sec:throats}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap} (a) The pore sizes between
+neighboring grains. Two grains are said to be neighbors if they share an
+edge of a Delanuay configuration that uses nodes placed at the center of
+each eroding grain. (b) The distribution of the pore sizes of an eroded
+geometry. The black curve is the Weibull distribution with the same
+first two moments as the data.}
+\end{figure}
+
 While transport in a porous media depends on the porosity, it also
 depends on the placement of the grains.  In particular, the grain
 placement affects velocity scales~\cite{ali-par-wei-bre2017},
@@ -730,39 +749,14 @@ grains.  To define neighboring grains, we form a Delaunay triangulation
 using nodes placed at the center of each eroding grain and at a
 collection of points around the boundary of the porous region.  Then, we
 say that two grains are neighbors if their centers share an edge of the
-triangulation~\cite{dea-qua-bir-jua2018}.  Finally, we compute the
-minimum distance between all pairs of neighboring grains.  In
-Figure~\ref{fig:Eroding100gap}(a), we plot a histogram of the pore size
-of 100 eroded bodies.  The black curve is an unnormalized Weibull
-distribution with the same mean and variance as the measured data.  In
-Figure~\ref{fig:Eroding100gap}(b), we plot illustrate the pore throat
-sizes by drawing the shortest lines between neighboring grains.  We do
-not consider pores between eroding bodies and the solid wall $\Gamma$,
-so some of the grains near the porous region boundary only have two
-neighbors.  To analyze the effect of erosion on pore sizes, we use a
-single Delaunay triangulation to define the neighbors up until a body
-has completely eroded. At this point, a new Delanuay triangulation is
-formed.
-
-\todo[inline]{This figure seemed out of place to me because you do not present other graphs yet, only the distribution of pores, and it is before the numerical methods are explained. HOWEVER, I think I see what you are driving towards: I think you want to give the reader a little teaser of the results, so that they are more inclined to make it through the methods section without losing interest (is that more or less right?). So perhaps just a few words to indicate our intent would prevent the reader from getting whiplash; maybe phrases like ``As illustration of the statistical results that will be elaborated in Section blah, we show here....''
-}
-
-\begin{figure}[H]
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding100gap} (a) The distribution of the pore
-sizes of an eroded geometry. The black curve is the Weibull distribution
-with the same first two moments as the data. (b) We only consider pore
-sizes between neighboring grains, where two grains are neighbors if they
-share a edge in a Delaunay triangulation using nodes placed at the
-center of each eroding grain.}
-\end{figure}
+triangulation~\cite{dea-qua-bir-jua2018}. The pores for a eroded
+geometry are illustrated in Figure~\ref{fig:Eroding100gap}(a). We do not
+consider pores between eroding bodies and the solid wall $\Gamma$, so
+some of the grains near the porous region boundary only have two
+neighbors. Having defined the pore sizes, we form its distribution and
+compare it with the Weibull distribution (black curve) in
+Figure~\ref{fig:Eroding100gap}(b) . A more complete statistical analysis
+of the pore size distribution is in Section~\ref{sec:Eroding100}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -1248,18 +1242,16 @@ $i=1,\ldots,N_p$.
 \section{Numerical Results}
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\nick{In this section, we apply our new quadrature method to simulate
-erosion of several different configurations of nearly-touching eroding
-bodies, and to characterize transport inside eroded geometries.}
-\todo[inline]{This opening sentence is awkward and seems like a run-on
-sentence.} Each eroding body is initially a circle with center $\cc_i$
-and radius $r_i$.  The center and radius are chosen at random, and the
-body is accepted if it is contained in $[-1,1] \times [-1,1]$ and is
-sufficiently separated from all other bodies.  Since the error of our
-quadrature method is bounded independent of the geometry, we consider
-bodies that are separated by less than 10\% of an arclength spacing.
-The randomized method is repeated until the initial geometry reaches a
-desired initial porosity.
+We now present numerical results on dense packings of bodies eroding in
+Stokes flow. Moreover, we analyze transport through the eroded
+geometries by examining coarse-grained variables.  Each eroding body is
+initially a circle with center $\cc_i$ and radius $r_i$.  The center and
+radius are chosen at random, and the body is accepted if it is contained
+in $[-1,1] \times [-1,1]$ and is sufficiently separated from all other
+bodies.  Since the error of our quadrature method is bounded independent
+of the geometry, we consider bodies that are separated by less than 10\%
+of an arclength spacing.  The randomized method is repeated until the
+initial geometry reaches a desired initial porosity.
 
 Once the geometry is initialized, each body has length $L_i = 2\pi r_i$,
 and they are each discretized with $N_\iin$ points.  A no-slip boundary
@@ -1780,6 +1772,7 @@ $0.72$ ($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and $0.92$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{100 eroding bodies}
+\label{sec:Eroding100}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 As a final example, we consider 100 eroding bodies with an initial
 porosity near 50\%.  Snapshots of the configurations and vorticity are
@@ -1817,9 +1810,7 @@ Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
 methods~\eqref{eqn:tortuosity2}. Therefore, we must compute the velocity
 at $N_p = 1000$ points along the inlet $x=-1$. These normalized
 velocities are plotted in Figure~\ref{fig:Eroding100tort}(a) for the
-eroded geometry at porosity $\phi = 63.0\%$ \todo[inline]{Make
-consistent with caption in figu 13 and another caption somwhere else in
-this section}
+eroded geometry at porosity $\phi = 62.98\%$
 (Figure~\ref{fig:Eroding100tort}(c)).  The initial velocity of the
 tracers is qualitatively similar to the 20 body example
 (Figure~\ref{fig:Eroding20tort}(a)), except with additional maximum and
@@ -1853,7 +1844,7 @@ if the bodies were absent, so the tortuosity is $1.12$.
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100tort} The tortuosity of a porous geometry
-that initially had 100 grains and has eroded to a porosity of 63.0\%.
+that initially had 100 grains and has eroded to a porosity of 62.98\%.
 (a) The $x$-component of the velocity at the inlet, $u_1(-1, y)$,
 normalized by its maximum velocity $u_{max}=3.90 \times 10^{-4}$.  Note
 that this maximum velocity is about a order of magnitude smaller than
@@ -1947,9 +1938,14 @@ dispersion~\cite{dea-qua-bir-jua2018}. In addition, the pore sizes are
 required in network models~\cite{bry-mel-cad1993, bry-kin-mel1993}.  As
 described in Section~\ref{sec:throats}, we use a Delaunay triangulation
 to define neighboring eroding bodies, and we compute the pore size by
-finding the closest distance between all neighboring bodies.  Once all
+finding the closest distance between all neighboring bodies.  Instead of
+computing a Delanuay configuration at each time step, which would result
+in new definitions for the pores at each time step, we only compute a
+new Delaunay triangulation when a grain completely erodes.  Once all
 pore sizes are computed, we analyze their distribution as a function of
-the porosity.  In Figure~\ref{fig:Eroding100gap_hist}, we plot
+the porosity.  
+
+In Figure~\ref{fig:Eroding100gap_hist}, we plot
 histograms of the pore pore sizes at six porosities during the erosion
 process. These types of distributions have been described with Weibull
 distributions~\cite{ioa-cha1993}, and we superimpose the Weibull
