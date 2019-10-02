@@ -1471,7 +1471,7 @@ fit, the flow rate is approximately
 \end{align}
 which is the dashed line in} Figure~\ref{fig:Eroding20flowrate}(b).
 
-\todo[inline]{WAIT.... Fig 7b is a semi-log plot with the x-axis linear and the y-axis logarithmic. Therefore, a straight line indicates exponential increase, not a power law.}
+\todo[inline]{WAIT! Fig 7b is a semi-log plot with the x-axis linear and the y-axis logarithmic. Therefore, a straight line indicates exponential increase, not a power law.}
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1495,18 +1495,17 @@ network of channels from the inlet to outlet where the velocity and
 vorticity, and therefore erosion rate, are much larger than other
 regions.  These channels can be further visualized by considering the
 streamlines.  In Figure~\ref{fig:Eroding20tracer}, we freeze the
-geometry at the second snapshot from Figure~\ref{fig:Eroding20vort}, and
-we plot 200 streamlines that are initialized at $x=-1$ and equally
+geometry at the second snapshot from Figure~\ref{fig:Eroding20vort} and plot 200 streamlines that are initialized at $x=-1$ and equally
 spaced in $y \in (-1,1)$.  The streamlines are shown at five different
 times, and the final plot is a zoom in of the lower right quadrant of
 the fifth time step.  Since we use a high-order quadrature rule and time
 stepping method, we resolve streamlines that come very close to the
-eroded bodies.  There are three clear regions where the streamlines are
-concentrated, and this corresponds to regions of high velocity.  Two of
-these regions are located between the bodies and the solid walls at
+eroded bodies.  There are three clear regions where the streamlines are \nick{most}
+concentrated, \nick{\st{and this}} corresponding to the regions of highest velocity.  Two of these regions are located between the bodies and the solid walls at
 $y=\pm 1$, and the third cuts through the porous region with the upper
-part of the channel formed by bodies 1, 4, 6, and 8.  Since the flow is
-fastest in these regions, the shearing is largest, and this causes the
+part of the channel formed by bodies 1, 4, 6, and 8.  
+\todo[inline]{Right now, this description has the reader looking at Fig. 8, but the bodies are not numbered in that figure, so they don't know which ones are 1, 4, 6, 8 without flipping back and forth with the previous figures to try to match corresponding bodes.}
+Since the flow is fastest in these regions, the shearing is largest, and this causes the
 channels to continue to open fastest which can be observed in
 Figure~\ref{fig:Eroding20vort}.
 
