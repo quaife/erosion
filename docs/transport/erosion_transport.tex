@@ -2060,9 +2060,9 @@ the distributions of grain sizes, shapes, and opening angles.
 
 As a long term goal, we would like to include the effect of inertia and
 other transport models. Including inertia requires an integral equation
-formulation for the Navier-Stokes equations, and one approach has
-recently been developed~\cite{kli-ask-kro2019}. Regarding other
-transport models, this would involve a diffusive term to consider the
+formulation of the Navier-Stokes equations, \nick{which is an active area of research with a few promising algorithms recently proposed}~\cite{gray2019boundary, kli-ask-kro2019}. 
+\todo[inline]{Okay with you if I include my work with Lenny here? After all, the end goal of it is to solve Navier-Stokes with boundary integrals :)}
+Regarding other transport models, this would involve a diffusive term to consider the
 transport of heat or a contaminant. Forming high-fidelity simulations of
 such an advection-diffusion equation can be accomplished by using time
 splitting methods and recent work on heat solvers in complex
