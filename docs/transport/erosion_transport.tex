@@ -290,14 +290,14 @@ confined geometry $\Omega$ that contains $M$ eroding bodies with
 boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$.  The boundary of the
 fluid domain is $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup
 \gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly
-smoothed version of $[-3,3] \times [-1,1]$.  We only place eroding
-bodies in $[-1,1] \times [-1,1]$ so as to create a buffer region for the
-flow profile imposed at the inlet to transition to the more complex flow
-intervening between the bodies. On each eroding body, $\nn$ is the
-normal vector pointing into the body, and $\ss$ is the unit tangent
-vector pointing in the counterclockwise direction.  The normal vector on
-$\Gamma$ is the outward unit normal.  Neglecting inertial forces, the
-governing equations are
+smoothed version of the boundary of $[-3,3] \times [-1,1]$.  We only
+place eroding bodies in $[-1,1] \times [-1,1]$ to create a buffer region
+for the flow profile imposed at the inlet to transition to the more
+complex flow intervening between the bodies. On each eroding body, $\nn$
+is the normal vector pointing into the body, and $\ss$ is the unit
+tangent vector pointing in the counterclockwise direction.  The normal
+vector on $\Gamma$ is the outward unit normal.  Neglecting inertial
+forces, the governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
   \begin{split}
@@ -331,17 +331,17 @@ achieve a constant pressure drop across the channel.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Since we require an accurate solution of the incompressible Stokes
 equations in complex two-dimensional geometries, we reformulate the
-incompressible Stokes equations as a BIE.  This has the advantage that
-only the one-dimensional boundary of the domain must be discretized,
-and, with an appropriate quadrature formula and fast summation methods,
-the result is a high-fidelity numerical simulation with near-optimal
-computational complexity.
+equations as a BIE.  This has the advantage that only the
+one-dimensional boundary of the domain must be discretized, and, with
+appropriate quadrature formulas and fast summation methods, the result
+is a high-fidelity numerical simulation with near-optimal computational
+complexity.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Applying the same approach as our previous work~\cite{qua-moo2018}, we
-write the velocity $\uu$ as a double-layer potential 
+start with the double-layer potential 
 \begin{align}
   \DDD[\eeta](\xx) = \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
   \frac{1}{\pi}\int_{\bd\Omega} 
@@ -351,10 +351,10 @@ write the velocity $\uu$ as a double-layer potential
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  The double-layer potential cannot
-represent all solutions of the incompressible Stokes equations, so we
-complete the integral equation formulation by adding the $M$ Stokeslets
-and rotlets~\cite{pow-mir1987}
+is an unknown density function.  The double-layer potential is a
+solution of the incompressible Stokes equations, but it cannot represent
+all the solutions. Therefore, we complete the integral equation
+formulation by adding the $M$ Stokeslets and rotlets~\cite{pow-mir1987}
 \begin{align}
   S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\pi} \left( 
     -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
@@ -364,9 +364,11 @@ and rotlets~\cite{pow-mir1987}
 \end{align}
 where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
 $\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
-\|\rr\|$.  Then, for any sufficiently smooth geometry $\Omega$, the
-solution of the incompressible Stokes equation with a Dirichlet boundary
-condition $\ff$ is
+\|\rr\|$. Here, $\llambda_\ell$ and $\xi_\ell$ are the Stokeslet and
+rotlet strengths, respectively, corresponding to the $\ell^{th}$ body.
+Then, for any sufficiently smooth geometry $\Omega$, the solution of the
+incompressible Stokes equation with a Dirichlet boundary condition $\ff$
+is
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
@@ -381,14 +383,14 @@ where the density function, Stokeslets, and rotlets satisfy
     \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
     \NN_0[\eeta](\xx), \quad &&\xx \in \bd\Omega, \\
   \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-    \eeta(\yy)\, ds_\yy &&\ell = 1,\ldots,M, \\
+    \eeta(\yy)\, ds_\yy, &&\ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
-    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy 
+    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy, 
     &&\ell = 1,\ldots,M.
 \end{alignat}
 \end{subequations}
 Here, the null space associated with the flux-free condition of $\ff$ is
-addressed with  $\NN_0$ which is the integral operator having kernel
+addressed with  $\NN_0$ which is the integral operator with kernel
 $N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$.  In
 this work, $\ff$ is the prescribed velocity, which is equal to $\UU$ on
 the outer wall, $\Gamma$, and equal to zero on the eroding bodies,
@@ -396,8 +398,8 @@ $\gamma_\ell$, $\ell=1,\ldots,M$.
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, we are able to
-compute the deformation tensor, pressure, and vorticity, defined
-respectively as
+compute, for $\xx \in \Omega$, the deformation tensor, pressure, and
+vorticity, defined respectively as
 \begin{align}
   \label{eqn:deformationDLP} 
   \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
@@ -437,14 +439,14 @@ discontinuous across $\bd\Omega$, the jump term
 must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
 Stokeslets and rotlets do not exhibit any jumps across $\gamma$, so the
 associated components of the deformation tensor, pressure, and vorticity
-due to the Stokeslets and rotlets are straightforward to
-compute~\cite{poz1992}.  Having computed the deformation tensor on
-$\gamma$, the shear stress is computed using
+are straightforward to compute~\cite{poz1992}.  Having computed the
+deformation tensor on $\gamma$, the shear stress is computed using
 equation~\eqref{eqn:shearStress}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
+\todo[inline]{Bryan is here}
 \label{sec:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
