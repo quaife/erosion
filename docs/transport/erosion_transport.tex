@@ -1680,8 +1680,8 @@ Initially, the smallest distance between pairs of bodies is $3.29 \times
 10^{-4}$, and the smallest distance between the bodies and solid wall is
 $4.50 \times 10^{-3}$.  At these distances, a resolution of
 approximately $N_\iin = 27,000$ and $N_\out = 18,000$ discretization
-points is required to satisfy the $5h$ threshold required \nick{\st{to guarantee
-that} for} the trapezoid rule achieves machine precision.  By applying the
+points is required to satisfy the $5h$ threshold \nick{\st{required to guarantee
+that} needed for} the trapezoid rule to achieve machine precision.  By applying the
 Barycentric quadrature rule, we stably simulate erosion at the much
 coarser resolution of $N_\iin = 256$ and $N_\out = 1024$ discretization
 points.
@@ -1715,7 +1715,7 @@ the power law
 This model outperformed the other three models in
 equation~\eqref{eqn:tortuosityModels}, and its root-mean-squared error
 is $1.13 \times 10^{-2}$.  As grains erode, there is an increase in the
-number of streamlines that take a nearly direct pact through the
+number of streamlines that take a nearly direct \nick{\st{pact} path} through the
 geometry, and this decreases the tortuosity. However, the channelization
 effect of erosion results in an increase in the tortuosity since the
 length of many of the streamlines increases when they deflect from a
@@ -1734,7 +1734,8 @@ Figure~\ref{fig:Eroding20Transport}.  However, there are still clear
 transitions from ballistic dynamics to asymptotic super-dispersive
 spreading.  In contrast to the higher porosity initial condition
 (Section~\ref{sec:Eroding20}), at early times the erosion results in a
-decrease in the dispersion rate. In particular, once erosion has eroded
+decrease in the dispersion rate. In particular, \nick{once erosion has eroded}
+\todo[inline]{Erosion has eroded?}
 the first 5\% of the bodies, the particle spreading transitions from
 $\sigma_\lambda \sim t^{0.92}$ to $\sigma_\lambda \sim t^{0.69}$.  To
 explain this behavior, recall that anomalous dispersion is caused by
@@ -1834,8 +1835,10 @@ nearby streamlines that are deflected apart from one another as they
 tend to a stagnation point in the flow, and this results in trajectories
 with significantly different lengths.  At this porosity, one of the
 tracers travels 25.5\% farther than it would have if the bodies had been
-absent, and the average tracer travelled 12\% farther than it would have
-if the bodies were absent, so the tortuosity is $1.12$.
+absent, and the average tracer travelled 12\% farther \nick{\st{than it would have
+if the bodies were absent,} indicating a tortuosity of $1.12$.}
+\todo[inline]{Here and in a previous example, I believe the qualifier `than it would have if the bodies were absent' is obvious from the first part of the sentence and does not need to be repeated because it makes the sentence very verbose.}
+
 
 \begin{figure}[H]
 \begin{subfigure}[b]{0.45\textwidth}
