@@ -1505,16 +1505,16 @@ streamlines.  In Figure~\ref{fig:Eroding20tracer}, we freeze the
 geometry at the second snapshot from Figure~\ref{fig:Eroding20vort} and plot 200 streamlines that are initialized at $x=-1$ and equally
 spaced in $y \in (-1,1)$.  The streamlines are shown at five different
 times, and the final plot is a zoom in of the lower right quadrant of
-the fifth time step.  Since we use a high-order quadrature rule and time
-stepping method, we resolve streamlines that come very close to the
-eroded bodies.  There are three clear regions where the streamlines are
-most concentrated, corresponding to the regions of highest velocity.
-Two of these regions are located between the bodies and the solid walls
-at $y=\pm 1$, and the third cuts through the porous region with the
-upper part of the channel formed by bodies 1, 4, 6, and 8.  Since the
-flow is fastest in these regions, the shearing is largest, and this
-causes the channels to continue to open fastest as observed in
-Figure~\ref{fig:Eroding20vort}.
+the fifth time step, but with additional streamlines.  Since we use a
+high-order quadrature rule and time stepping method, we resolve
+streamlines that come very close to the eroded bodies.  There are three
+clear regions where the streamlines are most concentrated, corresponding
+to the regions of highest velocity.  Two of these regions are located
+between the bodies and the solid walls at $y=\pm 1$, and the third cuts
+through the porous region with the upper part of the channel formed by
+bodies 1, 4, 6, and 8.  Since the flow is fastest in these regions, the
+shearing is largest, and this causes the channels to continue to open
+fastest as observed in Figure~\ref{fig:Eroding20vort}.
 
 \begin{figure}[H]
 \begin{center}
@@ -1528,9 +1528,10 @@ Figure~\ref{fig:Eroding20vort}.
 geometry from Figure~\ref{fig:Eroding20vort}. The streamlines are
 initialized at $x=-1$ and are equally spaced in $y \in (-1,1)$. The
 first five snapshots are evenly spaced in time.  The bottom right frame
-is a zoom in of the fifth snapshot.  Since we use the Barycentric
-quadrature rule and the fourth-order Runge-Kutta method, some
-streamlines are very close to the grains without penetrating them.}
+is a zoom in of the fifth snapshot, but with additional streamlines.
+Since we use the Barycentric quadrature rule and the fourth-order
+Runge-Kutta method, some streamlines are very close to the grains
+without penetrating them.}
 \end{center}
 \end{figure}
 
