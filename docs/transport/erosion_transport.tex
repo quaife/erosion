@@ -654,7 +654,6 @@ channel with the trajectories in an eroded geometry.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{Bryan is here}
 The tortuosity is a dimensionless number that quantifies the amount of
 twisting of streamlines. Unlike the dispersion calculations, we do not
 use reinsertion to form long trajectories.  The local tortuosity is
@@ -662,31 +661,28 @@ use reinsertion to form long trajectories.  The local tortuosity is
   \tau(y_0) = \frac{\lambda(y_0)}{d}.
   \label{eqn:localTort}
 \end{align}
-Here, the streamline originates at $(x_0,y_0)$ on the inlet and its
-arclength is calculated once it passes the parallel outlet $x = x_0 +
-d$.  The hydraulic tortuosity is defined by taking the average over all
-points on the cross-section
+Here, the streamline originates on the inlet cross-section $x=x_0$ at
+$(x_0,y_0)$, and its arclength, $\lambda(y_0)$, is calculated until the
+streamline passes the parallel outlet cross-section $x = x_0 + d$.  In
+this work, we consider streamlines originating at $x=-1$ and terminating
+at $x=1$, so $d=2$.  However, other choices for the terminal point when
+computing the tortuosity are sometime used~\cite{dud-koz-mat2011}.  The
+hydraulic tortuosity is defined by taking the average over all points on
+the inlet cross-section
 \begin{align}
   T = \frac{1}{d}\frac{\displaystyle\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0}
   {\displaystyle\int_{S}u_1(x_0,y_0)\,dy_0},
   \label{eqn:tortuosity1}
-\end{align}
-where $S$ is the inlet cross-section $x = x_0$ that is perpendicular to
-the $x$-axis, $u_1(y_0)$ is the $x$ component of the velocity at the
-initial point of the streamline, and $d$ is still the distance between
-the inlet and outlet. Therefore, the tortuosity satisfies $T \geq 1$,
-and $T=1$ only if no grains are present.  
+\end{align} 
+where $S$ is the inlet cross-section $x = -1$, $u_1(y_0)$ is the
+$x$-component of the velocity at the initial point of the streamline,
+and $d=2$ is the distance between the inlet and outlet.  Note that $T
+\geq 1$, and $T=1$ only if no grains are present.
 
-The tortuosity is defined in terms of the length of streamlines between
-a starting and ending point. The starting point is typically along a
-cross-section $S$, but there are several options for the ending
-point~\cite{dud-koz-mat2011}.  The choice adopted here is to use
-streamlines that originate at $S$ and terminate at a parallel
-cross-section.  We use the cross-sections $x=-1$ and $x=1$ that are at
-the start and end of the porous region.  This choice of averaging allows
-us to also compute the tortuosity in terms of an area integral.
-Assuming that the flow is incompressible and not re-entrant, meaning
-that all streamlines connect the two cross-sections, the tortuosity in
+The definition we made for the tortuosity allows us to compute the
+tortuosity in terms of an area integral.  Assuming that the flow is
+incompressible and not re-entrant, meaning that all streamlines connect
+the two cross-sections, the tortuosity in
 equation~\eqref{eqn:tortuosity1} is equivalent to~\cite{dud-koz-mat2011}
 \begin{align}
   T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
@@ -703,8 +699,9 @@ definition for the majority of the tortuosity calculations.  However, we
 do compare the two definitions for the tortuosity at several porosities
 in Section~\ref{sec:results}.
 
-There have been efforts to relate the tortuosity to the porosity.  For
-example, Matyka et al.~\cite{mat-kha-koz2008} propose the models
+There have been efforts to relate the tortuosity, $T$, to the porosity,
+$\phi$.  For example, Matyka et al.~\cite{mat-kha-koz2008} propose the
+models
 \begin{subequations}
   \label{eqn:tortuosityModels}
   \begin{align}
@@ -714,14 +711,36 @@ example, Matyka et al.~\cite{mat-kha-koz2008} propose the models
     \widehat{T}(\phi) &= (1+p (1-\phi))^2, 
   \end{align}
 \end{subequations}
-where $\phi$ is the porosity and $p>0$ is a fitting parameter.  In
-Section~\ref{sec:results}, we compare these four models with the
-tortuosity of eroding porous geometries.
+where $p>0$ is a fitting parameter.  In Section~\ref{sec:results}, we
+compare these four models with the tortuosity of eroding porous
+geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pore Throat Size}
 \label{sec:throats}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+While transport in porous media depends on the porosity, it also depends
+on the placement of the grains.  In particular, grain placement affects
+velocity scales~\cite{ali-par-wei-bre2017}, correlation
+structures~\cite{leb-ded-dav-bou2007}, contaminant
+transport~\cite{knu-car2005},
+channelization~\cite{sie-ili-pri-riv-gua2019,berhanu2012shape}, and pore
+network models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. To
+characterize the grain placement, we compute distributions of pore sizes
+between neighboring grains.  To define neighboring grains, we form a
+Delaunay triangulation using nodes placed at the center of each eroding
+grain and at a collection of points around the boundary of the porous
+media.  Then, we say that two grains are neighbors if their centers
+share an edge of the triangulation~\cite{dea-qua-bir-jua2018}. The pores
+of an eroded geometry are illustrated in
+Figure~\ref{fig:Eroding100gap}(a). We do not consider pores between
+eroding bodies and the solid wall $\Gamma$, so some of the grains near
+the porous region boundary only have two neighbors. Having defined the
+pore sizes, we plot its distribution in
+Figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
+distribution, a distribution used by others to characterize pore
+sizes~\cite{ioa-cha1993}.  In Section~\ref{sec:Eroding100}, we
+investigate the effect of erosion on the pore size distribution.
 \begin{figure}[H]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
@@ -733,39 +752,18 @@ tortuosity of eroding porous geometries.
 \end{subfigure}
 \caption{\label{fig:Eroding100gap} (a) The pore sizes between
 neighboring grains. Two grains are said to be neighbors if they share an
-edge of a Delanuay configuration that uses nodes placed at the center of
-each eroding grain. (b) The distribution of the pore sizes of an eroded
+edge of a Delanuay triangulation with nodes at the center of each
+eroding grain. (b) The distribution of the pore sizes of an eroded
 geometry. The black curve is the Weibull distribution with the same
 first two moments as the data.}
 \end{figure}
 
-While transport in a porous media depends on the porosity, it also
-depends on the placement of the grains.  In particular, the grain
-placement affects velocity scales~\cite{ali-par-wei-bre2017},
-correlation structures~\cite{leb-ded-dav-bou2007}, contaminant
-transport~\cite{knu-car2005},
-channelization~\cite{sie-ili-pri-riv-gua2019,berhanu2012shape}, and
-more. In addition, the grain configuration is important for pore network
-models~\cite{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006} that rely on
-descriptions of the pore throat sizes. To characterize the grain
-placement, we compute distributions of pore sizes between neighboring
-grains.  To define neighboring grains, we form a Delaunay triangulation
-using nodes placed at the center of each eroding grain and at a
-collection of points around the boundary of the porous region.  Then, we
-say that two grains are neighbors if their centers share an edge of the
-triangulation~\cite{dea-qua-bir-jua2018}. The pores for a eroded
-geometry are illustrated in Figure~\ref{fig:Eroding100gap}(a). We do not
-consider pores between eroding bodies and the solid wall $\Gamma$, so
-some of the grains near the porous region boundary only have two
-neighbors. Having defined the pore sizes, we form its distribution and
-compare it with the Weibull distribution (black curve) in
-Figure~\ref{fig:Eroding100gap}(b) . A more complete statistical analysis
-of the pore size distribution is in Section~\ref{sec:Eroding100}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
 \label{sec:method}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Bryan is here}
 In line with our previous work~\cite{qua-moo2018}, we use two meshes to
 simulate erosion. The integral equation is solved by discretizing the
 boundary of the geometry at a set of collocation points distributed
@@ -1956,6 +1954,7 @@ new Delaunay triangulation when a grain completely erodes.  Once all
 pore sizes are computed, we analyze their distribution as a function of
 the porosity.  
 
+HERE
 In Figure~\ref{fig:Eroding100gap_hist}, we plot
 histograms of the pore pore sizes at six porosities during the erosion
 process. These types of distributions have been described with Weibull
