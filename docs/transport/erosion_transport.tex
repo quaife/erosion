@@ -413,6 +413,7 @@ vorticity, defined respectively as
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
     \right) \, ds_\yy, \\
 %
+  \label{eqn:pressureDLP}
   p(\xx) &= \int_{\bd\Omega} D_{p}(\xx,\yy) 
       \eeta(\yy) ds_{\yy} 
   = -\frac{1}{\pi}\int_{\bd\Omega} \frac{1}{\rho^2}
@@ -446,15 +447,17 @@ equation~\eqref{eqn:shearStress}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
-\todo[inline]{Bryan is here}
 \label{sec:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In equations~\eqref{eqn:velocityDLP} and~\eqref{eqn:deformationDLP},
-$\uu$ and its deformation tensor are written as layer potentials in
-$\RR^2$, but the quadrature method we introduce in
-Section~\ref{sec:method} requires a complex-valued representation of the
-layer potentials. The first step to form a complex representation is to
-write the Laplace double-layer potential as the complex integral
+In
+equations~\eqref{eqn:velocityDLP},~\eqref{eqn:deformationDLP},~\eqref{eqn:pressureDLP},
+and~\eqref{eqn:vorticityDLP}, the fluid velocity, deformation tensor,
+pressure, and vorticity are all written as layer potentials in $\RR^2$.
+However, the quadrature method we introduce in Section~\ref{sec:method}
+requires a complex-valued representation of the layer potentials for the
+velocity, deformation tensor, and vorticity. The first step to form a
+complex representation is to write the Laplace double-layer potential as
+the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
@@ -466,12 +469,11 @@ where $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
 counterparts of $\xx = (x_1,x_2),\yy = (y_1,y_2) \in \RR^2$, and $\eta =
 \eta_1 + i \eta_2$ is the complex counterpart of $\eeta =
 (\eta_1,\eta_2)$. Therefore, depending on the formulation of the layer
-potential, the space $\Omega$ can be interpreted as a subset of $\RR^2$
-or the corresponding subset of $\CC$.
-Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
-first finding the boundary data of $v$.  Assuming that $\Omega$ is a
-simply-connected interior domain, the boundary data of $v$ satisfies the
-Sokhotski-Plemelj jump relation
+potential, $\Omega$ is being interpreted as a subset of $\RR^2$ or
+$\CC$. Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy
+integral by first finding the boundary data of $v$.  Assuming that
+$\Omega$ is a simply-connected interior domain, the boundary data of $v$
+satisfies the Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
   v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
@@ -480,8 +482,8 @@ Sokhotski-Plemelj jump relation
 For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
 for multiply-connected domains, such as a porous media, $\bd\Omega$ is
 decomposed into its different connected components and the appropriate
-jump relation is applied.  Since $v$ is a holomorphic function and we
-have its boundary data, by the Cauchy integral theorem we have
+jump relation is applied.  Having computed the boundary data of the
+holomorphic function $v$, by the Cauchy integral theorem we have
 \begin{align}
   \label{eqn:cauchy}
   v(x) = \frac{1}{2\pi i}\int_{\bd\Omega} 
@@ -496,8 +498,9 @@ function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
 function defined in equation~\eqref{eqn:laplaceComplex}, and its first
 two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
   
-The Stokes double-layer potential~\eqref{eqn:velocityDLP} can be written
-as~\cite{bar-wu-vee2015}
+Finally, the Stokes double-layer potential~\eqref{eqn:velocityDLP} can
+be written using a Laplace double-layer
+potential~\eqref{eqn:laplaceComplex} and its gradients 
 \begin{equation}
   \label{eqn:Stokes2Laplace}
   \begin{aligned}
@@ -509,11 +512,11 @@ as~\cite{bar-wu-vee2015}
       &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
         \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
       \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy,
+        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
   \end{aligned}
 \end{equation}
-where $\xx = (x_1,x_2)$. Therefore, the Stokes double-layer potential
-can be written as a sum of Cauchy integrals and its first derivative 
+Therefore, the Stokes double-layer potential can be written as a sum of
+Cauchy integrals and its first derivative~\cite{bar-wu-vee2015}
 \begin{equation}
   \begin{aligned}
     u_1(x) &= \Re (v[\psi_1](x)) + \Re (v'[y\cdot\eta](x)) 
@@ -576,7 +579,7 @@ vorticity is
 \section{Transport, Tracers, and Tortuosity}
 \label{sec:transport}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Erosion in porous geometries leads to particular phenomena such as
+Erosion in porous media leads to particular phenomena such as
 channelization~\cite{berhanu2012shape}, and we are interested in
 characterizing transport in such geometries.  In our previous
 work~\cite{qua-moo2018}, we examined the effect of erosion on the area
@@ -584,14 +587,14 @@ fraction, flow rate, and the total drag.  However, to characterize
 macroscopic signatures of the transport, other quantities must be
 examined.  Here, we compute the anomalous dispersion rate, the
 tortuosity, and the distribution of the pore sizes.  The first two
-metrics can be defined in terms of streamlines governed by an advection
-autonomous equation~\eqref{eqn:tracers}.
+metrics can be defined in terms of streamlines governed by the
+autonomous advection equation~\eqref{eqn:tracers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Dispersion}
 \label{sec:dispersion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The dynamics of fluid in a porous media is often characterized in terms
+The spreading of fluid in a porous media is often characterized in terms
 of anomalous dispersion~\cite{kla-rad-sok2008, den-cor-sch-ber2004}.
 The anomalous dispersion rate depends on the porosity and
 permeability~\cite{koc-bra1988}, but is also affected by the
@@ -621,16 +624,16 @@ that the flow is super-dispersive.
 
 To establish an anomalous dispersion rate, the trajectories must pass
 several grains so that an asymptotic regime is reached. The geometries
-that we consider are too short to observe the asymptotic dispersion, so
-we use a reinsertion method to form longer trajectories. Similar to the
+that we consider are too short to observe asymptotic dispersion, so we
+use a reinsertion method to form longer trajectories. Similar to the
 work of others~\cite{dea-qua-bir-jua2018, puy-gou-den2019}, once a
 particle reaches the outlet of the porous region, it is reinserted at
 the inlet.  To minimize errors caused by reinsertion, the particle is
 initialized at the discretization point that has the closest velocity to
 the particle's velocity at the outlet.  After a single trajectory is
-formed, it has undergone a collection of reinsertions.  Therefore, as a
+formed, it has undergone a collection of reinsertions.  Then, as a
 post-processing step, the trajectory is made continuous by attaching the
-tail of each segment to the origin of the next segment.  
+tail of each segment to the origin of the next segment.
 
 We consider trajectories in an open channel so that they can be compared
 to trajectories in eroded geometries with large permeability.  The
@@ -645,12 +648,13 @@ moments are
   \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
     \sigma_\lambda^2(t) = \frac{4}{45}t^2.
 \end{align}
-In Section~\ref{sec:results}, we compare these moments in an open
+In Section~\ref{sec:results}, we compare the second moment in an open
 channel with the trajectories in an eroded geometry.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Bryan is here}
 The tortuosity is a dimensionless number that quantifies the amount of
 twisting of streamlines. Unlike the dispersion calculations, we do not
 use reinsertion to form long trajectories.  The local tortuosity is
