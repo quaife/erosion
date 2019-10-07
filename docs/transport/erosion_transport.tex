@@ -1047,20 +1047,20 @@ to eroding grains.
 \subsection{Efficiently Applying the Quadrature}
 \label{sec:fmm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{Bryan is here}
 By using the Barycentric quadrature rule, the velocity, shear stress,
 and vorticity are computed with an error that is bounded independent of
 the target location. However, applied directly, it requires
-$\mathcal{O}(N^2)$ operations.  By using a fast summation method, such
-as the fast multipole method (FMM)~\cite{gre-rok1987}, this cost can be
-reduced to $\mathcal{O}(N)$ operations.  However, the Barycentric
-quadrature rules require several $N$-body calculations, and they must be
-done for each component of $\bd\Omega$ individually.  The resulting cost
-would be prohibitive, so we introduce a hybrid method that combines the
-Barycentric quadrature rule and the trapezoid rule.  Note that the
-source points of the layer potential is always one of the eroding bodies
-or the outer wall, but the target point can either be on another
-component of $\bd\Omega$ or it can be in the fluid bulk $\Omega$.
+$\mathcal{O}(N^2)$ operations, where $N$ is the total number of source
+and target points.  By using a fast summation method, such as the fast
+multipole method (FMM)~\cite{gre-rok1987}, this cost can be reduced to
+$\mathcal{O}(N)$ operations.  However, the Barycentric quadrature rules
+require several $N$-body calculations.  The resulting cost would be
+prohibitive, so we introduce a hybrid method that combines the
+Barycentric quadrature rule and an accelerated trapezoid rule.  Note
+that the source points of the layer potential is always one of the
+eroding bodies or the outer wall, but the target point can either be on
+another component of $\bd\Omega$ or it can be in the fluid bulk
+$\Omega$.
 
 To compute the velocity double-layer potential, we start by applying the
 trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
@@ -1076,8 +1076,8 @@ contribution of these nearby bodies needs to be replaced.  Assuming that
 $\xx$ is too close to $\gamma_k$, we first subtract the inaccurate
 trapezoid rule approximation of the double-layer potential due to
 $\gamma_k$.  Then, the Barycentric quadrature rule is used to compute
-the velocity due to $\gamma_k$ with more accuracy.  That is, the final
-velocity is
+the velocity due to $\gamma_k$ with more accuracy.  Finally, the
+velocity at $\xx$ is
 \begin{align}
   \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_k} \sum_{j=1}^{N_\iin} 
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
@@ -1097,14 +1097,14 @@ only a small fraction of the total number of points.
 An identical strategy is used to compute the vorticity and the
 deformation tensor.  That is, the trapezoid rule is used as a first pass
 to form the vorticity and deformation tensor, and then local corrections
-are made to replace the inaccuracies of the trapezoid rule.  However,
+are made to amend the inaccuracies of the trapezoid rule.  However,
 since the shear stress and vorticity are only computed once per time
 step, the trapezoid rule is applied with a direct summation rather than
 the FMM.  Relative to the cost of computing the velocity at each
 iteration of GMRES with the FMM, the additional once-per-time-step costs
 to compute the vorticity and deformation tensor are minimal.
 
-Per grid point, applying the Barycentric quadrature rules dominates the
+Per grid point, applying the Barycentric quadrature rules dominate the
 computational cost. Therefore, it is imperative that we only apply the
 Barycentric quadrature when the trapezoid rule is inaccurate.  As a rule
 of thumb, the trapezoid rule due to $\gamma_k$ achieves machine epsilon
@@ -1114,7 +1114,7 @@ accuracy if~\cite{bar2014}
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
     5 \frac{L_k}{N_\iin}.
 \end{align}
-To avoid checking if all target point $\xx$
+To avoid checking if all target points $\xx$
 satisfy~\eqref{eqn:TrapCutoff}, we make use of the {\thL}
 variables~\cite{hou-low-she1994}.  First, given two eroding bodies
 $\gamma_i$ and $\gamma_j$ with lengths $L_i$ and $L_j$, and centroids
@@ -1193,14 +1193,14 @@ where $\epsilon \ll 1,$ $\langle \cdot \rangle$ is the spatial average,
 $L$ is the length of $\gamma$, and $\kappa$ is the curvature of
 $\gamma$.  This new term penalizations regions of high curvature, and
 the normalization term guarantees that the regularization only changes
-the body's shape, but not its total length.  
+the body's shape, but not its total length.  Finally, to increase the
+overall stability of the method, a narrow Gaussian filter is applied to
+the erosion rate at each time step.
 
-Rather than tracking the $(x,y)$ coordinates, the {\thL} variables are
+Rather than tracking the $(x,y)$ coordinates, the {\thL} coordinates are
 tracked. In addition, a tangential velocity field is added to each body
 so that the discretization points remain equispaced in arclength for all
-time.  Additionally, to increase the overall stability of the method, a
-narrow Gaussian filter is applied to the erosion rate at each time step.
-Time stepping is performed with a second-order Implicit-Explicit
+time.  Time stepping is performed with a second-order Implicit-Explicit
 Runge-Kutta method. In particular, the diffusive term corresponding to
 the curvature penalization term is discretized implicitly, and all other
 terms, which are non-stiff, are treated explicitly.  By using this time
@@ -1246,7 +1246,7 @@ $i=1,\ldots,N_p$.
 \section{Numerical Results}
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We now present numerical results on dense packings of bodies eroding in
+We now present numerical results of dense packings of bodies eroding in
 Stokes flow. Moreover, we analyze transport through the eroded
 geometries by examining coarse-grained variables.  Each eroding body is
 initially a circle with center $\cc_i$ and radius $r_i$.  The center and
@@ -1268,28 +1268,29 @@ equations are linear, this is achieved by computing the pressure near
 the inlet and outlet at each time step, and then scaling the flow rate
 appropriately~\cite{qua-moo2018}.
 
-In each of the examples, we plot the vorticity in the fluid bulk.  Since
-the vorticity and the shear stress agree on surface of the eroding
-bodies, the vorticity is a useful method to visualize the erosion rate.
-In particular, the rate of erosion is largest in regions where the
-magnitude of the vorticity is largest.
-
 The erosion rate loses regularity at stagnation points, which inevitably
 leads to corner formation on the bodies.  As described in
 Section~\ref{sec:formulation} and our previous work~\cite{qua-moo2018},
 we introduce a curvature penalization term and a Gaussian smoothing step
-in order to ameliorate corner formation.  For all examples, we use the
-smoothing parameters $\eps=15/256$ and $\sigma=10/256$, and the time
-step size is $\Delta t = 10^{-4}$.
+to ameliorate corner formation.  For all examples, we use the smoothing
+parameters $\eps=15/256$ and $\sigma=10/256$, and the time step size is
+$\Delta t = 10^{-4}$.
+
+In each of the examples, we plot the vorticity in the fluid bulk.  Since
+the vorticity and the shear stress agree on surface of the eroding
+bodies, the vorticity is useful to visualize the erosion rate.  In
+particular, the rate of erosion is largest in regions where the
+magnitude of the vorticity is largest.
 
 The common characteristic of each of the experiments is near-contact
 between the eroding bodies, outer walls, and streamlines. We use our
-numerical methods to describe and visualize the following examples:
+numerical methods to simulate, analyze, and visualize the following
+examples:
 \begin{itemize}
   \item{\bf Single Body Close to a Wall}: We consider a single eroding
   body close to the outer wall at $y=-1$.  We impose a shear flow
   centered at $y=-1$ and compare the eroding body's shape to a similar
-  experiment of Spagnolie and Mitchell~\cite{mit-spa2017}.
+  experiment of Mitchell and Spagnolie~\cite{mit-spa2017}.
 
   \item{\bf 20 Bodies at a Medium Porosity}: We consider 20 eroding
   bodies with a medium initial porosity.  After computing accurate
@@ -1309,8 +1310,7 @@ numerical methods to describe and visualize the following examples:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Single Body Close to a Wall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-First, consider a single eroding body close to a solid wall with the
-shear flow
+Consider a single eroding body close to a solid wall with the shear flow
 \begin{align}
   \UU(\xx)=\left[
   \begin{array}{c}
@@ -1320,14 +1320,14 @@ shear flow
 \end{align}
 imposed on the outer wall. Mitchell and Spagnolie~\cite{mit-spa2017}
 performed a similar three-dimensional experiment using a second-order
-quadrature method.  They initialized the body with its center located
-$1.5$ radii above the solid wall.  In two dimensions, the trapezoid rule
-is spectrally accurate, and an analogous initial configuration is
-possible. However, unless the number of discretization points is
-increased, the trapezoid rule becomes obsolete if the eroding body is
-initialized closer to the solid wall. Therefore, to simulate erosion
-near a solid wall at reasonable levels of discretization, we use our
-hybrid method that combines the trapezoid rule and the Barycentric
+quadrature method.  Their initial body is a sphere with its center
+located $1.5$ radii above the solid wall.  In two dimensions, the
+trapezoid rule is spectrally accurate, and an analogous initial
+configuration is possible. However, unless the number of discretization
+points is increased, the trapezoid rule becomes obsolete if the eroding
+body is initialized too close to the solid wall. Therefore, to simulate
+erosion near a solid wall at reasonable levels of discretization, we use
+our hybrid method that combines the trapezoid rule and the Barycentric
 quadrature rule.
 
 We consider an eroding body that is initially a circle of radius
@@ -1341,7 +1341,7 @@ discretization points, and the outer wall would require $50,000$
 discretization points.
 
 In Figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
-equispaced time steps.  For the three initial configurations, the shear
+equispaced time steps.  For all three initial configurations, the shear
 stress is positive for all time, but varies over several orders of
 magnitude.  Therefore, we color the eroding body's boundary with the
 logarithm of the shear stress.  Since the shear stress is always
@@ -1353,11 +1353,11 @@ dimensions~\cite{mit-spa2017} (Figure 7(c)).  The biggest difference
 between the two- and three-dimensional results is the presence of a
 recirculation zone.  In three dimensions, there is no recirculation
 between the solid wall and the spherical body~\cite{cha-feu2003}, but
-this is possible in two dimensions~\cite{chw-wu1975, hig1985}. To
-visualize the flow, we plot the vorticity of the final time step from
-Figure~\ref{fig:NearWall} in Figure~\ref{fig:NearWall_vort}.  The
-recirculation is present in the region where the vorticity is smallest,
-but its size is very small.
+recirculation is possible in two dimensions~\cite{chw-wu1975, hig1985}.
+To visualize the flow, we plot the vorticity of the final time step from
+Figure~\ref{fig:NearWall} in Figure~\ref{fig:NearWall_vort}.  In these
+examples, a small recirculation zone, both in size and magnitude, is
+present in the region where the vorticity is smallest
 
 \begin{figure}[htbp]
 \begin{center}
@@ -1373,11 +1373,11 @@ but its size is very small.
 \includegraphics[width =\textwidth]{./figs/1b_0d4r0d1h_shear}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:NearWall} A single body eroding in a Stokes flow.
-The color is the logarithm of the shear stress. Therefore, erosion is
-fastest in the red regions (upper half) and slowest in the blue regions
-(lower half).  The body is initialized at three different distances from
-the lower wall: (a) $h$, (b) $h/2$, and (c) $h/10$.}
+\caption{\label{fig:NearWall} A single body eroding in a shearing Stokes
+flow.  The color is the logarithm of the shear stress. Therefore,
+erosion is fastest in the red regions (upper half) and slowest in the
+blue regions (lower half).  The body is initialized at three different
+distances from the lower wall: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \end{center}
 \end{figure}
 \begin{figure}[H]
@@ -1395,8 +1395,8 @@ the lower wall: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \caption{}
 \end{subfigure}
 \caption{\label{fig:NearWall_vort} The vorticity of the fluid with a
-single body eroding at time t=0.1. The initial distance from the body to
-the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
+single body eroding at time $t=0.1$. The initial distance from the body
+to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \end{center}
 \end{figure}
 
@@ -1405,6 +1405,7 @@ the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \subsection{20 Bodies at a Medium Porosity}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Bryan is here}
 We consider 20 eroding bodies that are discretized with $N_\iin=256$
 points.  The background flow is the Hagen-Poiseuille flow
 \begin{align}
