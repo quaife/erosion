@@ -130,7 +130,7 @@ formation~\citep{cho2019crack}. We focus on erosion, a fluid-mechanical
 process that is prevalent in many geophysical, hydrological, and
 industrial applications~\citep{berhanu2012shape, hewett2017evolution,
 lachaussee2018competitive, lopez2018cfd, allen2019sde, amin2019role}.
-When a porous geometry erodes, certain qualitative characteristics are
+When a porous medium erodes, certain qualitative characteristics are
 unveiled that affect transport through the geometry.  For example, an
 eroded geometry may contain channels of high porosity, which, though few
 in number and modest in volume fraction, transmit a large portion of the
@@ -148,7 +148,7 @@ efforts build on previous work~\citep{ris-moo-chi-she-zha2012,
 moore2013self, moo2017}, in particular recent numerical methods
 developed to simulate erosion in the Stokes-flow
 regime~\citep{qua-moo2018}. We, however, make key improvements to the
-numerical methods from~\citep{qua-moo2018} to enable simulations of more
+numerical methods \nick{(I killed the reference here because I think its redundant)} to enable simulations of more
 realistic, dense suspensions of eroding grains
 (figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  Then, to
 characterize transport through these configurations, we examine
@@ -177,10 +177,9 @@ Owing to the scales present in groundwater flow~\citep{bea1972}, we model
 the hydrodynamics with the two-dimensional incompressible Stokes
 equations.  Meanwhile, individual grains erode at a rate proportional to
 the hydrodynamic shear stress~\citep{wan-fel2004,
-ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the
-vorticity and the shear stress are equivalent on solid boundaries, we
-also compute the fluid vorticity for visualization purposes
-(figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
+ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.
+\nick{We compute the vorticity in the fluid bulk since, on solid boundaries, vorticity reduces to shear and thus provides a convenient way to simultaneously visualize local erosion rates and changes in the surrounding flow} (figure~\ref{fig:Eroding50vort}).  
+A variety of numerical methods for
 the fluid solver are available including lattice-gas or lattice
 Boltzmann~\citep{kop-kat-tim1996, dar-mcc1998}, finite
 volumes~\citep{suo-liu-gan2019, den-ica-hid2018,
