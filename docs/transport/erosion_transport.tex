@@ -4,12 +4,6 @@
 \input{preambles.tex}
 %\usepackage{showkeys}
 
-\usepackage{graphicx}
-\usepackage{epstopdf, epsfig}
-
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-
 \shorttitle{Viscous Transport in Eroding Porous Media}
 \shortauthor{Chiu, Moore and Quaife}
 
@@ -140,7 +134,7 @@ When a porous geometry erodes, certain qualitative characteristics are
 unveiled that affect transport through the geometry.  For example, an
 eroded geometry may contain channels of high porosity, which, though few
 in number and modest in volume fraction, transmit a large portion of the
-flux \citep{qua-moo2018}. This arrangement results in velocities that
+flux~\citep{qua-moo2018}. This arrangement results in velocities that
 vary over several orders of magnitude~\citep{all-hea-lab-rei2002}.
 Moreover, channelization creates heterogeneous and anisotropic medium
 properties, which affect the transport of tracers such as
@@ -210,8 +204,8 @@ trapezoid rule, which was used in previous work, is adequate for
 bodies that are sufficiently separated~\citep{tre-wei2014}.  However, it
 loses accuracy whenever grains are in close contact.  One of the
 earliest works to address quadrature methods for nearly-singular
-integrands was developed by Baker and Shelley~\citep{bak-she1986}, and in
-recent years, many other near-singular integration schemes have
+integrands was developed by~\citet{bak-she1986}, and in recent years,
+many other near-singular integration schemes have
 followed~\citep{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
 bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
 method~\citep{bar2014, bar-wu-vee2015} since it is a non-intrusive
@@ -286,12 +280,12 @@ connectivity~\citep{knu-car2005, wes-blo-gra2001}, and to develop network
 models~\citep{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Contributions}
-Our first contribution is extending the Barycentric quadrature rule of
-Barnett et al.~\citep{bar-wu-vee2015} to accurately compute velocity
-gradients associated with Stokes flow. This new quadrature rule permits
-accurate and stable simulations of erosion, and, moreover, enables
-visualization of the vorticity field throughout.
+\subsection{Contributions}
+Our first contribution is extending the Barycentric quadrature rule
+of~\citet{bar-wu-vee2015} to accurately compute velocity gradients
+associated with Stokes flow. This new quadrature rule permits accurate
+and stable simulations of erosion, and, moreover, enables visualization
+of the vorticity field throughout.
 
 Our second contribution is computing and analyzing trajectories in
 eroded geometries.  These trajectories are formed by combining the
@@ -301,7 +295,7 @@ geometries. Finally, we examine the effect of erosion on the pore size
 distribution.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Limitations}
+\subsection{Limitations}
 As in our previous work~\citep{qua-moo2018}, we consider two-dimensional
 immobile eroding grains. However, this work does not limit the proximity
 of  grains. Compared to our previous work, we are able to simulate much
@@ -506,7 +500,7 @@ complex representation is to write the Laplace double-layer potential as
 the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\upi} \int_{\bd\Omega} 
-    \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Re (v(x)) \quad 
+    \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)) \quad 
     \text{where} \quad v(x) = \frac{1}{2\upi i} \int_{\bd\Omega}
     \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega,
   \label{eqn:laplaceComplex}
@@ -565,17 +559,17 @@ Therefore, the Stokes double-layer potential can be written as a sum of
 Cauchy integrals and its first derivative~\citep{bar-wu-vee2015}
 \begin{equation}
   \begin{aligned}
-    u_1(x) &= \Re (v[\psi_1](x)) + \Re (v'[y\cdot\eta](x)) 
-             -x_1\Re (v'[\eta_1](x)) - x_2\Re (v'[\eta_2](x)), \\
-    u_2(x) &= \Re (v[\psi_2](x)) - \Im (v'[y\cdot\eta](x)) 
-         +x_1\Im (v'[\eta_1](x)) + x_2\Im (v'[\eta_2](x)),
+    u_1(x) &= \Real (v[\psi_1](x)) + \Real (v'[y\cdot\eta](x)) 
+             -x_1\Real (v'[\eta_1](x)) - x_2\Real (v'[\eta_2](x)), \\
+    u_2(x) &= \Real (v[\psi_2](x)) - \Imag (v'[y\cdot\eta](x)) 
+         +x_1\Imag (v'[\eta_1](x)) + x_2\Imag (v'[\eta_2](x)),
   \end{aligned}
   \label{eqn:cauchyVelocity}
 \end{equation}
 where $y \cdot \eta = y_1 \eta_1 + i y_2 \eta_2 \in \CC$, 
 \begin{align} 
-  \psi_1=(\eta_1+i\eta_2)\frac{\Re(n)}{n}, \quad
-  \psi_2=(\eta_1+i\eta_2)\frac{\Im(n)}{n},
+  \psi_1=(\eta_1+i\eta_2)\frac{\Real(n)}{n}, \quad
+  \psi_2=(\eta_1+i\eta_2)\frac{\Imag(n)}{n},
 \end{align}
 and $n \in \CC$ is the complex counterpart of the outward unit normal
 $\nn \in \RR^2$.
@@ -592,18 +586,18 @@ expressions for $u_1$ and $u_2$ in equation~\eqref{eqn:cauchyVelocity}
 \begin{equation}
 \label{eqn:cauchyGradient}
   \begin{aligned}
-    \pderiv{u_1}{x_1} &= +\Re (v'[\psi_1](x)) + 
-      \Re (v''[y\cdot\eta](x)) - \Re (v'[\eta_1](x)) - 
-      x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x)), \\
-    \pderiv{u_1}{x_2} &= - \Im (v'[\psi_1](x)) - 
-      \Im (v''[y\cdot\eta](x)) + x_1\Im (v''[\eta_1](x)) - 
-      \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x)), \\
-    \pderiv{u_2}{x_1} &= +\Re (v'[\psi_2](x)) - 
-      \Im (v''[y\cdot\eta](x)) + \Im (v'[\eta_1](x)) +
-      x_1\Im (v''[\eta_1](x)) + x_2\Im (v''[\eta_2](x)), \\
-    \pderiv{u_2}{x_2} &= -\Im (v'[\psi_2](x)) - 
-      \Re (v''[y\cdot\eta](x)) + x_1\Re (v''[\eta_1](x)) +
-      \Im (v'[\eta_2](x)) + x_2\Re (v''[\eta_2](x)).
+    \pderiv{u_1}{x_1} &= +\Real (v'[\psi_1](x)) + 
+      \Real (v''[y\cdot\eta](x)) - \Real (v'[\eta_1](x)) - 
+      x_1\Real (v''[\eta_1](x)) - x_2\Real (v''[\eta_2](x)), \\
+    \pderiv{u_1}{x_2} &= - \Imag (v'[\psi_1](x)) - 
+      \Imag (v''[y\cdot\eta](x)) + x_1\Imag (v''[\eta_1](x)) - 
+      \Real (v'[\eta_2](x)) + x_2\Imag (v''[\eta_2](x)), \\
+    \pderiv{u_2}{x_1} &= +\Real (v'[\psi_2](x)) - 
+      \Imag (v''[y\cdot\eta](x)) + \Imag (v'[\eta_1](x)) +
+      x_1\Imag (v''[\eta_1](x)) + x_2\Imag (v''[\eta_2](x)), \\
+    \pderiv{u_2}{x_2} &= -\Imag (v'[\psi_2](x)) - 
+      \Real (v''[y\cdot\eta](x)) + x_1\Real (v''[\eta_1](x)) +
+      \Imag (v'[\eta_2](x)) + x_2\Real (v''[\eta_2](x)).
   \end{aligned}
 \end{equation}
 The same expressions are used to compute the deformation tensor for $x
@@ -616,8 +610,8 @@ bulk.  For $x \in \Omega$, the Cauchy integral representation of the
 vorticity is
 \begin{align}
   \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
-\Re (v'[\psi_2](x)) + \Im (v'[\psi_1](x)) 
- + \Re (v'[\eta_2](x))+ \Im (v'[\eta_1](x)), \quad x \in \Omega.
+\Real (v'[\psi_2](x)) + \Imag (v'[\psi_1](x)) 
+ + \Real (v'[\eta_2](x))+ \Imag (v'[\eta_1](x)), \quad x \in \Omega.
 \end{align}
 
 
@@ -746,7 +740,7 @@ do compare the two definitions for the tortuosity at several porosities
 in Section~\ref{sec:results}.
 
 There have been efforts to relate the tortuosity, $T$, to the porosity,
-$\phi$.  For example, Matyka et al.~\citep{mat-kha-koz2008} propose the
+$\phi$.  For example,~\citet{mat-kha-koz2008} propose the
 models
 \begin{subequations}
   \label{eqn:tortuosityModels}
@@ -770,19 +764,19 @@ on the placement of the grains.  In particular, grain placement affects
 velocity scales~\citep{ali-par-wei-bre2017}, correlation
 structures~\citep{leb-ded-dav-bou2007}, contaminant
 transport~\citep{knu-car2005},
-channelization~\citep{sie-ili-pri-riv-gua2019,berhanu2012shape}, and pore
-network models~\citep{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. To
-characterize the grain placement, we compute distributions of pore sizes
-between neighboring grains.  To define neighboring grains, we form a
-Delaunay triangulation using nodes placed at the center of each eroding
-grain and at a collection of points around the boundary of the porous
-media.  Then, we say that two grains are neighbors if their centers
-share an edge of the triangulation~\citep{dea-qua-bir-jua2018}. The pores
-of an eroded geometry are illustrated in
-figure~\ref{fig:Eroding100gap}(a). We do not consider pores between
-eroding bodies and the solid wall $\Gamma$, so some of the grains near
-the porous region boundary only have two neighbors. Having defined the
-pore sizes, we plot its distribution in
+channelization~\citep{sie-ili-pri-riv-gua2019,berhanu2012shape}, and
+pore network models~\citep{bry-kin-mel1993, bry-mel-cad1993,
+bij-blu2006}. To characterize the grain placement, we compute
+distributions of pore sizes between neighboring grains.  To define
+neighboring grains, we form a Delaunay triangulation using nodes placed
+at the center of each eroding grain and at a collection of points around
+the boundary of the porous media.  Then, we say that two grains are
+neighbors if their centers share an edge of the
+triangulation~\citep{dea-qua-bir-jua2018}. The pores of an eroded
+geometry are illustrated in figure~\ref{fig:Eroding100gap}(a). We do not
+consider pores between eroding bodies and the solid wall $\Gamma$, so
+some of the grains near the porous region boundary only have two
+neighbors. Having defined the pore sizes, we plot its distribution in
 figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
 distribution, a distribution used by others to characterize pore
 sizes~\citep{ioa-cha1993}.  In Section~\ref{sec:Eroding100}, we
@@ -937,15 +931,15 @@ representation can all be written as the sum of Cauchy integrals and its
 first two derivatives.  Therefore, we can accurately compute the
 velocity, shear stress, and vorticity at any target location by using a
 quadrature rule with a uniform error bound for Cauchy integrals and its
-derivatives~\eqref{eqn:cauchy}. Ioakimidis et al.~\citep{ioa-pap-per1991}
-developed quadrature rules, that we call {\em Barycentric quadrature
-rules}, to compute Cauchy integrals and their derivatives with an error
-bound that is independent of $x \in \CC$.  Then, Barnett et
-al.~\citep{bar-wu-vee2015} used these quadrature rules to compute the
-Stokes double-layer potential representation of the
-velocity~\eqref{eqn:velocityDLP}, and we briefly summarize their method.
-Then, we extend their work to compute the second derivative so that the
-shear stress and vorticity can be computed with a uniform error bound. 
+derivatives~\eqref{eqn:cauchy}. \citet{ioa-pap-per1991} developed
+quadrature rules, that we call {\em Barycentric quadrature rules}, to
+compute Cauchy integrals and their derivatives with an error bound that
+is independent of $x \in \CC$.  Then,~\citet{bar-wu-vee2015} used these
+quadrature rules to compute the Stokes double-layer potential
+representation of the velocity~\eqref{eqn:velocityDLP}, and we briefly
+summarize their method.  Then, we extend their work to compute the
+second derivative so that the shear stress and vorticity can be computed
+with a uniform error bound. 
 
 We present the quadrature rules for a simply-connected interior domain
 $\Omega \subset \CC$, with any point $a \in \Omega$, and we consider the
@@ -1022,8 +1016,8 @@ and~\eqref{eqn:BaryvExterior}.
 
 To compute the shear stress and vorticity, we require a Barycentric
 quadrature rule for $v''(x)$.  The derivation is largely based on the
-work of Ioakimidis et al.~\citep{ioa-pap-per1991} (see equation (2.12)).
-We start with the second derivative of the Cauchy integral theorem
+work of~\citet{ioa-pap-per1991} (see equation (2.12)).  We start with
+the second derivative of the Cauchy integral theorem
 \begin{align}
   0 = \frac{1}{2\upi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x).
@@ -1096,10 +1090,10 @@ to eroding grains.
 By using the Barycentric quadrature rule, the velocity, shear stress,
 and vorticity are computed with an error that is bounded independent of
 the target location. However, applied directly, it requires
-$\mathcal{O}(N^2)$ operations, where $N$ is the total number of source
+$O(N^2)$ operations, where $N$ is the total number of source
 and target points.  By using a fast summation method, such as the fast
 multipole method (FMM)~\citep{gre-rok1987}, this cost can be reduced to
-$\mathcal{O}(N)$ operations.  However, the Barycentric quadrature rules
+$O(N)$ operations.  However, the Barycentric quadrature rules
 require several $N$-body calculations.  The resulting cost would be
 prohibitive, so we introduce a hybrid method that combines the
 Barycentric quadrature rule and an accelerated trapezoid rule.  Note
@@ -1110,7 +1104,7 @@ $\Omega$.
 
 To compute the velocity double-layer potential, we start by applying the
 trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
-calculation requires $\mathcal{O}(N)$ operations, and we call the
+calculation requires $O(N)$ operations, and we call the
 resulting velocity $\vv_\trap(\xx)$.  Since the trapezoid rule is
 spectrally accurate, the error of $\vv_\trap(\xx)$ is small for points
 sufficiently far from $\bd\Omega$, and this region depends on the number
@@ -1336,7 +1330,7 @@ examples:
   \item{\bf Single Body Close to a Wall}: We consider a single eroding
   body close to the outer wall at $y=-1$.  We impose a shear flow
   centered at $y=-1$ and compare the eroding body's shape to a similar
-  experiment of Mitchell and Spagnolie~\citep{mit-spa2017}.
+  experiment of~\citet{mit-spa2017}.
 
   \item{\bf 20 Bodies at a Medium Porosity}: We consider 20 eroding
   bodies with a medium initial porosity.  After computing accurate
@@ -1364,17 +1358,16 @@ Consider a single eroding body close to a solid wall with the shear flow
   \end{array}
   \right],
 \end{align}
-imposed on the outer wall. Mitchell and Spagnolie~\citep{mit-spa2017}
-performed a similar three-dimensional experiment using a second-order
-quadrature method.  Their initial body is a sphere with its center
-located $1.5$ radii above the solid wall.  In two dimensions, the
-trapezoid rule is spectrally accurate, and an analogous initial
-configuration is possible. However, unless the number of discretization
-points is increased, the trapezoid rule becomes obsolete if the eroding
-body is initialized too close to the solid wall. Therefore, to simulate
-erosion near a solid wall at reasonable levels of discretization, we use
-our hybrid method that combines the trapezoid rule and the Barycentric
-quadrature rule.
+imposed on the outer wall. \citet{mit-spa2017} performed a similar
+three-dimensional experiment using a second-order quadrature method.
+Their initial body is a sphere with its center located $1.5$ radii above
+the solid wall.  In two dimensions, the trapezoid rule is spectrally
+accurate, and an analogous initial configuration is possible. However,
+unless the number of discretization points is increased, the trapezoid
+rule becomes obsolete if the eroding body is initialized too close to
+the solid wall. Therefore, to simulate erosion near a solid wall at
+reasonable levels of discretization, we use our hybrid method that
+combines the trapezoid rule and the Barycentric quadrature rule.
 
 We consider an eroding body that is initially a circle of radius
 $r=0.4$.  We discretize the eroding body with $N_\iin=256$
@@ -1592,18 +1585,18 @@ tortuosity, we require the velocity at the inlet $x=-1$.  These
 normalized velocities are plotted in figure~\ref{fig:Eroding20tort}(a)
 for the eroded geometry at porosity $\phi = 62.9\%$
 (figure~\ref{fig:Eroding20tort}(c)).  The velocities are similar to the
-work of Matyka et al.~\citep{mat-kha-koz2008} (see figure 4(a)), except
-that our cross-section, by construction, does not cut through any of the
-grains.  Next, in figure~\ref{fig:Eroding20tort}(b), we plot the local
+work of~\citet{mat-kha-koz2008} (see figure 4(a)), except that our
+cross-section, by construction, does not cut through any of the grains.
+Next, in figure~\ref{fig:Eroding20tort}(b), we plot the local
 tortuosity~\eqref{eqn:localTort} by calculating the relative length of
 each streamline as it traverses the channel from $x=-1$ to $x=1$.  The
 local tortuosity ranges from 1 to 1.27, meaning that one of the
 streamlines is 27\% longer than it would have been if the grains were
 absent.  The average streamline is 9.79\% longer or equivalently the
 tortuosity of the geometry is $1.098$.  Again, comparing the local
-tortuosity to Matyka~\citep{mat-kha-koz2008} (figure 4(b)), the results
-are qualitatively similar. However, since our initial cross-section does
-not cut through the grains, the local tortuosity does not have any gaps.
+tortuosity to~\citet{mat-kha-koz2008} (figure 4(b)), the results are
+qualitatively similar. However, since our initial cross-section does not
+cut through the grains, the local tortuosity does not have any gaps.
 Discontinuities in local tortuosity occur when nearby streamlines
 diverge to circumvent a grain.  In figure~\ref{fig:Eroding20tort}(c), we
 plot pairs of streamlines associated with the ten largest jumps in the
@@ -2076,9 +2069,9 @@ nearly-touching grains and to characterize transport, it is necessary to
 integrate near-singular functions. This is achieved by extending a
 Barycentric quadrature rule~\citep{bar-wu-vee2015} to accurately compute
 the erosion rate and vorticity. By using this quadrature rule, we are
-able to perform stable simulations of erosion with $N =
-\mathcal{O}(100)$ discretization points, while the trapezoid rule would
-require $\mathcal{O}(10^5)$ discretization points.
+able to perform stable simulations of erosion with $N = O(100)$
+discretization points, while the trapezoid rule would require $O(10^5)$
+discretization points.
 
 The transport is characterized in terms of tortuosity and anomalous
 dispersion. The local tortuosity agrees qualitatively with other
