@@ -22,29 +22,44 @@ Institute, Florida State University, Tallahassee, FL, 32306.}
 Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
-  We extend our previous work, [{\em Journal of Computational Physics},
-  {\bf 375}:1--21, 2018], to simulate fluid-mechanical erosion of
-  two-dimensional porous media with nearly-touching grains.  The method
-  continues to use a boundary integral equation (BIE) method to solve
-  the fluid equations, and a stable second-order time stepping method to
-  erode the grains.  In our previous work, we required eroding grains
-  that were sufficiently separated to guarantee that the trapezoid rule
-  provides a sufficient amount of accuracy. We now remove this
-  restriction by introducing a Barycentric quadrature rule whose error
-  is bounded independent of the geometry.  The Barycentric quadrature
-  rule is computationally expensive, so it is only used when necessary,
-  and the spectrally accurate fast-multipole-accelerated trapezoid rule
-  is used otherwise. We also simulate and analyze transport through
-  eroded porous media.  By using the Barycentric quadrature rule, the
-  analysis examines flow both in the fast and slow regions with
-  high-order accuracy. Our results reveal several interesting  effects
-  of erosion on the tortuosity, dispersion, and pore size distributions.
+  Transport of viscous fluid through porous media is a direct
+  consequence of the pore structure. Here we investigate transport
+  through specific two-dimensional porous geometries---those that have
+  become channelized by the process of fluid-mechanical erosion.  We
+  consider passive tracers in the eroded geometries and analyze their to
+  statistical moments to investigate the effect of erosion on the
+  tortuosity and dispersion rates. We compare the computed
+  porosity-tortuosity relationship with models available in the
+  literature. Finally, we analyze the pore size distribution of an
+  eroding geometry. The simulations are performed by combining a
+  high-fidelity boundary integral equation solver for the Stokes
+  equations, a second-order stable time stepping method to simulate
+  erosion, a new numerical method to stably and accurately compute the
+  eroded geometries and particle trajectories.
+  
+%  We extend our previous work, [{\em Journal of Computational Physics},
+%  {\bf 375}:1--21, 2018], to simulate fluid-mechanical erosion of
+%  two-dimensional porous media with nearly-touching grains.  The method
+%  continues to use a boundary integral equation (BIE) method to solve
+%  the fluid equations, and a stable second-order time stepping method to
+%  erode the grains.  In our previous work, we required eroding grains
+%  that were sufficiently separated to guarantee that the trapezoid rule
+%  provides a sufficient amount of accuracy. We now remove this
+%  restriction by introducing a Barycentric quadrature rule whose error
+%  is bounded independent of the geometry.  The Barycentric quadrature
+%  rule is computationally expensive, so it is only used when necessary,
+%  and the spectrally accurate fast-multipole-accelerated trapezoid rule
+%  is used otherwise. We also simulate and analyze transport through
+%  eroded porous media.  By using the Barycentric quadrature rule, the
+%  analysis examines flow both in the fast and slow regions with
+%  high-order accuracy. Our results reveal several interesting  effects
+%  of erosion on the tortuosity, dispersion, and pore size distributions.
 \end{abstract}
 
 \begin{keyword}
-  Porous media \sep Stokes flow \sep Erosion \sep Quadrature \sep
-  Transport \sep Tortuosity \sep Anomalous dispersion \sep Pore size
-  distributions
+  Porous media \sep Stokes flow \sep Erosion \sep Transport \sep
+  Tortuosity \sep Anomalous dispersion \sep Pore size distributions \sep
+  Quadrature
 \end{keyword}
 
 \maketitle
@@ -115,7 +130,7 @@ characterize transport through these configurations, we examine
 coarse-grained variables through statistical analysis of tracer
 trajectories.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{center}
 \includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b1}
 \includegraphics[height = 0.31 \textwidth]{./figs/vel_log_50b80}
@@ -174,7 +189,7 @@ uniformly bounded.  We extend the original quadrature method to compute
 the velocity gradient, which is needed to evaluate the shear stress and
 the fluid vorticity.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{center}
 \includegraphics[height = 0.3 \textwidth]{./figs/vort_50b1}
 \includegraphics[height = 0.3 \textwidth]{./figs/vort_50b80}
@@ -741,7 +756,7 @@ Figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
 distribution, a distribution used by others to characterize pore
 sizes~\cite{ioa-cha1993}.  In Section~\ref{sec:Eroding100}, we
 investigate the effect of erosion on the pore size distribution.
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
 \caption{}
@@ -1359,39 +1374,39 @@ Figure~\ref{fig:NearWall} in Figure~\ref{fig:NearWall_vort}.  In these
 examples, a small recirculation zone, both in size and magnitude, is
 present in the region where the vorticity is smallest
 
-\begin{figure}[htbp]
+\begin{figure}[htp]
 \begin{center}
-\begin{subfigure}[b]{0.3\textwidth}
-\includegraphics[width = \textwidth]{./figs/1b_0d4r1h_shear}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[height = 0.74\textwidth]{./figs/1b_0d4r1h_shear}
 \caption{}
 \end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\includegraphics[width = \textwidth]{./figs/1b_0d4r0d5h_shear}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[height = 0.74\textwidth]{./figs/1b_0d4r0d5h_shear}
 \caption{}
 \end{subfigure}
-\begin{subfigure}[b]{0.38\textwidth}
-\includegraphics[width =\textwidth]{./figs/1b_0d4r0d1h_shear}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[height = 0.74\textwidth]{./figs/1b_0d4r0d1h_shear}
 \caption{}
 \end{subfigure}
+\end{center}
 \caption{\label{fig:NearWall} A single body eroding in a shearing Stokes
 flow.  The color is the logarithm of the shear stress. Therefore,
 erosion is fastest in the red regions (upper half) and slowest in the
 blue regions (lower half).  The body is initialized at three different
 distances from the lower wall: (a) $h$, (b) $h/2$, and (c) $h/10$.}
-\end{center}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{center}
-\begin{subfigure}[b]{0.3\textwidth}
-\includegraphics[width = \textwidth]{./figs/1b_0d4r1h_vort}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[height = 0.53\textwidth]{./figs/1b_0d4r1h_vort}
 \caption{}
 \end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\includegraphics[width = \textwidth]{./figs/1b_0d4r0d5h_vort}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[height = 0.53\textwidth]{./figs/1b_0d4r0d5h_vort}
 \caption{}
 \end{subfigure}
-\begin{subfigure}[b]{0.33\textwidth}
-\includegraphics[width = \textwidth]{./figs/1b_0d4r0d1h_vort}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[height = 0.53\textwidth]{./figs/1b_0d4r0d1h_vort}
 \caption{}
 \end{subfigure}
 \caption{\label{fig:NearWall_vort} The vorticity of the fluid with a
@@ -1405,7 +1420,6 @@ to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \subsection{20 Bodies at a Medium Porosity}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{Bryan is here}
 We consider 20 eroding bodies that are discretized with $N_\iin=256$
 points.  The background flow is the Hagen-Poiseuille flow
 \begin{align}
@@ -1415,25 +1429,24 @@ points.  The background flow is the Hagen-Poiseuille flow
   \end{array}
   \right],
 \end{align}
-where the flow rate $U$ is chosen so that the pressure drop from $x=-2$
-to $x=2$ is held fixed at 8. Therefore, $U=1$ once all the bodies have
-vanished.  Snapshots of the bodies at four equispaced times are shown in
-Figure~\ref{fig:Eroding20vort}.  The color is the vorticity, whose
-absolute value is proportional to the erosion rate on solid boundaries.
-Initially, several of the eroding bodies are closer to the outer wall
-than the $5h$ threshold required for the trapezoid rule to achieve
-machine precision.  In particular, the distance between bodies 1, 6, 13,
-and 15 and the outer wall is $1.3h$, $2.9h$, $2.8h$, and $1.3h$,
-respectively, where $h$ is the arclength spacing of the outer wall
-$\Gamma$.  In addition, the distance between several pairs of eroding
-bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and 14 \& 18, is too small to
-be accurately resolved with the trapezoid rule.  By using the
+where the flow rate $U$ is chosen so that the average pressure drop from
+$x=-2$ to $x=2$ is held fixed at 8. Therefore, $U=1$ once all the bodies
+have vanished.  Snapshots of the bodies at four equispaced times are
+shown in Figure~\ref{fig:Eroding20vort}.  The color is the vorticity,
+whose absolute value is proportional to the erosion rate on solid
+boundaries.  Initially, several of the eroding bodies are closer to the
+outer wall than the $5h$ threshold required for the trapezoid rule to
+achieve machine precision.  In particular, the distance between bodies
+1, 6, 13, and 15 and the outer wall is $1.3h$, $2.9h$, $2.8h$, and
+$1.3h$, respectively, where $h$ is the arclength spacing of the outer
+wall $\Gamma$.  In addition, the distance between several pairs of
+eroding bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and 14 \& 18, is too
+small to be accurately resolved with the trapezoid rule.  By using the
 Barycentric quadrature rule, the interaction between these
-nearly-touching bodies can be accurately resolved to the desired
-accuracy, and erosion can be simulated until all the bodies have
-vanished.
+nearly-touching bodies is accurately resolved to the desired accuracy,
+and erosion can be simulated until all the bodies have vanished.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{center}
   \includegraphics[height=0.225\textwidth]{./figs/20b_dense1}
   \includegraphics[height=0.225\textwidth]{./figs/20b_dense101}
@@ -1450,42 +1463,17 @@ vanished completely, and body 19 has almost completely eroded.}
 Erosion causes the space between nearly touching bodies to quickly
 expand, and flat faces develop along the regions of near contact.  This
 qualitative behavior is seen in Figure~\ref{fig:Eroding20vort} between
-bodies 3 \& 4, 15 \& 16, and was also observed in previous work.
-However, by resolving the interaction between bodies that are much
-closer together than in previous work, we observe that very little
-erosion occurs between certain pairs of bodies, at least initially.  For
-instance the opening between bodies 1 \& 6, 3 \& 9, and 5 \& 13 grow
-much slower than the opening between bodies 15 \& 16.  A common feature
-of the pores that grow slowly is that they are nearly perpendicular to
-the main flow direction, resulting in a small erosion rate.
+bodies 3 \& 4, 15 \& 16, and was also observed in previous
+work~\cite{qua-moo2018}. However, by resolving the interaction between
+bodies that are much closer together than in previous work, we observe
+that very little erosion occurs between certain pairs of bodies, at
+least initially.  For instance the opening between bodies 1 \& 6, 3 \&
+9, and 5 \& 13 grow much slower than the opening between bodies 15 \&
+16.  A common feature of the pores that grow slowly is that they are
+nearly perpendicular to the main flow direction, resulting in a small
+erosion rate.
 
-Following our previous work~\cite{qua-moo2018}, we begin by analyzing
-the effect of erosion on the area fraction and the flow rate.  In
-Figure~\ref{fig:Eroding20flowrate}(a), we plot the area fraction as a
-function of normalized time.  The general trend of the area fraction
-resembles our previous work~\cite{qua-moo2018} (Figure 10(a)), but with
-a larger initial area fraction.  In
-Figure~\ref{fig:Eroding20flowrate}(b), we plot the flow rate $U$
-required to maintain a constant pressure drop across the channel.
-Again, the trend of $U$ resembles that of our previous
-work~\cite{qua-moo2018} (Figure 10(b)), except that the initial flow
-rate is an order of magnitude smaller because of the larger initial area
-fraction.  Starting around normalized time $0.2$,
-Figure~\ref{fig:Eroding20flowrate}(b) is roughly linear which indicates
-that the flow rate can be written as a exponential law.  The line of
-best fit is
-\begin{align} 
-  \log_{10} U \approx 4.32 \frac{t}{t_f} + c, 
-\end{align}
-$t_f$ is the time required for all the bodies to erode, and $c$ is a
-fitting parameter. By construction $U = 1$ when $t=t_f$, so $c=-4,32$,
-and the flow rate is approximated as
-\begin{align}
-  U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
-\end{align}
-which is the dashed line in Figure~\ref{fig:Eroding20flowrate}(b).
-
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.7\linewidth]{./figs/porosity20dense}
 \caption{}
@@ -1498,30 +1486,36 @@ which is the dashed line in Figure~\ref{fig:Eroding20flowrate}(b).
 nearly touching eroding bodies versus normalized time. (b) The flow
 rate, $U$, for a fixed pressure drop across the channel versus
 normalized time.  The flow rate is initially very small, but it
-eventually increases as a power law (dashed line) towards the flow rate
-$U=1$ that occurs once all the bodies have eroded.}
+eventually increases as an exponential law  (dashed line) towards the
+flow rate $U=1$ that occurs once all the bodies have eroded.}
 \end{figure}
 
-In Figure~\ref{fig:Eroding20vort}, we observe that erosion creates a
-network of channels from the inlet to outlet where the velocity and
-vorticity, and therefore erosion rate, are much larger than other
-regions.  These channels can be further visualized by considering the
-streamlines.  In Figure~\ref{fig:Eroding20tracer}, we freeze the
-geometry at the second snapshot from Figure~\ref{fig:Eroding20vort} and plot 200 streamlines that are initialized at $x=-1$ and equally
-spaced in $y \in (-1,1)$.  The streamlines are shown at five different
-times, and the final plot is a zoom in of the lower right quadrant of
-the fifth time step, but with additional streamlines.  Since we use a
-high-order quadrature rule and time stepping method, we resolve
-streamlines that come very close to the eroded bodies.  There are three
-clear regions where the streamlines are most concentrated, corresponding
-to the regions of highest velocity.  Two of these regions are located
-between the bodies and the solid walls at $y=\pm 1$, and the third cuts
-through the porous region with the upper part of the channel formed by
-bodies 1, 4, 6, and 8.  Since the flow is fastest in these regions, the
-shearing is largest, and this causes the channels to continue to open
-fastest as observed in Figure~\ref{fig:Eroding20vort}.
+We next analyze the effect of erosion on the area fraction and the flow
+rate.  In Figure~\ref{fig:Eroding20flowrate}(a), we plot the area
+fraction as a function of normalized time.  The general trend of the
+area fraction resembles our previous work~\cite{qua-moo2018} (Figure
+10(a)), but with a larger initial area fraction.  In
+Figure~\ref{fig:Eroding20flowrate}(b), we plot the flow rate $U$
+required to maintain a constant pressure drop across the channel.
+Again, the trend of $U$ resembles that of our previous
+work~\cite{qua-moo2018} (Figure 10(b)), except that the initial flow
+rate is an order of magnitude smaller because of the larger initial area
+fraction.  Starting around normalized time $0.2$,
+Figure~\ref{fig:Eroding20flowrate}(b) is roughly linear which indicates
+that the flow rate can be written as an exponential law.  The line of
+best fit is
+\begin{align} 
+  \log_{10} U \approx 4.32 \frac{t}{t_f} + c, 
+\end{align}
+where $t_f$ is the time required for all the bodies to erode, and $c$ is
+a fitting parameter. By construction $U = 1$ when $t=t_f$, so $c=-4.32$,
+and the flow rate is approximated as
+\begin{align}
+  U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
+\end{align}
+which is the dashed line in Figure~\ref{fig:Eroding20flowrate}(b).
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{center}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b30n}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b90n}
@@ -1534,38 +1528,58 @@ geometry from Figure~\ref{fig:Eroding20vort}. The streamlines are
 initialized at $x=-1$ and are equally spaced in $y \in (-1,1)$. The
 first five snapshots are evenly spaced in time.  The bottom right frame
 is a zoom in of the fifth snapshot, but with additional streamlines.
-Since we use the Barycentric quadrature rule and the fourth-order
+Since we use the Barycentric quadrature rule and a fourth-order
 Runge-Kutta method, some streamlines are very close to the grains
 without penetrating them.}
 \end{center}
 \end{figure}
 
-Next, we use the streamlines to compute the tortuosity and the anomalous
-dispersion rates of eroding geometries.  To achieve statistical
-convergence, we use $N_p = 1000$ streamlines~\cite{bel-sal-rin1992}. To
-compute the tortuosity, we require the velocity at the inlet $x=-1$.
-These normalized velocities are plotted in
-Figure~\ref{fig:Eroding20tort}(a) for the eroded geometry at porosity
-$\phi = 62.9\%$ (Figure~\ref{fig:Eroding20tort}(c)).  The velocities are
-similar to the work of Matyka et al.~\cite{mat-kha-koz2008} (see Figure
-4(a)), except that our cross-section, by construction, does not cut
-through any of the grains.  Next, in Figure~\ref{fig:Eroding20tort}(b),
-we plot the local tortuosity~\eqref{eqn:localTort} by calculating the
-relative length of each streamline as it traverses the channel from
-$x=-1$ to $x=1$.  The local tortuosity ranges from 1 to 1.27, meaning
-that one of the streamlines is 27\% longer than it would have been if
-the grains were absent.  The average streamline is 9.79\% longer or
-equivalently the tortuosity of the geometry is $1.098$.  Again,
-comparing the local tortuosity to Matyka~\cite{mat-kha-koz2008} (Figure
-4(b)), the results are qualitatively similar. However, since our initial
-cross-section does not cut through the grains, the local tortuosity does
-not have any gaps.  Discontinuities in local tortuosity occur when
-nearby streamlines diverge to circumvent a grain.  In
-Figure~\ref{fig:Eroding20tort}(c), we plot pairs of streamlines
-associated with the ten largest jumps in the local tortuosity, with each
-pair of corresponding streamlines plotted in the same color.
 
-\begin{figure}[H]
+In Figure~\ref{fig:Eroding20vort}, we observe that erosion creates a
+network of channels from the inlet to outlet where the velocity and
+vorticity, and therefore erosion rate, are much larger than other
+regions.  These channels can be further visualized  with the
+streamlines.  In Figure~\ref{fig:Eroding20tracer}, we freeze the
+geometry at the second snapshot from Figure~\ref{fig:Eroding20vort} and
+plot 200 streamlines that are initialized at $x=-1$ and equally spaced
+in $y \in (-1,1)$.  The streamlines are shown at five different times,
+and the final plot is a zoom in of the lower right quadrant of the fifth
+time step, but with additional streamlines.  Since we use a high-order
+quadrature rule and time stepping method, we resolve streamlines that
+come very close to the eroded bodies.  There are three clear regions
+where the streamlines are most concentrated, corresponding to the
+regions of highest velocity.  Two of these regions are located between
+the bodies and the solid walls at $y=\pm 1$, and the third cuts through
+the porous region with the upper part of the channel formed by bodies 1,
+4, 6, and 8.  Since the flow is fastest in these regions, the shearing
+is largest, and this causes the channels to continue to open fastest as
+observed in Figure~\ref{fig:Eroding20vort}.
+
+Next, we use the $N_p = 1000$~\cite{bel-sal-rin1992} streamlines to
+compute the tortuosity of the eroding geometry.  To compute the
+tortuosity, we require the velocity at the inlet $x=-1$.  These
+normalized velocities are plotted in Figure~\ref{fig:Eroding20tort}(a)
+for the eroded geometry at porosity $\phi = 62.9\%$
+(Figure~\ref{fig:Eroding20tort}(c)).  The velocities are similar to the
+work of Matyka et al.~\cite{mat-kha-koz2008} (see Figure 4(a)), except
+that our cross-section, by construction, does not cut through any of the
+grains.  Next, in Figure~\ref{fig:Eroding20tort}(b), we plot the local
+tortuosity~\eqref{eqn:localTort} by calculating the relative length of
+each streamline as it traverses the channel from $x=-1$ to $x=1$.  The
+local tortuosity ranges from 1 to 1.27, meaning that one of the
+streamlines is 27\% longer than it would have been if the grains were
+absent.  The average streamline is 9.79\% longer or equivalently the
+tortuosity of the geometry is $1.098$.  Again, comparing the local
+tortuosity to Matyka~\cite{mat-kha-koz2008} (Figure 4(b)), the results
+are qualitatively similar. However, since our initial cross-section does
+not cut through the grains, the local tortuosity does not have any gaps.
+Discontinuities in local tortuosity occur when nearby streamlines
+diverge to circumvent a grain.  In Figure~\ref{fig:Eroding20tort}(c), we
+plot pairs of streamlines associated with the ten largest jumps in the
+local tortuosity, with each pair of corresponding streamlines plotted in
+the same color.
+
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/velocity_loc20_268}
@@ -1586,8 +1600,8 @@ that initially had 20 grains and has eroded to a porosity of 62.9\%.
 normalized by its maximum velocity of $2.98 \times 10^{-3}$. (b) The
 local tortuosity $\tau(y)$ on the cross section $x = -1$.  The spatially
 averaged tortuosity through the channel is $1.098$.  (c) The streamlines
-resulting in the ten largest differences between neighboring
-streamlines.  Neighboring streamlines have the same color.}
+resulting in the ten largest differences of local tortuosity between
+neighboring streamlines.  Neighboring streamlines have the same color.}
 \end{figure}
 
 In Figure~\ref{fig:Eroding20Transport}(a), we plot the tortuosity as a
@@ -1603,11 +1617,11 @@ quadrature to compute the tortuosity.  As the bodies erode, wide
 channels form where streamlines undergo only minor vertical deflections,
 and this explains why the tortuosity eventually decreases with porosity.
 We computed lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels} and found the power law to give the
-smallest error.  The  black dashed line in
+models~\eqref{eqn:tortuosityModels} and found the power law that
+minimizes the error.  The  black dashed line in
 Figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
 \begin{align}
-  \widehat{T}(\phi) = \phi^{-0.2064}
+  \widehat{T}(\phi) = \phi^{-0.2064},
 \end{align}
 with a root-mean-square error of $5.90 \times 10^{-3}$.  Interestingly,
 at the low porosities, the tortuosity initially increases. This increase
@@ -1621,27 +1635,28 @@ amount of vertical deflection, and therefore the tortuosity. While this
 increase in tortuosity is interesting, in the next two examples we will
 see that the tortuosity does not initially increase.
 
-In Figure~\ref{fig:Eroding20Transport}(b), we plot the temporal
-evolution of the particle spreading $\sigma_\lambda$.  The spreading is
-computed for seven geometries of different porosities that are formed
-during the erosion process.  So that the spreading reaches a statistical
-equilibrium, we use the reinsertion algorithm described in
-Section~\ref{sec:dispersion} to form sufficiently long trajectories.
-For all the reported porosities, the particle dispersion exhibits two
-distinct power law regimes.  Initially, the dispersion is ballistic
-($\sigma_\lambda \sim t$) since individual fluid particles have not yet
-explored enough space to significantly alter their velocity.  However,
-once the particles have been subjected to a range of velocities, their
-dispersion slows, and we observe super-dispersive ($\sigma_\lambda \sim
-t^\alpha$, $\alpha \in (1/2,1)$) behavior over at least one order of
-magnitude in time.  Before any erosion takes place, the anomalous
-dispersion coefficient is $\alpha = 0.56$.  Then, as the grains begin to
-erode, the dispersion rate grows towards the ballistic regime that
-occurs in the absence of grains.  The monotonic increase in dispersion
-with respect to the porosity is explained by the onset of channels where
-many tracers experience less variability in their velocities.
+We next use streamlines to investigate the temporal evolution of the
+particle spreading $\sigma_\lambda$.  The spreading is computed for
+seven geometries of different porosities that are formed during the
+erosion process (Figure~\ref{fig:Eroding20Transport}(b)).  So that the
+spreading reaches a statistical equilibrium, we use the reinsertion
+algorithm described in Section~\ref{sec:dispersion} to form sufficiently
+long trajectories.  For all the reported porosities, the particle
+dispersion exhibits two distinct power law regimes.  Initially, the
+dispersion is ballistic ($\sigma_\lambda \sim t$) since individual fluid
+particles have not yet explored enough space to significantly alter
+their velocity.  However, once the particles have been subjected to a
+range of velocities, their dispersion slows, and we observe
+super-dispersive ($\sigma_\lambda \sim t^\alpha$, $\alpha \in (1/2,1)$)
+behavior over at least one order of magnitude in time.  Before any
+erosion takes place, the anomalous dispersion coefficient is $\alpha =
+0.56$.  Then, as the grains begin to erode, the dispersion rate grows
+towards the ballistic regime that occurs in the absence of grains.  The
+monotonic increase in dispersion with respect to the porosity is
+explained by the onset of channels where many tracers experience less
+variability in their velocities.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/tort_eulerian}
 \caption{}
@@ -1689,7 +1704,7 @@ Barycentric quadrature rule, we stably simulate erosion at the much
 coarser resolution of $N_\iin = 256$ and $N_\out = 1024$ discretization
 points.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{center}
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort1}
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort150}
@@ -1726,32 +1741,7 @@ high porosity region (low pressure) to a low porosity region (high
 pressure). For this example, we see that the net effect is a decrease in
 the tortuosity for all time.
 
-In Figure~\ref{fig:ErodingLow20Transport}(b), we plot the temporal
-evolution of the particle spreading $\sigma_\lambda$.  As in the last
-example, we analyze the spreading at several different porosities and we
-use the reinsertion algorithm described in Section~\ref{sec:dispersion}
-to form sufficiently long trajectories to observe an asymptotic
-dispersion rate.  For all the porosities, the dispersion is much closer
-to ballistic when compared to the results in
-Figure~\ref{fig:Eroding20Transport}.  However, there are still clear
-transitions from ballistic dynamics to asymptotic super-dispersive
-spreading.  In contrast to the higher porosity initial condition
-(Section~\ref{sec:Eroding20}), at early times the erosion results in a
-decrease in the dispersion rate. In particular, the first 5\% of the
-bodies have eroded, the particle spreading transitions from
-$\sigma_\lambda \sim t^{0.92}$ to $\sigma_\lambda \sim t^{0.69}$.  To
-explain this behavior, recall that anomalous dispersion is caused by
-tracers spending time in both the fast and slow regimes.  Since the
-initial configuration has a reasonably uniform velocity (see
-Figure~\ref{fig:ErodingLow20vort}), albeit a small one, the dispersion
-is nearly ballistic. However, as the geometry erodes, the flow becomes
-more intermittent, and this results in an increased anomalous dispersion
-rate~\cite{dea-leb-den-tar-bol-dav2013}.  Then, as the bodies continue
-to erode, the geometry channelizes, and most tracers are transported
-with a large velocity through the channels, again resulting in a nearly
-ballistic motion~\cite{sie-ili-pri-riv-gua2019}.
-
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/tort_eulerian20b}
 \caption{}
@@ -1780,33 +1770,48 @@ $0.72$ ($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and $0.92$
 ($\phi=30.67\%$).}
 \end{figure}
 
-
+In Figure~\ref{fig:ErodingLow20Transport}(b), we plot the temporal
+evolution of the particle spreading $\sigma_\lambda$.  As in the last
+example, we analyze the spreading at several different porosities and we
+use the reinsertion algorithm described in Section~\ref{sec:dispersion}.
+For all the porosities, the dispersion is much closer to ballistic when
+compared to the results in Figure~\ref{fig:Eroding20Transport}.
+However, there are still clear transitions from ballistic dynamics to
+asymptotic super-dispersive spreading.  In contrast to the higher
+porosity initial condition (Section~\ref{sec:Eroding20}), at early times
+the erosion results in a decrease in the dispersion rate. In particular,
+after the first 5\% of the bodies have eroded, the particle spreading
+transitions from $\sigma_\lambda \sim t^{0.92}$ to $\sigma_\lambda \sim
+t^{0.69}$.  To explain this behavior, recall that anomalous dispersion
+is caused by tracers spending time in both the fast and slow regimes.
+Since the initial configuration has a reasonably uniform velocity (see
+Figure~\ref{fig:ErodingLow20vort}), albeit a small one, the dispersion
+is nearly ballistic. However, as the geometry erodes, the flow becomes
+more intermittent, and this results in an increased anomalous dispersion
+rate~\cite{dea-leb-den-tar-bol-dav2013}.  Then, as the bodies continue
+to erode, the geometry channelizes, and most tracers are transported
+with a large velocity through the channels, again resulting in a nearly
+ballistic motion~\cite{sie-ili-pri-riv-gua2019}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{100 eroding bodies}
 \label{sec:Eroding100}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-As a final example, we consider 100 eroding bodies with an initial
-porosity near 50\%.  Snapshots of the configurations and vorticity are
-in Figure~\ref{fig:Eroding100vort}.  Again, by resolving near-contacts
-with the Barycentric quadrature rule, a stable simulation is possible
-with only $N_\iin = 256$ discretization points.
-
-\begin{figure}[H]
- \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =0.9\linewidth]{./figs/100b_50}
+\begin{figure}[htp]
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height =0.8\linewidth]{./figs/100b_50}
 \caption{100 bodies, $\phi = 55.54\%$}
 \end{subfigure}%
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =1.1\linewidth]{./figs/100b_100}
+\includegraphics*[height =0.8\linewidth]{./figs/100b_100}
 \caption{99 bodies, $\phi = 62.98\%$}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =0.9\linewidth]{./figs/100b_150}
+\includegraphics*[height =0.8\linewidth]{./figs/100b_150}
 \caption{94 bodies, $\phi = 72.22\%$}
 \end{subfigure}%
 \begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[width =1.1\linewidth]{./figs/100b_200}
+\includegraphics*[height =0.8\linewidth]{./figs/100b_200}
 \caption{82 bodies, $\phi = 83.67\%$}
 \end{subfigure}
 \caption{\label{fig:Eroding100vort} The erosion of 100 nearly
@@ -1817,8 +1822,11 @@ vorticity.  Because of the large number of bodies, erosion creates many
 channels connecting the inlet to the outlet.}
 \end{figure}
 
-We compute the tortuosity using both the
-Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
+As a final example, we consider 100 eroding bodies, each with
+$N_\iin=256$ discretization points, with an initial porosity near 50\%.
+Snapshots of the configurations and vorticity are in
+Figure~\ref{fig:Eroding100vort}. We compute the tortuosity using both
+the Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
 methods~\eqref{eqn:tortuosity2}. Therefore, we must compute the velocity
 at $N_p = 1000$ points along the inlet $x=-1$. These normalized
 velocities are plotted in Figure~\ref{fig:Eroding100tort}(a) for the
@@ -1840,7 +1848,7 @@ tracers travels 25.5\% farther than it would have if the bodies had been
 absent, and the average tracer travelled 12\% farther indicating a
 tortuosity of $1.12$.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{subfigure}[b]{\textwidth}
 \includegraphics*[width =\linewidth]{./figs/velocity_loc100}
@@ -1860,15 +1868,14 @@ that initially had 100 grains and has eroded to a porosity of 62.98\%.
 (a) The $x$-component of the velocity at the inlet, $u_1(-1, y)$,
 normalized by its maximum velocity $u_{max}=3.90 \times 10^{-4}$.  Note
 that this maximum velocity is about a order of magnitude smaller than
-when compared to the 20 body example in Figure~\ref{fig:Eroding20tort}.
-(b) The local tortuosity $\tau(y)$ on the cross section $x = -1$. The
-spatially averaged tortuosity through the channel is $1.12$. (c) The
-trajectories of 200 tracers initialized at $x = -1$.  The
-discontinuities in the local tortuosity correspond to nearby streamlines
-whose lengths are significantly different because they pass opposite
-sides of an eroding body. Compared to Figure~\ref{fig:Eroding20tort},
-this example has more small bodies, and this results in many more
-discontinuities.}
+the 20 body example in Figure~\ref{fig:Eroding20tort}.  (b) The local
+tortuosity $\tau(y)$ on the cross section $x = -1$. The spatially
+averaged tortuosity through the channel is $1.12$. (c) The trajectories
+of 200 tracers initialized at $x = -1$.  The discontinuities in the
+local tortuosity correspond to nearby streamlines whose lengths are
+significantly different because they pass opposite sides of an eroding
+body. Compared to Figure~\ref{fig:Eroding20tort}, this example has more
+small bodies, and this results in many more discontinuities.}
 \end{figure}
 
 In Figure~\ref{fig:Eroding100Transport}(a), we plot the tortuosity as a
@@ -1885,12 +1892,13 @@ the end of the simulation, and we have observed this behavior in other
 examples.  The increase is caused by a single small body near the middle
 of the channel being completely eroded.  While this results in
 straighter streamlines, therefore reducing $\lambda$, the horizontal
-flow, $u_1(y)$ increases since there is no longer a no-slip boundary.
-We also computed the lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels}.  The black dashed line in
-Figure~\ref{fig:Eroding100Transport}(a) is the line of best fit
+flow, $u_1(y)$ increases since there is no longer a no-slip boundary,
+and this increases the tortuosity.  We also computed the lines of best
+fit using the porosity-tortuosity models~\eqref{eqn:tortuosityModels}.
+The black dashed line in Figure~\ref{fig:Eroding100Transport}(a) is the
+line of best fit
 \begin{align}
-  \widehat{T}(\phi) = \phi^{-0.2459}
+  \widehat{T}(\phi) = \phi^{-0.2459},
 \end{align}
 with a root-mean-square error of $5.50 \times 10^{-3}$.  We note a
 slightly better root-mean-square error of $5.20 \times 10^{-3}$ is
@@ -1913,7 +1921,7 @@ Since the bodies are so small at this high porosity, after reinsertion,
 the streamline is not significantly deflected by any of the bodies, and
 this results in a ballistic regime.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/tort_eulerian100}
 \caption{}
@@ -1957,10 +1965,9 @@ new Delaunay triangulation when a grain completely erodes.  Once all
 pore sizes are computed, we analyze their distribution as a function of
 the porosity.  
 
-HERE
-In Figure~\ref{fig:Eroding100gap_hist}, we plot
-histograms of the pore pore sizes at six porosities during the erosion
-process. These types of distributions have been described with Weibull
+In Figure~\ref{fig:Eroding100gap_hist}, we plot histograms of the pore
+pore sizes at six porosities during the erosion process. These types of
+distributions have been described with Weibull
 distributions~\cite{ioa-cha1993}, and we superimpose the Weibull
 distribution with the same first two moments as the data.  The
 parameters of the distribution, $(k,\lambda)$, are included in the
@@ -1972,28 +1979,28 @@ and the variance remains nearly flat. Since a channelized geometry has
 large variance, this indicates that channelization is less prevalent at
 low porosities.
 
-\begin{figure}[H]
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{figure}[htp]
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_1}
 \caption{100 bodies, 258 pores}
 \end{subfigure}%
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_46}
 \caption{100 bodies, 258 pores}
 \end{subfigure}%
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_112}
 \caption{97 bodies, 249 pores}
 \end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_164}
 \caption{92 bodies, 234 pores}
 \end{subfigure}%
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_207}
 \caption{75 bodies, 189 pores}
 \end{subfigure}%
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.33\textwidth}
 \includegraphics*[width =\linewidth]{./figs/hist100b_246}
 \caption{34 bodies, 74 pores}
 \end{subfigure}
@@ -2010,7 +2017,7 @@ $(k,\lambda)=(2.6235,0.1713)$; (f) $\phi = 95.12\%$ and
 $(k,\lambda)=(1.9840, 0.3194)$.}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.5\textwidth}
 \includegraphics*[height = 0.8\linewidth]{./figs/gap_mean}
 \caption{}
@@ -2034,7 +2041,7 @@ As a continuation of our previous work~\cite{qua-moo2018}, we have
 simulated dense suspensions and characterized transport in viscous
 erosion of porous media. A BIE formulation is used to solve the Stokes
 equations and to compute the shear stress. However, to simulate
-nearly-touching grains and to consider transport, it is necessary to
+nearly-touching grains and to characterize transport, it is necessary to
 integrate near-singular functions. This is achieved by extending a
 Barycentric quadrature rule~\cite{bar-wu-vee2015} to accurately compute
 the erosion rate and vorticity. By using this quadrature rule, we are
@@ -2049,7 +2056,8 @@ geometries cannot be completely described in terms of the porosity. In
 particular, we observe that for certain porous media, the tortuosity can
 increase when the porosity increases under erosion. We also observe
 super-dispersive spreading, and the rate of dispersion significantly
-depends not only on the porosity, but also the number of eroding bodies.
+depends not only on the porosity, but also the number of eroding bodies
+and their distribution.
 
 To further our understanding of erosion, we are examining other bulk and
 statistical properties of an eroding porous media. In this work, we
@@ -2058,10 +2066,10 @@ anomalous dispersion rate~\cite{dea-qua-bir-jua2018}.  At a later date,
 we will report results on the  development of anisotropic effects and
 the distributions of grain sizes, shapes, and opening angles.
 
-As a long term goal, we would like to include the effect of inertia and
-other transport models. Including inertia requires an integral equation
+As a long term goal, we hope to include the inertial effects and other
+transport models. Including inertia requires an integral equation
 formulation of the Navier-Stokes equations, which is an active area of
-research with a few promising algorithms recently
+research with a few promising directions recently
 proposed~\cite{gray2019boundary, kli-ask-kro2019}.  Regarding other
 transport models, this would involve a diffusive term to consider the
 transport of heat or a contaminant. Forming high-fidelity simulations of
@@ -2069,11 +2077,11 @@ such an advection-diffusion equation can be accomplished by using time
 splitting methods and recent work on heat solvers in complex
 geometries~\cite{fry-kro-tor2019}.
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{\bf Acknowledgments} BQ and NM were supported by Florida
 State University startup funds and Simons Foundation Mathematics and
-Physical Sciences-Collaboration Grants for Mathematicians.
+Physical Sciences-Collaboration Grants for Mathematicians 527139 and
+524259.
 
 \bibliographystyle{plainnat} 
 \biboptions{sort&compress}
