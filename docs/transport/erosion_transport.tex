@@ -176,19 +176,21 @@ and the geometry becomes channelized and anisotropic.}
 \end{center}
 \end{figure}
 
-Owing to the scales present in groundwater flow~\citep{bea1972}, we model
-the hydrodynamics with the two-dimensional incompressible Stokes
+Owing to the scales present in groundwater flow~\citep{bea1972}, we
+model the hydrodynamics with the two-dimensional incompressible Stokes
 equations.  Meanwhile, individual grains erode at a rate proportional to
 the hydrodynamic shear stress~\citep{wan-fel2004,
-ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.
-\nick{We compute the vorticity in the fluid bulk since, on solid boundaries, vorticity reduces to shear and thus provides a convenient way to simultaneously visualize local erosion rates and changes in the surrounding flow} (figure~\ref{fig:Eroding50vort}).  
-A variety of numerical methods for
+ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  \nick{We compute
+the vorticity in the fluid bulk since, on solid boundaries, vorticity
+reduces to shear and thus provides a convenient way to simultaneously
+visualize local erosion rates and changes in the surrounding flow}
+(figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
 the fluid solver are available including lattice-gas or lattice
 Boltzmann~\citep{kop-kat-tim1996, dar-mcc1998}, finite
 volumes~\citep{suo-liu-gan2019, den-ica-hid2018,
 sie-ili-pri-riv-gua2019}, finite differences~\citep{leb-ded-dav-bou2007,
-knu-car2005}, and cellular automata~\citep{rot1988}.  However, simulating
-erosion requires a method that is high-order, can resolve
+knu-car2005}, and cellular automata~\citep{rot1988}.  However,
+simulating erosion requires a method that is high-order, can resolve
 nearly-touching arbitrarily shaped grains, and can accurately compute
 derivatives of the velocity field.  Since the governing equations are
 linear and homogeneous, we address these challenges by converting the
@@ -197,15 +199,15 @@ fluid equations to a boundary integral equation (BIE).
 To compute stable simulations of erosion, we use high-order methods in
 both space and time. The time integration method is unchanged from
 previous work~\citep{qua-moo2018}.  We apply a mild regularization and a
-smoothing term to eliminate numerical instabilities that can be triggered by changes in
-sign of the shear stress, and we use a stable second-order Runge-Kutta
-method applied to the {\thL} coordinates~\citep{hou-low-she1994} of the
-eroding grains.  In this work, we introduce a new quadrature method to
-resolve dense suspensions.  The accuracy of the
-trapezoid rule, which was used in previous work, is adequate for
-bodies that are sufficiently separated~\citep{tre-wei2014}.  However, it
-loses accuracy whenever grains are in close contact.  One of the
-earliest works to address quadrature methods for nearly-singular
+smoothing term to eliminate numerical instabilities that can be
+triggered by changes in sign of the shear stress, and we use a stable
+second-order Runge-Kutta method applied to the {\thL}
+coordinates~\citep{hou-low-she1994} of the eroding grains.  In this
+work, we introduce a new quadrature method to resolve dense suspensions.
+The accuracy of the trapezoid rule, which was used in previous work, is
+adequate for bodies that are sufficiently separated~\citep{tre-wei2014}.
+However, it loses accuracy whenever grains are in close contact.  One of
+the earliest works to address quadrature methods for nearly-singular
 integrands was developed by~\citet{bak-she1986}, and in recent years,
 many other near-singular integration schemes have
 followed~\citep{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
@@ -278,8 +280,8 @@ we construct the pore-size distribution throughout the erosion process.
 These distributions are required to quantify velocity
 distributions~\citep{ali-par-wei-bre2017, dea-qua-bir-jua2018},
 channelization~\citep{sie-ili-pri-riv-gua2019},
-connectivity~\citep{knu-car2005, wes-blo-gra2001}, and to develop network
-models~\citep{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. 
+connectivity~\citep{knu-car2005, wes-blo-gra2001}, and to develop
+network models~\citep{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Contributions}
@@ -309,7 +311,7 @@ simulate a finite Peclet number advection-diffusion equation in eroded
 geometries.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Outline of the Paper}
+\subsection{Outline of the Paper}
 In Section~\ref{sec:formulation}, we summarize the erosion model that is
 described in more detail in previous work~\citep{qua-moo2018}.  In
 Section~\ref{sec:DLP}, we recast all the governing equations as layer
@@ -421,14 +423,15 @@ where the density function, Stokeslets, and rotlets satisfy
 \label{eqn:BIE}
 \begin{alignat}{3}
   \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
-    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
-    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx) +
-    \NN_0[\eeta](\xx), \quad &&\xx \in \bd\Omega, \\
+    \NN_0[\eeta](\xx) \nonumber \\
+    &\quad + \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
+    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx), 
+    \quad &&\qquad\xx \in \bd\Omega, \\
   \llambda_\ell &= \frac{1}{2\upi} \int_{\gamma_\ell} 
-    \eeta(\yy)\, ds_\yy, &&\ell = 1,\ldots,M, \\
+    \eeta(\yy)\, ds_\yy, &&\qquad \ell = 1,\ldots,M, \\
   \xi_\ell &= \frac{1}{2\upi} \int_{\gamma_\ell}
     (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy, 
-    &&\ell = 1,\ldots,M.
+    &&\qquad \ell = 1,\ldots,M.
 \end{alignat}
 \end{subequations}
 Here, the null space associated with the flux-free condition of $\ff$ is
@@ -450,7 +453,7 @@ vorticity, defined respectively as
     2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
     \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
     \right. \nonumber \\
-    & \qquad\qquad\qquad\qquad\qquad\qquad \left.
+    & \qquad\qquad\qquad\qquad \left.
     +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
     8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
     \right) \, ds_\yy, \\
@@ -502,12 +505,15 @@ complex representation is to write the Laplace double-layer potential as
 the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\upi} \int_{\bd\Omega} 
-    \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)) \quad 
-    \text{where} \quad v(x) = \frac{1}{2\upi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega,
+    \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)),
+\end{align}
+where
+\begin{align}
+  v(x) = \frac{1}{2\upi i} \int_{\bd\Omega}
+    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega.
   \label{eqn:laplaceComplex}
 \end{align}
-where $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
+Here $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
 counterparts of $\xx = (x_1,x_2),\yy = (y_1,y_2) \in \RR^2$, and $\eta =
 \eta_1 + i \eta_2$ is the complex counterpart of $\eeta =
 (\eta_1,\eta_2)$. Therefore, depending on the formulation of the layer
@@ -526,15 +532,17 @@ for multiply-connected domains, such as a porous media, $\bd\Omega$ is
 decomposed into its different connected components and the appropriate
 jump relation is applied.  Having computed the boundary data of the
 holomorphic function $v$, by the Cauchy integral theorem we have
-\begin{align}
+\begin{subequations}
+  \begin{alignat}{3}
   \label{eqn:cauchy}
-  v(x) = \frac{1}{2\upi i}\int_{\bd\Omega} 
-    \frac{v(y)}{y-x} \,dy, \quad
-  v'(x) = \frac{1}{2\upi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^2} \, dy, \quad
-  v''(x) = \frac{1}{\upi i} \int_{\bd\Omega}
+  v(x) &= \frac{1}{2\upi i}\int_{\bd\Omega} 
+    \frac{v(y)}{y-x} \,dy, \\
+  v'(x) &= \frac{1}{2\upi i} \int_{\bd\Omega}
+    \frac{v(y)}{(y-x)^2} \, dy, \\
+  v''(x) &= \frac{1}{\upi i} \int_{\bd\Omega}
     \frac{v(y)}{(y-x)^3} \, dy,
-\end{align}
+  \end{alignat}
+\end{subequations}
 for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
 function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
 function defined in equation~\eqref{eqn:laplaceComplex}, and its first
@@ -589,17 +597,17 @@ expressions for $u_1$ and $u_2$ in equation~\eqref{eqn:cauchyVelocity}
 \label{eqn:cauchyGradient}
   \begin{aligned}
     \pderiv{u_1}{x_1} &= +\Real (v'[\psi_1](x)) + 
-      \Real (v''[y\cdot\eta](x)) - \Real (v'[\eta_1](x)) - 
-      x_1\Real (v''[\eta_1](x)) - x_2\Real (v''[\eta_2](x)), \\
+    \Real (v''[y\cdot\eta](x)) - \Real (v'[\eta_1](x)) \\
+    &- x_1\Real (v''[\eta_1](x)) - x_2\Real (v''[\eta_2](x)), \\
     \pderiv{u_1}{x_2} &= - \Imag (v'[\psi_1](x)) - 
-      \Imag (v''[y\cdot\eta](x)) + x_1\Imag (v''[\eta_1](x)) - 
-      \Real (v'[\eta_2](x)) + x_2\Imag (v''[\eta_2](x)), \\
+    \Imag (v''[y\cdot\eta](x)) + x_1\Imag (v''[\eta_1](x)) \\
+    &- \Real (v'[\eta_2](x)) + x_2\Imag (v''[\eta_2](x)), \\
     \pderiv{u_2}{x_1} &= +\Real (v'[\psi_2](x)) - 
-      \Imag (v''[y\cdot\eta](x)) + \Imag (v'[\eta_1](x)) +
-      x_1\Imag (v''[\eta_1](x)) + x_2\Imag (v''[\eta_2](x)), \\
+    \Imag (v''[y\cdot\eta](x)) + \Imag (v'[\eta_1](x))  \\
+    &+ x_1\Imag (v''[\eta_1](x)) + x_2\Imag (v''[\eta_2](x)), \\
     \pderiv{u_2}{x_2} &= -\Imag (v'[\psi_2](x)) - 
-      \Real (v''[y\cdot\eta](x)) + x_1\Real (v''[\eta_1](x)) +
-      \Imag (v'[\eta_2](x)) + x_2\Real (v''[\eta_2](x)).
+    \Real (v''[y\cdot\eta](x)) + x_1\Real (v''[\eta_1](x)) \\
+    &+ \Imag (v'[\eta_2](x)) + x_2\Real (v''[\eta_2](x)).
   \end{aligned}
 \end{equation}
 The same expressions are used to compute the deformation tensor for $x
@@ -609,13 +617,14 @@ the shear stress, the deformation tensor on $\bd\Omega$ is applied to
 the normal and tangent vectors as in equation~\eqref{eqn:shearStress}.
 The velocity gradient is also used to compute the vorticity in the fluid
 bulk.  For $x \in \Omega$, the Cauchy integral representation of the
-vorticity is
-\begin{align}
-  \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
-\Real (v'[\psi_2](x)) + \Imag (v'[\psi_1](x)) 
- + \Real (v'[\eta_2](x))+ \Imag (v'[\eta_1](x)), \quad x \in \Omega.
-\end{align}
-
+vorticity at $x \in \Omega$ is
+\begin{equation}
+  \begin{aligned}
+    \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} &= 
+      \Real (v'[\psi_2](x)) + \Imag (v'[\psi_1](x))  \\
+      &+ \Real (v'[\eta_2](x))+ \Imag (v'[\eta_1](x)).
+  \end{aligned}
+\end{equation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Transport, Tracers, and Tortuosity}
@@ -815,8 +824,8 @@ quadrature rule (Section~\ref{sec:bary}).  The criteria that determines
 which quadrature method is applied is described in
 Section~\ref{sec:fmm}.  Once the shear stress is computed, the bodies
 are eroded a single time step by using a {\thL}
-discretization~\citep{hou-low-she1994, moore2013self}.  The time stepping
-methods for erosion and passive particles are described in
+discretization~\citep{hou-low-she1994, moore2013self}.  The time
+stepping methods for erosion and passive particles are described in
 Section~\ref{sec:time}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -838,6 +847,7 @@ inevitably develop during erosion.
 
 Given the discretization points of $\bd\Omega$, the trapezoid rule
 results in the collocation method for~\eqref{eqn:BIE}
+\todo[inline]{left off here with formatting equations}
 \begin{subequations}
 \label{eqn:trapLinearSystem}
   \begin{alignat}{3}
@@ -1018,7 +1028,7 @@ and~\eqref{eqn:BaryvExterior}.
 
 To compute the shear stress and vorticity, we require a Barycentric
 quadrature rule for $v''(x)$.  The derivation is largely based on the
-work of~\citet{ioa-pap-per1991} (see equation (2.12)).  We start with
+work of~\citet[see equation (2.12)]{ioa-pap-per1991}.  We start with
 the second derivative of the Cauchy integral theorem
 \begin{align}
   0 = \frac{1}{2\upi i} \int_{\bd\Omega} 
@@ -1390,7 +1400,7 @@ positive, the erosion rate is smooth and corners do not develop, but
 interesting shapes form nonetheless.  For instance, in the top half of
 the body, there is a sudden increase in the shear stress, and this leads
 to a region of high curvature.  This behavior is also present in three
-dimensions~\citep{mit-spa2017} (figure 7(c)).  The biggest difference
+dimensions~\citep[see figure 7(c)]{mit-spa2017}.  The biggest difference
 between the two- and three-dimensional results is the presence of a
 recirculation zone.  In three dimensions, there is no recirculation
 between the solid wall and the spherical body~\citep{cha-feu2003}, but
@@ -1519,14 +1529,14 @@ flow rate $U=1$ that occurs once all the bodies have eroded.}
 We next analyze the effect of erosion on the area fraction and the flow
 rate.  In figure~\ref{fig:Eroding20flowrate}(a), we plot the area
 fraction as a function of normalized time.  The general trend of the
-area fraction resembles our previous work~\citep{qua-moo2018} (figure
-10(a)), but with a larger initial area fraction.  In
+area fraction resembles our previous work~\citep[see][figure
+10(a)]{qua-moo2018}, but with a larger initial area fraction.  In
 figure~\ref{fig:Eroding20flowrate}(b), we plot the flow rate $U$
 required to maintain a constant pressure drop across the channel.
 Again, the trend of $U$ resembles that of our previous
-work~\citep{qua-moo2018} (figure 10(b)), except that the initial flow
-rate is an order of magnitude smaller because of the larger initial area
-fraction.  Starting around normalized time $0.2$,
+work~\citep[see][figure 10(b)]{qua-moo2018}, except that the initial
+flow rate is an order of magnitude smaller because of the larger initial
+area fraction.  Starting around normalized time $0.2$,
 figure~\ref{fig:Eroding20flowrate}(b) is roughly linear which indicates
 that the flow rate can be written as an exponential law.  The line of
 best fit is
@@ -1587,7 +1597,7 @@ tortuosity, we require the velocity at the inlet $x=-1$.  These
 normalized velocities are plotted in figure~\ref{fig:Eroding20tort}(a)
 for the eroded geometry at porosity $\phi = 62.9\%$
 (figure~\ref{fig:Eroding20tort}(c)).  The velocities are similar to the
-work of~\citet{mat-kha-koz2008} (see figure 4(a)), except that our
+work of~\citet[see figure 4(a)]{mat-kha-koz2008}, except that our
 cross-section, by construction, does not cut through any of the grains.
 Next, in figure~\ref{fig:Eroding20tort}(b), we plot the local
 tortuosity~\eqref{eqn:localTort} by calculating the relative length of
@@ -1596,7 +1606,7 @@ local tortuosity ranges from 1 to 1.27, meaning that one of the
 streamlines is 27\% longer than it would have been if the grains were
 absent.  The average streamline is 9.79\% longer or equivalently the
 tortuosity of the geometry is $1.098$.  Again, comparing the local
-tortuosity to~\citet{mat-kha-koz2008} (figure 4(b)), the results are
+tortuosity to~\citet[see figure 4(b)]{mat-kha-koz2008}, the results are
 qualitatively similar. However, since our initial cross-section does not
 cut through the grains, the local tortuosity does not have any gaps.
 Discontinuities in local tortuosity occur when nearby streamlines
@@ -2113,765 +2123,6 @@ Physical Sciences-Collaboration Grants for Mathematicians 527139 and
 %\biboptions{sort&compress}
 \bibliography{refs}
 
-
-
-
-
-
-
-
-
-
-%old stuff%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{boundary integral equation formulation} 
-%\label{sec:bies}
-%add an introduction why we do not use the double-layer potentials of stokes equations but the double-layer potentials of laplace equations to solve stokes equation when we use barycentric approach (or complex variable approach).
-%
-%\subsubsection{laplace's equations from $\rdb^2$ to $\cdb$ }
-%
-%let $\omega$ be the domain of fluid. the boundary of $\omega$ is $\gamma$ and the outward normal vector on $\gamma$ is ${\bf n_y}=(n_1,n_2)$.
-%
-%consider a laplace's equations with dirichlet boundary condition
-%\begin{equation}\label{laplace}
-%  \begin{cases}
-%    \delta {\bf u}=0, & \text{in}\,\,\, \omega \in \rdb^2;\\
-%    {\bf u}={\bf f}, & \text{on}\,\,\, \gamma.
-%  \end{cases}
-%\end{equation}
-%
-%Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
-%The double-layer potential which solves \eqref{Laplace} is 
-%\begin{align*}
-%\D[\sigma]({\bf x})&=\frac{1}{2\pi}\displaystyle\int_{\Gamma} \frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma({\bf y})ds_y,
-%%\frac{1}{2\pi}\displaystyle\int_{\Gamma}\frac{\partial}{\partial {\bf n_y}} \log |{\bf x}-{\bf y}| \sigma({\bf y})ds_y,\\ \\
-%%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{{\bf r}\cdot{\bf n_y}}{\rho^2} \sigma({\bf y})ds_y\\ \\
-%%&=\frac{-1}{2\pi}\int_{\Gamma}\frac{n_1(x_1-y_1)+n_2(x_2-y_2)}{(x_1-y_1)^2+(x_2-y_2)^2} \sigma({\bf y})ds_y 
-%\numberthis\label{DLP:real}
-%\end{align*}
-%where $\sigma$ is the density function on the boundary $\Gamma$.
-%
-%
-%Consider a Cauchy integral 
-%\begin{equation}\label{CI}
-%v({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{\sigma({ y})}{{ y}-{ x}} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Cdb\setminus \Gamma.
-%\end{equation}
-%where ${ x}=x_1+ix_2$, $ { y}=y_1+iy_2$, ${ n_y}=n_1+i n_2$ and $d{ y}=i {n_y}ds_y$. It can be shown that 
-%the real part of the Cauchy integral in \eqref{CI} is equivalent to the double-layer potential in \eqref{DLP:real}. 
-%
-%
-%\subsubsection{From Stokes DLP to Laplace DLPs}
-%
-%Let ${\bf x}=(x_1,x_2), {\bf y}=(y_1,y_2)$. Then we have ${\bf r}={\bf x} - {\bf y}$ and $\rho=|\bf r|$.
-%
-%
-%The Stokes double-layer potential  is
-%\begin{equation}\label{StokesDLP1}
-%\D[\boldsymbol\sigma]({\bf x}):=\frac{1}{\pi}\int_{\Gamma}\left(\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\frac{{\bf r} \otimes {\bf r}}{\rho^2}\right) {\boldsymbol\sigma({\bf y})} d s_y.
-%\end{equation}
-%We could rewrite the Stokes DLP in terms of the Laplace DLP as
-%\begin{align*}\label{StokesDLP2}
-%\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
-%&-\frac{1}{2\pi}x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y-\frac{1}{2\pi}x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y. \numberthis
-%\end{align*}
-%
-
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Computing the shear stress}
-%\label{sec:shearStressLP}
-%
-%To calculate the shear stress, we need to know the gradient of double-layer potential in \eqref{StokesDLP2} 
-%\begin{align*}\label{SSLP}
-%\nabla\D[\boldsymbol\sigma]({\bf x})=\frac{1}{2\pi}\nabla\int_{\Gamma}&\frac{{\bf n_y}}{\rho^2}({\bf r} \cdot {\boldsymbol \sigma})ds_y+\frac{1}{2\pi}\nabla^2\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}({\bf y} \cdot{\boldsymbol \sigma})ds_y\\
-%&-\frac{1}{2\pi}\nabla\left(x_1 \nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_1ds_y\right)-\frac{1}{2\pi}\nabla\left(x_2\nabla\int_{\Gamma}\frac{{\bf r} \cdot {\bf n_y}}{\rho^2}\sigma_2ds_y\right). \numberthis
-%\end{align*}
-%
-%
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Boundary evolution in the {\thL} framework} 
-%\label{sec:thetaL}
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Solving the BIE}
-%\label{sec:BIE}
-%\subsubsection{Interior Case}
-%Consider a Cauchy integral 
-%\begin{align}\label{CIFI}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{{ y}-{ x}} d{ y}
-%&=\begin{cases}
-%\,v(x), &{ x} \in \Omega,\\ 
-%\,0,  &{ x} \in \Cdb\setminus \bar{\Omega}.
-%\end{cases}
-%\end{align}
-%By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{{ y}-{ x}} d{ y}=1,$ we can rewrtie \eqref{CIFI} and get 
-%\begin{equation}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)}{{ y}-{ x}} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-%\end{equation}
-%\begin{equation}\label{dNCI}
-%v'({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})}{(y- x)^2} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-%\end{equation}
-%By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{dNCI} and get 
-%\begin{equation}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^-({ y})-v(x)-(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-%\end{equation}
-%
-%\subsubsection{Exterior case}
-%Consider a Cauchy integral formula for the exterior domain
-%\begin{align}\label{CIFE}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})}{{ y}-{ x}} d{ y}
-%&=\begin{cases}
-%\,v_{\infty}, &{ x} \in \Omega,\\ 
-%\,-v(x)+v_{\infty},  &{ x} \in \Omega^c,
-%\end{cases}
-%\end{align}
-%where $v_{\infty}=\displaystyle\lim_{x \to \infty}v(x)$.
-%\begin{equation}
-%\frac{1}{x-a}=\frac{-1}{2 \pi i} \int_{\Gamma}\frac{(y-a)^{-1}}{y-x} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-%\end{equation}
-%\begin{equation}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-(y-a)^{-1}(x-a)v(x)}{y-x} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-%\end{equation}
-%\begin{equation}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{v^+({ y})-v(x)-(y-a)^{-1}(x-a)(y-x)v'(x)}{(y-x)^2} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-%\end{equation}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Shear stress}
-%\label{sec:shearStress}
-%\subsubsection{Interior Case}
-%\begin{equation}\label{ddNCI}
-%v''({x})=\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})}{(y- x)^3} d{ y},\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-%\end{equation}
-%By the identity of Cauchy Integral Formula $\displaystyle\frac{1}{2 \pi i}\int_{\Gamma}\frac{1}{( y- x)^n} d{ y}=0$ for integer n $\neq 1$, we can rewrtie \eqref{ddNCI} and get 
-%\begin{equation}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega.
-%\end{equation}
-%\subsubsection{Exterior case}
-%\begin{equation}
-%\frac{1}{2\pi i}\int_{\Gamma}\frac{2v^+({ y})-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2v''(x)}{(y-x)^3} d{ y}=0,\,\,\,\,\,\,\,\,\, \forall { x} \in \Omega^c.
-%\end{equation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% TIME-STEPPING %%
-%\subsection{Time-stepping with the {\thL} method} 
-%\label{sec:timeStepping}
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Post processing quantities of interest}
-%\label{s:qoi}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Vorticity}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Pressure}
-%\label{sec:pressure}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Drag}
-%\label{sec:drag}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Near-singular integration}
-%\label{sec:NSI}
-%
-%
-%{\color{red}
-%Here we derive the equations~\eqref{eqn:pderiv1}-\eqref{eqn:pderiv2} 
-%and the other two are similar.
-%To derive equations~\eqref{eqn:pderiv1} and \eqref{eqn:pderiv2}, 
-%we need to apply the fact that if a real function $u$ is equivalent to 
-%the real part of a complex varaible function $f$, 
-%then we have $\nabla u=(\Re(f'),-\Im(f'))$.
-%Let $f_1(x)= v[\tau_1](x)$, $f_2(x)=v'[\yy\cdot\eeta](x)$, $f_3(x)=v'[\eta_1](x)$,
-%and $f_4(x)= v'[\eta_2](x)$. Then we can rewrite equation~\eqref{eqn:cauchy1}
-%\begin{align*}
-%u_1(\xx)&= u_{11}(\xx) +  u_{12}(\xx) +u_{13}(\xx)+u_{14}(\xx) \\
-%&=\Re (f_1(x)) + \Re (f_2(x))-x_1\Re (f_3(x)) - x_2\Re (f_4(x)).
-%\end{align*}
-%To get the gradient of $u_1(x)$, we have
-%\begin{align*}
-%\nabla u_1(x)&= \nabla u_{11}(x)+\nabla  u_{12}(x) 
-%+\nabla u_{13}(x)+\nabla u_{14}(x) \\ \\
-%&=\begin{bmatrix}
-%\Re(f_1'(x))\\ \\
-%-\Im(f_1'(x))
-%\end{bmatrix}+
-%\begin{bmatrix}
-%\Re(f_2'(x))\\ \\
-%-\Im(f_2'(x))
-%\end{bmatrix}
-%+
-%\begin{bmatrix}
-%-\Re(f_3(x))-x_1\Re(f_3'(x))\\ \\
-%x_1\Im(f_3'(x))
-%\end{bmatrix}
-%+
-%\begin{bmatrix}
-%-x_2\Re(f_4'(x))\\ \\
-%-\Re(f_4(x))+x_2\Im(f_4'(x))
-%\end{bmatrix}\\ \\
-%&=
-%\begin{bmatrix}
-%\Re (v'[\tau_1](x)) + 
-%    \Re (v''[\yy\cdot\eeta](x)) - \Re (v'[\eta_1](x)) - 
-%    x_1\Re (v''[\eta_1](x)) - x_2\Re (v''[\eta_2](x))\\ \\
-%- \Im (v'[\tau_1](x)) - 
-%    \Im (v''[\yy\cdot\eeta](x)) + x_1\Im (v''[\eta_1](x)) - 
-%    \Re (v'[\eta_2](x)) + x_2\Im (v''[\eta_2](x))
-%\end{bmatrix}.
-%\end{align*}
-%
-%{\color{red}
-%\begin{alignat}{3}
-%1 &= \frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{1}{y-x} dy, &&x \in \Omega, \label{eqn:cauchyId1}\\
-%\frac{1}{x-a} &= \frac{-1}{2\pi i}\int_{\Gamma} 
-%    \frac{(y-a)^{-1}}{y-x} dy,  \quad &&x \in \Omega^c\label{eqn:cauchyId2}. 
-%\end{alignat}
-%and the contour integral 
-%\begin{align}\label{eqn:cauchyId3}
-%0=\oint_{\Gamma} \frac{1}{(y-x)^n}dy, \quad n \neq 1.
-%\end{align}
-%Then we apply equations~\eqref{eqn:cauchyId1} and~\eqref{eqn:cauchyId3} on
-%the second derivative of Cauchy integral in \eqref{eqn:cauchy} and get
-%\begin{align*}
-%0 &= \frac{1}{2\pi i} \int_{\Gamma}
-%    \frac{2v^-(y)}{(y - x)^3} \, dy -v''(x)\\
-%&= \frac{1}{2\pi i} \int_{\Gamma}
-%    \frac{2v^-(y)}{(y - x)^3} \, dy 
-%-v''(x)\frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{1}{y-x} dy\\
-%&= \frac{1}{2\pi i} \int_{\Gamma}
-%    \frac{2v^-(y)}{(y - x)^3} \, dy 
-%-\frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{(y-x)^2v''(x)}{(y-x)^3} dy
-%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2v(x)}{(y-x)^3}dy
-%-\frac{1}{2\pi i}\int_{\Gamma} \frac{2(y-x)v'(x)}{(y-x)^3}dy\\
-%&= \frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy.
-%\end{align*}
-%}
-%\todo[inline]{S-H: How do we get these identities?}
-%\begin{alignat}{3}
-%  0 &= \frac{1}{2\pi i}\int_{\Gamma} 
-%    \frac{2v^-({ y})-2v(x)-2(y-x)v'(x)-(y-x)^2v''(x)}{(y-x)^3} dy, &&x \in \Omega, \\
-%  0 &= \frac{1}{2\pi i}\int_{\Gamma}
-%    \frac{2v^+(y)-2v(x)-2(y-x)v'(x)-(y-a)^{-1}(x-a)(y-x)^2 v''(x)}
-%    {(y-x)^3} dy, \quad &&x \in \Omega^c.  \label{eqn:Identity}
-%\end{alignat}
-%{\color{red}
-%and the quadrature formulations are
-%\begin{alignat}{3}
-%  v''(x) &\approx
-%    \frac{2\sum\limits_{j=1}^N \frac{v_j^- -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}w_j}
-%    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, &&x \in \Omega, \\
-%  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-%    \frac{v_j^+ -v(x)-(y_j-x)v'(x)}{(y_j-x)^3}}{\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}
-%    , \quad &&x \in \Omega^c.  \label{eqn:SecondBary}
-%\end{alignat}
-%where $a$ is a point inside the $\Omega$ in equations~\eqref{eqn:Identity} and \eqref{eqn:SecondBary}.
-%
-%}
-%
-%{\color{red}
-%By using Barycentric quadrature rule to approach integrations, we get a reasonable(?) double-layer potential and quantities of interest at target points but it requires $\mathcal{O}(N^2)$ operations per target point which is computational expensive if we impose it on all the target points. In order to accelerate the process and keep the accuracy, it is a compromise that we use Barycentric quadrature rule to approach the nearly singular integratons but apply trapezoid rule when the target point is far from source points. 
-%
-%
-%To numerically compute the completed double-layer potential, we discretize each of the $M$ bodies with  $N_\iin$ points, and the outer wall with $N_\out$ points. The following is the four-step fast summation methods.
-%}
-%\begin{itemize}
-%  \item Apply trapezoid rule as a first pass
-%
-%{\color{red} We use the Fast Multipole Method (FMM)~\citep{gre-rok1987, gre-gre-may1992} with trapezoid rule to calculate the double-layer potential.
-%}
-%  \item Efficiently find points that are too close for trapezoid
-%
-%{\color{red}
-% Let $L_w$ be the length of the outer wall and $L_{b}$ be the length of the boundary of body where $b=1, \cdots, M$. Here are the criteria to see if two points are too close for trapezoid. For criterion of outer wall to body,  let $d$ be the minimum distance between outer wall and a point $x$ on the body $b$, we say $x$ is too close to outer wall if
-%\begin{equation}\label{eqn:Cw2b}
-%d< \alpha_1\frac{L_w}{N_\out}
-%\end{equation}
-%where $\alpha_1$ is a constant. 
-%For criterion between two bodies, let $d$ be the distance between the centroid $a$ of the body $b_1$ and a point $x$ on the body $b_2$, we say they are too close if
-%\begin{equation}\label{eqn:Cb2b}
-%d<\alpha_2\left(\frac{L_{b_1}}{N_\iin}+\frac{L_{b_2}}{N_\iin}\right)
-%\end{equation}
-%where $\alpha_2$ is a constant. 
-%
-%}
-%\end{itemize}
-%{\color{red}  (Discussion of the choices of $\alpha_1$ and $\alpha_2$ with respect to accuracy and  efficiency)
-%
-%To find the suitable values of $\alpha_1$ and $\alpha_2$ in~\eqref{eqn:Cw2b} and \eqref{eqn:Cb2b}, we set $\alpha_1=\alpha_2=1, 2, 3$, and $4$ to test the criteria on a 20-body problem with $N_\out = 1024$ and $N_\iin = 128, 256$, and $512$. To check the accuracy of the simulations, we use the solution calculated by \todo[inline]{what method} to \todo[inline]{...}
-%To see how efficient our code is, we record the cpu time for each step.
-%
-%}
-
-%{\color{red} 
-%By using Barycentric quadrature rule, we are able to capture the details
-%in the fluid when wall and bodies or body and bodies are close to each
-%other.  The first nearly touching bodies case is 20 bodies in a
-%Hagen-Poiseuille flow.  The initial velocity of flow from the left side
-%of $\Omega$ is $$\UU(\xx)=U\begin{bmatrix} 1-y^2\\ 0\end{bmatrix},$$
-%where $U$ is chosen such that the pressure drop between  $x=-2$ and
-%$x=2$ remains fixed at 8.  With this choice, the velocity in the absent
-%of grains has flow rate $U=1$.  The number of discretization points is
-%$N_\iin = 256$.
-%
-%The snapshots of the process of 20 nearly touching bodies eroding are in
-%Fig.~\ref{fig:Eroding20vort}.  We initially place some bodies to nearly
-%contact not only one another but also the outer wall. For example,
-%bodies 1, 6, 13, and 15 are very close to outer wall: the distance
-%between body 1 and outer wall is $1.3025h$, the distance between body 6
-%and outer wall is $2.9275h$, the distance between body 13 and outer wall
-%is $2.8447h$, the distance between body 15 and outer wall is $1.3352h$
-%where $h=L_w/N_\out$ is the arclength spacing correponding to the outer
-%wall.  In~\citep{qua-moo2018} we reported the quick expanding space at
-%the narrow channel between neighboring bodies, the developing flat faces
-%at the sites of near contact, and bodies vanishing. In this nearly
-%touching bodies structure, we also observe these similar phenomena but
-%not totally the same.  For the speed of expanding space at the narrow
-%channel, we see some narrow channels do expand faster than other wider
-%channels.  For example, the spacing between bodies 14 and 18 is smaller
-%than the spacing between bodies 7 and 14 initially and the former one is
-%comparable to the latter one by the second frame. But there are some
-%small initial spacings that do not expand that much at all by the fourth
-%frame, for example between bodies 1 \& 6, 3 \& 9.  We could find the
-%explanation from the vorticity of fluid in Fig.~\ref{fig:Eroding20vort}.
-%Since the eroding velocity on the body is proportional to the absolute
-%value of vorticity in our erosion model,  then when the  absolute value
-%of vorticity is small there is not much erosion on the body.  In all
-%four frames of Fig.~\ref{fig:Eroding20vort}, the vorticity is relatively
-%small between bodies 1 \& 6 and 3 \& 9.
-%
-%Besides the channels between two bodies, there is a single channel goes
-%across the domain horizontally and the flow has been concentrated in
-%this channel.  In the second frame of Fig.~\ref{fig:Eroding20vort}, this
-%channel is between bodies 1 \& 20, 1 \& 9, 4 \& 3, 8 \& 11, 8 \& 2, 6 \&
-%12, and 6 \& 19.  We can get a better understanding of this channel from
-%the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}.  In the
-%top three frames of  Fig.~\ref{fig:Eroding20tracer}, the flow (or
-%tracer) first comes from three small channels between outer wall \& body
-%10, bodies 7 \& 14, and bodies 14 \& 18, then the three branches become
-%one and go into the main channel between bodies 1 \& 9.  From the first
-%frame to the forth frame of Fig.~\ref{fig:Eroding20vort}, this channel
-%is expanding faster than other channel and bodies 4 \& 12 has vanished
-%and body 19 is almost gone in the forth frame.  The reason of fast
-%expansion of this channel is the high vorticity.  In the forth frame of
-%Fig.~\ref{fig:Eroding20vort}, we could see the vorticity is relatively
-%high on the side of bodies which form this channel so the bodies are
-%eroded fast on the side of this channel or have vanished completely.
-%
-%Furthermore, how long the body lasts for depends on not only the size of
-%the body but also the location of the body.  For example, the first
-%three vanishing bodies are body 12 (as t=0.0256), 4 (as t=0.0278), then
-%17 (as t=0.0287).  Since body 4 is located in the main flow channel so
-%the body 4 is vanished earlier than body 17 although the initial size of
-%body 4 is larger than the size of body 17.  This channel will keep
-%expanding and the bodies around this channel will vanish earlier than
-%others.  After body 17, the next 8 vanished bodies with respect to time
-%are body 19 (as t=0.0312),  body 7 (as t=0.0325), body 20 (as t=0.0329),
-%body 8 (as t=0.0349), body 10 (as t=0.0353), body 3 (as t=0.0356), body
-%14 (as t=0.0363), then body 9 (as t=0.0376).  All of these eight bodies
-%were around this channel before they are gone.
-%
-%For the flat faces at the sites of near contact, since we put the body
-%be close to one another so we are able to see all the channels between
-%two close bodies have flat faces.  Besides the channels between bodies,
-%we also observe the flat faces on the bodies which are close to the
-%outer wall. For example, we see the flat faces on the top of bodies 1 \&
-%6 and the bottom of bodies 13 \& 15.  
-%
-%Since we use a Barycentric quadrature rule to approximate the velocity
-%of tracers and apply the fourth order Runge Kutta method to find the new
-%locations of tracers in each step, the tracers can be very close to but
-%not penetrate the bodies.  Those body-closed tracers are moving
-%perfectly so we are able to observe the details of the interaction of
-%bodies and fluid.  Although the direction of flow is from left to right,
-%the tracers will not only travel horizontally but also vertically.  In
-%the last three frames of Fig.~\ref{fig:Eroding20tracer}, some tracers
-%climb up from right to left around the body.  There are zoom windows of
-%the climbing tracers trajectories in Fig.~\ref{fig:Eroding20zoom} and
-%they are taken from the last three frames of
-%Fig.~\ref{fig:Eroding20tracer} with more tracers.  In
-%Fig.~\ref{fig:Eroding20zoom} the tracers around the center body first go
-%from the channel below the body, climb up to the left, then go to the
-%right and join another tracers in the channel above the body. 
-%
-%In Fig.~\ref{fig:Eroding20area} and Fig.~\ref{fig:Eroding20flowrate} we
-%measure the area occupied by bodies and the flow rate $U$ quantifily
-%during the eroding. In the beginning, 62.32\% of area of $[-1,1] \times
-%[-1,1]$ is occupied by 20 bodies. Then the eroding speed is increasing
-%when more and more bodies are vanished in the fluid. 
-%
-%The flow rate increases exponentially with growth rate close to
-%$\ln10^4$. 
-%
-%
-%In Fig.~\ref{fig:Eroding20tort} we use tortuosity to analysis the effect
-%of the geometrical structure on fluid velocity field. In
-%Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
-%x-component velocity u(-1, y) to its maximum velocity $u_{max}=6.2281
-%\times 10^{-4}$ at equal spreading tracers on the cross section (x=-1
-%and y in [-1,1]). The velocity is continuous along the cross section and
-%acting as several Poiseuille flows. This velocity graph is different
-%from the one in~\citep{matyka2008tortuosity} since we choose our cross
-%section to be the beginning of the flow before the fluid touches any
-%body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuousity
-%$\tau$ of the tracers at the cross section. This graph is not continuous
-%and the jumps in $\tau$ mean that the initial neighbor tracers have been
-%seperated by the bodies. 
-%
-%In Fig.~\ref{fig:Eroding20tort}(c)
-%In Fig.~\ref{fig:Eroding20tort}(d) 
-%}
-%
-%{\color{red}
-%To study the interaction of fluid and fixed bodies in the porous media,
-%some parameters can be used to describle the interation quantitively,
-%for example the porosity, the permeability, and the tortuosity. 
-%The relation of porosity and tortuosity has been studied in~\cite{matyka2008tortuosity}.
-%The definition of porosity is the ratio 
-%$$\phi=\frac{A_v}{A_T}$$
-%where $A_v$ is the area of void-space and $A_T$ is the area of the calculating area.}
-%{\color{red} The tortuosity represents the weighted average travel distance of a tracer in a porous media. 
-%The definition of tortuosity is 
-%$$T=\frac{1}{d}\frac{\displaystyle\int_{S}u_x(y) \lambda(y)dy}{\displaystyle\int_{S}u_x(y)dy}$$
-%where $S$ is an arbitrary cross section which is perpendicular to the x axis,
-%$\lambda(y)$ is the length of streamline at y on $S$, 
-%$u_x(y)$ is the component of velocity at y which is normal to $S$, and 
-%$d$ is the distance from $S$ to the end cross section.
-%It depends on not only the geometric structure but also the velocity of the fluid 
-%which is different from the porosity since porosity only depends on the geometric structure.}
-%{\color{red}Beisdes, the local tortuosity~\cite{matyka2008tortuosity} has been used to analysis 
-%the local behavior of steamline around a body. 
-%The definition of local tortuosity of the tracers at $y$ on $S$ is
-%$$\tau(y)=\frac{\lambda(y)}{d}.$$ 
-%}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Cauchy Integral Representation of the Pressure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%The pressure of the double-layer potential is
-%\begin{align}
-%  p(\xx) = -\frac{1}{\pi} \int_{\bd\Omega} \frac{1}{\rho^2}
-%    \left(1 - 2 \frac{\rr \otimes \rr}{\rho^2} \right) \nn
-%    \cdot \eeta(\yy) \, ds_\yy.
-%\end{align}
-%
-%
-%
-%{\color{red}
-%We
-%measure the area occupied by bodies 
-%during the eroding and record the flow rate $U$ quantifily in log scale
-%during the eroding in Fig.~\ref{fig:Eroding20flowrate}. 
-%Since we simulate the erosion by applying fixed pressure drop 
-%the flow rate $U$ is small when there are many bodies in the fluid and 
-%when the area fraction is getting smaller $U$ is getting larger.
-%In Fig.~\ref{fig:Eroding20flowrate}, 62.32\% of area of $[-1,1] \times
-%[-1,1]$ is occupied by 20 bodies initially and the flow rate $U$ starts from $9.86\times 10^{-5}$. 
-%Then the eroding speed is increasing
-%when more and more bodies are vanished in the fluid and 
-%the maximum eroding speed happens when the area fraction equals 7.57\% 
-%which is occupied by 8 bodies.
-%When all the bodies have vanished completely the flow rate $U$ is equal to 1.
-%In Fig.~\ref{fig:Eroding20flowrate}(b), the flow rate $U$ increases exponentially 
-%with growth rate close to $\ln10^4$. }
-%Besides the channels between two bodies, there is a single channel goes
-%across the domain horizontally and the flow has been concentrated in
-%this channel.  In the second frame of Fig.~\ref{fig:Eroding20vort}, this
-%channel is between bodies 1 \& 20, 1 \& 9, 4 \& 3, 8 \& 11, 8 \& 2, 6 \&
-%12, and 6 \& 19.  We can get a better understanding of this channel from
-%the trajectories of tracers in Fig.~\ref{fig:Eroding20tracer}.  In Fig.~\ref{fig:Eroding20tracer}, 
-%the flow (or tracer) first comes from three small channels between outer wall \& body
-%10, bodies 7 \& 14, and bodies 14 \& 18, then the three branches become
-%one and go into the main channel between bodies 1 \& 9.  From the first
-%frame to the forth frame of Fig.~\ref{fig:Eroding20vort}, this channel
-%is expanding faster than other channel and bodies 4 \& 12 has vanished
-%and body 19 is almost gone in the forth frame.  The reason of fast
-%expansion of this channel is the high vorticity.  In the forth frame of
-%Fig.~\ref{fig:Eroding20vort}, we could see the vorticity is relatively
-%high on the side of bodies which form this channel so the bodies are
-%eroded fast on the side of this channel or have vanished completely.
-%{\color{red} 
-%Furthermore, how long the body lasts in the fluid depends on not only
-%the size of the body but also the location of the body.  For example,
-%the first three vanishing bodies are body 12 (as t=0.0256), 4 (as
-%t=0.0278), then 17 (as t=0.0287).  Since body 4 is located in the main
-%flow channel so the body 4 is vanished earlier than body 17 although the
-%initial size of body 4 is larger than the size of body 17.  This channel
-%will keep expanding and the bodies around this channel will vanish
-%earlier than others.  After body 17, the next 8 vanished bodies with
-%respect to time are body 19 (as t=0.0312),  body 7 (as t=0.0325), body
-%20 (as t=0.0329), body 8 (as t=0.0349), body 10 (as t=0.0353), body 3
-%(as t=0.0356), body 14 (as t=0.0363), then body 9 (as t=0.0376).  All of
-%these eight bodies were around this channel before they are gone.
-%
-%For the flat faces at the sites of near contact, since we put the body
-%be close to one another so we are able to see all the channels between
-%two close bodies have flat faces.  Besides the channels between bodies,
-%we also observe the flat faces on the bodies which are close to the
-%outer wall. For example, we see the flat faces on the top of bodies 1 \&
-%6 and the bottom of bodies 13 \& 15.  
-%
-%Since we use a Barycentric quadrature rule to approximate the velocity
-%of tracers and apply the fourth order Runge Kutta method to find the new
-%locations of tracers in each step, the tracers can be very close to but
-%not penetrate the bodies.  Those body-closed tracers are moving
-%perfectly so we are able to observe the details of the interaction of
-%bodies and fluid.  Although the direction of flow is from left to right,
-%the tracers will not only travel horizontally but also vertically.  In
-%the bottom middle frame of Fig.~\ref{fig:Eroding20tracer}, some tracers
-%climb up from right to left around the body.  There is a zoom windows of
-%the climbing tracers trajectories in the bottom right frame of Fig.~\ref{fig:Eroding20tracer} and
-%they are taken from the bottom middle frame of
-%Fig.~\ref{fig:Eroding20tracer} with more tracers.  In the bottom right frame of 
-%Fig.~\ref{fig:Eroding20tracer} the tracers around the center body first go
-%from the channel below the body, climb up to the left, then go to the
-%right and join another tracers in the channel above the body. 
-%}
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b210_zoom}
-%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b240_zoom}
-%\includegraphics[width = 0.32\textwidth]{./figs/tracer_20b270_zoom}
-%\caption{\label{fig:Eroding20zoom}The zoom windows in the last three
-%  frames of Figure~\ref{fig:Eroding20tracer}. The trajectories of
-%  tracers around the bodies. Since we use a Barycentric quadrature rule
- % and the fourth order Runge Kutta method, the tracers can be very close
- % to but not penetrate the bodies.}
-%\end{center}
-%\end{figure}
-%{\color{red}
-%In Fig.~\ref{fig:Eroding20tort} we release 1000 tracers 
-%from the starting cross section x = -1 to 
-%the end cross section x = 1 and 
-%use the local tortuosity to analysis the effect
-%of the geometrical structure on fluid velocity field when the porosity is 62.9 \%.
-%In Fig.~\ref{fig:Eroding20tort}(a) the graph represents the ratio of the
-%x-component velocity u(-1, y) to its maximum velocity $u_{max}=2.9828
-%\times 10^{-3}$ at equal spreading tracers on the starting cross section.
-%The velocity is continuous along the starting cross section and
-%acting as several Poiseuille flows. This velocity graph is different
-%from the one in~\cite{matyka2008tortuosity} since we choose our cross
-%section to be the beginning of the flow before the fluid touches any
-%body. In Fig.~\ref{fig:Eroding20tort}(b) we record the local tortuosity
-%$\tau(y)=\lambda(y)/d$
-%of the tracers at $y$ on the starting cross section x = -1 
-%where $d = 2$.
-%This graph is not continuous 
-%and the jumps in $\tau$ mean that the initial neighboring tracers have been
-%seperated by the bodies. 
-%The maximum of $\tau$ is 1.2713 and the minimum is 1.0001.
-%}
-%{\color{red}
-%In Fig.~\ref{fig:Eroding20tort}(c) we calculate the difference of 
-%$\tau$ at two neighboring tracers 
-%and draw the trajectories of neighboring tracers
-%if the difference of $\tau$ at the neighboring tracers is large. 
-%From Fig.~\ref{fig:Eroding20tort}(c), we collect the 10 largest difference of $\tau$ 
-%at the neighboring tracers and 
-%draw the pair of trajectories in the same color and 
-%are able to tell the neighboring trajectories will be very 
-%different if they are separated by bodies.
-%For each pair of trajectories, 
-%they are splitted by the body at the left side of the body, then
-%one of them goes up and the other one goes down along the body 
-%until they rejoin with each other at the right side of body.  
-%Furthermore, the pair trajectories could be splitted by more than one body, 
-%for example in Fig.~\ref{fig:Eroding20tort}(c) the toppest red pair trajectories 
-%are splitted by two close bodies.
-%}
-
-%To measure the local behavior of fluid quantitatively, 
-%we use the velocities and local tortuosities at the starting cross section 
-%to analysis the interaction of fluid and bodies until the end cross section 
-%in Fig.~\ref{fig:Eroding100tort}(b) and (c).
-%In Fig.~\ref{fig:Eroding100tort}(b) the graph represents the ratio of the
-%x-component velocity u(-1, y) to its maximum velocity $u_{max}=3.9021
-%\times 10^{-4}$ at equal spreading tracers on the strating cross section.
-%As in the case of 20 nearly touching bodies, the velocity is continuous along
-%the starting cross section and acting as a Poiseuille flow in the channel between
-%bodies. When the fluid is close to bodies
-%the speed of fluid will be slow down because of the no-slip condition on the bodies
-%and this causes the separated branches of the inlet flow.
-%The maximum velocity of the fluid with 100 bodies on the starting cross 
-%section is slower than the maximum velocity of the fluid with 20 bodies
-%but the velocity in the case of 100 bodies 
-%changes more rapidly than the velocity of the fluid with 20 bodies.
-%The reason of the rapid change on the starting cross section of 
-%100-body case is because there are 
-%more bodies near the starting cross section in
-%100-body case than in the 20-body case. 
-%so the inlet flow in 100-body case
-%will be separated into more branches than the flow in 20-body case. 
-%
-%In Fig.~\ref{fig:Eroding100tort}(c) we record the 
-%local tortuosity $\tau(y)$ for $y$ on the starting cross section x = -1.
-%It is a discontinous function and the maximum of $\tau$ in the case of 100 bodies
-%is 1.2547 and the minimum is 1.0003. This function $\tau$
-%has more jumps than the one in the case of 20 bodies but its maximum 
-%is smaller than the maximum in the case of 20 bodies. 
-%The jump in this graph means the neighboring trajectories are splitted by bodies
-%so it is reasonable to have more jumps in the case of 100-body than the case of 20-body
-%since there are more bodies in the former case. 
-
-%To study the behavior of fluid in the porous media with multiple bodies, 
-%we release 1000 tracers equispaced in $y$ from the 
-%cross section x = -1 and record their trajectories and velocities
-%until they arrive the end cross section x = 1 
-%and the porosity of this geometric structure is 62.98 \%. 
-%To understand the global action of fluid qualitatively, 
-%we only draw 200 historical trajectories from x = -1 to x = 1 
-%in Fig.~\ref{fig:Eroding100tort}(a). 
-%When equispaced tracers are released in a 2D tube without any grains, 
-%the streamlines are straight 
-%and the intersection points of streamlines and any cross section are equispaced. 
-%But it is not the same when there are bodies in the fluid. 
-%In Fig.~\ref{fig:Eroding100tort}(a)
-%even the tracers are equispaced in $y$ on the cross section $S$, 
-%the streamlines have been push up and down by the bodies and
-%some of them are close together. 
-%
-%
-%%To understand the meaning of jump 
-%%of $\tau$, we use the data we got from local tortuosity $\tau(y)$
-%%to find the difference of $\tau$ at the neighboring tracers in Fig.~\ref{fig:Eroding100tort}(c) 
-%%and draw 50 pairs of neighboring trajectories which have the largest difference of $\tau$
-%%in Fig.~\ref{fig:Eroding100tort_traj}. These pairs of two neighboring trajectories are splitted by bodies
-%%then rejoin with each other and the splitting-rejoining behavior causes the difference of $\tau$ with respect to the neighboring trajectories.   
-%%We also can get the idea why the maximum value of $\tau$ is smaller 
-%%than the one in the case of 20 bodies . 
-%%The most of the bodies in this case are smaller than those in the case of 20 bodies.
-%%So when two neighboring trajectories are splitted on the left side by a smaller body they do not
-%%travel as far as the two splitted by a bigger body do after they rejoin on the right side. 
-
-
-%{\color{red}
-%This case is 100 bodies in a Hagen-Poiseuille flow. The background
-%flow is 
-%\begin{align}
-%  \UU(\xx)=U \left[
-%  \begin{array}{c}
-%    1-y^2 \\ 0
-%  \end{array}
-%  \right]
-%\end{align}
-%with floating flow rate $U$ such that pressure drop is fixed from x = -2 to x = 2.
-%We record the vorticity of 
-%fluid in colormap during the bodies erosion in Fig.~\ref{fig:Eroding100vort} and 
-%measure the gap sizes between bodies in Fig.~\ref{fig:Eroding100gap} at four equispaced times.
-%Since the vorticity is equivalent to the shear stress and the erosion is faster in the regions where
-%the magnitude of the vorticity is larger 
-%so the erosion is getting faster and faster 
-%from the first snapshot to the forth one in Fig.~\ref{fig:Eroding100vort}.
-%At t = 0.005 the porosity is 55.54\% and the most gap sizes between bodies are less than 0.015 in 
-%Fig.~\ref{fig:Eroding100gap}(a). Since some of the bodies are vanished in the fluid, the numner of gaps 
-%decreases and the gap sizes get larger and larger between the remaining bodies. 
-%In Fig.~\ref{fig:Eroding100gap}(b) and (c) we still can see small gap sizes are in the majority but 
-%it is not as concentrated as the one we see in Fig.~\ref{fig:Eroding100gap}(a). 
-%In Fig.~\ref{fig:Eroding100gap}(d) there are only 254 gaps between 82 bodies and 
-%the distribution of gap sizes spreads over without any major pack.  
-%}
-%
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width = 0.55\linewidth]{./figs/tort_eulerian}
-%\caption{\label{fig:Eroding20tort_all} The tortuosity inside of an
-%eroding geometry initialized with 20 bodies.  The tortuosity is
-%calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue dots)
-%and Lagrangian method~\eqref{eqn:tortuosity1} (red stars).  The red
-%square correspond to the geometry in Figure~\ref{fig:Eroding20tort}(c).
-%The dash line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$ as
-%$p=0.2064$ and the root-mean-square error is $5.9 \times 10^{-3}$.}
-%\end{figure}
-%
-%
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.55\linewidth]{./figs/20b_second_moment_long_ref}
-%\caption{\label{fig:Eroding20anomalousMedium} The analysis of anomalous
-%dispersion in 20 nearly touching bodies with respect to initial porosity
-%(as p=37.68\%) and another six porosities during the eroding. The dashed
-%line correspondes to a porosity of 100\% and the dashed-dotted lines are
-%lines of best fit with slope 1.0644 (as p=95.1\%), 1.0673 (as
-%p=85.09\%), 1.0594 (as p=75.15\%), 0.9664 (as p=65.09\%), 0.7766 (as
-%p=55.10\%), 0.7475 (as p=45.08\%), and 0.5607 (as p=37.68\%.}
-%\end{figure}
-%
-
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.55\linewidth]{./figs/tort_eulerian20b}
-%\caption{\label{fig:ErodingLow20tort} The tortuosity inside of an
-%eroding geometry initialized with 20 bodies.  The tortuosity is
-%calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue
-%dots).  The dash line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$
-%as $p=0.1669$ and the root mean square deviation is $1.13 \times
-%10^{-2}$.}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.55\linewidth]{./figs/20b_dense_second_moment_ref}
-%\caption{\label{fig:Eroding20anomalousLow} The analysis of anomalous
-%dispersion in 20 nearly touching bodies with respect to initial porosity
-%(as p=30.67\%) and another seven porosities during the eroding. The
-%dashed line correspondes to a porosity of 100\% and the dashed-dotted
-%lines are lines of best fit with slope 0.9194 (as p=95\%), 0.8666 (as
-%p=85.17\%), 0.8682 (as p=75.10\%), 0.9087 (as p=65.02\%), 0.9054 (as
-%p=55.08\%), 0.7234 (as p=45.03\%), 0.6895 (as p=35.05\%), and 0.9225 (as
-%p=30.67\%).}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.55\linewidth]{./figs/tort_eulerian100}
-%\caption{\label{fig:Eroding100tort_all} The Eulerian and Lagrangian
-%approach of tortuosity.  The blue dots are Eulerian approach of
-%tortuosity and the red stars and square are Lagrangian approach of
-%tortuosity.  The dash line is the fitting line
-%$\widehat{T}(\phi)=\phi^{-p}$ as $p=0.2459$ and the root-mean-square
-%error is $5.5 \times 10^{-3}$.  We note that the model
-%$\widehat{T}(\phi) = 1-p\ln(\phi)$, with $p=0.2631$ has a comparable
-%root-mean-square error of $5.2 \times 10^{-3}$.}
-%\end{figure}
-%
-%\begin{figure}
-%\center
-%\includegraphics*[width =0.55\linewidth]{./figs/100b_second_moment_long_ref}
-%\caption{\label{fig:Eroding100anomalous} The analysis of anomalous
-%dispersion in 100 bodies with respect to initial porosity
-%(as p=50.09\%) and another five porosities during the eroding. The dashed line
-%correspondes to a porosity of 100\% and the dashed-dotted lines are lines
-%of best fit with slope 1.1135 (as p=95.12\%), 0.6825 (as p=85.07\%), 
-%0.7347 (as p=75.14\%), 0.5915 (as p=65.03\%), 
-%0.6107 (as p=55.02\%), and 0.7 (as p=50.09\%).}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\begin{center}
-%\includegraphics[width = 0.8\textwidth]{./figs/100b_t100tracer}
-%\caption{\label{fig:Eroding100tracer} The historical trajectories of 
-%200 tracers released at x = -1 in the fluid with multiple bodies.}
-%\end{center}
-%\end{figure}
-
-
-%\begin{figure}[H]
-%\center
-%\includegraphics*[width =0.5\linewidth]{./figs/tort100b_diff_top50}
-%\caption{\label{fig:Eroding100tort_traj} The largest 50 difference of 
-%local tortuosity $\tau$ at two neighboring tracers in
-%100 bodies eroding when the porosity is 62.98 \%
-%and the tortuosity is 1.1182. The same color of a pair of trajectories 
-%means they are from two neighboring tracers.}
-%\end{figure}
 
 \end{document}
 
