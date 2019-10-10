@@ -45,26 +45,24 @@ Institute, Florida State University, Tallahassee, FL 32306, USA
 \begin{abstract} 
   Transport of viscous fluid through porous media is a direct
   consequence of the pore structure. Here we investigate transport
-  through \nick{a specific class of two-dimensional porous geometries, 
-  namely those formed by fluid-mechanical erosion.}  
-  We investigate the tortuosity and
-  dispersion by analyzing the first two statistical moments of tracer
-  trajectories. \nick{For most initial configurations, tortuosity decreases in time 
-  as a result of erosion increasing the porosity. 
-  However, we find that tortuosity can also increase transiently in certain cases.}
-  \nick{The porosity-tortuosity relationships that result from our simulations 
-  are compared against models available in the literature.}
-  \nick{Asymptotic dispersion rates are also strongly affected by the
-  erosion process, as well as by the number and
-  distribution of the eroding bodies.}  
-  Finally, we analyze the pore size
+  through a specific class of two-dimensional porous geometries, namely
+  those formed by fluid-mechanical erosion.  We investigate the
+  tortuosity and dispersion by analyzing the first two statistical
+  moments of tracer trajectories. For most initial configurations,
+  tortuosity decreases in time as a result of erosion increasing the
+  porosity.  However, we find that tortuosity can also increase
+  transiently in certain cases.  The porosity-tortuosity relationships
+  that result from our simulations are compared against models available
+  in the literature.  Asymptotic dispersion rates are also strongly
+  affected by the erosion process, as well as by the number and
+  distribution of the eroding bodies. Finally, we analyze the pore size
   distribution of an eroding geometry. The simulations are performed by
   combining a high-fidelity boundary integral equation solver for the
   fluid equations, a second-order stable time stepping method to
   simulate erosion, and new numerical methods to stably and accurately
   resolve nearly-touching eroded bodies and particle trajectories near
   the eroding bodies.
-  
+
 %  We extend our previous work, [{\em Journal of Computational Physics},
 %  {\bf 375}:1--21, 2018], to simulate fluid-mechanical erosion of
 %  two-dimensional porous media with nearly-touching grains.  The method
@@ -151,12 +149,11 @@ efforts build on previous work~\citep{ris-moo-chi-she-zha2012,
 moore2013self, moo2017}, in particular recent numerical methods
 developed to simulate erosion in the Stokes-flow
 regime~\citep{qua-moo2018}. We, however, make key improvements to the
-numerical methods \nick{(I killed the reference here because I think its redundant)} to enable simulations of more
-realistic, dense suspensions of eroding grains
-(figures~\ref{fig:Eroding50vel} and~\ref{fig:Eroding50vort}).  Then, to
-characterize transport through these configurations, we examine
-coarse-grained variables through statistical analysis of tracer
-trajectories.
+numerical methods to enable simulations of more realistic, dense
+suspensions of eroding grains (figures~\ref{fig:Eroding50vel}
+and~\ref{fig:Eroding50vort}).  Then, to characterize transport through
+these configurations, we examine coarse-grained variables through
+statistical analysis of tracer trajectories.
 
 \begin{figure}
 \begin{center}
@@ -180,10 +177,10 @@ Owing to the scales present in groundwater flow~\citep{bea1972}, we
 model the hydrodynamics with the two-dimensional incompressible Stokes
 equations.  Meanwhile, individual grains erode at a rate proportional to
 the hydrodynamic shear stress~\citep{wan-fel2004,
-ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  \nick{We compute
-the vorticity in the fluid bulk since, on solid boundaries, vorticity
+ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  We compute the
+vorticity in the fluid bulk since, on solid boundaries, vorticity
 reduces to shear and thus provides a convenient way to simultaneously
-visualize local erosion rates and changes in the surrounding flow}
+visualize local erosion rates and changes in the surrounding flow
 (figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
 the fluid solver are available including lattice-gas or lattice
 Boltzmann~\citep{kop-kat-tim1996, dar-mcc1998}, finite
@@ -847,7 +844,6 @@ inevitably develop during erosion.
 
 Given the discretization points of $\bd\Omega$, the trapezoid rule
 results in the collocation method for~\eqref{eqn:BIE}
-\todo[inline]{left off here with formatting equations}
 \begin{subequations}
 \label{eqn:trapLinearSystem}
   \begin{alignat}{3}
@@ -857,22 +853,24 @@ results in the collocation method for~\eqref{eqn:BIE}
     w^k_j D(\yy^0_\ell,\yy^k_j) \eeta^k_j +
   \sum_{j=1}^{N_\out} w^0_j N_0(\yy^0_\ell,\yy^0_j)\eeta_j^0 
     \nonumber \\
-  &\quad+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^0_\ell) + 
-  \sum_{k=1}^M R[\xi_k,\cc_k](\yy^0_\ell),
-    &&\hspace{-60pt} \ell = 1,\ldots,N_\out, \\
+  &+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^0_\ell) + 
+  \sum_{k=1}^M R[\xi_k,\cc_k](\yy^0_\ell), 
+  &&\hspace{-124pt}\ell = 1,\ldots,N_\out, \\
 %
   \mathbf{0} &= \sum_{j=1}^{N_\out} 
     w^0_j D(\yy^m_\ell,\yy^0_j) \eeta_j^0 +
   \sum_{k=1}^M \sum_{j=1}^{N_\iin}
     w^k_j D(\yy^m_\ell,\yy^k_j) \eeta^k_j \nonumber \\
-  &\quad+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^m_\ell) + 
+  &+\sum_{k=1}^M S[\llambda_k,\cc_k](\yy^m_\ell) + 
   \sum_{k=1}^M R[\xi_k,\cc_k](\yy^m_\ell),
-    &&\hspace{-60pt}\ell = 1,\ldots,N_\iin, \: m=1,\ldots,M, \\
+    &&\hspace{-124pt}m=1,\ldots,M, \: \ell = 1,\ldots,N_\iin,  \\
 %
-  \llambda_m &= \frac{1}{2\upi} \sum_{j=1}^{N_\iin} w_j^m \eeta^m_j,
-  \quad \xi_m = \frac{1}{2\upi} \sum_{j=1}^{N_\iin} w_j^m
-    (\yy^m_j - \cc_m)^\perp \cdot \eeta^m_j,
-    &&\hspace{-60pt} m=1,\ldots,M,
+  \llambda_m &= \frac{1}{2\upi} \sum_{j=1}^{N_\iin} 
+    w_j^m \eeta^m_j, 
+  &&\hspace{-124pt}m = 1,\ldots,M \\ 
+  \xi_m &= \frac{1}{2\upi} \sum_{j=1}^{N_\iin} 
+    w_j^m (\yy^m_j - \cc_m)^\perp \cdot \eeta^m_j,
+  &&\hspace{-124pt}m=1,\ldots,M,
 \end{alignat}
 \end{subequations}
 where $w^k_j$ are quadrature weights that depend on $N_\iin$, $N_\out$,
