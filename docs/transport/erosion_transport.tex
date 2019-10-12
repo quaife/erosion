@@ -1298,37 +1298,38 @@ $i=1,\ldots,N_p$.
 We now present numerical results of dense packings of bodies eroding in
 Stokes flow. Moreover, we analyze transport through the eroded
 geometries by examining coarse-grained variables.  Each eroding body is
-initially a circle with center $\cc_i$ and radius $r_i$.  The center and
-radius are chosen at random, and the body is accepted if it is contained
-in $[-1,1] \times [-1,1]$ and is sufficiently separated from all other
-bodies.  Since the error of our quadrature method is bounded independent
-of the geometry, we consider bodies that are separated by less than 10\%
-of an arclength spacing.  The randomized method is repeated until the
-initial geometry reaches a desired initial porosity.
+initially a circle with center $\cc_i$, $r_i$, and length $L_i = 2\upi
+r_i$.  The center and radius are chosen at random, and the body is
+accepted if it is contained in $[-1,1] \times [-1,1]$ and is
+sufficiently separated from all other bodies.  Since the error of our
+quadrature method is bounded independent of the geometry, we consider
+bodies that are separated by less than 10\% of an arclength spacing.
+The randomized method is repeated until the initial geometry reaches a
+desired initial porosity.
 
-Once the geometry is initialized, each grain of length $L_i = 2\upi r_i$
-is discretized with $N_\iin$ points.  A no-slip boundary condition is
-imposed on each eroding body $\gamma_i$.  For all simulations, we
-discretize the outer wall $\Gamma$ with $N_\out=1024$ points.  For all
-but the first example, the Dirichlet boundary condition on $\Gamma$ is a
-Hagen-Poiseuille flow, and the flow rate is adjusted at each time step
-to maintain a constant pressure drop. Since the fluid equations are
-linear, this is achieved by computing the pressure near the inlet and
-outlet at each time step, and then scaling the flow rate
-appropriately~\citep{qua-moo2018}.
+For all simulations, we discretize each eroding grain with $N_\iin =
+256$ points and the outer wall $\Gamma$ with $N_\out=1024$ points.  A
+no-slip boundary condition is imposed on each eroding body $\gamma_i$,
+and a Dirichlet boundary condition on $\Gamma$ is used to approximate a
+far-field boundary condition. For all but the first example, the
+Dirichlet boundary condition is a Hagen-Poiseuille flow, and the flow
+rate is adjusted at each time step to maintain a constant pressure drop.
+Since the fluid equations are linear, this is achieved by computing the
+pressure near the inlet and outlet at each time step, and then scaling
+the flow rate appropriately~\citep{qua-moo2018}.
 
 The erosion rate loses regularity at stagnation points, which inevitably
 leads to corner formation on the bodies.  As described in
 section~\ref{sec:time} and our previous work~\citep{qua-moo2018}, we
 ameliorate corner formation by introducing a curvature penalization term
-with parameter $\epsilon$ and a Gaussian smoothing step with parameter
+with parameter $\eps$ and a Gaussian smoothing step with parameter
 $\sigma$.  For all examples, we use the smoothing parameters
 $\eps=15/256$ and $\sigma=10/256$, and the time step size is $\Delta t =
 10^{-4}$.
 
 In each of the examples, we plot the vorticity in the fluid bulk.  Since
-the vorticity and the shear stress agree on surface of the eroding
-bodies, the vorticity is useful to visualize the erosion rate.  In
+the vorticity and the shear stress agree on the boundary of the eroding
+grains, the vorticity is useful to visualize the erosion rate.  In
 particular, the rate of erosion is largest in regions where the
 magnitude of the vorticity is largest.
 
@@ -1371,22 +1372,13 @@ Consider a single eroding body close to a solid wall with the shear flow
 imposed on the outer wall. \citet{mit-spa2017} performed a similar
 three-dimensional experiment using a second-order quadrature method.
 Their initial body is a sphere with its center located $1.5$ radii above
-the solid wall.  In two dimensions, the trapezoid rule is spectrally
-accurate, and an analogous initial configuration is possible. However,
-unless the number of discretization points is increased, the trapezoid
-rule becomes obsolete if the eroding body is initialized too close to
-the solid wall. Therefore, to simulate erosion near a solid wall at
-reasonable levels of discretization, we use our hybrid method that
-combines the trapezoid rule and the Barycentric quadrature rule.
-
-We consider an eroding body that is initially a circle of radius
-$r=0.4$.  We discretize the eroding body with $N_\iin=256$
-discretization points, and its center is chosen so that the distance
-between the body and the solid wall is $h$, $h/2$, and $h/10$, where $h
-= 2\upi r/N_\iin$.  If we used the trapezoid rule and required an error
-that is comparable to the Barycentric quadrature rule, the body with an
-initial distance of $h/10$ from the solid wall would require $6,400$
-discretization points, and the outer wall would require $50,000$
+the solid wall.  We initialize the two-dimensional eroding body with
+radius $r = 0.4$, and we conduct numerical experiments where the initial
+distance between the grain and the solid wall is $h$, $h/2$, and $h/10$,
+where $h = 2\upi r/N_\iin$.  If we used the trapezoid rule and required
+an error that is comparable to the Barycentric quadrature rule, the body
+with an initial distance of $h/10$ from the solid wall would require
+$6,400$ discretization points, and the outer wall would require $50,000$
 discretization points.
 
 In figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
@@ -1394,19 +1386,19 @@ equispaced time steps.  For all three initial configurations, the shear
 stress is positive for all time, but varies over several orders of
 magnitude.  Therefore, we color the eroding body's boundary with the
 logarithm of the shear stress.  Since the shear stress is always
-positive, the erosion rate is smooth and corners do not develop, but
-interesting shapes form nonetheless.  For instance, in the top half of
-the body, there is a sudden increase in the shear stress, and this leads
-to a region of high curvature.  This behavior is also present in three
-dimensions~\citep[see figure 7(c)]{mit-spa2017}.  The biggest difference
-between the two- and three-dimensional results is the presence of a
-recirculation zone.  In three dimensions, there is no recirculation
-between the solid wall and the spherical body~\citep{cha-feu2003}, but
-recirculation is possible in two dimensions~\citep{chw-wu1975, hig1985}.
-To visualize the flow, we plot the vorticity of the final time step from
-figure~\ref{fig:NearWall} in figure~\ref{fig:NearWall_vort}.  In these
-examples, a small recirculation zone, both in size and magnitude, is
-present in the region where the vorticity is smallest
+positive, the erosion rate is smooth and corners do not develop.
+However, in the top half of the body, there is a sudden increase in the
+shear stress, and this leads to a region of high curvature.  This
+behavior is also present in three dimensions~\citep[see figure
+7(c)]{mit-spa2017}.  The biggest difference between the two- and
+three-dimensional results is the presence of a recirculation zone.  In
+three dimensions, there is no recirculation between the solid wall and
+the spherical body~\citep{cha-feu2003}, but recirculation is possible in
+two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, we
+plot the vorticity of the final time step from figure~\ref{fig:NearWall}
+in figure~\ref{fig:NearWall_vort}.  In these examples, a small
+recirculation zone, both in size and magnitude, is present in the region
+where the vorticity is smallest
 
 \begin{figure}
 \begin{center}
@@ -1454,8 +1446,7 @@ to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \subsection{20 Bodies at a Medium Porosity}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider 20 eroding bodies that are discretized with $N_\iin=256$
-points.  The background flow is the Hagen-Poiseuille flow
+We consider 20 eroding grains with the Hagen-Poiseuille flow
 \begin{align}
   \UU(\xx)=U \left[
   \begin{array}{c}
@@ -1463,49 +1454,48 @@ points.  The background flow is the Hagen-Poiseuille flow
   \end{array}
   \right],
 \end{align}
-where the flow rate $U$ is chosen so that the average pressure drop from
-$x=-2$ to $x=2$ is held fixed at 8. Therefore, $U=1$ once all the bodies
-have vanished.  Snapshots of the bodies at four equispaced times are
-shown in figure~\ref{fig:Eroding20vort}.  The color is the vorticity,
-whose absolute value is proportional to the erosion rate on solid
-boundaries.  Initially, several of the eroding bodies are closer to the
-outer wall than the $5h$ threshold required for the trapezoid rule to
-achieve machine precision.  In particular, the distance between bodies
-1, 6, 13, and 15 and the outer wall is $1.3h$, $2.9h$, $2.8h$, and
-$1.3h$, respectively, where $h$ is the arclength spacing of the outer
-wall $\Gamma$.  In addition, the distance between several pairs of
-eroding bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and 14 \& 18, is too
-small to be accurately resolved with the trapezoid rule.  By using the
-Barycentric quadrature rule, the interaction between these
-nearly-touching bodies is accurately resolved to the desired accuracy,
-and erosion can be simulated until all the bodies have vanished.
+imposed on $\Gamma$. The flow rate $U$ is chosen so that the average
+pressure drop from $x=-2$ to $x=2$ is held fixed at 8. Therefore, $U=1$
+once all the grains have vanished.  The vorticity and grain
+configuration at four equispaced times are shown in
+figure~\ref{fig:Eroding20vort}.  Initially, several of the grains are
+closer to the outer wall than the $5h$ threshold required for the
+trapezoid rule to achieve machine precision.  In particular, the
+distance between bodies 1, 6, 13, and 15 and the outer wall is $1.3h$,
+$2.9h$, $2.8h$, and $1.3h$, respectively, where $h$ is the arclength
+spacing of the outer wall $\Gamma$.  In addition, the distance between
+several pairs of eroding bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and
+14 \& 18, is too small to be accurately resolved with the trapezoid
+rule.  By using the Barycentric quadrature rule, the interaction between
+these nearly-touching bodies is accurately resolved to the desired
+accuracy, and erosion can be simulated until all the bodies have
+vanished.
 
 \begin{figure}
 \begin{center}
-  \includegraphics[height=0.225\textwidth]{./figs/20b_dense1}
-  \includegraphics[height=0.225\textwidth]{./figs/20b_dense101}
-  \includegraphics[height=0.225\textwidth]{./figs/20b_dense201}
-  \includegraphics[height=0.225\textwidth]{./figs/20b_dense301}
+  \includegraphics[height=0.227\textwidth]{./figs/20b_dense1}
+  \includegraphics[height=0.227\textwidth]{./figs/20b_dense101}
+  \includegraphics[height=0.227\textwidth]{./figs/20b_dense201}
+  \includegraphics[height=0.227\textwidth]{./figs/20b_dense301}
 \caption{\label{fig:Eroding20vort} The erosion of 20 nearly touching
-bodies, each discretized with $N_\iin=256$ points, in a Hagen-Poiseuille
-flow.  The four snapshots are evenly spaced in time, and the color is
-the fluid vorticity. In the fourth frame, bodies 4, 12, and 17 have
-vanished completely, and body 19 has almost completely eroded.}
+bodies in a Hagen-Poiseuille flow.  The four snapshots are evenly spaced
+in time, and the color is the fluid vorticity. In the fourth frame,
+bodies 4, 12, and 17 have completely vanished, and body 19 has almost
+completely eroded.}
 \end{center}
 \end{figure}
 
-Erosion causes the space between nearly touching bodies to quickly
-expand, and flat faces develop along the regions of near contact.  This
-qualitative behavior is seen in figure~\ref{fig:Eroding20vort} between
-bodies 3 \& 4, 15 \& 16, and was also observed in previous
-work~\citep{qua-moo2018}. However, by resolving the interaction between
-bodies that are much closer together than in previous work, we observe
-that very little erosion occurs between certain pairs of bodies, at
-least initially.  For instance the opening between bodies 1 \& 6, 3 \&
-9, and 5 \& 13 grow much slower than the opening between bodies 15 \&
-16.  A common feature of the pores that grow slowly is that they are
-nearly perpendicular to the main flow direction, resulting in a small
-erosion rate.
+Erosion causes the some of the pore sizes to quickly grow, and flat
+faces develop along the regions of near contact.  This qualitative
+behavior is seen in figure~\ref{fig:Eroding20vort} between bodies 3 \&
+4, 15 \& 16, and was also observed in previous work~\citep{qua-moo2018}.
+However, by resolving the interaction between bodies that are much
+closer together, we observe that very little erosion occurs between
+certain pairs of bodies, at least initially.  For instance the opening
+between bodies 1 \& 6, 3 \& 9, and 5 \& 13 grow much slower than the
+opening between bodies 15 \& 16.  A common feature of the pores that
+grow slowly is that they are nearly perpendicular to the main flow
+direction, resulting in a small erosion rate.
 
 \begin{figure}
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1538,12 +1528,6 @@ area fraction.  Starting around normalized time $0.2$,
 figure~\ref{fig:Eroding20flowrate}(b) is roughly linear which indicates
 that the flow rate can be written as an exponential law.  The line of
 best fit is
-\begin{align} 
-  \log_{10} U \approx 4.32 \frac{t}{t_f} + c, 
-\end{align}
-where $t_f$ is the time required for all the bodies to erode, and $c$ is
-a fitting parameter. By construction $U = 1$ when $t=t_f$, so $c=-4.32$,
-and the flow rate is approximated as
 \begin{align}
   U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
 \end{align}
@@ -1559,25 +1543,24 @@ which is the dashed line in figure~\ref{fig:Eroding20flowrate}(b).
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270n_zoom}
 \caption{\label{fig:Eroding20tracer} 200 streamlines in the second
 geometry from figure~\ref{fig:Eroding20vort}. The streamlines are
-initialized at $x=-1$ and are equally spaced in $y \in (-1,1)$. The
-first five snapshots are evenly spaced in time.  The bottom right frame
-is a zoom in of the fifth snapshot, but with additional streamlines.
-Since we use the Barycentric quadrature rule and a fourth-order
-Runge-Kutta method, some streamlines are very close to the grains
-without penetrating them.}
+initially equispaced at $(-1,y)$, where $y \in (-1,1)$. The first five
+snapshots are evenly spaced in time.  The bottom right frame is a zoom
+in of the fifth snapshot, but with additional streamlines.  Since we use
+the Barycentric quadrature rule and a fourth-order Runge-Kutta method,
+streamlines that are very close to the grains are resolved.}
 \end{center}
 \end{figure}
 
 
 In figure~\ref{fig:Eroding20vort}, we observe that erosion creates a
-network of channels from the inlet to outlet where the velocity and
-vorticity, and therefore erosion rate, are much larger than other
+network of channels from the inlet to the outlet where the velocity and
+vorticity, and therefore erosion rate, are much larger relative to other
 regions.  These channels can be further visualized  with the
 streamlines.  In figure~\ref{fig:Eroding20tracer}, we freeze the
 geometry at the second snapshot from figure~\ref{fig:Eroding20vort} and
-plot 200 streamlines that are initialized at $x=-1$ and equally spaced
-in $y \in (-1,1)$.  The streamlines are shown at five different times,
-and the final plot is a zoom in of the lower right quadrant of the fifth
+plot 200 streamlines that are initially equispaced along $(-1,y)$, where
+$y \in (-1,1)$.  The streamlines are shown at five different times, and
+the final plot is a zoom in of the lower right quadrant of the fifth
 time step, but with additional streamlines.  Since we use a high-order
 quadrature rule and time stepping method, we resolve streamlines that
 come very close to the eroded bodies.  There are three clear regions
@@ -1594,8 +1577,8 @@ compute the tortuosity of the eroding geometry.  To compute the
 tortuosity, we require the velocity at the inlet $x=-1$.  These
 normalized velocities are plotted in figure~\ref{fig:Eroding20tort}(a)
 for the eroded geometry at porosity $\phi = 62.9\%$
-(figure~\ref{fig:Eroding20tort}(c)).  The velocities are similar to the
-work of~\citet[see figure 4(a)]{mat-kha-koz2008}, except that our
+(figure~\ref{fig:Eroding20tort}(c)).  The velocities are similar those
+of~\citet[see figure 4(a)]{mat-kha-koz2008}, except that our
 cross-section, by construction, does not cut through any of the grains.
 Next, in figure~\ref{fig:Eroding20tort}(b), we plot the local
 tortuosity~\eqref{eqn:localTort} by calculating the relative length of
@@ -1651,7 +1634,7 @@ quadrature to compute the tortuosity.  As the bodies erode, wide
 channels form where streamlines undergo only minor vertical deflections,
 and this explains why the tortuosity eventually decreases with porosity.
 We computed lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels} and found the power law that
+models~\eqref{eqn:tortuosityModels} and found that the power law
 minimizes the error.  The  black dashed line in
 figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
 \begin{align}
@@ -1717,7 +1700,7 @@ with slopes $\alpha = 1.06$ ($\phi=95.10\%$), $\alpha = 1.07$
 ($\phi=85.09\%$), $\alpha = 1.06$ ($\phi=75.15\%$), $\alpha = 0.97$
 ($\phi=65.09\%$), $\alpha = 0.78$ ($\phi=55.10\%$), $\alpha = 0.75$
 ($\phi=45.08\%$), and $\alpha = 0.56$ ($\phi=37.68\%$).  Values greater
-than 1 are a result of using a least-squares fit for the tails of the
+than 1 result from using a least-squares fit for the tails of the
 particle spreading.}
 \end{figure}
 
@@ -1725,6 +1708,7 @@ particle spreading.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 Bodies at a Low Porosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Bryan is here}
 We consider a second example with 20 eroding bodies, but with a smaller
 initial porosity.  In figure~\ref{fig:ErodingLow20vort}, we plot the
 eroding geometry and vorticity at four evenly spaced instances in time.
@@ -1746,12 +1730,11 @@ points.
   \includegraphics[height=0.225\textwidth]{./figs/20b2_vort450}
 \end{center}
 \caption{\label{fig:ErodingLow20vort} The erosion of 20 nearly touching
-bodies, each discretized with $N_\iin = 256$ points, in a
-Hagen-Poiseuille flow. The four snapshots are evenly spaced in time, and
-the color is the fluid vorticity. In addition to the channels that
-develop between the bodies and the solid walls, erosion leads to two
-main channels through the geometry---one in the top half and one near
-the middle.}
+bodies in a Hagen-Poiseuille flow. The four snapshots are evenly spaced
+in time, and the color is the fluid vorticity. In addition to the
+channels that develop between the bodies and the solid walls, erosion
+leads to two main channels through the geometry---one in the top half
+and one near the middle.}
 \end{figure}
 
 To avoid computing streamlines at every time step during the erosion
@@ -1848,12 +1831,11 @@ ballistic motion~\citep{sie-ili-pri-riv-gua2019}.
 \includegraphics*[height =0.8\linewidth]{./figs/100b_200}
 \caption{82 bodies, $\phi = 83.67\%$}
 \end{subfigure}
-\caption{\label{fig:Eroding100vort} The erosion of 100 nearly
-touching grains, each discretized with $N_\iin = 256$ points, in a
-Hagen-Poiseuille flow. The color is the vorticity of fluid. The four
-snapshots are evenly spaced in time, and the color is the fluid
-vorticity.  Because of the large number of bodies, erosion creates many
-channels connecting the inlet to the outlet.}
+\caption{\label{fig:Eroding100vort} The erosion of 100 nearly touching
+grains in a Hagen-Poiseuille flow. The four snapshots are evenly spaced
+in time, and the color is the fluid vorticity.  Because of the large
+number of bodies, erosion creates many channels connecting the inlet to
+the outlet.}
 \end{figure}
 
 As a final example, we consider 100 eroding bodies, each with
@@ -2112,17 +2094,17 @@ splitting methods and recent work on heat solvers in complex
 geometries~\citep{fry-kro-tor2019}.
 
 
-\todo[inline]{dump of text}
-As in our previous work~\citep{qua-moo2018}, we consider two-dimensional
-immobile eroding grains. However, this work does not limit the proximity
-of  grains. Compared to our previous work, we are able to simulate much
-denser suspensions with a comparable number of discretization points and
-without upsampling.  While we do investigate transport in this work, we
-only consider passive particles that are advected by the flow.  To model
-other physical processes, such as contaminant transport, we plan to
-simulate a finite Peclet number advection-diffusion equation in eroded
-geometries.
-\todo[inline]{dump of text}
+%\todo[inline]{dump of text}
+%As in our previous work~\citep{qua-moo2018}, we consider two-dimensional
+%immobile eroding grains. However, this work does not limit the proximity
+%of  grains. Compared to our previous work, we are able to simulate much
+%denser suspensions with a comparable number of discretization points and
+%without upsampling.  While we do investigate transport in this work, we
+%only consider passive particles that are advected by the flow.  To model
+%other physical processes, such as contaminant transport, we plan to
+%simulate a finite Peclet number advection-diffusion equation in eroded
+%geometries.
+%\todo[inline]{dump of text}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
