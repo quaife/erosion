@@ -1306,15 +1306,15 @@ of the geometry, we consider bodies that are separated by less than 10\%
 of an arclength spacing.  The randomized method is repeated until the
 initial geometry reaches a desired initial porosity.
 
-Once the geometry is initialized, each body has length $L_i = 2\upi
-r_i$, and they are each discretized with $N_\iin$ points.  A no-slip
-boundary condition is imposed on each eroding body $\gamma_i$.  For all
-simulations, we discretize the outer wall $\Gamma$ with $N_\out=1024$
-points.  For all but the first example, the Dirichlet boundary condition
-on $\Gamma$ is a Hagen-Poiseuille flow, and the flow rate is adjusted at
-each time step to maintain a constant pressure drop. Since the fluid
-equations are linear, this is achieved by computing the pressure near
-the inlet and outlet at each time step, and then scaling the flow rate
+Once the geometry is initialized, each grain of length $L_i = 2\upi r_i$
+is discretized with $N_\iin$ points.  A no-slip boundary condition is
+imposed on each eroding body $\gamma_i$.  For all simulations, we
+discretize the outer wall $\Gamma$ with $N_\out=1024$ points.  For all
+but the first example, the Dirichlet boundary condition on $\Gamma$ is a
+Hagen-Poiseuille flow, and the flow rate is adjusted at each time step
+to maintain a constant pressure drop. Since the fluid equations are
+linear, this is achieved by computing the pressure near the inlet and
+outlet at each time step, and then scaling the flow rate
 appropriately~\citep{qua-moo2018}.
 
 The erosion rate loses regularity at stagnation points, which inevitably
