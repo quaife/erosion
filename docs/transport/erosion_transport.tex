@@ -119,7 +119,7 @@ connectivity~\citep{knu-car2005, wes-blo-gra2001}, anomalous
 dispersion~\citep{dea-qua-bir-jua2018, den-cor-sch-ber2004,
 sie-ili-pri-riv-gua2019}, and more.  
 
-\todo[inline]{The above set of references for ``examples of course-grained models" seems very thorough and perhaps not as relevant as other references on erosion, melting, etc. JFMs reference format makes them take up a lot of space. So if there are references here that you wouldn't mind dropping, it might help. I wouldn't drop all of them. I think at least 3-4 are definitely needed.}
+\todo[inline]{The above set of references for ``examples of course-grained models" seems very thorough and perhaps not as relevant as other references on erosion, melting, etc. JFM's reference format makes them take up a lot of space. So if there are references here that you wouldn't mind dropping, it might help. I wouldn't drop all of them. I think at least 3-4 are definitely needed.}
 
 Flow in porous media is further complicated when boundaries evolve 
 dynamically in response to the fluid flow. This coupling between geometry
@@ -131,7 +131,7 @@ wykes2018self}, deposition~\citep{joh-eli1995, hewett2018modelling},
 biofilm growth~\citep{tan-val-wer2015}, and crack
 formation~\citep{cho2019crack}. We focus on erosion, a fluid-mechanical
 process that is prevalent in many geophysical, hydrological, and
-industrial applications~\citep{berhanu2012shape, hewett2017evolution,
+industrial applications~\citep{ris-moo-chi-she-zha2012, berhanu2012shape, hewett2017evolution,
 lachaussee2018competitive, lopez2018cfd, allen2019sde, amin2019role}.
 
 When a porous medium erodes, certain qualitative characteristics are
@@ -189,8 +189,9 @@ the fluid solver are available including lattice-gas or lattice
 Boltzmann~\citep{kop-kat-tim1996, dar-mcc1998}, finite
 volumes~\citep{suo-liu-gan2019, den-ica-hid2018,
 sie-ili-pri-riv-gua2019}, finite differences~\citep{leb-ded-dav-bou2007,
-knu-car2005}, and cellular automata~\citep{rot1988}.  However,
-simulating erosion requires a method that is high-order, can resolve
+knu-car2005}, and cellular automata~\citep{rot1988}.  
+\todo[inline]{The set of references above seems to me like an unneeded `straw-man' argument. i.e.~Just because we are using a boundary integral method, does that mean we have to list every other possible way of solving the fluid equations? It takes up a fair amount of space. On the other hand, if there are references here you want to keep, by all means do it.}
+However, simulating erosion requires a method that is high-order, can resolve
 nearly-touching arbitrarily shaped grains, and can accurately compute
 derivatives of the velocity field.  Since the governing equations are
 linear and homogeneous, we address these challenges by converting the
@@ -212,8 +213,9 @@ in the green regions.}
 \end{center}
 \end{figure}
 
-To compute stable simulations of erosion, we use high-order methods in
-both space and time. The time integration method is unchanged from
+To compute stable simulations of erosion, we use 
+\nick{methods of high order in both space and time.}
+The time integration is unchanged from
 previous work~\citep{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities that can be
 triggered by changes in sign of the shear stress, and we use a stable
@@ -221,11 +223,11 @@ second-order Runge-Kutta method applied to the {\thL}
 coordinates~\citep{hou-low-she1994} of the eroding grains.  In this
 work, we introduce a new quadrature method to resolve dense suspensions.
 The accuracy of the trapezoid rule, which was used in previous work, is
-adequate for bodies that are sufficiently separated~\citep{tre-wei2014}.
-However, it loses accuracy whenever grains are in close contact.  One of
-the earliest works to address quadrature methods for nearly-singular
+adequate for bodies that are sufficiently separated~\citep{tre-wei2014}, 
+but not for grains in close contact.  
+One of the earliest quadrature methods for nearly-singular
 integrands was developed by~\citet{bak-she1986}, and in recent years,
-many other near-singular integration schemes have
+many other \nick{\st{near-singular integration}} schemes have
 followed~\citep{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
 bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
 method~\citep{bar2014, bar-wu-vee2015} since it is a non-intrusive
@@ -248,9 +250,10 @@ $\ss_0$ by solving the advection equation
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
   \label{eqn:tracers}
 \end{align}
+\todo[inline]{Could the above equation be changed to inline to save space?}
 where $\uu$ is the fluid velocity.  Since there is no stiff diffusive
 term, we solve~\eqref{eqn:tracers} with a fourth-order explicit
-Runge-Kutta time stepping method.  In addition, the Barycentric
+Runge-Kutta time stepping method. The Barycentric
 quadrature rule is used to accurately compute trajectories that are
 close to an eroding grain. 
 %We note that an alternative approach to
@@ -338,7 +341,7 @@ fluid domain is $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup
 \gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly
 smoothed version of the boundary of $[-3,3] \times [-1,1]$.  We only
 place eroding bodies in $[-1,1] \times [-1,1]$ to create a buffer region
-for the flow profile imposed at the inlet to transition to the more
+that allows the flow profile imposed at the inlet to transition to the more
 complex flow intervening between the bodies. On each eroding body, $\nn$
 is the normal vector pointing into the body, and $\ss$ is the unit
 tangent vector pointing in the counterclockwise direction.  The normal
@@ -369,7 +372,8 @@ of $\gamma$, and
 is the shear stress on $\gamma$. We simulate erosion by alternating
 between solving the fluid equations and advancing the eroding grains.
 The strength of $\UU$ is adjusted at each time step to achieve a
-constant pressure drop across the channel.
+constant pressure drop across the channel, 
+\nick{motivated by the geological situation of a porous medium connecting two regions of  fixed hydraulic heads.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
@@ -924,6 +928,8 @@ tortuosity is approximated as
       {\sum\limits_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y}.
 \end{align}
 
+\todo[inline]{The above vertical fraction could be made into a horizontal fraction, which would save a lot of space.}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature Formulas}
 \label{sec:bary}
@@ -997,6 +1003,8 @@ $\Omega$, the exterior Barycentric quadrature rule is
     \quad x \in \Omega^c.
   \label{eqn:BaryvExterior}
 \end{align}
+
+\todo[inline]{More prime examples of vertical fractions that could be made horizontal.}
 
 Similar constructions can be used to derive quadrature rules
 for $v'(x)$.  For $x \in \Omega$, we have the identity
@@ -1260,16 +1268,17 @@ terms, which are non-stiff, are treated explicitly.  By using this time
 stepping method in conjunction with the Barycentric rule, we stably
 evolve the eroding bodies.  
 
-To compute the tortuosity and the anomalous dispersion rates
-(section~\ref{sec:transport}), we require the streamlines that are
-governed by equation~\eqref{eqn:tracers}.  To characterize the
-transport, it is crucial that the streamlines are computed accurately.
+To examine the tortuosity and the anomalous dispersion rates
+(section~\ref{sec:transport}), we require accurate computation of the streamlines
+governed by equation~\eqref{eqn:tracers}.
+\nick{\st{To characterize the transport, it is crucial that the streamlines are computed accurately.}}
 If a low-order time stepping method is used, or if $\uu(\ss(t))$ is
 inaccurate, then a trajectory $\ss(t)$ can unphysically enter a grain,
-rendering the trajectory meaningless to quantify transport.  However, if
-we simply ignore trajectories that pass close to grains, this would
-significantly skew the characterization of the transport. Therefore, we
-use high-order quadrature and time stepping methods.  In particular,
+rendering the trajectory meaningless. \nick{\st{to quantify transport.}}
+\nick{\st{However, if we simply ignore trajectories that pass close to grains, this would
+significantly skew the characterization of the transport. } 
+However, simply ignoring trajectories that pass close to a grain could significantly bias the characterization of transport.}
+Therefore, we use high-order quadrature and time stepping methods.  In particular,
 depending on the proximity of $\ss(t)$ to $\bd\Omega$
 (section~\ref{sec:fmm}), we apply the trapezoid rule or the Barycentric
 quadrature rule.  For time stepping, we use a fourth-order explicit
@@ -1298,15 +1307,18 @@ $i=1,\ldots,N_p$.
 \section{Numerical Results}
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We now present numerical results of dense packings of bodies eroding in
-Stokes flow. Moreover, we analyze transport through the eroded
-geometries by examining coarse-grained variables.  Each eroding body is
-initially a circle with center $\cc_i$, $r_i$, and length $L_i = 2\upi
-r_i$.  The center and radius are chosen at random, and the body is
+We now present numerical results of dense grain packings eroding in
+Stokes flow and analyze transport through the evolving
+geometries. \nick{\st{by examining coarse-grained variables}}.  
+Each \nick{\st{eroding}} body is
+initialized as a circle of center $\cc_i$, radius $r_i$, and length $L_i = 2\upi r_i$.  
+\todo[inline]{There were too many sequential uses of the word `eroding' above, so I cut two of them out.}
+The center and radius are chosen at random, and the body is
 accepted if it is contained in $[-1,1] \times [-1,1]$ and is
-sufficiently separated from all other bodies.  Since the error of our
-quadrature method is bounded independent of the geometry, we consider
-bodies that are separated by less than 10\% of an arclength spacing.
+sufficiently separated from all other bodies.  
+\awk{Since the error of our quadrature method is bounded independent of the geometry, we consider bodies that are separated by less than 10\% of an arclength spacing.}
+\todo[inline]{The above sentence seemed like a non sequitur to me. See if I got the right idea across in the sentence below.}
+\nick{Owing to our adaptive quadrature rule, we can consider bodies that are separated by less than 10\% of an arclength spacing.}
 The randomized method is repeated until the initial geometry reaches a
 desired initial porosity.
 
@@ -1401,7 +1413,8 @@ two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, we
 plot the vorticity of the final time step from figure~\ref{fig:NearWall}
 in figure~\ref{fig:NearWall_vort}.  In these examples, a small
 recirculation zone, both in size and magnitude, is present in the region
-where the vorticity is smallest
+where the vorticity is \nick{smallest.}
+\todo[inline]{I was proud of myself for catching the missing period at the end, so had to point it out :)}
 
 \begin{figure}
 \begin{center}
@@ -1473,6 +1486,7 @@ rule.  By using the Barycentric quadrature rule, the interaction between
 these nearly-touching bodies is accurately resolved to the desired
 accuracy, and erosion can be simulated until all the bodies have
 vanished.
+\todo[inline]{accurately resolved to the desired accuracy is redundant.}
 
 \begin{figure}
 \begin{center}
@@ -1535,6 +1549,8 @@ best fit is
   U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
 \end{align}
 which is the dashed line in figure~\ref{fig:Eroding20flowrate}(b).
+\todo[inline]{Perhaps equations like the above could be made inline to save space.}
+
 
 \begin{figure}
 \begin{center}
@@ -1643,6 +1659,7 @@ figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
 \begin{align}
   \widehat{T}(\phi) = \phi^{-0.2064},
 \end{align}
+\todo[inline]{This one definitely seems like a candidate for an inline equation.}
 with a root-mean-square error of $5.90 \times 10^{-3}$.  Interestingly,
 at the low porosities, the tortuosity initially increases. This increase
 occurs because in the absence of erosion (left plot in
@@ -1745,6 +1762,7 @@ the power law
 \begin{align}
   \widehat{T}(\phi) = \phi^{-0.1669}.
 \end{align}
+\todo[inline]{inline?}
 This model outperforms the other three models in
 equation~\eqref{eqn:tortuosityModels}, and its root-mean-squared error
 is $1.13 \times 10^{-2}$.  As grains erode, there is an increase in the
@@ -1784,6 +1802,8 @@ $0.92$ ($\phi=95.00\%$), $0.87$ ($\phi=85.17\%$), $0.87$
 $0.72$ ($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and $0.92$
 ($\phi=30.67\%$).}
 \end{figure}
+
+\todo[inline]{Very long captions in Figs. 10 and 12 and maybe others.}
 
 In figure~\ref{fig:ErodingLow20Transport}(b), we plot the temporal
 evolution of the particle spreading $\sigma_\lambda$.  As in the last
@@ -1889,6 +1909,8 @@ possible with the model
 \begin{align}
   \widehat{T}(\phi) = 1 - 0.2631 \ln(\phi).
 \end{align}
+\todo[inline]{More inline candidates}
+
 
 \begin{figure}
 \begin{subfigure}[b]{0.45\textwidth}
@@ -2063,15 +2085,15 @@ The transport is characterized in terms of tortuosity and anomalous
 dispersion. While the local tortuosity agrees qualitatively with other
 works~\citep{mat-kha-koz2008}, the tortuosity of eroded geometries
 cannot be completely described in terms of the porosity. In particular,
-we observe that for certain porous media, the tortuosity can increase as
-erosion increases the porosity of the porous media. We also observe
-super-dispersive spreading, and the rate of dispersion significantly
+we observe that for certain \nick{\st{porous media} configurations}, the tortuosity \nick{transiently increases, even though the porosity always increases due to erosion.}
+\nick{\st{as erosion increases the porosity of the porous media.}} 
+We also observe super-dispersive spreading, and the rate of dispersion significantly
 depends not only on the porosity, but also the number of eroding bodies
 and their distribution.
 
 To further our understanding of erosion, we are examining other bulk and
 statistical properties of an eroding porous media. In this work, we
-provide preliminary results for the pore throat sizes which affect the
+provide \nick{\st{preliminary}} results for the pore throat sizes which affect the
 anomalous dispersion rate~\citep{dea-qua-bir-jua2018}.  At a later date,
 we will report results on the  development of anisotropic effects and
 the distributions of grain sizes, shapes, and opening angles.
