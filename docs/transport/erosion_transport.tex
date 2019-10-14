@@ -107,19 +107,10 @@ mixing~\citep{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}, and
 (iii) develop meaningful constitutive relationships that link the
 microscopic and macroscopic realms~\citep{mil-chr-imh-mcb-ped1998}.
 Examples of coarse-grained models for porous media flow include
-pressure-saturation-permeability
-relationships~\citep{mil-chr-imh-mcb-ped1998}, permeability-porosity
-relationships~\citep{dar-mcc1998, car1937, won-kop-tom1984}, first
-passage time distributions~\citep{ber-sch-sil2000, hym-den-hag-kan2019,
-cve-che-wen1996}, tortuosities~\citep{hak-com-den2019, mat-kha-koz2008,
-dud-koz-mat2011, kop-kat-tim1996}, concentration
-distributions~\citep{ica-den2019, bel-sal-rin1992}, pore and flow
-distributions~\citep{ali-par-wei-bre2017}, geometry
-connectivity~\citep{knu-car2005, wes-blo-gra2001}, anomalous
-dispersion~\citep{dea-qua-bir-jua2018, den-cor-sch-ber2004,
-sie-ili-pri-riv-gua2019}, and more.  
-
-\todo[inline]{The above set of references for ``examples of course-grained models" seems very thorough and perhaps not as relevant as other references on erosion, melting, etc. JFM's reference format makes them take up a lot of space. So if there are references here that you wouldn't mind dropping, it might help. I wouldn't drop all of them. I think at least 3-4 are definitely needed.}
+permeability-porosity relationships~\citep{dar-mcc1998, car1937},
+tortuosities~\citep{mat-kha-koz2008, dud-koz-mat2011, kop-kat-tim1996},
+geometry connectivity~\citep{knu-car2005}, anomalous
+dispersion~\citep{den-cor-sch-ber2004}, and more.  
 
 Flow in porous media is further complicated when boundaries evolve 
 dynamically in response to the fluid flow. This coupling between geometry
@@ -180,22 +171,15 @@ Owing to the scales present in groundwater flow~\citep{bea1972}, we
 model the hydrodynamics with the two-dimensional incompressible Stokes
 equations.  Meanwhile, individual grains erode at a rate proportional to
 the hydrodynamic shear stress~\citep{wan-fel2004,
-ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  We compute the
-vorticity in the fluid bulk since, on solid boundaries, vorticity
-reduces to shear and thus provides a convenient way to simultaneously
-visualize local erosion rates and changes in the surrounding flow
-(figure~\ref{fig:Eroding50vort}).  A variety of numerical methods for
-the fluid solver are available including lattice-gas or lattice
-Boltzmann~\citep{kop-kat-tim1996, dar-mcc1998}, finite
-volumes~\citep{suo-liu-gan2019, den-ica-hid2018,
-sie-ili-pri-riv-gua2019}, finite differences~\citep{leb-ded-dav-bou2007,
-knu-car2005}, and cellular automata~\citep{rot1988}.  
-\todo[inline]{The set of references above seems to me like an unneeded `straw-man' argument. i.e.~Just because we are using a boundary integral method, does that mean we have to list every other possible way of solving the fluid equations? It takes up a fair amount of space. On the other hand, if there are references here you want to keep, by all means do it.}
-However, simulating erosion requires a method that is high-order, can resolve
-nearly-touching arbitrarily shaped grains, and can accurately compute
-derivatives of the velocity field.  Since the governing equations are
-linear and homogeneous, we address these challenges by converting the
-fluid equations to a boundary integral equation (BIE).
+ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the fluid
+equations are linear and homogeneous, they are converted to a boundary
+integral equation (BIE). Therefore, we resolve the non-negligible
+interactions between nearly-touching arbitrarily shaped bodies, and the
+erosion rate is computed accurately. We also compute the vorticity in
+the fluid bulk since, on solid boundaries, vorticity reduces to shear
+and thus provides a convenient way to simultaneously visualize local
+erosion rates and changes in the surrounding flow
+(figure~\ref{fig:Eroding50vort}).
 
 \begin{figure}
 \begin{center}
@@ -213,21 +197,19 @@ in the green regions.}
 \end{center}
 \end{figure}
 
-To compute stable simulations of erosion, we use 
-\nick{methods of high order in both space and time.}
-The time integration is unchanged from
-previous work~\citep{qua-moo2018}.  We apply a mild regularization and a
+To compute stable simulations of erosion, we use methods of high-order
+in both space and time. The time integration is unchanged from previous
+work~\citep{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities that can be
 triggered by changes in sign of the shear stress, and we use a stable
 second-order Runge-Kutta method applied to the {\thL}
 coordinates~\citep{hou-low-she1994} of the eroding grains.  In this
 work, we introduce a new quadrature method to resolve dense suspensions.
 The accuracy of the trapezoid rule, which was used in previous work, is
-adequate for bodies that are sufficiently separated~\citep{tre-wei2014}, 
-but not for grains in close contact.  
-One of the earliest quadrature methods for nearly-singular
-integrands was developed by~\citet{bak-she1986}, and in recent years,
-many other \nick{\st{near-singular integration}} schemes have
+adequate for bodies that are sufficiently separated~\citep{tre-wei2014},
+but not for grains in close contact.  One of the earliest quadrature
+methods for nearly-singular integrands was developed
+by~\citet{bak-she1986}, and in recent years, many other schemes have
 followed~\citep{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
 bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
 method~\citep{bar2014, bar-wu-vee2015} since it is a non-intrusive
@@ -250,16 +232,11 @@ $\ss_0$ by solving the advection equation
   \frac{d\ss}{dt} = \uu(\ss,t), \quad \ss(0) = \ss_0,
   \label{eqn:tracers}
 \end{align}
-\todo[inline]{Could the above equation be changed to inline to save space?}
 where $\uu$ is the fluid velocity.  Since there is no stiff diffusive
 term, we solve~\eqref{eqn:tracers} with a fourth-order explicit
-Runge-Kutta time stepping method. The Barycentric
-quadrature rule is used to accurately compute trajectories that are
-close to an eroding grain. 
-%We note that an alternative approach to
-%compute trajectories is to form a distribution of velocities $\uu$ and
-%use a continuous time random walk~\citep{mon-wei1965,
-%den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006}.
+Runge-Kutta time stepping method. The Barycentric quadrature rule is
+used to accurately compute trajectories that are close to an eroding
+grain. 
 
 Once the streamlines are computed, we characterize transport by
 analyzing three different metrics: the tortuosity, the anomalous
@@ -372,8 +349,9 @@ of $\gamma$, and
 is the shear stress on $\gamma$. We simulate erosion by alternating
 between solving the fluid equations and advancing the eroding grains.
 The strength of $\UU$ is adjusted at each time step to achieve a
-constant pressure drop across the channel, 
-\nick{motivated by the geological situation of a porous medium connecting two regions of  fixed hydraulic heads.}
+constant pressure drop across the channel, motivated by the geological
+situation of a porous medium connecting two regions of  fixed hydraulic
+heads.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
@@ -924,11 +902,12 @@ $i,j=1,\ldots,N$, where $\Delta x = \Delta y = 2/N$, and the velocity at
 points inside an eroding body are assigned a value of 0.  Then, the
 tortuosity is approximated as
 \begin{align}
-  T = \frac{\sum\limits_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y}
-      {\sum\limits_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y}.
+  T = \left(\sum_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y \right) 
+      \Bigg/ 
+      \left(\sum_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y \right)
+%  T = \frac{\sum\limits_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y}
+%      {\sum\limits_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y}.
 \end{align}
-
-\todo[inline]{The above vertical fraction could be made into a horizontal fraction, which would save a lot of space.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Barycentric Quadrature Formulas}
@@ -990,21 +969,28 @@ trapezoid rule
 and the error is independent of $x$.  Rearranging for $v(x)$, we have
 the interior Barycentric quadrature rule
 \begin{align}
-  v(x) = \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
-  {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}, \quad x \in \Omega.
+  v(x) = \left(\sum_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j \right)
+  \Bigg/
+  \left(\sum_{j=1}^N \frac{1}{y_j - x} w_j \right), 
+  \quad x \in \Omega.
+%  v(x) = \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
+%  {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}, \quad x \in \Omega.
   \label{eqn:BaryvInterior}
 \end{align}
 Using a similar construction and letting $a$ be any point inside
 $\Omega$, the exterior Barycentric quadrature rule is
 \begin{align}
   v(x) = \frac{1}{x-a} 
-    \frac{\sum\limits_{j=1}^N \frac{v^+(y_j)}{y_j - x}w_j}
-    {\sum\limits_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j},
+    \left(\sum_{j=1}^N \frac{v^+(y_j)}{y_j - x}w_j \right)
+    \Bigg/
+    \left(\sum_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j \right),
     \quad x \in \Omega^c.
+%  v(x) = \frac{1}{x-a} 
+%    \frac{\sum\limits_{j=1}^N \frac{v^+(y_j)}{y_j - x}w_j}
+%    {\sum\limits_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j},
+%    \quad x \in \Omega^c.
   \label{eqn:BaryvExterior}
 \end{align}
-
-\todo[inline]{More prime examples of vertical fractions that could be made horizontal.}
 
 Similar constructions can be used to derive quadrature rules
 for $v'(x)$.  For $x \in \Omega$, we have the identity
@@ -1015,19 +1001,29 @@ and the integrand is bounded for all $x \in \Omega$.  Therefore, after
 applying the trapezoid rule and rearranging for $v'(x)$, we have the
 interior Barycentric quadrature rule
 \begin{align}
-  v'(x) = \frac{\sum\limits_{j=1}^{N}
-    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
-  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}, 
+  v'(x) = \left(\sum_{j=1}^{N}
+    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j \right)
+  \Bigg/
+  \left(\sum_{j=1}^{N} \frac{1}{y_j-x} w_j\right), 
   \quad x \in \Omega.
+%  v'(x) = \frac{\sum\limits_{j=1}^{N}
+%    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
+%  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}, 
+%  \quad x \in \Omega.
   \label{eqn:BaryvprimeInterior}
 \end{align}
 Using a similar construction, the exterior Barycentric quadrature rule
 for the the first derivative is
 \begin{align}
-  v'(x) = \frac{1}{x-a} \frac{\sum\limits_{j=1}^N
-    \frac{v^+_j - v(x)}{(y_j - x)^2} w_j}
-    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j},
+  v'(x) = \frac{1}{x-a} \left(\sum_{j=1}^N
+    \frac{v^+_j - v(x)}{(y_j - x)^2} w_j \right)
+    \Bigg/
+    \left(\sum_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j\right),
     \quad x \in \Omega^c.
+%  v'(x) = \frac{1}{x-a} \frac{\sum\limits_{j=1}^N
+%    \frac{v^+_j - v(x)}{(y_j - x)^2} w_j}
+%    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j},
+%    \quad x \in \Omega^c.
   \label{eqn:BaryvprimeExterior}
 \end{align}
 Note that $v(x)$ is required to compute $v'(x)$ for both the interior
@@ -1068,11 +1064,16 @@ This integrand is constructed so that it is bounded for all $x \in
       {(y_j-x)^3} w_j,
 \end{align}
 where the accuracy is independent of $x$.  Solving for $v''(x)$, the
-Barycentric quadrature rule for the interior second derivative is
+Barycentric quadrature rule for the interior second derivative at $x \in
+\Omega$ is
 \begin{align}
-  v''(x) &\approx \frac{2\sum\limits_{j=1}^N 
-    \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
-    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, \quad x \in \Omega.
+  v''(x) \approx \left(2\sum_{j=1}^N 
+    \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j \right)
+    \Bigg/
+    \left(\sum_{j=1}^N \frac{1}{y_j-x}w_j\right).
+%  v''(x) &\approx \frac{2\sum\limits_{j=1}^N 
+%    \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
+%    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, \quad x \in \Omega.
 \end{align}
 For the exterior case, $x \in \Omega^c$, we start with the identity
 \begin{align}
@@ -1089,12 +1090,16 @@ $v''(x)$, we have
 As in the interior case, the integrand is chosen so that it is bounded
 for all $x \in \Omega^c$.  Therefore, after applying the trapezoid rule
 and solving for $v''(x)$, we have the Barycentric quadrature rule for
-the exterior second derivative
+the exterior second derivative at $x \in \Omega^c$
 \begin{align}
-  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
-    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
-    \quad x \in \Omega^c.
+  v''(x) \approx \frac{1}{x-a}\left(2\sum\limits_{j=1}^N
+    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j\right)
+    \Bigg/
+    \left(\sum_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j\right).
+%  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
+%    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
+%    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
+%    \quad x \in \Omega^c.
 \end{align}
 The quadrature rule for $v''(x)$ requires $v(x)$ and $v'(x)$, and theses
 are computed using the quadrature rules in
@@ -1269,21 +1274,18 @@ stepping method in conjunction with the Barycentric rule, we stably
 evolve the eroding bodies.  
 
 To examine the tortuosity and the anomalous dispersion rates
-(section~\ref{sec:transport}), we require accurate computation of the streamlines
-governed by equation~\eqref{eqn:tracers}.
-\nick{\st{To characterize the transport, it is crucial that the streamlines are computed accurately.}}
-If a low-order time stepping method is used, or if $\uu(\ss(t))$ is
-inaccurate, then a trajectory $\ss(t)$ can unphysically enter a grain,
-rendering the trajectory meaningless. \nick{\st{to quantify transport.}}
-\nick{\st{However, if we simply ignore trajectories that pass close to grains, this would
-significantly skew the characterization of the transport. } 
-However, simply ignoring trajectories that pass close to a grain could significantly bias the characterization of transport.}
-Therefore, we use high-order quadrature and time stepping methods.  In particular,
-depending on the proximity of $\ss(t)$ to $\bd\Omega$
-(section~\ref{sec:fmm}), we apply the trapezoid rule or the Barycentric
-quadrature rule.  For time stepping, we use a fourth-order explicit
-Runge-Kutta method.  By using these high-order methods, we are able to
-simulate dynamics very close to the eroding bodies (see
+(section~\ref{sec:transport}), we require accurate computation of the
+streamlines governed by equation~\eqref{eqn:tracers}. If a low-order
+time stepping method is used, or if $\uu(\ss(t))$ is inaccurate, then a
+trajectory $\ss(t)$ can unphysically enter a grain, rendering the
+trajectory meaningless. However, simply ignoring trajectories that pass
+close to a grain could significantly bias the characterization of
+transport.  Therefore, we use high-order quadrature and time stepping
+methods.  In particular, depending on the proximity of $\ss(t)$ to
+$\bd\Omega$ (section~\ref{sec:fmm}), we apply the trapezoid rule or the
+Barycentric quadrature rule.  For time stepping, we use a fourth-order
+explicit Runge-Kutta method.  By using these high-order methods, we are
+able to simulate dynamics very close to the eroding bodies (see
 figures~\ref{fig:Eroding20tracer} and~\ref{fig:Eroding100tort}).
 
 Once a collection of trajectories are formed, they are used to quantify
@@ -1296,9 +1298,13 @@ the trajectories, we consider trajectories crossing between the two
 cross-sections $x=-1$ and $x=1$.  Then, we discretize
 equation~\eqref{eqn:tortuosity1} as
 \begin{align}
-  T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
-    u_1(y_i) \lambda(y_i) \Delta y}
-  {\displaystyle\sum_{i=1}^{N_p} u_1(y_i) \Delta y}, 
+  T = \frac{1}{d}\left(\sum_{i=1}^{N_p} 
+    u_1(y_i) \lambda(y_i) \Delta y \right)
+  \Bigg/
+  \left(\sum_{i=1}^{N_p} u_1(y_i) \Delta y\right), 
+%  T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
+%    u_1(y_i) \lambda(y_i) \Delta y}
+%  {\displaystyle\sum_{i=1}^{N_p} u_1(y_i) \Delta y}, 
 \end{align}
 where $\Delta y = 2/(N_p + 1)$ and $y_i = -1 + i \Delta y$,
 $i=1,\ldots,N_p$.  
@@ -1308,19 +1314,14 @@ $i=1,\ldots,N_p$.
 \label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We now present numerical results of dense grain packings eroding in
-Stokes flow and analyze transport through the evolving
-geometries. \nick{\st{by examining coarse-grained variables}}.  
-Each \nick{\st{eroding}} body is
-initialized as a circle of center $\cc_i$, radius $r_i$, and length $L_i = 2\upi r_i$.  
-\todo[inline]{There were too many sequential uses of the word `eroding' above, so I cut two of them out.}
-The center and radius are chosen at random, and the body is
-accepted if it is contained in $[-1,1] \times [-1,1]$ and is
-sufficiently separated from all other bodies.  
-\awk{Since the error of our quadrature method is bounded independent of the geometry, we consider bodies that are separated by less than 10\% of an arclength spacing.}
-\todo[inline]{The above sentence seemed like a non sequitur to me. See if I got the right idea across in the sentence below.}
-\nick{Owing to our adaptive quadrature rule, we can consider bodies that are separated by less than 10\% of an arclength spacing.}
-The randomized method is repeated until the initial geometry reaches a
-desired initial porosity.
+Stokes flow and analyze transport through the evolving geometries.  Each
+body is initialized as a circle of center $\cc_i$, radius $r_i$, and
+length $L_i = 2\upi r_i$.  The center and radius are chosen at random,
+and the body is accepted if it is contained in $[-1,1] \times [-1,1]$
+and is sufficiently separated from all other bodies.  Owing to our
+adaptive quadrature rule, we can consider bodies that are separated by
+less than 10\% of an arclength spacing. The randomized method is
+repeated until the initial geometry reaches a desired initial porosity.
 
 For all simulations, we discretize each eroding grain with $N_\iin =
 256$ points and the outer wall $\Gamma$ with $N_\out=1024$ points.  A
@@ -1413,8 +1414,7 @@ two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, we
 plot the vorticity of the final time step from figure~\ref{fig:NearWall}
 in figure~\ref{fig:NearWall_vort}.  In these examples, a small
 recirculation zone, both in size and magnitude, is present in the region
-where the vorticity is \nick{smallest.}
-\todo[inline]{I was proud of myself for catching the missing period at the end, so had to point it out :)}
+where the vorticity is smallest.
 
 \begin{figure}
 \begin{center}
@@ -1462,14 +1462,15 @@ to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \subsection{20 Bodies at a Medium Porosity}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider 20 eroding grains with the Hagen-Poiseuille flow
-\begin{align}
-  \UU(\xx)=U \left[
-  \begin{array}{c}
-    1-y^2 \\ 0
-  \end{array}
-  \right],
-\end{align}
+We consider 20 eroding grains with the Hagen-Poiseuille flow $\UU(\xx) =
+U \left(1-y^2,0 \right)$.
+%\begin{align}
+%  \UU(\xx)=U \left[
+%  \begin{array}{c}
+%    1-y^2 \\ 0
+%  \end{array}
+%  \right],
+%\end{align}
 imposed on $\Gamma$. The flow rate $U$ is chosen so that the average
 pressure drop from $x=-2$ to $x=2$ is held fixed at 8. Therefore, $U=1$
 once all the grains have vanished.  The vorticity and grain
@@ -1481,12 +1482,10 @@ distance between bodies 1, 6, 13, and 15 and the outer wall is $1.3h$,
 $2.9h$, $2.8h$, and $1.3h$, respectively, where $h$ is the arclength
 spacing of the outer wall $\Gamma$.  In addition, the distance between
 several pairs of eroding bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and
-14 \& 18, is too small to be accurately resolved with the trapezoid
-rule.  By using the Barycentric quadrature rule, the interaction between
-these nearly-touching bodies is accurately resolved to the desired
-accuracy, and erosion can be simulated until all the bodies have
-vanished.
-\todo[inline]{accurately resolved to the desired accuracy is redundant.}
+14 \& 18, is too small to be resolve with the trapezoid rule.  By using
+the Barycentric quadrature rule, the interaction between these
+nearly-touching bodies is resolved to the desired accuracy, and erosion
+can be simulated until all the bodies have vanished.
 
 \begin{figure}
 \begin{center}
@@ -1544,12 +1543,11 @@ flow rate is an order of magnitude smaller because of the larger initial
 area fraction.  Starting around normalized time $0.2$,
 figure~\ref{fig:Eroding20flowrate}(b) is roughly linear which indicates
 that the flow rate can be written as an exponential law.  The line of
-best fit is
-\begin{align}
-  U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
-\end{align}
+best fit is $U \approx \exp(9.94(t-t_f)/t_f)$
+%\begin{align}
+%  U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
+%\end{align}
 which is the dashed line in figure~\ref{fig:Eroding20flowrate}(b).
-\todo[inline]{Perhaps equations like the above could be made inline to save space.}
 
 
 \begin{figure}
@@ -1656,21 +1654,18 @@ We computed lines of best fit using the porosity-tortuosity
 models~\eqref{eqn:tortuosityModels} and found that the power law
 minimizes the error.  The  black dashed line in
 figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
-\begin{align}
-  \widehat{T}(\phi) = \phi^{-0.2064},
-\end{align}
-\todo[inline]{This one definitely seems like a candidate for an inline equation.}
-with a root-mean-square error of $5.90 \times 10^{-3}$.  Interestingly,
-at the low porosities, the tortuosity initially increases. This increase
-occurs because in the absence of erosion (left plot in
-figure~\ref{fig:Eroding20vort}), many of the streamlines, such as those
-initialized between bodies 15 \& 18, only perform minor deflections to
-pass through the narrow regions, albeit, very slowly.  However, as
-erosion starts to open the channels, the streamlines deflect into the
-fast regions, such as the region above body 11, and this increases the
-amount of vertical deflection, and therefore the tortuosity. While this
-increase in tortuosity is interesting, in the next two examples we will
-see that the tortuosity does not initially increase.
+$\widehat{T}(\phi) = \phi^{-0.2064}$ with a root-mean-square error of
+$5.90 \times 10^{-3}$.  Interestingly, at the low porosities, the
+tortuosity initially increases. This increase occurs because in the
+absence of erosion (left plot in figure~\ref{fig:Eroding20vort}), many
+of the streamlines, such as those initialized between bodies 15 \& 18,
+only perform minor deflections to pass through the narrow regions,
+albeit, very slowly.  However, as erosion starts to open the channels,
+the streamlines deflect into the fast regions, such as the region above
+body 11, and this increases the amount of vertical deflection, and
+therefore the tortuosity. While this increase in tortuosity is
+interesting, in the next two examples we will see that the tortuosity
+does not initially increase.
 
 We next use streamlines to investigate the temporal evolution of the
 particle spreading $\sigma_\lambda$.  The spreading is computed for
@@ -1706,17 +1701,13 @@ variability in their velocities.
 geometry initialized with 20 grains.  The tortuosity is calculated using
 the Eulerian method~\eqref{eqn:tortuosity2} (blue dots) and Lagrangian
 method~\eqref{eqn:tortuosity1} (red stars).  The red square corresponds
-to the geometry in figure~\ref{fig:Eroding20tort}(c).  The dash line is
-the line of best fit $\widehat{T}(\phi)=\phi^{-p}$ with $p=0.2064$, and
-the corresponding root-mean-square error is $5.90 \times 10^{-3}$. (b)
-The temporal evolution of $\sigma_\lambda$ as a function of time at
-seven different porosities.  The dashed line, which has slope one,
-corresponds to ballistic dispersion $\sigma_\lambda \sim t$ that occurs
-if no grains are present. At early times, the particles undergo a
-ballistic motion, but once they have traversed a few grains, the
-spreading becomes super-dispersive with $\sigma_\lambda \sim t^\alpha$,
-$\alpha \in (1/2,1)$.  The dashed-dotted lines are lines of best fit
-with slopes $\alpha = 1.06$ ($\phi=95.10\%$), $\alpha = 1.07$
+to the geometry in figure~\ref{fig:Eroding20tort}(c).  The dashed line
+is the line of best fit $\widehat{T}(\phi)=\phi^{-p}$ with $p=0.2064$.
+(b) The temporal evolution of $\sigma_\lambda$ at seven porosities.  The
+dashed line has slope one and corresponds to ballistic dispersion.
+Asymptotically, the spreading is super-dispersive with $\sigma_\lambda
+\sim t^\alpha$, $\alpha \in (1/2,1)$.  The dashed-dotted lines of best
+fit have slopes $\alpha = 1.06$ ($\phi=95.10\%$), $\alpha = 1.07$
 ($\phi=85.09\%$), $\alpha = 1.06$ ($\phi=75.15\%$), $\alpha = 0.97$
 ($\phi=65.09\%$), $\alpha = 0.78$ ($\phi=55.10\%$), $\alpha = 0.75$
 ($\phi=45.08\%$), and $\alpha = 0.56$ ($\phi=37.68\%$).  Values greater
@@ -1758,12 +1749,8 @@ method~\eqref{eqn:tortuosity2} at each time step. The initial porosity
 is $\phi = 30.67\%$ and the initial tortuosity is $T = 1.24$.  In
 figure~\ref{fig:ErodingLow20Transport}(a), we plot the tortuosity with
 respect to the porosity (blue) and the line of best fit (black) using
-the power law 
-\begin{align}
-  \widehat{T}(\phi) = \phi^{-0.1669}.
-\end{align}
-\todo[inline]{inline?}
-This model outperforms the other three models in
+the power law $\widehat{T}(\phi) = \phi^{-0.1669}$. This model
+outperforms the other three models in
 equation~\eqref{eqn:tortuosityModels}, and its root-mean-squared error
 is $1.13 \times 10^{-2}$.  As grains erode, there is an increase in the
 number of streamlines that take a nearly direct path through the
@@ -1783,27 +1770,20 @@ the tortuosity for all time.
 \includegraphics*[height=0.8\linewidth]{./figs/20b_dense_second_moment_ref}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:ErodingLow20Transport} (a) The tortuosity of an
+\caption{\label{fig:ErodingLow20Transport} (a) The tortuosity  of an
 eroding geometry initialized with 20 grains.  When compared to the last
 example, the bodies are initially much closer together, and the porosity
-is smaller.  The tortuosity is calculated with the Eulerian
-method~\eqref{eqn:tortuosity2} (blue dots).  The dash line is the
-fitting line $\widehat{T}(\phi)=\phi^{-p}$ with $p=0.1669$, and the root
-mean square deviation is $1.13 \times 10^{-2}$.  (b) The temporal
-evolution of $\sigma_\lambda$ as a function of time at eight different
-porosities.  The dashed line, which has slope one, corresponds to
-ballistic dispersion $\sigma_\lambda \sim t$ that occurs if no grains
-are present.  At early times, the particles undergo a ballistic motion,
-but once they have traversed a few grains, the spreading becomes
-super-dispersive with $\sigma_\lambda \sim t^{\alpha}$, $\alpha \in
-(1/2,1)$.  The dashed-dotted lines are lines of best fit with slope
+is smaller.  The dashed line is the line of best fit
+$\widehat{T}(\phi)=\phi^{-p}$ with $p=0.1669$.  (b) The temporal
+evolution of $\sigma_\lambda$ at eight porosities.  The dashed line has
+slope one and corresponds to ballistic motion. Asymptotically, the
+spreading is super-dispersive with $\sigma_\lambda \sim t^{\alpha}$,
+$\alpha \in (1/2,1)$.  The dashed-dotted lines of best fit have slopes
 $0.92$ ($\phi=95.00\%$), $0.87$ ($\phi=85.17\%$), $0.87$
 ($\phi=75.10\%$), $0.91$ ($\phi=65.02\%$), $0.91$ ($\phi=55.08\%$),
 $0.72$ ($\phi=45.03\%$), $0.69$ ($\phi=35.05\%$), and $0.92$
 ($\phi=30.67\%$).}
 \end{figure}
-
-\todo[inline]{Very long captions in Figs. 10 and 12 and maybe others.}
 
 In figure~\ref{fig:ErodingLow20Transport}(b), we plot the temporal
 evolution of the particle spreading $\sigma_\lambda$.  As in the last
@@ -1969,21 +1949,15 @@ bodies, and this results in a ballistic regime.
 \caption{\label{fig:Eroding100Transport} (a) The tortuosity of an
 eroding geometry initialized with 100 grains.  The tortuosity is
 calculated using the Eulerian method~\eqref{eqn:tortuosity2} (blue dots)
-and Lagrangian method~\eqref{eqn:tortuosity1} (red stars).  The dash
-line is the fitting line $\widehat{T}(\phi)=\phi^{-p}$ with $p=0.2459$,
-and the root-mean-square error is $5.50 \times 10^{-3}$.  We note that
-the model $\widehat{T}(\phi) = 1 - p \ln (\phi)$, with $p=0.2631$, has a
-comparable root-mean-square error of $5.20 \times 10^{-3}$.  (b) The
-temporal evolution of $\sigma_\lambda$ as a function of time at six
-different porosities.  The dashed line, which has slope one, corresponds
-to ballistic dispersion $\sigma_\lambda \sim t$ that occurs if no bodies
-are present.  At early times, the particles undergo a ballistic motion,
-but once they have traversed a few grains, the spreading becomes
-super-dispersive with $\sigma_\lambda \sim t^{\alpha}$, $\alpha \in
-(1/2,1)$.  The dashed-dotted lines are lines of best fit with slope
-$1.11$ ($\phi=95.12\%$), $0.68$ ($\phi=85.07\%$), $0.73$
-($\phi=75.14\%$), $0.59$ ($\phi=65.03\%$), $0.61$ ($\phi=55.02\%$), and
-$0.70$ ($\phi=50.09\%$).}
+and Lagrangian method~\eqref{eqn:tortuosity1} (red stars).  The dashed
+line is the line of best fit $\widehat{T}(\phi)=\phi^{-p}$ with
+$p=0.2459$. (b) The temporal evolution of $\sigma_\lambda$ at six
+porosities.  The dashed line has slope one and corresponds to ballistic
+dispersion. Asymptotically, the spreading becomes super-dispersive with
+$\sigma_\lambda \sim t^{\alpha}$, $\alpha \in (1/2,1)$.  The
+dashed-dotted lines of best fit have slopes $1.11$ ($\phi=95.12\%$),
+$0.68$ ($\phi=85.07\%$), $0.73$ ($\phi=75.14\%$), $0.59$
+($\phi=65.03\%$), $0.61$ ($\phi=55.02\%$), and $0.70$ ($\phi=50.09\%$).}
 \end{figure}
 
 Finally, we investigate the effect of erosion on pore sizes.  The
@@ -2120,3 +2094,32 @@ Physical Sciences-Collaboration Grants for Mathematicians 527139 and
 \bibliography{refs}
 
 \end{document}
+
+
+
+% OUTDATED STUFF
+%Examples of coarse-grained models for porous media flow include
+%pressure-saturation-permeability
+%relationships~\citep{mil-chr-imh-mcb-ped1998}, permeability-porosity
+%relationships~\citep{dar-mcc1998, car1937, won-kop-tom1984}, first
+%passage time distributions~\citep{ber-sch-sil2000, hym-den-hag-kan2019,
+%cve-che-wen1996}, tortuosities~\citep{hak-com-den2019, mat-kha-koz2008,
+%dud-koz-mat2011, kop-kat-tim1996}, concentration
+%distributions~\citep{ica-den2019, bel-sal-rin1992}, pore and flow
+%distributions~\citep{ali-par-wei-bre2017}, geometry
+%connectivity~\citep{knu-car2005, wes-blo-gra2001}, anomalous
+%dispersion~\citep{dea-qua-bir-jua2018, den-cor-sch-ber2004,
+%sie-ili-pri-riv-gua2019}, and more.  
+
+%A variety of numerical methods for the fluid solver are available
+%including lattice-gas or lattice Boltzmann~\citep{kop-kat-tim1996,
+%dar-mcc1998}, finite volumes~\citep{suo-liu-gan2019, den-ica-hid2018,
+%sie-ili-pri-riv-gua2019}, finite
+%differences~\citep{leb-ded-dav-bou2007, knu-car2005}, and cellular
+%automata~\citep{rot1988}.  
+
+%We note that an alternative approach to
+%compute trajectories is to form a distribution of velocities $\uu$ and
+%use a continuous time random walk~\citep{mon-wei1965,
+%den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006}.
+
