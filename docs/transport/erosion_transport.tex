@@ -173,12 +173,11 @@ equations.  Meanwhile, individual grains erode at a rate proportional to
 the hydrodynamic shear stress~\citep{wan-fel2004,
 ris-moo-chi-she-zha2012, moore2013self, par-izu2000}.  Since the fluid
 equations are linear and homogeneous, they are converted to a boundary
-integral equation (BIE). Therefore, we resolve the non-negligible
-interactions between nearly-touching arbitrarily shaped bodies, and the
-erosion rate is computed accurately. We also compute the vorticity in
-the fluid bulk since, on solid boundaries, vorticity reduces to shear
-and thus provides a convenient way to simultaneously visualize local
-erosion rates and changes in the surrounding flow
+integral equation (BIE), and this allows us to naturally resolve the
+non-negligible interactions between bodies.  We also compute the
+vorticity in the fluid bulk since, on solid boundaries, vorticity
+reduces to shear and thus provides a convenient way to simultaneously
+visualize local erosion rates and changes in the surrounding flow
 (figure~\ref{fig:Eroding50vort}).
 
 \begin{figure}
@@ -210,8 +209,8 @@ adequate for bodies that are sufficiently separated~\citep{tre-wei2014},
 but not for grains in close contact.  One of the earliest quadrature
 methods for nearly-singular integrands was developed
 by~\citet{bak-she1986}, and in recent years, many other schemes have
-followed~\citep{oja-tor2015, kli-tor2018, hel-oja2008a, bea-yin-wil2016,
-bea-lai2001, klo-bar-gre-one2013}.  We use a Barycentric quadrature
+followed~\citep{kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001,
+klo-bar-gre-one2013}.  We use a Barycentric quadrature
 method~\citep{bar2014, bar-wu-vee2015} since it is a non-intrusive
 modification of the trapezoid rule, and the error is guaranteed to be
 uniformly bounded.  We extend the original quadrature method to compute
@@ -221,7 +220,7 @@ the fluid vorticity.
 To characterize transport through the resulting configurations, particle
 trajectories must be computed. Depending on the application, microscale
 transport can be modelled as pure advection~\citep{dea-qua-bir-jua2018,
-leb-ded-dav-bou2007, cve-che-wen1996, puy-gou-den2019},
+cve-che-wen1996, puy-gou-den2019},
 advection-diffusion~\citep{cus-hu-den1995, dag1987, den-ica-hid2018}, or
 with a random walk~\citep{saf1959, bij-blu2006, ber-sch-sil2000}.  In
 this work, we assume trajectories to be governed by pure advection
@@ -250,8 +249,8 @@ porosity. The tortuosity of a geometry is defined by averaging the local
 tortuosity over all streamlines initialized at the inlet, and the
 geometry's tortuosity characterizes average particle
 motions~\citep{hak-com-den2019}.  To characterize spreading, the fluid
-dispersion is computed by calculating the variance of the streamline
-lengths. In porous media, this spreading is often
+dispersion is defined as the variance of the streamline lengths. In
+porous media, this spreading is often
 super-dispersive~\citep{kan-dea-nun-bij-blu-jua2014, cus-hu-den1995,
 dea-leb-den-tar-bol-dav2013}. Since anomalous dispersion results from
 streamlines spending time in both the high and low velocity
@@ -316,13 +315,10 @@ confined geometry $\Omega$ that contains $M$ eroding bodies with
 boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$.  The boundary of the
 fluid domain is $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup
 \gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly
-smoothed version of the boundary of $[-3,3] \times [-1,1]$.  We only
-place eroding bodies in $[-1,1] \times [-1,1]$ to create a buffer region
-that allows the flow profile imposed at the inlet to transition to the more
-complex flow intervening between the bodies. On each eroding body, $\nn$
-is the normal vector pointing into the body, and $\ss$ is the unit
-tangent vector pointing in the counterclockwise direction.  The normal
-vector on $\Gamma$ is the outward unit normal.  Neglecting inertial
+smoothed version of the boundary of $[-3,3] \times [-1,1]$.  All eroding
+bodies are placed in $[-1,1] \times [-1,1]$ to create a buffer region
+that allows the flow profile imposed at the inlet to transition to the
+more complex flow intervening between the bodies. Neglecting inertial
 forces, the governing equations are
 \begin{equation}
 \label{eqn:erosionModel}
@@ -339,31 +335,31 @@ forces, the governing equations are
       &&\mbox{\em erosion model}.
   \end{split}
 \end{equation}
-Here, $\uu$ is the fluid velocity, $p$ is the pressure, $\UU$ is a
-prescribed Hagen-Poiseuille velocity field, $\Vn$ is the normal velocity
-of $\gamma$, and
+Here $\uu$ is the fluid velocity, $p$ is the pressure, $\UU$ is a
+prescribed Hagen-Poiseuille velocity field, and $\Vn$ is the normal
+velocity of $\gamma$. The shear stress on $\gamma$ is
 \begin{align}
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
-is the shear stress on $\gamma$. We simulate erosion by alternating
-between solving the fluid equations and advancing the eroding grains.
-The strength of $\UU$ is adjusted at each time step to achieve a
-constant pressure drop across the channel, motivated by the geological
-situation of a porous medium connecting two regions of  fixed hydraulic
-heads.
+where, $\nn$ is the normal vector pointing into the body, and $\ss$ is
+the unit tangent vector pointing in the counterclockwise direction. We
+simulate erosion by alternating between solving the fluid equations and
+advancing the eroding grains.  The strength of $\UU$ is adjusted at each
+time step to achieve a constant pressure drop across the channel,
+motivated by the geological situation of a porous medium connecting two
+regions of  fixed hydraulic heads.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary Integral Equation Formulation}
 \label{sec:DLP}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Since we require accurate solutions of the incompressible Stokes
-equations in complex two-dimensional geometries, we reformulate the
-equations as a BIE.  This has the advantage that only the
-one-dimensional boundary of the domain must be discretized, and, with
-appropriate quadrature formulas and fast summation methods, the result
-is a high-fidelity numerical simulation with near-optimal computational
-complexity.
+To accurately solve the governing equations~\eqref{eqn:erosionModel} in
+complex two-dimensional geometries, we reformulate the equations as a
+BIE.  This has the advantage that only the one-dimensional boundary of
+the domain must be discretized, and, with appropriate quadrature
+formulas and fast summation methods, the result is a high-fidelity
+numerical simulation with near-optimal computational complexity.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Double-Layer Potential Formulation in $\RR^2$}
@@ -418,7 +414,7 @@ $\gamma_\ell$, $\ell=1,\ldots,M$.
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 corresponding deformation tensor, pressure, and vorticity at $\xx \in
-\Omega$ is written in terms of a layer potential~\cite{qua-moo2018}. To
+\Omega$ is written in terms of a layer potential~\citep{qua-moo2018}. To
 compute the deformation tensor for $\xx \in \gamma$, we include the jump
 term
 \begin{align}
@@ -442,10 +438,9 @@ Potential}
 The velocity double-layer potential~\eqref{eqn:velocityDLP}, and its
 corresponding deformation tensor, pressure, and vorticity are all
 written as layer potentials in $\RR^2$.  However, the quadrature method
-we introduce in section~\ref{sec:method} requires a complex-valued
-representation of the layer potentials for the velocity, deformation
-tensor, and vorticity. The first step to form a complex representation
-is to write the Laplace double-layer potential as the complex integral
+we introduce in section~\ref{sec:method} requires complex-valued
+representations. The first step to form a complex representation is to
+write the Laplace double-layer potential as the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\upi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)),
@@ -460,15 +455,15 @@ Here $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
 counterparts of $\xx = (x_1,x_2),\yy = (y_1,y_2) \in \RR^2$, and $\eta =
 \eta_1 + i \eta_2$ is the complex counterpart of $\eeta =
 (\eta_1,\eta_2)$. Therefore, depending on the formulation of the layer
-potential, $\Omega$ is being interpreted as a subset of $\RR^2$ or
-$\CC$. Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy
-integral by first finding the boundary data of $v$.  Assuming that
-$\Omega$ is a simply-connected interior domain, the boundary data of $v$
+potential, $\Omega$ is interpreted as a subset of $\RR^2$ or $\CC$.
+Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
+first finding the boundary data of $v$. If $\Omega$ is a
+simply-connected interior domain, then the boundary data of $v$
 satisfies the Sokhotski-Plemelj jump relation
 \begin{align}
   \label{eqn:SPrelation}
   v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\upi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x-y}\, dy, \quad x \in \Omega.
+    \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
 \end{align}
 For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
 for multiply-connected domains, such as a porous media, $\bd\Omega$ is
@@ -571,7 +566,7 @@ vorticity at $x \in \Omega$ is
 \section{Transport, Tracers, and Tortuosity}
 \label{sec:transport}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Erosion in porous media leads to particular phenomena such as
+Erosion in porous media leads to phenomena such as
 channelization~\citep{berhanu2012shape}, and we are interested in
 characterizing transport in such geometries.  In our previous
 work~\citep{qua-moo2018}, we examined the effect of erosion on the area
@@ -579,8 +574,8 @@ fraction, flow rate, and the total drag.  However, to characterize
 macroscopic signatures of the transport, other quantities must be
 examined.  Here, we compute the anomalous dispersion rate, the
 tortuosity, and the distribution of the pore sizes.  The first two
-metrics can be defined in terms of streamlines governed by the
-autonomous advection equation~\eqref{eqn:tracers}.
+metrics are defined in terms of streamlines governed by the autonomous
+advection equation~\eqref{eqn:tracers}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Anomalous Dispersion}
@@ -607,41 +602,41 @@ Then, the first and second ensemble moments are
     \sigma_\lambda^2(t) = \frac{1}{N_p} \sum_{j=1}^{N_p}
     \left[\lambda_j(t) - \langle \lambda \rangle(t) \right]^2,
 \end{align}
-and $\sigma_\lambda$ characterizes particle dispersion.  At early times,
-the particles have not explored much of the geometry, and we expect a
+and $\sigma_\lambda$ characterizes the dispersion.  At early times, the
+particles have not explored much of the geometry, and we expect a
 ballistic motion $\sigma_\lambda \sim t$.  However, as the particles
 pass the grains, their trajectories are altered, and we expect that
 $\sigma_\lambda \sim t^\alpha$, with $\alpha \in (0.5,1)$, indicating
 that the flow is super-dispersive.
 
-To establish an anomalous dispersion rate, the trajectories must pass
-several grains so that an asymptotic regime is reached. The geometries
-that we consider are too short to observe asymptotic dispersion, so we
-use a reinsertion method to form longer trajectories. Similar to the
-work of others~\citep{dea-qua-bir-jua2018, puy-gou-den2019}, once a
-particle reaches the outlet of the porous region, it is reinserted at
-the inlet.  To minimize errors caused by reinsertion, the particle is
-initialized at the discretization point that has the closest velocity to
-the particle's velocity at the outlet.  After a single trajectory is
-formed, it has undergone a collection of reinsertions.  Then, as a
-post-processing step, the trajectory is made continuous by attaching the
-tail of each segment to the origin of the next segment.
+To establish an asymptotic anomalous dispersion rate, the trajectories
+must pass several grains. The geometries that we consider are too short
+to observe asymptotic dispersion, so we use a reinsertion method to form
+longer trajectories. Similar to the work of
+others~\citep{dea-qua-bir-jua2018, puy-gou-den2019}, once a particle
+reaches the outlet of the porous region, it is reinserted at the inlet.
+To minimize errors caused by reinsertion, the particle is initialized at
+the discretization point that has the closest velocity to the particle's
+velocity at the outlet.  After a single trajectory is formed, it has
+undergone a collection of reinsertions.  Then, as a post-processing
+step, the trajectory is made continuous by attaching the tail of each
+segment to the origin of the next segment.
 
-We consider trajectories in an open channel so that they can be compared
-to trajectories in eroded geometries with large permeability.  The
-trajectories are $(s_1(t),s_2(t)) = ((1-s_2(0)^2)t + s_1(0), s_2(0))$.
+%We consider trajectories in an open channel so that they can be compared
+%to trajectories in eroded geometries with large permeability.  The
+%trajectories are $(s_1(t),s_2(t)) = ((1-s_2(0)^2)t + s_1(0), s_2(0))$.
+%%\begin{align}
+%%  s_1(t) = (1-s_2(0)^2)t + s_1(0), \quad
+%%  s_2(t) = s_2(0).
+%%\end{align}
+%Averaging over $s_2(0) \in [-1,1]$, the first and second ensemble
+%moments are
 %\begin{align}
-%  s_1(t) = (1-s_2(0)^2)t + s_1(0), \quad
-%  s_2(t) = s_2(0).
+%  \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
+%    \sigma_\lambda^2(t) = \frac{4}{45}t^2.
 %\end{align}
-Averaging over $s_2(0) \in [-1,1]$, the first and second ensemble
-moments are
-\begin{align}
-  \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
-    \sigma_\lambda^2(t) = \frac{4}{45}t^2.
-\end{align}
-In section~\ref{sec:results}, we compare the second moment in an open
-channel with the trajectories in an eroded geometry.
+%In section~\ref{sec:results}, we compare the second moment in an open
+%channel with the trajectories in an eroded geometry.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
@@ -741,10 +736,10 @@ channelization~\citep{sie-ili-pri-riv-gua2019,berhanu2012shape}, and
 pore network models~\citep{bry-kin-mel1993, bry-mel-cad1993,
 bij-blu2006}. To characterize the grain placement, we compute
 distributions of pore sizes between neighboring grains.  To define
-neighboring grains, we form a Delaunay triangulation using nodes placed
-at the center of each eroding grain and at a collection of points around
-the boundary of the porous media.  Then, we say that two grains are
-neighbors if their centers share an edge of the
+neighboring grains, we form the Delaunay triangulation using nodes
+placed at the center of each eroding grain and at a collection of points
+around the boundary of the porous media.  Then, we say that two grains
+are neighbors if their centers share an edge of the
 triangulation~\citep{dea-qua-bir-jua2018}. The pores of an eroded
 geometry are illustrated in figure~\ref{fig:Eroding100gap}(a). We do not
 consider pores between eroding bodies and the solid wall $\Gamma$, so
@@ -779,17 +774,15 @@ section~\ref{sec:time}.
 \label{sec:spatialDiscretization}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Since we use a BIE formulation, we only need to discretize the
-one-dimensional boundary of the domain.  Therefore, we easily resolve
-complex geometries, and differentiation is performed with spectral
-accuracy in Fourier space.  We discretize each eroding grain $\gamma_k$
-with $N_\iin$ points and discretize the outer wall $\Gamma$ with
-$N_\out$ points.  The $j^{th}$ discretization point on $\Gamma$ and
-$\gamma_k$ are denoted by $\yy_j^0$ and $\yy^k_j$, respectively.  The
-discretization points are initially distributed evenly in arclength, and
-this equispacing is maintained throughout the entire simulation by using
-the {\thL} formulation.  In addition, we apply
-regularization~\citep{qua-moo2018} to slightly smooth the corners that
-inevitably develop during erosion.
+one-dimensional boundary of the domain.  We discretize each eroding
+grain $\gamma_k$ with $N_\iin$ points and discretize the outer wall
+$\Gamma$ with $N_\out$ points.  The $j^{th}$ discretization point on
+$\Gamma$ and $\gamma_k$ are denoted by $\yy_j^0$ and $\yy^k_j$,
+respectively.  The discretization points are initially distributed
+evenly in arclength, and this equispacing is maintained throughout the
+entire simulation by using the {\thL} formulation.  In addition, we
+apply regularization~\citep{qua-moo2018} to slightly smooth the corners
+that inevitably develop during erosion.
 
 Given the discretization points of $\bd\Omega$, the trapezoid rule
 results in the collocation method for~\eqref{eqn:BIE}
@@ -832,28 +825,27 @@ system~\eqref{eqn:trapLinearSystem} is a well-conditioned second-kind
 integral equation and is solved iteratively with GMRES.  If the number
 of discretization points is sufficiently large, then the solution
 of~\eqref{eqn:trapLinearSystem} is an accurate approximation of the
-density function, Stokeslets, and rotlets.   Then, if $\xx \in \Omega$
-is sufficiently far from $\bd\Omega$, an approximation of the velocity,
-deformation tensor, and vorticity due to the double-layer potential is
-found by applying the trapezoid rule. In particular,
+density function, Stokeslets, and rotlets. Then, for $\xx \in \Omega$,
+the double-layer potential is approximated as
 \begin{align}
   \label{eqn:trap}
   \uu(\xx) &= \sum_{j=1}^{N_\out} w^0_j D(\xx,\yy^0_j) \eeta_j +
-  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D(\xx,\yy^k_j) \eeta^k_j, \\
-%
-  \ssigma(\xx) &= \sum_{j=1}^{N_\out} w^0_j \mathbf{D}_\ssigma(\xx,\yy^0_j) \eeta_j +
-  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j \mathbf{D}_\ssigma(\xx,\yy^k_j)
-  \eeta^k_j, \\
-%
-  w(\xx) &= \sum_{j=1}^{N_\out} w^0_j D_\omega(\xx,\yy^0_j) \eeta_j +
-  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D_\omega(\xx,\yy^k_j)
-  \eeta^k_j.
+  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D(\xx,\yy^k_j) \eeta^k_j. 
+%%
+%  \ssigma(\xx) &= \sum_{j=1}^{N_\out} w^0_j \mathbf{D}_\ssigma(\xx,\yy^0_j) \eeta_j +
+%  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j \mathbf{D}_\ssigma(\xx,\yy^k_j)
+%  \eeta^k_j, \\
+%%
+%  w(\xx) &= \sum_{j=1}^{N_\out} w^0_j D_\omega(\xx,\yy^0_j) \eeta_j +
+%  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D_\omega(\xx,\yy^k_j)
+%  \eeta^k_j.
 \end{align}
-The contributions due to the Stokeslets and rotlets require no
-quadrature and are easily included in the velocity, deformation tensor,
-and vorticity.  Finally, to compute the shear stress, we apply the
-trapezoid rule with Fourier differentiation to approximate the jump
-term~\eqref{eqn:deformationJump} of the deformation tensor, and then the
+Similarly, the corresponding layer potentials for the deformation tensor
+and vorticity are approximated with the trapezoid rule. The
+contributions due to the Stokeslets and rotlets require no quadrature
+and are easily included in the velocity, deformation tensor, and
+vorticity.  Finally, Fourier differentiation is used to compute the jump
+term~\eqref{eqn:deformationJump} of the shear stress, and then the
 tensor is applied to the normal and tangent vectors as defined in
 equation~\eqref{eqn:shearStress}.
 
@@ -877,8 +869,7 @@ tortuosity is approximated as
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 While the trapezoid rule is spectrally accurate for smooth, periodic
 functions~\citep{tre-wei2014}, the derivative of the integrand grows as
-the target point $\xx$ approaches $\bd\Omega$. The result is an error
-bound depends on the location of the target point. Therefore, if the
+the target point $\xx$ approaches $\bd\Omega$.  Therefore, if the
 trapezoid rule is applied when bodies are in near-contact, or if a layer
 potential is evaluated at a point close to $\bd\Omega$, then the result
 become unreliable and the simulation ultimately becomes unstable.  We
@@ -902,14 +893,14 @@ uniform error bound.
 
 We present the quadrature rules for a simply-connected interior domain
 $\Omega \subset \CC$, with any point $a \in \Omega$, and we consider
-target points $x \in \Omega$ and $x \in \Omega^c$. Then, these
-quadrature rules can be applied to individual components of a
-multiply-connected domain to compute the velocity, vorticity, and
-deformation tensor in an eroding porous media.  The method starts with
-an underlying quadrature rule, and we use the spectrally accurate
-$N$-point trapezoid rule.  Since the quadrature points are uniformly
-distributed, the quadrature weights are $w_j = L/N$, $j=1,\ldots,N$,
-where $L$ is the length of $\bd\Omega$.
+target points $x \in \Omega$ and $x \in \Omega^c$. Then, the quadrature
+rules can be applied to individual components of a multiply-connected
+domain to compute the velocity, vorticity, and deformation tensor in an
+eroding porous media.  The method starts with an underlying quadrature
+rule, and we use the spectrally accurate $N$-point trapezoid rule.
+Since the quadrature points are uniformly distributed, the quadrature
+weights are $w_j = L/N$, $j=1,\ldots,N$, where $L$ is the length of
+$\bd\Omega$.
 
 Again, given a complex-valued density function $\eta$, the boundary data
 of $v[\eta](x)$, as defined in equation~\eqref{eqn:laplaceComplex},
@@ -1080,7 +1071,7 @@ and vorticity are computed with an error that is bounded independent of
 the target location. However, applied directly, it requires
 $O(N^2)$ operations, where $N$ is the total number of source
 and target points.  By using a fast summation method, such as the fast
-multipole method (FMM)~\citep{gre-rok1987}, this cost can be reduced to
+multipole method (FMM)~\citep{gre-rok1987}, the cost can be reduced to
 $O(N)$ operations.  However, each application of the Barycentric
 quadrature rules involve several $N$-body calculations, rendering the
 computational cost prohibitive, so we introduce a hybrid method that
@@ -1090,10 +1081,10 @@ of the eroding bodies or the outer wall, but the target point can either
 be on another component of $\bd\Omega$ or it can be in the fluid bulk
 $\Omega$.
 
-To compute the velocity double-layer potential, we start by applying the
-trapezoid rule~\eqref{eqn:trap} accelerated with the FMM.  This
-calculation requires $O(N)$ operations, and we call the
-resulting velocity $\vv_\trap(\xx)$.  Since the trapezoid rule is
+To compute the velocity double-layer potential~\eqref{eqn:velocityDLP},
+we start by applying the trapezoid rule~\eqref{eqn:trap} accelerated
+with the FMM.  This calculation requires $O(N)$ operations, and we call
+the resulting velocity $\vv_\trap(\xx)$.  Since the trapezoid rule is
 spectrally accurate, the error of $\vv_\trap(\xx)$ is small for points
 sufficiently far from $\bd\Omega$, and this region depends on the number
 of discretization points $N_\iin$ and $N_\out$.  However, the trapezoid
@@ -1107,7 +1098,7 @@ $\gamma_k$.  Then, the Barycentric quadrature rule is used to compute
 the velocity due to $\gamma_k$ with more accuracy.  Finally, the
 velocity at $\xx$ is
 \begin{align}
-  \vv(\xx) = \vv_\trap(\xx) - \frac{L_k}{N_\iin} \sum_{j=1}^{N_\iin} 
+  \vv(\xx) = \vv_\trap(\xx) - \sum_{j=1}^{N_\iin} w_j^k
     D(\xx,\yy^k_j) \eeta(\yy_j) + \vv^k_\bary(\xx),
   \label{eqn:velocityDecomp}
 \end{align}
@@ -1133,10 +1124,9 @@ iteration with the FMM, the additional once-per-time-step costs to
 compute the vorticity and deformation tensor are minimal.
 
 Per grid point, applying the Barycentric quadrature rules dominate the
-computational cost. Therefore, it is imperative that we only apply the
-Barycentric quadrature when the trapezoid rule is inaccurate.  As a rule
-of thumb, the trapezoid rule due to $\gamma_k$ achieves machine epsilon
-accuracy if~\citep{bar2014}
+computational cost, so it is imperative that it is only applied when
+necessary. As a rule of thumb, the trapezoid rule due to $\gamma_k$
+achieves machine epsilon accuracy if~\citep{bar2014}
 \begin{align}
   \label{eqn:TrapCutoff}
   d(\xx,\gamma_k) = \inf_{\yy \in \gamma_k} \|\xx - \yy\| > 
@@ -1207,6 +1197,7 @@ these values for all of our numerical simulations.
 \subsection{Time Integration}
 \label{sec:time}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{Bryan is here}
 We use the time stepping method outlined in our previous
 work~\citep[see][section 3.3]{qua-moo2018} which we briefly summarize
 here.  The erosion rate loses differentiability if the shear stress
@@ -1890,17 +1881,6 @@ the model $\widehat{T}(\phi) = 1 - 0.2631 \ln(\phi)$.
 \includegraphics[width = \textwidth]{./figs/100b_t100tracer}
 \caption{}
 \end{subfigure}
-
-\caption{\label{fig:Eroding20tort} The local tortuosity of a porous
-geometry initialized with 20 grains after eroding to a porosity of
-62.9\%.  (a) The $x$-component of the velocity at the inlet,
-$u_1(-1,y)$, normalized by its maximum velocity of $2.98 \times
-10^{-3}$. (b) The local tortuosity $\tau(y)$ on the cross section $x =
--1$. (c) The streamlines resulting in the ten largest differences of
-local tortuosity between neighboring streamlines.  Neighboring
-streamlines have the same color.}
-
-
 \caption{\label{fig:Eroding100tort} The local tortuosity of a porous
 geometry initialized with 100 grains after eroding to a porosity of
 62.98\%.  (a) The $x$-component of the velocity at the inlet, $u_1(-1,
