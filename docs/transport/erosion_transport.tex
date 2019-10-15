@@ -670,11 +670,11 @@ tail of each segment to the origin of the next segment.
 
 We consider trajectories in an open channel so that they can be compared
 to trajectories in eroded geometries with large permeability.  The
-trajectory originating at $(s_1(0),s_2(0))$ is
-\begin{align}
-  s_1(t) = (1-s_2(0)^2)t + s_1(0), \quad
-  s_2(t) = s_2(0).
-\end{align}
+trajectories are $(s_1(t),s_2(t)) = ((1-s_2(0)^2)t + s_1(0), s_2(0))$.
+%\begin{align}
+%  s_1(t) = (1-s_2(0)^2)t + s_1(0), \quad
+%  s_2(t) = s_2(0).
+%\end{align}
 Averaging over $s_2(0) \in [-1,1]$, the first and second ensemble
 moments are
 \begin{align}
@@ -703,8 +703,11 @@ computing the tortuosity are sometime used~\citep{dud-koz-mat2011}.  The
 hydraulic tortuosity is defined by taking the average over all points on
 the inlet cross-section
 \begin{align}
-  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0}
-  {\displaystyle\int_{S}u_1(x_0,y_0)\,dy_0},
+  T = \frac{1}{d}\left(\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0 \right)
+  \Bigg/
+  \left(\int_{S}u_1(x_0,y_0)\,dy_0 \right),
+%  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0}
+%  {\displaystyle\int_{S}u_1(x_0,y_0)\,dy_0},
   \label{eqn:tortuosity1}
 \end{align} 
 where $S$ is the inlet cross-section $x = -1$, $u_1(y_0)$ is the
@@ -718,8 +721,11 @@ streamlines connect the two cross-sections, the tortuosity in
 equation~\eqref{eqn:tortuosity1} is equivalent
 to~\citep{dud-koz-mat2011}
 \begin{align}
-  T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
-           {\displaystyle\int_\Omega u_1(\yy)\, d\yy},
+  T = \left(\int_\Omega \|\uu(\yy)\|\, d\yy \right)
+    \Bigg/
+      \left(\int_\Omega u_1(\yy)\, d\yy \right),
+%  T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
+%           {\displaystyle\int_\Omega u_1(\yy)\, d\yy},
   \label{eqn:tortuosity2}
 \end{align}
 where $\Omega$ is the fluid region between the inlet and outlet
@@ -784,11 +790,10 @@ investigate the effect of erosion on the pore size distribution.
 \caption{}
 \end{subfigure}
 \caption{\label{fig:Eroding100gap} (a) The pore sizes between
-neighboring grains. Two grains are said to be neighbors if they share an
-edge of a Delanuay triangulation with nodes at the center of each
-eroding grain. (b) The distribution of the pore sizes of an eroded
-geometry. The black curve is the Weibull distribution with the same
-first two moments as the data.}
+neighboring grains. Two grains are neighbors if they share an edge of
+the Delanuay triangulation with nodes at the center of each eroding
+grain. (b) The pore sizes of an eroded geometry. The black curve is the
+Weibull distribution with the same first two moments as the data.}
 \end{figure}
 
 
@@ -1378,14 +1383,15 @@ examples:
 \subsection{A Single Body Close to a Wall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Consider a single eroding body close to a solid wall with the shear flow
-\begin{align}
-  \UU(\xx)=\left[
-  \begin{array}{c}
-    y+1 \\ 0
-  \end{array}
-  \right],
-\end{align}
-imposed on the outer wall. \citet{mit-spa2017} performed a similar
+$\UU(\xx) = (y+1,0)$
+%\begin{align}
+%  \UU(\xx)=\left[
+%  \begin{array}{c}
+%    y+1 \\ 0
+%  \end{array}
+%  \right],
+%\end{align}
+imposed on $\Gamma$. \citet{mit-spa2017} performed a similar
 three-dimensional experiment using a second-order quadrature method.
 Their initial body is a sphere with its center located $1.5$ radii above
 the solid wall.  We initialize the two-dimensional eroding body with
@@ -1463,7 +1469,7 @@ to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We consider 20 eroding grains with the Hagen-Poiseuille flow $\UU(\xx) =
-U \left(1-y^2,0 \right)$.
+U \left(1-y^2,0 \right)$
 %\begin{align}
 %  \UU(\xx)=U \left[
 %  \begin{array}{c}
@@ -1493,11 +1499,10 @@ can be simulated until all the bodies have vanished.
   \includegraphics[height=0.227\textwidth]{./figs/20b_dense101}
   \includegraphics[height=0.227\textwidth]{./figs/20b_dense201}
   \includegraphics[height=0.227\textwidth]{./figs/20b_dense301}
-\caption{\label{fig:Eroding20vort} The erosion of 20 nearly touching
-bodies in a Hagen-Poiseuille flow.  The four snapshots are evenly spaced
-in time, and the color is the fluid vorticity. In the fourth frame,
-bodies 4, 12, and 17 have completely vanished, and body 19 has almost
-completely eroded.}
+\caption{\label{fig:Eroding20vort} 20 bodies eroding in a
+Hagen-Poiseuille flow.  The four snapshots are equispaced in time, and
+the color is the fluid vorticity. In the fourth frame, bodies 4, 12, and
+17 have vanished, and body 19 has almost vanished.}
 \end{center}
 \end{figure}
 
@@ -1522,12 +1527,11 @@ direction, resulting in a small erosion rate.
 \includegraphics*[height = 0.7\linewidth]{./figs/flow_rate20densen}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20flowrate}(a) The area fraction of 20
-nearly touching eroding bodies versus normalized time. (b) The flow
-rate, $U$, for a fixed pressure drop across the channel versus
-normalized time.  The flow rate is initially very small, but it
-eventually increases as an exponential law  (dashed line) towards the
-flow rate $U=1$ that occurs once all the bodies have eroded.}
+\caption{\label{fig:Eroding20flowrate}(a) The time-dependent area
+fraction of a geometry with 20 eroding bodies. (b) The time-dependent
+flow rate, $U$, for a fixed pressure drop across the channel.  The flow
+rate is initially small, but it eventually increases as an exponential
+law (dashed line) towards the maximum flow rate $U=1$.}
 \end{figure}
 
 We next analyze the effect of erosion on the area fraction and the flow
@@ -1561,10 +1565,8 @@ which is the dashed line in figure~\ref{fig:Eroding20flowrate}(b).
 \caption{\label{fig:Eroding20tracer} 200 streamlines in the second
 geometry from figure~\ref{fig:Eroding20vort}. The streamlines are
 initially equispaced at $(-1,y)$, where $y \in (-1,1)$. The first five
-snapshots are evenly spaced in time.  The bottom right frame is a zoom
-in of the fifth snapshot, but with additional streamlines.  Since we use
-the Barycentric quadrature rule and a fourth-order Runge-Kutta method,
-streamlines that are very close to the grains are resolved.}
+snapshots are equispaced in time.  The bottom right frame is a
+magnification of the fifth snapshot, but with additional streamlines.}
 \end{center}
 \end{figure}
 
@@ -1628,14 +1630,14 @@ the same color.
 \includegraphics*[width =\linewidth]{./figs/tort_diff_top10_268}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding20tort} The tortuosity of a porous geometry
-that initially had 20 grains and has eroded to a porosity of 62.9\%.
-(a) The $x$-component of the velocity at the inlet, $u_1(-1,y)$,
-normalized by its maximum velocity of $2.98 \times 10^{-3}$. (b) The
-local tortuosity $\tau(y)$ on the cross section $x = -1$.  The spatially
-averaged tortuosity through the channel is $1.098$.  (c) The streamlines
-resulting in the ten largest differences of local tortuosity between
-neighboring streamlines.  Neighboring streamlines have the same color.}
+\caption{\label{fig:Eroding20tort} The local tortuosity of a porous
+geometry initialized with 20 grains after eroding to a porosity of
+62.9\%.  (a) The $x$-component of the velocity at the inlet,
+$u_1(-1,y)$, normalized by its maximum velocity of $2.98 \times
+10^{-3}$. (b) The local tortuosity $\tau(y)$ on the cross section $x =
+-1$. (c) The streamlines resulting in the ten largest differences of
+local tortuosity between neighboring streamlines.  Neighboring
+streamlines have the same color.}
 \end{figure}
 
 In figure~\ref{fig:Eroding20Transport}(a), we plot the tortuosity as a
@@ -1736,12 +1738,12 @@ trapezoid rule to achieve machine precision.
   \includegraphics[height=0.227\textwidth]{./figs/20b2_vort300}
   \includegraphics[height=0.227\textwidth]{./figs/20b2_vort450}
 \end{center}
-\caption{\label{fig:ErodingLow20vort} The erosion of 20 nearly touching
-bodies in a Hagen-Poiseuille flow. The four snapshots are evenly spaced
-in time, and the color is the fluid vorticity. In addition to the
-channels that develop between the bodies and the solid walls, erosion
-leads to two main channels through the geometry---one in the top half
-and one near the middle.}
+\caption{\label{fig:ErodingLow20vort} 20 bodies eroding in a
+Hagen-Poiseuille flow. The snapshots are equispaced in time, and the
+color is the fluid vorticity. In addition to the channels that develop
+between the bodies and the solid walls, erosion leads to two main
+channels through the geometry---one in the top half and one near the
+middle.}
 \end{figure}
 
 We compute the tortuosity using the Eulerian
@@ -1817,11 +1819,10 @@ porosity near 50\%.  Snapshots of the configurations and vorticity are
 in figure~\ref{fig:Eroding100vort}. We compute the tortuosity using both
 the Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
 methods~\eqref{eqn:tortuosity2}. Therefore, we compute and plot the
-normalized velocity
-at $N_p = 1000$ points along the inlet $x=-1$ in figure~\ref{fig:Eroding100tort}(a) for the
-eroded geometry at porosity $\phi = 62.98\%$
-(figure~\ref{fig:Eroding100tort}(c)).  The initial velocity of the
-tracers is qualitatively similar to the 20 body example
+normalized velocity at $N_p = 1000$ points along the inlet $x=-1$ in
+figure~\ref{fig:Eroding100tort}(a) for the eroded geometry at porosity
+$\phi = 62.98\%$ (figure~\ref{fig:Eroding100tort}(c)).  The initial
+velocity of the tracers is qualitatively similar to the 20 body example
 (figure~\ref{fig:Eroding20tort}(a)), except with additional oscillations
 because of the additional grains.  In
 figure~\ref{fig:Eroding100tort}(b), we plot the local tortuosity by
@@ -1837,29 +1838,43 @@ tracers travels 25.5\% farther than it would have if the bodies had been
 absent, and the average tracer travelled 12\% farther resulting in a
 tortuosity of $T = 1.12$.
 
+
 \begin{figure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/100b_50}
-\caption{100 bodies, $\phi = 55.54\%$}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/100b_100}
-\caption{99 bodies, $\phi = 62.98\%$}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/100b_150}
-\caption{94 bodies, $\phi = 72.22\%$}
-\end{subfigure}%
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/100b_200}
-\caption{82 bodies, $\phi = 83.67\%$}
-\end{subfigure}
-\caption{\label{fig:Eroding100vort} The erosion of 100 nearly touching
-grains in a Hagen-Poiseuille flow. The four snapshots are evenly spaced
-in time, and the color is the fluid vorticity.  Because of the large
-number of bodies, erosion creates many channels connecting the inlet to
-the outlet.}
+\begin{center}
+  \includegraphics[height=0.227\textwidth]{./figs/100b_50}
+  \includegraphics[height=0.227\textwidth, trim=0cm 0cm 2.8cm 0cm, clip=true]
+    {./figs/100b_100}
+  \includegraphics[height=0.227\textwidth]{./figs/100b_150}
+  \includegraphics[height=0.227\textwidth]{./figs/100b_200}
+\end{center}
+\caption{\label{fig:Eroding100vort} 100 bodies eroding in a
+Hagen-Poiseuille flow. The four snapshots are equispaced in time, and
+the color is the fluid vorticity.  Erosion creates many channels
+connecting the inlet to the outlet.}
 \end{figure}
+
+%\begin{figure}
+%\begin{subfigure}[b]{0.5\textwidth}
+%\includegraphics*[height =0.8\linewidth]{./figs/100b_50}
+%\caption{100 bodies, $\phi = 55.54\%$}
+%\end{subfigure}%
+%\begin{subfigure}[b]{0.5\textwidth}
+%\includegraphics*[height =0.8\linewidth]{./figs/100b_100}
+%\caption{99 bodies, $\phi = 62.98\%$}
+%\end{subfigure}
+%\begin{subfigure}[b]{0.5\textwidth}
+%\includegraphics*[height =0.8\linewidth]{./figs/100b_150}
+%\caption{94 bodies, $\phi = 72.22\%$}
+%\end{subfigure}%
+%\begin{subfigure}[b]{0.5\textwidth}
+%\includegraphics*[height =0.8\linewidth]{./figs/100b_200}
+%\caption{82 bodies, $\phi = 83.67\%$}
+%\end{subfigure}
+%\caption{\label{fig:Eroding100vort} 100 bodies eroding in a
+%Hagen-Poiseuille flow. The four snapshots are equispaced in time, and
+%the color is the fluid vorticity.  Erosion creates many channels
+%connecting the inlet to the outlet.}
+%\end{figure}
 
 In figure~\ref{fig:Eroding100Transport}(a), we plot the tortuosity as a
 function of the porosity.  The initial geometry has a porosity of $\phi
@@ -1889,8 +1904,6 @@ possible with the model
 \begin{align}
   \widehat{T}(\phi) = 1 - 0.2631 \ln(\phi).
 \end{align}
-\todo[inline]{More inline candidates}
-
 
 \begin{figure}
 \begin{subfigure}[b]{0.45\textwidth}
@@ -1907,20 +1920,27 @@ possible with the model
 \includegraphics[width = \textwidth]{./figs/100b_t100tracer}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding100tort} The tortuosity of a porous geometry
-that initially had 100 grains and has eroded to a porosity of 62.98\%.
-(a) The $x$-component of the velocity at the inlet, $u_1(-1, y)$,
-normalized by its maximum velocity $u_{max}=3.90 \times 10^{-4}$.  Note
-that this maximum velocity is about a order of magnitude smaller than
-the 20 body example in figure~\ref{fig:Eroding20tort}.  (b) The local
-tortuosity $\tau(y)$ on the cross section $x = -1$. The spatially
-averaged tortuosity through the channel is $T = 1.12$. (c) The
-trajectories of 200 tracers initialized at $x = -1$.  The
-discontinuities in the local tortuosity correspond to nearby streamlines
-whose lengths are significantly different because they pass opposite
-sides of an eroding body. Compared to figure~\ref{fig:Eroding20tort},
-this example has more small bodies, and this results in many more
-discontinuities.}
+
+\caption{\label{fig:Eroding20tort} The local tortuosity of a porous
+geometry initialized with 20 grains after eroding to a porosity of
+62.9\%.  (a) The $x$-component of the velocity at the inlet,
+$u_1(-1,y)$, normalized by its maximum velocity of $2.98 \times
+10^{-3}$. (b) The local tortuosity $\tau(y)$ on the cross section $x =
+-1$. (c) The streamlines resulting in the ten largest differences of
+local tortuosity between neighboring streamlines.  Neighboring
+streamlines have the same color.}
+
+
+\caption{\label{fig:Eroding100tort} The local tortuosity of a porous
+geometry initialized with 100 grains after eroding to a porosity of
+62.98\%.  (a) The $x$-component of the velocity at the inlet, $u_1(-1,
+y)$, normalized by its maximum velocity $u_{max}=3.90 \times 10^{-4}$.
+Note that this maximum velocity is about a order of magnitude smaller
+than the 20 body example in figure~\ref{fig:Eroding20tort}.  (b) The
+local tortuosity $\tau(y)$ on the cross section $x = -1$. Compared to
+figure~\ref{fig:Eroding20tort}, this example has more small bodies, and
+this results in more discontinuities in the local tortuosity.  (c) The
+trajectories of 200 tracers initialized at $x = -1$.}
 \end{figure}
 
 In figure~\ref{fig:Eroding100Transport}(b), we plot the temporal
@@ -1961,19 +1981,18 @@ $0.68$ ($\phi=85.07\%$), $0.73$ ($\phi=75.14\%$), $0.59$
 \end{figure}
 
 Finally, we investigate the effect of erosion on pore sizes.  The
-distribution of the pore sizes is directly related to the
-distribution of the velocity, and thus effects the
-tortuosity~\citep{den-ica-hid2018} and anomalous
-dispersion~\citep{dea-qua-bir-jua2018}. In addition, the pore sizes are
-used in network models~\citep{bry-mel-cad1993, bry-kin-mel1993}.  As
-described in section~\ref{sec:throats}, we use a Delaunay triangulation
-to define neighboring eroding bodies, and we compute the pore size by
-finding the closest distance between all neighboring bodies.  Instead of
-computing a Delanuay configuration at each time step, which would result
-in new definitions for the pores at each time step, we only compute a
-new Delaunay triangulation when a grain completely erodes.  Once all
-pore sizes are computed, we analyze their distribution as a function of
-the porosity.  
+distribution of the pore sizes is directly related to the distribution
+of the velocity, and thus effects the tortuosity~\citep{den-ica-hid2018}
+and anomalous dispersion~\citep{dea-qua-bir-jua2018}. In addition, the
+pore sizes are used in network models~\citep{bry-mel-cad1993,
+bry-kin-mel1993}.  As described in section~\ref{sec:throats}, we use a
+Delaunay triangulation to define neighboring eroding bodies, and we
+compute the pore size by finding the closest distance between all
+neighboring bodies.  Instead of computing the Delanuay configuration at
+each time step, which would result in new definitions for the pores at
+each time step, we only compute a new Delaunay triangulation when a
+grain completely erodes.  Once all pore sizes are computed, we analyze
+their distribution as a function of the porosity.  
 
 In figure~\ref{fig:Eroding100gap_hist}, we plot histograms of the pore
 pore sizes at six porosities throughout the erosion process. We
@@ -2013,13 +2032,12 @@ low porosities.
 \includegraphics*[width =\linewidth]{./figs/hist100b_246}
 \caption{34 bodies, 74 pores}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap_hist} The distribution of the pore
-sizes of 100 eroding bodies at six porosities. The black curves are
-Weibull distributions whose first and second moments agree with the
-data. The porosities and Weibull distribution parameters $(k,\lambda)$
-at each of the porosities are: (a) $\phi = 50.09\%$ and
-$(k,\lambda)=(1.4650,0.0605)$; (b) $\phi = 55.02\%$ and
-$(k,\lambda)=(1.9485,0.0737)$; (c) $\phi = 65.03\%$ and
+\caption{\label{fig:Eroding100gap_hist} The pore sizes of 100 eroding
+bodies at six porosities. The black curves are Weibull distributions
+whose first and second moments agree with the data. The porosities and
+Weibull distribution parameters $(k,\lambda)$ at each of the porosities
+are: (a) $\phi = 50.09\%$ and $(k,\lambda)=(1.4650,0.0605)$; (b) $\phi =
+55.02\%$ and $(k,\lambda)=(1.9485,0.0737)$; (c) $\phi = 65.03\%$ and
 $(k,\lambda)=(2.5682,0.0965)$; (d) $\phi = 75.14\%$ and
 $(k,\lambda)=(2.7771,0.1255)$; (e) $\phi = 85.07\%$ and
 $(k,\lambda)=(2.6235,0.1713)$; (f) $\phi = 95.12\%$ and
@@ -2059,18 +2077,18 @@ The transport is characterized in terms of tortuosity and anomalous
 dispersion. While the local tortuosity agrees qualitatively with other
 works~\citep{mat-kha-koz2008}, the tortuosity of eroded geometries
 cannot be completely described in terms of the porosity. In particular,
-we observe that for certain \nick{\st{porous media} configurations}, the tortuosity \nick{transiently increases, even though the porosity always increases due to erosion.}
-\nick{\st{as erosion increases the porosity of the porous media.}} 
-We also observe super-dispersive spreading, and the rate of dispersion significantly
-depends not only on the porosity, but also the number of eroding bodies
-and their distribution.
+we observe that for certain configurations, the tortuosity transiently
+increases, even though the porosity always increases due to erosion. We
+also observe super-dispersive spreading, and the rate of dispersion
+significantly depends not only on the porosity, but also the number of
+eroding bodies and their distribution.
 
 To further our understanding of erosion, we are examining other bulk and
 statistical properties of an eroding porous media. In this work, we
-provide \nick{\st{preliminary}} results for the pore throat sizes which affect the
-anomalous dispersion rate~\citep{dea-qua-bir-jua2018}.  At a later date,
-we will report results on the  development of anisotropic effects and
-the distributions of grain sizes, shapes, and opening angles.
+provide results for the pore throat sizes which affect the anomalous
+dispersion rate~\citep{dea-qua-bir-jua2018}.  At a later date, we will
+report results on the  development of anisotropic effects and the
+distributions of grain sizes, shapes, and opening angles.
 
 As a long term goal, we plan to include the inertial effects and other
 transport models. Including inertia requires an integral equation
