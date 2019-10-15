@@ -113,8 +113,8 @@ geometry connectivity~\citep{knu-car2005}, anomalous
 dispersion~\citep{den-cor-sch-ber2004}, and more.  
 
 Flow in porous media is further complicated when boundaries evolve 
-dynamically in response to the fluid flow. This coupling between geometry
-and flow occurs, for example, in applications involving
+dynamically in response to the fluid flow. This coupling between
+geometry and flow occurs, for example, in applications involving
 melting~\citep{bec-vis1998, rycroft2016asymmetric, jambon2018singular,
 favier2019rayleigh, morrow2019moving},
 dissolution~\citep{kan-zha-che-he2002, mac2015shape, moo2017,
@@ -122,8 +122,9 @@ wykes2018self}, deposition~\citep{joh-eli1995, hewett2018modelling},
 biofilm growth~\citep{tan-val-wer2015}, and crack
 formation~\citep{cho2019crack}. We focus on erosion, a fluid-mechanical
 process that is prevalent in many geophysical, hydrological, and
-industrial applications~\citep{ris-moo-chi-she-zha2012, berhanu2012shape, hewett2017evolution,
-lachaussee2018competitive, lopez2018cfd, allen2019sde, amin2019role}.
+industrial applications~\citep{ris-moo-chi-she-zha2012,
+berhanu2012shape, hewett2017evolution, lachaussee2018competitive,
+lopez2018cfd, allen2019sde, amin2019role}.
 
 When a porous medium erodes, certain qualitative characteristics are
 unveiled that affect transport through the geometry.  For example, an
@@ -144,13 +145,12 @@ heat~\citep{nil-sto1990, ree-sto1995}.
 \includegraphics[height = 0.3 \textwidth]{./figs/vel_log_50b240}
 \includegraphics[height = 0.3 \textwidth]{./figs/vel_log_50b320}
 \includegraphics[height = 0.3 \textwidth]{./figs/vel_log_50b400}
-\caption{\label{fig:Eroding50vel} Six evenly spaced snapshots of 50
-eroding bodies.  The background velocity is a Hagen-Poiseuille flow with
-a varying flow strength that corresponds to a constant pressure drop
-across the channel. The color is the magnitude of the velocity in a
-logarithmic scale. The flow velocity varies over several orders of
-magnitude, the grains form irregular shapes with large aspect ratios,
-and the geometry becomes channelized and anisotropic.}
+\caption{\label{fig:Eroding50vel} 50 bodies eroding in a
+Hagen-Poiseuille flow.  The six snapshots are equispaced in time, and
+the color is the magnitude of the fluid velocity in a logarithmic scale.
+The flow velocity varies over several orders of magnitude, the grains
+form irregular shapes with large aspect ratios, and the geometry becomes
+channelized and anisotropic.}
 \end{center}
 \end{figure}
 
@@ -379,24 +379,15 @@ start with the double-layer potential
 \end{align}
 where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-is an unknown density function.  The double-layer potential is a
-solution of the incompressible Stokes equations, but it cannot represent
-all the solutions. Therefore, we complete the integral equation
-formulation by adding the $M$ Stokeslets and rotlets~\citep{pow-mir1987}
-\begin{align}
-  S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\upi} \left( 
-    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
-    \right)\llambda_\ell, \quad
-  R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
-  \quad \ell=1,\ldots,M,
-\end{align}
-where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
-$\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
-\|\rr\|$. Here, $\llambda_\ell$ and $\xi_\ell$ are the Stokeslet and
-rotlet strengths, respectively, corresponding to the $\ell^{th}$ body.
-Then, for any sufficiently smooth geometry $\Omega$, the solution of the
-incompressible Stokes equation with a Dirichlet boundary condition $\ff$
-is
+is an unknown density function.  We complete the integral equation
+formulation by adding the $M$ Stokeslets,
+$S[\llambda_\ell,\cc_\ell](\xx)$, and rotlets,
+$R[\xi_\ell,\cc_\ell](\xx)$, where $\cc_\ell$ is a point inside the
+$\ell^{th}$ body~\citep{pow-mir1987}.  Here $\llambda_\ell$ and
+$\xi_\ell$ are the Stokeslet and rotlet strengths, respectively,
+corresponding to the $\ell^{th}$ body.  Then, for any sufficiently
+smooth geometry $\Omega$, the solution of the incompressible Stokes
+equation with a Dirichlet boundary condition $\ff$ is
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + 
     \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
@@ -426,67 +417,35 @@ the outer wall, $\Gamma$, and equal to zero on the eroding bodies,
 $\gamma_\ell$, $\ell=1,\ldots,M$.
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
-Stokeslets $\llambda_\ell$, and the rotlets $\xi_\ell$, we are able to
-compute, for $\xx \in \Omega$, the deformation tensor, pressure, and
-vorticity, defined respectively as
-\begin{align}
-  \label{eqn:deformationDLP} 
-  \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
-      \eeta(\yy) ds_{\yy} 
-  = \frac{1}{2\upi}\int_{\bd\Omega} \left(
-    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
-    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
-    \right. \nonumber \\
-    & \qquad\qquad\qquad\qquad \left.
-    +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
-    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-    \right) \, ds_\yy, \\
-%
-  \label{eqn:pressureDLP}
-  p(\xx) &= \int_{\bd\Omega} D_{p}(\xx,\yy) 
-      \eeta(\yy) ds_{\yy} 
-  = -\frac{1}{\upi}\int_{\bd\Omega} \frac{1}{\rho^2}
-    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) \nn \cdot
-      \eeta(\yy)\,ds_\yy, \\
-%
-  \label{eqn:vorticityDLP} 
-  \omega(\xx) &= \int_{\bd\Omega} D_{\omega}(\xx,\yy) 
-      \eeta(\yy) ds_{\yy} 
-  = -\frac{1}{\upi} \int_{\bd\Omega}
-    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
-      (\rr \cdot \eeta) \, ds_\yy.
-\end{align}
-Since the deformation tensor of the double-layer potential is
-discontinuous across $\bd\Omega$, the jump term 
+corresponding deformation tensor, pressure, and vorticity at $\xx \in
+\Omega$ is written in terms of a layer potential~\cite{qua-moo2018}. To
+compute the deformation tensor for $\xx \in \gamma$, we include the jump
+term
 \begin{align}
   \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
     \begin{array}{cc}
       s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
     \end{array}
-  \right],
+  \right].
   \label{eqn:deformationJump}
 \end{align}
-must be added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
-Stokeslets and rotlets do not exhibit any jumps across $\gamma$, so the
-associated components of the deformation tensor, pressure, and vorticity
-are straightforward to compute~\citep{poz1992}.  Having computed the
-deformation tensor on $\gamma$, the shear stress is computed using
-equation~\eqref{eqn:shearStress}.  
+Finally, the deformation tensor, pressure, and vorticity due to the
+Stokeslets and rotlets are readily available~\citep{poz1992}. Having
+computed the deformation tensor on $\gamma$, the shear stress is
+computed using equation~\eqref{eqn:shearStress}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cauchy Integral Representation of the Double-Layer
 Potential}
 \label{sec:DLPcomplex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In
-equations~\eqref{eqn:velocityDLP},~\eqref{eqn:deformationDLP},~\eqref{eqn:pressureDLP},
-and~\eqref{eqn:vorticityDLP}, the fluid velocity, deformation tensor,
-pressure, and vorticity are all written as layer potentials in $\RR^2$.
-However, the quadrature method we introduce in section~\ref{sec:method}
-requires a complex-valued representation of the layer potentials for the
-velocity, deformation tensor, and vorticity. The first step to form a
-complex representation is to write the Laplace double-layer potential as
-the complex integral
+The velocity double-layer potential~\eqref{eqn:velocityDLP}, and its
+corresponding deformation tensor, pressure, and vorticity are all
+written as layer potentials in $\RR^2$.  However, the quadrature method
+we introduce in section~\ref{sec:method} requires a complex-valued
+representation of the layer potentials for the velocity, deformation
+tensor, and vorticity. The first step to form a complex representation
+is to write the Laplace double-layer potential as the complex integral
 \begin{align}
   \DD[\eeta](\xx) = \frac{1}{2\upi} \int_{\bd\Omega} 
     \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)),
@@ -758,6 +717,21 @@ geometries.
 \subsection{Pore Throat Size}
 \label{sec:throats}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap} (a) The pore sizes between
+neighboring grains. Two grains are neighbors if they share an edge of
+the Delanuay triangulation with nodes at the center of each eroding
+grain. (b) The pore sizes of an eroded geometry. The black curve is the
+Weibull distribution with the same first two moments as the data.}
+\end{figure}
 While transport in porous media depends on the porosity, it also depends
 on the placement of the grains.  In particular, grain placement affects
 velocity scales~\citep{ali-par-wei-bre2017}, correlation
@@ -780,21 +754,6 @@ figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
 distribution, a distribution used by others to characterize pore
 sizes~\citep{ioa-cha1993}.  In section~\ref{sec:Eroding100}, we
 investigate the effect of erosion on the pore size distribution.
-\begin{figure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding100gap} (a) The pore sizes between
-neighboring grains. Two grains are neighbors if they share an edge of
-the Delanuay triangulation with nodes at the center of each eroding
-grain. (b) The pore sizes of an eroded geometry. The black curve is the
-Weibull distribution with the same first two moments as the data.}
-\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -876,9 +835,7 @@ of~\eqref{eqn:trapLinearSystem} is an accurate approximation of the
 density function, Stokeslets, and rotlets.   Then, if $\xx \in \Omega$
 is sufficiently far from $\bd\Omega$, an approximation of the velocity,
 deformation tensor, and vorticity due to the double-layer potential is
-found by applying the trapezoid rule to \eqref{eqn:velocityDLP},
-\eqref{eqn:deformationDLP}, and~\eqref{eqn:vorticityDLP}, respectively.
-In particular,
+found by applying the trapezoid rule. In particular,
 \begin{align}
   \label{eqn:trap}
   \uu(\xx) &= \sum_{j=1}^{N_\out} w^0_j D(\xx,\yy^0_j) \eeta_j +
@@ -1337,7 +1294,8 @@ Dirichlet boundary condition is a Hagen-Poiseuille flow, and the flow
 rate is adjusted at each time step to maintain a constant pressure drop.
 Since the fluid equations are linear, this is achieved by computing the
 pressure near the inlet and outlet at each time step, and then scaling
-the flow rate appropriately~\citep{qua-moo2018}.
+the flow rate appropriately~\citep{qua-moo2018}. We also compute the
+vorticity in the fluid bulk to help visualize the erosion rate.
 
 The erosion rate loses regularity at stagnation points, which inevitably
 leads to corner formation on the bodies.  As described in
@@ -1347,12 +1305,6 @@ with parameter $\eps$ and a Gaussian smoothing step with parameter
 $\sigma$.  For all examples, we use the smoothing parameters
 $\eps=15/256$ and $\sigma=10/256$, and the time step size is $\Delta t =
 10^{-4}$.
-
-In each of the examples, we plot the vorticity in the fluid bulk.  Since
-the vorticity and the shear stress agree on the boundary of the eroding
-grains, the vorticity is useful to visualize the erosion rate.  In
-particular, the rate of erosion is largest in regions where the
-magnitude of the vorticity is largest.
 
 The common characteristic of each of the experiments is near-contact
 between the eroding bodies, outer walls, and streamlines. We use our
@@ -1894,16 +1846,10 @@ flow, $u_1(y)$, increases since there is no longer a no-slip boundary,
 and this increases the tortuosity.  We also compute the lines of best
 fit using the porosity-tortuosity models~\eqref{eqn:tortuosityModels}.
 The black dashed line in figure~\ref{fig:Eroding100Transport}(a) is the
-line of best fit
-\begin{align}
-  \widehat{T}(\phi) = \phi^{-0.2459},
-\end{align}
-with a root-mean-square error of $5.50 \times 10^{-3}$.  We note a
-slightly better root-mean-square error of $5.20 \times 10^{-3}$ is
-possible with the model
-\begin{align}
-  \widehat{T}(\phi) = 1 - 0.2631 \ln(\phi).
-\end{align}
+line of best fit $\widehat{T}(\phi) = \phi^{-0.2459}$, with a
+root-mean-square error of $5.50 \times 10^{-3}$.  We note a slightly
+better root-mean-square error of $5.20 \times 10^{-3}$ is possible with
+the model $\widehat{T}(\phi) = 1 - 0.2631 \ln(\phi)$.
 
 \begin{figure}
 \begin{subfigure}[b]{0.45\textwidth}
@@ -2141,3 +2087,52 @@ Physical Sciences-Collaboration Grants for Mathematicians 527139 and
 %use a continuous time random walk~\citep{mon-wei1965,
 %den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006}.
 
+%we are able to compute, for $\xx \in \Omega$, the deformation tensor,
+%pressure, and vorticity.
+%defined respectively as
+%\begin{align}
+%  \label{eqn:deformationDLP} 
+%  \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
+%      \eeta(\yy) ds_{\yy} 
+%  = \frac{1}{2\upi}\int_{\bd\Omega} \left(
+%    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
+%    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
+%    \right. \nonumber \\
+%    & \qquad\qquad\qquad\qquad \left.
+%    +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
+%    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
+%    \right) \, ds_\yy, \\
+%%
+%  \label{eqn:pressureDLP}
+%  p(\xx) &= \int_{\bd\Omega} D_{p}(\xx,\yy) 
+%      \eeta(\yy) ds_{\yy} 
+%  = -\frac{1}{\upi}\int_{\bd\Omega} \frac{1}{\rho^2}
+%    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) \nn \cdot
+%      \eeta(\yy)\,ds_\yy, \\
+%%
+%  \label{eqn:vorticityDLP} 
+%  \omega(\xx) &= \int_{\bd\Omega} D_{\omega}(\xx,\yy) 
+%      \eeta(\yy) ds_{\yy} 
+%  = -\frac{1}{\upi} \int_{\bd\Omega}
+%    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
+%      (\rr \cdot \eeta) \, ds_\yy.
+%\end{align}
+%Since the deformation tensor of the double-layer potential is
+%discontinuous across $\bd\Omega$, the jump term 
+%added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
+%Stokeslets and rotlets do not exhibit any jumps across $\gamma$, so the
+%associated components of the deformation tensor, pressure, and vorticity
+%are straightforward to compute~\citep{poz1992}.  Having computed the
+%deformation tensor on $\gamma$, the shear stress is computed using
+%equation~\eqref{eqn:shearStress}.  
+
+%\begin{align}
+%  S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\upi} \left( 
+%    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
+%    \right)\llambda_\ell, \quad
+%  R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
+%  \quad \ell=1,\ldots,M,
+%\end{align}
+%where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
+%$\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
+%\|\rr\|$. 
