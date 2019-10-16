@@ -1197,7 +1197,6 @@ these values for all of our numerical simulations.
 \subsection{Time Integration}
 \label{sec:time}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{Bryan is here}
 We use the time stepping method outlined in our previous
 work~\citep[see][section 3.3]{qua-moo2018} which we briefly summarize
 here.  The erosion rate loses differentiability if the shear stress
@@ -1210,24 +1209,22 @@ in equation~\eqref{eqn:erosionModel}, with
 \end{align}
 where $\epsilon \ll 1,$ $\langle \cdot \rangle$ is the spatial average,
 $L$ is the length of $\gamma$, and $\kappa$ is the curvature of
-$\gamma$.  This new term penalizes regions of high curvature, and the
-normalization term guarantees that the regularization only changes the
-body's shape, but not its total length.  Finally, to increase the
-overall stability of the method, a narrow Gaussian filter is applied to
-the erosion rate at each time step.
+$\gamma$.  The new erosion model penalizes regions of high curvature,
+but does not change the total length of each body.  Moreover, to
+increase the overall stability of the method, a narrow Gaussian filter
+is applied to the erosion rate at each time step.
 
 Rather than tracking the $(x,y)$ coordinates, the {\thL} coordinates are
-tracked. In addition, a tangential velocity field is added to each body
-so that the discretization points remain equispaced in arclength for all
-time.  Time stepping is performed with a second-order Implicit-Explicit
-Runge-Kutta method. In particular, the diffusive term corresponding to
-the curvature penalization term is discretized implicitly, and all other
-terms, which are non-stiff, are treated explicitly.  By using this time
-stepping method in conjunction with the Barycentric rule, we stably
-evolve the eroding bodies.  
+tracked. In addition, tangential velocity fields are used to maintain
+an equispaced discretization. Time stepping is performed with a
+second-order Implicit-Explicit Runge-Kutta method. In particular, the
+diffusive term corresponding to the curvature penalization term is
+discretized implicitly, and all other terms, which are non-stiff, are
+treated explicitly.  By using this time stepping method in conjunction
+with the Barycentric rule, we stably evolve the eroding bodies.
 
 To examine the tortuosity and the anomalous dispersion rates
-(section~\ref{sec:transport}), we require accurate computation of the
+(section~\ref{sec:transport}), we require accurate 
 streamlines governed by equation~\eqref{eqn:tracers}. If a low-order
 time stepping method is used, or if $\uu(\ss(t))$ is inaccurate, then a
 trajectory $\ss(t)$ can unphysically enter a grain, rendering the
@@ -1243,13 +1240,13 @@ figures~\ref{fig:Eroding20tracer} and~\ref{fig:Eroding100tort}).
 
 Once a collection of trajectories are formed, they are used to quantify
 the dispersion and the tortuosity.  We use $N_p = 1000$ streamlines so
-that the statistics have converged~\citep{bel-sal-rin1992}.  However, as
-described in section~\ref{sec:dispersion}, a reinsertion method is used
-to compute trajectories that are sufficiently long to observe an
-asymptotic anomalous dispersion rate.  To compute the tortuosity using
-the trajectories, we consider trajectories crossing between the two
-cross-sections $x=-1$ and $x=1$.  Then, we discretize
-equation~\eqref{eqn:tortuosity1} as
+that the statistics have converged~\citep{bel-sal-rin1992}. As described
+in section~\ref{sec:dispersion}, a reinsertion method is used to compute
+trajectories that are sufficiently long to observe an asymptotic
+anomalous dispersion rate.  To compute the tortuosity using
+equation~\eqref{eqn:tortuosity1}, we consider trajectories crossing
+between the two cross-sections $x=-1$ and $x=1$, and approximate the
+tortuosity with
 \begin{align}
   T = \frac{1}{d}\left(\sum_{i=1}^{N_p} 
     u_1(y_i) \lambda(y_i) \Delta y \right)
