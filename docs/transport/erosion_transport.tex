@@ -377,7 +377,7 @@ where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
 $\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
 is an unknown density function.  We complete the integral equation
 formulation by adding the $M$ Stokeslets,
-$S[\llambda_\ell,\cc_\ell](\xx)$, and rotlets,
+$S[\llambda_\ell,\cc_\ell](\xx)$, and $M$ rotlets,
 $R[\xi_\ell,\cc_\ell](\xx)$, where $\cc_\ell$ is a point inside the
 $\ell^{th}$ body~\citep{pow-mir1987}.  Here $\llambda_\ell$ and
 $\xi_\ell$ are the Stokeslet and rotlet strengths, respectively,
@@ -414,9 +414,9 @@ $\gamma_\ell$, $\ell=1,\ldots,M$.
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 corresponding deformation tensor, pressure, and vorticity at $\xx \in
-\Omega$ is written in terms of a layer potential~\citep{qua-moo2018}. To
-compute the deformation tensor for $\xx \in \gamma$, we include the jump
-term
+\Omega$ are written in terms of layer potentials~\citep{qua-moo2018}.
+To compute the deformation tensor for $\xx \in \gamma$, we include the
+jump term
 \begin{align}
   \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
     \begin{array}{cc}
@@ -966,7 +966,7 @@ interior Barycentric quadrature rule
   \label{eqn:BaryvprimeInterior}
 \end{align}
 Using a similar construction, the exterior Barycentric quadrature rule
-for the the first derivative is
+for the first derivative is
 \begin{align}
   v'(x) = \frac{1}{x-a} \left(\sum_{j=1}^N
     \frac{v^+_j - v(x)}{(y_j - x)^2} w_j \right)
@@ -1935,7 +1935,7 @@ pore sizes are used in network models~\citep{bry-mel-cad1993,
 bry-kin-mel1993}.  As described in section~\ref{sec:throats}, we use a
 Delaunay triangulation to define neighboring eroding bodies, and we
 compute the pore size by finding the closest distance between all
-neighboring bodies.  Instead of computing the Delanuay configuration at
+neighboring bodies.  Instead of computing the Delaunay configuration at
 each time step, which would result in new definitions for the pores at
 each time step, we only compute a new Delaunay triangulation when a
 grain completely erodes.  Once all pore sizes are computed, we analyze
