@@ -9,7 +9,7 @@
     Use geom files and density files to find the streamlines by RK4.
     
 (4) stokesTracer_long.f: 
-    Make the long streamlines for calculting anomalous dispersion rate. 
+    Make the long streamlines for calculating anomalous dispersion rate. 
     
 -------------------------------------------------------------------------------------------    
 
@@ -26,8 +26,8 @@
 
 (9) tortuosity_Lagragian.m: [ do it after (3) ]
 
-(10) tracerplot.m: [do it atfer (3)]
-    tracer vedio.
+(10) tracerplot.m: [do it after (3)]
+    tracer video.
     
 (11) anomalous_diffusion_long.m: [do it after (4)]
      get the second moment (anomalous dispersion rate) of the streamlines.
@@ -42,6 +42,6 @@
      draw the distribution of pore size with a fitting Weibull distribution 
      
 (15) shape_eroding.m: [using function color_line3.m]
-     draw the shear stress on the sigle body. 
+     draw the shear stress on the single body. 
      
     
