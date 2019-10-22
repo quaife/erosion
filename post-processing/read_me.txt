@@ -7,6 +7,8 @@
 
 (3) stokesTracer.f: 
     Use geom files and density files to find the streamlines by RK4.
+    
+-------------------------------------------------------------------------------------------    
 
 (4) vorticity_target.m: [do it after (1) & (2)]
     Do the pressure drop on velocity field and vorticity field, then make a vedio. 
@@ -23,3 +25,6 @@
 
 (9) tracerplot.m: [do it atfer (3)]
     tracer vedio.
+    
+(10) anomalous_diffusion_long.m:     
+    
