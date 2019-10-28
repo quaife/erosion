@@ -1,0 +1,297 @@
+ \documentclass[12pt]{article}
+
+%---------------------------------------------------------------------------------------------------%
+%% PACKAGES
+\usepackage{fullpage}
+%\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage{graphicx, amsmath, amssymb, amsfonts, mathtools, mathrsfs, color}
+\usepackage{comment, enumerate, tabularx}
+\usepackage{natbib, hyperref, url}
+%\usepackage[justification=RaggedRight]{caption}
+\usepackage{outlines,enumitem}
+%---------------------------------------------------------------------------------------------------%
+
+%---------------------------------------------------------------------------------------------------%
+%% LATEX DEFINITIONS
+% Basic editing
+\newcommand{\tocite}{{\color{blue}(to cite)}}
+\newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
+\newcommand{\np}{\newpage \noindent}
+\newcommand{\here}{{\color{blue} here}}
+% Basic math, derivatives
+\newcommand{\td}[2]{\frac{d #1 }{d #2}}
+\newcommand{\ttd}[2]{\frac{d^2 #1 }{{d #2}^2}}
+\newcommand{\pd}[2]{ \frac{ \partial #1}{ \partial #2 } }
+\newcommand{\ppd}[2]{ \frac{ \partial^2 #1}{ {\partial #2}^2 } }
+\newcommand{\mppd}[3]{ \partial_{#2 #3} #1 }
+% Basic math, vectors and other
+%\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\bvec}[1]{{\mathbf{#1}}}
+\newcommand{\grad}{\nabla}
+\newcommand {\Lap} {\grad^2}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\tavg}[1]{\langle #1 \rangle}
+\newcommand{\norm}[1]{ \left\| #1 \right\| }
+\newcommand{\ip}[1]{ \langle #1 \rangle }
+\newcommand{\eps}{\varepsilon}
+% For real and imaginary, could use \Re or \Im, or \mathcal{R}, or \text{Re}
+
+% Outline stuff
+\setenumerate[1]{label=\Roman*.}
+\setenumerate[2]{label=\Alph*.}
+\setenumerate[3]{label=\roman*.}
+
+% Specific
+\newcommand{\uu}{\bvec{u}}
+\newcommand{\xx}{\bvec{x}}
+\newcommand {\qq} {\bvec{q}}
+\newcommand{\nn}{{\mathbf{n}}}
+\renewcommand{\ss}{{\mathbf{s}}}
+\newcommand{\Vn}{V_\nn}
+\newcommand{\CE}{C_E}
+\newcommand {\ny}{n}
+\newcommand {\bdry} {\partial B}
+\newcommand{\Diff}{D}
+\newcommand{\thL}{$\theta$--$L$}
+
+%---------------------------------------------------------------------------------------------------%
+
+
+%---------------------------------------------------------------------------------------------------%
+%% TITLE
+\begin{document}
+\title{Project Description --
+CAREER: Erosion, Seepage, Collapse, and Filtration in Granular and Porous Media}
+
+% Original erosion title
+%Mathematical models and analysis for erosion and dissolution in porous-media flow}
+%\author{}
+\date{}
+\maketitle
+%---------------------------------------------------------------------------------------------------%
+
+%---------------------------------------------------------------------------------------------------%
+%% INTRODUCTION
+\section{Proposed Research} 
+
+\subsection{Introduction and Background} 
+
+Naturally occurring porous and granular materials, such as soil, sand, and clay, play a pivotal role in regulating earth's water resources by filtering contaminants and, over long timescales, supplying fresh water. Not only is this process essential for human water resources, but also for the ecology of rivers, estuaries, and other natural habitats. Natural water resources, however, have been placed under enormous pressure by human population growth and associated activities that can comprise the natural filtration cycle, for example expansion of industry, urbanization, pollution, and climate change. See the USGS and the UN report on water resources for further detail on the threats to water resources [USGS?] \cite{UNwater}.
+
+To take one example of particular importance to the state of Florida, the formation of sinkholes can be triggered by certain human activities such as groundwater pumping or the weight of run-off storage ponds \cite{sandhu2018fate}. When collapse occurs below a storage pond, the underlying reservoir of pristine groundwater can be severely contaminated, thus surrendering a natural resource of great economic and societal value. Clearly, a deeper understanding of the mechanisms leading to sinkhole formation, and more generally that underly earth's natural filtration system, could reap enormous benefits in predicting and mitigating such environmental disasters. Other applications include understanding and predicting contamination by nuclear waste and by hydraulic fracturing.
+
+This proposal aims to develop a deeper understanding of the physical processes by which groundwater flow can alter properties of a porous medium. A recognized complexity of naturally occurring media is that their macroscopic properties, e.g.~permeability and mechanical strength, can be highly heterogeneous and anisotropic {\color{blue}(cite)}. These properties can change over short timescales, for example sinkhole collapse or hydraulic fracturing, or over long timescales, for example the slow erosion or dissolution of solid material. Potential exists for feedback between these timescales: for example the slow wearing process reaching a critical threshold beyond which catastrophic events become more likely. The main objective of this proposal is to gain a deeper understanding of such processes through analyzing a specific set of problems and by developing a host of new mathematical tools, ranging from analytical to computational ones.
+
+Physical mechanisms that can dynamically alter porous-medium properties include:
+\begin{itemize}
+\item Erosion of solid material due to fluid-mechanical stresses or chemical dissolution.
+\item Transport of grains due to intervening fluid flow and due to sedimentation.
+\item Compaction of the medium due to overlying loads.
+\item Gravitational collapse of a medium due to loads exceeding a threshold.
+\end{itemize}
+The above are roughly ordered according to timescale, from the slowest acting to the fastest. While many of these mechanisms have been studied individually in various contexts and to varying levels of rigor, very little is known about their combined effect on the dynamic evolution of a porous medium. Since we aim to build a quantitative model from the ground up, we will first focus on the slowest acting mechanisms, as these ultimately set the stage for the more rapid events like sinkhole collapse. 
+In particular, we view the slow processes of erosion and dissolution as instrumental in altering porous-medium properties. First, by deteriorating solid material, erosion alters the size distribution of grains. This modified distribution can in turn affect transport by enabling smaller grains to be sieved through networks of larger ones. A second and more subtle way that erosion can alter medium properties is by changing the {\em shape} distribution of grains. For instance, erosion can carve grains into slender shapes aligned primarily in the direction of the dominant flow, thereby creating {\em anisotropic} characteristics. {\color{blue} Need to include comment on dissolution changing conduit paths.}
+
+More generally, the coupling between shape and flow during erosion, dissolution, and related phase-change processes is a topic that has garnered recent interest in the mathematical sciences community \cite{Ristroph2012, rycroft2016asymmetric, cohen2016erosion, MooreCPAM2017, mitchell2017generalized, Quaife2018, wykes2018self, lachaussee2018competitive, lopez2018cfd, ristroph2018sculpting}. 
+Erosion-induced shape change has been studied in the high Reynolds number regime, both experimentally \cite{Ristroph2012, MoorePOF2013} and theoretically \cite{MoorePOF2013, MooreCPAM2017, hewett2017evolution} and in single \cite{Ristroph2012, MoorePOF2013, MooreCPAM2017, lachaussee2018competitive} and multiple-body arrangements \cite{hewett2017evolution}. 
+Studies on related processes of dissolution \cite{HuangJFM2015, kondratiuk2015steadily, cohen2016erosion, claudin2017dissolution, wykes2018self, huang2017solute}, melting \cite{Cummings1999, back2014effect, rycroft2016asymmetric, hewett2017pear, MooreCPAM2017, toppaladoddi2018combined, hewett2019evolution, favier2019rayleigh}, solidification \cite{Huppert90, Anderson95, Cummings1999, mccue2003extinction}, and deposition \cite{hewett2018modelling} exhibit intriguing similarities and differences \cite{MooreCPAM2017}.
+These studies reveal a rich set of possible dynamics, from the emergence of universal morphologies that erase details of the initial state and evolve self-similarly in time \cite{MoorePOF2013, MooreCPAM2017, hewett2017pear}, to fine-scale pattern formation \cite{cohen2016erosion, claudin2017dissolution, huang2017solute},
+to unstable morphologies that can retain or even amplify features present in the initial state \cite{claudin2017dissolution, wykes2018self}.
+
+Only recently have these ideas been extended to low Reynolds number flows  \cite{mitchell2017generalized, Quaife2018} --- the regime applicable to porous media as well as biological applications like plaque erosion. While the governing fluid-flow equations become linear in this regime, porous-media applications present a host of new challenges, for example:
+\begin{itemize}
+\item Porous media typically involves dense packings so that close-range effects and even nearly contacting bodies must be considered {\color{blue}(cite nearly contact papers)}.
+\item The Stokes limit introduces {\em longer} range effects than the inertial limit does, thus coupling the shape evolution of {\em all} grains and conduits to a higher degree.
+\item Somewhat counterintuitively, erosion does not always act to smooth shapes but rather can create sharp features and corners. These features can be difficult to resolve and, further, can trigger numerical instabilities. Dissolution, meanwhile, can initiate a roughening transition {\color{blue} (cite)}, leading to similar numerical difficulties.
+\item Additionally effects, such as sedimentation, transport, and compaction constantly work to reconfigure the medium as its constituents and boundaries degrade.
+\end{itemize}
+These challenges require innovative computational techniques, many of which have been developed recently \cite{Quaife2018} and many of which await resolution. The grand goal of achieving high-fidelity simulations of order-100 mobile bodies which undergo simultaneous erosion, transport, sedimentation, and compaction, with the computational efficiency to run large ensembles for statistical analysis, still awaits. Fortunately, some closely related laboratory experiments on erosion in colloidal systems are already being explored in the Datta Lab at Princeton \cite{bizmark2019multiscale}. The experiments offer a wonderful opportunity to guide, calibrate, and validate theoretical developments.
+
+While erosion and dissolution correspond to gradual changes in a medium, the example of a sinkhole represents a sudden, catastrophic event. It is likely that all of the mechanisms listed above --- erosion, dissolution, transport, compaction, and gravitational collapse --- contribute to sinkhole formation, with the slowest acting mechanisms creating conditions favorable for the final act of gravity. Sinkhole formation has been explored with preliminary experiments run at the Geophysical Fluid Dynamics Institute at Florida State University \cite{tao2014experimental}. These scaled-down experiments offer the ability to probe various mechanisms behind sinkhole formation, for example a difference in hydraulic head between the confined and unconfined aquifers. 
+
+	With two Mathematics PhD students, the PI has begun running preliminary simulations to model this behaviors. The simulations, which are at an early stage of development, are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize a homogenized description of the flow field, e.g.~the Darcy or Brinkman equations.
+These simulations incorporate the physical effects of:
+\begin{itemize}
+\item Transport of grains due to seepage force from the surrounding fluid flow.
+\item Gravitational sedimentation of grains.
+\item Feedback of grain-distribution onto permeability field.
+\item Contact and cohesive forces between grains.
+\end{itemize}
+Preliminary investigation suggests that this last mechanisms of cohesion is essential to model sinkhole collapse in the system, and the simulations await careful calibration against experimental data.
+
+The simulations do not yet incorporate the effects of erosion and dissolution. A grand goal of this proposal would be to merge these two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics robust enough to capture both short term events, such as sinkhole collapse, and long-term changes in the medium. Such a framework must include the effects of erosion, dissolution, transport, sedimentation, compaction, cohesive forces, and mechanical collapse. The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our strategy is to use the high-fidelity erosion and dissolution simulations to develop reduced models (ala mean-field theory) that would be incorporated into simulations.
+
+% McCurdy and Wang work
+% Multiphase stuff too
+
+% Could emphasize dissolution of karst more too.
+% Not crazy about inverse model sentences, maybe move to end of paragraph.
+
+%I could try to work in more mathy stuff: complex dynamical system, feedback, timescales, computational methods, analytical reductions...
+
+
+
+%---------------------------------------------------------------------------------------------------%
+\subsection{Governing equations}
+At the finest scale, the fluid flow intervening between individual grains of a porous medium is governed by the incompressible Stokes equations
+\begin{equation}
+\label{StokesEq}
+\begin{split}
+\mu \Delta \uu = \grad p,	&\hspace{20pt} \xx \in \Omega, \\
+\grad \cdot \uu = 0, 		&\hspace{20pt} \xx \in \Omega,
+\end{split}
+\end{equation}
+where $\uu$ is the velocity field, $p$ the pressure field, and $\mu$ the fluid viscosity. This microscopic description is needed to model the shape evolution of individual grains from shear-induced erosion. The description, however, becomes impractical when attempting to model seepage in very large porous systems where the microscopic geometry can be exceedingly complex. Instead, it becomes necessary to homogenize over microscopic details to arrive at an approximate description. Leading-order homogenization produces the well-known Darcy system
+\begin{equation}
+\label{DarcyEq}
+\qq = - \bvec{K} \grad \phi
+\end{equation}
+where $\qq$ is the {\em specific discharge} or {\em Darcy velocity}, and $\phi = z + p/(\rho g)$ is the hydraulic head, with $\rho$ and $g$ representing the fluid density and gravitational constant respectively. Above, $\bvec{K}$ is the {\em conductivity}, which is related to the {\em permeability} $\bvec{k}$ through $\bvec{K} = \bvec{k} \rho g/\mu$. Both the conductivity and permeability are in general tensors, and they reduce to scalars in the case of an isotropic medium.
+Note that the Darcy velocity is related to the tracer velocity through $\qq = \theta_f \uu$, where $\theta_f$ is porosity (i.e.~fluid volume fraction).
+In the case of an isotropic medium, the Kozeny-Carman equation is often used to relate permeability to volume fraction \cite{bear2013dynamics}
+% See Bear Ch. 2.8, pg. 111
+\begin{equation}
+k = C \frac{\theta_f^3}{(1-\theta_f)^2}
+\end{equation}
+The macroscopic description offered by Eq.~\eqref{DarcyEq}, although approximate, simplifies analysis tremendously in that individual grains are no longer resolved and thus the domain geometry is generally much simpler.
+
+\subsection{Mechanical and chemical erosion of a porous medium}
+
+%\subsubsection{Background}
+
+The first problem discussed here is the erosion of a porous medium, as has been preliminarily investigated in \cite{Quaife2018}. We will consider erosion induced by either fluid-mechanical forces or by chemical reaction, i.e.~dissolution. In the former case, erosion results from surface shear stress
+\begin{align}
+\tau = -\left(\nabla \uu + \nabla \uu^T \right)\nn \cdot \ss \, .
+\end{align}
+where $\nn$ and $\ss$ are the unit normal and tangent vectors on the surface respectively and $\uu$ is the velocity field as computed from the incompressible Stokes equations \eqref{StokesEq}. 
+The motion of the interface is proportional to the absolute value of shear
+\begin{align}
+\Vn = \CE \, \abs{\tau},
+\end{align}
+In the later case of chemically-induced erosion, a solute concentration field $C$ undergoes advection and diffusion:
+\begin{align}
+\label{Ceq}
+& \pd{C}{t} + \uu \cdot \grad C = \Diff \Lap C \, ,
+\end{align}
+Material removal is then governed by Fick's law with interface velocity
+\begin{equation}
+\label{DissVn}
+\Vn = \left. \Diff \pd{C}{\ny} \right. %\right\vert_{\bdry} \, ,
+\end{equation}
+Both processes have been investigated by the PI and collaborators in the context of single bodies in high Reynolds-number flows \cite{Ristroph2012, MoorePOF2013, HuangJFM2015, MooreCPAM2017}. In the low-Reynolds regime of porous-media flow, numerical methods have been developed by the PI and collaborators to simulate shear-induced erosion \cite{Quaife2018}. These simulations combine highly accurate boundary integral methods with stable interface evolution techniques. The boundary integral solver is accelerated by the fast multipole method \cite{gre-rok1987, gre-gre-may1992} to achieve optimal $O(N)$ complexity. Meanwhile, the so-called {\thL} method is used for interface evolution to prevent distortion and tangling of the interface meshes.
+%A near-term goal is to adapt these methods to handle the case of chemically-induced dissolution.
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.99 \textwidth]{./figs/80circ8vort.pdf}
+\caption{\label{fig1} Simulation of 80 bodies eroding in Stokes flow under the action of shear stress. Flow is left to right. Color represents vorticity, which provides a convenient way to visualize local shear rates. 
+%Erosion not only diminishes the size of the bodies but also alters their shapes considerably. A few well-defined channels develop in the space between bodies. Several of the bodies vanish in finite time and the simulation continues without interruption.
+}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+ 
+ Figure \ref{fig1} shows preliminary results of multiple bodies undergoing mechanical erosion in Stokes flow. The figure shows 80 bodies of initially random size and position, undergoing erosion. This figure extends previously reported 50-body simulations to 80 bodies \cite{Quaife2018} due to a recently developed barycentric interpolation scheme (CITE), which enables closer contact between bodies and thus more bodies.
+The color shows the (normalized) vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity. Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. Notice that, as erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. The channelization process is made more evident by visualization of the velocity magnitude, as in Fig.~\ref{fig2}
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.99 \textwidth]{./figs/80circ8vel.pdf}
+\caption{\label{fig2} The same simulation as above with velocity magnitude in color. Velocity magnitude highlights the most dominant channels whose growth is reinforced by the shape-flow interaction of erosion.}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+ 
+The creation and reinforcement of channels significantly impacts the macroscopic properties of the porous medium, as the PI and collaborators have just begun to examine. Fig.~\ref{fig3} shows preliminary results on how media properties change in time. First, the left-most plot shows the rate at which the area fraction decreases as the bodies erode. Time is normalized by the value $t_f$ at which all bodies vanish and hence the area fraction is zero. Notice that the rate of area reduction does not change significantly during the simulation. The middle plot shows the resistivity, or inverse permeability of the medium. In the simulations, resistivity is calculated by measuring the total flux and the pressure upstream and downstream, then using Darcy's relation \eqref{DarcyEq} to infer $k$. Naturally, as bodies erode, the resistivity they provide decreases in time. Note, however, that the vertical axis is logarithmic. Hence, the initial linear decrease corresponds to an exponential rate of resistivity reduction. The much more mild decrease in area fraction is not sufficient to account for this exponential rate, and hence the reshaping process, in particular the formation of channels, plays a pivotal role.
+
+Lastly, the right-most plot of Fig.~\ref{fig3} shows the anisotropy, which is calculated as the ratio of the vertical resistivity to the horizontal resistivity. The vertical resistivity is computed by rotating the configuration of bodies by 90 degrees. This plot shows the anisotropy to initial increase with time. Thus, the initially isotropic state becomes erased as bodies streamline and form primarily horizontal channels. Remarkably, the medium reaches an anisotropy of over 10, meaning that erosion can lead to a configuration that resists flow 10 times more in the vertically than horizontally.
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.99 \textwidth]{./figs/fig3.pdf}
+\caption{\label{fig3} Left: the area fraction of solid bodies versus time. Time is normalized by the vanishing time $t_f$. Middle: the resistivity of the porous matrix decrease much more rapidly than area fraction, indicating the reshaping process to be essential. Right: the anisotropy (ratio of vertical to horizontal resistivity) as it varies in time. Erosion can create a highly anisotropic medium.
+}
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+
+An immediate goal of the proposed work is extend the range of physical effects captured in these simulations. Very recently, we have implemented barycentric interpolation into the boundary integral solver in order to allow for more tightly spaced configurations, even bodies that nearly touch. Near-term plans are to include flow transport and gravitational sedimentation of the particles. For this extension, contact forces between bodies must be included. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from straightforward in practice, with several competing possible strategies that are a topic of current research  {\color{blue} cite}. We plan to implement contact forces with {\color{blue} stuff}. This goal will form the PhD dissertation of a graduate student who will be supervised by myself and Prof. Bryan Quaife (FSU Scientific Computing).
+
+Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws \eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations \eqref{Ceq} and interface law \eqref{DissVn} would need to be implemented. Once these pieces are in place, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible. Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.
+
+\subsection{Sinkhole modeling}
+
+Sinkhole background stuff...
+
+Researchers at FSU's Geophysical Fluid Dynamics Institute have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments {\color{blue} cite}.
+
+\np
+\subsection{Filtration with porous membrane}
+
+
+Efficient wastewater management and treatment facilities are a crucial part of clean water efforts in the United States. Most public utilities combine water pretreatment with microfiltration systems that need frequent cleaning and upkeep to ensure high production of clean water. Large-scale wastewater plants utilize hollow-fiber filtration systems where filters are built by splitting each tube into thousands of millimeter-scale capped porous tubes that run along its length [1-3]. As wastewater runs through the filter during the so-called forward filtration process, impurities accumulate and foul the membrane by occluding its pores. Pretreating the wastewater along with backwashing the filtering system (i.e. inverting the flow direction to dislodge foulants accumulated on the membranes) allows for the water production volume to be maintained [4, 5]. These dead-end microfiltration systems are widespread thanks to their success in removing solids, colloids, and difficult-to-disinfect protozoa [6, 7]; nonetheless, most research has focused on flat-membrane filters where only the tube cross-section is porous. This is mostly due to the simplicity of the cross-flow filtration and its modeling, as fouling and backwashing are spatially-uniform across the membrane [8, add reference, maybe 17?].
+Our interest is in modeling hollow-fiber filtration systems to produce the maximum possible volume of clean water. We focus on a single hollow-fiber membrane system and scale its behavior up to match the ensemble filter. This will allow us to compare analytical and numerical results with experimental studies performed at the Aerosols and Water Treatment Lab with P.I. Professor Shankar Chellam at Texas A\&M University. Based on previous results [10-12], our aim is to model wastewater flow during forward filtration and foulant deposition on the membrane, which is spatially-dependent for this type of filtering system. In particular, although backwashing is an essential part of the filtration process, an optimal way of selecting its timing, frequency, duration, and flow, has yet to be found. Instead, backwashing is applied according to filter manufacturers’ recommendations based on limited on-site testing. The ultimate goal is to optimize the backwashing process and give directions to affect clean water production in large- scale plants.
+
+
+%---------------------------------------------------------------------------------------------------%
+
+
+\np
+%---------------------------------------------------------------------------------------------------%
+%% BROADER IMPACTS
+%\section{Broader Impacts of the Proposed Work}
+% Xiaoming
+%\subsection{Broader scientific impact of the project} 
+%\subsection{Student training and collaborative work} 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%  SECTION: Education and outreach
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Broader impacts of the proposed work}
+
+By gaining a deeper understanding of the underlying physical processes, this investigation offers several potential benefits for managing water resources. First and foremost, a better understanding of sinkhole collapse could lead to policies to prevent these natural hazards. Second, inference of spatially-variable porous-medium properties from seepage measurements could identify locations in natural aquifers vulnerable to contamination and/or collapse. Finally, optimization of manmade filtration systems could save vast money and resource.
+
+The above scientific impacts have been addressed throughout this proposal, and so below I expand on how this project will impact future generations of mathematical scientists through educational and outreach activities, particularly women and underrepresented minorities (URM). 
+The PI is already actively involved in graduate and undergraduate research, as well as outreach to K-12 students. Further, I have successfully recruited women and underrepresented minorities in both undergraduate and graduate research. Below, I describe a range of new educational activities that are related to the proposed research.
+
+%The fluid dynamics of bio-like propulsion is a topic that naturally captures the imagination of young students and thus serves as a wonderful opportunity in this regard. 
+
+\subsection{Undergraduate research}
+The ideas in this proposal represent a rich and fascinating topic for undergraduate research, while also being approachable by the methods and tools acquired at that stage. As mentioned above, there are a number of open questions in this proposal appropriate for undergraduate research, from {\color{blue} Stuff}
+	
+At FSU, there are at least two excellent avenues to attract interested undergraduate students:  the Undergraduate Research Opportunity Program (UROP) and the IDEA grant. The UROP is a program to engage underclassmen in academic research, while the IDEA grant is a competitive program, requiring (typically advanced) students to write a proposal in which they identify a research advisor. Both programs make special efforts to recruit from underrepresented groups. I already have experience using these programs to recruit interested students as I am currently serving as the advisor for IDEA grant winner Tyler Bolles, whose proposal was ranked $\#1$ overall out of the 110 applicants.
+
+I will use a combination of funds from the above two resources and from the current proposal to engage undergraduates in research. Since the UROP program is well-known at FSU, it is the best way to recruit young, interested students. I plan to recruit one such student who will be supported by UROP for the first summer of his/her research, and should the student wish to continue, I will fund subsequent years using the current proposal. I will also encourage the student to apply for the IDEA grant in the final year of research, as this is a prestigious award at FSU. 
+
+
+\subsection{Assessment for graduate and undergraduate education}
+
+Developing strong mentoring relationships is essential to a student's intellectual development and a responsibility that the PI takes very seriously. When working with students on research (both undergraduate and graduate), I am always sure to outline the expectations of {\em both} parties -- the student and myself -- and periodically revisit the list to determine if the expectations are being met or if changes are necessary. This ensures that progress continues uninterrupted and that both parties are comfortable with their responsibilities. For the graduate seminar course, questionnaires will be provided to the students to determine how the seminar relates to their own research and their intellectual development, as well as parts of the course that were particularly beneficial and parts that could be improved. This will ensure that, once integrated into the standard curriculum, the course will maximally benefit the students' education.
+
+
+\subsection{Outreach for K-12 and the general public}
+
+I have already seized this opportunity to engage K-12 students in outreach activities. In particular, my research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K-12 education. The video, which features an interview with me and animations of my research, is used to reinforce concepts from mathematics courses (grade levels 7-12), and to encourage students to consider a career in the STEM fields \cite{CPALMS}. Additionally, these videos are frequently used for the continuing education of K-12 {\em teachers}, providing them a broader perspective of mathematics that could be integrated into their teaching.
+ 
+My plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Mathematics departments to engage K-12 students in the region. I have led activities at Math Fun Day in prior years and, related to the current proposal, I plan to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse.
+Laboratory materials for the demo are available at the neighboring Geophysical Fluid Dynamics Institute, of which the PI is a faculty associate.
+
+\section{Results from Prior and Current NSF Support: N/A}
+
+
+%---------------------------------------------------------------------------------------------------%
+%%  BIBLIOGRAPHY
+\newpage
+\setcounter{page}{1}
+% Bibliography
+\bibliographystyle{plain}
+%plain, apalike, unsrt
+%\bibliography{ProjBib,JCPbib}
+\bibliography{ProjBib}
+%---------------------------------------------------------------------------------------------------%
+\end{document}
