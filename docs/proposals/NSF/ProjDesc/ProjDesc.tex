@@ -14,6 +14,7 @@
 %---------------------------------------------------------------------------------------------------%
 %% LATEX DEFINITIONS
 % Basic editing
+\newcommand{\nick}[1]{{\color{red}#1}}
 \newcommand{\tocite}{{\color{blue}(to cite)}}
 \newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
 \newcommand{\np}{\newpage \noindent}
@@ -61,7 +62,7 @@
 %% TITLE
 \begin{document}
 \title{Project Description --
-CAREER: Erosion, Seepage, Collapse, and Filtration in Granular and Porous Media}
+CAREER: Erosion, Seepage, Transport, and Collapse in Granular and Porous Media}
 
 % Original erosion title
 %Mathematical models and analysis for erosion and dissolution in porous-media flow}
@@ -157,7 +158,7 @@ The macroscopic description offered by Eq.~\eqref{DarcyEq}, although approximate
 
 \subsection{Mechanical and chemical erosion of a porous medium}
 
-%\subsubsection{Background}
+\subsubsection{Background}
 
 The first problem discussed here is the erosion of a porous medium, as has been preliminarily investigated in \cite{Quaife2018}. We will consider erosion induced by either fluid-mechanical forces or by chemical reaction, i.e.~dissolution. In the former case, erosion results from surface shear stress
 \begin{align}
@@ -181,6 +182,11 @@ Material removal is then governed by Fick's law with interface velocity
 Both processes have been investigated by the PI and collaborators in the context of single bodies in high Reynolds-number flows \cite{Ristroph2012, MoorePOF2013, HuangJFM2015, MooreCPAM2017}. In the low-Reynolds regime of porous-media flow, numerical methods have been developed by the PI and collaborators to simulate shear-induced erosion \cite{Quaife2018}. These simulations combine highly accurate boundary integral methods with stable interface evolution techniques. The boundary integral solver is accelerated by the fast multipole method \cite{gre-rok1987, gre-gre-may1992} to achieve optimal $O(N)$ complexity. Meanwhile, the so-called {\thL} method is used for interface evolution to prevent distortion and tangling of the interface meshes.
 %A near-term goal is to adapt these methods to handle the case of chemically-induced dissolution.
 
+\subsubsection{Basic dynamics}
+
+ Figure \ref{fig1} shows preliminary results of multiple bodies undergoing mechanical erosion in Stokes flow. The figure shows 80 bodies of initially random size and position, undergoing erosion. This figure extends previously reported 50-body simulations to 80 bodies \cite{Quaife2018} due to a recently developed barycentric interpolation scheme \tocite, which enables closer contact between bodies and thus more bodies.
+The color shows the (normalized) vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity. Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. Notice that, as erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. The channelization process is made more evident by visualization of the velocity magnitude, as in Fig.~\ref{fig2}.
+
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
 \begin{center}
@@ -192,8 +198,7 @@ Both processes have been investigated by the PI and collaborators in the context
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
- Figure \ref{fig1} shows preliminary results of multiple bodies undergoing mechanical erosion in Stokes flow. The figure shows 80 bodies of initially random size and position, undergoing erosion. This figure extends previously reported 50-body simulations to 80 bodies \cite{Quaife2018} due to a recently developed barycentric interpolation scheme (CITE), which enables closer contact between bodies and thus more bodies.
-The color shows the (normalized) vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity. Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. Notice that, as erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. The channelization process is made more evident by visualization of the velocity magnitude, as in Fig.~\ref{fig2}
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -228,12 +233,6 @@ Sinkhole background stuff...
 
 Researchers at FSU's Geophysical Fluid Dynamics Institute have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments {\color{blue} cite}.
 
-\np
-\subsection{Filtration with porous membrane}
-
-
-Efficient wastewater management and treatment facilities are a crucial part of clean water efforts in the United States. Most public utilities combine water pretreatment with microfiltration systems that need frequent cleaning and upkeep to ensure high production of clean water. Large-scale wastewater plants utilize hollow-fiber filtration systems where filters are built by splitting each tube into thousands of millimeter-scale capped porous tubes that run along its length [1-3]. As wastewater runs through the filter during the so-called forward filtration process, impurities accumulate and foul the membrane by occluding its pores. Pretreating the wastewater along with backwashing the filtering system (i.e. inverting the flow direction to dislodge foulants accumulated on the membranes) allows for the water production volume to be maintained [4, 5]. These dead-end microfiltration systems are widespread thanks to their success in removing solids, colloids, and difficult-to-disinfect protozoa [6, 7]; nonetheless, most research has focused on flat-membrane filters where only the tube cross-section is porous. This is mostly due to the simplicity of the cross-flow filtration and its modeling, as fouling and backwashing are spatially-uniform across the membrane [8, add reference, maybe 17?].
-Our interest is in modeling hollow-fiber filtration systems to produce the maximum possible volume of clean water. We focus on a single hollow-fiber membrane system and scale its behavior up to match the ensemble filter. This will allow us to compare analytical and numerical results with experimental studies performed at the Aerosols and Water Treatment Lab with P.I. Professor Shankar Chellam at Texas A\&M University. Based on previous results [10-12], our aim is to model wastewater flow during forward filtration and foulant deposition on the membrane, which is spatially-dependent for this type of filtering system. In particular, although backwashing is an essential part of the filtration process, an optimal way of selecting its timing, frequency, duration, and flow, has yet to be found. Instead, backwashing is applied according to filter manufacturers’ recommendations based on limited on-site testing. The ultimate goal is to optimize the backwashing process and give directions to affect clean water production in large- scale plants.
 
 
 %---------------------------------------------------------------------------------------------------%
@@ -254,12 +253,13 @@ Our interest is in modeling hollow-fiber filtration systems to produce the maxim
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Broader impacts of the proposed work}
 
-By gaining a deeper understanding of the underlying physical processes, this investigation offers several potential benefits for managing water resources. First and foremost, a better understanding of sinkhole collapse could lead to policies to prevent these natural hazards. Second, inference of spatially-variable porous-medium properties from seepage measurements could identify locations in natural aquifers vulnerable to contamination and/or collapse. Finally, optimization of manmade filtration systems could save vast money and resource.
+By gaining a deeper understanding of the underlying physical processes, this investigation offers several potential benefits for managing water resources.
+\nick{More on erosion modifying porous medium properties etc...}
+%First and foremost, a better understanding of sinkhole collapse could lead to policies to prevent these natural hazards. Second, inference of spatially-variable porous-medium properties from seepage measurements could identify locations in natural aquifers vulnerable to contamination and/or collapse.
 
-The above scientific impacts have been addressed throughout this proposal, and so below I expand on how this project will impact future generations of mathematical scientists through educational and outreach activities, particularly women and underrepresented minorities (URM). 
-The PI is already actively involved in graduate and undergraduate research, as well as outreach to K-12 students. Further, I have successfully recruited women and underrepresented minorities in both undergraduate and graduate research. Below, I describe a range of new educational activities that are related to the proposed research.
+The above scientific impacts have been addressed throughout this proposal, and so the section below expands on how this project will impact future generations of mathematical scientists through educational and outreach activities, particularly women and underrepresented minorities (URM). 
+The PIs are already actively involved in graduate and undergraduate research, as well as outreach to K-12 students. Further, we have successfully recruited women and underrepresented minorities in both undergraduate and graduate research. The section below describes a range of new educational activities related to the proposed research.
 
-%The fluid dynamics of bio-like propulsion is a topic that naturally captures the imagination of young students and thus serves as a wonderful opportunity in this regard. 
 
 \subsection{Undergraduate research}
 The ideas in this proposal represent a rich and fascinating topic for undergraduate research, while also being approachable by the methods and tools acquired at that stage. As mentioned above, there are a number of open questions in this proposal appropriate for undergraduate research, from {\color{blue} Stuff}
@@ -271,14 +271,14 @@ I will use a combination of funds from the above two resources and from the curr
 
 \subsection{Assessment for graduate and undergraduate education}
 
-Developing strong mentoring relationships is essential to a student's intellectual development and a responsibility that the PI takes very seriously. When working with students on research (both undergraduate and graduate), I am always sure to outline the expectations of {\em both} parties -- the student and myself -- and periodically revisit the list to determine if the expectations are being met or if changes are necessary. This ensures that progress continues uninterrupted and that both parties are comfortable with their responsibilities. For the graduate seminar course, questionnaires will be provided to the students to determine how the seminar relates to their own research and their intellectual development, as well as parts of the course that were particularly beneficial and parts that could be improved. This will ensure that, once integrated into the standard curriculum, the course will maximally benefit the students' education.
+Developing strong mentoring relationships is essential to a student's intellectual development and a responsibility that the PIs takes very seriously. When working with students on research, whether undergraduate or graduate, we are always sure to outline the expectations of {\em both} parties -- the student and myself -- and periodically revisit the list to determine if the expectations are being met or if changes are necessary. This ensures that progress continues uninterrupted and that both parties are comfortable with their responsibilities. For the graduate seminar course, questionnaires will be provided to the students to determine how the seminar relates to their own research and their intellectual development, as well as parts of the course that were particularly beneficial and parts that could be improved. This will ensure that, once integrated into the standard curriculum, the course will maximally benefit the students' education.
 
 
 \subsection{Outreach for K-12 and the general public}
 
-I have already seized this opportunity to engage K-12 students in outreach activities. In particular, my research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K-12 education. The video, which features an interview with me and animations of my research, is used to reinforce concepts from mathematics courses (grade levels 7-12), and to encourage students to consider a career in the STEM fields \cite{CPALMS}. Additionally, these videos are frequently used for the continuing education of K-12 {\em teachers}, providing them a broader perspective of mathematics that could be integrated into their teaching.
+The PIs have already seized the opportunity to engage K-12 students in outreach activities. In particular, Moore's research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K-12 education. The video, which features an interview and animations of research, is used to reinforce concepts from mathematics courses (grade levels 7-12), and to encourage students to consider a career in the STEM fields \cite{CPALMS}. Additionally, these videos are frequently used for the continuing education of K-12 {\em teachers}, providing them a broader perspective of mathematics that could be integrated into their teaching.
  
-My plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Mathematics departments to engage K-12 students in the region. I have led activities at Math Fun Day in prior years and, related to the current proposal, I plan to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse.
+Plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Mathematics departments to engage K-12 students in the region. Moore has led activities at Math Fun Day in prior years and, related to the current proposal, plans to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse.
 Laboratory materials for the demo are available at the neighboring Geophysical Fluid Dynamics Institute, of which the PI is a faculty associate.
 
 \section{Results from Prior and Current NSF Support: N/A}
