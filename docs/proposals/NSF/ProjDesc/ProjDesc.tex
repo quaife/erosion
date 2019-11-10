@@ -9,6 +9,7 @@
 \usepackage{natbib, hyperref, url}
 %\usepackage[justification=RaggedRight]{caption}
 \usepackage{outlines,enumitem}
+\usepackage{wrapfig}
 %---------------------------------------------------------------------------------------------------%
 
 %---------------------------------------------------------------------------------------------------%
@@ -36,6 +37,7 @@
 \newcommand{\ip}[1]{ \langle #1 \rangle }
 \newcommand{\eps}{\varepsilon}
 % For real and imaginary, could use \Re or \Im, or \mathcal{R}, or \text{Re}
+\newcommand{\Pe}{\mathrm{Pe}}
 
 % Outline stuff
 \setenumerate[1]{label=\Roman*.}
@@ -169,7 +171,7 @@ The motion of the interface is proportional to the absolute value of shear
 \begin{align}
 \Vn = \CE \, \abs{\tau},
 \end{align}
-In the later case of chemically-induced erosion, a solute concentration field $C$ undergoes advection and diffusion:
+In the latter case of chemically-induced erosion, a solute concentration field $C$ undergoes advection and diffusion:
 \begin{align}
 \label{Ceq}
 & \pd{C}{t} + \uu \cdot \grad C = \Diff \Lap C \, ,
@@ -227,6 +229,79 @@ An immediate goal of the proposed work is extend the range of physical effects c
 
 Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws \eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations \eqref{Ceq} and interface law \eqref{DissVn} would need to be implemented. Once these pieces are in place, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible. Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.
 
+%---------------------------------------------------------------------------------------------------%
+\subsection{Transport through eroded media}
+\begin{wrapfigure}[]{r}{0.5\textwidth}
+  \includegraphics[width=0.5\textwidth]{figs/100b_t100tracer}
+  \caption{\label{fig:100tracers} A visualization of the streamlines
+  with 200 tracers passing through an eroded geometry with a porosity of
+  0.63. The tracers are initialized at the left end of the channel.}
+\end{wrapfigure}
+Transport through eroded media is a direct consequence of the pore
+structure. Qualitative properties of an eroded media, such as channels
+of high porosity can be modest in volume fraction, but still be
+responsible for a large portion of the flux~\cite{Quaife2018}. To
+increase understanding of flow through eroded media, we will simulate
+and statistically analyze transport through eroded geometries.
+
+In an eroded geometry $\Omega$, a concentration non-dimensionalized
+concentration $c$ is governed by
+\begin{align}
+  \pd{c}{t} + \uu \cdot \nabla c + \frac{1}{\Pe} \Delta c, 
+\end{align}
+where $\Pe$ is the dimensionless Peclet number. Here we assume that the
+concentration $c$ is affected by the eroded geometry, but the geometry
+is not altered further by the concentration. In the infinite Peclet
+number limit, the concentration is governed by pure advection and the
+characteristics of the concentration field are identical to the
+streamlines (Figure~\ref{fig:100tracers}).
+\begin{wrapfigure}[]{l}{0.4\textwidth}
+  \includegraphics[width=0.4\textwidth]{figs/tort_eulerian100}
+  \caption{\label{fig:100tortuosity} The tortuosity of an eroding
+  geometry. The tortuosity can be computed using two different formulas
+  (red vs.~blue marks). The red square is the tortuosity in
+  Figure~\ref{fig:100tracers}. Their is qualitative agreement between
+  our numerical simulations and a power-law model (black dashed
+  line)~\cite{mat-kha-koz2008}.}
+\end{wrapfigure}
+
+The $j^{th}$ trajectories, or characteristics, is governed by
+$\dot{ss}_j(t) = \uu(\ss_j(t))$. Once these trajectories are computed,
+using, for example, a high-order Runge-Kutta method, a statistical
+analysis be used to describe the transport. Two of the most important
+measurements are the tortuosity and the anomalous dispersion, both which
+are defined in terms of the length of the trajectories
+\begin{align}
+  \lambda_j(t) = \int_{0}^{t} \|\ss'(t')\| dt'.
+\end{align}
+Once $N_p$ trajectories are computed, the tortuosity is the
+dimensionless number
+\begin{align}
+  T = \frac{1}{d} \left(\int_{S} u_1(x_0,y_0)\lambda(y_0) dy_0\, \right)
+  \Bigg/ \left(\int_S u_1(x_0,y_0)\, dy_0 \right),
+\end{align}
+where $S$ is the vertical cross-section at $x=x_0$, $d$ is its length,
+$u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of
+the trajectory starting at $(x_0,y_0)$ and ending at a vertical
+cross-section at the other end of the channel. Relationships between the
+tortuosity and porosity of a geometry have been developed by other
+groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and
+preliminary results indicate that such models might be appropriate for
+geometries whose porosity is increasing under the process of erosion
+(Figure~\ref{fig:100tortuosity}).
+
+While the tortuosity characterizes the amount of winding of streamlines,
+the dispersion characterizes the spreading of the trajectories.
+Dispersion can be descried using the first- and second-ensemble moments
+of the trajectories
+\begin{align}
+  \langle \lambda \rangle (t) = \frac{1}{N_p} \sum_{j=1}^{N_p}
+    \lambda_j(t), \quad \sigma_\lambda^{2}(t) = \frac{1}{N_p}
+    \sum_{j=1}^{N_p} (\lambda_j(t) - \langle \lambda \rangle(t))^2
+\end{align}
+
+
+%---------------------------------------------------------------------------------------------------%
 \subsection{Sinkhole modeling}
 
 Sinkhole background stuff...
