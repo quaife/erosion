@@ -1,8 +1,8 @@
- \documentclass[12pt]{article}
+\documentclass[11pt]{article}
 
 %---------------------------------------------------------------------------------------------------%
 %% PACKAGES
-\usepackage{fullpage}
+%\usepackage{fullpage}
 %\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 \usepackage{graphicx, amsmath, amssymb, amsfonts, mathtools, mathrsfs, color}
 \usepackage{comment, enumerate, tabularx}
@@ -10,7 +10,27 @@
 %\usepackage[justification=RaggedRight]{caption}
 \usepackage{outlines,enumitem}
 \usepackage{wrapfig, todonotes}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
 %---------------------------------------------------------------------------------------------------%
+
+\addtolength{\oddsidemargin}{-0.75in}
+\addtolength{\evensidemargin}{-0.75in}
+\addtolength{\textwidth}{1.5in}
+\addtolength{\topmargin}{-0.75in}
+\addtolength{\textheight}{1.5in}
+% For 11pt size
+
+
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+
+\pagestyle{fancy}
+\lhead{\footnotesize Moore and Quaife}
+\chead{\footnotesize Erosion, Transport, and  Dispersion in Granular and
+Porous Media}
+\rhead{\footnotesize \thepage}
+\cfoot{}
 
 %---------------------------------------------------------------------------------------------------%
 %% LATEX DEFINITIONS
@@ -63,14 +83,18 @@
 %---------------------------------------------------------------------------------------------------%
 %% TITLE
 \begin{document}
-\title{Project Description --
-Erosion, Transport, Anomalous Diffusion, and Collapse in Granular and Porous Media}
+\begin{center}
+{\large \bf Erosion, Transport, and Dispersion in Granular
+and Porous Media} 
+\end{center}
+%\title{Project Description --
+%Erosion, Transport, Anomalous Diffusion, and Collapse in Granular and Porous Media}
 
 % Original erosion title
 %Mathematical models and analysis for erosion and dissolution in porous-media flow}
 %\author{}
-\date{}
-\maketitle
+%\date{}
+%\maketitle
 %---------------------------------------------------------------------------------------------------%
 
 %---------------------------------------------------------------------------------------------------%
@@ -327,24 +351,44 @@ geometry that is initialized with 100 grains.
   of the black dashed-dotted line.}
 \end{wrapfigure}
 
-We propose to extend our preliminary results for pure advection so that
-concentrations with finite Peclet numbers can be investigated.
-Numerical methods to solve the advection-diffusion
-equation~\eqref{eqn:advectionDiffusion} in a complex geometry poses
-several challenges that we will address.  We will start by splitting the
-advection and diffusion equations using a Strang splitting~\cite{}.
-Numerical solutions of the advection equation will be formed with a
-semi-Lagrangian method. These methods have the advantage that they ...?
-The forced diffusion equation is more challenging to solve in a complex
-geometry with an integral equation formulation. One particular challenge
-is extending the forcing function from the complex geometry and into a
+We propose to extend our preliminary results by considering
+concentrations with finite Peclet numbers. Numerical methods to solve
+the advection-diffusion equation~\eqref{eqn:advectionDiffusion} in a
+complex geometry poses several challenges that we will address.  We will
+start by splitting the advection and diffusion equations with a Strang
+splitting method~\cite{str1968}.  Numerical solutions of the advection
+equation will be formed with a semi-Lagrangian method~\cite{rob1981} so
+that it can be solved on an Eulerian grid without a restrictive CFL
+condition. PI Quaife has experience with using semi-Lagrangian
+methods for another type of complex viscous flow~\cite{kab-qua-bir2017}.
+The diffusion equation is more challenging to solve in a complex
+geometry with an integral equation formulation.  One approach is to use
+the space-time heat kernel~\cite{}, but this requires storing an entire
+time history of the solution.  Alternatively, the heat equation can be
+discretized in time and the resulting Yukawa equation is solved at each
+time step~\cite{kro-qua2010}. A particular challenge of this method is
+extending the forcing function from the complex geometry and into a
 regular geometry, such as a square, so that a high-order volume integral
-or Fourier method can be applied. Recently, groups have used radial
-basis functions to form a sufficiently smooth extension~\cite{}
-\todo[inline]{A-K, MC}. Alternatively, others have used the space-time
-heat kernel~\cite{}, but this requires storing an entire time history of
-the solution. We propose to develop a new method that uses the Laplace
-transform.
+or Fourier method can be applied.  Recently, groups have used radial
+basis functions to form a sufficiently smooth
+extension~\cite{fry-kro-tor2019, fry-leh-tor2019}.
+
+We propose to develop a new method that uses the Laplace transform.
+Upon applying a Strang splitting, the resulting diffusion equation is
+\begin{alignat}{3}
+  \pd{c}{t} &= \frac{1}{\Pe} \Delta c, \quad &&\xx \in \Omega, \: t>0, \\
+  \pd{c}{\nn} &= 0, &&\xx \in \partial\Omega, \: t>0, \\
+  c(\xx,0) &= c_0(\xx), &&\xx \in \Omega.
+\end{alignat}
+Then, the Laplace transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$,
+satisfies
+\begin{align}
+  sC(\xx,s) - \frac{1}{\Pe} = c_0(\xx).
+\end{align}
+This PDE will be solved with high-order accuracy and efficiently by
+using fast-multipole-accelerated integral equation methods of the
+Beltrami equation~\cite{kro-qua2011}, and the concentration will be
+recovered with a inverese Laplace transform~\cite{jos-war2006}.
 
 
 
