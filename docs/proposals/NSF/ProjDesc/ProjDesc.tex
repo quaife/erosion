@@ -12,6 +12,7 @@
 \usepackage{wrapfig, todonotes}
 \usepackage{titlesec}
 \usepackage{fancyhdr}
+\usepackage{subcaption}
 %---------------------------------------------------------------------------------------------------%
 
 \addtolength{\oddsidemargin}{-0.75in}
@@ -86,6 +87,8 @@ Porous Media}
 \begin{center}
 {\large \bf Erosion, Transport, and Dispersion in Granular
 and Porous Media} 
+\\
+M.J.N.~Moore and Bryan D.~Quaife
 \end{center}
 %\title{Project Description --
 %Erosion, Transport, Anomalous Diffusion, and Collapse in Granular and Porous Media}
@@ -261,8 +264,8 @@ Next, we plan to extend the simulation framework to handle chemical dissolution 
 
 %---------------------------------------------------------------------------------------------------%
 \subsection{Transport through eroded media}
-\begin{wrapfigure}[]{r}{0.5\textwidth}
-  \includegraphics[width=0.5\textwidth]{figs/100b_t100tracer}
+\begin{wrapfigure}[]{r}{0.3\textwidth}
+  \includegraphics[width=0.3\textwidth]{figs/100b_t100tracer}
   \caption{\label{fig:100tracers} A visualization of the streamlines
   with 200 tracers passing through an eroded geometry with a porosity of
   0.63. The tracers are initialized at the left end of the channel.}
@@ -340,7 +343,6 @@ grains, dispersion in porous media is often super-dispersive with
 $\alpha \in (0.5,1)$~\cite{}. In Figure~\ref{fig:100dispersion}, we
 investigate spreading at several different porosities of a porous
 geometry that is initialized with 100 grains.
-
 \begin{wrapfigure}[]{r}{0.5\textwidth}
   \includegraphics[width=0.5\textwidth]{figs/100b_second_moment_long_ref}
   \caption{\label{fig:100dispersion} The particle spreading,
@@ -350,6 +352,35 @@ geometry that is initialized with 100 grains.
   dispersion becomes super-dispersive at a rate indicated by the slope
   of the black dashed-dotted line.}
 \end{wrapfigure}
+
+The rate of dispersion is known to be directly related to the pore size
+distribution~\cite{dea-qua-bir-jua2018}. Therefore, there is a need to
+understand how erosion affects the pore size distribution. In
+preliminary, we define pore sizes between grains that share an edge of a
+Delanuay triangulation with vertices at the grain centers
+(Figure~\ref{fig:triangluation}). In Figure~\ref{fig:poreStats}, we plot
+the mean and variance of the pore sizes as a function of porosity.
+
+\begin{figure}
+\begin{subfigure}[b]{0.33\textwidth}
+  \includegraphics*[height=0.8\linewidth]{figs/triangulation_100b100.pdf}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.33\textwidth}
+  \includegraphics*[height = 0.8\linewidth]{figs/gap_mean}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.33\textwidth}
+  \includegraphics*[height=0.8\linewidth]{figs/gap_variance}
+\caption{}
+\end{subfigure}
+  \caption{\label{fig:Eroding100gap_mean_var} (a) The pore sizes are
+  defined in terms of a Delanuay triangulation. The effect of erosion on
+  (b) the mean and (c) the variance of the pore sizes. The geometry
+  initially contains 100 eroding bodies.}
+\end{figure}
+
+
 
 We propose to extend our preliminary results by considering
 concentrations with finite Peclet numbers. Numerical methods to solve
@@ -383,12 +414,13 @@ Upon applying a Strang splitting, the resulting diffusion equation is
 Then, the Laplace transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$,
 satisfies
 \begin{align}
-  sC(\xx,s) - \frac{1}{\Pe} = c_0(\xx).
+  sC(\xx,s) - \frac{1}{\Pe}\Delta C(\xx,s) = c_0(\xx), 
+    \quad \xx \in \Omega
 \end{align}
 This PDE will be solved with high-order accuracy and efficiently by
-using fast-multipole-accelerated integral equation methods of the
-Beltrami equation~\cite{kro-qua2011}, and the concentration will be
-recovered with a inverese Laplace transform~\cite{jos-war2006}.
+using fast-multipole-accelerated integral equation methods of the Yukawa
+equation~\cite{kro-qua2011}, and the concentration will be recovered
+with an inverse Laplace transform~\cite{jos-war2006}.
 
 
 
