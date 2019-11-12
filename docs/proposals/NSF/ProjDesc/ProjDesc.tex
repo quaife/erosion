@@ -426,25 +426,21 @@ with an inverse Laplace transform~\cite{jos-war2006}.
 
 	One central goal of this proposal is to enable the free motion of grains during the erosion processes. As mentioned above, this goal requires resolving contact forces between bodies, as well as the incorporation of the external buoyancy forces. Once this goal is achieved, it will be possible to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and buoyancy forces. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks.
 
-	As mentioned above, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments \cite{tao2014experimental}. The new simulations will compare against this experimental data and guide future experiments.
-
-
-\vsp{3}
-
-	With two Mathematics PhD students, PI Moore has begun running preliminary simulations to model this behaviors. The simulations, which are at an early stage of development, are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize a homogenized description of the flow field, e.g.~the Darcy or Brinkman equations.
-These simulations incorporate the physical effects of:
+	In very preliminary work, PI Moore has been running simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in \eqref{DarcyEq} and incorporate the physical effects of:
 \begin{itemize}
 \item Transport of grains due to seepage force from the surrounding fluid flow.
 \item Gravitational sedimentation of grains.
 \item Feedback of grain-distribution onto permeability field.
 \item Contact and cohesive forces between grains.
 \end{itemize}
-Preliminary investigation suggests that this last mechanisms of cohesion is essential to model sinkhole collapse in the system, and the simulations await careful calibration against experimental data.
+Preliminary investigation suggests that this last mechanisms of cohesion is essential to model sinkhole collapse in the system.
 
-The simulations do not yet incorporate the effects of erosion and dissolution. A grand goal of this proposal would be to merge these two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics robust enough to capture both short term events, such as sinkhole collapse, and long-term changes in the medium. Such a framework must include the effects of erosion, dissolution, transport, sedimentation, compaction, cohesive forces, and mechanical collapse. The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our strategy is to use the high-fidelity erosion and dissolution simulations to develop reduced models (ala mean-field theory) that would be incorporated into simulations.
+These simulation have not yet begun to incorporate the slow-acting effects of mechanical and chemical erosion, and the associated gradual changes in medium properties. A grand goal of this proposal would be to merge the two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics robust enough to capture both short term events, such as sinkhole collapse, and long-term changes in the medium. 
+The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our proposed strategy is to use the high-fidelity erosion simulations to parametrize the effect of erosion on medium properties.
 
-
-
+	As mentioned above, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments \cite{tao2014experimental}. The new simulations will compare against this experimental data and guide future experiments.
+	
+MORE	
 
 \np
 %---------------------------------------------------------------------------------------------------%
