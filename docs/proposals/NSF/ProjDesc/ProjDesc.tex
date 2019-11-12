@@ -142,7 +142,7 @@ Fortunately, some closely related laboratory experiments on erosion in colloidal
 
 While erosion and dissolution lead to gradual changes in a medium, other events like sinkhole collapse can occur suddenly and catastrophically. Most likely, all of the mechanisms listed above --- erosion, dissolution, transport, compaction, and gravitational collapse --- contribute to sinkhole formation, with the slowest acting mechanisms creating conditions favorable for the final act of gravity. Sinkhole formation has been explored with preliminary experiments run at the Geophysical Fluid Dynamics Institute (GFDI) at Florida State University \cite{tao2014experimental}. These scaled-down experiments offer the ability to probe various mechanisms behind sinkhole formation, for example a difference in hydraulic head between the confined and unconfined aquifers. An ultimate goal of this project is to merge these two lines of inquiry to gain a deeper understanding the influence of mechanically or chemically induced erosion on gravitational collapse. Ultimately, we envision the high-fidelity erosion simulations to inform coarse-grained models for: (i) transport and dispersion; and (ii) dynamic evolution of macroscopic medium properties. These parameterized models could then be combined with well-developed multi-phase models \cite{Imma2019, eastham2019multiphase} to be used for the quantitative description and prediction of sinkhole collapse.
 
-	In the following, we first describe the governing equations underlying the proposed work, then detail the computational challenges for simulation erosion, characterizing transport, and potentially modeling gravitational interactions.
+	In the following, we first describe the underlying governing equations, then detail the computational challenges and proposed work on simulating fluid-mechanical erosion, characterizing transport and dispersion, and modeling gravitational interactions.
 
 
 %---------------------------------------------------------------------------------------------------%
@@ -155,7 +155,9 @@ At the finest scale, the fluid flow intervening between individual grains of a p
 \grad \cdot \uu = 0, 		&\hspace{20pt} \xx \in \Omega,
 \end{split}
 \end{equation}
-where $\uu$ is the velocity field, $p$ the pressure field, and $\mu$ the fluid viscosity. This microscopic description is needed to model the shape evolution of individual grains from shear-induced erosion. The description, however, becomes impractical when attempting to model seepage in very large porous systems where the microscopic geometry can be exceedingly complex. Instead, it becomes necessary to homogenize over microscopic details to arrive at an approximate description. Leading-order homogenization produces the well-known Darcy system
+where $\uu$ is the velocity field, $p$ the pressure field, and $\mu$ the fluid viscosity. 
+
+	The above microscopic description is required for the shape evolution of individual grains due to fine-scale erosive effects, either mechanical or chemical. The description, however, becomes impractical when attempting to model seepage in very large porous systems where the microscopic geometry can be exceedingly complex. Instead, one must homogenize over microscopic details to arrive at an approximate description. Leading-order homogenization produces the well-known Darcy system
 \begin{equation}
 \label{DarcyEq}
 \qq = - \bvec{K} \grad \phi
@@ -169,9 +171,11 @@ k = C \frac{\theta_f^3}{(1-\theta_f)^2}
 \end{equation}
 The macroscopic description offered by Eq.~\eqref{DarcyEq}, although approximate, simplifies analysis tremendously in that individual grains are no longer resolved and thus the domain geometry is generally much simpler.
 
+While the most immediate proposed work on computational methods to simulate erosion will utilize \eqref{StokesEq}, the later stages of this project will also incorporate \eqref{DarcyEq}, or closely related variants known as multiphase models \cite{Imma2019, eastham2019multiphase}, in order to develop coarse-grained descriptions for porous medium evolution and the associated dispersion within. These models will rely on statistical analysis of the data produced by the high-fidelity erosion simulations in order to parameterize the effects of erosion, leading to deterministic or stochastic reduced-order models for porous-medium evolution and erosion, combined with other external effects such as gravitationally-induced dynamics.
+
 \subsection{Mechanical and chemical erosion of a porous medium}
 
-\subsubsection{Background}
+%\subsubsection{Background}
 
 The first problem discussed here is the erosion of a porous medium, as has been preliminarily investigated in \cite{Quaife2018}. We will consider erosion induced by either fluid-mechanical forces or by chemical reaction, i.e.~dissolution. In the former case, erosion results from surface shear stress
 \begin{align}
@@ -192,10 +196,10 @@ Material removal is then governed by Fick's law with interface velocity
 \label{DissVn}
 \Vn = \left. \Diff \pd{C}{\ny} \right. %\right\vert_{\bdry} \, ,
 \end{equation}
-Both processes have been investigated by the PI and collaborators in the context of single bodies in high Reynolds-number flows \cite{Ristroph2012, MoorePOF2013, HuangJFM2015, MooreCPAM2017}. In the low-Reynolds regime of porous-media flow, numerical methods have been developed by the PI and collaborators to simulate shear-induced erosion \cite{Quaife2018}. These simulations combine highly accurate boundary integral methods with stable interface evolution techniques. The boundary integral solver is accelerated by the fast multipole method \cite{gre-rok1987, gre-gre-may1992} to achieve optimal $O(N)$ complexity. Meanwhile, the so-called {\thL} method is used for interface evolution to prevent distortion and tangling of the interface meshes.
+Both processes have been investigated by the PIs and collaborators in the context of single bodies in high Reynolds-number flows \cite{Ristroph2012, MoorePOF2013, HuangJFM2015, MooreCPAM2017}. In the low-Reynolds regime of porous-media flow, numerical methods have been developed by the PIs to simulate shear-induced erosion \cite{Quaife2018}. These simulations combine highly accurate boundary integral methods with stable interface evolution techniques. The boundary integral solver is accelerated by the fast multipole method \cite{gre-rok1987, gre-gre-may1992} to achieve optimal $O(N)$ complexity. Meanwhile, the so-called {\thL} method is used for interface evolution to prevent distortion and tangling of the interface meshes \cite{hou1994removing, MoorePOF2013, Quaife2018}.
 %A near-term goal is to adapt these methods to handle the case of chemically-induced dissolution.
 
-\subsubsection{Basic dynamics}
+%\subsubsection{Basic dynamics}
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -220,13 +224,11 @@ The color shows the (normalized) vorticity field surrounding the bodies. Vortici
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
- 
- \vsp{5}
- \todo[inline]{Nick is here}
- 
-The creation and reinforcement of channels significantly impacts the macroscopic properties of the porous medium. Fig.~\ref{fig3} shows preliminary results on how media properties change in time. First, the left-most plot shows the rate at which the area fraction decreases as the bodies erode. Time is normalized by the value $t_f$ at which all bodies vanish and hence the area fraction is zero. Notice that the rate of area reduction does not change significantly during the simulation. The middle plot shows the resistivity, or inverse permeability of the medium. In the simulations, resistivity is calculated by measuring the total flux and the pressure upstream and downstream, then using Darcy's relation \eqref{DarcyEq} to infer $k$. Naturally, as bodies erode, the resistivity they provide decreases in time. Note, however, that the vertical axis is logarithmic. Hence, the initial linear decrease corresponds to an exponential rate of resistivity reduction. The much more mild decrease in area fraction is not sufficient to account for this exponential rate, and hence the reshaping process, in particular the formation of channels, plays a pivotal role.
+%\subsubsection{Evolution of macroscopic properties}
 
-Lastly, the right-most plot of Fig.~\ref{fig3} shows the anisotropy, which is calculated as the ratio of the vertical resistivity to the horizontal resistivity. The vertical resistivity is computed by rotating the configuration of bodies by 90 degrees. This plot shows the anisotropy to initial increase with time. Thus, the initially isotropic state becomes erased as bodies streamline and form primarily horizontal channels. Remarkably, the medium reaches an anisotropy of over 10, meaning that erosion can lead to a configuration that resists flow 10 times more in the vertically than horizontally.
+The creation and reinforcement of channels significantly impacts the macroscopic properties of the porous medium. Fig.~\ref{fig3} shows new, preliminary results on how media properties change in time. First, the left-most plot shows the rate at which the area fraction decreases as the bodies erode. Time is normalized by the value $t_f$ at which all bodies vanish and hence the area fraction is zero. Notice that the rate of area reduction does not change significantly during the simulation. The middle plot shows the resistivity, or inverse permeability of the medium. In the simulations, resistivity is calculated by measuring the total flux and the pressure upstream and downstream, then using Darcy's relation \eqref{DarcyEq} to infer $k$. Naturally, as bodies erode, the resistivity they provide decreases in time. Note, however, that the vertical axis is logarithmic. Hence, the initial linear decrease corresponds to an exponential rate of resistivity reduction. The much more mild decrease in area fraction is not sufficient to account for this exponential rate, and hence the reshaping process, in particular the formation of channels, plays a pivotal role.
+
+Lastly, the right-most plot of Fig.~\ref{fig3} shows the anisotropy, which is calculated as the ratio of the vertical resistivity to the horizontal resistivity, see Eq.~\eqref{DarcyEq}. The vertical resistivity is computed by rotating the configuration of bodies by 90 degrees. This plot shows the anisotropy to initial increase with time. Thus, the initially isotropic state becomes erased as bodies streamline and form primarily horizontal channels. Remarkably, the medium reaches an anisotropy of over 10, meaning that erosion can lead to a configuration that resists flow 10 times more in the vertically than horizontally.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -238,10 +240,16 @@ Lastly, the right-most plot of Fig.~\ref{fig3} shows the anisotropy, which is ca
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
-An immediate goal of the proposed work is extend the range of physical effects captured in these simulations. Very recently, we have implemented barycentric interpolation into the boundary integral solver in order to allow for more tightly spaced configurations, even bodies that nearly touch. Near-term plans are to include flow transport and gravitational sedimentation of the particles. For this extension, contact forces between bodies must be included. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from straightforward in practice, with several competing possible strategies that are a topic of current research  {\color{blue} cite}. We plan to implement contact forces with {\color{blue} stuff}. This goal will form the PhD dissertation of a graduate student who will be supervised by myself and Prof. Bryan Quaife (FSU Scientific Computing).
+%\subsubsection{Immediate goals of proposed work}
+
+\todo[inline]{Bryan, could you add some details and references to these paragraphs below?}
+
+An immediate goal of the proposed work is extend the range of physical effects captured in these simulations. Very recently, we have implemented barycentric interpolation into the boundary integral solver in order to allow for more tightly spaced configurations, even bodies that nearly touch. Near-term plans are to include flow transport and gravitational sedimentation of the particles. For this extension, contact forces between bodies must be included. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research  {\color{blue} cite}. We plan to implement contact forces with {\color{blue} stuff}. This goal will form the PhD dissertation of a graduate student who will be supervised by myself and Prof.~Bryan Quaife (FSU Scientific Computing).
 
 Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws \eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations \eqref{Ceq} and interface law \eqref{DissVn} would need to be implemented. Once these pieces are in place, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible. Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.
 
+
+ 
 %---------------------------------------------------------------------------------------------------%
 \subsection{Transport through eroded media}
 
@@ -406,12 +414,19 @@ with an inverse Laplace transform~\cite{jos-war2006}.
 
 
 
+
 %---------------------------------------------------------------------------------------------------%
-\subsection{Sinkhole modeling}
+% SINKHOLES AND MOBILE BODIES
+%---------------------------------------------------------------------------------------------------%
 
-Sinkhole background stuff...
+\subsection{Mobile grain simulations and sinkhole formation}
 
-Researchers at FSU's Geophysical Fluid Dynamics Institute have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments {\color{blue} cite}.
+% PREVIOUS PARAGRAPH
+%Near-term plans are to include flow transport and gravitational sedimentation of the particles. For this extension, contact forces between bodies must be included. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research  {\color{blue} cite}. We plan to implement contact forces with {\color{blue} stuff}. This goal will form the PhD dissertation of a graduate student who will be supervised by myself and Prof.~Bryan Quaife (FSU Scientific Computing).
+
+	One central goal of this proposal is to enable the free motion of grains during the erosion processes. As mentioned above, this goal requires resolving contact forces between bodies, as well as the incorporation of the external buoyancy forces. Once this goal is achieved, it will be possible to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and buoyancy forces. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks.
+
+	As mentioned above, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments \cite{tao2014experimental}. The new simulations will compare against this experimental data and guide future experiments.
 
 
 \vsp{3}
