@@ -343,8 +343,8 @@ grains, dispersion in porous media is often super-dispersive with
 $\alpha \in (0.5,1)$~\cite{}. In Figure~\ref{fig:100dispersion}, we
 investigate spreading at several different porosities of a porous
 geometry that is initialized with 100 grains.
-\begin{wrapfigure}[]{r}{0.5\textwidth}
-  \includegraphics[width=0.5\textwidth]{figs/100b_second_moment_long_ref}
+\begin{wrapfigure}[]{r}{0.4\textwidth}
+  \includegraphics[width=0.4\textwidth]{figs/100b_second_moment_long_ref}
   \caption{\label{fig:100dispersion} The particle spreading,
   characterized with the standard deviation $\sigma_\lambda(t)$ at 6
   different porosities. At early times, the line of slope 1 (black
@@ -359,7 +359,14 @@ understand how erosion affects the pore size distribution. In
 preliminary, we define pore sizes between grains that share an edge of a
 Delanuay triangulation with vertices at the grain centers
 (Figure~\ref{fig:triangluation}). In Figure~\ref{fig:poreStats}, we plot
-the mean and variance of the pore sizes as a function of porosity.
+the mean and variance of the pore sizes as a function of porosity. To
+better understand how erosion affects the anomalous dispersion, we
+propose to investigate how the pores grow with erosion. We will start
+with the notion of a {\em porelet} which is an individual
+Hagen-Poiseuille flow in each of the individual
+pores~\cite{dea-qua-bib-jua2018}. By computing the strength of the
+individual Hagen-Poiseuille flows, the shear rate can be computed, and
+thus the rate of erosion can be computed. 
 
 \begin{figure}
 \begin{subfigure}[b]{0.33\textwidth}
