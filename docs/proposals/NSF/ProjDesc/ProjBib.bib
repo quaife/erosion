@@ -1,4 +1,7 @@
 
+%--------------------------------------------------------------------------------------%
+% GENERAL INTRO REFERENCES
+%--------------------------------------------------------------------------------------%
 % UN Water
 @book{UNwater,
 title={The United Nations World Water Development Report 2018: Nature-Based Solutions for Water},
@@ -30,6 +33,17 @@ publisher={UNESCO}
   publisher={APS}
 }
 
+%--------------------------------------------------------------------------------------%
+% SINKHOLE
+%--------------------------------------------------------------------------------------%
+% Ming Ye GFDI sinkhole experiments
+@inproceedings{tao2014experimental,
+  title={Experimental investigation of catastrophic cover-collapse sinkhole formation},
+  author={Tao, X and Wang, D and Ye, M and Wang, X and Zhao, J and Pacheco Castro, RB},
+  booktitle={AGU Fall Meeting Abstracts},
+  year={2014}
+}
+%Tao, X., Ye, M., Wang, D., Castro, R.P., Wang, X., Zhao J. (2015), Experimental and Numerical Investigation of Cover-Collapse Sinkhole Development and Collapse in Central Florida, in Sinkholes and the Engineering and Environmental Impacts of Karst, edited by Doctor, D.H., Land, L., and Stephenson, J.B., National Cave and Karst Research Institute Symposium 5, Rochester, Minnesota.
 % Florida sinkhole 2018
 @article{sandhu2018fate,
   title={Fate and transport of radioactive gypsum stack water entering the Floridan aquifer due to a sinkhole collapse},
@@ -42,6 +56,9 @@ publisher={UNESCO}
   publisher={Nature Publishing Group}
 }
 
+ %--------------------------------------------------------------------------------------%
+% NUMERICAL
+%--------------------------------------------------------------------------------------%
 % FMM
 @article{gre-rok1987,
 title = {{A Fast Algorithm for Particle Simulations}},
@@ -61,11 +78,92 @@ volume = {60},
 pages = {216--225},
 year = {1992}
 }
+% Barycentric
+@article{bar2014,
+title = {{Evaluation of layer potentials close to the boundary for
+  Laplace and Helmholtz problems on analytic planar domains}},
+author = {A.~H.~Barnett},
+journal = {SIAM Journal on Scientific Computing},
+volume = {36},
+number = {2},
+pages = {A427--A451},
+year = {2014}
+}
+% Barycentric
+@article{bar-wu-vee2015,
+title = {Spectrally-Accurate Quadratures for Evaluation of Layer
+  Potentials Close to the Boundary for the 2D Stokes and Laplace
+    Equations},
+author = {A.~Barnett and B.~Wu and S.~Veerapaneni},
+journal = {SIAM Journal on Scientific Computing},
+volume = {37},
+number = {4},
+pages = {B519--B542},
+year = {2015},
+publisher = {SIAM}
+}
 
 %--------------------------------------------------------------------------------------%
+% MY EROSION PAPERS
 %--------------------------------------------------------------------------------------%
-% EROSION
+% Moore and Quaife JCP 2018
+@article{Quaife2018,
+title = "A boundary-integral framework to simulate viscous erosion of a porous medium",
+journal = "Journal of Computational Physics",
+volume = "375",
+pages = "1--21",
+year = "2018",
+issn = "0021-9991",
+doi = "https://doi.org/10.1016/j.jcp.2018.07.037",
+url = "http://www.sciencedirect.com/science/article/pii/S0021999118304984",
+author = "B.D. Quaife and M. N. J. Moore"
+}
+% CPAM 2016
+@article{MooreCPAM2017,
+  title={{R}iemann-{H}ilbert Problems for the Shapes Formed by Bodies Dissolving, Melting, and Eroding in Fluid Flows},
+  author={Moore, M. N. J.},
+  journal={Communications on Pure and Applied Mathematics},
+  volume={70},
+  number={9},
+  pages={1810--1831},
+  year={2017},
+  publisher={Wiley Online Library}
+}
+% JFM 2015
+@article{HuangJFM2015,
+  title={Shape dynamics and scaling laws for a body dissolving in fluid flow},
+  author={Huang, J. M. and Moore, M. N. J. and Ristroph, L.},
+  journal={Journal of Fluid Mechanics},
+  volume={765},
+  pages={R3},
+  year={2015},
+  publisher={Cambridge Univ Press}
+}
+% POF 2013
+@article{MoorePOF2013,
+  title={Self-similar evolution of a body eroding in a fluid flow},
+  author={Moore, M. N. J. and Ristroph, L. and Childress, S. and Zhang, J. and Shelley, M. J.},
+  journal={Physics of Fluids},
+  volume={25},
+  number={11},
+  pages={116602},
+  year={2013},
+  publisher={AIP Publishing}
+}
+% PNAS 2012
+@article{Ristroph2012,
+  title={Sculpting of an erodible body by flowing water},
+  author={Ristroph, L. and Moore, M. N. J. and Childress, S. and Shelley, M. J. and Zhang, J.},
+  journal={Proceedings of the National Academy of Sciences},
+  volume={109},
+  number={48},
+  pages={19606--19609},
+  year={2012},
+  publisher={National Acad Sciences}
+}
+
 %--------------------------------------------------------------------------------------%
+% EROSION PAPERS
 %--------------------------------------------------------------------------------------%
 % Spagnolie erosion
 @article{mitchell2017generalized,
@@ -119,9 +217,7 @@ year = {1992}
 }
 
 %--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
 % DISSOLUTION AND MELTING
-%--------------------------------------------------------------------------------------%
 %--------------------------------------------------------------------------------------%
 % SIAM dissolution fingers 2015 
 @article{kondratiuk2015steadily,
@@ -235,9 +331,7 @@ year = {1992}
 }
 
 %--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
 % SOLIDIFICATION
-%--------------------------------------------------------------------------------------%
 %--------------------------------------------------------------------------------------%
 % McCue solidification
 @article{mccue2003extinction,
@@ -282,9 +376,7 @@ year = {1992}
 }
 
 %--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
-% EROSION AND DISSOLUTION RELATED
-%--------------------------------------------------------------------------------------%
+% OTHER EROSION AND DISSOLUTION RELATED
 %--------------------------------------------------------------------------------------%
 % Ristroph sculpting with flow
 @article{ristroph2018sculpting,
@@ -307,77 +399,43 @@ year = {1992}
   publisher={Elsevier}
 }
 
-
-
-
 %--------------------------------------------------------------------------------------%
+% MULTIPHASE
 %--------------------------------------------------------------------------------------%
-% Some Riemann-Hilbert stuff
-%--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
-% Riemann-Hilbert
-@book{Ablowitz2003,
-  title={Complex Variables: Introduction and Applications},
-  author={Ablowitz, M.J. and Fokas, A.S.},
-  year={2003},
-  publisher={Cambridge University Press}
+% Imma Tumor 2019
+@article{Imma2019,
+title = "A Biomechanical Model of Tumor-Induced Intracranial Pressure and Edema in Brain Tissue",
+journal = "Biophysical Journal",
+volume = "116",
+number = "8",
+pages = "1560--1574",
+year = "2019",
+issn = "0006-3495",
+doi = "https://doi.org/10.1016/j.bpj.2019.02.030",
+url = "http://www.sciencedirect.com/science/article/pii/S0006349519302012",
+author = "Inmaculada C. Sorribes and Matthew N.J. Moore and Helen M. Byrne and Harsh V. Jain",
 }
-@article{Its2003,
-  title={The {R}iemann--{H}ilbert problem and integrable systems},
-  author={Its, A.},
-  journal={Notices of the AMS},
-  volume={50},
-  number={11},
-  pages={1389--1400},
-  year={2003}
+% Eastham multiphase
+@article{eastham2019multiphase,
+  title={Multiphase modeling of precipitation-induced membrane formation},
+  author={Eastham, PS and Moore, MNJ and Cogan, NG and Wang, Qingpu and Steinbock, Oliver},
+  journal={arXiv preprint arXiv:1906.04216},
+  year={2019}
 }
-@article{Olver2014,
-  title={Nonlinear Steepest Descent and Numerical Solution of {R}iemann--{H}ilbert Problems},
-  author={Olver, S. and Trogdon, T.},
-  journal={Comm. Pure Appl. Math.},
-  volume={67},
-  number={8},
-  pages={1353--1389},
-  year={2014},
+% Ladd dissolution wormholes
+@article{szymczak2009wormhole,
+  title={Wormhole formation in dissolving fractures},
+  author={Szymczak, P and Ladd, AJC},
+  journal={Journal of Geophysical Research: Solid Earth},
+  volume={114},
+  number={B6},
+  year={2009},
   publisher={Wiley Online Library}
 }
 
-
 %--------------------------------------------------------------------------------------%
+% MISC PAPERS
 %--------------------------------------------------------------------------------------%
-% SINKHOLE
-%--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
-% Ming Ye GFDI sinkhole experiments
-@inproceedings{tao2014experimental,
-  title={Experimental investigation of catastrophic cover-collapse sinkhole formation},
-  author={Tao, X and Wang, D and Ye, M and Wang, X and Zhao, J and Pacheco Castro, RB},
-  booktitle={AGU Fall Meeting Abstracts},
-  year={2014}
-}
-%Tao, X., Ye, M., Wang, D., Castro, R.P., Wang, X., Zhao J. (2015), Experimental and Numerical Investigation of Cover-Collapse Sinkhole Development and Collapse in Central Florida, in Sinkholes and the Engineering and Environmental Impacts of Karst, edited by Doctor, D.H., Land, L., and Stephenson, J.B., National Cave and Karst Research Institute Symposium 5, Rochester, Minnesota.
-
-% CPALM
-@Misc{CPALMS,
-  title =  {Using Mathematics to Optimize Wing Design},
-  author =  {CPALMS Perspectives Videos},
-  howpublished = {\url{http://www.cpalms.org/Public/PreviewResourceUpload/Preview/%20155780}},
-  year =  2015
-}
-
-
-
-
-
-%--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
-% MY PAPERS
-%--------------------------------------------------------------------------------------%
-%--------------------------------------------------------------------------------------%
-
-%--------------------------------------------%
-% MY NEWEST PAPERS
-%--------------------------------------------%
 % Bolles waves 2019
 @article{Bolles2019,
   title = {Anomalous wave statistics induced by abrupt depth change},
@@ -392,44 +450,12 @@ year = {1992}
   doi = {10.1103/PhysRevFluids.4.011801},
   url = {https://link.aps.org/doi/10.1103/PhysRevFluids.4.011801}
 }
-% Majda waves 2019
-@article {Majda2019,
-	author = {Majda, Andrew J. and Moore, M. N. J. and Qi, Di},
-	title = {Statistical dynamical model to predict extreme events and anomalous features in shallow water waves with abrupt depth change},
-	volume = {116},
-	number = {10},
-	pages = {3982--3987},
-	year = {2019},
-	doi = {10.1073/pnas.1820467116},
-	publisher = {National Academy of Sciences},
-	issn = {0027-8424},
-	URL = {https://www.pnas.org/content/116/10/3982},
-	eprint = {https://www.pnas.org/content/116/10/3982.full.pdf},
-	journal = {Proceedings of the National Academy of Sciences}
-}
-% Imma Tumor 2019
-@article{Imma2019,
-title = "A Biomechanical Model of Tumor-Induced Intracranial Pressure and Edema in Brain Tissue",
-journal = "Biophysical Journal",
-volume = "116",
-number = "8",
-pages = "1560--1574",
-year = "2019",
-issn = "0006-3495",
-doi = "https://doi.org/10.1016/j.bpj.2019.02.030",
-url = "http://www.sciencedirect.com/science/article/pii/S0006349519302012",
-author = "Inmaculada C. Sorribes and Matthew N.J. Moore and Helen M. Byrne and Harsh V. Jain",
-}
-
-%--------------------------------------------%
-% MY FORTHCOMING PAPERS
-%--------------------------------------------%
-% Lenny boundary integral
-@article{Lenny2018,
-  title={Boundary integral analysis for the non-homogeneous 3{D} {S}tokes equation.},
-  author={Gray, L. J. and Jakowski, J. and Moore, M. N. J. and Ye, W.},
-  journal={arXiv preprint arXiv:1812.00853},
-  year={2018}
+% CPALM
+@Misc{CPALMS,
+  title =  {Using Mathematics to Optimize Wing Design},
+  author =  {CPALMS Perspectives Videos},
+  howpublished = {\url{http://www.cpalms.org/Public/PreviewResourceUpload/Preview/%20155780}},
+  year =  2015
 }
 %note ={Under review at {\it Advances in Computational Mathematics}},
 % Karina Caves 2018
@@ -449,157 +475,24 @@ author = "Inmaculada C. Sorribes and Matthew N.J. Moore and Helen M. Byrne and H
 }
 %note={Submitted to {\it SIAM Journal on Applied Mathematics}},
 
-%--------------------------------------------%
-% MY FLAPPING PAPERS
-%--------------------------------------------%
-% JCP 2017
-@article{MooreJCP2017,
-  title={A fast {C}hebyshev method for simulating flexible-wing propulsion},
-  author={Moore, M. N. J.},
+% Shelley theta-L
+@article{hou1994removing,
+  title={Removing the stiffness from interfacial flows with surface tension},
+  author={Hou, Thomas Y and Lowengrub, John S and Shelley, Michael J},
   journal={Journal of Computational Physics},
-  volume={345},
-  pages={792--817},
-  year={2017},
+  volume={114},
+  number={2},
+  pages={312--338},
+  year={1994},
   publisher={Elsevier}
 }
-% POF 2015
-@article{MoorePOF2015,
-  title={Torsional spring is the optimal flexibility arrangement for thrust production of a flapping wing},
-  author={Moore, M. N. J.},
-  journal={Physics of Fluids},
-  volume={27},
-  number={9},
-  pages={091701},
-  year={2015},
-  publisher={AIP Publishing}
-}
-% JFM 2014
-@article{MooreJFM2014,
-  title={Analytical results on the role of flexibility in flapping propulsion},
-  author={Moore, M. N. J.},
-  journal={Journal of Fluid Mechanics},
-  volume={757},
-  pages={599--612},
-  year={2014},
-  publisher={Cambridge Univ Press}
-}
-
-%--------------------------------------------%
-% MY EROSION PAPERS
-%--------------------------------------------%
-% Moore and Quaife JCP 2018
-@article{Quaife2018,
-title = "A boundary-integral framework to simulate viscous erosion of a porous medium",
-journal = "Journal of Computational Physics",
-volume = "375",
-pages = "1--21",
-year = "2018",
-issn = "0021-9991",
-doi = "https://doi.org/10.1016/j.jcp.2018.07.037",
-url = "http://www.sciencedirect.com/science/article/pii/S0021999118304984",
-author = "B.D. Quaife and M. N. J. Moore"
-}
-% CPAM 2016
-@article{MooreCPAM2017,
-  title={{R}iemann-{H}ilbert Problems for the Shapes Formed by Bodies Dissolving, Melting, and Eroding in Fluid Flows},
-  author={Moore, M. N. J.},
-  journal={Communications on Pure and Applied Mathematics},
-  volume={70},
-  number={9},
-  pages={1810--1831},
-  year={2017},
-  publisher={Wiley Online Library}
-}
-% JFM 2015
-@article{HuangJFM2015,
-  title={Shape dynamics and scaling laws for a body dissolving in fluid flow},
-  author={Huang, J. M. and Moore, M. N. J. and Ristroph, L.},
-  journal={Journal of Fluid Mechanics},
-  volume={765},
-  pages={R3},
-  year={2015},
-  publisher={Cambridge Univ Press}
-}
-% POF 2013
-@article{MoorePOF2013,
-  title={Self-similar evolution of a body eroding in a fluid flow},
-  author={Moore, M. N. J. and Ristroph, L. and Childress, S. and Zhang, J. and Shelley, M. J.},
-  journal={Physics of Fluids},
-  volume={25},
-  number={11},
-  pages={116602},
-  year={2013},
-  publisher={AIP Publishing}
-}
-% PNAS 2012
-@article{Ristroph2012,
-  title={Sculpting of an erodible body by flowing water},
-  author={Ristroph, L. and Moore, M. N. J. and Childress, S. and Shelley, M. J. and Zhang, J.},
-  journal={Proceedings of the National Academy of Sciences},
-  volume={109},
-  number={48},
-  pages={19606--19609},
-  year={2012},
-  publisher={National Acad Sciences}
-}
 
 
-%--------------------------------------------%
-% MY OLDER PAPERS
-%--------------------------------------------%
-% Weak-coupling 2012
-@article{Moore2012JNNFM,
-  title={A weak-coupling expansion for viscoelastic fluids applied to dynamic settling of a body.},
-  author={ { M. N. J. Moore} and Shelley, M. J.},
-  journal={J. Non-Newton. Fluid},
-  volume={183--184},
-  pages={25--36},
-  year={2012},
-  publisher={Elsevier}
-}
-% Dustin Hill 2013
-@misc{HillThesis2013,
-  title={A weak-coupling expansion applied to the motion of a settling rod in a viscoelastic fluid.},
-  author={ Dustin J. Hill },
-  howpublished={Senior Honors Thesis, Albright College},
-  month = {May},
-  year={2013},
-}
-% Vertical Layering 2012 JFM
-@article{Moore2012JFM,
-  title={Stratified flows with vertical layering of density:
-experimental and theoretical study of flow configurations and their stability},
-  author={Camassa, R. and McLaughlin, R. M. and { M. N. J. Moore} and Yu, K.},
-  journal={Journal of Fluid Mechanics},
-  volume={690},
-  number={},
-  pages={571--606},
-  year={2012},
-  publisher={}
-}
-% Brachistochrones 2008
-@article{BrachPaper2008,
-  title={Brachistochrones in potential flow and the connection to {D}arwin's theorem},
-  author={Camassa, R. and McLaughlin, R. M. and { M. N. J. Moore} and Vaidya, A.},
-  journal={Physics Letters A},
-  volume={372},
-  number={45},
-  pages={6742--6749},
-  year={2008},
-  publisher={Elsevier}
-}
-% Boundary integrals 2007
-@article{Moore2007,
-  title={Evaluation of supersingular integrals: second-order boundary derivatives},
-  author={{ M. N. J. Moore} and Gray, L. J. and Kaplan, T.},
-  journal={Int. J. Numer. Meth. Eng.},
-  volume={69},
-  number={9},
-  pages={1930--1947},
-  year={2007},
-  publisher={Wiley Online Library}
-}
 
+
+%--------------------------------------------------------------------------------------%
+% Bryan's additions
+%--------------------------------------------------------------------------------------%
 @article{mat-kha-koz2008,
 title = {Tortuosity-porosity relation in porous media flow},
 author = {M.~Matyka and A.~Khalili and Z.~Koza},
@@ -627,43 +520,6 @@ journal = {Physical Review E},
 volume = {84},
 pages = {036319},
 year = {2011}
-}
-
-
-% Ladd dissolution wormholes
-@article{szymczak2009wormhole,
-  title={Wormhole formation in dissolving fractures},
-  author={Szymczak, P and Ladd, AJC},
-  journal={Journal of Geophysical Research: Solid Earth},
-  volume={114},
-  number={B6},
-  year={2009},
-  publisher={Wiley Online Library}
-}
-
-% Barycentric
-@article{bar2014,
-title = {{Evaluation of layer potentials close to the boundary for
-  Laplace and Helmholtz problems on analytic planar domains}},
-author = {A.~H.~Barnett},
-journal = {SIAM Journal on Scientific Computing},
-volume = {36},
-number = {2},
-pages = {A427--A451},
-year = {2014}
-}
-% Barycentric
-@article{bar-wu-vee2015,
-title = {Spectrally-Accurate Quadratures for Evaluation of Layer
-  Potentials Close to the Boundary for the 2D Stokes and Laplace
-    Equations},
-author = {A.~Barnett and B.~Wu and S.~Veerapaneni},
-journal = {SIAM Journal on Scientific Computing},
-volume = {37},
-number = {4},
-pages = {B519--B542},
-year = {2015},
-publisher = {SIAM}
 }
 
 @article{str1968,
@@ -761,5 +617,3 @@ number = {12},
 pages = {124103},
 year = {2018},
 }
-
-
