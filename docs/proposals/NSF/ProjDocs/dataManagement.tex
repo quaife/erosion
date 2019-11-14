@@ -1,0 +1,85 @@
+%\documentclass[12pt]{amsart}
+\documentclass[11pt]{article}
+
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+%\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{tabularx}
+\usepackage{mathpazo}
+\usepackage{enumitem}
+
+%\renewcommand\thesubsection{(\alph{subsection})}
+%\renewcommand\thesubsubsection{(\roman{subsubsection})}
+
+\addtolength{\oddsidemargin}{-0.75in}
+\addtolength{\evensidemargin}{-0.75in}
+\addtolength{\textwidth}{1.5in}
+\addtolength{\topmargin}{-0.75in}
+\addtolength{\textheight}{1.5in}
+% For 11pt size
+
+\pagestyle{fancy}
+\lhead{\footnotesize Moore and Quaife}
+\chead{\footnotesize Data Management Plan}
+\rhead{\footnotesize \thepage{ of }\pageref{LastPage}}
+\cfoot{}
+
+\begin{document}
+\thispagestyle{fancy}
+\subsection*{Products of the Research}
+The following types of data will be produced as part of this project:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt] 
+\item numerical methods for simulating erosion;
+\item scientific software for implementing these methods;
+\item website for disseminating results;
+\item peer-reviewed journal publications.
+\end{itemize}
+
+\subsection*{Data Formats}
+The software product will consist of (i) exploratory MATLAB or Python
+scripts for testing analyzing the algorithms, and (ii) Julia and Fortran
+implementations to measure runtime efficiencies on computer
+architectures available at Florida State University.  All scripts and
+codes will include explanatory comments.  The website will be in ASCII
+plaintext using html, php, and javascript.
+
+
+\subsection*{Access to Data and Data Sharing Practices and Policies}
+Source scripts and codes will be made available, often before the
+acceptance of the peer-reviewed papers, using the relevant scripts and
+libraries.  This software will then be available, without restriction,
+to any user who wishes to download, use, or modify it.  The website will
+be available on the Internet.  All materials, including movies, images,
+and text, will be licensed for re-use with appropriate credit given
+(using a license such as the GNU Copyleft license).  Data from the
+research will be open source, and there are no significant privacy,
+confidentiality, or intellectual property requirements that pertain to
+this research. Educational videos will be prodced by the CPALMS
+organization and made freely available to the public
+
+
+\subsection*{Policies for Re-Use, Re-Distribution and Production of
+Derivatives}
+All data created as a result of this project will be freely available
+and usable by the public, and by other researchers.  The only condition
+will be a citation to the appropriate publications.  The PIs will
+further request, but not require, that users of our software contribute
+any changes, improvements, or additions that they make back to the
+appropriate open-source software project.  Data or images that are
+copyrighted (by a journal, for example) will be marked as such by
+watermark or text header in the file.
+
+\subsection*{Archiving of Data} 
+Source code will be uploaded to Google Code, BitBucket, GitHub, and
+other Cloud-based data providers.  Websites relating to this project,
+and all of the data on the aforementioned websites, will be hosted by
+Florida State University's (FSU) Information Technology group on
+servers that are backed up regularly.  This data will be available to
+the public for as long as the PIs remain actively employed at FSU.  If
+the PIs leave FSU for any reason, steps will be taken to ensure that
+this data remains available, either by moving it to another university
+or making it a part of a larger, more persistent project at FSU.
+
+
+\end{document}

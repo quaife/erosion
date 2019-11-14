@@ -1,0 +1,82 @@
+%\documentclass[12pt]{amsart}
+\documentclass[11pt]{article}
+
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{mathpazo}
+
+%\renewcommand\thesubsection{(\alph{subsection})}
+%\renewcommand\thesubsubsection{(\roman{subsubsection})}
+
+\addtolength{\oddsidemargin}{-0.75in}
+\addtolength{\evensidemargin}{-0.75in}
+\addtolength{\textwidth}{1.5in}
+\addtolength{\topmargin}{-0.75in}
+\addtolength{\textheight}{1.5in}
+% For 11pt size
+
+\newcommand{\todo}[1]{ \fbox{{\bf TODO:} \color{red} #1}}
+
+\pagestyle{fancy}
+\lhead{\footnotesize Quaife and Moore}
+\chead{\footnotesize Facilities, Equipment, and Other Resources}
+\rhead{\footnotesize \thepage{ of }\pageref{LastPage}}
+\cfoot{}
+
+\begin{document}
+\thispagestyle{fancy}
+
+\subsection*{Computing Resources}
+Florida State University's (FSU) high performance computing (HPC) and
+high throughput computing (HTC) clusters are managed by the Research
+Computing Center (RCC).
+
+The FSU HPC system is comprised of 12,492 x86 64-bit compute cores
+linked together by low-latency infiniband networks for MPI
+communication. The aggregate peak performance of the system is 264.6
+TFLOPS. Compute nodes support between 2 and 16GB of memory per core. A
+redundant cluster of specialized nodes serve as the user entry points
+for the system. The Slurm job scheduler handles job submission and
+scheduling on the HPC system. A broad set of compilers, math and
+communication libraries, and software applications are made available on
+the HPC to maximize the utility of the system by users across diverse
+academic disciplines.  The cluster also includes nodes with 16 NVIDIA
+Tesla gpGPU cards (m2050) for a total 7,168 GPU cores for a peak system
+performance of 19.8 TFLOPS.
+
+The FSU HTC system, Condor, is comprised of 1,200 x86 64-bit compute
+cores.  The system is specifically tailored to support large batches of
+serial jobs where overall throughput is preferred over performance.
+The aggregate peak performance of the system is 16.5 TFLOPS.  Compute
+nodes support between 2 and 8 GBs of memory per core.
+
+In addition to the HPC and HTC systems, the PI's group has access to
+RCC's Spear cluster.  The Spear Cluster is comprised of 288 x86 64-bit
+process cores linked together by a QDR Infiniband network.  Eight of the
+Spear nodes also connect to a PCI chassis equipped with 16 Nvidia Tesla
+gpGPU cards (M2050) for a total of 7,168 GPU cores for a peak system
+performance of 19.8 TFLOPS. 
+
+\subsection*{Personnel}
+The RCC has dedicated personnel who offer help with hardware
+specification and acquisition, software acquisition and licensing,
+compilation, installation, integration with the queuing system, running
+benchmarks, developing computational workflows, and necessary end-user
+training.  In addition, the Department of Mathematics and the Department
+of Scientific Computing have systems administrators that assist with the
+PIs's group's computing needs.
+
+Both the PIs are associates in the Geophysical Fluid Dynamics Institute
+(GFDI). GFDI is a fluids lab where experimental work will be performed.
+The lab includes the necessary support staff, including a machinist and
+system administrator, to assist with experimental setups and
+computational needs.
+
+\subsection*{Office Space}
+The project will utilize office and workspace in the Department of
+Mathematics, Department of Scientific Computing, and Geophysical Fluid
+Dynamics Institute at Florida State University. Offices are equipped
+with a standard desktop computer and internet access.
+
+\end{document}
