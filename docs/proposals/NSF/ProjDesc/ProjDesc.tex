@@ -279,6 +279,7 @@ Applying the Laplace transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$ satisfies
 \begin{align}
   sC(\xx,s) - \frac{1}{\Pe}\Delta C(\xx,s) = c_0(\xx), 
     \quad \xx \in \Omega,
+  \label{eqn:DiffusionLaplace}
 \end{align}
 where $c_0(\xx)$ is the initial concentration. This PDE will be solved with high-order accuracy and efficiently by using fast-multipole-accelerated integral equation methods of the Yukawa equation~\cite{kro-qua2011}, and the concentration will be recovered with an inverse Laplace transform~\cite{jos-war2006}.  
 Once a high-order advection-diffusion solver is in place, by combining it with our integral equation formulation for the Stokes equation and the shear stress, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible. Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.
@@ -354,12 +355,12 @@ While the tortuosity characterizes the amount of winding of streamlines, the dis
     \sum_{j=1}^{N_p} (\lambda_j(t) - \langle \lambda \rangle(t))^2
 \end{align}
 Then, the standard deviation $\sigma_\lambda$ characterizes the dispersion, and long-time behavior typically results in a power-law scaling $\sigma_\lambda \sim t^{\alpha}$. The power $\alpha$, which quantifies the long-time spreading, is $1$ in a ballistic regime which occurs at early times when the trajectories have not explored much of the porous geometry. However, once the trajectories have traversed a few grains, dispersion in porous media is often super-dispersive with $\alpha \in (0.5,1)$~\cite{dea-leb-den-tar-bol-dav2013}. In Figure~\ref{fig:100dispersion}, we investigate spreading at several different porosities of a porous geometry that is initialized with 100 grains.
-\begin{wrapfigure}[]{r}{0.4\textwidth}
+\begin{wrapfigure}[22]{r}{0.4\textwidth}
   \includegraphics[width=0.4\textwidth]{figs/100b_second_moment_long_ref}
   \caption{\label{fig:100dispersion} The particle spreading,
   characterized with the standard deviation $\sigma_\lambda(t)$ at 6
   different porosities. At early times, the line of slope 1 (black
-  curve) indicates a ballistic motion. Then, at later times, the
+  curve) indicates a ballistic motion. At later times, the
   dispersion becomes super-dispersive at a rate indicated by the slope
   of the black dashed-dotted line.}
 \end{wrapfigure}
@@ -378,7 +379,15 @@ stably simulate erosion with only 512 points on the eroding body which
 corresponds to an arclength spacing 12 times larger than the original
 separation distance---to achieve a comparable accuracy with the spectral
 trapezoid rule, 60 times as many discretization points would be
-required. In Figure~\ref{fig:}
+required. In Figure~\ref{fig:porelets}(a), different shades of grey
+correspond to the configuration of the eroding grain at five equally
+spaced time steps. At three of the time steps, we plot the velocity
+between the grain and the solid wall (black line). At all three
+configurations, the flow is nearly parabolic indicating that  porelet
+model~\cite{dea-qua-bir-jua2018} is appropriate. After performing a
+thorough analysis of the pore size growth in this simple configuration,
+we will develop a more complete model for networks of pores that are
+prevalent in porous media.
 
 
 \begin{figure}[htp]
@@ -409,13 +418,22 @@ semi-Lagrangian advection solver~\cite{rob1981}, and a diffusion solver
 that solves an $s$-dependent Yukawa equation, where $s$ is the Laplace
 transform variable~\eqref{eqn:DiffusionLaplace}.
 
-\begin{wrapfigure}[]{r}{0.4\textwidth}
-  \includegraphics[width=0.4\textwidth]{figs/porelets_geom} \\ \\ \\
-  \includegraphics[width=0.4\textwidth]{figs/porelets_size}
-\end{wrapfigure}
-
-\todo[inline]{Talk about how to develop models for the pore sizes as a
-function of time. See results from S-H}
+\begin{figure}[htp]
+  \centering
+  \begin{subfigure}[b]{0.47\textwidth}
+  \begin{center}
+  \includegraphics[height=0.55\textwidth]{figs/porelets_geom}
+  \end{center}
+  \caption{}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.47\textwidth}
+  \begin{center}
+  \includegraphics[height=0.55\textwidth]{figs/porelets_size}
+  \end{center}
+  \caption{}
+  \end{subfigure}
+  \caption{\label{fig:porelets} (a) An eroding body at five equally time steps in $[0,1]$. The far field condition is a constant pressure drop in a channel three times as wide as the eroding grain.  At the three intermediate time steps, the velocity field in the field, which is nearly parabolic, is included. (b) The pore size (black) and maximum velocity in the pore (red) as a function of time.  As the channel opens, the flow rate increases to maintain a constant pressure drop, and this increases the rate of erosion.} 
+\end{figure}
 
 
 %---------------------------------------------------------------------------------------------------%
