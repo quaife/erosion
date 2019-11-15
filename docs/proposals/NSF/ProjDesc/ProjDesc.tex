@@ -273,7 +273,7 @@ Though conceptually straightforward, implementing contact forces in multibody fl
 
 Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws~\eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations~\eqref{Ceq} and interface law~\eqref{DissVn} need to be implemented.  We proposed to solve the advection diffusion equation~\eqref{Ceq} by first using Strang splitting~\cite{str1968} to decompose the PDE into linear advection and diffusion.  The advection equation will be solved with a semi-Lagrangian method~\cite{rob1981} so that it can be solved on an Eulerian grid without a restrictive CFL condition. PI Quaife has experience with using semi-Lagrangian methods for another type of complex viscous flow~\cite{kab-qua-bir2017}.  The diffusion equation is more challenging to accurately solve in the complex porous geometries.  Two approaches include a memory-intensive space-time heat kernel~\cite{bar-eps-gre-jia-wan2019, jia-gre-wan2015, li-gre2009}, and Rothe's method coupled with a Yukawa equation solver~\cite{kro-qua2010, cau-cho-chr-sea2016}. A particular challenge of the latter method is extending functions from the complex geometry and into a regular geometry, such as a square, so that a high-order volume integral or Fourier method can be applied, and some groups have recently developed new techniques to form such an extension~\cite{fry-kro-tor2019, fry-leh-tor2019}. Alternatively, we propose to use a Laplace Transform to solve the diffusion equation
 \begin{alignat}{3}
-  \pd{c}{t} &= \frac{1}{\Pe} \Delta c, \quad &&\xx \in \Omega, \: t>0, .
+  \pd{c}{t} &= \frac{1}{\Pe} \Delta c, \quad &&\xx \in \Omega, \: t>0.
 \end{alignat}
 Applying the Laplace transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$ satisfies
 \begin{align}
@@ -318,27 +318,33 @@ Upon computing $N_p$ trajectories, the tortuosity is the dimensionless number
   T = \frac{1}{d} \left(\int_{S} u_1(x_0,y_0)\lambda(y_0) dy_0\, \right)
   \Bigg/ \left(\int_S u_1(x_0,y_0)\, dy_0 \right),
 \end{align}
-where $S$ is the vertical cross-section at $x=x_0$, $d$ is its length, $u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of the trajectory starting at $(x_0,y_0)$ and ending at a vertical cross-section at the other end of the channel. Relationships between the tortuosity and porosity of a geometry have been developed by other groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and preliminary results indicate that such models might be appropriate for geometries whose porosity is increasing under the process of erosion (Figure~\ref{fig:100tortuosity}). However, preliminary results also indicate that erosion can increase the amount of tortuosity as is evident towards the at the towards the end of the erosion process in Figure~\ref{fig:100tortuosity}. Moreover, we have observed a significant increase in the tortuosity at small porosities (Figure~\ref{fig:20tortuosity}.
+where $S$ is the vertical cross-section at $x=x_0$, $d$ is its length,
+$u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of
+the trajectory starting at $(x_0,y_0)$ and ending at a vertical
+cross-section at the other end of the channel. Relationships between the
+tortuosity and porosity of a geometry have been developed by other
+groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and
+preliminary results indicate that such models might be appropriate for
+geometries whose porosity is increasing under the process of erosion
+(Figure~\ref{fig:100tortuosity}(a)). However, preliminary results also
+indicate that erosion can increase the amount of tortuosity as is
+evident towards the at the towards the end of the erosion process in
+Figure~\ref{fig:100tortuosity}(a). Moreover, we have observed a
+significant increase in the tortuosity at small porosities
+(Figure~\ref{fig:100tortuosity}(b)).
 
 \begin{figure}[htp]
   \begin{center}
   \begin{subfigure}[b]{0.45\textwidth}
-  \includegraphics[width=\textwidth]{figs/tort_eulerian20}
-  \caption{20 eroding bodies}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.45\textwidth}
   \includegraphics[width=\textwidth]{figs/tort_eulerian100}
   \caption{100 eroding bodies}
   \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[width=\textwidth]{figs/tort_eulerian20}
+  \caption{20 eroding bodies}
+  \end{subfigure}
   \end{center}
-
-  \caption{\label{fig:100tortuosity} The tortuosity of two eroding
-  geometries. The tortuosity can be computed using two different formulas
-  (red vs.~blue marks). The red square is the tortuosity in
-  Figure~\ref{fig:100tracers}. Their is qualitative agreement between
-  our numerical simulations and a power-law model (black dashed
-  line)~\cite{mat-kha-koz2008}.}
-  \todo[inline]{Fix caption and its references}
+  \caption{\label{fig:100tortuosity} The tortuosity of two eroding geometries. The tortuosity can be computed using two different formulas (red vs.~blue marks). In the left plot, the red square is the tortuosity of the geometry in Figure~\ref{fig:100tracers}. In both cases, there is qualitative agreement between our numerical simulations and a power-law model (black dashed line)~\cite{mat-kha-koz2008}.}
 \end{figure}
 
 While the tortuosity characterizes the amount of winding of streamlines, the dispersion characterizes the spreading of the trajectories.  Dispersion can be described using the first- and second-ensemble moments of the trajectories
@@ -347,16 +353,7 @@ While the tortuosity characterizes the amount of winding of streamlines, the dis
     \lambda_j(t), \quad \sigma_\lambda^{2}(t) = \frac{1}{N_p}
     \sum_{j=1}^{N_p} (\lambda_j(t) - \langle \lambda \rangle(t))^2
 \end{align}
-Then, the standard deviation $\sigma_\lambda$ characterizes the
-dispersion, and long-time behavior typically results in a power-law
-scaling $\sigma_\lambda \sim t^{\alpha}$. The power $\alpha$, which
-quantifies the long-time spreading, is $1$ in a ballistic regime which
-occurs at early times when the trajectories have not explored much of
-the porous geometry. However, once the trajectories have traversed a few
-grains, dispersion in porous media is often super-dispersive with
-$\alpha \in (0.5,1)$~\cite{}. In Figure~\ref{fig:100dispersion}, we
-investigate spreading at several different porosities of a porous
-geometry that is initialized with 100 grains.
+Then, the standard deviation $\sigma_\lambda$ characterizes the dispersion, and long-time behavior typically results in a power-law scaling $\sigma_\lambda \sim t^{\alpha}$. The power $\alpha$, which quantifies the long-time spreading, is $1$ in a ballistic regime which occurs at early times when the trajectories have not explored much of the porous geometry. However, once the trajectories have traversed a few grains, dispersion in porous media is often super-dispersive with $\alpha \in (0.5,1)$~\cite{dea-leb-den-tar-bol-dav2013}. In Figure~\ref{fig:100dispersion}, we investigate spreading at several different porosities of a porous geometry that is initialized with 100 grains.
 \begin{wrapfigure}[]{r}{0.4\textwidth}
   \includegraphics[width=0.4\textwidth]{figs/100b_second_moment_long_ref}
   \caption{\label{fig:100dispersion} The particle spreading,
@@ -367,9 +364,24 @@ geometry that is initialized with 100 grains.
   of the black dashed-dotted line.}
 \end{wrapfigure}
 
-The rate of dispersion is known to be directly related to the pore size distribution~\cite{dea-qua-bir-jua2018}. Therefore, there is a need to understand how erosion affects the pore size distribution. In preliminary, we define pore sizes between grains that share an edge of a Delanuay triangulation with vertices at the grain centers (Figure~\ref{fig:Eroding100gap_mean_var}(a)). In Figures~\ref{fig:Eroding100gap_mean_var}(a) and~\ref{fig:Eroding100gap_mean_var}(b), we plot the mean and variance of the pore sizes as a function of porosity. To better understand how erosion affects the anomalous dispersion, we propose to investigate how the pores grow with erosion. We will start with the notion of a {\em porelet} which is an individual Hagen-Poiseuille flow in each of the individual pores~\cite{dea-qua-bir-jua2018}. By computing the strength of the individual Hagen-Poiseuille flows, the shear rate can be computed, and thus the rate of erosion can be computed. 
+The rate of dispersion is known to be directly related to the pore size
+distribution~\cite{dea-qua-bir-jua2018}. Therefore, there is a need to
+understand how erosion affects the pore size distribution. In
+preliminary work~\cite{chi-moo-qua2019}, we define pore sizes between grains that share an edge of a Delanuay triangulation with vertices at the grain centers (Figure~\ref{fig:Eroding100gap_mean_var}(a)). In Figures~\ref{fig:Eroding100gap_mean_var}(a) and~\ref{fig:Eroding100gap_mean_var}(b), we plot the mean and variance of the pore sizes as a function of porosity. To better understand how erosion affects the anomalous dispersion, we propose to investigate how the pores grow with erosion. We will start with the notion of a {\em porelet} which is an individual Hagen-Poiseuille flow in each of the individual pores~\cite{dea-qua-bir-jua2018}. By computing the strength of the individual Hagen-Poiseuille flows, the shear rate can be computed, and thus the rate of erosion can be computed. 
 
-\begin{figure}
+We have performed a carefully chosen simulation to better understand the
+effect of erosion on the pore size. We start with a single grain inside
+the channel that is sufficiently large that the spacing between the
+initial grain and the channel walls, which is 2 units wide), is
+$10^{-3}$. Since we use a Barycentric quadrature rule, we are able to
+stably simulate erosion with only 512 points on the eroding body which
+corresponds to an arclength spacing 12 times larger than the original
+separation distance---to achieve a comparable accuracy with the spectral
+trapezoid rule, 60 times as many discretization points would be
+required. In Figure~\ref{fig:}
+
+
+\begin{figure}[htp]
 \begin{subfigure}[b]{0.33\textwidth}
   \includegraphics*[height=0.8\linewidth]{figs/triangulation_100b100.pdf}
 \caption{}
@@ -388,48 +400,19 @@ The rate of dispersion is known to be directly related to the pore size distribu
   initially contains 100 eroding bodies.}
 \end{figure}
 
-\todo[inline]{Advection diffusion done with the same method used to do
-dissolution. A lot of the next few paragraphs will be simplified}
 We propose to extend our preliminary results by considering
-concentrations with finite Peclet numbers. Numerical methods to solve
-the advection-diffusion equation~\eqref{eqn:advectionDiffusion} in a
-complex geometry poses several challenges that we will address.  We will
-start by splitting the advection and diffusion equations with a Strang
-splitting method~\cite{str1968}.  Numerical solutions of the advection
-equation will be formed with a semi-Lagrangian method~\cite{rob1981} so
-that it can be solved on an Eulerian grid without a restrictive CFL
-condition. PI Quaife has experience with using semi-Lagrangian
-methods for another type of complex viscous flow~\cite{kab-qua-bir2017}.
-The diffusion equation is more challenging to solve in a complex
-geometry with an integral equation formulation.  One approach is to use
-the space-time heat kernel~\cite{}, but this requires storing an entire
-time history of the solution.  Alternatively, the heat equation can be
-discretized in time and the resulting Yukawa equation is solved at each
-time step~\cite{kro-qua2010}. A particular challenge of this method is
-extending the forcing function from the complex geometry and into a
-regular geometry, such as a square, so that a high-order volume integral
-or Fourier method can be applied.  Recently, groups have used radial
-basis functions to form a sufficiently smooth
-extension~\cite{fry-kro-tor2019, fry-leh-tor2019}.
+concentrations with finite Peclet numbers. We will deploy the same
+numerical methods to simulate dissolution and melting to study a
+concentration that is being transported through a eroded porous
+geometry. Again, this will encompass Strang splitting~\cite{str1968}, a
+semi-Lagrangian advection solver~\cite{rob1981}, and a diffusion solver
+that solves an $s$-dependent Yukawa equation, where $s$ is the Laplace
+transform variable~\eqref{eqn:DiffusionLaplace}.
 
-We propose to develop a new method that uses the Laplace transform.
-Upon applying a Strang splitting, the resulting diffusion equation is
-\begin{alignat}{3}
-  \pd{c}{t} &= \frac{1}{\Pe} \Delta c, \quad &&\xx \in \Omega, \: t>0, \\
-  \pd{c}{\nn} &= 0, &&\xx \in \partial\Omega, \: t>0, \\
-  c(\xx,0) &= c_0(\xx), &&\xx \in \Omega.
-\end{alignat}
-Then, the Laplace transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$,
-satisfies
-\begin{align}
-  sC(\xx,s) - \frac{1}{\Pe}\Delta C(\xx,s) = c_0(\xx), 
-    \quad \xx \in \Omega
-\end{align}
-This PDE will be solved with high-order accuracy and efficiently by
-using fast-multipole-accelerated integral equation methods of the Yukawa
-equation~\cite{kro-qua2011}, and the concentration will be recovered
-with an inverse Laplace transform~\cite{jos-war2006}.
-
+\begin{wrapfigure}[]{r}{0.4\textwidth}
+  \includegraphics[width=0.4\textwidth]{figs/porelets_geom} \\ \\ \\
+  \includegraphics[width=0.4\textwidth]{figs/porelets_size}
+\end{wrapfigure}
 
 \todo[inline]{Talk about how to develop models for the pore sizes as a
 function of time. See results from S-H}
