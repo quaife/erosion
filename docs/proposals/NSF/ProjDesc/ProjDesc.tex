@@ -267,13 +267,21 @@ Lastly, the right-most plot of Fig.~\ref{fig3} shows the anisotropy, which is ca
 
 %\subsubsection{Immediate goals of proposed work}
 
-An immediate goal of the proposed work is extend the range of physical effects captured in these simulations. A particular challenge of a BIE formulation is developing quadrature for nearly-singular integrands that arise when bodies are close. To address this problem, we have very recently extended a Barycentric quadrature~\cite{bar2014, bar-wu-vee2015} and have successfully simulated erosion with grains that are initially separated by 1\% of an arclength spacing. This quadrature approach has the advantage that it is a non-intrusive modification of the trapezoid rule, allowing us to achieve an error bound that independent of the grain configuration. Near-term plans are to include flow transport and gravitational sedimentation of the eroding grains. For this extension, contact forces between bodies must be included to eliminate unphysical contact that is inevitable due to discretization errors. 
+An immediate goal of the proposed work is extend the range of physical effects captured in these simulations. A particular challenge of a BIE formulation is developing quadrature for nearly-singular integrands that arise when bodies are close. To address this problem, we have very recently extended a Barycentric quadrature~\cite{bar2014, bar-wu-vee2015} and have successfully simulated erosion with grains that are initially separated by 1\% of an arclength spacing~\cite{chi-moo-qua2019}. This quadrature approach has the advantage that it is a non-intrusive modification of the trapezoid rule, allowing us to achieve an error bound that independent of the grain configuration. Near-term plans are to include flow transport and gravitational sedimentation of the eroding grains. For this extension, contact forces between bodies must be included to eliminate unphysical contact that is inevitable due to discretization errors. 
 
-Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research.  One approach is to use introduce a potential with short-range repulsion~\cite{}, but such methods often introduce stiffness. Alternatively, a space-time interference volume can guarantee a minimum separation between grains.  In a fluid context, this method was first introduced by Lu et al.~\cite{lu-rah-zor2017}, and extended to allow for much smaller separation distances of rigid bodies by the PI's previous graduate student~\cite{bys-sha-qua2019}. One Ph.D.~student, who will be jointly supervised by both PIs, will simulate sedimentation of eroding bodies by developing algorithms that resolve quadrature error and contact.
+Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research.  One approach is to use introduce a potential with short-range repulsion, but such methods often introduce stiffness. Alternatively, a space-time interference volume can guarantee a minimum separation between grains.  In a fluid context, this method was first introduced by Lu et al.~\cite{lu-rah-zor2017}, and extended to allow for much smaller separation distances of rigid bodies by the PI's previous graduate student~\cite{bys-sha-qua2019}. One Ph.D.~student, who will be jointly supervised by both PIs, will simulate sedimentation of eroding bodies by developing algorithms that resolve quadrature error and contact.
 
-Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws \eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations~\eqref{Ceq} and interface law~\eqref{DissVn} would need to be implemented. Once these pieces are in place, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible. Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.
-\todo[inline]{If we are going to propose the Laplace transform idea
-to solve advection-diffusion, this might be the place to put it}
+Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws~\eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations~\eqref{Ceq} and interface law~\eqref{DissVn} need to be implemented.  We proposed to solve the advection diffusion equation~\eqref{Ceq} by first using Strang splitting~\cite{str1968} to decompose the PDE into linear advection and diffusion.  The advection equation will be solved with a semi-Lagrangian method~\cite{rob1981} so that it can be solved on an Eulerian grid without a restrictive CFL condition. PI Quaife has experience with using semi-Lagrangian methods for another type of complex viscous flow~\cite{kab-qua-bir2017}.  The diffusion equation is more challenging to accurately solve in the complex porous geometries.  Two approaches include a memory-intensive space-time heat kernel~\cite{bar-eps-gre-jia-wan2019, jia-gre-wan2015, li-gre2009}, and Rothe's method coupled with a Yukawa equation solver~\cite{kro-qua2010, cau-cho-chr-sea2016}. A particular challenge of the latter method is extending functions from the complex geometry and into a regular geometry, such as a square, so that a high-order volume integral or Fourier method can be applied, and some groups have recently developed new techniques to form such an extension~\cite{fry-kro-tor2019, fry-leh-tor2019}. Alternatively, we propose to use a Laplace Transform to solve the diffusion equation
+\begin{alignat}{3}
+  \pd{c}{t} &= \frac{1}{\Pe} \Delta c, \quad &&\xx \in \Omega, \: t>0, .
+\end{alignat}
+Applying the Laplace transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$ satisfies
+\begin{align}
+  sC(\xx,s) - \frac{1}{\Pe}\Delta C(\xx,s) = c_0(\xx), 
+    \quad \xx \in \Omega,
+\end{align}
+where $c_0(\xx)$ is the initial concentration. This PDE will be solved with high-order accuracy and efficiently by using fast-multipole-accelerated integral equation methods of the Yukawa equation~\cite{kro-qua2011}, and the concentration will be recovered with an inverse Laplace transform~\cite{jos-war2006}.  
+Once a high-order advection-diffusion solver is in place, by combining it with our integral equation formulation for the Stokes equation and the shear stress, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible. Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.
 
  
 %---------------------------------------------------------------------------------------------------%
@@ -310,20 +318,7 @@ Upon computing $N_p$ trajectories, the tortuosity is the dimensionless number
   T = \frac{1}{d} \left(\int_{S} u_1(x_0,y_0)\lambda(y_0) dy_0\, \right)
   \Bigg/ \left(\int_S u_1(x_0,y_0)\, dy_0 \right),
 \end{align}
-where $S$ is the vertical cross-section at $x=x_0$, $d$ is its length,
-$u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of
-the trajectory starting at $(x_0,y_0)$ and ending at a vertical
-cross-section at the other end of the channel. Relationships between the
-tortuosity and porosity of a geometry have been developed by other
-groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and
-preliminary results indicate that such models might be appropriate for
-geometries whose porosity is increasing under the process of erosion
-(Figure~\ref{fig:100tortuosity}). However, preliminary results also
-indicate that erosion can increase the amount of tortuosity as is
-evident towards the at the towards the end of the erosion process in
-Figure~\ref{fig:100tortuosity}. Moreover, we have observed a significant
-increase in the tortuosity at small porosities
-(Figure~\ref{fig:20tortuosity}.
+where $S$ is the vertical cross-section at $x=x_0$, $d$ is its length, $u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of the trajectory starting at $(x_0,y_0)$ and ending at a vertical cross-section at the other end of the channel. Relationships between the tortuosity and porosity of a geometry have been developed by other groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and preliminary results indicate that such models might be appropriate for geometries whose porosity is increasing under the process of erosion (Figure~\ref{fig:100tortuosity}). However, preliminary results also indicate that erosion can increase the amount of tortuosity as is evident towards the at the towards the end of the erosion process in Figure~\ref{fig:100tortuosity}. Moreover, we have observed a significant increase in the tortuosity at small porosities (Figure~\ref{fig:20tortuosity}.
 
 \begin{figure}[htp]
   \begin{center}
@@ -372,7 +367,7 @@ geometry that is initialized with 100 grains.
   of the black dashed-dotted line.}
 \end{wrapfigure}
 
-The rate of dispersion is known to be directly related to the pore size distribution~\cite{dea-qua-bir-jua2018}. Therefore, there is a need to understand how erosion affects the pore size distribution. In preliminary, we define pore sizes between grains that share an edge of a Delanuay triangulation with vertices at the grain centers (Figure~\ref{fig:Eroding100gap_mean_var}(a)). In Figures~\ref{fig:Eroding100gap_mean_var}(a) and~\ref{fig:Eroding100gap_mean_var}(b), we plot the mean and variance of the pore sizes as a function of porosity. To better understand how erosion affects the anomalous dispersion, we propose to investigate how the pores grow with erosion. We will start with the notion of a {\em porelet} which is an individual Hagen-Poiseuille flow in each of the individual pores~\cite{dea-qua-bib-jua2018}. By computing the strength of the individual Hagen-Poiseuille flows, the shear rate can be computed, and thus the rate of erosion can be computed. 
+The rate of dispersion is known to be directly related to the pore size distribution~\cite{dea-qua-bir-jua2018}. Therefore, there is a need to understand how erosion affects the pore size distribution. In preliminary, we define pore sizes between grains that share an edge of a Delanuay triangulation with vertices at the grain centers (Figure~\ref{fig:Eroding100gap_mean_var}(a)). In Figures~\ref{fig:Eroding100gap_mean_var}(a) and~\ref{fig:Eroding100gap_mean_var}(b), we plot the mean and variance of the pore sizes as a function of porosity. To better understand how erosion affects the anomalous dispersion, we propose to investigate how the pores grow with erosion. We will start with the notion of a {\em porelet} which is an individual Hagen-Poiseuille flow in each of the individual pores~\cite{dea-qua-bir-jua2018}. By computing the strength of the individual Hagen-Poiseuille flows, the shear rate can be computed, and thus the rate of erosion can be computed. 
 
 \begin{figure}
 \begin{subfigure}[b]{0.33\textwidth}
@@ -393,8 +388,8 @@ The rate of dispersion is known to be directly related to the pore size distribu
   initially contains 100 eroding bodies.}
 \end{figure}
 
-
-
+\todo[inline]{Advection diffusion done with the same method used to do
+dissolution. A lot of the next few paragraphs will be simplified}
 We propose to extend our preliminary results by considering
 concentrations with finite Peclet numbers. Numerical methods to solve
 the advection-diffusion equation~\eqref{eqn:advectionDiffusion} in a
@@ -436,6 +431,8 @@ equation~\cite{kro-qua2011}, and the concentration will be recovered
 with an inverse Laplace transform~\cite{jos-war2006}.
 
 
+\todo[inline]{Talk about how to develop models for the pore sizes as a
+function of time. See results from S-H}
 
 
 %---------------------------------------------------------------------------------------------------%
@@ -461,6 +458,8 @@ Preliminary investigation suggests that this last mechanisms of cohesion is esse
 These simulation have not yet begun to incorporate the slow-acting effects of mechanical and chemical erosion, and the associated gradual changes in medium properties. A grand goal of this proposal would be to merge the two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics robust enough to capture both short term events, such as sinkhole collapse, and long-term changes in the medium. The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our proposed strategy is to use the high-fidelity erosion simulations to parametrize the effect of erosion on medium properties.
 
 	More specifically, we plan to run large batches of the high-fidelity boundary-integral-equation-based numerical simulations of erosion and then leverage rapid advances in the field of machine learning and deep-neural networks to develop reduced models that parametrize the effects of erosion on the evolution of macroscopic medium properties. The output of the high-fidelity simulations can be transformed into essential an image format, enabling us to use cutting-edge advancements on deep neural-networks for image analysis \cite{pelt2018mixed}. Some important advantages of referenced work are the use of dilated convolutions in a deeply connected network, which first mixes scales and second reduces the number of super-parameters present and thus largely averts the risk of overfitting data. Both PIs will supervise a graduate student who will design and implement the deep-neural network for learning the essence of the high-fidelity simulations. Once the essential features are learned, they will be incorporated into reduced-order models that utilize the multiphase framework to enable more efficient and larger scale coarse-grained simulations of dynamic erosion.
+        \todo[inline]{Nathan Kutz has a 2017 JFM 4 page paper that talks
+        about neural networks/deep learning in fluid dynamics}
 
 As mentioned previously, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments~\cite{tao2014experimental}. Firstly, already existing data from these experiments offers a testbed for comparison against our newly developed simulations. Furthermore, we propose to run a set of new experiments at the facilities offered by GFDI, spearheaded by an undergraduate student in close collaboration with the graduate students and PIs. These new experiments will more deeply probe the mechanisms underlying sinkhole formation with the special design goal of comparison agains the numerical simulations. These experiments will be used to calibrate and validate our computations.
 
