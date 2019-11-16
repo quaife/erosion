@@ -132,7 +132,7 @@ In particular, we view the accumulated effects of slow processes like erosion an
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.99 \textwidth]{./figs/collage.pdf}
-\caption{\label{fig1} Geophysical examples of chemical and mechanical erosion. Top from left: Diagram of a coupled karst-soil system with conduit formation \cite{watson2019sinkholes}; Limestone pavement in Dent de Crolles, France; Nohoch Ch’en Sinkhole in Belize. Bottom: examples of soil erosion. The bottom right shows the microscopic soil texture.}
+\caption{\label{collage} Geophysical examples of chemical and mechanical erosion. Top from left: Diagram of a coupled karst-soil system with conduit formation \cite{watson2019sinkholes}; Limestone pavement in Dent de Crolles, France; Nohoch Ch’en Sinkhole in Belize. Bottom: examples of soil erosion. The bottom right shows the microscopic soil texture.}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -151,6 +151,16 @@ Only recently have these ideas been extended to the low-Reynolds-number regime t
 \end{itemize}
 These challenges require innovative computational techniques, some of which have been developed recently~\cite{Quaife2018} and others that await resolution. An ultimate goal of this proposal is to achieve high-fidelity simulations of $\mathcal{O}(100-1000)$ mobile bodies undergoing simultaneous erosion, transport, sedimentation, and compaction, with the computational efficiency required to run large ensembles for statistical analysis. Dynamic erosion of porous media is a highly active area of research, as closely related laboratory experiments on erosion in colloidal systems are already being explored in the Datta Lab at Princeton~\cite{bizmark2019multiscale}. These experiments a great opportunity for comparison against our numerical simulations. Furthermore, we propose performing a set of experiments conducted at the nearby the Geophysical Fluid Dynamics Institute, which would help to guide, calibrate, and validate the computations (see letter of collaboration).
 
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+\begin{figure}%[htbp]
+\begin{center}
+\includegraphics[width = 0.99 \textwidth]{./figs/80circ8vel.pdf}
+\caption{\label{80circ8vel} High-fidelity numerical simulations of a configuration of densely-packed solid bodies undergoing mechanical erosion due to an intervening Stokes flow. Color indicates velocity magnitude which highlights the channel formation process. The solid bodies develop flat faces and sharp corners during evolution. 
+}
+%The same simulation as above with velocity magnitude in color. Velocity magnitude highlights the most dominant channels whose growth is reinforced by the shape-flow interaction of erosion.
+\end{center}
+\end{figure}
+ %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
 While erosion and dissolution lead to gradual changes in a medium, other events like sinkhole collapse or hydraulic fracturing occur over much shorter timescales.  Most likely, all of the mechanisms listed above---erosion, dissolution, transport, compaction, and gravitational collapse---contribute to sinkhole formation, with the slowest acting mechanisms creating conditions favorable for the final act of gravity. Sinkhole formation has been explored in preliminary experiments conducted at the Geophysical Fluid Dynamics Institute (GFDI) at Florida State University~\cite{tao2014experimental}. These scaled-down experiments offer the ability to probe various mechanisms behind sinkhole formation, for example a difference in hydraulic head between the confined and unconfined aquifers. An ultimate goal of the project proposed here is to merge these two lines of inquiry to gain a deeper understanding of the influence of mechanically or chemically induced erosion on gravitational collapse.  Ultimately, we envision the high-fidelity erosion simulations to inform coarse-grained models for: (i) transport and dispersion; and (ii) dynamic evolution of macroscopic medium properties. These parameterized models could then be combined with well-developed multi-phase models~\cite{Imma2019, eastham2019multiphase} to quantitatively describe and predict sinkhole collapse.
 
@@ -237,24 +247,16 @@ evolution to prevent distortion and tangling of the interface meshes~\cite{hou19
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.99 \textwidth]{./figs/80circ8vort.pdf}
-\caption{\label{fig1} Simulation of 80 bodies eroding in Stokes flow under the action of shear stress. Flow is left to right. Color represents vorticity, which provides a convenient way to visualize local shear rates. 
+\caption{\label{80circ8vort} Simulation of 80 bodies eroding in Stokes flow under the action of shear stress. Flow is left to right. Color represents vorticity, which provides a convenient way to visualize local shear rates. 
 %Erosion not only diminishes the size of the bodies but also alters their shapes considerably. A few well-defined channels develop in the space between bodies. Several of the bodies vanish in finite time and the simulation continues without interruption.
 }
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
-Fig.~\ref{fig1} shows preliminary results of multiple bodies undergoing mechanical erosion in Stokes flow. The figure shows 80 bodies of initially random size and position, undergoing erosion. This figure extends previously reported 50-body simulations to 80 bodies~\cite{Quaife2018} due to a recently developed Barycentric interpolation scheme~\cite{bar2014, bar-wu-vee2015}, which enables closer contact between bodies and thus more bodies.
-The color shows the (normalized) vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity. Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. Notice that, as erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. The channelization process is made more evident by visualization of the velocity magnitude, as in Fig.~\ref{fig2}.
+Fig.~\ref{80circ8vort} shows preliminary results of multiple bodies undergoing mechanical erosion in Stokes flow. The figure shows 80 bodies of initially random size and position, undergoing erosion. This figure extends previously reported 50-body simulations to 80 bodies~\cite{Quaife2018} due to a recently developed Barycentric interpolation scheme~\cite{bar2014, bar-wu-vee2015}, which enables closer contact between bodies and thus more bodies.
+The color shows the (normalized) vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity. Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. Notice that, as erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. The channelization process is made more evident by visualization of the velocity magnitude, as seen in Fig.~\ref{80circ8vel}.
 
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure}%[htbp]
-\begin{center}
-\includegraphics[width = 0.99 \textwidth]{./figs/80circ8vel.pdf}
-\caption{\label{fig2} The same simulation as above with velocity magnitude in color. Velocity magnitude highlights the most dominant channels whose growth is reinforced by the shape-flow interaction of erosion.}
-\end{center}
-\end{figure}
- %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
 %\subsubsection{Evolution of macroscopic properties}
 
