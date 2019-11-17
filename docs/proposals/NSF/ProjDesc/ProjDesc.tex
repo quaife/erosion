@@ -244,6 +244,12 @@ The PIs co-authored a paper describing numerical methods for simulating erosion~
 
   \item Simulate transport of finite Peclet number species in eroded
     geometries.
+
+  \item Understand pore size growth under erosion
+
+  \item New parameterizations using modern machine learning techniques
+
+  \item Validation with experimental results
 \end{itemize}
 
 
@@ -302,7 +308,7 @@ Lastly, the right-most plot of Fig.~\ref{fig3} shows the anisotropy, which is ca
 \end{figure}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
-An immediate goal of the proposed work is to extend the range of physical effects captured in these simulations. A particular challenge of a BIE formulation is developing quadrature for nearly-singular integrands that arise when bodies are close. To address this problem, we have very recently extended a Barycentric quadrature~\cite{bar2014, bar-wu-vee2015} and have successfully simulated erosion with grains that are initially separated by 1\% of an arclength spacing~\cite{chi-moo-qua2019}. This quadrature approach has the advantage that it is a non-intrusive modification of the trapezoid rule, allowing us to achieve an error bound that independent of the grain configuration. However, the implementation of the quadrature method does not fully use FMM acceleration. The numerical challenge is developing the required FMM expansions for the velocity, vorticity, and deformation tensor layer potentials. Since we require several layer potentials with different kernels, we will utilize kernel-independent FMMs~\cite{yin-bir-zor2004, fon-dar2009}, and its implementations that are readily available (for example, see \url{http://pvfmm.org}). Other challenges that will be investigated include preconditioning strategies to reduce the number of required GMRES iterations, and time adaptivity to allow for stable simulations to user-specified tolerances. PI Quaife has experience developing such algorithms~\cite{qua-bir2015b, qua-bir2016, qua-bir2015a, qua-cou-dar2018}.
+An immediate goal of the proposed work is to extend the range of physical effects captured in these simulations. A particular challenge of a BIE formulation is developing quadrature for nearly-singular integrands that arise when bodies are close. To address this problem, we have very recently extended a Barycentric quadrature~\cite{bar2014, bar-wu-vee2015} and have successfully simulated erosion with grains that are initially separated by 1\% of an arclength spacing~\cite{chi-moo-qua2019}. This quadrature approach has the advantage that it is a non-intrusive modification of the trapezoid rule, allowing us to achieve an error bound that independent of the grain configuration. However, the implementation of the quadrature method does not fully use FMM acceleration. The numerical challenge is developing the required FMM expansions for the velocity, vorticity, and deformation tensor layer potentials. Since we require several layer potentials with different kernels, we will utilize kernel-independent FMMs~\cite{yin-bir-zor2004, fon-dar2009}, and its HPC implementations that are readily available (for example, see \url{http://pvfmm.org}). Other challenges that will be investigated include preconditioning strategies to reduce the number of required GMRES iterations, and time adaptivity to allow for stable simulations to user-specified tolerances. PI Quaife has experience developing such algorithms~\cite{qua-bir2015b, qua-bir2016, qua-bir2015a, qua-cou-dar2018}.
 
 Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws~\eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations, is already in place, but the coupling to the advection-diffusion equations~\eqref{Ceq} and interface law~\eqref{DissVn} need to be implemented.  We proposed to solve the advection-diffusion equation~\eqref{Ceq} by first using Strang splitting~\cite{str1968} to decompose the PDE into individual PDEs for linear advection and diffusion.  The advection equation will be solved with a semi-Lagrangian method~\cite{rob1981} so that it can be solved on an Eulerian grid without a restrictive CFL condition. PI Quaife has experience with using semi-Lagrangian methods for another type of complex viscous flow~\cite{kab-qua-bir2017}.  The diffusion equation is more challenging to accurately solve in the complex porous geometries.  Two approaches include a memory-intensive space-time heat kernel~\cite{bar-eps-gre-jia-wan2019, jia-gre-wan2015, li-gre2009}, and Rothe's method coupled with a Yukawa equation solver~\cite{kro-qua2010, cau-cho-chr-sea2016}. A particular challenge of the latter method is extending functions from the complex geometry and into a regular geometry, such as a square, so that a high-order volume integral or Fourier method can be applied, and some groups have recently developed new techniques to form such an extension~\cite{fry-kro-tor2019, fry-leh-tor2019}. Alternatively, we propose to use a Laplace Transform to solve the diffusion equation
 \begin{alignat}{3}
@@ -327,22 +333,15 @@ where $c_0(\xx)$ is the initial concentration. This PDE will be solved with high
   the flow is driven by a pressure difference from left to right.}
 \end{wrapfigure}
 
-Transport through eroded media is a direct consequence of the pore structure. Qualitative properties of an eroded media, such as channels of high porosity, can be modest in volume fraction, but can be responsible for a large portion of the flux~\cite{Quaife2018}.  To increase understanding of flow through eroded media, we will simulate and statistically analyze transport through eroded geometries.
-
-In an eroded geometry $\Omega$, the dimensionless
-concentration $c$ is governed by
+Transport through eroded media is a direct consequence of the pore structure. Qualitative properties of an eroded media, such as channels of high porosity, can be modest in volume fraction, but can be responsible for a large portion of the flux~\cite{Quaife2018}.  To increase understanding of flow through eroded media, we will simulate and statistically analyze transport through eroded geometries. In an eroded geometry $\Omega$, the dimensionless concentration $c$ is governed by
 \begin{align}
   \pd{c}{t} + \uu \cdot \nabla c = \frac{1}{\Pe} \Delta c, 
   \label{eqn:advectionDiffusion}
 \end{align}
-where $\Pe$ is the dimensionless Peclet number. Here we assume that the
-concentration $c$ is affected by the eroded geometry, but the geometry
-is not altered further by the concentration. In the infinite Peclet
-number limit, the concentration is governed by pure advection and the
-characteristics of the concentration field are identical to the
-streamlines (Fig.~\ref{fig:100tracers}).
+where $\Pe$ is the dimensionless Peclet number. Here we assume that the concentration $c$ is affected by the eroded geometry, but the geometry is not altered further by the concentration (i.e.~$c$ is not responsible for dissolution).  
 
-The $j^{th}$ trajectory, or characteristic, is governed by $\dot{\ss}_j(t) = \uu(\ss_j(t))$. Once these trajectories are computed, using for example a high-order Runge-Kutta method, a statistical analysis can be used to describe the transport. Two of the most important measurements are the tortuosity and the anomalous dispersion, both which are defined in terms of the length of the trajectories \begin{align}
+In the infinite Peclet number limit, the concentration is governed by pure advection and the characteristics of the concentration field are identical to the streamlines (Fig.~\ref{fig:100tracers}). The $j^{th}$ trajectory, or characteristic, is governed by $\dot{\ss}_j(t) = \uu(\ss_j(t))$. Once these trajectories are computed, using for example a high-order Runge-Kutta method, a statistical analysis can be used to describe the transport. Two of the most important measurements are the tortuosity and the anomalous dispersion, both which are defined in terms of the length of the trajectories
+\begin{align} 
   \lambda_j(t) = \int_{0}^{t} \|\ss'(t')\| dt'.
 \end{align}
 Upon computing $N_p$ trajectories, the tortuosity is the dimensionless number
@@ -379,11 +378,18 @@ significant increase in the tortuosity at small porosities
   \caption{\label{fig:100tortuosity} The tortuosity of two different eroding geometries. The tortuosity can be computed using two different formulas (red vs.~blue marks). In the left plot, the red square is the tortuosity of the geometry in Fig.~\ref{fig:100tracers}. In both cases, there is qualitative agreement between our numerical simulations and a power-law model (black dashed line)~\cite{mat-kha-koz2008}.}
 \end{figure}
 
+\begin{wrapfigure}[19]{r}{0.35\textwidth}
+  \includegraphics[width=0.35\textwidth]{figs/100b_second_moment_long_ref}
+  \caption{\label{fig:100dispersion} The particle spreading, characterized with the standard deviation $\sigma_\lambda(t)$ at six different porosities. At early times, the line of slope 1 (black curve) indicates a ballistic motion. At later times, the dispersion becomes super-dispersive at a rate indicated by the slope of the black dashed-dotted line.}
+\end{wrapfigure}
 While the tortuosity characterizes the amount of winding of streamlines, the dispersion characterizes the spreading of the trajectories.  Dispersion can be described using the first- and second-ensemble moments of the trajectories
 \begin{align}
-  \langle \lambda \rangle (t) = \frac{1}{N_p} \sum_{j=1}^{N_p}
-    \lambda_j(t), \quad \sigma_\lambda^{2}(t) = \frac{1}{N_p}
-    \sum_{j=1}^{N_p} (\lambda_j(t) - \langle \lambda \rangle(t))^2
+  \begin{split}
+  \langle \lambda \rangle (t) &= \frac{1}{N_p} 
+      \sum_{j=1}^{N_p} \lambda_j(t), \\ 
+  \sigma_\lambda^{2}(t) &= \frac{1}{N_p}
+    \sum_{j=1}^{N_p} (\lambda_j(t) - \langle \lambda \rangle(t))^2.
+  \end{split}
 \end{align}
 Then, the standard deviation $\sigma_\lambda$ characterizes the
 dispersion, and long-time behavior typically results in a power-law
@@ -393,15 +399,6 @@ occurs at early times when the trajectories have not explored much of
 the porous geometry. However, once the trajectories have traversed a few
 grains, dispersion in porous media is often super-dispersive with
 $\alpha \in (0.5,1)$~\cite{dea-leb-den-tar-bol-dav2013}. In Fig.~\ref{fig:100dispersion}, we investigate spreading at several different porosities of a porous geometry that is initialized with 100 grains.
-\begin{wrapfigure}[22]{r}{0.4\textwidth}
-  \includegraphics[width=0.4\textwidth]{figs/100b_second_moment_long_ref}
-  \caption{\label{fig:100dispersion} The particle spreading,
-  characterized with the standard deviation $\sigma_\lambda(t)$ at 6
-  different porosities. At early times, the line of slope 1 (black
-  curve) indicates a ballistic motion. At later times, the
-  dispersion becomes super-dispersive at a rate indicated by the slope
-  of the black dashed-dotted line.}
-\end{wrapfigure}
 
 The rate of dispersion is known to be directly related to the pore size
 distribution~\cite{dea-qua-bir-jua2018}. Therefore, there is a need to
@@ -484,19 +481,11 @@ transform variable~\eqref{eqn:DiffusionLaplace}.
 \subsection{Mobile Grain Simulations and Sinkhole Formation}
 \label{sec:sinkhole}
 
-Near-term plans are to include flow transport and gravitational sedimentation of the eroding grains. For this extension, contact forces between bodies must be included to eliminate unphysical contact that is inevitable due to discretization errors. 
+Upon developing and improving numerical methods to simulate mechanical
+and chemical erosion, we plan to develop methods to simulate transport,
+gravitational sedimentation, and external buoyant forces of the eroding grains. In addition to the new previously described quadrature, preconditioning, adaptivity, and fast summation methods,  this extension also requires contact forces between bodies to eliminate unphysical contact that is inevitable due to discretization errors. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research.  One approach is to use introduce a potential with short-range repulsion, but such methods often introduce stiffness. Alternatively, a space-time interference volume can guarantee a minimum separation between grains.  In a fluid context, this method was first introduced by Lu et al.~\cite{lu-rah-zor2017}, and extended to allow for much smaller separation distances of rigid bodies by the PI's previous graduate student~\cite{bys-sha-qua2019}. One PhD student, who will be jointly supervised by both PIs, will simulate sedimentation of eroding bodies by developing algorithms that resolve quadrature error and contact.  
 
-Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research.  One approach is to use introduce a potential with short-range repulsion, but such methods often introduce stiffness. Alternatively, a space-time interference volume can guarantee a minimum separation between grains.  In a fluid context, this method was first introduced by Lu et al.~\cite{lu-rah-zor2017}, and extended to allow for much smaller separation distances of rigid bodies by the PI's previous graduate student~\cite{bys-sha-qua2019}. One PhD student, who will be jointly supervised by both PIs, will simulate sedimentation of eroding bodies by developing algorithms that resolve quadrature error and contact.
-
-
-
-% PREVIOUS PARAGRAPH
-%Near-term plans are to include flow transport and gravitational sedimentation of the particles. For this extension, contact forces between bodies must be included. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research  {\color{blue} cite}. We plan to implement contact forces with {\color{blue} stuff}. This goal will form the PhD dissertation of a graduate student who will be supervised by myself and Prof.~Bryan Quaife (FSU Scientific Computing).
-
-One central goal of this proposal is to enable the free motion of grains during the erosion processes. As mentioned earlier, this goal requires resolving contact forces between bodies, as well as the incorporation of the external buoyancy forces. Once this goal is achieved, it will be possible to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and buoyancy forces. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks.
-
-In very preliminary work, PI Moore has been running simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in~\eqref{DarcyEq} and incorporate the physical effects of:
-\begin{itemize}[noitemsep]
+The central goal of simulating transport of eroding grains is to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and buoyancy forces. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks. In very preliminary work, PI Moore has been running simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in~\eqref{DarcyEq} and incorporate the physical effects of: \begin{itemize}[noitemsep]
 \item Transport of grains due to seepage force from the surrounding fluid flow.
 \item Gravitational sedimentation of grains.
 \item Feedback of grain-distribution onto permeability field.
@@ -504,19 +493,13 @@ In very preliminary work, PI Moore has been running simplified simulations with 
 \end{itemize}
 Preliminary investigation suggests that this last mechanisms of cohesion is essential to model sinkhole collapse in the system.
 
-\todo[inline]{Eventually, our FMM solver will reach its capacity. We
-need to talk about fast summation methods for the barycentric
-quadrature, deformation tensor, vorticity, and pressure. In addition to
-fast summation methods, we can talk about parallel implementations. I
-have new PhD student in DSC that wants to work on erosion and he has
-experience running MPI and OpenMP.}
-
-These simulations have not yet begun to incorporate the slow-acting effects of mechanical and chemical erosion, and the associated gradual changes in medium properties. A grand goal of this proposal would be to merge the two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics robust enough to capture both short-term events, such as sinkhole collapse, and long-term changes in the medium. The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our proposed strategy is to use the high-fidelity erosion simulations to parametrize the effect of erosion on medium properties.
-
 %----------------------------------------------------------------------%
 \subsection{Parameterizations of Eroding Porous Media}
+These simulations have not yet begun to incorporate the slow-acting effects of mechanical and chemical erosion, and the associated gradual changes in medium properties. A grand goal of this proposal would be to merge the two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics robust enough to capture both short-term events, such as sinkhole collapse, and long-term changes in the medium. The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our proposed strategy is to use the high-fidelity erosion simulations to parametrize the effect of erosion on medium properties.
+
 More specifically, we plan to run large batches of the high-fidelity boundary-integral-equation-based numerical simulations of erosion and then leverage rapid advances in the field of machine learning and deep-neural networks to develop reduced models that parametrize the effects of erosion on the evolution of macroscopic medium properties and the flow.  The output of the high-fidelity simulations of the grain configuration can be transformed into essentially an image format, enabling us to use cutting-edge advancements on deep neural-networks for image analysis~\cite{pelt2018mixed}. Some important advantages of referenced work are the use of dilated convolutions in a deeply connected network, which first mixes scales and second reduces the number of super-parameters present and thus largely averts the risk of overfitting data. Additionally, high-fidelity flow conditions can be used to train a neural network, and this has been successfully used by others to predict, as one example, an anisotropy tensor~\cite{ling2016reynolds}.  Both PIs will supervise a graduate student who will design and implement the deep-neural network for learning the essence of the high-fidelity simulations. Once the essential features are learned, they will be incorporated into reduced-order models that utilize the multiphase framework to enable more efficient and larger scale coarse-grained simulations of dynamic erosion.
 
+%----------------------------------------------------------------------%
 \subsection{Experimental Validation}
 \label{sec:experiments}
 As mentioned previously, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments~\cite{tao2014experimental}. First, already existing data from these experiments offers a testbed for comparison against our newly developed simulations. Furthermore, we propose to run a set of new experiments at the facilities offered by GFDI, spearheaded by an undergraduate student in close collaboration with the graduate students, PIs, and an experimentalist at GFDI. These new experiments will more deeply probe the mechanisms underlying sinkhole formation with the special design goal of comparison against the numerical simulations. These experiments will be used to calibrate and validate our computations.
@@ -526,10 +509,10 @@ As mentioned previously, researchers at FSU's Geophysical Fluid Dynamics Institu
 %%%%  SECTION: Education and outreach
 %----------------------------------------------------------------------%
 \section{Outreach}
-The PIs are committed to ....
+The PIs are committed to utilizing and training students at various levels of their education throughout the proposed research. Different aspects of the proposed research are at appropriate levels for PhD students, undergraduate students, and high school students. Moreover, different opportunities within FSU will be used to publicize the work to K--12 students and the greater public.
 
 %----------------------------------------------------------------------%
-\subsection{Graduate research}
+\subsection{Graduate Research}
 An important benefit of the research proposed here is the potential to immerse graduate students in fundamentally {\em cross-disciplinary} research. This proposal involves a confluence of disciplines, most centrally computational mathematics, but also geophysics, reduced-physical modeling, hydrology, and environmental science.  Exposure to a range of disciplines is, in the view of the PIs, an invaluable opportunity for young scientists.
 
 Naturally, the research proposed here will form the foundation for the
@@ -551,7 +534,7 @@ graduate student to receive her PhD under Moore's advising was female
 
 
 %----------------------------------------------------------------------%
-\subsection{Undergraduate research}
+\subsection{Undergraduate Research}
 Regarding undergraduate research, the ideas in this proposal represent a rich and fascinating topic for undergraduate students, while also being approachable these students. In particular, we aim to recruit at least one undergraduate student to perform laboratory experiments at the Geophysical Fluid Dynamics Institute (GFDI). As mentioned above, GFDI offers state-of-the-art laboratory facilities, with an already-functioning sinkhole experiment. The student will perform controlled experiments using natural and artificial porous media (e.g.~sand and micro-glass beads respectively) to precisely characterize the parameter regime leading to gravitational collapse. Parallel experiments will be conducted with erodible (bentonite clay) or dissolvable  (sucrose solids) fragments materials, which will represent the porous medium. These experiments will be used to guide, calibrate, and validate the computational advances. These undergraduate students will work closely with the graduate students to ensure that theory and experiments advance in close cooperation, with constant feedback between the two.
 
 PI Moore already has experience successfully training undergraduate students in combined laboratory and theoretical work. A recent example is undergraduate student Tyler Bolles who completed an honors thesis with PI Moore at FSU on laboratory and theory of water waves. This work resulted in one {\em peer-reviewed} publication already~\cite{Bolles2019}, with a second to be submitted soon. In addition, PI Quaife successfully trained an undergraduate student, Miles Currie, in a statistical analysis of flows related to prescribed fire dynamics.  This work resulted in a peer-reviewed publication~\cite{cur-spe-hie-obr-goo-qua2018}.
@@ -559,16 +542,15 @@ PI Moore already has experience successfully training undergraduate students in 
 At FSU, there are at least two excellent avenues to attract interested undergraduate students:  the Undergraduate Research Opportunity Program (UROP) and the IDEA grant. The UROP is a program to engage underclassmen in academic research, while the IDEA grant is a competitive program, requiring (typically advanced) students to write a proposal in which they identify a research advisor. Both programs make special efforts to recruit from underrepresented groups. PIs Moore and Quaife already have experience using these programs to recruit interested students.
 
 %----------------------------------------------------------------------%
-\subsection{Outreach for K--12 and the general public}
+\subsection{Outreach for K--12 and the General Public}
 The PIs have already seized the opportunity to engage K--12 students in outreach activities. In particular, PI Moore's research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K--12 education. The video, which features an interview and animations of research, is used to reinforce concepts from mathematics courses (grade levels 7--12), and to encourage students to consider a career in the STEM fields~\cite{CPALMS}. Additionally, these videos are frequently used for the continuing education of K--12 {\em teachers}, providing them a broader perspective of mathematics that could be integrated into their teaching.
  
 Plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Mathematics departments to engage K-12 students in the region. PI Moore has led activities at Math Fun Day in prior years and, related to the current proposal, plans to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse. Laboratory materials for the demo are available at GFDI.
 
 FSU also provides an opportunity to expose high school students to university-level research through the {\bf Young Scholars Program (YSP)}. The YSP is a six week experience that brings Florida's brightest grade 11 students to FSU where they are exposed to university-level lectures and work with FSU faculty on a research project. PI Quaife participated in this program in Summer 2016. The PIs will propose research projects that are accessible to high school students throughout the duration of the proposed research. In addition to high school students receiving a high school experience, the PhD students will be tasked with much of the day-to-day interaction with the high school students. This offers an excellent opportunity for the PhD students to develop leadership and mentorship skills.
 
-%\subsection{Assessment for graduate and undergraduate education}
-%Developing strong mentoring relationships is essential to a student's intellectual development and a responsibility that the PIs takes very seriously. When working with students on research, whether undergraduate or graduate, we are always sure to outline the expectations of {\em both} parties -- the student and myself -- and periodically revisit the list to determine if the expectations are being met or if changes are necessary. This ensures that progress continues uninterrupted and that both parties are comfortable with their responsibilities. For the graduate seminar course, questionnaires will be provided to the students to determine how the seminar relates to their own research and their intellectual development, as well as parts of the course that were particularly beneficial and parts that could be improved. This will ensure that, once integrated into the standard curriculum, the course will maximally benefit the students' education.
-
+%----------------------------------------------------------------------%
+\section{Timeline and Concluding Remarks}
 
 
 
