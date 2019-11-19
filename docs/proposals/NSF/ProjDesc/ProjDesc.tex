@@ -23,6 +23,7 @@
 \addtolength{\textheight}{1.5in}
 % For 11pt size
 
+%\captionsetup{belowskip=-20pt}
 
 \titleformat*{\section}{\large\bfseries}
 \titleformat*{\subsection}{\normalsize\bfseries}
@@ -74,7 +75,7 @@ Porous Media}
 \renewcommand{\ss}{{\mathbf{s}}}
 \newcommand{\Vn}{V_\nn}
 \newcommand{\CE}{C_E}
-\newcommand {\ny}{n}
+\newcommand {\ny}{\mathbf{n}}
 \newcommand {\bdry} {\partial B}
 \newcommand{\Diff}{D}
 \newcommand{\thL}{$\theta$--$L$}
@@ -115,7 +116,7 @@ Naturally occurring porous and granular materials, such as soil, sand, and clay,
 An understanding of these filtration and contamination processes relies on the complex phenomenon of transport and dispersion in porous media \cite{scheidegger1961general, neuman1987stochastic, delgado2007longitudinal, zhang2016backward}. Further, the action of continually flowing groundwater can alter medium properties through erosive, transportive, and other processes. Thus, it becomes necessary to understand transport through complex media whose properties change {\em dynamically} in response to the intervening fluid flow. These effects are most noticeable during rapid events, like the gravitational collapse of a sinkhole~\cite{sandhu2018fate}, during which medium properties can change dramatically over short timescales. Though less obvious, the accumulation of slower process, such as mechanical or chemical erosion, can also substantially alter medium properties \cite{szymczak2009wormhole, ellis2013dissolution}.  
 
 {\bf This proposal aims to develop a suite of computational tools geared towards developing a deeper understanding of the physical processes by which groundwater flow alters porous-media properties and to characterize the associated changes in dispersive transport within the evolving medium.} A recognized complexity of naturally occurring media is the heterogeneity and anisotropy of macroscopic properties such as permeability and mechanical strength~\cite{neuman1987stochastic, moyner2016multiscale, lin2018randomization}. These properties can change over short timescales, for example sinkhole collapse or hydraulic fracturing, or over long timescales, for example the slow erosion or dissolution of solid material. Potential exists for feedback between these timescales: for example the slow wearing process reaching a critical threshold beyond which catastrophic events become more likely.  Physical mechanisms that can alter porous-medium properties include: 
-\begin{itemize}[noitemsep]
+\begin{itemize}[noitemsep,topsep=0pt]
 \item Erosion of solid material due to fluid-mechanical stresses or chemical dissolution.
 \item Transport of grains due to intervening fluid flow and due to sedimentation.
 \item Compaction of the medium due to overlying loads.
@@ -129,7 +130,7 @@ In particular, we view the slow, accumulated effects of erosion and dissolution 
 \begin{figure}%[htbp]
 \begin{center}
 \includegraphics[width = 0.99 \textwidth]{./figs/collage.pdf}
-\caption{\label{collage} Geophysical examples of chemical and mechanical erosion. Top from left: Diagram of a coupled karst-soil system with conduit formation \cite{watson2019sinkholes}; Limestone pavement in Dent de Crolles, France; Nohoch Ch’en Sinkhole in Belize. Bottom: examples of soil erosion. The bottom right shows the microscopic soil texture, exhibiting polydispersity and anisotropy.}
+\caption{\label{collage} \em Geophysical examples of chemical and mechanical erosion. Top from left: Diagram of a coupled karst-soil system with conduit formation \cite{watson2019sinkholes}; Limestone pavement in Dent de Crolles, France; Nohoch Ch’en Sinkhole in Belize. Bottom: examples of soil erosion. The bottom right shows the microscopic soil texture, exhibiting polydispersity and anisotropy.}
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -137,7 +138,7 @@ In particular, we view the slow, accumulated effects of erosion and dissolution 
 More generally, the coupling between shape and flow during erosion, dissolution, and related phase-change processes is a vibrant research area in the mathematical sciences community~\cite{Ristroph2012, rycroft2016asymmetric, cohen2016erosion, MooreCPAM2017, mitchell2017generalized, Quaife2018, wykes2018self, lachaussee2018competitive, lopez2018cfd, ristroph2018sculpting}.  Erosion-induced shape change has been studied in the high Reynolds number regime, both experimentally~\cite{Ristroph2012, MoorePOF2013} and theoretically~\cite{MoorePOF2013, MooreCPAM2017, hewett2017evolution} and in single~\cite{Ristroph2012, MoorePOF2013, MooreCPAM2017, lachaussee2018competitive} and multiple-body arrangements~\cite{hewett2017evolution}.  Studies on related processes of dissolution~\cite{HuangJFM2015, kondratiuk2015steadily, cohen2016erosion, claudin2017dissolution, wykes2018self, huang2017solute}, melting~\cite{Cummings1999, back2014effect, rycroft2016asymmetric, hewett2017pear, MooreCPAM2017, toppaladoddi2018combined, hewett2019evolution, favier2019rayleigh}, solidification~\cite{Huppert90, Anderson95, Cummings1999, mccue2003extinction}, and deposition~\cite{hewett2018modelling} exhibit intriguing similarities and differences~\cite{MooreCPAM2017}.  These studies reveal a rich set of possible dynamics, from the emergence of universal morphologies that erase details of the initial state and evolve self-similarly in time~\cite{MoorePOF2013, MooreCPAM2017, hewett2017pear}, to fine-scale pattern formation~\cite{cohen2016erosion, claudin2017dissolution, huang2017solute}, to unstable morphologies that can retain or even amplify features present in the initial state~\cite{claudin2017dissolution, wykes2018self}.
 	
 Only recently have these ideas been extended to the low-Reynolds-number regime that is applicable to porous media~\cite{mitchell2017generalized, Quaife2018}. While the governing fluid-flow equations become linear in this regime, porous-media applications present a host of new challenges, for example:
-\begin{itemize}[noitemsep]
+\begin{itemize}[noitemsep,topsep=0pt]
 \item Porous media typically involves dense packings so that close-range effects and even nearly contacting bodies must be considered.
 
 \item The Stokes limit introduces {\em longer} range effects than the inertial limit does, thus coupling the shape evolution of {\em all} grains and conduits to a higher degree.
@@ -148,45 +149,45 @@ Only recently have these ideas been extended to the low-Reynolds-number regime t
 \end{itemize}
 These challenges require innovative computational techniques, some of which have been developed recently~\cite{Quaife2018} and others that await resolution. 
 
-{\bf An ultimate goal of this proposal is to achieve high-fidelity simulations of $\boldsymbol{\mathcal{O}(10^2-10^3)}$ mobile bodies undergoing simultaneous erosion, transport, sedimentation, and compaction, with the computational efficiency required to run large ensembles for statistical analysis.} A major step towards this goal is illustrated in Fig.~\ref{80circ8vel}, which features high-fidelity erosion simulations of an initial configuration of 80 bodies of high volume fraction $50 \%$. Color indicates the velocity magnitude, which highlights the spontaneous formation of channels during the erosion process. These channels arise from small variations in the initial condition. Once formed, the larger channels transmit more flow which reinforces their growth. The process of channel formation can dramatically alter medium properties and create high levels of anisotropy, which directly impacts dispersion of transported quantities such as contaminants.
+{\bf An ultimate goal of this proposal is to simulate $\boldsymbol{\mathcal{O}(10^2-10^3)}$ mobile bodies undergoing simultaneous erosion, transport, sedimentation, and compaction, with high-order accuracy and the computational efficiency required to run large ensembles for statistical analysis.} A major step towards this goal is illustrated in Fig.~\ref{80circ8vel}, which features high-fidelity erosion simulations of an initial configuration of 80 bodies of high volume fraction $50 \%$. Color indicates the velocity magnitude, which highlights the spontaneous formation of channels during the erosion process. These channels arise from small variations in the initial condition. Once formed, the larger channels transmit more flow which reinforces their growth. The process of channel formation can dramatically alter medium properties and create high levels of anisotropy, which directly impacts dispersion of transported quantities such as contaminants.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htp]
 \begin{center}
 \includegraphics[width = 0.99 \textwidth]{./figs/80circ8vel.pdf}
-\caption{\label{80circ8vel} High-fidelity numerical simulations of a configuration of densely-packed solid bodies undergoing mechanical erosion due to an intervening Stokes flow. The color indicates velocity magnitude which highlights the channel formation process. The solid bodies develop flat faces and sharp corners during evolution. }
+\caption{\label{80circ8vel} \em High-fidelity numerical simulations of a configuration of densely-packed solid bodies undergoing mechanical erosion due to an intervening Stokes flow. The color indicates velocity magnitude which highlights the channel formation process. The solid bodies develop flat faces and sharp corners during evolution. }
 \end{center}
 \end{figure}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
-In addition to the work of the PIs, dynamic erosion of a porous media is a highly active subject as laboratory experiments on erosion of colloidal systems are currently being explored in the Datta Lab at Princeton~\cite{bizmark2019multiscale}. These experiments are closely related to our proposed computational study, thus offering a great opportunity for comparison. Furthermore, we propose performing a set of experiments conducted at the nearby the Geophysical Fluid Dynamics Institute (see Section~\ref{sec:experiments}), which would help to guide, calibrate, and validate the computations (see letter of collaboration).  
+In addition to the work of the PIs, dynamic erosion of a porous media is a highly active subject as laboratory experiments on erosion of colloidal systems are currently being explored in the Datta Lab at Princeton~\cite{bizmark2019multiscale}. These experiments are closely related to our proposed computational study, thus offering a great opportunity for comparison. Furthermore, {\bf we propose performing a set of experiments conducted at the nearby Geophysical Fluid Dynamics Institute (see Section~\ref{sec:experiments}), which would help to guide, calibrate, and validate the computations (see letter of collaboration).} 
 
-While erosion and dissolution lead to gradual changes in a medium, other events like sinkhole collapse or hydraulic fracturing represent rapid changes.  Most likely, all of the mechanisms listed above---erosion, dissolution, transport, compaction, and gravitational collapse---contribute to sinkhole formation, with the slowest acting mechanisms creating conditions favorable for the final act of gravity.  Sinkhole formation has been explored in preliminary experiments conducted at the Geophysical Fluid Dynamics Institute at Florida State University~\cite{tao2014experimental}. These scaled-down experiments offer the ability to probe various mechanisms behind sinkhole formation, for example a difference in hydraulic head between the confined and unconfined aquifers. An ultimate goal of the proposed project is to merge these two lines of inquiry to gain a deeper understanding of the influence of mechanically or chemically induced erosion on gravitational collapse.  Ultimately, we envision the high-fidelity erosion simulations to inform coarse-grained models for: (i) transport and dispersion; and (ii) dynamic evolution of macroscopic medium properties. These parameterized models could then be combined with well-developed multi-phase models \cite{breward2003multiphase, cogan2010multiphase, Imma2019, eastham2019multiphase} to quantitatively describe and predict sinkhole collapse.
-
+While erosion and dissolution lead to gradual changes in a medium, other events like sinkhole collapse or hydraulic fracturing represent rapid changes.  Most likely, all of the mechanisms listed above---erosion, dissolution, transport, compaction, and gravitational collapse---contribute to sinkhole formation, with the slowest acting mechanisms creating conditions favorable for the final act of gravity.  Sinkhole formation has been explored in preliminary experiments conducted at the Geophysical Fluid Dynamics Institute at Florida State University~\cite{tao2014experimental}. These scaled-down experiments offer the ability to probe various mechanisms behind sinkhole formation, for example a difference in hydraulic head between the confined and unconfined aquifers. An ultimate goal of the proposed project is to merge these two lines of inquiry to gain a deeper understanding of the influence of mechanically or chemically induced erosion on gravitational collapse.  Ultimately, we envision the high-fidelity erosion simulations to inform coarse-grained models for: (i) transport and dispersion; and (ii) dynamic evolution of macroscopic medium properties. These parameterized models could then be combined with well-developed multi-phase models \cite{breward2003multiphase, cogan2010multiphase, Imma2019, eastham2019multiphase} to quantitatively describe and predict sinkhole collapse.  
+\todo[inline]{The last paragraph of this sections seems out of place.  Maybe it just needs to be reversed with the one before it?}
 %----------------------------------------------------------------------%
 \subsection{Theoretical Foundation and Governing Equations}
 
-We first outline the theoretical foundation that will be used in later sections of the proposal. At the finest scale, the fluid flow intervening between individual grains of a porous medium is governed by the incompressible Stokes equations \begin{equation}
-\label{eqn:StokesEq}
-\begin{split}
-\mu \Delta \uu = \grad p,	&\hspace{20pt} \xx \in \Omega, \\
-\grad \cdot \uu = 0, 		&\hspace{20pt} \xx \in \Omega,
-\end{split}
-\end{equation}
-where $\uu$ is the velocity field, $p$ the pressure field, $\mu$ the
-fluid viscosity, and $\Omega$ is the fluid domain. Linear elliptic PDEs,
-such as the Stokes equations, can be reformulated as a boundary integral
-equation (BIE).  BIEs have several numerical advantages including a
-dimension reduction, automatic mass conservation, and high-order
-accuracy. An equivalent BIE formulation of the Stokes equations in
-Eq.~\eqref{eqn:StokesEq} is
+We first outline the theoretical foundation that will be used in later sections of the proposal. At the finest scale, the fluid flow intervening between individual grains of a porous medium is governed by the incompressible Stokes equations
+\begin{align}
+  \label{eqn:StokesEq}
+  \mu \Delta \uu = \grad p, \quad
+  \grad \cdot \uu = 0, \quad \xx \in \Omega,
+\end{align}
+%\begin{equation}
+%\label{eqn:StokesEq}
+%\begin{split}
+%\mu \Delta \uu = \grad p,	&\hspace{20pt} \xx \in \Omega, \\
+%\grad \cdot \uu = 0, 		&\hspace{20pt} \xx \in \Omega,
+%\end{split}
+%\end{equation}
+where $\uu$ is the velocity field, $p$ the pressure field, $\mu$ the fluid viscosity, and $\Omega$ the fluid domain. Linear elliptic PDEs, such as the Stokes equations, can be reformulated as a boundary integral equation (BIE).  BIEs have several numerical advantages including a dimension reduction, automatic mass conservation, and high-order accuracy. An equivalent BIE formulation of the Stokes equations~\eqref{eqn:StokesEq} is
 \begin{align}
   \label{eqn:BIE}
   \ff(\xx) = -\frac{1}{2}\eeta(\xx) + \frac{1}{\pi} \int_{\bd\Omega}
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
     \eeta(\yy) ds_\yy, \quad \xx \in \bd\Omega,
 \end{align}
-where $\ff$ is a Dirichlet boundary condition, $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the outward unit normal of $\bd\Omega$.  Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, important quantities such as the velocity, pressure, vorticity, and deformation tensor can be computed in the fluid bulk.  For example, the velocity at $\xx \in \Omega$ is 
+where $\ff$ is a Dirichlet boundary condition, $\rr = \xx - \yy$, $\rho = \|\rr\|$, and $\nn$ is the outward unit normal of $\bd\Omega$.  Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, quantities such as the velocity, pressure, vorticity, and deformation tensor can be computed in the fluid bulk.  For example, the velocity at $\xx \in \Omega$ is 
 \begin{align}
   \uu(\xx) = \frac{1}{\pi} \int_{\bd\Omega}
     \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
@@ -205,24 +206,25 @@ where $\qq$ is the {\em specific discharge} or {\em Darcy velocity}, and $\phi =
 \end{align}
 The macroscopic description offered by Eq.~\eqref{DarcyEq}, although approximate, simplifies analysis tremendously in that individual grains are no longer resolved and thus the domain geometry is generally much simpler.
 
-Whilst the most immediate proposed work on computational methods to
-simulate erosion will utilize~\eqref{eqn:StokesEq}, the later stages of this project will also incorporate~\eqref{DarcyEq}, or closely related variants known as multiphase models \cite{breward2003multiphase, cogan2010multiphase, Imma2019, eastham2019multiphase}, in order to develop coarse-grained descriptions for porous medium evolution and the associated dispersion within. These models will rely on statistical analysis of the data produced by the high-fidelity erosion simulations in order to parameterize the effects of erosion, leading to deterministic or stochastic reduced-order models for porous-medium evolution. 
+Whilst the most immediate proposed work on computational methods to simulate erosion will utilize~\eqref{eqn:StokesEq}, the later stages of this project will incorporate~\eqref{DarcyEq}, or closely related variants known as multiphase models \cite{breward2003multiphase, cogan2010multiphase, Imma2019, eastham2019multiphase}, in order to develop coarse-grained descriptions for porous medium evolution and the associated dispersion within. These models will rely on statistical analysis of the data produced by the high-fidelity erosion simulations in order to parameterize the effects of erosion, leading to deterministic or stochastic reduced-order models for porous-medium evolution. 
 %and erosion, combined with other external effects such as gravitationally-induced dynamics.  
 
 
 %----------------------------------------------------------------------%
 \subsection{Project Overview}
 
-\paragraph{Broader Impacts:} The proposed research could lead to a range of societal benefits, including better management of water resources, accurate prediction of contaminant transport, and an understanding of the long-term effects of human activities, such as hydraulic fracturing or groundwater pumping, on porous media and water resources. In such scenarios, the slow timescales of mechanical and chemical erosion are coupled to the faster timescales of human-induced changes and gravitational collapse. Currently, the relationship between these scales is poorly understood. The high-fidelity, efficient computational methods proposed here will enable a deeper understanding of these processes, which is the first step towards developing effective strategies for managing water resources and mitigating catastrophic events such as contamination or structural collapse. For example, the insights gained here could potentially help identify locations in natural aquifers vulnerable to contamination and/or collapse.  
+\paragraph{Broader Impacts:} The proposed research could lead to a range of societal benefits, including better management of water resources, accurate prediction of contaminant transport, and an understanding of the long-term effects of human activities, such as hydraulic fracturing or groundwater pumping, on porous media and water resources. In such scenarios, the slow timescales of mechanical and chemical erosion are coupled to the faster timescales of human-induced changes and gravitational collapse. Currently, the relationship between these scales is poorly understood. The proposed high-fidelity, efficient computational methods will enable a deeper understanding of these processes, which is the first step towards developing effective strategies for managing water resources and mitigating catastrophic events such as contamination or structural collapse. For example, the insights gained here could potentially help identify locations in natural aquifers vulnerable to contamination and/or collapse.  
 
-In addition to these societal impacts, the work proposed here will spur the training of mathematicians and computational scientists in fundamentally cross-disciplinary research of great societal importance. Further, the PIs will engage in educational and outreach activities to impact future generations of mathematical scientists, with particular focus on women and underrepresented minorities (URM). Both PIs are already actively involved in graduate and undergraduate research, as well as outreach to K-12 students. Further, we have successfully recruited women and underrepresented minorities in undergraduate, graduate, and postdoctoral research.  
+In addition to these societal impacts, the proposed work will spur the training of mathematicians and computational scientists in fundamentally cross-disciplinary research of great societal importance. Further, the PIs will engage in educational and outreach activities to impact future generations of mathematical scientists, with particular focus on women and underrepresented minorities (URM). Both PIs are already actively involved in graduate and undergraduate research, as well as outreach to K-12 students. Further, we have successfully recruited women and underrepresented minorities in high school, undergraduate, graduate, and postdoctoral research.  
 
 \paragraph{Intellectual Merit:} The proposed research introduces a host of new computational challenges and opportunities. First the range of scales is vast: spatial scales range from microscopic granular constituents to large geological aquifers; timescales range from that of a sudden sinkhole collapse to years required mechanical and chemical erosion. The systems are inherently multicomponent, with coupling between the fluid and solid phases. Although the governing PDEs are linear, the presence of moving boundaries introduces nonlinear feedback between geometry and flow. To tackle these challenges, the PIs will combine cutting-edge computational tools with reduced-order modeling. Mixed-scale, deep neural networks will be used to learn from the data generated by high-fidelity numerical simulations to parameterize coarse-grained models based on the multiphase framework. Additionally, controlled laboratory experiments will be used to guide and verify theory developed herein.  
 
 \paragraph{Relevance to the Computational Mathematics Synopsis:}
 \begin{itemize}[noitemsep]
   \item Efficient, high-fidelity computational methods form the core of the proposed research on porous-media erosion and dispersive transport. Large ensembles of the high-fidelity simulations will inform the coarse-grained models to be developed in the later stages of the proposed work.
-  \item The proposed research is interdisciplinary by nature, with immediate applications in the fields of geophysics and environmental sciences. The PIs already have experience collaborating with scientists from other disciplines \cite{Caves2018, eastham2019multiphase, Bolles2019} through FSU's Geophysical Fluid Dynamics Institute, an interdisciplinary unit comprised of a diverse set of faculty from home departments in example Earth, Atmospheric, and Ocean Sciences, Geology, Physics, Civil Engineering, Environmental Engineering, Scientific Computing, Mathematics, and others.
+
+  \item The proposed research is interdisciplinary by nature, with immediate applications in the fields of geophysics and environmental sciences. The PIs already have experience collaborating with scientists from other disciplines \cite{Caves2018, eastham2019multiphase, Bolles2019, cur-spe-hie-obr-goo-qua2018} through FSU's Geophysical Fluid Dynamics Institute, an interdisciplinary unit comprised of a diverse set of faculty from home departments in example Earth, Atmospheric, and Ocean Sciences, Geology, Physics, Civil Engineering, Environmental Engineering, Mechanical Engineering, Scientific Computing, Mathematics, and others.  
+
   \item The proposed research is a collaborative effort with a focus on training future generations of scientists and mathematicians. The proposal will include graduate, undergraduate, and K--12 students, with close interaction and cooperation between them.
 \end{itemize}
 
@@ -230,42 +232,24 @@ In addition to these societal impacts, the work proposed here will spur the trai
 
 \paragraph{PIs' Qualifications:} PI Moore joined the Department of Mathematics at Florida State University (FSU) in 2014. He is also a Research Associate in FSU's Geophysical Fluid Dynamics Institute (GFDI).  His expertise includes modeling dynamic interactions between fluids and structures, especially in geophysical and biologically motivated settings. PI Quaife joined the Department of Scientific Computing at FSU in 2015 and is also a Research Associate in GFDI. His expertise includes high-fidelity and efficient numerical methods for fluid dynamics in complex geometries.
 
-The PIs co-authored a paper in the {\em Journal of Computational Physics} describing numerical methods for simulating erosion in the Stokes flow regime~\cite{Quaife2018}, the regime relevant for the currently proposed groundwater applications. Very recently the PIs, along with postdoctoral scholar Shang-Huan Chiu, submitted a second paper on newly developed methods for precise characterization of transport and dispersion within the special class of porous-media configurations formed by erosion \cite{chi-moo-qua2019}.
-
-
-\paragraph{Outline of the Proposal:} 
-
-\todo[inline]{Summary of what is in the proposal.}
-
-
+The PIs co-authored a paper in the {\em Journal of Computational Physics} describing numerical methods for simulating erosion in the Stokes flow regime~\cite{Quaife2018}, the regime relevant for the currently proposed groundwater applications. Very recently the PIs, along with postdoctoral scholar Shang-Huan Chiu, submitted a second paper on newly developed methods for precise characterization of transport and dispersion within the special class of porous-media configurations formed by erosion~\cite{chi-moo-qua2019}.
 
 %----------------------------------------------------------------------%
 \section{Proposed Research} 
 %----------------------------------------------------------------------%
-The goal of the proposed research is to develop new numerical methods to
-simulate erosion processes. Specific research tasks will include:
-\begin{itemize}[noitemsep]
-  \item Simulating chemical erosion.
+The goal of the proposed research is to develop computational methods to better understand erosion processes. Specific research tasks will include:
+\begin{enumerate}[noitemsep,label=(\arabic*)]
+  \item Simulating chemical erosion, and transport, including sedimentation and compaction, of eroding bodies 
 
-  \item Characterizing anisotropy and permeability to inform
-    homogenized models such as Darcy's relation.
+  \item Characterizing anisotropy, permeability, and pore size dynamics to inform homogenized models such as Darcy's relation~\eqref{DarcyEq}.
 
-  \item Simulating the transport of finite Peclet number concentrations
-    inside eroded porous geometries.
+  \item Simulating the transport of finite Peclet number concentrations in eroded porous geometries.
 
-  \item Improving numerical methods including fast summation methods,
-    preconditioners, and quadrature.
+  \item Improving numerical methods including fast summation methods, preconditioners, and quadrature.  
+  
+  \item Developing and validating new parameterizations using machine learning techniques, numerical simulations, and in-house experiments.
 
-  \item Developing new models to characterize the effect of erosion on
-    pore size dynamics.
-
-  \item Developing new parameterizations using modern machine learning
-    techniques.
-
-  \item Validating simulations with in-house experimental results.
-
-  \item \todo[inline]{Something about transport, sedimentation, etc.}
-\end{itemize}
+\end{enumerate}
 
 
 
@@ -276,15 +260,15 @@ The development of accurate and efficient numerical methods to solve the Stokes 
 \begin{align}
   \Vn = \CE \, \abs{\tau}.
 \end{align}
-In the case of chemically-induced erosion, a solute concentration field $C$ undergoes advection and diffusion:
+In the case of chemically-induced erosion, a solute concentration field $c$ undergoes advection and diffusion:
 \begin{align}
   \label{Ceq}
-  \pd{C}{t} + \uu \cdot \grad C = \Diff \Lap C.
+  \pd{c}{t} + \uu \cdot \grad c = \Diff \Lap c.
 \end{align}
 Material removal is then governed by Fick's law with interface velocity
 \begin{equation}
 \label{DissVn}
-\Vn = \Diff \pd{C}{\ny}.
+\Vn = \Diff \pd{c}{\ny}.
 \end{equation}
 Both erosion processes have been investigated by the PIs and collaborators in the context of single bodies in high Reynolds-number flows~\cite{Ristroph2012, MoorePOF2013, HuangJFM2015, MooreCPAM2017}. In the context of a porous media at low Reynolds-number flows, numerical methods have been developed by the PIs to simulate shear-induced erosion~\cite{Quaife2018, chi-moo-qua2019}. These simulations combine highly accurate boundary integral methods with stable interface evolution techniques.  The boundary integral solver is accelerated by the fast multipole method~\cite{gre-rok1987, gre-gre-may1992} to achieve optimal $\mathcal{O}(N)$ complexity. Meanwhile, the so-called {\thL} method is used for interface evolution to prevent distortion and tangling of the interface meshes~\cite{hou1994removing, MoorePOF2013, Quaife2018}.
 
@@ -292,127 +276,86 @@ Both erosion processes have been investigated by the PIs and collaborators in th
 \begin{figure}%[htp]
 \begin{center}
 \includegraphics[width = 0.99 \textwidth]{./figs/80circ8vort.pdf}
-\caption{\label{80circ8vort} Simulation of 80 bodies eroding in Stokes flow under the action of shear stress. Flow is left to right. Color represents vorticity, which provides a convenient way to visualize local shear rates. 
+\caption{\label{80circ8vort} \em Simulation of 80 bodies eroding in Stokes flow under the action of shear stress. Flow is left to right. Color represents vorticity, which provides a convenient way to visualize local shear rates. 
 }
 \end{center}
 \end{figure}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
  
-Figs.~\ref{80circ8vel} and~\ref{80circ8vort} show preliminary results of 80 bodies, initially of random position and size, undergoing mechanical erosion in Stokes flow. This simulation extends previously reported 50-body simulations to 80 bodies~\cite{Quaife2018} due to a recently developed Barycentric interpolation scheme~\cite{bar2014, bar-wu-vee2015, chi-moo-qua2019}, which enables more densely packed configurations. The color in Fig~\ref{80circ8vort} represents the vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity.  Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. As erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. This channelization process is made even more apparent by viewing the velocity magnitude as in Fig.~\ref{80circ8vel}.
+Figs.~\ref{80circ8vel} and~\ref{80circ8vort} show preliminary results of 80 bodies, initially of random position and size, undergoing mechanical erosion in Stokes flow. This simulation extends previously reported 50-body simulations to 80 bodies~\cite{Quaife2018} due to a recently developed barycentric quadrature scheme~\cite{bar2014, bar-wu-vee2015, chi-moo-qua2019}, which enables more densely packed configurations. The color in Fig.~\ref{80circ8vort} represents the vorticity field surrounding the bodies. Vorticity, since it reduces to shear on solid interfaces, provides a convenient way to visualize local erosion rates, as well as the local flow intensity.  Observe that erosion not only reduces the size of solid bodies, but also alters their shapes substantially. The bodies tend to become somewhat polygonal: corners develop connected by relatively flat faces. The number of faces does not appear to be easily predicted, but rather depends on the interaction with neighboring bodies as mediated by the Stokes flow. As erosion proceeds, relatively straight channels tend to develop between the bodies. Certain channels that are initially larger can transmit more flow, which promotes local erosion rates and further widens these selected channels. In this way, erosion creates a runaway process in which small differences in initial channel size become amplified. This channelization process is made even more apparent by viewing the velocity magnitude in Fig.~\ref{80circ8vel}.
  
-The creation and reinforcement of channels significantly impacts the macroscopic properties of the porous medium. Fig.~\ref{fig3} shows how certain medium properties change in time. First, the left-most plot shows the rate at which the area fraction decreases as the bodies disintegrate. Notice that the rate of area reduction does not change significantly during the simulation. The middle plot shows the resistivity, or inverse permeability of the medium. In the simulations, resistivity is calculated by measuring the total flux and the pressure upstream and downstream, then using Darcy's relation~\eqref{DarcyEq} to infer the horizontal permeability $k_x$. Naturally, as bodies erode, the resistivity they provide decreases in time. Note that, unlike the area plot, the vertical axis is logarithmic and so the straight line observed at early times indicates that the resistivity decreases exponentially. The much more modest decrease of area fraction is not sufficient to account for this exponential rate. Hence the reshaping process, in particular the formation of channels, plays a pivotal role the medium's macroscopic resistivity to flow.  
+The creation and reinforcement of channels significantly impacts the macroscopic properties of the porous medium. Fig.~\ref{fig3} shows how certain medium properties change in time. First, the left-most plot shows the rate at which the area fraction decreases as the bodies disintegrate. Notice that the rate of area reduction does not change significantly during the simulation. The middle plot shows the resistivity, or inverse permeability of the medium. In the simulations, resistivity is calculated by measuring the total flux and the pressure upstream and downstream, then using Darcy's relation~\eqref{DarcyEq} to infer the horizontal permeability $k_x$. Naturally, as bodies erode, the resistivity they provide decreases in time. Note that, unlike the area plot, the vertical axis is logarithmic and so the straight line observed at early times indicates that the resistivity decreases exponentially.  The much more modest decrease of area fraction is not sufficient to account for this exponential rate. Hence the reshaping process, in particular the formation of channels, plays a pivotal role in the medium's macroscopic resistivity to flow.  
 
-Lastly, the right-most plot of Fig.~\ref{fig3} shows new, preliminary results on how medium anisotropy evolves during the reshaping process of erosion. Anisotropy calculated as the ratio of vertical to horizontal resistivity, with the vertical resistivity computed by rotating the configuration of bodies by 90 degrees. This plot shows the anisotropy to initial increase with time. Thus, the initially isotropic state becomes erased as bodies streamline and form primarily horizontal channels. Remarkably, the medium reaches an anisotropy of over 10, meaning that erosion can lead to a configuration that resists flow 10 times more in the vertical direction than the horizontal direction.
+Lastly, the right-most plot of Fig.~\ref{fig3} shows new, preliminary results on how medium anisotropy evolves during the reshaping process of erosion. Anisotropy is calculated as the ratio of vertical to horizontal resistivity, with the vertical resistivity computed by rotating the configuration of bodies by 90 degrees. This plot shows the anisotropy to initial increase with time. Thus, the initially isotropic state becomes erased as bodies streamline and form primarily horizontal channels. Remarkably, the medium reaches an anisotropy of over 10, meaning that erosion can lead to a configuration that resists flow 10 times more in the vertical direction than the horizontal direction.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htp]
 \begin{center}
 \includegraphics[width = 0.99 \textwidth]{./figs/fig3.pdf}
-  \caption{\label{fig3} {\em Left}: The area fraction of solid bodies versus time. Time is normalized by the vanishing time $t_f$. {\em Middle}: The resistivity of the porous matrix decrease much more rapidly than area fraction, indicating the reshaping process to be essential. Right: The anisotropy (ratio of vertical to horizontal resistivity) as it varies in time. Erosion can create a highly anisotropic medium.}
-\end{center}
+  \caption{\label{fig3} \em Left: The area fraction of solid bodies versus time. Time is normalized by the vanishing time $t_f$.  Middle: The resistivity of the porous matrix decrease much more rapidly than area fraction, indicating the reshaping process to be essential. Right: The anisotropy (ratio of vertical to horizontal resistivity) as it varies in time. Erosion can create a highly anisotropic medium.} \end{center}
 \end{figure}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
-{An immediate goal of the proposed work is to extend the range of physical effects captured in these simulations.} A particular challenge of a BIE formulation is developing quadrature for nearly-singular integrands that arise when bodies are close. To address this problem, we have very recently extended a Barycentric quadrature~\cite{bar2014, bar-wu-vee2015} and have successfully simulated erosion with grains that are initially separated by 1\% of an arclength spacing~\cite{chi-moo-qua2019}. This quadrature approach has the advantage that it is a non-intrusive modification of the trapezoid rule, permitting an error bound that is independent of the grain configuration. However, the current implementation does not yet fully exploit FMM acceleration. The numerical challenge here is to develop FMM expansions for the velocity, vorticity, and deformation-tensor layer potentials. Since these layer potentials each have distinct kernels, we will utilize kernel-independent FMMs~\cite{yin-bir-zor2004, fon-dar2009}, and their HPC implementations (for example, see \url{http://pvfmm.org}). Other challenges to be investigated include preconditioning strategies to reduce the number of required GMRES iterations, and time adaptivity to enable stable simulations to user-specified tolerances. PI Quaife is a leading expert in developing such algorithms~\cite{qua-bir2015b, qua-bir2016, qua-bir2015a, qua-cou-dar2018}.
+{\bf An immediate goal of the proposed work is to extend the range of physical effects captured in these simulations.} A particular challenge of a BIE formulation is developing quadrature for nearly-singular integrands that arise when bodies are close. To address this problem, we have very recently extended a Barycentric quadrature method~\cite{bar2014, bar-wu-vee2015} and have successfully simulated erosion with grains that are initially separated by 1\% of an arclength spacing~\cite{chi-moo-qua2019}. The quadrature method is a non-intrusive modification of the trapezoid rule and results in an error bound that is independent of the grain configuration. However, the current implementation does not yet fully exploit FMM acceleration. The computational challenge is to develop FMM expansions for the velocity, vorticity, and deformation-tensor layer potentials. Since these layer potentials each have distinct kernels, we will utilize kernel-independent FMMs~\cite{yin-bir-zor2004, fon-dar2009}, and their HPC implementations (for example, see \url{http://pvfmm.org}). Other challenges to be investigated include preconditioning strategies to reduce the number of required GMRES iterations, and time adaptivity to enable stable simulations to user-specified tolerances. PI Quaife is an expert in developing such algorithms~\cite{qua-bir2015b, qua-bir2016, qua-bir2015a, qua-cou-dar2018}.
 
-Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws~\eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations and the {\thL} method for interface evolution, is already in place. The BIE Stokes solver, however, has not yet been coupled to the advection-diffusion equations~\eqref{Ceq} and interface law~\eqref{DissVn} required for dissolution.  We proposed to solve the advection-diffusion equation~\eqref{Ceq} by first using Strang splitting~\cite{str1968} to decompose the system into individual PDEs for linear advection and diffusion.  The advection equation will be handled with a semi-Lagrangian method~\cite{rob1981} so that it can be solved on an Eulerian grid without a restrictive CFL condition. PI Quaife has experience using semi-Lagrangian methods in the closely related context of complex viscous flow~\cite{kab-qua-bir2017}. 
-
-The diffusion equation is more challenging to accurately solve in the complex porous geometries.  Two approaches include a memory-intensive space-time heat kernel~\cite{bar-eps-gre-jia-wan2019, jia-gre-wan2015, li-gre2009}, and Rothe's method coupled with a Yukawa equation solver~\cite{kro-qua2010, cau-cho-chr-sea2016}. A particular challenge of the latter method is extending functions from the complex geometry into a regular geometry, such as a square, so that a high-order volume integral or Fourier method can be applied~\cite{fry-kro-tor2019, fry-leh-tor2019}. Alternatively, we propose to use a Laplace Transform to solve the diffusion equation
-\begin{alignat}{3}
-  \pd{c}{t} &= \frac{1}{\Pe} \Delta c, \quad &&\xx \in \Omega, \: t>0.
-\end{alignat}
-The transformed variable $C(\xx,s) = \mathcal{L}[c](\xx,t)$ satisfies
+Next, we plan to extend the simulation framework to handle chemical dissolution of solid bodies via physical laws~\eqref{Ceq}--\eqref{DissVn}. For this goal, much of the computational infrastructure, such as the boundary-integral solver for the Stokes equations and the {\thL} method for interface evolution, is already in place. The BIE Stokes solver, however, has not yet been coupled to the advection-diffusion equations~\eqref{Ceq} and interface law~\eqref{DissVn} required for dissolution.  We proposed to solve the advection-diffusion equation~\eqref{Ceq} by first using Strang splitting~\cite{str1968} to decompose the system into individual PDEs for linear advection and diffusion.  The advection equation will be handled with a semi-Lagrangian method~\cite{rob1981} so that it can be solved on an Eulerian grid without a restrictive CFL condition. PI Quaife has experience using semi-Lagrangian methods in the closely related context of complex viscous flow~\cite{kab-qua-bir2017}.  The diffusion equation is more challenging to accurately solve in the complex porous geometries.  Two approaches include a memory-intensive space-time heat kernel~\cite{bar-eps-gre-jia-wan2019, jia-gre-wan2015, li-gre2009}, and Rothe's method coupled with a Yukawa equation solver~\cite{kro-qua2010, cau-cho-chr-sea2016}. A particular challenge of the latter method is extending functions from the complex geometry into a regular geometry, such as a square, so that a high-order volume integral or Fourier method can be applied~\cite{fry-kro-tor2019, fry-leh-tor2019}. Alternatively, we propose to use a Laplace Transform, $C(\xx,s) = \mathcal{L}[c](\xx,t)$, which satisfies
+\begin{wrapfigure}[19]{r}{0.3\textwidth}
+  \includegraphics[width=0.3\textwidth]{figs/100b_t100tracer}
+  \caption{\label{fig:100tracers} \em Streamlines visualized with 200 tracers passing through an eroded geometry. The tracers are initialized at the left end of the channel and the flow is from left to right.} \end{wrapfigure}
 \begin{align}
   sC(\xx,s) - \frac{1}{\Pe}\Delta C(\xx,s) = c_0(\xx), 
     \quad \xx \in \Omega, \: s \in \mathbb{C},
   \label{eqn:DiffusionLaplace}
 \end{align}
-where $c_0(\xx)$ is the initial concentration. This PDE will be solved with high-order accuracy and efficiently by using fast-multipole-accelerated integral equation methods of the Yukawa equation~\cite{kro-qua2011}. The concentration field can then be recovered with an inverse Laplace transform~\cite{jos-war2006}. 
+where $c_0(\xx)$ is the initial concentration and $\Pe$ is the dimensionless Peclet number. This PDE will be solved with high-order accuracy and efficiently by using fast-multipole-accelerated integral equation methods of the Yukawa equation~\cite{kro-qua2011}. The concentration field will then be recovered with an inverse Laplace transform~\cite{jos-war2006}.
 
-By combining our BIE Stokes solver with the proposed high-order, advection-diffusion solver, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation, would finally become possible.  Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes (see Section~\ref{sec:sinkhole}).  
+By combining our BIE Stokes solver with the proposed high-order, advection-diffusion solver, simulations of simultaneous erosion and dissolution, while also including transport and sedimentation (see Section~\ref{sec:sinkhole}), would finally become possible.  Such a framework could accurately simulate the geophysically relevant scenario of karst conduits with embedded granular media. The gradual changes in the medium and karst boundaries due to erosion and dissolution could create conditions favorable for mechanical failure or collapse of the structure, for example sinkholes.  
 
 %----------------------------------------------------------------------%
 \subsection{Dispersive transport through eroded media}
 
-\begin{wrapfigure}[23]{r}{0.4\textwidth}
-  \includegraphics[width=0.4\textwidth]{figs/100b_t100tracer}
-  \caption{\label{fig:100tracers} A visualization of the streamlines
-  with 200 tracers passing through an eroded geometry with a porosity of
-  0.63. The tracers are initialized at the left end of the channel and
-  the flow is driven by a pressure difference from left to right.}
-\end{wrapfigure}
-
-Transport through eroded media is a direct consequence of the pore structure. Qualitative properties of an eroded media, such as channels of high porosity, can be modest in volume fraction, but can be responsible for a large portion of the flux~\cite{Quaife2018}.  
-\todo[inline]{The above sentence does not make sense grammatically, at least the way I am reading it.}
-To gain an understanding of transport and dispersion through the complex geometries formed by erosion, we will simulate and statistically analyze tracer trajectories as advected by the intervening flow. In an eroded geometry $\Omega$, the dimensionless concentration $c$ is governed by
+Transport through eroded media is a direct consequence of the pore structure. To gain an understanding of transport and dispersion through the complex geometries formed by erosion, we will simulate and statistically analyze tracer trajectories as advected by the intervening flow. In an eroded geometry $\Omega$, the dimensionless concentration $c$ is governed by
 \begin{align}
   \pd{c}{t} + \uu \cdot \nabla c = \frac{1}{\Pe} \Delta c, 
   \label{eqn:advectionDiffusion}
 \end{align}
 where $\Pe$ is the dimensionless Peclet number. In this context, the concentration $c$ is a passive tracer and not responsible for dissolution as in the previous section. 
 
-In the infinite Peclet number limit, the concentration is governed by pure advection and the characteristics of the concentration field are identical to the streamlines (Fig.~\ref{fig:100tracers}). The $j^{th}$ trajectory, or characteristic, is governed by $\dot{\ss}_j(t) = \uu(\ss_j(t))$. Once these trajectories are computed, using for example a high-order Runge-Kutta method, a statistical analysis can be used to describe the transport. Two of the most important measurements are the tortuosity and the anomalous dispersion, both which are defined in terms of the length of the trajectories. Upon computing $N_p$ trajectories, the tortuosity is the dimensionless number
+In the infinite Peclet number limit, the concentration is governed by pure advection and the characteristics of the concentration field satisfy $\dot{\ss}(t) = \uu(\ss(t))$ and are identical to the streamlines (Fig.~\ref{fig:100tracers}). Once $N_p$ trajectories are computed, using for example a high-order Runge-Kutta method, transport can be quantified. Two of the most important measurements to quantify transport are the tortuosity and the anomalous dispersion, both which are defined in terms of the length of the trajectories. The tortuosity is the dimensionless number 
 \begin{align}
   T = \frac{1}{d} \left(\int_{S} u_1(x_0,y_0)\lambda(y_0) dy_0\, \right)
   \Bigg/ \left(\int_S u_1(x_0,y_0)\, dy_0 \right),
 \end{align}
-where $S$ is the vertical cross-section at $x=x_0$, $d$ is its length, $u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of the trajectory starting at $(x_0,y_0)$ and ending at a vertical cross-section at the other end of the channel. Relationships between the tortuosity and porosity of a geometry have been developed by other groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and preliminary results indicate that such models might be appropriate for geometries whose porosity increases under the action of erosion (Fig.~\ref{fig:100tortuosity}(a)). Some preliminary results, however, indicate that erosion can also transiently increase the tortuosity, as seen towards the end of the erosion process in Fig.~\ref{fig:100tortuosity}(a). We have observed even more significant increase in the tortuosity at small porosities and early times, as in Fig.~\ref{fig:100tortuosity}(b). These counterintuitive results are indicative of the complex interaction between material loss and shape change that occurs during erosion, so that macroscopic quantities like tortuosity do not always behave in a strict monotone fashion.
+which is approximated using the $N_p$ trajectories. Here, $S$ is the vertical cross-section at $x=x_0$, $d$ is its length, $u_1$ is the horizontal velocity, and $\lambda(y_0)$ is the length of the trajectory starting at $(x_0,y_0)$ and ending at a vertical cross-section at the other end of the channel.  Relationships between the tortuosity and porosity of a geometry have been developed by other groups~\cite{kop-kat-tim1996, dud-koz-mat2011, mat-kha-koz2008}, and preliminary results indicate that such models might be appropriate for geometries whose porosity increases under the action of erosion (Fig.~\ref{fig:100tortuosity}(a)). Some preliminary results, however, indicate that erosion can also transiently increase the tortuosity, as seen towards the end of the erosion process in Fig.~\ref{fig:100tortuosity}(a). We have observed an even more significant increase in the tortuosity at small porosities and early times, as in Fig.~\ref{fig:100tortuosity}(b). These counterintuitive results are indicative of the complex interaction between material loss and shape change that occurs during erosion, so that macroscopic quantities like tortuosity do not always behave in a strict monotone fashion.  
 
 \begin{figure}[htp]
   \begin{center}
   \begin{subfigure}[b]{0.45\textwidth}
   \includegraphics[width=\textwidth]{figs/tort_eulerian100}
-  \caption{100 eroding bodies}
+  \caption{\em 100 eroding bodies}
   \end{subfigure}
   \begin{subfigure}[b]{0.45\textwidth}
   \includegraphics[width=\textwidth]{figs/tort_eulerian20}
-  \caption{20 eroding bodies}
+  \caption{\em 20 eroding bodies}
   \end{subfigure}
   \end{center}
-  \caption{\label{fig:100tortuosity} The tortuosity of two different eroding geometries. The tortuosity can be computed using two different formulas (red vs.~blue marks). In the left plot, the red square is the tortuosity of the geometry in Fig.~\ref{fig:100tracers}. In both cases, there is qualitative agreement between our numerical simulations and a power-law model (black dashed line)~\cite{mat-kha-koz2008}.}
+  \caption{\label{fig:100tortuosity} \em The tortuosity of two different eroding geometries. The tortuosity can be computed using two different formulas (red vs.~blue marks). In the left plot, the red square is the tortuosity of the geometry in Fig.~\ref{fig:100tracers}. In both cases, there is qualitative agreement between our numerical simulations and a power-law model (black dashed line)~\cite{mat-kha-koz2008}.}
 \end{figure}
 
-\begin{wrapfigure}[19]{r}{0.35\textwidth}
-  \includegraphics[width=0.35\textwidth]{figs/100b_second_moment_long_ref}
-  \caption{\label{fig:100dispersion} The particle spreading, characterized with the standard deviation $\sigma_\lambda(t)$ at six different porosities. At early times, the line of slope 1 (black curve) indicates a ballistic motion. At later times, the dispersion becomes super-dispersive at a rate indicated by the slope of the black dashed-dotted line.}
-\end{wrapfigure}
-While the tortuosity characterizes the amount of winding of streamlines, the dispersion characterizes the spreading of the trajectories.  Dispersion can be described using the first- and second-ensemble moments of the trajectories
+While the tortuosity characterizes the amount of winding of trajectories, the dispersion characterizes their spreading.  Dispersion can be described using the first- and second-ensemble moments of the trajectories
 \begin{align}
-  \begin{split}
-  \langle \lambda \rangle (t) &= \frac{1}{N_p} 
-      \sum_{j=1}^{N_p} \lambda_j(t), \\ 
-  \sigma_\lambda^{2}(t) &= \frac{1}{N_p}
+  \langle \lambda \rangle (t) = \frac{1}{N_p} 
+      \sum_{j=1}^{N_p} \lambda_j(t), \quad
+  \sigma_\lambda^{2}(t) = \frac{1}{N_p}
     \sum_{j=1}^{N_p} (\lambda_j(t) - \langle \lambda \rangle(t))^2.
-  \end{split}
 \end{align}
-Then, the standard deviation $\sigma_\lambda$ characterizes the
-dispersion, and long-time behavior typically results in a power-law
-scaling $\sigma_\lambda \sim t^{\alpha}$, where $\alpha$ 
-quantifies the long-time spreading. At early times, transport is ballistic with $\alpha = 1$, as the trajectories have not explored much of the porous geometry. Once the trajectories have traversed a few grains, however, dispersion typically becomes super-dispersive with $\alpha \in (0.5,1)$~\cite{dea-leb-den-tar-bol-dav2013}. In Fig.~\ref{fig:100dispersion}, we investigate spreading at several different porosities of a porous geometry that is initialized with 100 grains.
+\begin{wrapfigure}[22]{l}{0.4\textwidth}
+  \includegraphics[width=0.4\textwidth]{figs/100b_second_moment_long_ref}
+  \caption{\label{fig:100dispersion} \em The particle spreading, characterized with the standard deviation $\sigma_\lambda(t)$ at six different porosities. At early times, the line of slope 1 (black dashed curve) indicates a ballistic motion. At later times, the dispersion becomes super-dispersive at a rate indicated by the slope of the black dashed-dotted line.}
+\end{wrapfigure}
+Then, the standard deviation $\sigma_\lambda$ characterizes the dispersion, and long-time behavior typically results in a power-law scaling $\sigma_\lambda \sim t^{\alpha}$, where $\alpha$ quantifies the long-time spreading. At early times, transport is ballistic with $\alpha = 1$, as the trajectories have not explored much of the porous geometry.  Once the trajectories have traversed a few grains, however, spreading typically becomes super-dispersive with $\alpha \in (0.5,1)$~\cite{dea-leb-den-tar-bol-dav2013}. In Fig.~\ref{fig:100dispersion}, we investigate spreading at several different porosities of a porous geometry that is initialized with 100 grains.
 
-The rate of dispersion is known to be directly related to the pore size distribution~\cite{dea-qua-bir-jua2018}. As such, we must first  understand how erosion affects the pore size distributions.  In preliminary work~\cite{chi-moo-qua2019}, we define pore sizes between grains that share an edge of a Delanuay triangulation with vertices at the grain centers (Fig.~\ref{fig:Eroding100gap_mean_var}(a)). 
-In Fig.~\ref{fig:Eroding100gap_mean_var}(a) and~\ref{fig:Eroding100gap_mean_var}(b), we plot the mean and variance of the pore sizes as a function of porosity. To better understand how erosion affects the anomalous dispersion, we propose to investigate how the pores grow with erosion. We will start with the notion of a {\em porelet} which is an individual Hagen-Poiseuille flow in each of the individual pores~\cite{dea-qua-bir-jua2018}. By computing the strength of the individual Hagen-Poiseuille flows, the shear rate, and thus the local rate of erosion, can be estimated.
-
-We have performed a carefully chosen simulation to better understand the
-effect of erosion on the pore size distribution. We start with a single grain inside
-the channel that is sufficiently large that the spacing between the
-initial grain and the channel walls, which is 2 units wide), is
-$10^{-3}$. 
-\todo[inline]{There is a right parenthesis, but no left parenthesis. I am not sure where the missing parenthesis should go.}
-Since we use a Barycentric quadrature rule, we are able to
-stably simulate erosion with only 512 points on the eroding body which
-corresponds to an arclength spacing 12 times larger than the original
-separation distance; to achieve a comparable accuracy with the spectral
-trapezoid rule, 60 times as many discretization points would be
-required. In Fig.~\ref{fig:porelets}(a), different shades of grey
-correspond to the configuration of the eroding grain at five equally
-spaced time steps. At three of the time steps, we plot the velocity
-between the grain and the solid wall (black line). At all three
-configurations, the flow is observed to be nearly parabolic, which supports the validity of the porelet
-model~\cite{dea-qua-bir-jua2018}. After performing a
-thorough analysis of the pore size growth in this simple configuration,
-we will develop a more complete model for pore networks that are characteristic of porous media.
-
+The rate of dispersion is directly related to the pore size distribution~\cite{dea-qua-bir-jua2018}. As such, {\bf we propose to investigate how erosion affects pore size distributions}. In preliminary work~\cite{chi-moo-qua2019}, we define pore sizes between grains that share an edge of a Delanuay triangulation with vertices at the grain centers (Fig.~\ref{fig:Eroding100gap_mean_var}(a)).  We then compute and plot the mean and variance of the pore sizes as a function of porosity in Fig.~\ref{fig:Eroding100gap_mean_var}(b) and~\ref{fig:Eroding100gap_mean_var}(c). Continuing in this direction, we will use the notion of a {\em porelet}, an individual Hagen-Poiseuille flow in each of the individual pores~\cite{dea-qua-bir-jua2018}, to continue to investigate the effect of erosion on pores sizes. By computing the strength of the individual Hagen-Poiseuille flows, the shear rate, and thus the local rate of erosion, can be estimated.
 
 \begin{figure}[htp]
 \begin{subfigure}[b]{0.33\textwidth}
@@ -427,16 +370,16 @@ we will develop a more complete model for pore networks that are characteristic 
   \includegraphics*[height=0.8\linewidth]{figs/gap_variance}
 \caption{}
 \end{subfigure}
-  \caption{\label{fig:Eroding100gap_mean_var} (a) The pore sizes are
-  defined in terms of a Delanuay triangulation. The effect of erosion on
-  (b) the mean and (c) the variance of the pore sizes. The geometry
-  initially contains 100 eroding bodies.}
+  \caption{\label{fig:Eroding100gap_mean_var} \em (a) The pore sizes are defined in terms of a Delanuay triangulation. The effect of erosion on (b) the mean and (c) the variance of the pore sizes. The geometry initially contains 100 eroding bodies.}
 \end{figure}
 
-We propose to extend our preliminary results by considering
-concentrations with finite Peclet numbers. We will deploy the same
-numerical methods to simulate dissolution and melting to study a
-concentration that is being transported through a eroded porous
+
+We have performed a carefully chosen simulation to better understand the effect of erosion on the pore size distribution. We start with a single grain inside the channel that is sufficiently large that the spacing between the initial grain and the channel walls, which is 2 units wide, is $10^{-3}$. By using a Barycentric quadrature rule, we stably simulate erosion with only 512 points on the eroding body which corresponds to an arclength spacing 12 times larger than the original separation distance; to achieve a comparable accuracy with the spectral trapezoid rule, 60 times as many discretization points would be required. In Fig.~\ref{fig:porelets}(a), different shades of grey correspond to the configuration of the eroding grain at five equally spaced time steps. At three of the time steps, we plot the velocity between the grain and the solid wall (black line). At all three configurations, the flow is observed to be nearly parabolic, supporting the validity of the porelet model~\cite{dea-qua-bir-jua2018}. After performing a thorough analysis of the pore size growth in this simple configuration, we will develop a more complete model for pore networks that are characteristic of porous media.
+
+Finally, {\bf we propose to extend our preliminary results by
+considering concentrations with finite Peclet numbers}. We will deploy
+the same numerical methods to simulate dissolution and melting to study
+a concentration that is being transported through a eroded porous
 geometry. Again, this will encompass Strang splitting~\cite{str1968}, a
 semi-Lagrangian advection solver~\cite{rob1981}, and a diffusion solver
 that solves an $s$-dependent Yukawa equation, where $s$ is the Laplace
@@ -456,7 +399,7 @@ transform variable~\eqref{eqn:DiffusionLaplace}.
   \end{center}
   \caption{}
   \end{subfigure}
-  \caption{\label{fig:porelets} (a) An eroding body at five equally time steps in $[0,1]$. The far field condition is a constant pressure drop in a channel three times as wide as the eroding grain.  At the three intermediate time steps, the velocity field in the field, which is nearly parabolic, is included. (b) The pore size (black) and maximum velocity in the pore (red) as a function of time.  As the channel opens, the flow rate increases to maintain a constant pressure drop, and this increases the rate of erosion.} 
+  \caption{\label{fig:porelets} \em (a) An eroding body at five equally time steps.  At the three intermediate time steps, the Stokesian velocity field in the bulk, which is nearly parabolic, is included. (b) The pore size (black) and maximum velocity in the pore (red) as a function of time.  As the channel opens, the flow rate increases to maintain a constant pressure drop.} 
 \end{figure}
 
 
@@ -468,58 +411,62 @@ transform variable~\eqref{eqn:DiffusionLaplace}.
 \subsection{Mobile Grain Simulations and Sinkhole Formation}
 \label{sec:sinkhole}
 
-Upon developing and improving numerical methods to simulate mechanical and chemical erosion, we plan to develop methods to simulate the effects of seepage transport, gravitational sedimentation, and buoyancy forces acting that act on the porous media constituents. In addition to the new techniques of quadrature, preconditioning, adaptivity, and fast summation described in earlier sections, this extension also requires the inclusion of contact forces between bodies to eliminate unphysical overlap that is inevitable due to discretization errors. Though conceptually straightforward, implementing contact forces in multibody fluid-structure simulations is far from simple in practice, with several competing possible strategies that are a topic of current research \cite{yan2019computing, lu-rah-zor2017, bys-sha-qua2019}.  
+Upon developing and improving numerical methods to simulate mechanical
+and chemical erosion, {\bf we will develop methods to simulate the
+effects of seepage transport, gravitational sedimentation, and buoyancy
+forces acting that act on the porous media constituents.} In addition to
+the new techniques for quadrature, preconditioning, adaptivity, and fast
+summation described in earlier sections, this extension also requires
+the inclusion of contact forces between bodies to eliminate unphysical
+overlap that is inevitable due to discretization errors. Though
+conceptually straightforward, implementing contact forces in multibody
+fluid-structure simulations is far from simple in practice, with several
+competing possible strategies that are a topic of current research
+\cite{yan2019computing, lu-rah-zor2017, bys-sha-qua2019,
+kab-qua-bir2018, vou-har-tam-gri2011}.  
 
 One approach is to use introduce a potential with short-range repulsion, but such methods often introduce stiffness. Alternatively, a space-time interference volume can guarantee a minimum separation between grains.  In a fluid context, this method was first introduced by Lu et al.~\cite{lu-rah-zor2017}, and extended to allow for much smaller separation distances of rigid bodies by the PI's previous graduate student~\cite{bys-sha-qua2019}. One PhD student, who will be jointly supervised by both PIs, will simulate sedimentation of eroding bodies by developing algorithms that resolve quadrature error and contact.  
 
-The central goal of simulating transport of eroding grains is to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and gravitational sedimentation. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks. In very preliminary work, PI Moore has been running simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in~\eqref{DarcyEq} and incorporate the physical effects of: \begin{itemize}[noitemsep]
+The central goal of simulating transport of eroding grains is to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and gravitational sedimentation. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks. In very preliminary work, PI Moore has run simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in~\eqref{DarcyEq} and incorporate the physical effects of: 
+\begin{itemize}[noitemsep]
 \item Transport of grains due to seepage force from the surrounding fluid flow.
 \item Gravitational sedimentation of grains.
 \item Feedback of grain-distribution onto permeability field.
 \item Contact and cohesive forces between grains.
 \end{itemize}
-Preliminary investigation suggests that this last mechanisms of cohesion is essential to model sinkhole collapse in the system.
+Preliminary investigation suggests that this last mechanism of cohesion is essential to model sinkhole collapse in the system.
 
 %----------------------------------------------------------------------%
 \subsection{Parameterizations of Eroding Porous Media}
-These sinkhole simulations have not yet begun to incorporate the slow-acting effects of mechanical and chemical erosion, and the associated gradual changes in medium properties. A grand goal of this proposal would be to merge the two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics that is robust enough to capture both short-term events, such as sinkhole collapse, and long-term changes in the medium. The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our proposed strategy is to use the high-fidelity erosion simulations to parametrize the effect of erosion on medium properties.
+These sinkhole simulations have not yet begun to incorporate the slow-acting effects of mechanical and chemical erosion, and the associated gradual changes in medium properties. {\bf A grand goal of this proposal is to merge the two lines of inquiry to develop a sound theoretical framework for porous-medium dynamics that is robust enough to capture both short-term events, such as sinkhole collapse, and long-term changes in the medium.} The greatest challenge faced is the disparate temporal and spatial scales that must be considered. Our proposed strategy is to use the high-fidelity erosion simulations to parametrize the effect of erosion on medium properties.
 
-More specifically, we plan to run large batches of the high-fidelity boundary-integral-equation-based numerical simulations of erosion and then leverage rapid advances in the field of machine learning and deep-neural networks \cite{ling2016reynolds, kutz2017deep, ling2016machine, pelt2018mixed} to develop reduced models that parametrize the effects of erosion on the evolution of macroscopic medium properties and the flow.  The output of the high-fidelity simulations of the grain configuration can be transformed into essentially an image format, permitting use of cutting-edge advances in deep neural-networks for image analysis~\cite{pelt2018mixed}. Some important advantages of referenced work are the use of dilated convolutions in a deeply connected network, which first mixes scales and second reduces the number of super-parameters present, thus largely mitigating the risk of overfitting data. Additionally, high-fidelity flow conditions can be used to train a neural network --- a strategy that has been successfully used by others to predict, for example, an anisotropy tensor~\cite{ling2016reynolds}.  Both PIs will supervise a graduate student who will design and implement the deep-neural network for learning the essence of the high-fidelity simulations. Once the essential features are learned, they will be incorporated into reduced-order models that harness the multiphase framework. These reduced models will enable more efficient and larger scale coarse-grained simulations of dynamic erosion.
+More specifically, we plan to run large batches of the high-fidelity boundary-integral-equation-based numerical simulations of erosion and then leverage rapid advances in the field of machine learning and deep-neural networks \cite{ling2016reynolds, kutz2017deep, ling2016machine, pelt2018mixed} to develop reduced models that parametrize the effects of erosion on the evolution of macroscopic medium properties and the flow.  The output of the high-fidelity simulations of the grain configuration can be transformed into essentially an image format, permitting use of cutting-edge advances in deep neural-networks for image analysis~\cite{pelt2018mixed}. Some important advantages of referenced work are the use of dilated convolutions in a deeply connected network, which first mixes scales and second reduces the number of super-parameters present, thus largely mitigating the risk of overfitting data. Additionally, high-fidelity flow conditions can be used to train a neural network---a strategy that has been successfully used by others to predict, for example, an anisotropy tensor~\cite{ling2016reynolds}.  Both PIs will supervise a graduate student who will design and implement deep-neural networks for learning the essence of the high-fidelity simulations. Once the essential features are learned, they will be incorporated into reduced-order models that harness the multiphase framework. These reduced models will enable more efficient and larger scale coarse-grained simulations of dynamic erosion.
 
 %----------------------------------------------------------------------%
 \subsection{Experimental Validation}
 \label{sec:experiments}
-As mentioned previously, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments~\cite{tao2014experimental}. First, already existing data from these experiments offers a testbed for comparison against our newly developed simulations. Furthermore, we propose to run a set of new experiments at the facilities offered by GFDI, spearheaded by an undergraduate student in close collaboration with the graduate students, PIs, and an experimentalist at GFDI. These new experiments will more deeply probe the mechanisms underlying sinkhole formation with the special design goal of comparison against the numerical simulations. These experiments will be used to calibrate and validate our computations.
+As mentioned previously, researchers at FSU's Geophysical Fluid Dynamics
+Institute (GFDI) have investigated the mechanisms behind sinkhole
+formation with a series of scaled-down laboratory
+experiments~\cite{tao2014experimental}. First, already existing data
+from these experiments offers a testbed for comparison against our newly
+developed simulations. Furthermore, {\bf we propose to run a set of new
+experiments at the facilities offered by GFDI}, spearheaded by an undergraduate student in close collaboration with the graduate students, PIs, and an experimentalist at GFDI. These new experiments will more deeply probe the mechanisms underlying sinkhole formation with the special design goal of comparison against the numerical simulations. These experiments will be used to calibrate and validate our computations.
+\todo[inline]{We have more room at the end of the document. This
+section seems a bit brief and could maybe be expanded.}
 
 
 %----------------------------------------------------------------------%
 %%%%  SECTION: Education and outreach
 %----------------------------------------------------------------------%
 \section{Outreach}
-The PIs are committed to the development and training of students at various levels of their education throughout the proposed research. 
-\todo[inline]{I don't think we want to say we are `utilizing' people.}
-Different aspects of the proposed research are appropriate levels for PhD research, undergraduate research, and high school student research. Moreover, opportunities within FSU will be seized to publicize the work to K--12 students and to the greater public.
+The PIs are committed to the development and training of students at various levels of their education throughout the time frame of the proposed research. Different aspects of the proposed research are appropriate levels for PhD research, undergraduate research, and high school student research. Moreover, opportunities within FSU will be seized to publicize the work to K--12 students and to the greater public.
 
 %----------------------------------------------------------------------%
 \subsection{Graduate Research}
-An important benefit of the research proposed here is the potential to immerse graduate students in fundamentally {\em cross-disciplinary} research. This proposal involves a confluence of disciplines, most centrally computational mathematics, but also geophysics, environmental science, hydrology, and physical modeling. Exposure to a range of disciplines is, in the view of the PIs, an invaluable opportunity for young scientists.
+An important benefit of the proposed research is the potential to immerse graduate students in fundamentally {\em cross-disciplinary} research. This proposal involves a confluence of disciplines, most centrally computational mathematics, but also geophysics, environmental science, hydrology, and physical modeling. Exposure to a range of disciplines is, in the view of the PIs, an invaluable opportunity for young scientists.  
 
-Naturally, the research proposed here will form the foundation for the
-PhD dissertations of the graduate students involved. Beyond this, the
-students will engage in publishing articles in peer-reviewed journals of
-high quality and attending national and international conferences where
-they will present their work and network with experts in the field. The
-PIs will closely mentor the graduate students to ensure their continued
-development, not only intellectually, but also in the `soft' skills of
-communication, promotion, and networking. Having both PIs Moore and
-Quaife involved in the training of each graduate student is especially
-valuable for offering multiple perspectives on these issues. The PIs
-will make special efforts to recruit women and underrepresented
-minorities as the graduate students funded by this project. Both PIs
-have already had success recruiting women in these roles, as the first
-graduate student to receive her PhD under Moore's advising was female
-(Karina Khazmutdinova, 2016), and Quaife's current PhD student is female
-(Ashley Gannon, 2022).
+Naturally, the proposed research will form the foundation for the PhD dissertations of the supported graduate students. Beyond this, the students will engage in publishing articles in peer-reviewed journals of high quality and attending national and international conferences where they will present their work and network with experts in the field. The PIs will closely mentor the graduate students to ensure their continued development, not only intellectually, but also in the `soft' skills of communication, promotion, and networking. Having both PIs Moore and Quaife involved in the training of each graduate student is especially valuable for offering multiple perspectives on these issues. The PIs will make special efforts to recruit women and underrepresented minorities as the graduate students funded by this project. Both PIs have already had success recruiting women in these roles, as the first graduate student to receive her PhD under Moore's advising was female (Karina Khazmutdinova, 2016), and Quaife's current PhD student (Ashley Gannon, 2022) and Master's student (Daryn Sagel, 2020) are female.
 
 
 %----------------------------------------------------------------------%
@@ -528,20 +475,15 @@ Regarding undergraduate research, the ideas in this proposal represent a rich an
 
 PI Moore already has experience successfully training undergraduate students in combined laboratory and theoretical work. A recent example is undergraduate student Tyler Bolles who completed an honors thesis with PI Moore at FSU on laboratory and theory of water waves. This work resulted in one {\em peer-reviewed} publication already~\cite{Bolles2019}, with a second to be submitted soon. PI Quaife successfully trained an undergraduate student, Miles Currie, in a statistical analysis of flows related to prescribed fire dynamics.  This work resulted in a peer-reviewed publication~\cite{cur-spe-hie-obr-goo-qua2018}.
 
-At FSU, there are at least two excellent avenues to attract interested undergraduate students:  the Undergraduate Research Opportunity Program (UROP) and the IDEA grant. The UROP is a program to engage underclassmen in academic research, while the IDEA grant is a competitive program, requiring more advanced students to write a proposal in which they identify a research advisor. Both programs make special efforts to recruit from underrepresented groups. PIs Moore and Quaife already have experience using these programs to recruit interested students.
+At FSU, there are at least two excellent avenues to attract interested undergraduate students:  the Undergraduate Research Opportunity Program (UROP) and the IDEA grant. The UROP is a program to engage undergraduates in academic research, while the IDEA grant is a competitive program, requiring more advanced students to write a proposal in which they identify a research advisor. Both programs make special efforts to recruit from underrepresented groups. PIs Moore and Quaife already have experience using these programs to recruit interested students.
 
 %----------------------------------------------------------------------%
 \subsection{Outreach for K--12 and the General Public}
 The PIs have already seized the opportunity to engage K--12 students in outreach activities. In particular, PI Moore's research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K--12 education. The video, which features an interview and animations of research, is used to reinforce concepts from mathematics courses (grade levels 7--12), and to encourage students to consider a career in the STEM fields~\cite{CPALMS}. Additionally, these videos are frequently used for the continuing education of K--12 {\em teachers}, providing them a broader perspective of mathematics that could be integrated into their teaching.
  
-Plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Mathematics departments to engage K-12 students in the region. PI Moore has led activities at Math Fun Day in prior years and, related to the current proposal, plans to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse. Laboratory materials for the demo are available at GFDI.
+Plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Department of Mathematics to engage K-12 students in the region. PI Moore has led activities at Math Fun Day in prior years and, related to the current proposal, plans to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse. Laboratory materials for the demo are available at GFDI.
 
-FSU also provides an opportunity to expose high school students to university-level research through the {\bf Young Scholars Program (YSP)}. The YSP is a six week experience that brings Florida's brightest grade 11 students to FSU where they are exposed to university-level lectures and work with FSU faculty on a research project. PI Quaife participated in this program in Summer 2016. The PIs will propose research projects that are accessible to high school students throughout the duration of the proposed research. In addition to high school students receiving a high school experience, the PhD students will be tasked with much of the day-to-day interaction with the high school students. This offers an excellent opportunity for the PhD students to develop leadership and mentorship skills.
-
-%----------------------------------------------------------------------%
-\section{Timeline}
-
-
+FSU also provides an opportunity to expose high school students to university-level research through the {\bf Young Scholars Program (YSP)}. The YSP is a six week experience that brings Florida's brightest grade 11 students to FSU where they are exposed to university-level lectures and work with FSU faculty on a research project. PI Quaife participated in this program in Summer 2016. The PIs will propose research projects that are accessible to high school students throughout the duration of the proposed research. In addition to high school students receiving a university experience, the PhD students will be tasked with much of the day-to-day interaction with the high school students. This offers an excellent opportunity for the PhD students to develop leadership and mentorship skills.
 
 
 %----------------------------------------------------------------------%
