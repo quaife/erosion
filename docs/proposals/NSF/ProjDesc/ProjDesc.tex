@@ -118,13 +118,13 @@ An understanding of these filtration and contamination processes relies on the c
 {\bf This proposal aims to develop a suite of computational tools geared towards developing a deeper understanding of the physical processes by which groundwater flow alters porous-media properties and to characterize the associated changes in dispersive transport within the evolving medium.} A recognized complexity of naturally occurring media is the heterogeneity and anisotropy of macroscopic properties such as permeability and mechanical strength~\cite{neuman1987stochastic, moyner2016multiscale, lin2018randomization}. These properties can change over short timescales, for example sinkhole collapse or hydraulic fracturing, or over long timescales, for example the slow erosion or dissolution of solid material. Potential exists for feedback between these timescales: for example the slow wearing process reaching a critical threshold beyond which catastrophic events become more likely.  Physical mechanisms that can alter porous-medium properties include: 
 \begin{itemize}[noitemsep,topsep=0pt]
 \item Erosion of solid material due to fluid-mechanical stresses or chemical dissolution.
-\item Transport of grains due to intervening fluid flow and due to sedimentation.
+\item Transport of fragments and grains due to intervening fluid flow and due to sedimentation.
 \item Compaction of the medium due to overlying loads.
 \item Gravitational collapse of a medium due to loads exceeding a threshold.
 \end{itemize}
 The above are roughly ordered according to timescale, from the slowest acting to the fastest. While many of these mechanisms have been studied individually in various contexts and to varying levels of rigor, very little is known about their combined effect on the dynamic evolution of a porous medium. Since we aim to build a quantitative model from the ground up, we will first focus on the slowest acting mechanisms, as these ultimately set the stage for the more rapid events like sinkhole collapse. 
 
-In particular, we view the slow, accumulated effects of erosion and dissolution as instrumental in altering porous-medium properties. First, by deteriorating solid material, erosion alters the size distribution of porous-medium constituents, enabling smaller fragments to be sieved through networks of larger ones. A second and more subtle way that erosion can alter medium properties is by changing the {\em shape} distribution of fragments or grains. For instance, erosion can carve grains  into slender shapes aligned primarily in the direction of the dominant flow, thereby creating {\em anisotropic} characteristics. Likewise, chemical dissolution can carve well-defined conduit paths in karst networks which strongly alter transport properties~\cite{szymczak2009wormhole}. Some visible effects of flow-induced erosion are shown in Fig.~\ref{collage}. The top row shows products of primarily {\em chemically-driven} erosion, i.e.~dissolution, while the bottom shows effects of primarily {\em mechanically-driven} erosion. Some examples in the figure include the rough surface of limestone pavement, a sinkhole relic in Belize, and an erosion-curved conduit. The final image shows the small-scale structure of soil which exhibits polydispersity and anisotropy resulting from a combination of erosive, compaction, and transport actions.
+In particular, we view the slow, accumulated effects of erosion and dissolution as instrumental in altering porous-medium properties. First, by deteriorating solid material, erosion alters the size distribution of porous-medium constituents, enabling smaller fragments to be sieved through networks of larger ones. A second and more subtle way that erosion can alter medium properties is by changing the {\em shape} distribution of individual fragments or particles. For instance, erosion can carve particles into slender shapes aligned primarily in the direction of the dominant flow, thereby creating {\em anisotropic} characteristics. Likewise, chemical dissolution can carve well-defined conduit paths in karst networks which strongly alter transport properties~\cite{szymczak2009wormhole}. Some visible effects of flow-induced erosion are shown in Fig.~\ref{collage}. The top row shows products of primarily {\em chemically-driven} erosion, i.e.~dissolution, while the bottom shows effects of primarily {\em mechanically-driven} erosion. Some examples in the figure include the rough surface of limestone pavement, a sinkhole relic in Belize, and an erosion-curved conduit. The final image shows the small-scale structure of soil which exhibits polydispersity and anisotropy resulting from a combination of erosive, compaction, and transport actions.
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure}%[htbp]
@@ -141,7 +141,7 @@ Only recently have these ideas been extended to the low-Reynolds-number regime t
 \begin{itemize}[noitemsep,topsep=0pt]
 \item Porous media typically involves dense packings so that close-range effects and even nearly contacting bodies must be considered.
 
-\item The Stokes limit introduces {\em longer} range effects than the inertial limit does, thus coupling the shape evolution of {\em all} grains and conduits to a higher degree.
+\item The Stokes limit introduces {\em longer} range effects than the inertial limit does, thus coupling the shape evolution of {\em all} fragments, grains, and conduits to a higher degree.
 
 \item Somewhat counterintuitively, erosion does not always act to smooth shapes but rather can create sharp features and corners~\cite{Ristroph2012}. These features can be difficult to resolve and, further, can trigger numerical instabilities~\cite{Quaife2018}. Dissolution, meanwhile, can initiate a roughening transition~\cite{claudin2017dissolution}, leading to similar numerical difficulties.
 
@@ -168,7 +168,7 @@ While erosion and dissolution lead to gradual changes in a medium, other events 
 %----------------------------------------------------------------------%
 \subsection{Theoretical Foundation and Governing Equations}
 
-We first outline the theoretical foundation that will be used in later sections of the proposal. At the finest scale, the fluid flow intervening between individual grains of a porous medium is governed by the incompressible Stokes equations
+We first outline the theoretical foundation that will be used in later sections of the proposal. At the finest scale, the fluid flow intervening between individual constituents of a porous medium is governed by the incompressible Stokes equations
 \begin{align}
   \label{eqn:StokesEq}
   \mu \Delta \uu = \grad p, \quad
