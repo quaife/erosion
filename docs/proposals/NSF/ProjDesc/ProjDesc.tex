@@ -376,8 +376,12 @@ The rate of dispersion is directly related to the pore size distribution~\cite{d
   \caption{\label{fig:Eroding100gap_mean_var} \em (a) The pore sizes are defined in terms of a Delanuay triangulation. The effect of erosion on (b) the mean and (c) the variance of the pore sizes. The geometry initially contains 100 eroding bodies.}
 \end{figure}
 
+We have performed a carefully chosen simulation to better understand the effect of erosion on the pore size distribution. We start with a single grain inside the channel that is sufficiently large that the spacing between the initial grain and the channel walls, which is 2 units wide, is $10^{-3}$. By using a Barycentric quadrature rule, we stably simulate erosion with only 512 points on the eroding body which corresponds to an arclength spacing 12 times larger than the original separation distance; to achieve a comparable accuracy with the spectral trapezoid rule, 60 times as many discretization points would be required. In Fig.~\ref{fig:porelets}, different shades of grey correspond to the configuration of the eroding grain at five equally spaced time steps. At three of the time steps, we plot the velocity between the grain and the solid wall (black line). At all three configurations, the flow is observed to be nearly parabolic, supporting the validity of the porelet model~\cite{dea-qua-bir-jua2018}. After performing a thorough analysis of the pore size growth in this simple configuration, we will develop a more complete model for pore networks that are characteristic of porous media.
 
-We have performed a carefully chosen simulation to better understand the effect of erosion on the pore size distribution. We start with a single grain inside the channel that is sufficiently large that the spacing between the initial grain and the channel walls, which is 2 units wide, is $10^{-3}$. By using a Barycentric quadrature rule, we stably simulate erosion with only 512 points on the eroding body which corresponds to an arclength spacing 12 times larger than the original separation distance; to achieve a comparable accuracy with the spectral trapezoid rule, 60 times as many discretization points would be required. In Fig.~\ref{fig:porelets}(a), different shades of grey correspond to the configuration of the eroding grain at five equally spaced time steps. At three of the time steps, we plot the velocity between the grain and the solid wall (black line). At all three configurations, the flow is observed to be nearly parabolic, supporting the validity of the porelet model~\cite{dea-qua-bir-jua2018}. After performing a thorough analysis of the pore size growth in this simple configuration, we will develop a more complete model for pore networks that are characteristic of porous media.
+\begin{wrapfigure}[13]{l}{0.4\textwidth}
+  \includegraphics[width=0.4\textwidth]{figs/porelets_geom}
+  \caption{\label{fig:porelets} \em An eroding body at five equally time steps.  At the three intermediate time steps, the Stokesian velocity field in the bulk, which is nearly parabolic, is included.} 
+\end{wrapfigure}
 
 Finally, {\bf we propose to extend our preliminary results by
 considering concentrations with finite Peclet numbers}. We will deploy
@@ -388,22 +392,22 @@ semi-Lagrangian advection solver~\cite{rob1981}, and a diffusion solver
 that solves an $s$-dependent Yukawa equation, where $s$ is the Laplace
 transform variable~\eqref{eqn:DiffusionLaplace}.
 
-\begin{figure}[htp]
-  \centering
-  \begin{subfigure}[b]{0.47\textwidth}
-  \begin{center}
-  \includegraphics[height=0.55\textwidth]{figs/porelets_geom}
-  \end{center}
-  \caption{}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.47\textwidth}
-  \begin{center}
-  \includegraphics[height=0.55\textwidth]{figs/porelets_size}
-  \end{center}
-  \caption{}
-  \end{subfigure}
-  \caption{\label{fig:porelets} \em (a) An eroding body at five equally time steps.  At the three intermediate time steps, the Stokesian velocity field in the bulk, which is nearly parabolic, is included. (b) The pore size (black) and maximum velocity in the pore (red) as a function of time.  As the channel opens, the flow rate increases to maintain a constant pressure drop.} 
-\end{figure}
+%\begin{figure}[htp]
+%  \centering
+%  \begin{subfigure}[b]{0.47\textwidth}
+%  \begin{center}
+%  \includegraphics[height=0.55\textwidth]{figs/porelets_geom}
+%  \end{center}
+%  \caption{}
+%  \end{subfigure}
+%  \begin{subfigure}[b]{0.47\textwidth}
+%  \begin{center}
+%  \includegraphics[height=0.55\textwidth]{figs/porelets_size}
+%  \end{center}
+%  \caption{}
+%  \end{subfigure}
+%  \caption{\label{fig:porelets} \em (a) An eroding body at five equally time steps.  At the three intermediate time steps, the Stokesian velocity field in the bulk, which is nearly parabolic, is included. (b) The pore size (black) and maximum velocity in the pore (red) as a function of time.  As the channel opens, the flow rate increases to maintain a constant pressure drop.} 
+%\end{figure}
 
 
 %---------------------------------------------------------------------------------------------------%
@@ -430,14 +434,15 @@ kab-qua-bir2018, vou-har-tam-gri2011}.
 
 One approach is to use introduce a potential with short-range repulsion, but such methods often introduce stiffness. Alternatively, a space-time interference volume can guarantee a minimum separation between grains.  In a fluid context, this method was first introduced by Lu et al.~\cite{lu-rah-zor2017}, and extended to allow for much smaller separation distances of rigid bodies by the PI's previous graduate student~\cite{bys-sha-qua2019}. One PhD student, who will be jointly supervised by both PIs, will simulate sedimentation of eroding bodies by developing algorithms that resolve quadrature error and contact.  
 
-The central goal of simulating transport of eroding grains is to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and gravitational sedimentation. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks. In very preliminary work, PI Moore has run simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in~\eqref{DarcyEq} and incorporate the physical effects of: 
-\begin{itemize}[noitemsep]
-\item Transport of grains due to seepage force from the surrounding fluid flow.
-\item Gravitational sedimentation of grains.
-\item Feedback of grain-distribution onto permeability field.
-\item Contact and cohesive forces between grains.
-\end{itemize}
-Preliminary investigation suggests that this last mechanism of cohesion is essential to model sinkhole collapse in the system.
+The central goal of simulating transport of eroding grains is to simulate a complex porous-medium of arbitrarily sized and shaped grains undergoing the simultaneous action of mechanical-or-chemical erosion and transport due to the combined effects of seepage, contact, and gravitational sedimentation. These computations will thus simulate, with high-fidelity, the multi-physics of realistic porous-medium dynamics, albeit in a scaled down context. Ultimately, such simulations could be used to build an understanding of medium reconfiguration events, such as sinkhole collapse or conduit formation in karst networks. In very preliminary work, PI Moore has run simplified simulations with a current graduate student. These preliminary simulations are based on a hybrid continuum-discrete model for the permeability field and grain particle field respectively. They utilize the homogenized description of the flow field in~\eqref{DarcyEq} and incorporate the seepage and gravitational forces on the grains, feedback between the grain-distribution and the permeability field, and contact and cohesive forces between the grains.  Preliminary results suggest that cohesion is essential to model sinkhole collapse.
+
+%\begin{itemize}[noitemsep]
+%\item Transport of grains due to seepage force from the surrounding fluid flow.
+%\item Gravitational sedimentation of grains.
+%\item Feedback of grain-distribution onto permeability field.
+%\item Contact and cohesive forces between grains.
+%\end{itemize}
+%Preliminary investigation suggests that this last mechanism of cohesion is essential to model sinkhole collapse in the system.
 
 %----------------------------------------------------------------------%
 \subsection{Parameterizations of Eroding Porous Media}
@@ -449,16 +454,22 @@ These sinkhole simulations have not yet begun to incorporate the slow-acting eff
 \subsection{Experimental Validation}
 \label{sec:experiments}
 
-	As mentioned previously, researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have investigated the mechanisms behind sinkhole formation with a series of scaled-down laboratory experiments~\cite{tao2014experimental}. We plan to make use of the knowledge gained from these past experiments, as well as the facilities and equipment already in place, to inform and validate our computational program. 
+Researchers at FSU's Geophysical Fluid Dynamics Institute (GFDI) have
+investigated the mechanisms behind sinkhole formation with a series of
+scaled-down laboratory experiments~\cite{tao2014experimental}. We will
+make use of the knowledge gained from these past experiments, and the
+facilities and equipment already in place, to inform and validate our
+computational program. In particular, existing data from these
+experiments offers a first-rate testbed for comparison against the newly
+developed simulation, and also provides information about the physical
+conditions and broad parameter regimes required for sinkhole collapse. Furthermore, and more importantly, {\bf we propose to conduct a new campaign of laboratory experiments at the GFDI facilities that will be spearheaded by PI Moore and an undergraduate student funded by the project.} The experiments will use much of the same infrastructure, as well as GFDI technical staff who have working knowledge of the specific equipment. The experiments will be conducted in close cooperation with the graduate students to ensure constant feedback between advances in the computational program and experiments.
+
+The proposed experiments involve two parallel lines of inquiry that will
+be merged in later stages of the project. The first line will
+investigate dynamic erosion of a porous material by mechanical or
+chemical action. The porous medium will be represented by fragments of either erodible material, such as bentonite clay, or dissolve material, such as sucrose solids. We will perform controlled experiments to examine how important macroscopic properties, such as permeability, mechanical strength, and anisotropy, evolve dynamically as the constituents disintegrate. These experiments will make use of Darcy-column containers that allow precise control of flux through the medium and precise hydraulic head measurements to infer permeability. These Darcy columns have already been fabricated and are available for use at GFDI. 
 	
-	First, already existing data from these experiments offers a wonderful testbed for comparison against the newly developed simulations. This data provides information about the physical conditions and broad parameter regimes required for sinkhole collapse. Second, and more importantly, we propose to conduct a new campaign of laboratory experiments at the GFDI facilities which will be spearheaded by PI Moore and an undergraduate student funded by the project. These experiments will make use of much of the same infrastructure, as well as technical staff present at GFDI with working knowledge of the specific equipment. The experiments will be conducted in close cooperation with the graduate students to ensure constant feedback between advances in the computational program and experiments.
-
-	The proposed experiments involve two parallel lines of inquiry that we plan to merge in later stages of the project. The first line of inquiry involves the dynamic erosion of a porous material by either mechanical or chemical action. In this context, the porous medium will be represented by fragments of either erodible material, such as bentonite clay, or dissolve material, such as sucrose solids. We will perform controlled experiments to examine how important macroscopic properties, such as permeability, mechanical strength, and anisotropy, evolve dynamically as the constituents disintegrate. These experiments will make use of Darcy-column containers that allow precise control of flux through the medium and precise hydraulic head measurements to infer permeability. These Darcy columns have already been fabricated and are available for use at GFDI. 
-	
-	The second line of inquiry will extend the sinkhole experiments that were previously conducted at GFDI, with the specific aim of informing and validating our numerical simulations. These experiments will build on the significant infrastructure already in place from the previous sinkhole experiments, with the express consent of our collaborator Prof. Ming Ye (see collaboration letter). This infrastructure permits precise control of the hydraulic head in a confined and unconfined aquifers -- it is the difference in the heads creates conditions favorable for sinkhole formation. The new experiments will use both natural (sand) and artificial (glass beads) granular materials. The advantage of the latter is to achieve a mono-disperse medium for direct comparison against numerical simulations. Time permitting, we hope to merge the two lines of inquiry to examine the influence of material erodibility on gravitational reconfiguration and specifically sinkhole formation. The materials available for laboratory experiments, in particular the relatively rapid rates of degradation that can be achieved, would enable us to study phenomenon that occur on much longer timescales in the natural world.
-
-\todo[inline]{Like it?}
-
+The second line of inquiry will extend the previously conducted sinkhole experiments of our collaborator Prof.~Ming Ye (see letter of collaboration), with the specific aim of informing and validating our numerical simulations. This infrastructure permits precise control of the hydraulic head in confined and unconfined aquifers---it is the difference in the heads that creates conditions favorable for sinkhole formation. The new experiments will use both natural (sand) and artificial (glass beads) granular materials. The advantage of the latter is to achieve a mono-disperse medium for direct comparison against numerical simulations. Time permitting, we will merge the two lines of inquiry to examine the influence of material erodibility on gravitational reconfiguration and specifically sinkhole formation. The materials available for laboratory experiments, in particular the relatively rapid rates of degradation that can be achieved, will enable us to study phenomenon that occur on much longer timescales in the natural world.
 
 %----------------------------------------------------------------------%
 %%%%  SECTION: Education and outreach
@@ -475,19 +486,17 @@ Naturally, the proposed research will form the foundation for the PhD dissertati
 
 %----------------------------------------------------------------------%
 \subsection{Undergraduate Research}
-Regarding undergraduate research, the ideas in this proposal represent a rich and fascinating topic for undergraduate students, while also being approachable by the skills acquired at that stage. In particular, we aim to recruit at least one undergraduate student to perform laboratory experiments at the Geophysical Fluid Dynamics Institute (GFDI). As mentioned above, GFDI offers state-of-the-art laboratory facilities, with an already-functioning sinkhole experiment. The student will perform controlled experiments using natural and artificial porous media (e.g.~sand and micro-glass beads respectively) to precisely characterize the parameter regime leading to gravitational collapse. Parallel experiments will be conducted with erodible (bentonite clay) or dissolvable  (sucrose solids) fragmented materials to represent a {\em dynamically} changing porous medium. These experiments will be used to guide, calibrate, and validate the computational advances. These undergraduate students will work closely with the graduate students to ensure that theory and experiments advance in close cooperation, with constant feedback between the two.
+The proposed research represents a rich and fascinating topic for undergraduate students, while also being approachable by the skills acquired at that stage. We aim to recruit at least one undergraduate student to perform laboratory experiments at GFDI. As mentioned above, GFDI offers state-of-the-art laboratory facilities, with an already-functioning sinkhole experiment. The student will perform controlled experiments using natural and artificial porous media to precisely characterize the parameter regime leading to gravitational collapse. Parallel experiments will be conducted with erodible (bentonite clay) or dissolvable (sucrose solids) fragmented materials to represent a {\em dynamically} changing porous medium. These experiments will guide, calibrate, and validate the computational advances. The undergraduate students will work closely with the PIs and the graduate students to ensure that theory and experiments advance in close cooperation, with constant feedback between the two.
 
-PI Moore already has experience successfully training undergraduate students in combined laboratory and theoretical work. A recent example is undergraduate student Tyler Bolles who completed an honors thesis with PI Moore at FSU on laboratory and theory of water waves. This work resulted in one {\em peer-reviewed} publication already~\cite{Bolles2019}, with a second to be submitted soon. PI Quaife successfully trained an undergraduate student, Miles Currie, in a statistical analysis of flows related to prescribed fire dynamics.  This work resulted in a peer-reviewed publication~\cite{cur-spe-hie-obr-goo-qua2018}.
+PI Moore has experience successfully training undergraduate students in combined laboratory and theoretical work. A recent example is Tyler Bolles who completed an undergraduate honors thesis with PI Moore at FSU on laboratory and theory of water waves. This work resulted in one {\em peer-reviewed} publication~\cite{Bolles2019}, and a second to be submitted soon. PI Quaife successfully trained an undergraduate student, Miles Currie, in a statistical analysis of flows related to prescribed fire dynamics.  This work resulted in a {\em peer-reviewed} publication~\cite{cur-spe-hie-obr-goo-qua2018}.
 
-At FSU, there are at least two excellent avenues to attract interested undergraduate students:  the Undergraduate Research Opportunity Program (UROP) and the IDEA grant. The UROP is a program to engage undergraduates in academic research, while the IDEA grant is a competitive program, requiring more advanced students to write a proposal in which they identify a research advisor. Both programs make special efforts to recruit from underrepresented groups. PIs Moore and Quaife already have experience using these programs to recruit interested students.
+At FSU, there are at least two excellent avenues to attract interested undergraduate students: the Undergraduate Research Opportunity Program (UROP) and the IDEA grant. The UROP engages undergraduates in academic research, while the IDEA grant is a competitive program, requiring more advanced students to identify a research advisor and write an internal proposal. Both programs make special efforts to recruit from underrepresented groups. PIs Moore and Quaife already have experience using these programs to recruit interested students.
 
 %----------------------------------------------------------------------%
 \subsection{Outreach for K--12 and the General Public}
-The PIs have already seized the opportunity to engage K--12 students in outreach activities. In particular, PI Moore's research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K--12 education. The video, which features an interview and animations of research, is used to reinforce concepts from mathematics courses (grade levels 7--12), and to encourage students to consider a career in the STEM fields~\cite{CPALMS}. Additionally, these videos are frequently used for the continuing education of K--12 {\em teachers}, providing them a broader perspective of mathematics that could be integrated into their teaching.
- 
-Plans for future outreach include continued collaboration with CPALMS to create a series of educational videos for both students and teachers, as well as planned activities at {\bf Math Fun Day}, which is an annual event held by the FSU Department of Mathematics to engage K-12 students in the region. PI Moore has led activities at Math Fun Day in prior years and, related to the current proposal, plans to deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse. Laboratory materials for the demo are available at GFDI.
+The PIs have already seized the opportunity to engage K--12 students in outreach activities. In particular, PI Moore's research was the focus of an educational video created by {\bf CPALMS}, which is the State of Florida's official source for standards information and course descriptions for K--12 education. The video features an interview and animations of research, and is used to reinforce mathematics concepts (grade levels 7--12), encourage students to consider a career in the STEM fields~\cite{CPALMS}, and provides K--12 {\em teachers} with a broader perspective of mathematics that can be integrated into their teaching. Plans for future outreach include continued collaboration with CPALMS to create a series of educational videos.  In addition, activities at {\bf Math Fun Day}, an annual event held by the FSU Department of Mathematics to engage regional K-12 students, will be planned. PI Moore has previously led activities at Math Fun Day and, related to the current proposal, will deliver lectures and demos on porous-media flows, erosion, and sinkhole collapse. Laboratory materials for the demo are available at GFDI.
 
-FSU also provides an opportunity to expose high school students to university-level research through the {\bf Young Scholars Program (YSP)}. The YSP is a six week experience that brings Florida's brightest grade 11 students to FSU where they are exposed to university-level lectures and work with FSU faculty on a research project. PI Quaife participated in this program in Summer 2016. The PIs will propose research projects that are accessible to high school students throughout the duration of the proposed research. In addition to high school students receiving a university experience, the PhD students will be tasked with much of the day-to-day interaction with the high school students. This offers an excellent opportunity for the PhD students to develop leadership and mentorship skills.
+Another opportunity to expose high school students to university-level research is FSU's {\bf Young Scholars Program (YSP)}. The YSP is a six week experience for Florida's brightest grade 11 students where they are exposed to university-level lectures and work with FSU faculty on a research project. PI Quaife participated in the YSP in 2016. The PIs will propose accessible projects throughout the duration of the proposed research. In addition to high school students receiving a university experience, the PhD students will be tasked with much of the day-to-day interaction, and this offers an excellent opportunity for the PhD students to develop leadership and mentorship skills.
 
 
 %----------------------------------------------------------------------%
