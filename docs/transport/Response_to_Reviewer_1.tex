@@ -1,0 +1,184 @@
+\documentclass[11pt]{article}
+
+
+\usepackage{todonotes}
+\usepackage{fullpage}
+\usepackage{amsmath,amsfonts,amssymb,stmaryrd}
+\usepackage{color}
+\newcommand{\comment}[1]{{\color{blue} #1}}
+
+\begin{document}
+
+\noindent
+Dear Silas Alben,
+\\ \\
+\noindent
+Thank you for handling the manuscript, and we would like to thank the
+reviewer for their positive and constructive comments.  The attached
+manuscript addresses all the reviewer's comments and the result is what
+we believe is a stronger manuscript.  We also note that formatting
+issues were resolved in the bibliography. An itemized list of the
+changes addressing the reviewer's comments are below.
+\\ \\
+\noindent
+Sincerely,
+\\
+\noindent
+Shang-Huan Chiu, Nick Moore, and Bryan Quaife
+
+\section*{Response to Reviewer 1}
+
+\noindent
+\comment{The Barycentric formulae (5.9 \& 5.10) for the first
+derivatives of Cauchy integral are incorrect. They are NOT true
+barycentric form and straightforward numerical experiments will show
+that all accuracies are lost up to the boundary using these formulae,
+even if $v(x)$ is computed to high accuracy using the formulae (5.6 \&
+5.7). (See e.g.~Sec 3.3 of Barnett et.~al.~2015 for more details.)}
+\begin{itemize}
+  \item response
+\end{itemize}
+
+\noindent
+\comment{Likewise, the second derivative ``barycentric formulae" (5.15 \& 5.18) are incorrect, either. So the authors will need to explain how they managed to get high accuracies with the stated formulae?}
+\begin{itemize}
+  \item response
+\end{itemize}
+
+\noindent
+\comment{In my opinion, the claim of having developed a ``new quadrature
+method" is too strong. After all, there is nothing new about the
+barycentric quadrature itself. Rather, I suggest that maybe a more
+appropriate claim would be that the authors have developed a ``new
+numerical scheme" for the Stokes porous media flow, where the accurate
+quadrature is one ingredient in this scheme.}
+\begin{itemize}
+  \item response
+\end{itemize}
+
+
+\noindent
+\comment{The transient increase of tortuosity is interesting, but the
+explanation in Sec 6.4 is not satisfying. The authors proposed that the
+increase of tortuosity can be explained by the sudden increase of
+$x$-velocity when a grain vanishes. But in formula (4.4) or (4.5), the
+$x$-velocity appears both in the numerator and the denominator, which
+seems to me that the increase would just cancel. Then, as the authors
+have pointed out, wouldn't the straighter streamlines resulted from the
+vanishing of grains have decreased the tortuosity?}
+\begin{itemize}
+  \item response
+\end{itemize}
+
+\noindent
+\comment{The porosity-tortuosity models (4.6c \& 4.6d) are not
+explicitly compared in the results section. How much worse are they
+comparing to the other models?}
+\begin{itemize}
+  \item response
+\end{itemize}
+
+\noindent
+\comment{The coefficient CE in equation (2.1) is undefined.}
+\begin{itemize}
+  \item Thank you for pointing this out. We also realized that $\mu$ is
+  undefined. We now state:
+  \begin{quotation}
+    \noindent
+    Parameters include the fluid viscosity $\mu$ and the
+    material-dependent erosion constant $C_E$. By non-dimensionalizing
+    equations (2.1) (Quaife \& Moore 2018), we set both these parameters
+    to one.
+  \end{quotation}
+\end{itemize}
+
+\noindent
+\comment{Should the shear stress formula (2.2) contain viscosity in it
+based on the governing equation (2.1)?}
+\begin{itemize}
+  \item In general, it would. However, since we have non-dimensionalized
+    following our previous work, the viscosity is assumed to be 1.
+\end{itemize}
+
+\noindent
+\comment{In Figure 5, do the colors represent vorticity itself or the
+log of the abs vorticity? (Which would be consistent with the colors in
+Figure 4.)}
+\begin{itemize}
+  \item The color represents the logarithm of the absolute value of the
+    vorticity.
+  \item We have updated the caption to read:
+    \begin{quotation}
+    \noindent
+      The eroded bodies from figure 4 at time $t = 0.1$. The color is
+      the logarithm of the magnitude of the vorticity. The initial
+      distances from the body to the solid wall are: (a) $h$, (b) $h/2$,
+      and (c) $h/10$.
+    \end{quotation}
+  \item We have also updated the text to read:
+    \begin{quotation}
+    \noindent
+      To visualize the flow, in figure 5 we plot the logarithm of the
+      absolute value of the vorticity from the final time step in figure
+      4.
+    \end{quotation}
+\end{itemize}
+
+\noindent
+\comment{When first introduced in Sec 4.3, the ``pore sizes" are not
+clearly defined. (My first impression was that pore size = portion of an
+edge of the Delaunay diagram. Only at the end in Sec 6.4 do we know that
+it is defined as the closest distance between grains.)}
+\begin{itemize}
+  \item In Figure 3, we clarify the definition by adding the statement:
+    {\em represented by the length of the red line segments}.
+  \item In the text, we now state:
+    \begin{quotation}
+    \noindent
+      Finally, we define the pore sizes to be the minimum distance
+      between all pairs of neighboring grains, and these distances are
+      represented by the red line segments in figure 3(a).
+    \end{quotation}
+\end{itemize}
+
+\noindent
+\comment{``Porosity" is undefined throughout the paper.}
+\begin{itemize}
+  \item We have now formally defined the porosity by rewriting the
+    description of coarse-grained models as:
+  \begin{quotation}
+  \noindent
+    Examples of coarse-grained models for porous media flow include
+    tortuosities (Matyka et al.~2008; Duda et al.~2011; Koponen et
+    al.~1996), geometry connectivity (Knudby \& Carrera 2005), anomalous
+    dispersion (Dentz et al.~ 2004), and permeability-porosity
+    relationships (Dardis \& McCloskey 1998; Carman 1937), where the
+    porosity is the fraction of the geometry that is fluidized.
+  \end{quotation}
+
+
+\end{itemize}
+
+\noindent
+\comment{``Area fraction" is plotted in (and only in) Figure 7, while
+the rest of the paper used porosity. Maybe plotting porosity here would
+give a more consistent and smoother reading experience?}
+\begin{itemize}
+  \item We examined the area fraction and flow rate in figure 7 so that
+    it could be compared to results from our previous work. The goal is
+    to demonstrate that we now able to resolve smaller area fractions
+    and correspondingly lower flow rates.
+
+  \item We have updated the text to read:
+    \begin{quotation}
+      \noindent
+      In our previous work (Quaife \& Moore 2018), we investigated the
+      effects of erosion on the area fraction and flow rate of two
+      different geometries. Here, we do the same analysis, but with the
+      denser packing of the grains.
+    \end{quotation}
+
+\end{itemize}
+
+
+\end{document}

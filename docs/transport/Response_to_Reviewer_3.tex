@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+
+
+\usepackage{todonotes}
+\usepackage{fullpage}
+\usepackage{amsmath,amsfonts,amssymb,stmaryrd}
+\usepackage{color}
+\newcommand{\comment}[1]{{\color{blue} #1}}
+
+\begin{document}
+
+\noindent
+Dear Silas Alben,
+\\ \\
+\noindent
+Thank you for handling the manuscript, and we would like to thank the
+reviewer for their positive and constructive comments.  The attached
+manuscript addresses all the reviewer's comments and the result is what
+we believe is a stronger manuscript.  We also note that formatting
+issues were resolved in the bibliography. An itemized list of the
+changes addressing the reviewer's comments are below.
+\\ \\
+\noindent
+Sincerely,
+\\
+\noindent
+Shang-Huan Chiu, Nick Moore, and Bryan Quaife
+
+\section*{Response to Reviewer 3}
+
+
+\noindent
+\comment{Pores in natural porous media care of three-dimensional
+geometry.  The authors may include some discussion on how to extend
+their numerical method to three-dimensional problems.  In addition, they
+may also discuss the limitations of the erosion analysis in
+2-dimensional flow to be applied for three-dimensional flow. If the
+erosion process in three-dimensional flow is very different from that in
+two-dimensional flow, the analysis of this paper may have less relevant
+to the analysis of erosion in natural porous media.}
+\begin{itemize}
+  \item The reviewer is correct that by assuming the geometry is
+    two-dimensional, we have limited the applicability for natural
+    porous media. There are several numerical challenges to simulate
+    three-dimensional erosion, with the most significant being the
+    $\theta-L$ formulation, quadrature method, spectral representation
+    of the geometry, and the boundary integral equation solver.
+
+  \item Others have developed three-dimensional numerical methods for
+    removing stiffness in interfacial flow ($\theta-L$ formulation),
+    spectrally representing geometries, and efficiently solving BIEs.
+    The challenge with these methods is their computational cost. To
+    consider suspensions with the resolution and number of grains that
+    we consider, the BIE would most likely require a parallel
+    implementation that would run on high-performance computing
+    architectures. At this point, this is not the goal of our work.
+
+  \item The Barycentric quadrature method relies on a complex variable
+    formulation, so it is inherently two-dimensional. However, there are
+    other quadrature methods that can be applied in three dimensions,
+    but they are also computationally expensive.
+
+  \item Our response to the reviewer's second comment points to a
+    paragraph that has been added to the Introduction.
+
+
+\end{itemize}
+
+\noindent
+\comment{In the numerical examples of the paper the grains are all
+separated. In natural porous media, grains are compressed to form grain
+contacts. The authors may include discussion on numerical challenges in
+studying erosion process in natural porous media.}
+\begin{itemize}
+  \item The reviewer is correct that porous media grains are compressed
+    and form grain contact. This is the result of processes such as
+    sedimentation and transport of the grains themselves. This, again,
+    is a limitation of our method since we only consider immobile
+    bodies.
+
+  \item We plan to consider mobile bodies in the future, and this will
+    require a significant computational effort.
+
+  \item To the best of our knowledge, nobody has studied the effect
+    erosion has on transport through a porous media. Therefore, as a
+    first step, we limit ourselves to two-dimensional suspensions of
+    immobile bodies, and we plan to remove these limitations in the
+    future. In the Introduction, we have added the following paragraph:
+    \begin{quotation}
+      \noindent
+      While natural porous media are three-dimensional, there are
+      several challenges that must be overcome to extend our high-order
+      methods to three dimensions.  A three-dimensional version of a
+      {$\theta-L$} formulation exists (Ambrose {\em et al.} 2013), but
+      the Barycentric quadrature method relies upon a complex variable
+      formulation of the BIE, making it inherently two-dimensional.
+      Therefore, a different quadrature method is required. Additional
+      challenges of three-dimensional simulations include spectral
+      representations of the geometry and efficiently solving
+      discretizations of the BIE.  While high-order methods for
+      three-dimensional BIEs have been developed, their computational
+      cost limits the number of bodies that can be practically
+      simulated. Another limitation of this work is the assumption of
+      immobile grains.  Mechanisms such as sedimentation play a role in
+      real applications, and this will effect the transport properties.
+      Simulating mobile grains introduces the additional challenge of
+      resolving contact.  Since high-order methods have never been used
+      to study transport in eroded porous media, as a first step we
+      consider the case  with two-dimensional immobile grains. This
+      assumption allows for a clear interpretation of the results.  For
+      example, in this work we are able to simulate a large
+      densely-packed suspension (up to $100$ in this manuscript).
+
+
+    \end{quotation}
+\end{itemize}
+
+
+
+\end{document}

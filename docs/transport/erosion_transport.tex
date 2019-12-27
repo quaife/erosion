@@ -1,4 +1,3 @@
-%\documentclass[preprint,10pt]{elsarticle}
 \documentclass{jfm}
 
 \input{preambles.tex}
@@ -12,11 +11,6 @@
 \author{Shang-Huan Chiu\aff{1}, M.~N.~J.~Moore\aff{2}, and Bryan
 Quaife\aff{3}\corresp{\email{bquaife@fsu.edu}}}
   
-%  Alan N. Other\aff{1}
-%  \corresp{\email{jfm@damtp.cam.ac.uk}},
-%  H. - C. Smith\aff{1}
-% \and J. Q.  Public\aff{2}}
-
 \affiliation{
 \aff{1}Department of Scientific Computing, Florida State University,
 Florida State University, Tallahassee, FL 32306, USA
@@ -29,19 +23,6 @@ Institute, Florida State University, Tallahassee, FL 32306, USA
 \begin{document}
 
 \maketitle
-
-%\title{Viscous Transport in Eroding Porous Media}
-%
-%\author[SH]{Shang-Huan Chiu}
-%\author[Nick]{M.~N.~J.~Moore}
-%\author[Bryan]{Bryan D.~Quaife}
-%
-%\address[SH]{Department of Scientific Computing, Florida State
-%University, Tallahassee, FL, 32306.}
-%\address[Nick]{Department of Mathematics and Geophysical Fluid Dynamics
-%Institute, Florida State University, Tallahassee, FL, 32306.}
-%\address[Bryan]{Department of Scientific Computing and Geophysical Fluid
-%Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract} 
   Transport of viscous fluid through porous media is a direct
@@ -63,24 +44,6 @@ Institute, Florida State University, Tallahassee, FL 32306, USA
   simulate erosion, and new numerical methods to stably and accurately
   resolve nearly-touching eroded bodies and particle trajectories near
   the eroding bodies.
-
-%  We extend our previous work, [{\em Journal of Computational Physics},
-%  {\bf 375}:1--21, 2018], to simulate fluid-mechanical erosion of
-%  two-dimensional porous media with nearly-touching grains.  The method
-%  continues to use a boundary integral equation (BIE) method to solve
-%  the fluid equations, and a stable second-order time stepping method to
-%  erode the grains.  In our previous work, we required eroding grains
-%  that were sufficiently separated to guarantee that the trapezoid rule
-%  provides a sufficient amount of accuracy. We now remove this
-%  restriction by introducing a Barycentric quadrature rule whose error
-%  is bounded independent of the geometry.  The Barycentric quadrature
-%  rule is computationally expensive, so it is only used when necessary,
-%  and the spectrally accurate fast-multipole-accelerated trapezoid rule
-%  is used otherwise. We also simulate and analyze transport through
-%  eroded porous media.  By using the Barycentric quadrature rule, the
-%  analysis examines flow both in the fast and slow regions with
-%  high-order accuracy. Our results reveal several interesting  effects
-%  of erosion on the tortuosity, dispersion, and pore size distributions.
 \end{abstract}
 
 %\begin{keyword}
@@ -100,17 +63,18 @@ can vary from $10^{-6}\mathrm{m}$ to
 $10^{-1}\mathrm{m}$~\citep{mil-chr-imh-mcb-ped1998} and velocity scales
 can be as small as $10^{-1}\mathrm{m/day}$~\citep{kut-scr-dav-ham1995}.
 Moreover, for a single porous geometry, the pore sizes and velocities
-can range over several orders of magnitude.  Numerical methods that
+can range over several orders of magnitude. Numerical methods that
 resolve this range of scales offer the ability to: (i) characterize
 dispersion~\citep{saf1959}, (ii) quantify
 mixing~\citep{leb-den-dav-bol-car-dec-bou2011, den-leb-eng-bij2011}, and
 (iii) develop meaningful constitutive relationships that link the
 microscopic and macroscopic realms~\citep{mil-chr-imh-mcb-ped1998}.
 Examples of coarse-grained models for porous media flow include
-permeability-porosity relationships~\citep{dar-mcc1998, car1937},
 tortuosities~\citep{mat-kha-koz2008, dud-koz-mat2011, kop-kat-tim1996},
 geometry connectivity~\citep{knu-car2005}, anomalous
-dispersion~\citep{den-cor-sch-ber2004}, and more.  
+dispersion~\citep{den-cor-sch-ber2004}, and permeability-porosity
+relationships~\citep{dar-mcc1998, car1937}, where the porosity is the
+fraction of the geometry that is fluidized.
 
 Flow in porous media is further complicated when boundaries evolve 
 dynamically in response to the fluid flow. This coupling between
@@ -217,6 +181,27 @@ uniformly bounded.  We extend the original quadrature method to compute
 the velocity gradient, which is needed to evaluate the shear stress and
 the fluid vorticity.
 
+While natural porous media are three-dimensional, there are several
+challenges that must be overcome to extend our high-order methods to
+three dimensions.  A three-dimensional version of a {\thL} formulation
+exists~\citep{amb-sie-tlu2013}, but the Barycentric quadrature method
+relies upon a complex variable formulation of the BIE, making it
+inherently two-dimensional. Therefore, a different quadrature method is
+required. Additional challenges of three-dimensional simulations include
+spectral representations of the geometry and efficiently solving
+discretizations of the BIE. While high-order methods for
+three-dimensional BIEs have been developed, their computational cost
+limits the number of bodies that can be practically simulated. Another
+limitation of this work is the assumption of immobile grains.
+Mechanisms such as sedimentation play a role in real applications, and
+this will effect the transport properties. Simulating mobile grains
+introduces the additional challenge of resolving contact.  Since
+high-order methods have never been used to study transport in eroded
+porous media, as a first step we consider the case  with two-dimensional
+immobile grains. This assumption allows for a clear interpretation of
+the results.  For example, in this work we are able to simulate a large
+densely-packed suspension (up to $100$ in this manuscript). 
+
 To characterize transport through the resulting configurations, particle
 trajectories must be computed. Depending on the application, microscale
 transport can be modelled as pure advection~\citep{dea-qua-bir-jua2018,
@@ -264,34 +249,6 @@ connectivity~\citep{knu-car2005, wes-blo-gra2001}, and to develop
 network models~\citep{bry-kin-mel1993, bry-mel-cad1993, bij-blu2006}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Contributions}
-%Our first contribution is extending the Barycentric quadrature rule
-%of~\citet{bar-wu-vee2015} to accurately compute velocity gradients
-%associated with Stokes flow. This new quadrature rule permits accurate
-%and stable simulations of erosion, and, moreover, enables visualization
-%of the vorticity field throughout.
-%
-%Our second contribution is computing and analyzing trajectories in
-%eroded geometries.  These trajectories are formed by combining the
-%Barycentric quadrature rule and a fourth-order Runge-Kutta method. Then,
-%they are used to compute tortuosities and dispersion rates of eroded
-%geometries. Finally, we examine the effect of erosion on the pore size
-%distribution.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Limitations}
-%As in our previous work~\citep{qua-moo2018}, we consider two-dimensional
-%immobile eroding grains. However, this work does not limit the proximity
-%of  grains. Compared to our previous work, we are able to simulate much
-%denser suspensions with a comparable number of discretization points and
-%without upsampling.  While we do investigate transport in this work, we
-%only consider passive particles that are advected by the flow.  To model
-%other physical processes, such as contaminant transport, we plan to
-%simulate a finite Peclet number advection-diffusion equation in eroded
-%geometries.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Outline of the Paper}
 This paper is organized as follows. In section~\ref{sec:formulation}, we
 summarize the erosion model that is described in more detail in previous
 work~\citep{qua-moo2018}.  In section~\ref{sec:DLP}, we recast all the
@@ -337,7 +294,12 @@ forces, the governing equations are
 \end{equation}
 Here $\uu$ is the fluid velocity, $p$ is the pressure, $\UU$ is a
 prescribed Hagen-Poiseuille velocity field, and $\Vn$ is the normal
-velocity of $\gamma$. The shear stress on $\gamma$ is
+velocity of $\gamma$. Since the rate of erosion is much slower than the
+background flow, a quasi-steady approximation justifies the no-slip
+boundary condition. Parameters include the fluid viscosity $\mu$ and the
+material-dependent erosion constant $\CE$. By non-dimensionalizing
+equations~\eqref{eqn:erosionModel}~\citep{qua-moo2018}, we set both
+these parameters to one. The shear stress on $\gamma$ is
 \begin{align}
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
@@ -617,26 +579,13 @@ others~\citep{dea-qua-bir-jua2018, puy-gou-den2019}, once a particle
 reaches the outlet of the porous region, it is reinserted at the inlet.
 To minimize errors caused by reinsertion, the particle is initialized at
 the discretization point that has the closest velocity to the particle's
-velocity at the outlet.  After a single trajectory is formed, it has
-undergone a collection of reinsertions.  Then, as a post-processing
-step, the trajectory is made continuous by attaching the tail of each
-segment to the origin of the next segment.
-
-%We consider trajectories in an open channel so that they can be compared
-%to trajectories in eroded geometries with large permeability.  The
-%trajectories are $(s_1(t),s_2(t)) = ((1-s_2(0)^2)t + s_1(0), s_2(0))$.
-%%\begin{align}
-%%  s_1(t) = (1-s_2(0)^2)t + s_1(0), \quad
-%%  s_2(t) = s_2(0).
-%%\end{align}
-%Averaging over $s_2(0) \in [-1,1]$, the first and second ensemble
-%moments are
-%\begin{align}
-%  \langle \lambda \rangle (t) = \frac{2}{3}t, \quad 
-%    \sigma_\lambda^2(t) = \frac{4}{45}t^2.
-%\end{align}
-%In section~\ref{sec:results}, we compare the second moment in an open
-%channel with the trajectories in an eroded geometry.
+velocity at the outlet. This method of reinsertion does not artificially
+decorrelate the particle velocities~\citep{puy-gou-den2019}, and this
+allows us to reliably use the statistical moments~\eqref{eqn:moments} to
+characterize the anomalous dispersion. After a single trajectory is
+formed, it has undergone a collection of reinsertions.  Then, as a
+post-processing step, the trajectory is made continuous by attaching the
+tail of each segment to the origin of the next segment.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tortuosity}
@@ -653,15 +602,17 @@ $(x_0,y_0)$, and its arclength, $\lambda(y_0)$, is calculated until the
 streamline passes the parallel outlet cross-section $x = x_0 + d$.  In
 this work, we consider streamlines originating at $x=-1$ and terminating
 at $x=1$, so $d=2$.  However, other choices for the terminal point when
-computing the tortuosity are sometime used~\citep{dud-koz-mat2011}.  The
-hydraulic tortuosity is defined by taking the average over all points on
-the inlet cross-section
+computing the tortuosity are sometime used~\citep{dud-koz-mat2011}.
+We note that if a streamline originates in a recirculation zone, which
+is possible in two dimensions~\citep{hig1985}, then the local tortuosity
+will be infinite. However, in each of our numerical experiments, all the
+streamlines connect the inlet to the outlet. Having only finite local
+tortuosities, the hydraulic tortuosity is defined by taking the average
+over all points on the inlet cross-section
 \begin{align}
   T = \frac{1}{d}\left(\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0 \right)
   \Bigg/
   \left(\int_{S}u_1(x_0,y_0)\,dy_0 \right),
-%  T = \frac{1}{d}\frac{\displaystyle\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0}
-%  {\displaystyle\int_{S}u_1(x_0,y_0)\,dy_0},
   \label{eqn:tortuosity1}
 \end{align} 
 where $S$ is the inlet cross-section $x = -1$, $u_1(y_0)$ is the
@@ -678,8 +629,6 @@ to~\citep{dud-koz-mat2011}
   T = \left(\int_\Omega \|\uu(\yy)\|\, d\yy \right)
     \Bigg/
       \left(\int_\Omega u_1(\yy)\, d\yy \right),
-%  T = \frac{\displaystyle\int_\Omega \|\uu(\yy)\|\, d\yy}
-%           {\displaystyle\int_\Omega u_1(\yy)\, d\yy},
   \label{eqn:tortuosity2}
 \end{align}
 where $\Omega$ is the fluid region between the inlet and outlet
@@ -721,11 +670,12 @@ geometries.
 \includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:Eroding100gap} (a) The pore sizes between
-neighboring grains. Two grains are neighbors if they share an edge of
-the Delanuay triangulation with nodes at the center of each eroding
-grain. (b) The pore sizes of an eroded geometry. The black curve is the
-Weibull distribution with the same first two moments as the data.}
+\caption{\label{fig:Eroding100gap} (a) The pore sizes, represented by
+the length of the red line segments, between neighboring grains. Two
+grains are neighbors if they share an edge of the Delanuay triangulation
+with nodes at the center of each eroding grain. (b) The pore sizes of an
+eroded geometry. The black curve is the Weibull distribution with the
+same first two moments as the data.}
 \end{figure}
 While transport in porous media depends on the porosity, it also depends
 on the placement of the grains.  In particular, grain placement affects
@@ -740,14 +690,16 @@ neighboring grains, we form the Delaunay triangulation using nodes
 placed at the center of each eroding grain and at a collection of points
 around the boundary of the porous media.  Then, we say that two grains
 are neighbors if their centers share an edge of the
-triangulation~\citep{dea-qua-bir-jua2018}. The pores of an eroded
-geometry are illustrated in figure~\ref{fig:Eroding100gap}(a). We do not
-consider pores between eroding bodies and the solid wall $\Gamma$, so
-some of the grains near the porous region boundary only have two
-neighbors. Having defined the pore sizes, we plot its distribution in
+triangulation~\citep{dea-qua-bir-jua2018}. Finally, we define the pore
+sizes to be the minimum distance between all pairs of neighboring
+grains, and these distances are represented by the red line segments in
+figure~\ref{fig:Eroding100gap}(a). We do not consider pores between
+eroding bodies and the solid wall $\Gamma$, so some of the grains near
+the porous region boundary only have two neighbors. Having defined the
+pore sizes, we plot its distribution in
 figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
 distribution, a distribution used by others to characterize pore
-sizes~\citep{ioa-cha1993}.  In section~\ref{sec:Eroding100}, we
+sizes~\citep{ioa-cha1993}. In section~\ref{sec:Eroding100}, we
 investigate the effect of erosion on the pore size distribution.
 
 
@@ -831,14 +783,6 @@ the double-layer potential is approximated as
   \label{eqn:trap}
   \uu(\xx) &= \sum_{j=1}^{N_\out} w^0_j D(\xx,\yy^0_j) \eeta_j +
   \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D(\xx,\yy^k_j) \eeta^k_j. 
-%%
-%  \ssigma(\xx) &= \sum_{j=1}^{N_\out} w^0_j \mathbf{D}_\ssigma(\xx,\yy^0_j) \eeta_j +
-%  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j \mathbf{D}_\ssigma(\xx,\yy^k_j)
-%  \eeta^k_j, \\
-%%
-%  w(\xx) &= \sum_{j=1}^{N_\out} w^0_j D_\omega(\xx,\yy^0_j) \eeta_j +
-%  \sum_{k=1}^M \sum_{j=1}^{N_\iin} w^k_j D_\omega(\xx,\yy^k_j)
-%  \eeta^k_j.
 \end{align}
 Similarly, the corresponding layer potentials for the deformation tensor
 and vorticity are approximated with the trapezoid rule. The
@@ -859,8 +803,6 @@ tortuosity is approximated as
   T = \left(\sum_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y \right) 
       \Bigg/ 
       \left(\sum_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y \right)
-%  T = \frac{\sum\limits_{i,j=1}^N \|\uu(\xx_{ij})\|\Delta x \Delta y}
-%      {\sum\limits_{i,j=1}^N u_1(\xx_{ij}) \Delta x \Delta y}.
 \end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -926,8 +868,6 @@ the interior Barycentric quadrature rule
   \Bigg/
   \left(\sum_{j=1}^N \frac{1}{y_j - x} w_j \right), 
   \quad x \in \Omega.
-%  v(x) = \frac{\sum\limits_{j=1}^N \frac{v^{-}(y_j)}{y_j - x} w_j}
-%  {\sum\limits_{j=1}^N \frac{1}{y_j - x} w_j}, \quad x \in \Omega.
   \label{eqn:BaryvInterior}
 \end{align}
 Using a similar construction and letting $a$ be any point inside
@@ -938,10 +878,6 @@ $\Omega$, the exterior Barycentric quadrature rule is
     \Bigg/
     \left(\sum_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j \right),
     \quad x \in \Omega^c.
-%  v(x) = \frac{1}{x-a} 
-%    \frac{\sum\limits_{j=1}^N \frac{v^+(y_j)}{y_j - x}w_j}
-%    {\sum\limits_{j=1}^N \frac{(y_j - a)^{-1}}{y_j - x}w_j},
-%    \quad x \in \Omega^c.
   \label{eqn:BaryvExterior}
 \end{align}
 
@@ -959,10 +895,6 @@ interior Barycentric quadrature rule
   \Bigg/
   \left(\sum_{j=1}^{N} \frac{1}{y_j-x} w_j\right), 
   \quad x \in \Omega.
-%  v'(x) = \frac{\sum\limits_{j=1}^{N}
-%    \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j}
-%  {\sum\limits_{j=1}^{N} \frac{1}{y_j-x} w_j}, 
-%  \quad x \in \Omega.
   \label{eqn:BaryvprimeInterior}
 \end{align}
 Using a similar construction, the exterior Barycentric quadrature rule
@@ -973,10 +905,6 @@ for the first derivative is
     \Bigg/
     \left(\sum_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j\right),
     \quad x \in \Omega^c.
-%  v'(x) = \frac{1}{x-a} \frac{\sum\limits_{j=1}^N
-%    \frac{v^+_j - v(x)}{(y_j - x)^2} w_j}
-%    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j - x} w_j},
-%    \quad x \in \Omega^c.
   \label{eqn:BaryvprimeExterior}
 \end{align}
 Note that $v(x)$ is required to compute $v'(x)$ for both the interior
@@ -1024,9 +952,6 @@ Barycentric quadrature rule for the interior second derivative at $x \in
     \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j \right)
     \Bigg/
     \left(\sum_{j=1}^N \frac{1}{y_j-x}w_j\right).
-%  v''(x) &\approx \frac{2\sum\limits_{j=1}^N 
-%    \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
-%    {\sum\limits_{j=1}^N \frac{1}{y_j-x}w_j}, \quad x \in \Omega.
 \end{align}
 For the exterior case, $x \in \Omega^c$, we start with the identity
 \begin{align}
@@ -1049,10 +974,6 @@ the exterior second derivative at $x \in \Omega^c$
     \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j\right)
     \Bigg/
     \left(\sum_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j\right).
-%  v''(x) &\approx \frac{1}{x-a}\frac{2\sum\limits_{j=1}^N
-%    \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j}
-%    {\sum\limits_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j}, 
-%    \quad x \in \Omega^c.
 \end{align}
 The quadrature rule for $v''(x)$ requires $v(x)$ and $v'(x)$, and theses
 are computed using the quadrature rules in
@@ -1252,9 +1173,6 @@ tortuosity with
     u_1(y_i) \lambda(y_i) \Delta y \right)
   \Bigg/
   \left(\sum_{i=1}^{N_p} u_1(y_i) \Delta y\right), 
-%  T = \frac{1}{d}\frac{\displaystyle\sum_{i=1}^{N_p} 
-%    u_1(y_i) \lambda(y_i) \Delta y}
-%  {\displaystyle\sum_{i=1}^{N_p} u_1(y_i) \Delta y}, 
 \end{align}
 where $\Delta y = 2/(N_p + 1)$ and $y_i = -1 + i \Delta y$,
 $i=1,\ldots,N_p$.  
@@ -1294,15 +1212,15 @@ $\sigma$.  For all examples, we use the smoothing parameters
 $\eps=15/256$ and $\sigma=10/256$, and the time step size is $\Delta t =
 10^{-4}$.
 
-The common characteristic of each of the experiments is near-contact
-between the eroding bodies, outer walls, and streamlines. We use our
-numerical methods to simulate, analyze, and visualize the following
-examples:
+The common characteristic of each of the numerical experiments is
+near-contact between the eroding bodies, outer walls, and streamlines.
+We use our numerical methods to simulate, analyze, and visualize the
+following examples:
 \begin{itemize}
   \item{\bf Single Body Close to a Wall}: We consider a single eroding
   body close to the outer wall at $y=-1$.  We impose a shear flow
   centered at $y=-1$ and compare the eroding body's shape to a similar
-  experiment of~\citet{mit-spa2017}.
+  numerical experiment of~\citet{mit-spa2017}.
 
   \item{\bf 20 Bodies at a Medium Porosity}: We consider 20 eroding
   bodies with a medium initial porosity.  After computing accurate
@@ -1323,25 +1241,17 @@ examples:
 \subsection{A Single Body Close to a Wall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Consider a single eroding body close to a solid wall with the shear flow
-$\UU(\xx) = (y+1,0)$
-%\begin{align}
-%  \UU(\xx)=\left[
-%  \begin{array}{c}
-%    y+1 \\ 0
-%  \end{array}
-%  \right],
-%\end{align}
-imposed on $\Gamma$. \citet{mit-spa2017} performed a similar
-three-dimensional experiment using a second-order quadrature method.
-Their initial body is a sphere with its center located $1.5$ radii above
-the solid wall.  We initialize the two-dimensional eroding body with
-radius $r = 0.4$, and we conduct numerical experiments where the initial
-distance between the grain and the solid wall is $h$, $h/2$, and $h/10$,
-where $h = 2\upi r/N_\iin$.  If we used the trapezoid rule and required
-an error that is comparable to the Barycentric quadrature rule, the body
-with an initial distance of $h/10$ from the solid wall would require
-$6,400$ discretization points, and the outer wall would require $50,000$
-discretization points.
+$\UU(\xx) = (y+1,0)$ imposed on $\Gamma$. \citet{mit-spa2017} performed
+a similar three-dimensional numerical experiment using a second-order
+quadrature method.  Their initial body is a sphere with its center
+located $1.5$ radii above the solid wall.  We initialize the
+two-dimensional eroding body with radius $r = 0.4$, and we conduct
+numerical experiments where the initial distance between the grain and
+the solid wall is $h$, $h/2$, and $h/10$, where $h = 2\upi r/N_\iin$.
+If we used the trapezoid rule and required an error that is comparable
+to the Barycentric quadrature rule, the body with an initial distance of
+$h/10$ from the solid wall would require $6,400$ discretization points,
+and the outer wall would require $50,000$ discretization points.
 
 In figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
 equispaced time steps.  For all three initial configurations, the shear
@@ -1356,11 +1266,12 @@ behavior is also present in three dimensions~\citep[see figure
 three-dimensional results is the presence of a recirculation zone.  In
 three dimensions, there is no recirculation between the solid wall and
 the spherical body~\citep{cha-feu2003}, but recirculation is possible in
-two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, we
-plot the vorticity of the final time step from figure~\ref{fig:NearWall}
-in figure~\ref{fig:NearWall_vort}.  In these examples, a small
-recirculation zone, both in size and magnitude, is present in the region
-where the vorticity is smallest.
+two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, in
+figure~\ref{fig:NearWall_vort} we plot the logarithm of the absolute
+value of the vorticity from the final time step in
+figure~\ref{fig:NearWall}.  In these examples, a small recirculation
+zone, both in size and magnitude, is present in the region where the
+vorticity is smallest.
 
 \begin{figure}
 \begin{center}
@@ -1397,9 +1308,10 @@ distances from the lower wall: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \includegraphics[height = 0.53\textwidth]{./figs/1b_0d4r0d1h_vort}
 \caption{}
 \end{subfigure}
-\caption{\label{fig:NearWall_vort} The vorticity of the fluid with a
-single body eroding at time $t=0.1$. The initial distance from the body
-to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
+\caption{\label{fig:NearWall_vort} The eroded bodies from
+figure~\ref{fig:NearWall} at time $t=0.1$. The color is the logarithm of
+the magnitude of the vorticity. The initial distances from the body to
+the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \end{center}
 \end{figure}
 
@@ -1408,19 +1320,12 @@ to the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \subsection{20 Bodies at a Medium Porosity}
 \label{sec:Eroding20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider 20 eroding grains with the Hagen-Poiseuille flow $\UU(\xx) =
-U \left(1-y^2,0 \right)$
-%\begin{align}
-%  \UU(\xx)=U \left[
-%  \begin{array}{c}
-%    1-y^2 \\ 0
-%  \end{array}
-%  \right],
-%\end{align}
-imposed on $\Gamma$. The flow rate $U$ is chosen so that the average
-pressure drop from $x=-2$ to $x=2$ is held fixed at 8. Therefore, $U=1$
-once all the grains have vanished.  The vorticity and grain
-configuration at four equispaced times are shown in
+We randomly initialize 20 eroding grains with an initial porosity of
+$\phi = 37.68\%$ and the Hagen-Poiseuille flow $\UU(\xx) = U
+\left(1-y^2,0 \right)$ imposed on $\Gamma$. The flow rate $U$ is chosen
+so that the average pressure drop from $x=-2$ to $x=2$ is held fixed at
+8. Therefore, $U=1$ once all the grains have vanished.  The vorticity
+and grain configuration at four equispaced times are shown in
 figure~\ref{fig:Eroding20vort}.  Initially, several of the grains are
 closer to the outer wall than the $5h$ threshold required for the
 trapezoid rule to achieve machine precision.  In particular, the
@@ -1447,7 +1352,7 @@ the color is the fluid vorticity. In the fourth frame, bodies 4, 12, and
 \end{figure}
 
 Erosion causes the some of the pore sizes to quickly grow, and flat
-faces develop along the regions of near contact.  This qualitative
+faces develop along the regions of near-contact.  This qualitative
 behavior is seen in figure~\ref{fig:Eroding20vort} between bodies 3 \&
 4, 15 \& 16, and was also observed in previous work~\citep{qua-moo2018}.
 However, by resolving the interaction between bodies that are much
@@ -1474,10 +1379,12 @@ rate is initially small, but it eventually increases as an exponential
 law (dashed line) towards the maximum flow rate $U=1$.}
 \end{figure}
 
-We next analyze the effect of erosion on the area fraction and the flow
-rate.  In figure~\ref{fig:Eroding20flowrate}(a), we plot the area
-fraction as a function of normalized time.  The general trend of the
-area fraction resembles our previous work~\citep[see][figure
+In our previous work~\citep{qua-moo2018}, we investigated the effects
+of erosion on the area fraction and flow rate of two different
+geometries.  Here, we do the same analysis, but with the denser packing
+of the grains. In figure~\ref{fig:Eroding20flowrate}(a), we plot the
+area fraction as a function of normalized time.  The general trend of
+the area fraction resembles our previous work~\citep[see][figure
 10(a)]{qua-moo2018}, but with a larger initial area fraction.  In
 figure~\ref{fig:Eroding20flowrate}(b), we plot the flow rate $U$
 required to maintain a constant pressure drop across the channel.
@@ -1487,13 +1394,8 @@ flow rate is an order of magnitude smaller because of the larger initial
 area fraction.  Starting around normalized time $0.2$,
 figure~\ref{fig:Eroding20flowrate}(b) is roughly linear which indicates
 that the flow rate can be written as an exponential law.  The line of
-best fit is $U \approx \exp(9.94(t-t_f)/t_f)$
-%\begin{align}
-%  U \approx \exp\left(9.94 \left(\frac{t - t_f}{t_f} \right)\right),
-%\end{align}
-which is the dashed line in figure~\ref{fig:Eroding20flowrate}(b).
-
-
+best fit is $U \approx \exp(9.94(t-t_f)/t_f)$ which is the dashed line
+in figure~\ref{fig:Eroding20flowrate}(b).
 \begin{figure}
 \begin{center}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b30n}
@@ -1502,34 +1404,34 @@ which is the dashed line in figure~\ref{fig:Eroding20flowrate}(b).
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b210n}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270n}
 \includegraphics[width = 0.32 \textwidth]{./figs/tracer_20b270n_zoom}
-\caption{\label{fig:Eroding20tracer} 200 streamlines in the second
-geometry from figure~\ref{fig:Eroding20vort}. The streamlines are
+\caption{\label{fig:Eroding20tracer} 200 particle trajectories in the
+second geometry from figure~\ref{fig:Eroding20vort}. The particles are
 initially equispaced at $(-1,y)$, where $y \in (-1,1)$. The first five
 snapshots are equispaced in time.  The bottom right frame is a
-magnification of the fifth snapshot, but with additional streamlines.}
+magnification of the fifth snapshot, but with additional trajectories.}
 \end{center}
 \end{figure}
-
 
 In figure~\ref{fig:Eroding20vort}, we observe that erosion creates a
 network of channels from the inlet to the outlet where the velocity and
 vorticity, and therefore erosion rate, are much larger relative to other
-regions.  These channels can be further visualized  with the
-streamlines.  In figure~\ref{fig:Eroding20tracer}, we freeze the
-geometry at the second snapshot from figure~\ref{fig:Eroding20vort} and
-plot 200 streamlines that are initially equispaced along $(-1,y)$, where
-$y \in (-1,1)$.  The streamlines are shown at five different times, and
-the final plot is a zoom in of the lower right quadrant of the fifth
-time step, but with additional streamlines.  Since we use a high-order
-quadrature rule and time stepping method, we resolve streamlines that
-come very close to the eroded bodies.  There are three clear regions
-where the streamlines are most concentrated, corresponding to the
-regions of highest velocity.  Two of these regions are located between
-the bodies and the solid walls at $y=\pm 1$, and the third cuts through
-the porous region with the upper part of the channel formed by bodies 1,
-4, 6, and 8.  Since the flow is fastest in these regions, the shearing
-is largest, and this causes the channels to continue to open fastest as
-observed in figure~\ref{fig:Eroding20vort}.
+regions.  These channels can be further visualized with particle
+trajectories that are trace out the streamlines.  In
+figure~\ref{fig:Eroding20tracer}, we freeze the geometry at the second
+snapshot from figure~\ref{fig:Eroding20vort} and plot 200 trajectories
+that are initially equispaced along $(-1,y)$, where $y \in (-1,1)$.  The
+trajectories are shown at five different times, and the final plot is a
+zoom in of the lower right quadrant of the fifth time step, but with
+additional trajectories.  Since we use a high-order quadrature rule and
+time stepping method, we resolve the dynamics very close to the eroded
+bodies.  There are three clear regions where the streamlines are most
+concentrated, corresponding to the regions of highest velocity.  Two of
+these regions are located between the bodies and the solid walls at
+$y=\pm 1$, and the third cuts through the porous region with the upper
+part of the channel formed by bodies 1, 4, 6, and 8.  Since the flow is
+fastest in these regions, the shearing is largest, and this causes the
+channels to continue to open fastest as observed in
+figure~\ref{fig:Eroding20vort}.
 
 Next, we use the $N_p = 1000$~\citep{bel-sal-rin1992} streamlines to
 compute the tortuosity of the eroding geometry.  To compute the
@@ -1661,15 +1563,16 @@ particle spreading.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 Bodies at a Low Porosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider a second example with 20 eroding bodies, but with a smaller
-initial porosity.  In figure~\ref{fig:ErodingLow20vort}, we plot the
-eroding geometry and vorticity at four evenly spaced instances in time.
-Initially, the smallest distance between pairs of bodies is $3.29 \times
-10^{-4}$, and the smallest distance between the bodies and solid wall is
-$4.50 \times 10^{-3}$.  At these distances, a resolution of
-approximately $N_\iin = 27,000$ and $N_\out = 18,000$ discretization
-points is required to satisfy the $5h$ threshold needed for the
-trapezoid rule to achieve machine precision.
+We consider a second example with of 20 randomly initialized eroding
+bodies, but with a smaller initial porosity of $\phi = 30.67\%$.  In
+figure~\ref{fig:ErodingLow20vort}, we plot the eroding geometry and
+vorticity at four evenly spaced instances in time.  Initially, the
+smallest distance between pairs of bodies is $3.29 \times 10^{-4}$, and
+the smallest distance between the bodies and solid wall is $4.50 \times
+10^{-3}$.  At these distances, a resolution of approximately $N_\iin =
+27,000$ and $N_\out = 18,000$ discretization points is required to
+satisfy the $5h$ threshold needed for the trapezoid rule to achieve
+machine precision.
 
 \begin{figure}
 \begin{center}
@@ -1754,12 +1657,12 @@ ballistic motion~\citep{sie-ili-pri-riv-gua2019}.
 \subsection{100 eroding bodies}
 \label{sec:Eroding100}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-As a final example, we consider 100 eroding bodies with an initial
-porosity near 50\%.  Snapshots of the configurations and vorticity are
-in figure~\ref{fig:Eroding100vort}. We compute the tortuosity using both
-the Lagrangian~\eqref{eqn:tortuosity1} and Eulerian
-methods~\eqref{eqn:tortuosity2}. Therefore, we compute and plot the
-normalized velocity at $N_p = 1000$ points along the inlet $x=-1$ in
+As a final example, we consider 100 randomly initialized eroding bodies
+with an initial porosity near $50\%$.  Snapshots of the configurations
+and vorticity are in figure~\ref{fig:Eroding100vort}. We compute the
+tortuosity using both the Lagrangian~\eqref{eqn:tortuosity1} and
+Eulerian methods~\eqref{eqn:tortuosity2}. Therefore, we compute and plot
+the normalized velocity at $N_p = 1000$ points along the inlet $x=-1$ in
 figure~\ref{fig:Eroding100tort}(a) for the eroded geometry at porosity
 $\phi = 62.98\%$ (figure~\ref{fig:Eroding100tort}(c)).  The initial
 velocity of the tracers is qualitatively similar to the 20 body example
@@ -1778,67 +1681,17 @@ tracers travels 25.5\% farther than it would have if the bodies had been
 absent, and the average tracer travelled 12\% farther resulting in a
 tortuosity of $T = 1.12$.
 
-
 \begin{figure}
-%<<<<<<< HEAD
-%\begin{subfigure}[b]{0.5\textwidth}
 \includegraphics[height =0.227\linewidth]{./figs/100b_50}
-%\caption{100 bodies, $\phi = 55.54\%$}
-%\end{subfigure}%
-%\begin{subfigure}[b]{0.5\textwidth}
 \includegraphics[height =0.227\linewidth]{./figs/100b_100}
-%\caption{99 bodies, $\phi = 62.98\%$}
-%\end{subfigure}
-%\begin{subfigure}[b]{0.5\textwidth}
 \includegraphics[height =0.227\linewidth]{./figs/100b_150}
-%\caption{94 bodies, $\phi = 72.22\%$}
-%\end{subfigure}%
-%\begin{subfigure}[b]{0.5\textwidth}
 \includegraphics[height =0.227\linewidth]{./figs/100b_200}
-%\caption{82 bodies, $\phi = 83.67\%$}
-%\end{subfigure}
 \caption{\label{fig:Eroding100vort} The erosion of 100 nearly touching
 grains in a Hagen-Poiseuille flow. The four snapshots are evenly spaced
 in time, and the color is the fluid vorticity.  Because of the large
 number of bodies, erosion creates many channels connecting the inlet to
 the outlet.}
-%=======
-%\begin{center}
-%  \includegraphics[height=0.227\textwidth]{./figs/100b_50}
-%  \includegraphics[height=0.227\textwidth, trim=0cm 0cm 2.8cm 0cm, clip=true]
-%    {./figs/100b_100}
-%  \includegraphics[height=0.227\textwidth]{./figs/100b_150}
-%  \includegraphics[height=0.227\textwidth]{./figs/100b_200}
-%\end{center}
-%\caption{\label{fig:Eroding100vort} 100 bodies eroding in a
-%Hagen-Poiseuille flow. The four snapshots are equispaced in time, and
-%the color is the fluid vorticity.  Erosion creates many channels
-%connecting the inlet to the outlet.}
-%>>>>>>> 90934916f4dbe677f0ad6f05331ec1c3515ddab7
 \end{figure}
-
-%\begin{figure}
-%\begin{subfigure}[b]{0.5\textwidth}
-%\includegraphics*[height =0.8\linewidth]{./figs/100b_50}
-%\caption{100 bodies, $\phi = 55.54\%$}
-%\end{subfigure}%
-%\begin{subfigure}[b]{0.5\textwidth}
-%\includegraphics*[height =0.8\linewidth]{./figs/100b_100}
-%\caption{99 bodies, $\phi = 62.98\%$}
-%\end{subfigure}
-%\begin{subfigure}[b]{0.5\textwidth}
-%\includegraphics*[height =0.8\linewidth]{./figs/100b_150}
-%\caption{94 bodies, $\phi = 72.22\%$}
-%\end{subfigure}%
-%\begin{subfigure}[b]{0.5\textwidth}
-%\includegraphics*[height =0.8\linewidth]{./figs/100b_200}
-%\caption{82 bodies, $\phi = 83.67\%$}
-%\end{subfigure}
-%\caption{\label{fig:Eroding100vort} 100 bodies eroding in a
-%Hagen-Poiseuille flow. The four snapshots are equispaced in time, and
-%the color is the fluid vorticity.  Erosion creates many channels
-%connecting the inlet to the outlet.}
-%\end{figure}
 
 In figure~\ref{fig:Eroding100Transport}(a), we plot the tortuosity as a
 function of the porosity.  The initial geometry has a porosity of $\phi
@@ -2031,11 +1884,11 @@ significantly depends not only on the porosity, but also the number of
 eroding bodies and their distribution.
 
 To further our understanding of erosion, we are examining other bulk and
-statistical properties of an eroding porous media. In this work, we
-provide results for the pore throat sizes which affect the anomalous
-dispersion rate~\citep{dea-qua-bir-jua2018}.  At a later date, we will
-report results on the  development of anisotropic effects and the
-distributions of grain sizes, shapes, and opening angles.
+statistical properties of eroding porous media. In this work, we provide
+results for the pore throat sizes which affect the anomalous dispersion
+rate~\citep{dea-qua-bir-jua2018}.  At a later date, we will report
+results on the  development of anisotropic effects and the distributions
+of grain sizes, shapes, and opening angles.
 
 As a long term goal, we plan to include the inertial effects and other
 transport models. Including inertia requires an integral equation
@@ -2062,78 +1915,3 @@ Physical Sciences-Collaboration Grants for Mathematicians 527139 and
 
 
 
-% OUTDATED STUFF
-%Examples of coarse-grained models for porous media flow include
-%pressure-saturation-permeability
-%relationships~\citep{mil-chr-imh-mcb-ped1998}, permeability-porosity
-%relationships~\citep{dar-mcc1998, car1937, won-kop-tom1984}, first
-%passage time distributions~\citep{ber-sch-sil2000, hym-den-hag-kan2019,
-%cve-che-wen1996}, tortuosities~\citep{hak-com-den2019, mat-kha-koz2008,
-%dud-koz-mat2011, kop-kat-tim1996}, concentration
-%distributions~\citep{ica-den2019, bel-sal-rin1992}, pore and flow
-%distributions~\citep{ali-par-wei-bre2017}, geometry
-%connectivity~\citep{knu-car2005, wes-blo-gra2001}, anomalous
-%dispersion~\citep{dea-qua-bir-jua2018, den-cor-sch-ber2004,
-%sie-ili-pri-riv-gua2019}, and more.  
-
-%A variety of numerical methods for the fluid solver are available
-%including lattice-gas or lattice Boltzmann~\citep{kop-kat-tim1996,
-%dar-mcc1998}, finite volumes~\citep{suo-liu-gan2019, den-ica-hid2018,
-%sie-ili-pri-riv-gua2019}, finite
-%differences~\citep{leb-ded-dav-bou2007, knu-car2005}, and cellular
-%automata~\citep{rot1988}.  
-
-%We note that an alternative approach to
-%compute trajectories is to form a distribution of velocities $\uu$ and
-%use a continuous time random walk~\citep{mon-wei1965,
-%den-cor-sch-ber2004, leb-den-car2008, ber-cor-den-sch2006}.
-
-%we are able to compute, for $\xx \in \Omega$, the deformation tensor,
-%pressure, and vorticity.
-%defined respectively as
-%\begin{align}
-%  \label{eqn:deformationDLP} 
-%  \ssigma(\xx) &= \int_{\bd\Omega} \mathbf{D}_{\ssigma}(\xx,\yy) 
-%      \eeta(\yy) ds_{\yy} 
-%  = \frac{1}{2\upi}\int_{\bd\Omega} \left(
-%    2\frac{\rr \cdot \nn}{\rho^2} \frac{\rr \cdot \eeta}{\rho^2} \II + 
-%    \frac{\rr \cdot \eeta}{\rho^4} (\nn \otimes \rr + \rr \otimes \nn) 
-%    \right. \nonumber \\
-%    & \qquad\qquad\qquad\qquad \left.
-%    +\frac{\rr \cdot \nn}{\rho^4} (\eeta \otimes \rr + \rr \otimes \eeta) - 
-%    8\frac{(\rr \cdot \nn)(\rr \cdot \eeta)}{\rho^6}(\rr \otimes \rr)
-%    \right) \, ds_\yy, \\
-%%
-%  \label{eqn:pressureDLP}
-%  p(\xx) &= \int_{\bd\Omega} D_{p}(\xx,\yy) 
-%      \eeta(\yy) ds_{\yy} 
-%  = -\frac{1}{\upi}\int_{\bd\Omega} \frac{1}{\rho^2}
-%    \left(I - 2 \frac{\rr \otimes \rr}{\rho^2}\right) \nn \cdot
-%      \eeta(\yy)\,ds_\yy, \\
-%%
-%  \label{eqn:vorticityDLP} 
-%  \omega(\xx) &= \int_{\bd\Omega} D_{\omega}(\xx,\yy) 
-%      \eeta(\yy) ds_{\yy} 
-%  = -\frac{1}{\upi} \int_{\bd\Omega}
-%    \frac{(\rr \cdot \nn^\perp) + (\rr \cdot \nn)}{\rho^4} 
-%      (\rr \cdot \eeta) \, ds_\yy.
-%\end{align}
-%Since the deformation tensor of the double-layer potential is
-%discontinuous across $\bd\Omega$, the jump term 
-%added to $\ssigma(\xx)$ for $\xx \in \bd\Omega$.  Finally, the
-%Stokeslets and rotlets do not exhibit any jumps across $\gamma$, so the
-%associated components of the deformation tensor, pressure, and vorticity
-%are straightforward to compute~\citep{poz1992}.  Having computed the
-%deformation tensor on $\gamma$, the shear stress is computed using
-%equation~\eqref{eqn:shearStress}.  
-
-%\begin{align}
-%  S[\llambda_\ell,\cc_\ell](\xx) = \frac{1}{4\upi} \left( 
-%    -\log \rho \II + \frac{\rr \otimes \rr}{\rho^2}
-%    \right)\llambda_\ell, \quad
-%  R[\xi_\ell,\cc_\ell](\xx) = \frac{\rr^\perp}{\rho^2} \xi_\ell,
-%  \quad \ell=1,\ldots,M,
-%\end{align}
-%where $\rr = \xx - \cc_\ell$, $\cc_\ell$ is a point inside the
-%$\ell^{th}$ eroding body, $\rr^\perp = (r_2,-r_1)$, and $\rho =
-%\|\rr\|$. 
