@@ -46,23 +46,28 @@ to the analysis of erosion in natural porous media.}
     $\theta-L$ formulation, quadrature method, spectral representation
     of the geometry, and the boundary integral equation solver.
 
-  \item Others have developed three-dimensional numerical methods for
-    removing stiffness in interfacial flow ($\theta-L$ formulation),
-    spectrally representing geometries, and efficiently solving BIEs.
-    The challenge with these methods is their computational cost. To
-    consider suspensions with the resolution and number of grains that
-    we consider, the BIE would most likely require a parallel
+  \item In three-dimensions, others have extended the $\theta-L$
+    formulation to remove stiffness in interfacial flow, spectrally
+    represented geometries, and efficiently solving BIEs.  The challenge
+    with these methods is their computational cost. To consider
+    suspensions with the resolution and number of grains that we
+    consider, the BIE would most likely require a parallel
     implementation that would run on high-performance computing
     architectures. At this point, this is not the goal of our work.
+    Rather, we are interested in using very high-order methods to
+    provide an analysis of the effects of erosion on transport which
+    seems to be missing from the literature.
 
   \item The Barycentric quadrature method relies on a complex variable
     formulation, so it is inherently two-dimensional. However, there are
     other quadrature methods that can be applied in three dimensions,
-    but they are also computationally expensive.
+    but they are also computationally expensive. For example, if the
+    geometry is represented with spherical harmonics, a
+    Gaussian-Legendre quadrature method requires $\mathcal{O}(p^3)$
+    operations, where $p$ is the highest-order spherical harmonic.
 
   \item Our response to the reviewer's second comment points to a
     paragraph that has been added to the Introduction.
-
 
 \end{itemize}
 
@@ -88,30 +93,26 @@ studying erosion process in natural porous media.}
     future. In the Introduction, we have added the following paragraph:
     \begin{quotation}
       \noindent
-      While natural porous media are three-dimensional, there are
-      several challenges that must be overcome to extend our high-order
-      methods to three dimensions.  A three-dimensional version of a
-      {$\theta-L$} formulation exists (Ambrose {\em et al.} 2013), but
-      the Barycentric quadrature method relies upon a complex variable
-      formulation of the BIE, making it inherently two-dimensional.
-      Therefore, a different quadrature method is required. Additional
-      challenges of three-dimensional simulations include spectral
-      representations of the geometry and efficiently solving
-      discretizations of the BIE.  While high-order methods for
+      Since high-order methods have never been used to study transport
+      in eroding porous media, we consider, as a first step,
+      two-dimensional and immobile grains. These assumptions allow us to
+      simulate large densely-packed suspensions (up to $100$ in this
+      manuscript), and to clearly interpret the results. More realistic
+      three-dimensional and mobile configurations would require
+      overcoming a few challenges. First, a three-dimensional extension
+      of the $\theta-L$ formulation exists (Ambrose {\em et al.}~2013),
+      but the Barycentric quadrature method used here relies on a
+      complex variable formulation of the BIE, making it inherently two-
+      dimensional. Therefore, a different quadrature method would be
+      required. Additional challenges include spectral representations
+      of three-dimensional geometries and efficiently solving
+      discretizations of the BIE. While high-order methods for
       three-dimensional BIEs have been developed, their computational
       cost limits the number of bodies that can be practically
-      simulated. Another limitation of this work is the assumption of
-      immobile grains.  Mechanisms such as sedimentation play a role in
-      real applications, and this will effect the transport properties.
-      Simulating mobile grains introduces the additional challenge of
-      resolving contact.  Since high-order methods have never been used
-      to study transport in eroded porous media, as a first step we
-      consider the case  with two-dimensional immobile grains. This
-      assumption allows for a clear interpretation of the results.  For
-      example, in this work we are able to simulate a large
-      densely-packed suspension (up to $100$ in this manuscript).
-
-
+      simulated. Lastly, mechanisms such as sedimentation play a role in
+      realistic media and affect the pore structure. Simulating mobile
+      grains introduces the additional challenge of resolving contact,
+      which we plan to address in future work.
     \end{quotation}
 \end{itemize}
 

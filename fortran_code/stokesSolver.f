@@ -572,12 +572,9 @@ c     potential
       call cpu_time(t2)
       print *, 'GMRES  time =', t2-t1
 
-
-
       end
 
 c***********************************************************************
-
       subroutine matvec_DLP_fmmbary(ntotal,den,vel,nelt,ia,ja,a,isym)
 c     matrix vector multiplication routine for the double-layer
 c     potential
@@ -691,8 +688,8 @@ c     copy velocity on outer boundary in correct order
       enddo
 c     copy velocity on inner boundaries in correct order
 
-c    START OF REPLACING THE TRAPEZOID RUSELTS BY BARYCENTRIC ONE WHEN
-c    TWO POINTS ARE TOO CLOSED
+c     START OF REPLACING THE TRAPEZOID RESULTS BY BARYCENTRIC ONE WHEN
+c     TWO POINTS ARE TOO CLOSE
 
 
 c     START the wall-bodies section
@@ -702,10 +699,10 @@ c     start the wall-to-bodies part
         deny(k) = den(k + nouter)
       enddo      
 
-      alpha1 = 4.d0! the criterion parameter for B2Bs
-      alpha2 = 4.d0! the criterion parameter for W2Bs
+      alpha1 = 4.d0 ! the criterion parameter for B2Bs
+      alpha2 = 4.d0 ! the criterion parameter for W2Bs
 c     Find the radii of bodies      
-      do itar = 1, nbodies
+      do itar = 1,nbodies
         rtar(itar) = 0.d0
         do k = 1, ninner
           rtar(itar) = rtar(itar) + speed((itar-1)*ninner+k)  
@@ -730,8 +727,8 @@ c       the criterion of W2Bs
         if( abs(centery(itar)) .ge. dsum2) then
 
           do k=1,ninner
-            xtarloc(k)=x((itar-1)*ninner+k)
-            ytarloc(k)=y((itar-1)*ninner+k)
+            xtarloc(k) = x((itar-1)*ninner+k)
+            ytarloc(k) = y((itar-1)*ninner+k)
             denxb(k) = den(2*nouter + (itar-1)*2*ninner + k)
             denyb(k) = den(2*nouter + (itar-1)*2*ninner + k + ninner)
 c           save xtarloc, ytarloc, denxb, and denyb for body-to-wall barycentric           
@@ -5151,7 +5148,6 @@ c     put geometry in complex variables
           endif
         enddo
         bdval(j) = -eye*bdval(j)/twopi - density(j)
-c        bdval(j) = -bdval(j)
       enddo
 
       return
@@ -5221,7 +5217,7 @@ c       denominator is unchanged
           num = num + (bdval(k) - utar(j))/
      $          den2(k)*dzsou(k)
         enddo
-c       compute numerator and denominator term in equation (3.5) of
+c       compute numerator and denominator term in equation (3.10) of
 c       Barnett, Wu, Veerapaneni
         dutar(j) = num/den
 
@@ -5238,10 +5234,6 @@ c       Computing the second derivative of DLP for the stress tensor
           ddutar(j)=2.d0*num1/den
         endif
       enddo
-
-c      do k = 1,ntar
-c        print*,den(k) - den2(k)
-c      enddo
 
       end
 
@@ -5266,13 +5258,9 @@ c****************************************************************
 
       complex *16 zsou(npts), outnor
 
-c      real*8 omega
-      dimension densx(npts), densy(npts), sdotd(npts)!,
-!     &          dens1c(nptsc), dens2c(nptsc)
+      dimension densx(npts), densy(npts), sdotd(npts)
       complex *16 tau1(npts), tau2(npts)
       complex *16 eye, czero
-
-
 
 c     the center of the exterior boundary when doing parametrization of boundary 
 c      xc=0.d0
@@ -5319,13 +5307,12 @@ c      The Second, Third and, Forth parts
         utar1y(j) = utar1y(j) - dimag(dutar(j))
         
         if(nder .eq. 2) then        
-        u1xtar(j) = u1xtar(j) + dreal(ddutar(j))
-        u1ytar(j) = u1ytar(j) - dimag(ddutar(j))
-        u2xtar(j) = u2xtar(j) - dimag(ddutar(j))
-        u2ytar(j) = u2ytar(j) - dreal(ddutar(j))
+          u1xtar(j) = u1xtar(j) + dreal(ddutar(j))
+          u1ytar(j) = u1ytar(j) - dimag(ddutar(j))
+          u2xtar(j) = u2xtar(j) - dimag(ddutar(j))
+          u2ytar(j) = u2ytar(j) - dreal(ddutar(j))
         endif
       enddo     
-     
      
       call compute_bdval_ex(npts,xsou,ysou,dcmplx(densx),bdval)
 
@@ -5337,12 +5324,12 @@ c      The Second, Third and, Forth parts
         utar1y(j) = utar1y(j) + xtar(j)*dimag(dutar(j))
         
         if(nder .eq. 2) then        
-        u1xtar(j) = u1xtar(j) - dreal(dutar(j)) - xtar(j)*
+          u1xtar(j) = u1xtar(j) - dreal(dutar(j)) - xtar(j)*
      $              dreal(ddutar(j))
-        u1ytar(j) = u1ytar(j) + xtar(j)*dimag(ddutar(j))
-        u2xtar(j) = u2xtar(j) + dimag(dutar(j)) + xtar(j)*
+          u1ytar(j) = u1ytar(j) + xtar(j)*dimag(ddutar(j))
+          u2xtar(j) = u2xtar(j) + dimag(dutar(j)) + xtar(j)*
      $              dimag(ddutar(j))
-        u2ytar(j) = u2ytar(j) + xtar(j)*dreal(ddutar(j))
+          u2ytar(j) = u2ytar(j) + xtar(j)*dreal(ddutar(j))
         endif
         
       enddo        
@@ -5357,11 +5344,11 @@ c      The Second, Third and, Forth parts
         utar1y(j) = utar1y(j) + ytar(j)*dimag(dutar(j))
         
         if(nder .eq. 2) then        
-        u1xtar(j) = u1xtar(j) - ytar(j)*dreal(ddutar(j))
-        u1ytar(j) = u1ytar(j) - dreal(dutar(j)) + ytar(j)*
+          u1xtar(j) = u1xtar(j) - ytar(j)*dreal(ddutar(j))
+          u1ytar(j) = u1ytar(j) - dreal(dutar(j)) + ytar(j)*
      $              dimag(ddutar(j))
-        u2xtar(j) = u2xtar(j) + ytar(j)*dimag(ddutar(j))
-        u2ytar(j) = u2ytar(j) + dimag(dutar(j)) + ytar(j)*
+          u2xtar(j) = u2xtar(j) + ytar(j)*dimag(ddutar(j))
+          u2ytar(j) = u2ytar(j) + dimag(dutar(j)) + ytar(j)*
      $              dreal(ddutar(j))
         endif
         
@@ -5375,8 +5362,8 @@ c      The Second, Third and, Forth parts
         utar1x(j) = utar1x(j) + dreal(utar(j))
         
         if(nder .eq. 2) then        
-        u1xtar(j) = u1xtar(j) + dreal(dutar(j))
-        u1ytar(j) = u1ytar(j) - dimag(dutar(j))
+          u1xtar(j) = u1xtar(j) + dreal(dutar(j))
+          u1ytar(j) = u1ytar(j) - dimag(dutar(j))
         endif
         
       enddo
@@ -5390,8 +5377,8 @@ c      The Second, Third and, Forth parts
         utar1y(j) = utar1y(j) + dreal(utar(j))
         
         if(nder .eq. 2) then        
-        u2xtar(j) = u2xtar(j) + dreal(dutar(j))
-        u2ytar(j) = u2ytar(j) - dimag(dutar(j))
+          u2xtar(j) = u2xtar(j) + dreal(dutar(j))
+          u2ytar(j) = u2ytar(j) - dimag(dutar(j))
         endif
         
       enddo 
@@ -5447,12 +5434,7 @@ c     The formula (4.3) for exterior limit v^+
       return
       end
 
-
-
-
-
 c******************************************************************
-
       subroutine laplaceExteriorHolomorphic(npts,xsou,ysou,bdval,
      $      ntar,xtar,ytar,utar,nder,dutar,ddutar)
       implicit real*8 (a-h,o-z)
@@ -5462,8 +5444,8 @@ c******************************************************************
       complex *16 bdval(npts)
       complex *16 utar(ntar),dutar(ntar),
      &            ddutar(ntar) 
-
       complex *16 eye,czero,a
+      complex *16 tmp1,tmp2
       complex *16 zsou(npts),dzsou(npts)
       complex *16 den1(npts), den2(npts)
       complex *16 num,den,num1,den3
@@ -5475,15 +5457,14 @@ c******************************************************************
       dtheta = twopi/dble(npts)
       eye = (0.d0,1.d0)
       czero = (0.d0,0.d0)
-        x=0.d0
-        y=0.d0
+      x=0.d0
+      y=0.d0
       do k=1,npts
         x = x + xsou(k)/dble(npts)
         y = y + ysou(k)/dble(npts)
       enddo
       
       a = x + eye*y
-c      print *, x,y,a
       dtheta = twopi/dble(npts)
       do k=1,npts
         zsou(k) = xsou(k) + eye*ysou(k)
@@ -5497,11 +5478,8 @@ c     put geometry in complex variables
         num = czero
         den = czero
         do k = 1,npts
-          den1(k) = czero
           den1(k) = (zsou(k) - ztar)
           num = num + bdval(k)/den1(k)*dzsou(k)
-c          den = den + 1.d0/((zsou(k) - dcmplx(a))
-c     $          *(zsou(k) - ztar))*dzsou(k)
           den = den + 1.d0/den1(k)*dzsou(k)
         enddo
 c       compute numerator and denominator term in equation (3.8) of
@@ -5519,24 +5497,23 @@ c       denominator is unchanged
         do k = 1,npts
           den2(k) = czero
           den2(k) = den1(k)*den1(k)         
-        if( CDABS(zsou(k)-ztar) .gt. 1.d-10) then
-          num = num + (bdval(k) - utar(j))/
+          if(CDABS(zsou(k)-ztar) .gt. 1.d-10) then
+            num = num + (bdval(k) - utar(j))/
      $          den2(k)*dzsou(k)
           else
-c          print *,1
-          do l=1,npts
-             if( l .ne. k) then
-             tmp1 = tmp1 + (bdval(k)*(zsou(k)-dcmplx(a))/
-     $          (zsou(l)-dcmplx(a))-bdval(l))*dzsou(l)/(zsou(l)-ztar)
-             endif
-             tmp2 = tmp2 + 1.d0/((zsou(l) - dcmplx(a))
-     $          *(zsou(l) - ztar))*dzsou(l)           
-           enddo   
-           num = num + (tmp1/tmp2 - (zsou(k) - ztar)*bdval(k))/
+            do l=1,npts
+              if(l .ne. k) then
+                tmp1 = tmp1 + (bdval(k)*(zsou(k)-dcmplx(a))/
+     $            (zsou(l)-dcmplx(a))-bdval(l))*dzsou(l)/(zsou(l)-ztar)
+              endif
+              tmp2 = tmp2 + 1.d0/((zsou(l) - dcmplx(a))*
+     $          (zsou(l) - ztar))*dzsou(l)           
+            enddo   
+            num = num + (tmp1/tmp2 - (zsou(k) - ztar)*bdval(k))/
      $          (zsou(k) - ztar)**2.d0/(ztar-dcmplx(a))*dzsou(k)
-           endif
-           den = den +  1.d0/((zsou(k) - dcmplx(a))*(zsou(k) - ztar))
-     $          *dzsou(k)
+          endif
+          den = den +  1.d0/((zsou(k) - dcmplx(a))*(zsou(k) - ztar))*
+     $          dzsou(k)
         enddo
 c       compute numerator and denominator term in equation (3.8) of
 c       Barnett, Wu, Veerapaneni
@@ -5544,14 +5521,14 @@ c       Barnett, Wu, Veerapaneni
         
 c       Computing the second derivative of DLP for the stress tensor
         if(nder .eq. 2) then
-        num = czero
-        num1 = czero
-          Do k=1,npts
+          num = czero
+          num1 = czero
+          do k=1,npts
             den3=den2(k)*den1(k)
             num1 = num1+(bdval(k)-utar(j)-dutar(j)*(zsou(k)-ztar))/
-     $               den3*dzsou(k)
+     $             den3*dzsou(k)
           enddo
-          ddutar(j)=2.d0*num1/(ztar - dcmplx(a))/den
+        ddutar(j)=2.d0*num1/(ztar - dcmplx(a))/den
         endif
       enddo
 

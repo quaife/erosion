@@ -166,41 +166,40 @@ work~\citep{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities that can be
 triggered by changes in sign of the shear stress, and we use a stable
 second-order Runge-Kutta method applied to the {\thL}
-coordinates~\citep{hou-low-she1994} of the eroding grains.  In this
-work, we introduce a new quadrature method to resolve dense suspensions.
-The accuracy of the trapezoid rule, which was used in previous work, is
-adequate for bodies that are sufficiently separated~\citep{tre-wei2014},
-but not for grains in close contact.  One of the earliest quadrature
-methods for nearly-singular integrands was developed
-by~\citet{bak-she1986}, and in recent years, many other schemes have
-followed~\citep{kli-tor2018, hel-oja2008a, bea-yin-wil2016, bea-lai2001,
-klo-bar-gre-one2013}.  We use a Barycentric quadrature
-method~\citep{bar2014, bar-wu-vee2015} since it is a non-intrusive
-modification of the trapezoid rule, and the error is guaranteed to be
-uniformly bounded.  We extend the original quadrature method to compute
-the velocity gradient, which is needed to evaluate the shear stress and
-the fluid vorticity.
+coordinates~\citep{hou-low-she1994} of the eroding grains. In previous
+work~\citep{qua-moo2018}, the BIE is discretized with the trapezoid
+rule, and this is acceptable if the grains that are sufficiently
+separated~\citep{tre-wei2014}. However, when grains are close, the
+result is a nearly-singular integrand and the error of the trapezoid
+rule is no longer acceptable. One of the earliest quadrature methods for
+nearly-singular integrands was developed by~\citet{bak-she1986}, and in
+recent years, many other schemes have followed~\citep{kli-tor2018,
+hel-oja2008a, bea-yin-wil2016, bea-lai2001, klo-bar-gre-one2013}.  We
+use a Barycentric quadrature method~\citep{bar2014, bar-wu-vee2015}
+since it is a non-intrusive modification of the trapezoid rule, and the
+error is guaranteed to be uniformly bounded.  We use this quadrature
+method to compute the velocity gradient, which is needed to evaluate the
+shear stress and the fluid vorticity.
 
-While natural porous media are three-dimensional, there are several
-challenges that must be overcome to extend our high-order methods to
-three dimensions.  A three-dimensional version of a {\thL} formulation
+Since high-order methods have never been used to study transport in
+eroding porous media, we consider, as a first step, two-dimensional and
+immobile grains. These assumptions allow us to simulate large
+densely-packed suspensions (up to $100$ in this manuscript), and to
+clearly interpret the results. More realistic three-dimensional and
+mobile configurations would require overcoming a few challenges. First,
+a three-dimensional extension of the {\thL} formulation
 exists~\citep{amb-sie-tlu2013}, but the Barycentric quadrature method
-relies upon a complex variable formulation of the BIE, making it
-inherently two-dimensional. Therefore, a different quadrature method is
-required. Additional challenges of three-dimensional simulations include
-spectral representations of the geometry and efficiently solving
+used here relies on a complex variable formulation of the BIE, making it
+inherently two-dimensional. Therefore, a different quadrature method
+would be required. Additional challenges include spectral
+representations of three-dimensional geometries and efficiently solving
 discretizations of the BIE. While high-order methods for
 three-dimensional BIEs have been developed, their computational cost
-limits the number of bodies that can be practically simulated. Another
-limitation of this work is the assumption of immobile grains.
-Mechanisms such as sedimentation play a role in real applications, and
-this will effect the transport properties. Simulating mobile grains
-introduces the additional challenge of resolving contact.  Since
-high-order methods have never been used to study transport in eroded
-porous media, as a first step we consider the case  with two-dimensional
-immobile grains. This assumption allows for a clear interpretation of
-the results.  For example, in this work we are able to simulate a large
-densely-packed suspension (up to $100$ in this manuscript). 
+limits the number of bodies that can be practically simulated.  Lastly,
+mechanisms such as sedimentation play a role in realistic media and
+affect the pore structure. Simulating mobile grains introduces the
+additional challenge of resolving contact, which we plan to address in
+future work.
 
 To characterize transport through the resulting configurations, particle
 trajectories must be computed. Depending on the application, microscale
@@ -255,7 +254,7 @@ work~\citep{qua-moo2018}.  In section~\ref{sec:DLP}, we recast all the
 governing equations as layer potentials defined in both $\RR^2$ and in
 $\CC$.  Section~\ref{sec:transport} describes measures for
 characterizing the geometry and transport. Section~\ref{sec:method}
-describes the numerical methods, with special attention paid to the new
+describes the numerical methods, with special attention paid to the
 quadrature method for computing the shear stress and the vorticity.
 Section~\ref{sec:results} presents numerical examples for a variety of
 dense packings of bodies.  Finally, concluding remarks are made in
@@ -642,14 +641,17 @@ do compare the two definitions for the tortuosity at several porosities
 in section~\ref{sec:results}.
 
 There have been efforts to relate the tortuosity, $T$, to the porosity,
-$\phi$.  For example,~\citet{mat-kha-koz2008} propose the
-models
+$\phi$.  For example,~\citet{mat-kha-koz2008} propose the models
 \begin{subequations}
   \label{eqn:tortuosityModels}
   \begin{align}
+    \label{eqn:tortuosityModels1}
     \widehat{T}(\phi) &= \phi^{-p}, \\
+    \label{eqn:tortuosityModels2}
     \widehat{T}(\phi) &= 1-p \log \phi, \\
+    \label{eqn:tortuosityModels3}
     \widehat{T}(\phi) &= 1+p (1-\phi), \\
+    \label{eqn:tortuosityModels4}
     \widehat{T}(\phi) &= (1+p (1-\phi))^2, 
   \end{align}
 \end{subequations}
@@ -713,7 +715,7 @@ boundary of the geometry at a set of collocation points distributed
 equally in arclength (section~\ref{sec:spatialDiscretization}).
 Depending on the proximity of the target point to the source points, the
 quadrature rule is either the trapezoid rule or the Barycentric
-quadrature rule (section~\ref{sec:bary}).  The criteria that determines
+quadrature rule (section~\ref{sec:bary}). The criteria that determines
 which quadrature method is applied is described in
 section~\ref{sec:fmm}.  Once the shear stress is computed, the bodies
 are eroded a single time step by using a {\thL}
@@ -814,7 +816,7 @@ functions~\citep{tre-wei2014}, the derivative of the integrand grows as
 the target point $\xx$ approaches $\bd\Omega$.  Therefore, if the
 trapezoid rule is applied when bodies are in near-contact, or if a layer
 potential is evaluated at a point close to $\bd\Omega$, then the result
-become unreliable and the simulation ultimately becomes unstable.  We
+becomes unreliable and the simulation ultimately becomes unstable.  We
 thus desire a quadrature method whose error bound does not depend on the
 target location.
 
@@ -829,9 +831,8 @@ compute Cauchy integrals and their derivatives with an error bound that
 is independent of $x \in \CC$.  Then,~\citet{bar-wu-vee2015} used these
 quadrature rules to compute the Stokes double-layer potential
 representation of the velocity~\eqref{eqn:velocityDLP}. After briefly
-summarizing this method, we extend the work to compute the second
-derivative so that the shear stress and vorticity can be computed with a
-uniform error bound. 
+summarizing this method, we compute the second derivative so that the
+shear stress and vorticity can be accurately computed.
 
 We present the quadrature rules for a simply-connected interior domain
 $\Omega \subset \CC$, with any point $a \in \Omega$, and we consider
@@ -888,7 +889,7 @@ for $v'(x)$.  For $x \in \Omega$, we have the identity
 \end{align}
 and the integrand is bounded for all $x \in \Omega$.  Therefore, after
 applying the trapezoid rule and rearranging for $v'(x)$, we have the
-interior Barycentric quadrature rule
+interior quadrature rule
 \begin{align}
   v'(x) = \left(\sum_{j=1}^{N}
     \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j \right)
@@ -897,8 +898,8 @@ interior Barycentric quadrature rule
   \quad x \in \Omega.
   \label{eqn:BaryvprimeInterior}
 \end{align}
-Using a similar construction, the exterior Barycentric quadrature rule
-for the first derivative is
+Using a similar construction, an exterior quadrature rule for the first
+derivative is
 \begin{align}
   v'(x) = \frac{1}{x-a} \left(\sum_{j=1}^N
     \frac{v^+_j - v(x)}{(y_j - x)^2} w_j \right)
@@ -910,12 +911,22 @@ for the first derivative is
 Note that $v(x)$ is required to compute $v'(x)$ for both the interior
 and exterior case, and this is available using the Barycentric
 quadrature rules~\eqref{eqn:BaryvInterior}
-and~\eqref{eqn:BaryvExterior}.
+and~\eqref{eqn:BaryvExterior}. As pointed out by~\citet{bar-wu-vee2015},
+equations~\eqref{eqn:BaryvprimeInterior}
+and~\eqref{eqn:BaryvprimeExterior} are not in a Barycentric form since
+the numerators suffer from catastrophic cancellation as $x$ approaches
+$\bd\Omega$. The result is that the quadrature error is not uniformly
+bounded. However, since these errors are sufficiently small for the
+geometries and resolutions we consider, we use these quadrature formulas
+nonetheless. We note that the quadrature formulas can be put into true
+Barycentric form~\citep[see equations (3.11) and
+(3.13)]{bar-wu-vee2015}, but this increases the complexity for
+evaluating $v'(x)$ to $O(N^2)$ operations.
 
-To compute the shear stress and vorticity, we require a Barycentric
-quadrature rule for $v''(x)$.  The derivation is largely based on the
-work of~\citet[see equation (2.12)]{ioa-pap-per1991}.  We start with
-the second derivative of the Cauchy integral theorem
+To compute the shear stress and vorticity, we require a quadrature rule
+for $v''(x)$.  The derivation is largely based on the work of~\citet[see
+equation (2.12)]{ioa-pap-per1991}.  We start with the second derivative
+of the Cauchy integral theorem
 \begin{align}
   0 = \frac{1}{2\upi i} \int_{\bd\Omega} 
       \frac{2v^{-}(y)}{(y-x)^3}\,dy - v''(x).
@@ -945,13 +956,14 @@ This integrand is constructed so that it is bounded for all $x \in
       {(y_j-x)^3} w_j,
 \end{align}
 where the accuracy is independent of $x$.  Solving for $v''(x)$, the
-Barycentric quadrature rule for the interior second derivative at $x \in
+quadrature rule for the interior second derivative at $x \in
 \Omega$ is
 \begin{align}
   v''(x) \approx \left(2\sum_{j=1}^N 
     \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j \right)
     \Bigg/
     \left(\sum_{j=1}^N \frac{1}{y_j-x}w_j\right).
+    \label{eqn:Baryvprime2Interior}
 \end{align}
 For the exterior case, $x \in \Omega^c$, we start with the identity
 \begin{align}
@@ -967,39 +979,47 @@ $v''(x)$, we have
 \end{align}
 As in the interior case, the integrand is chosen so that it is bounded
 for all $x \in \Omega^c$.  Therefore, after applying the trapezoid rule
-and solving for $v''(x)$, we have the Barycentric quadrature rule for
-the exterior second derivative at $x \in \Omega^c$
+and solving for $v''(x)$, we have the quadrature rule for the exterior
+second derivative at $x \in \Omega^c$
 \begin{align}
   v''(x) \approx \frac{1}{x-a}\left(2\sum\limits_{j=1}^N
     \frac{v^{+}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j\right)
     \Bigg/
     \left(\sum_{j=1}^N \frac{(y_j-a)^{-1}}{y_j-x}w_j\right).
+    \label{eqn:Baryvprime2Exterior}
 \end{align}
-The quadrature rule for $v''(x)$ requires $v(x)$ and $v'(x)$, and theses
+The quadrature rule for $v''(x)$ requires $v(x)$ and $v'(x)$, and these
 are computed using the quadrature rules in
 equations~\eqref{eqn:BaryvInterior},~\eqref{eqn:BaryvExterior},~\eqref{eqn:BaryvprimeInterior},
-and~\eqref{eqn:BaryvprimeExterior}. In section~\ref{sec:results}, these
-quadrature rules are used to form simulations of nearly-touching eroding
-grains, and to study dynamics of the flow in regions arbitrarily close
-to eroding grains.
+and~\eqref{eqn:BaryvprimeExterior}. These quadrature formula are also
+not in a Barycentric form because of catastrophic cancellation in the
+numerator. As is the case when computing $v'(x)$, this error is
+sufficiently small at the geometries and resolutions we consider, so we
+use these quadrature formulas.
+
+In section~\ref{sec:results}, the quadrature
+rules~\eqref{eqn:BaryvInterior},~\eqref{eqn:BaryvExterior},~\eqref{eqn:BaryvprimeInterior},~\eqref{eqn:BaryvprimeExterior},~\eqref{eqn:Baryvprime2Interior},
+and~\eqref{eqn:Baryvprime2Exterior} are used to form simulations of
+nearly-touching eroding grains, and to study dynamics of the flow in
+regions arbitrarily close to eroding grains.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiently Applying the Quadrature}
 \label{sec:fmm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-By using the Barycentric quadrature rule, the velocity, shear stress,
-and vorticity are computed with an error that is bounded independent of
-the target location. However, applied directly, it requires
-$O(N^2)$ operations, where $N$ is the total number of source
-and target points.  By using a fast summation method, such as the fast
-multipole method (FMM)~\citep{gre-rok1987}, the cost can be reduced to
-$O(N)$ operations.  However, each application of the Barycentric
-quadrature rules involve several $N$-body calculations, rendering the
-computational cost prohibitive, so we introduce a hybrid method that
-combines the Barycentric quadrature rule and an accelerated trapezoid
-rule.  Note that the source points of the layer potential is always one
-of the eroding bodies or the outer wall, but the target point can either
-be on another component of $\bd\Omega$ or it can be in the fluid bulk
+By using these quadrature rules, the velocity, shear stress, and
+vorticity are calculated at the target points necessary to simulate
+erosion and transport. However, applied directly, it requires $O(N^2)$
+operations, where $N$ is the total number of source and target points.
+By using a fast summation method, such as the fast multipole method
+(FMM)~\citep{gre-rok1987}, the cost can be reduced to $O(N)$ operations.
+However, each application of the Barycentric quadrature rules involve
+several $N$-body calculations, rendering the computational cost
+prohibitive, so we introduce a hybrid method that combines the
+Barycentric quadrature rule and an accelerated trapezoid rule.  Note
+that the source points of the layer potential is always one of the
+eroding bodies or the outer wall, but the target point can either be on
+another component of $\bd\Omega$ or it can be in the fluid bulk
 $\Omega$.
 
 To compute the velocity double-layer potential~\eqref{eqn:velocityDLP},
@@ -1495,11 +1515,15 @@ quadrature to compute the tortuosity.  As the bodies erode, wide
 channels form where streamlines undergo only minor vertical deflections,
 and this explains why the tortuosity eventually decreases with porosity.
 We computed lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels} and found that the power law
-minimizes the error.  The  black dashed line in
-figure~\ref{fig:Eroding20Transport}(a) is the line of best fit
-$\widehat{T}(\phi) = \phi^{-0.2064}$ with a root-mean-square error of
-$5.90 \times 10^{-3}$.  Interestingly, at the low porosities, the
+models~\eqref{eqn:tortuosityModels} and the power
+law~\eqref{eqn:tortuosityModels1} minimizes the error.  The  black
+dashed line in figure~\ref{fig:Eroding20Transport}(a) is the line of
+best fit $\widehat{T}(\phi) = \phi^{-0.2064}$ with a root-mean-square
+error of $5.90 \times 10^{-3}$.  A slightly larger root-mean-square
+error of $6.70 \times 10^{-3}$ is possible with the logarithmic
+porosity-tortuosity model~\eqref{eqn:tortuosityModels2}, but the other
+two models have a root-mean-square error that is an order of magnitude
+larger. Interestingly, at the low porosities, the
 tortuosity initially increases. This increase occurs because in the
 absence of erosion (left plot in figure~\ref{fig:Eroding20vort}), many
 of the streamlines, such as those initialized between bodies 15 \& 18,
@@ -1597,14 +1621,15 @@ respect to the porosity (blue) and the line of best fit (black) using
 the power law $\widehat{T}(\phi) = \phi^{-0.1669}$. This model
 outperforms the other three models in
 equation~\eqref{eqn:tortuosityModels}, and its root-mean-squared error
-is $1.13 \times 10^{-2}$.  As grains erode, there is an increase in the
-number of streamlines that take a nearly direct path through the
-geometry, and this decreases the tortuosity. However, the channelization
-effect of erosion results in an increase in the tortuosity since the
-length of many of the streamlines increases when they deflect from a
-high porosity region (low pressure) to a low porosity region (high
-pressure). For this example, we see that the net effect is a decrease in
-the tortuosity for all time.
+is $1.13 \times 10^{-2}$. However, the root-mean-square error of the
+other three models is bounded by $2.38 \times 10^{-2}$.  As grains
+erode, there is an increase in the number of streamlines that take a
+nearly direct path through the geometry, and this decreases the
+tortuosity. However, the channelization effect of erosion results in an
+increase in the tortuosity since the length of many of the streamlines
+increases when they deflect from a high porosity region (low pressure)
+to a low porosity region (high pressure). For this example, we see that
+the net effect is a decrease in the tortuosity for all time.
 
 \begin{figure}
 \begin{subfigure}[b]{0.5\textwidth}
@@ -1710,11 +1735,14 @@ straighter streamlines, therefore reducing $\lambda$, the horizontal
 flow, $u_1(y)$, increases since there is no longer a no-slip boundary,
 and this increases the tortuosity.  We also compute the lines of best
 fit using the porosity-tortuosity models~\eqref{eqn:tortuosityModels}.
-The black dashed line in figure~\ref{fig:Eroding100Transport}(a) is the
-line of best fit $\widehat{T}(\phi) = \phi^{-0.2459}$, with a
-root-mean-square error of $5.50 \times 10^{-3}$.  We note a slightly
-better root-mean-square error of $5.20 \times 10^{-3}$ is possible with
-the model $\widehat{T}(\phi) = 1 - 0.2631 \ln(\phi)$.
+Each of the models result in a root-mean-squared error ranging from
+$4.60 \times 10^{-3}$ for model~\eqref{eqn:tortuosityModels4} to $7.20
+\times 10^{-3}$ for model~\eqref{eqn:tortuosityModels3}. The black
+dashed line in figure~\ref{fig:Eroding100Transport}(a) is the line of
+best fit $\widehat{T}(\phi) = \phi^{-0.2459}$, with a root-mean-square
+error of $5.50 \times 10^{-3}$.  We note a slightly better
+root-mean-square error of $4.60 \times 10^{-3}$ is possible with the
+model $\widehat{T}(\phi) = \left(1 + 0.1499(1-\phi)\right)^2$.
 
 \begin{figure}
 \begin{subfigure}[b]{0.45\textwidth}
@@ -1867,11 +1895,11 @@ figure~\ref{fig:Eroding100gap_hist} are indicated by the red stars.}
 As a continuation of our previous work~\citep{qua-moo2018}, we have
 simulated dense suspensions and characterized transport in viscous
 eroding porous media. This is accomplished by using high-order time
-stepping methods and a new quadrature methods to solve a BIE formulation
-of the Stokes equations.  By using these numerical methods, we are able
-to perform stable simulations of erosion with $N = O(100)$
-discretization points, while the trapezoid rule would require $O(10^5)$
-discretization points.
+stepping methods and a combination of trapezoid and Barycentric
+quadrature methods to solve a BIE formulation of the Stokes equations.
+By using these numerical methods, we are able to perform stable
+simulations of erosion with $N = O(100)$ discretization points, while
+the trapezoid rule would require $O(10^5)$ discretization points.
 
 The transport is characterized in terms of tortuosity and anomalous
 dispersion. While the local tortuosity agrees qualitatively with other
