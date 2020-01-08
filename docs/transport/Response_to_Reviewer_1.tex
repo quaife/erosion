@@ -107,8 +107,8 @@ even if $v(x)$ is computed to high accuracy using the formulae (5.6 \&
     \begin{quotation}
       \noindent
       By using these quadrature rules, the velocity, shear stress, and
-      vorticity are calculated at the target points necessary to
-      simulate erosion and transport.
+      vorticity are calculated at the target points to simulate erosion
+      and transport.
     \end{quotation}
 
 \end{itemize}
@@ -126,13 +126,13 @@ quadrature is one ingredient in this scheme.}
     \begin{quotation}
       \noindent
       In previous work (Quaife \& Moore 2018), the BIE is discretized
-      with the trapezoid rule, and this is acceptable if the grains that
-      are sufficiently separated (Trefethen \& Weideman 2014). However,
-      when grains are close, the result is a nearly-singular integrand
-      and the error of the trapezoid rule is no longer acceptable. One
-      of the earliest quadrature methods for nearly-singular integrands
-      was developed by Baker \& Shelley (1986), and in recent years,
-      many other schemes have followed (af Klinteberg \& Tornberg 2018;
+      with the trapezoid rule, and this is acceptable if the grains are
+      sufficiently separated (Trefethen \& Weideman 2014). However, when
+      grains are close, the result is a nearly-singular integrand and
+      the error of the trapezoid rule is no longer acceptable. One of
+      the earliest quadrature methods for nearly-singular integrands was
+      developed by Baker \& Shelley (1986), and in recent years, many
+      other schemes have followed (af Klinteberg \& Tornberg 2018;
       Helsing \& Ojala 2008; Beale {\em et al.}~2016; Beale \& Lai 2001;
       Kl\"{o}ckner {\em et al.}~2013). We use a Barycentric quadrature
       method (Barnett 2014; Barnett {\em et al.}~2015) since it is a
@@ -207,7 +207,7 @@ comparing to the other models?}
       We also compute the lines of best fit using the
       porosity-tortuosity models (4.6).  Each of the models result in a
       root-mean-squared error ranging from $4.60 \times 10^{-3}$ for
-      model (4.6c) to $7.20 \times 10^{-3}$ for model (4.6c). The black
+      model (4.6d) to $7.20 \times 10^{-3}$ for model (4.6c). The black
       dashed line in figure 15(a) is the line of best fit
       $\widehat{T}(\phi) = \phi^{-0.2459}$, with a root-mean-square
       error of $5.50 \times 10^{-3}$.  We note a slightly better
@@ -306,8 +306,8 @@ give a more consistent and smoother reading experience?}
 \begin{itemize}
   \item We examined the area fraction and flow rate in figure 7 so that
     it could be compared to results from our previous work. The goal is
-    to demonstrate that we now able to resolve smaller area fractions
-    and correspondingly lower flow rates.
+    to demonstrate that we now are able to resolve smaller area
+    fractions and correspondingly lower flow rates.
 
   \item We have updated the text to read:
     \begin{quotation}

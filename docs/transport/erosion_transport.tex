@@ -168,7 +168,7 @@ triggered by changes in sign of the shear stress, and we use a stable
 second-order Runge-Kutta method applied to the {\thL}
 coordinates~\citep{hou-low-she1994} of the eroding grains. In previous
 work~\citep{qua-moo2018}, the BIE is discretized with the trapezoid
-rule, and this is acceptable if the grains that are sufficiently
+rule, and this is acceptable if the grains are sufficiently
 separated~\citep{tre-wei2014}. However, when grains are close, the
 result is a nearly-singular integrand and the error of the trapezoid
 rule is no longer acceptable. One of the earliest quadrature methods for
@@ -601,13 +601,13 @@ $(x_0,y_0)$, and its arclength, $\lambda(y_0)$, is calculated until the
 streamline passes the parallel outlet cross-section $x = x_0 + d$.  In
 this work, we consider streamlines originating at $x=-1$ and terminating
 at $x=1$, so $d=2$.  However, other choices for the terminal point when
-computing the tortuosity are sometime used~\citep{dud-koz-mat2011}.
-We note that if a streamline originates in a recirculation zone, which
-is possible in two dimensions~\citep{hig1985}, then the local tortuosity
+computing the tortuosity are sometime used~\citep{dud-koz-mat2011}.  We
+note that if a streamline originates in a recirculation zone, which is
+possible in two dimensions~\citep{hig1985}, then the local tortuosity
 will be infinite. However, in each of our numerical experiments, all the
-streamlines connect the inlet to the outlet. Having only finite local
-tortuosities, the hydraulic tortuosity is defined by taking the average
-over all points on the inlet cross-section
+streamlines we consider connect the inlet to the outlet. Having only
+finite local tortuosities, the hydraulic tortuosity is defined by taking
+the average over all points on the inlet cross-section
 \begin{align}
   T = \frac{1}{d}\left(\int_{S}u_1(x_0,y_0)\lambda(y_0)\,dy_0 \right)
   \Bigg/
@@ -1008,10 +1008,10 @@ regions arbitrarily close to eroding grains.
 \label{sec:fmm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 By using these quadrature rules, the velocity, shear stress, and
-vorticity are calculated at the target points necessary to simulate
-erosion and transport. However, applied directly, it requires $O(N^2)$
-operations, where $N$ is the total number of source and target points.
-By using a fast summation method, such as the fast multipole method
+vorticity are calculated at the target points to simulate erosion and
+transport. However, applied directly, it requires $O(N^2)$ operations,
+where $N$ is the total number of source and target points.  By using a
+fast summation method, such as the fast multipole method
 (FMM)~\citep{gre-rok1987}, the cost can be reduced to $O(N)$ operations.
 However, each application of the Barycentric quadrature rules involve
 several $N$-body calculations, rendering the computational cost

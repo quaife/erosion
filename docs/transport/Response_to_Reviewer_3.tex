@@ -43,10 +43,11 @@ to the analysis of erosion in natural porous media.}
     two-dimensional, we have limited the applicability for natural
     porous media. There are several numerical challenges to simulate
     three-dimensional erosion, with the most significant being the
-    $\theta-L$ formulation, quadrature method, spectral representation
-    of the geometry, and the boundary integral equation solver.
+    $\theta$--$L$ formulation, quadrature method, spectral
+    representation of the geometry, and the boundary integral equation
+    solver.
 
-  \item In three-dimensions, others have extended the $\theta-L$
+  \item In three-dimensions, others have extended the $\theta$--$L$
     formulation to remove stiffness in interfacial flow, spectrally
     represented geometries, and efficiently solving BIEs.  The challenge
     with these methods is their computational cost. To consider
@@ -66,9 +67,8 @@ to the analysis of erosion in natural porous media.}
     Gaussian-Legendre quadrature method requires $\mathcal{O}(p^3)$
     operations, where $p$ is the highest-order spherical harmonic.
 
-  \item Our response to the reviewer's second comment points to a
-    paragraph that has been added to the Introduction.
-
+  \item The manuscript has been modified as discussed in the response to
+    the reviewer's second comment.
 \end{itemize}
 
 \noindent
@@ -84,7 +84,7 @@ studying erosion process in natural porous media.}
     bodies.
 
   \item We plan to consider mobile bodies in the future, and this will
-    require a significant computational effort.
+    require additional computational effort.
 
   \item To the best of our knowledge, nobody has studied the effect
     erosion has on transport through a porous media. Therefore, as a
@@ -100,13 +100,13 @@ studying erosion process in natural porous media.}
       manuscript), and to clearly interpret the results. More realistic
       three-dimensional and mobile configurations would require
       overcoming a few challenges. First, a three-dimensional extension
-      of the $\theta-L$ formulation exists (Ambrose {\em et al.}~2013),
-      but the Barycentric quadrature method used here relies on a
-      complex variable formulation of the BIE, making it inherently two-
-      dimensional. Therefore, a different quadrature method would be
-      required. Additional challenges include spectral representations
-      of three-dimensional geometries and efficiently solving
-      discretizations of the BIE. While high-order methods for
+      of the $\theta$--$L$ formulation exists (Ambrose {\em et
+      al.}~2013), but the Barycentric quadrature method used here relies
+      on a complex variable formulation of the BIE, making it inherently
+      two-dimensional. Therefore, a different quadrature method would
+      be required. Additional challenges include spectral
+      representations of three-dimensional geometries and efficiently
+      solving discretizations of the BIE. While high-order methods for
       three-dimensional BIEs have been developed, their computational
       cost limits the number of bodies that can be practically
       simulated. Lastly, mechanisms such as sedimentation play a role in
