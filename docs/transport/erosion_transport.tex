@@ -631,9 +631,8 @@ to~\citep{dud-koz-mat2011}
   \label{eqn:tortuosity2}
 \end{align}
 where $\Omega$ is the fluid region between the inlet and outlet
-cross-sections.  Recirculation zones are possible in viscous
-fluids~\citep{hig1985}, but they are very small in the examples we
-consider and have a negligible effect on the tortuosity.  Since
+cross-sections.  Our examples do contain recirculation zones, but they
+are very small and have a negligible effect on the tortuosity.  Since
 equation~\eqref{eqn:tortuosity2} does not require the additional work of
 computing particle trajectories at every time step, we use this
 definition for the majority of the tortuosity calculations.  However, we
@@ -663,22 +662,6 @@ geometries.
 \subsection{Pore Throat Size}
 \label{sec:throats}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding100gap} (a) The pore sizes, represented by
-the length of the red line segments, between neighboring grains. Two
-grains are neighbors if they share an edge of the Delanuay triangulation
-with nodes at the center of each eroding grain. (b) The pore sizes of an
-eroded geometry. The black curve is the Weibull distribution with the
-same first two moments as the data.}
-\end{figure}
 While transport in porous media depends on the porosity, it also depends
 on the placement of the grains.  In particular, grain placement affects
 velocity scales~\citep{ali-par-wei-bre2017}, correlation
@@ -703,6 +686,22 @@ figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
 distribution, a distribution used by others to characterize pore
 sizes~\citep{ioa-cha1993}. In section~\ref{sec:Eroding100}, we
 investigate the effect of erosion on the pore size distribution.
+\begin{figure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap} (a) The pore sizes, represented by
+the length of the red line segments, between neighboring grains. Two
+grains are neighbors if they share an edge of the Delanuay triangulation
+with nodes at the center of each eroding grain. (b) The pore sizes of an
+eroded geometry. The black curve is the Weibull distribution with the
+same first two moments as the data.}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1725,24 +1724,23 @@ with both the length of the streamlines~\eqref{eqn:tortuosity1} (red
 stars) and using the spatial average of the velocity on an Eulerian
 grid~\eqref{eqn:tortuosity2} (blue marks).  The red square corresponds
 to the porosity of the geometry in figure~\ref{fig:Eroding100tort}(c).
-Again, the two tortuosity formulas give similar results.  For this
-geometry, the tortuosity decreases monotonically at almost all
-porosities.  However, the tortuosity undergoes a sudden increase near
-the end of the simulation, and we have observed this behavior in other
-examples.  The increase is caused by a single small body near the middle
-of the channel being completely eroded.  While this results in
-straighter streamlines, therefore reducing $\lambda$, the horizontal
-flow, $u_1(y)$, increases since there is no longer a no-slip boundary,
-and this increases the tortuosity.  We also compute the lines of best
-fit using the porosity-tortuosity models~\eqref{eqn:tortuosityModels}.
-Each of the models result in a root-mean-squared error ranging from
-$4.60 \times 10^{-3}$ for model~\eqref{eqn:tortuosityModels4} to $7.20
-\times 10^{-3}$ for model~\eqref{eqn:tortuosityModels3}. The black
-dashed line in figure~\ref{fig:Eroding100Transport}(a) is the line of
-best fit $\widehat{T}(\phi) = \phi^{-0.2459}$, with a root-mean-square
-error of $5.50 \times 10^{-3}$.  We note a slightly better
-root-mean-square error of $4.60 \times 10^{-3}$ is possible with the
-model $\widehat{T}(\phi) = \left(1 + 0.1499(1-\phi)\right)^2$.
+Again, the two tortuosity formulas give similar results. While it
+appears that the tortuosity does increase suddenly near the end of the
+simulation, this jump is due to a recirculation zone that vanishes as
+one of the grains completely erodes. This sharp increase is not present
+when the Lagrangian definition of the tortuosity is used. However, the
+relative difference between the tortuosities calculated with the
+Eulerian and Lagrangian formulations is less than $O(10^{-2})$. We also
+compute the lines of best fit using the porosity-tortuosity
+models~\eqref{eqn:tortuosityModels}.  Each of the models result in a
+root-mean-squared error ranging from $4.60 \times 10^{-3}$ for
+model~\eqref{eqn:tortuosityModels4} to $7.20 \times 10^{-3}$ for
+model~\eqref{eqn:tortuosityModels3}. The black dashed line in
+figure~\ref{fig:Eroding100Transport}(a) is the line of best fit
+$\widehat{T}(\phi) = \phi^{-0.2459}$, with a root-mean-square error of
+$5.50 \times 10^{-3}$.  We note a slightly better root-mean-square error
+of $4.60 \times 10^{-3}$ is possible with the model $\widehat{T}(\phi) =
+\left(1 + 0.1499(1-\phi)\right)^2$.
 
 \begin{figure}
 \begin{subfigure}[b]{0.45\textwidth}

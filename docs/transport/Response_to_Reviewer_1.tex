@@ -174,7 +174,28 @@ seems to me that the increase would just cancel. Then, as the authors
 have pointed out, wouldn't the straighter streamlines resulted from the
 vanishing of grains have decreased the tortuosity?}
 \begin{itemize}
-  \item response
+  \item This was an oversight on our behalf. The jump is actually caused
+    by a small recirculation zone that vanishes when one of the eroding
+    bodies vanishes. As the blue dots correspond to the Eulerian
+    formulation, the sudden vanishing of this recirculation zone leads
+    to a discrepancy between the two methods of calculating the local
+    tortuosity.
+
+  \item  While there is an error, at 7 of the porosity values around the
+    jump in Figure 15a, the relative error between the Eulerian and
+    Lagrangian formulations never exceeds $6 \times 10^{-3}$.
+
+  \item We have updated the explanation to read:
+    \begin{quotation}
+      \noindent
+      While it appears that the tortuosity does increase suddenly near
+      the end of the simulation, this jump is due to a recirculation
+      zone that vanishes as one of the grains completely erodes. This
+      sharp increase is not present when the Lagrangian definition of
+      the tortuosity is used. However, the relative difference between
+      the tortuosities calculated with the Eulerian and Lagrangian
+      formulations is less than $O(10^{-2})$.
+    \end{quotation}
 \end{itemize}
 
 \noindent
