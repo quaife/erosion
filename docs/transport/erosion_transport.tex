@@ -39,11 +39,11 @@ Institute, Florida State University, Tallahassee, FL 32306, USA
   affected by the erosion process, as well as by the number and
   distribution of the eroding bodies. Finally, we analyze the pore size
   distribution of an eroding geometry. The simulations are performed by
-  combining a high-fidelity boundary integral equation solver for the
-  fluid equations, a second-order stable time stepping method to
-  simulate erosion, and new numerical methods to stably and accurately
-  resolve nearly-touching eroded bodies and particle trajectories near
-  the eroding bodies.
+  combining a boundary integral equation solver for the fluid equations,
+  a second-order stable time stepping method to simulate erosion, and
+  high-order numerical methods to stably and accurately resolve
+  nearly-touching eroded bodies and particle trajectories near the
+  eroding bodies.
 \end{abstract}
 
 %\begin{keyword}
@@ -160,8 +160,8 @@ in the green regions.}
 \end{center}
 \end{figure}
 
-To compute stable simulations of erosion, we use methods of high-order
-in both space and time. The time integration is unchanged from previous
+To compute stable simulations of erosion, we use high-order methods in
+both space and time. The time integration is unchanged from previous
 work~\citep{qua-moo2018}.  We apply a mild regularization and a
 smoothing term to eliminate numerical instabilities that can be
 triggered by changes in sign of the shear stress, and we use a stable
@@ -662,6 +662,23 @@ geometries.
 \subsection{Pore Throat Size}
 \label{sec:throats}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
+\caption{}
+\end{subfigure}
+\caption{\label{fig:Eroding100gap} (a) The pore sizes, represented by
+the length of the red line segments, between neighboring grains. Two
+grains are neighbors if they share an edge of the Delanuay triangulation
+with nodes at the center of each eroding grain. (b) The pore sizes of an
+eroded geometry. The black curve is the Weibull distribution with the
+same first two moments as the data.}
+\end{figure}
+
 While transport in porous media depends on the porosity, it also depends
 on the placement of the grains.  In particular, grain placement affects
 velocity scales~\citep{ali-par-wei-bre2017}, correlation
@@ -686,23 +703,6 @@ figure~\ref{fig:Eroding100gap}(b) and compare it with the Weibull
 distribution, a distribution used by others to characterize pore
 sizes~\citep{ioa-cha1993}. In section~\ref{sec:Eroding100}, we
 investigate the effect of erosion on the pore size distribution.
-\begin{figure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height =0.8\linewidth]{./figs/triangulation_100b100}
-\caption{}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics*[height = 0.8\linewidth]{./figs/gap_hist100b100}
-\caption{}
-\end{subfigure}
-\caption{\label{fig:Eroding100gap} (a) The pore sizes, represented by
-the length of the red line segments, between neighboring grains. Two
-grains are neighbors if they share an edge of the Delanuay triangulation
-with nodes at the center of each eroding grain. (b) The pore sizes of an
-eroded geometry. The black curve is the Weibull distribution with the
-same first two moments as the data.}
-\end{figure}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical Methods}
@@ -1016,7 +1016,7 @@ However, each application of the Barycentric quadrature rules involve
 several $N$-body calculations, rendering the computational cost
 prohibitive, so we introduce a hybrid method that combines the
 Barycentric quadrature rule and an accelerated trapezoid rule.  Note
-that the source points of the layer potential is always one of the
+that the source points of the layer potential are always one of the
 eroding bodies or the outer wall, but the target point can either be on
 another component of $\bd\Omega$ or it can be in the fluid bulk
 $\Omega$.
@@ -1259,39 +1259,6 @@ following examples:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Single Body Close to a Wall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Consider a single eroding body close to a solid wall with the shear flow
-$\UU(\xx) = (y+1,0)$ imposed on $\Gamma$. \citet{mit-spa2017} performed
-a similar three-dimensional numerical experiment using a second-order
-quadrature method.  Their initial body is a sphere with its center
-located $1.5$ radii above the solid wall.  We initialize the
-two-dimensional eroding body with radius $r = 0.4$, and we conduct
-numerical experiments where the initial distance between the grain and
-the solid wall is $h$, $h/2$, and $h/10$, where $h = 2\upi r/N_\iin$.
-If we used the trapezoid rule and required an error that is comparable
-to the Barycentric quadrature rule, the body with an initial distance of
-$h/10$ from the solid wall would require $6,400$ discretization points,
-and the outer wall would require $50,000$ discretization points.
-
-In figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
-equispaced time steps.  For all three initial configurations, the shear
-stress is positive for all time, but varies over several orders of
-magnitude.  Therefore, we color the eroding body's boundary with the
-logarithm of the shear stress.  Since the shear stress is always
-positive, the erosion rate is smooth and corners do not develop.
-However, in the top half of the body, there is a sudden increase in the
-shear stress, and this leads to a region of high curvature.  This
-behavior is also present in three dimensions~\citep[see figure
-7(c)]{mit-spa2017}.  The biggest difference between the two- and
-three-dimensional results is the presence of a recirculation zone.  In
-three dimensions, there is no recirculation between the solid wall and
-the spherical body~\citep{cha-feu2003}, but recirculation is possible in
-two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, in
-figure~\ref{fig:NearWall_vort} we plot the logarithm of the absolute
-value of the vorticity from the final time step in
-figure~\ref{fig:NearWall}.  In these examples, a small recirculation
-zone, both in size and magnitude, is present in the region where the
-vorticity is smallest.
-
 \begin{figure}
 \begin{center}
 \begin{subfigure}[b]{0.27\textwidth}
@@ -1334,6 +1301,40 @@ the solid wall are: (a) $h$, (b) $h/2$, and (c) $h/10$.}
 \end{center}
 \end{figure}
 
+Consider a single eroding body close to a solid wall with the shear flow
+$\UU(\xx) = (y+1,0)$ imposed on $\Gamma$. \citet{mit-spa2017} performed
+a similar three-dimensional numerical experiment using a second-order
+quadrature method.  Their initial body is a sphere with its center
+located $1.5$ radii above the solid wall.  We initialize the
+two-dimensional eroding body with radius $r = 0.4$, and we conduct
+numerical experiments where the initial distance between the grain and
+the solid wall is $h$, $h/2$, and $h/10$, where $h = 2\upi r/N_\iin$.
+If we used the trapezoid rule and required an error that is comparable
+to the Barycentric quadrature rule, the body with an initial distance of
+$h/10$ from the solid wall would require $6,400$ discretization points,
+and the outer wall would require $50,000$ discretization points.
+
+In figure~\ref{fig:NearWall}, we superimpose the eroding body's shape at
+equispaced time steps.  For all three initial configurations, the shear
+stress is positive for all time, but varies over several orders of
+magnitude.  Therefore, we color the eroding body's boundary with the
+logarithm of the shear stress.  Since the shear stress is always
+positive, the erosion rate is smooth and corners do not develop.
+However, in the top half of the body, there is a sudden increase in the
+shear stress, and this leads to a region of high curvature.  This
+behavior is also present in three dimensions~\citep[see figure
+7(c)]{mit-spa2017}.  The biggest difference between the two- and
+three-dimensional results is the presence of a recirculation zone.  In
+three dimensions, there is no recirculation between the solid wall and
+the spherical body~\citep{cha-feu2003}, but recirculation is possible in
+two dimensions~\citep{chw-wu1975, hig1985}.  To visualize the flow, in
+figure~\ref{fig:NearWall_vort} we plot the logarithm of the absolute
+value of the vorticity from the final time step in
+figure~\ref{fig:NearWall}.  In these examples, a small recirculation
+zone, both in size and magnitude, is present in the region where the
+vorticity is smallest.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 Bodies at a Medium Porosity}
@@ -1352,8 +1353,8 @@ distance between bodies 1, 6, 13, and 15 and the outer wall is $1.3h$,
 $2.9h$, $2.8h$, and $1.3h$, respectively, where $h$ is the arclength
 spacing of the outer wall $\Gamma$.  In addition, the distance between
 several pairs of eroding bodies, including 1 \& 6, 3 \& 9, 6 \& 8, and
-14 \& 18, is too small to be resolve with the trapezoid rule.  By using
-the Barycentric quadrature rule, the interaction between these
+14 \& 18, is too small to resolve with the trapezoid rule.  By using the
+Barycentric quadrature rule, the interaction between these
 nearly-touching bodies is resolved to the desired accuracy, and erosion
 can be simulated until all the bodies have vanished.
 
@@ -1398,12 +1399,12 @@ rate is initially small, but it eventually increases as an exponential
 law (dashed line) towards the maximum flow rate $U=1$.}
 \end{figure}
 
-In our previous work~\citep{qua-moo2018}, we investigated the effects
-of erosion on the area fraction and flow rate of two different
-geometries.  Here, we do the same analysis, but with the denser packing
-of the grains. In figure~\ref{fig:Eroding20flowrate}(a), we plot the
-area fraction as a function of normalized time.  The general trend of
-the area fraction resembles our previous work~\citep[see][figure
+In our previous work~\citep{qua-moo2018}, we investigated the effects of
+erosion on the area fraction and flow rate of two different geometries.
+Here, we do the same analysis, but with the denser initial packing of
+the grains. In figure~\ref{fig:Eroding20flowrate}(a), we plot the area
+fraction as a function of normalized time.  The general trend of the
+area fraction resembles our previous work~\citep[see][figure
 10(a)]{qua-moo2018}, but with a larger initial area fraction.  In
 figure~\ref{fig:Eroding20flowrate}(b), we plot the flow rate $U$
 required to maintain a constant pressure drop across the channel.
@@ -1435,7 +1436,7 @@ In figure~\ref{fig:Eroding20vort}, we observe that erosion creates a
 network of channels from the inlet to the outlet where the velocity and
 vorticity, and therefore erosion rate, are much larger relative to other
 regions.  These channels can be further visualized with particle
-trajectories that are trace out the streamlines.  In
+trajectories that trace out the streamlines.  In
 figure~\ref{fig:Eroding20tracer}, we freeze the geometry at the second
 snapshot from figure~\ref{fig:Eroding20vort} and plot 200 trajectories
 that are initially equispaced along $(-1,y)$, where $y \in (-1,1)$.  The
@@ -1509,12 +1510,12 @@ and using the spatial average of the velocity on an Eulerian
 grid~\eqref{eqn:tortuosity2} (blue marks).  The red square corresponds
 to the porosity of the geometry in figure~\ref{fig:Eroding20tort}(c).
 The two tortuosity formulas give similar results, and any discrepancy
-can be accounted for by slow regions of recirculation and from applying
-quadrature to compute the tortuosity.  As the bodies erode, wide
-channels form where streamlines undergo only minor vertical deflections,
-and this explains why the tortuosity eventually decreases with porosity.
-We computed lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels} and the power
+can be accounted for by slow regions of recirculation and from
+quadrature error incurred when computing the tortuosity.  As the bodies
+erode, wide channels form where streamlines undergo only minor vertical
+deflections, and this explains why the tortuosity eventually decreases
+with porosity.  We computed lines of best fit using the
+porosity-tortuosity models~\eqref{eqn:tortuosityModels} and the power
 law~\eqref{eqn:tortuosityModels1} minimizes the error.  The  black
 dashed line in figure~\ref{fig:Eroding20Transport}(a) is the line of
 best fit $\widehat{T}(\phi) = \phi^{-0.2064}$ with a root-mean-square
@@ -1522,17 +1523,17 @@ error of $5.90 \times 10^{-3}$.  A slightly larger root-mean-square
 error of $6.70 \times 10^{-3}$ is possible with the logarithmic
 porosity-tortuosity model~\eqref{eqn:tortuosityModels2}, but the other
 two models have a root-mean-square error that is an order of magnitude
-larger. Interestingly, at the low porosities, the
-tortuosity initially increases. This increase occurs because in the
-absence of erosion (left plot in figure~\ref{fig:Eroding20vort}), many
-of the streamlines, such as those initialized between bodies 15 \& 18,
-only perform minor deflections to pass through the narrow regions,
-albeit, very slowly.  However, as erosion starts to open the channels,
-the streamlines deflect into the fast regions, such as the region above
-body 11, and this increases the amount of vertical deflection, and
-therefore the tortuosity. While this increase in tortuosity is
-interesting, in the next two examples we will see that the tortuosity
-does not initially increase.
+larger. Interestingly, at the low porosities, the tortuosity initially
+increases. This increase occurs because in the absence of erosion (left
+plot in figure~\ref{fig:Eroding20vort}), many of the streamlines, such
+as those initialized between bodies 15 \& 18, only perform minor
+deflections to pass through the narrow regions, albeit, very slowly.
+However, as erosion starts to open the channels, the streamlines deflect
+into the fast regions, such as the region above body 11, and this
+increases the amount of vertical deflection, and therefore the
+tortuosity. While this increase in tortuosity is interesting, in the
+next two examples we will see that the tortuosity does not initially
+increase.
 
 We next use streamlines to investigate the temporal evolution of the
 particle spreading $\sigma_\lambda$.  The spreading is computed for
@@ -1586,7 +1587,7 @@ particle spreading.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{20 Bodies at a Low Porosity}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We consider a second example with of 20 randomly initialized eroding
+We consider a second example with 20 randomly initialized eroding
 bodies, but with a smaller initial porosity of $\phi = 30.67\%$.  In
 figure~\ref{fig:ErodingLow20vort}, we plot the eroding geometry and
 vorticity at four evenly spaced instances in time.  Initially, the
@@ -1724,15 +1725,18 @@ with both the length of the streamlines~\eqref{eqn:tortuosity1} (red
 stars) and using the spatial average of the velocity on an Eulerian
 grid~\eqref{eqn:tortuosity2} (blue marks).  The red square corresponds
 to the porosity of the geometry in figure~\ref{fig:Eroding100tort}(c).
-Again, the two tortuosity formulas give similar results. While it
-appears that the tortuosity does increase suddenly near the end of the
-simulation, this jump is due to a recirculation zone that vanishes as
-one of the grains completely erodes. This sharp increase is not present
-when the Lagrangian definition of the tortuosity is used. However, the
-relative difference between the tortuosities calculated with the
-Eulerian and Lagrangian formulations is less than $O(10^{-2})$. We also
-compute the lines of best fit using the porosity-tortuosity
-models~\eqref{eqn:tortuosityModels}.  Each of the models result in a
+Again, the two tortuosity formulas give similar results. For this
+geometry, the tortuosity decreases monotonically at almost all
+porosities. However, the tortuosity slightly increases near the end of
+the simulation. This increase is caused when a grain located at the
+start of a region with large local tortuosity completely erodes.  In
+this region, once the grain vanishes, the large local tortuosity changes
+slightly, but the inlet velocity, $u_1(y)$, relative to the inlet
+velocity in the remainder of the channel, increases sharply. The result
+is a sudden increase in the average local tortuosity when weighted by
+the initial velocity, and this increases the tortuosity of the geometry.
+We compute the lines of best fit using the porosity-tortuosity
+models~\eqref{eqn:tortuosityModels}.  The models result in a
 root-mean-squared error ranging from $4.60 \times 10^{-3}$ for
 model~\eqref{eqn:tortuosityModels4} to $7.20 \times 10^{-3}$ for
 model~\eqref{eqn:tortuosityModels3}. The black dashed line in
