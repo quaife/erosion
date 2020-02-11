@@ -117,7 +117,7 @@ function startpostprocess(foldername::AbstractString)
 	npts = Int(pinfovec[1])
 	ntimes = Int(pinfovec[3])
 	# Get the params object.
-	params = getparams(paramsfile,npts)
+	params = getparams(paramsfile)
 	return datafolder, ntimes, params
 end
 # get_thlenden

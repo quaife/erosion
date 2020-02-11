@@ -16,7 +16,12 @@ include("postprocess.jl")
 function erosion(paramsfile::AbstractString = "params")
 	thlenden, params = startup(paramsfile)
 	erosion(thlenden,params)
-	postprocess(string("run_",paramsfile))
+
+
+	#postprocess(string("run_",paramsfile))
+	#pp1(string("run_",paramsfile))
+
+
 end
 # Dispatch to call the main routine with dt and tfin set by the caller.
 function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)

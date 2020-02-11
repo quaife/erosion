@@ -16,7 +16,7 @@ mutable struct ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
 	nouter::Int; ifmm::Int; ibary::Int; maxl::Int; fixarea::Bool; fixpdrop::Bool;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64;
-	geofile::AbstractString; paramsfile::AbstractString
+	circfile::AbstractString; paramsfile::AbstractString
 end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm.
 mutable struct DerivsType
@@ -80,11 +80,11 @@ function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::B
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
-#	elseif (rotation == true && length(thlenden.denrot) == 0)
-#		println("Computing the rotated density function.")
-#		npts,nbods,xv,yv = getnxy(thlenden)
-#		xrot,yrot = xyrot(xv,yv)
-#		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
+	elseif (rotation == true && length(thlenden.denrot) == 0)
+		println("Computing the rotated density function.")
+		npts,nbods,xv,yv = getnxy(thlenden)
+		xrot,yrot = xyrot(xv,yv)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
 	end
 	return
 end
@@ -143,6 +143,13 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 	end
 	return pressure
 end
+
+
+
+
+
+
+
 #--- THE QUANTITIES OF INTEREST ---#
 # compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
 function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int, ibary::Int;
@@ -164,8 +171,33 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		Ref{Float64}, Ref{Float64}, Ref{Float64}, Ref{Float64}),
 		npts, nbods, nouter, ibary, xx, yy, density, 
 		ntargets, xtar, ytar, utar, vtar, ptar, vortar)
+
+
+	println()
+	println("xx type", "\n", typeof(xx), size(xx), "\n")
+	println("yy type", "\n", typeof(yy), size(yy), "\n")
+	println("density type", "\n", typeof(density), size(density), "\n")
+	println("xtar type", "\n", typeof(xtar), size(xtar), "\n")
+	println("ytar type", "\n", typeof(ytar), size(ytar), "\n")
+
+
+	println()
+	println("utar type", "\n", typeof(utar), size(utar), "\n")
+	println("vtar type", "\n", typeof(vtar), size(vtar), "\n")
+	println("ptar type", "\n", typeof(ptar), size(ptar), "\n")
+	println("vortar type", "\n", typeof(vortar), size(vortar), "\n")
+
+
+
 	return utar,vtar,ptar,vortar
 end
+
+
+
+
+
+
+
 
 #--------------- SMALL ROUTINES ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
@@ -260,5 +292,12 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64 =
 	if qreldiff > 1e-3
 		@warn string("The flux does not match at x0 and -x0: qreldiff = ", round(qreldiff,sigdigits=3))
 	end
+
+
+
+	println("pdrop = ", pdrop)
+	println("qavg = ", qavg)
+
+
 	return pdrop,qavg
 end
