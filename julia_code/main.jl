@@ -4,6 +4,7 @@ using DelimitedFiles
 using Statistics
 using FFTW
 include("basic.jl")
+include("makegeos.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("ioroutines.jl")
@@ -59,13 +60,17 @@ end
 # startup: Read params and geoinfile; setup stuff.
 function startup(paramsfile::AbstractString)
 	# Read the input geometry file.
-	paramvec = readvec(pfext(paramsfile))
-	geoinfile = string("../",paramvec[1])
-	thlenvec0 = read_thlen_file(geoinfile)
+	paramvec = readvec(string(paramsfile,".txt"))
+	circfile = string("../", paramvec[1])
+	npts = paramvec[2]
+	thlenfile = string("../thlen_tmp.txt")
+	save_thlen(circfile, thlenfile, npts)
+	thlenvec0 = read_thlen_file(thlenfile)
 	thlenden0 = new_thlenden(thlenvec0)
-	npts,nbods = getnvals(thlenvec0)
+	npts1,nbods = getnvals(thlenvec0)
+	assert(npts == npts1)
 	# Define the object params.
-	params = getparams(paramsfile,npts)
+	params = getparams(paramsfile)
 	# Create new data folders
 	datafolder, plotfolder = getfoldernames(params.paramsfile)
 	newfolder(datafolder)
@@ -76,15 +81,16 @@ function startup(paramsfile::AbstractString)
 	return thlenden0,params
 end
 # function getparams: Define the object of parameters.
-function getparams(paramsfile::AbstractString, npts::Int)
+function getparams(paramsfile::AbstractString)
 	# Read the parameters.
-	paramvec = readvec(pfext(paramsfile))
-	geofile = paramvec[1]
-	ibary, ifmm = Int(paramvec[2]), Int(paramvec[3])
-	epsfac, sigfac, dt, dtout = paramvec[4:7]
-	fixpdrop, fixarea = Bool(paramvec[8]), Bool(paramvec[9])
-	tfin = paramvec[10]
-	maxl, nouter = Int(paramvec[11]), Int(paramvec[12])
+	paramvec = readvec(string(paramsfile,".txt"))
+	circfile = paramvec[1]
+	npts = paramvec[2]
+	ibary, ifmm = Int(paramvec[3]), Int(paramvec[4])
+	epsfac, sigfac, dt, dtout = paramvec[5:8]
+	fixpdrop, fixarea = Bool(paramvec[9]), Bool(paramvec[10])
+	tfin = paramvec[11]
+	maxl, nouter = Int(paramvec[12]), Int(paramvec[13])
 	# Calculate the needed quantities.
 	epsilon = epsfac/npts
 	sigma = sigfac/npts

@@ -62,10 +62,6 @@ function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString
 	return
 end
 #--------------- HANDLING FOLDERS ---------------#
-# Add the extension .in to the params file.
-function pfext(paramsfile::AbstractString)
-	return string(paramsfile,".txt")
-end
 # getfoldernames: Set the name of the data and plot folders.
 function getfoldernames(paramsfile::AbstractString)
 	datafolder = string("../output_data/run_",paramsfile,"/")
