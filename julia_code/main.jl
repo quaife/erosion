@@ -14,13 +14,13 @@ include("postprocess.jl")
 #--------------- MAIN ROUTINE ---------------#
 # Dispatch to call the main routine with dt and tfin set by params file.
 function erosion(paramsfile::AbstractString = "params")
-	thlenden,params = startup(paramsfile)
+	thlenden, params = startup(paramsfile)
 	erosion(thlenden,params)
 	postprocess(string("run_",paramsfile))
 end
 # Dispatch to call the main routine with dt and tfin set by the caller.
 function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
-	thlenden,params = startup(paramsfile)
+	thlenden, params = startup(paramsfile)
 	params.dt = dt; params.tfin = tfin
 	erosion(thlenden,params)
 end
@@ -63,12 +63,12 @@ function startup(paramsfile::AbstractString)
 	paramvec = readvec(string(paramsfile,".txt"))
 	circfile = string("../", paramvec[1])
 	npts = paramvec[2]
-	thlenfile = string("../thlen_tmp.txt")
+	thlenfile = string("../input_geos/thlen_tmp.txt")
 	save_thlen(circfile, thlenfile, npts)
 	thlenvec0 = read_thlen_file(thlenfile)
 	thlenden0 = new_thlenden(thlenvec0)
 	npts1,nbods = getnvals(thlenvec0)
-	assert(npts == npts1)
+	@assert(npts == npts1)
 	# Define the object params.
 	params = getparams(paramsfile)
 	# Create new data folders
@@ -98,6 +98,6 @@ function getparams(paramsfile::AbstractString)
 	cput0 = time()
 	# Save the parameters in an object.
 	params = ParamType(dt,epsilon,sigma,nouter,ifmm,ibary,maxl,
-		fixarea,fixpdrop,npts,tfin,cntout,cput0,geofile,paramsfile)
+		fixarea,fixpdrop,npts,tfin,cntout,cput0,circfile,paramsfile)
 	return params
 end
