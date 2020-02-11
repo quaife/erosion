@@ -56,8 +56,8 @@ end
 # save_pinfo: Save info about the parameters.
 function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString)
 	cputime = round( (time()-params.cput0)/3600. , sigdigits=2)
-	label2 = "# Calculated Parameters: npts, cntout, last file number, cputime (hours)"
-	paramdata = [label2; params.npts; params.cntout; nfile; cputime]
+	label2 = "# Calculated Parameters: cntout, last file number, cputime (hours)"
+	paramdata = [label2; params.cntout; nfile; cputime]
 	writedata(paramdata, outparamsfile)
 	return
 end

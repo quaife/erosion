@@ -1,7 +1,8 @@
 #= Codes to make the initial geometries. =#
 # Example commands to run
 # makegeos(10, 0.5, 4)
-# save_thlen("10circ",512)
+# To make multiple geometries run: make9geos(10, 0.5)
+
 
 #--------------- INITIALIZATION ---------------#
 using Distributions
@@ -23,7 +24,14 @@ function figfolder()
 end
 include("iogeos.jl")
 
+
 #--------------- MAIN ROUTINE ---------------#
+# Call the main routine with given nbods and areafrac for 9 different seeds.
+function make9geos(nbods::Int,areafrac::Float64)
+	for ii=1:9
+		makegeos(nbods,areafrac,ii)
+	end
+end
 # Main routine to make the geometry.
 function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	# Parameters.
@@ -70,13 +78,6 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	# Output to data files.
 	save_circ_data(circvec,seed)
 	return
-end
-
-# Call the main routine with given nbods and areafrac for 9 different seeds.
-function make9geos(nbods::Int,areafrac::Float64)
-	for ii=1:9
-		makegeos(nbods,areafrac,ii)
-	end
 end
 
 #--------------- SUPPORTING ROUTINES ---------------#

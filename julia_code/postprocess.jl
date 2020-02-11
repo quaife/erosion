@@ -114,8 +114,7 @@ function startpostprocess(foldername::AbstractString)
 	pinfofile = string(datafolder,"apinfo.txt")
 	# Get extra information from apinfo.
 	pinfovec = readvec(pinfofile)
-	npts = Int(pinfovec[1])
-	ntimes = Int(pinfovec[3])
+	ntimes = Int(pinfovec[2])
 	# Get the params object.
 	params = getparams(paramsfile)
 	return datafolder, ntimes, params
