@@ -65,7 +65,7 @@ end
 # getfoldernames: Set the name of the data and plot folders.
 function getfoldernames(paramsfile::AbstractString)
 	datafolder = string("../output_data/run_",paramsfile,"/")
-	plotfolder = string("../figs_",paramsfile,"/")
+	plotfolder = string("../zFigsErosion_",paramsfile,"/")
 	return datafolder, plotfolder
 end
 # newfolder: If the folder exists, delete it. Then create a new folder.
