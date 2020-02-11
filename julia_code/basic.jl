@@ -144,12 +144,6 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 	return pressure
 end
 
-
-
-
-
-
-
 #--- THE QUANTITIES OF INTEREST ---#
 # compute_qoi_targets! Dispatch for ThLenDenType and TargetsType. 
 function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, nouter::Int, ibary::Int;
@@ -171,33 +165,8 @@ function compute_qoi_targets(xx::Vector{Float64}, yy::Vector{Float64},
 		Ref{Float64}, Ref{Float64}, Ref{Float64}, Ref{Float64}),
 		npts, nbods, nouter, ibary, xx, yy, density, 
 		ntargets, xtar, ytar, utar, vtar, ptar, vortar)
-
-
-	println()
-	println("xx type", "\n", typeof(xx), size(xx), "\n")
-	println("yy type", "\n", typeof(yy), size(yy), "\n")
-	println("density type", "\n", typeof(density), size(density), "\n")
-	println("xtar type", "\n", typeof(xtar), size(xtar), "\n")
-	println("ytar type", "\n", typeof(ytar), size(ytar), "\n")
-
-
-	println()
-	println("utar type", "\n", typeof(utar), size(utar), "\n")
-	println("vtar type", "\n", typeof(vtar), size(vtar), "\n")
-	println("ptar type", "\n", typeof(ptar), size(ptar), "\n")
-	println("vortar type", "\n", typeof(vortar), size(vortar), "\n")
-
-
-
 	return utar,vtar,ptar,vortar
 end
-
-
-
-
-
-
-
 
 #--------------- SMALL ROUTINES ---------------#
 # getnxy: For ThLenDenType, get npts, nbods and the x-y coordinates of all the bodies.
@@ -292,12 +261,5 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64 =
 	if qreldiff > 1e-3
 		@warn string("The flux does not match at x0 and -x0: qreldiff = ", round(qreldiff,sigdigits=3))
 	end
-
-
-
-	println("pdrop = ", pdrop)
-	println("qavg = ", qavg)
-
-
 	return pdrop,qavg
 end
