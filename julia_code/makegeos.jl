@@ -62,7 +62,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	newfolder(figfolder())
 	cnt = 0
 	fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
-	while(cnt < 50 || foverlap > 1e-10)
+	while((cnt < 50 || foverlap > 1e-10) && cnt < 800)
 		# Plot the circles.
 		println("count = ", cnt)
 		#plotcircs(circvec,cnt,seed)
