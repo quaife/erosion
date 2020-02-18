@@ -62,21 +62,33 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	newfolder(figfolder())
 	cnt = 0
 	fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
+	pass = true
+	println("\n\nseed = ", seed)
 	while(cnt < 50 || foverlap > 1e-10)
 		# Plot the circles.
-		println("count = ", cnt)
-		#plotcircs(circvec,cnt,seed)
+		if mod(cnt,10) == 0
+			println("count = ", cnt)
+			#plotcircs(circvec,cnt,seed)
+		end
 		# Shift the circles.
 		sigma = 0.15*exp(-0.5*cnt*dt)
 		shiftcircs(circvec,fx,fy,dt,sigma)
 		cnt += 1
 		fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
-		println("foverlap = ",foverlap)
+		#println("foverlap = ",foverlap)
+		# Break out of the loop if too many iterations.
+		if(cnt > 500)
+			pass = false
+			println("\nExceeded max iterations in run with seed ", seed, "\n")
+			break
+		end
 	end
 	#plotcircs(circvec,cnt,seed)
-	plotcircs(circvec,-1,seed)
-	# Output to data files.
-	save_circ_data(circvec,seed)
+	# Output to data files as long as the test passes.
+	if(pass)
+		plotcircs(circvec,-1,seed)
+		save_circ_data(circvec,seed)
+	end
 	return
 end
 
