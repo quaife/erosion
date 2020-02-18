@@ -21,8 +21,15 @@ function shrink_circles(paramsfile::AbstractString = "params")
 			thlenden.thlenvec[mm].xx = []
 			thlenden.thlenvec[mm].yy = []
 		end
+		# Delete everything at last step.
+		if nn == nsteps
+			thlenden.thlenvec = []
+			thlenden.density = []
+			thlenden.denrot = []
+		end
 		# Plot and save the results.
-		plotnsave(nn,0.,thlenden,params)
+		tt = nn/nsteps
+		plotnsave(nn,tt,thlenden,params)
 	end
 	postprocess(string("run_",paramsfile))
 end
