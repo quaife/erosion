@@ -1,7 +1,7 @@
 # Parameters
 
 # The data file for the initial geometry
-input_geos/02circ1.circ
+input_geos/test/02circ1.circ
 
 # Varied computational parameters
 128	# npts: usually set to 128
