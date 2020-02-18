@@ -65,7 +65,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 	while(cnt < 50 || foverlap > 1e-10)
 		# Plot the circles.
 		println("count = ", cnt)
-		plotcircs(circvec,cnt,seed)
+		#plotcircs(circvec,cnt,seed)
 		# Shift the circles.
 		sigma = 0.15*exp(-0.5*cnt*dt)
 		shiftcircs(circvec,fx,fy,dt,sigma)
@@ -73,7 +73,7 @@ function makegeos(nbods::Int, areafrac::Float64, seed::Int=1)
 		fx,fy,foverlap = forcesum(circvec,pow,buff,bolap)
 		println("foverlap = ",foverlap)
 	end
-	plotcircs(circvec,cnt,seed)
+	#plotcircs(circvec,cnt,seed)
 	plotcircs(circvec,-1,seed)
 	# Output to data files.
 	save_circ_data(circvec,seed)
