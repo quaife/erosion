@@ -2,7 +2,7 @@
 include("main.jl")
 
 function shrink_circles(paramsfile::AbstractString = "params")
-	nsteps = 100
+	nsteps = 10
 	thlenden, params = startup(paramsfile)
 	npts,nbods = getnvals(thlenden.thlenvec)
 	# Initialize the length vector.
@@ -11,7 +11,7 @@ function shrink_circles(paramsfile::AbstractString = "params")
 		lenvec0[mm] = thlenden.thlenvec[mm].len
 	end
 	# For each step, shrink the circles.
-	for nn = 0:nsteps-1
+	for nn = 0:nsteps
 		# Scale the lengths by a common factor.
 		lfac = sqrt((nsteps - nn)/(nsteps))
 		for mm = 1:nbods
