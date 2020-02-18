@@ -2,7 +2,7 @@
 include("main.jl")
 
 function shrink_circles(paramsfile::AbstractString = "params")
-	nsteps = 10
+	nsteps = 100
 	thlenden, params = startup(paramsfile)
 	npts,nbods = getnvals(thlenden.thlenvec)
 	# Initialize the length vector.
