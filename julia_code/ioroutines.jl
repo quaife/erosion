@@ -24,11 +24,11 @@ end
 
 #--------------- WRITING DATA ---------------#
 # writedata: Write generic data to a file.
-function writedata(data::Vector, filename::AbstractString)
+function writedata(data::Vector, filename::AbstractString; digs::Int = 8)
 	# Round the pieces of data that are simply numbers.
 	for ii in eachindex(data)
 		if typeof(data[ii]) <: AbstractFloat
-			data[ii] = round(data[ii], sigdigits=8)
+			data[ii] = round(data[ii], sigdigits=digs)
 		end
 	end
 	iostream = open(filename, "w")

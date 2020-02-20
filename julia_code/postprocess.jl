@@ -98,7 +98,9 @@ function pp3(foldername::AbstractString)
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar; targets.vortar]
-		writedata(targdata, targfile)
+		writedata(targdata, targfile, digs=5)
+
+
 		println("step completed")
 	end
 	println("Finished pp3 on ", foldername, "\n")
