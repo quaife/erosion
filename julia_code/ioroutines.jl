@@ -25,8 +25,15 @@ end
 #--------------- WRITING DATA ---------------#
 # writedata: Write generic data to a file.
 function writedata(data::Vector, filename::AbstractString)
+	# Round the pieces of data that are simply numbers.
+	#= Turned out to not be worthwhile.
+	for ii in eachindex(data)
+		if typeof(data[ii]) <: AbstractFloat
+			data[ii] = round(data[ii], sigdigits=10)
+		end
+	end =#
 	iostream = open(filename, "w")
-	writedlm(iostream, convert(Vector{Float32}, data))
+	writedlm(iostream, data)
 	close(iostream)
 	return
 end
@@ -36,21 +43,19 @@ function save_geo_density(tt::Float64, thlenden::ThLenDenType,
 		geomfile::AbstractString, densityfile::AbstractString)
 	# Write the geometry data.
 	thlenvec = thlenden.thlenvec
-	iostream = open(geomfile, "w")
 	npts,nbods = getnvals(thlenvec)
 	label = "# Parameters (time, npts, nbods), then geometry (theta, len, xsm, ysm, x, y) for each body"
-	writedlm(iostream, [label; tt; npts; nbods])
+	geomdata = [label; tt; npts; nbods]
 	for nn=1:nbods
 		getxy!(thlenvec[nn])
-		datavec = [thlenvec[nn].theta; thlenvec[nn].len; 
-			thlenvec[nn].xsm; thlenvec[nn].ysm; 
-			thlenvec[nn].xx; thlenvec[nn].yy]
-		writedlm(iostream, datavec)
+		newdata = [thlenvec[nn].theta; thlenvec[nn].len; 
+			thlenvec[nn].xsm; thlenvec[nn].ysm; thlenvec[nn].xx; thlenvec[nn].yy]
+		append!(geomdata, newdata)
 	end
-	close(iostream)
+	writedata(geomdata, geomfile)
 	# Write the density data.
 	densitydata = [thlenden.density; thlenden.denrot]
-	writedata(densitydata,densityfile)
+	writedata(densitydata, densityfile)
 	return
 end
 # save_pinfo: Save info about the parameters.
