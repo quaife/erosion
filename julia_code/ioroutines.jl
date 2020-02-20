@@ -26,7 +26,7 @@ end
 # writedata: Write generic data to a file.
 function writedata(data::Vector, filename::AbstractString)
 	iostream = open(filename, "w")
-	writedlm(iostream, data)
+	writedlm(iostream, convert(Vector{Float32}, data))
 	close(iostream)
 	return
 end
