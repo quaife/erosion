@@ -18,7 +18,7 @@ input_geos/test/02circ1.circ
 # Fixed physical parameters
 1	# fixpdrop: 1 to keep pressure drop fixed.
 0	# fixarea: 1 to keep area fixed.
-4e-4	# tfin: usually set to 0.1
+0.1	# tfin: usually set to 0.1
 
 # Fixed computational parameters
 8000	# maxl: the number of GMRES iterations.
