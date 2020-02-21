@@ -1,5 +1,5 @@
       subroutine stokesSolver(nninner,nnbodies,nnouter,
-     $     ifmm,ibary,maxl,xx,yy,den,iter)
+     $     ifmm,ibary,ibc,maxl,xx,yy,den,iter)
 c     Input x and y coordinates and return the density function on the
 c     boundary.  Outer wall is used to enclose the inner boundary so
 c     that Stokes paradox is avoided
@@ -90,7 +90,7 @@ c      close(unit=2)
 c      close(unit=3)
 c      close(unit=4)
 
-      call bd_condition(ninner,nbodies,x,y,nouter,xouter,youter,rhs)
+      call bd_condition(ninner,nbodies,ibc,x,y,nouter,xouter,youter,rhs)
 c     load boundary condition
       print *, 'load Bd condition'
       
@@ -205,7 +205,7 @@ c     normal and curvatures need to point outwards
         
 
 c***********************************************************************
-      subroutine bd_condition(ninner,nbodies,x,y,
+      subroutine bd_condition(ninner,nbodies,ibc,x,y,
      $    nouter,xouter,youter,rhs)
 c     Boundary condition coming from the far field flow
       implicit real*8 (a-h,o-z)
@@ -259,12 +259,12 @@ c     velocity coming from the r \otimes r part of the Stokes flow
 
       if (0 .eq. 1) then
         do k = 1,nouter
-          call bgFlow(1,xouter(k),youter(k),rhs(k),rhs(k+nouter))
+          call bgFlow(1,ibc,xouter(k),youter(k),rhs(k),rhs(k+nouter))
         enddo
 
         do j = 1,nbodies
           do k = 1,ninner
-            call bgFlow(1,x((j-1)*ninner+k),y((j-1)*ninner+k),
+            call bgFlow(1,ibc,x((j-1)*ninner+k),y((j-1)*ninner+k),
      $          rhs(2*nouter+(j-1)*2*ninner+k),
      $          rhs(2*nouter+(j-1)*2*ninner+k+ninner))
           enddo
@@ -274,7 +274,7 @@ c     generic boundary condition
 
       if (1 .eq. 1) then
         do k = 1,nouter
-          call bgFlow(1,xouter(k),youter(k),rhs(k),rhs(k+nouter))
+          call bgFlow(1,ibc,xouter(k),youter(k),rhs(k),rhs(k+nouter))
         enddo
         do j = 1,nbodies
           do k = 1,ninner
@@ -389,34 +389,26 @@ c     Take backward FFT
 
 
 c***********************************************************************
-      subroutine bgFlow(ninner,x,y,u,v)
+      subroutine bgFlow(ninner,ibc,x,y,u,v)
       implicit real*8 (a-h,o-z)
 
       dimension x(ninner),y(ninner)
       dimension u(ninner),v(ninner)
 
-      do k=1,ninner
-c        u(k) = 1.d0
-c        v(k) = 0.d0
-cc       constant flow
-
-c        u(k) = x(k)
-c        v(k) = -y(k)
-cc       extesional flow
-
-        scal = 1.0d0
-        u(k) = scal*(1.0d0 + y(k))*(1.0d0 - y(k))
-        v(k) = 0.d0
-c       pipe flow
-
-c        u(k) = y(k)
-c        v(k) = 0.d0
-cc       shear flow
-    
-c        u(k) = y(k)/(x(k)**2.d0 + y(k)**2.d0)
-c        v(k) = -x(k)/(x(k)**2.d0 + y(k)**2.d0)
-cc       single Rotlet
-      enddo
+      if (ibc .eq. 0) then
+        do k = 1,ninner
+          scal = 1.0d0
+          u(k) = scal*(1.0d0 + y(k))*(1.0d0 - y(k))
+          v(k) = 0.d0
+c         pipe flow
+        enddo
+      elseif (ibc .eq. 1) then
+        do k = 1,ninner
+          u(k) = 1.d0
+          v(k) = 0.d0
+c         constant flow
+        enddo
+      endif
 
       end 
 
