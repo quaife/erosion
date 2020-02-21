@@ -14,7 +14,8 @@ end
 # ParamType: Includes the parameters dt, epsilon, sigma, etc.
 mutable struct ParamType
 	dt::Float64; epsilon::Float64; sigma::Float64; 
-	nouter::Int; ifmm::Int; ibary::Int; maxl::Int; fixarea::Bool; fixpdrop::Bool;
+	nouter::Int; ifmm::Int; ibary::Int; ibc::Int;
+	maxl::Int; fixarea::Bool; fixpdrop::Bool;
 	npts::Int; tfin::Float64; cntout::Int; cput0::Float64;
 	circfile::AbstractString; paramsfile::AbstractString
 end
@@ -79,25 +80,25 @@ function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::B
 	if (rotation == false && length(thlenden.density) == 0)
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
-		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
+		thlenden.density = compute_density(xv,yv,npts,nbods,params.nouter,params.ifmm,params.ibary,params.ibc,params.maxl)
 	elseif (rotation == true && length(thlenden.denrot) == 0)
 		println("Computing the rotated density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
 		xrot,yrot = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.maxl)
+		thlenden.denrot = compute_density(xrot,yrot,npts,nbods,params.nouter,params.ifmm,params.ibary,params.ibc,params.maxl)
 	end
 	return
 end
 # compute_density: Fortran wrapper.
 function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, 
-		npts::Int, nbods::Int, nouter::Int, ifmm::Int, ibary::Int, maxl::Int)
+		npts::Int, nbods::Int, nouter::Int, ifmm::Int, ibary::Int, ibc::Int, maxl::Int)
 	density = zeros(Float64, 2*npts*nbods + 3*nbods + 2*nouter)
 	nits = zeros(Int,1)
 	# Call the Fortran routine StokesSolver.
 	ccall((:stokessolver_, "libstokes.so"), Nothing, 
-		(Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},
+		(Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},Ref{Int},
 		Ref{Float64},Ref{Float64},Ref{Float64},Ref{Int}), 
-		npts, nbods, nouter, ifmm, ibary, maxl, xx, yy, density, nits)
+		npts, nbods, nouter, ifmm, ibary, ibc, maxl, xx, yy, density, nits)
 	println("The total number of GMRES iterations is ", nits[1],"\n\n")
 	return density
 end

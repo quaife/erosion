@@ -86,18 +86,18 @@ function getparams(paramsfile::AbstractString)
 	paramvec = readvec(string(paramsfile,".txt"))
 	circfile = paramvec[1]
 	npts = paramvec[2]
-	ibary, ifmm = Int(paramvec[3]), Int(paramvec[4])
-	epsfac, sigfac, dt, dtout = paramvec[5:8]
-	fixpdrop, fixarea = Bool(paramvec[9]), Bool(paramvec[10])
-	tfin = paramvec[11]
-	maxl, nouter = Int(paramvec[12]), Int(paramvec[13])
+	ibary, ifmm, ibc = Int(paramvec[3]), Int(paramvec[4]), Int(paramvec[5])
+	epsfac, sigfac, dt, dtout = paramvec[6:9]
+	fixpdrop, fixarea = Bool(paramvec[10]), Bool(paramvec[11])
+	tfin = paramvec[12]
+	maxl, nouter = Int(paramvec[13]), Int(paramvec[14])
 	# Calculate the needed quantities.
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
 	cntout = max(round(Int,dtout/dt),1)
 	cput0 = time()
 	# Save the parameters in an object.
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,ibary,maxl,
+	params = ParamType(dt,epsilon,sigma,nouter,ifmm,ibary,ibc,maxl,
 		fixarea,fixpdrop,npts,tfin,cntout,cput0,circfile,paramsfile)
 	return params
 end
