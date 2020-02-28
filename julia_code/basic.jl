@@ -231,6 +231,12 @@ function getumax(thlenden::ThLenDenType, nouter::Int, ibary::Int, fixpdrop::Bool
 	if fixpdrop
 		pdrop = getpdrop(thlenden, nouter, ibary)[1]
 		umax =  10 * 8/pdrop
+		
+
+		###umax = 1./(pdrop + epsilon)
+
+
+
 		println("Fixing pdrop, umax = ", round(umax,sigdigits=3))
 	end
 	return umax
