@@ -225,18 +225,14 @@ function getnxyden(thlenden::ThLenDenType, nouter::Int, ibary::Int, fixpdrop::Bo
 	return npts,nbods,xv,yv,density
 end
 # getumax: Get umax to rescale the density function.
-function getumax(thlenden::ThLenDenType, nouter::Int, ibary::Int, fixpdrop::Bool)
+function getumax(thlenden::ThLenDenType, nouter::Int, ibary::Int, fixpdrop::Bool, x0::Float64 = 2.0)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
+	# This code should work for pipe flow or uniform flow: ibc = 0 or 1.
 	umax = 1.
 	if fixpdrop
 		pdrop = getpdrop(thlenden, nouter, ibary)[1]
-		umax =  10 * 8/pdrop
-		
-
-		###umax = 1./(pdrop + epsilon)
-
-
-
+		umax = 4*x0/(pdrop + 1e-6)
+	end
 		println("Fixing pdrop, umax = ", round(umax,sigdigits=3))
 	end
 	return umax

@@ -36,8 +36,8 @@ function pp1(foldername::AbstractString)
 		print("area completed; ")
 		#--------------------------------------#
 		# Compute the resistivity (1/permeability) of the matrix.
-		rbods = resistivity(thlenden,params.nouter,params.ibary,2.0)
-		rbodsrot = resistivity(thlenden,params.nouter,params.ibary,2.0,rotation=true)
+		rbods = resistivity(thlenden,params)
+		rbodsrot = resistivity(thlenden,params,rotation=true)
 		# Save the resistivity data to a file.
 		resfile = string(datafolder,"resistivity",cntstr,".dat")
 		label = string("# Data on resistivity: nbods, resistivity, rotated resistivity.")
@@ -154,16 +154,15 @@ function getareas(thlenden::ThLenDenType)
 	return areavec
 end
 # resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64=2.0; rotation::Bool=false)
+function resistivity(thlenden::ThLenDenType, params::ParamType, x0::Float64=2.0; rotation::Bool=false)
 	# Retrieve the pressure drop and flux (assuming umax = 1)
-	pdrop,qavg = getpdrop(thlenden,nouter,ibary,x0,rotation=rotation)	
+	pdrop,qavg = getpdrop(thlenden,params.nouter,params.ibary,x0,rotation=rotation)	
 	# Calculate the total resistivity
-	rtot = pdrop/(2*x0*qavg)
-	# Calculate the resisitvity due only to the bodies.
-	rbods = x0*(rtot - 3)
-	return rbods
+	resist = pdrop/(2*x0*qavg)
+	# If pipe flow (ibc = 0) then remove the contribution from the walls.
+	if params.ibc == 0; resist = x0*(resist - 3); end
+	return resist
 end
-
 # drag: Compute the total drag on all of the bodies combined.
 function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.

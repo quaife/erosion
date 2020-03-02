@@ -7,7 +7,7 @@ input_geos/test/02circ1.circ
 128	# npts: usually set to 128
 1	# ibary: 1 to use barycenteric scheme, 0 to use trapezoidal scheme.
 1	# iffm: 1 to use the ffm, 0 to use direct.
-0	# ibc: 1 for uniform flow, 0 for pipe flow.
+1	# ibc: 1 for uniform flow, 0 for pipe flow.
 
 # Varied physical parameters
 15	# epsfac: epsilon = epsfac/npts
