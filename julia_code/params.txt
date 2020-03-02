@@ -12,13 +12,13 @@ input_geos/test/02circ1.circ
 # Varied physical parameters
 15	# epsfac: epsilon = epsfac/npts
 10	# sigfac: sigma = sigfac/npts
-1e-4	# dt: usually set to 1e-4
-4e-4	# dtout: if zero, will round up to output at every step. 
+1e-3	# dt: usually set to 1e-3
+4e-3	# dtout: if zero, will round up to output at every step. 
 
 # Fixed physical parameters
 1	# fixpdrop: 1 to keep pressure drop fixed.
 0	# fixarea: 1 to keep area fixed.
-0.1	# tfin: usually set to 0.1
+1.0	# tfin: usually set to 1.0
 
 # Fixed computational parameters
 8000	# maxl: the number of GMRES iterations.
