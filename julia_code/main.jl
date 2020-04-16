@@ -18,7 +18,8 @@ function erosion(paramsfile::AbstractString = "params")
 	erosion(thlenden,params)
 	postprocess(string("run_",paramsfile))
 end
-# Dispatch to call the main routine with dt and tfin set by the caller.
+#= Dispatch to call the main routine with dt and tfin set by the caller.
+Used for convergence test. =#
 function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
 	thlenden, params = startup(paramsfile)
 	params.dt = dt; params.tfin = tfin
