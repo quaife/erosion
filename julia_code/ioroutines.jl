@@ -31,6 +31,7 @@ function writedata(data::Vector, filename::AbstractString; digs::Int = 8)
 			data[ii] = round(data[ii], sigdigits=digs)
 		end
 	end
+	# Write the data
 	iostream = open(filename, "w")
 	writedlm(iostream, data)
 	close(iostream)
