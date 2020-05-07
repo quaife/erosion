@@ -28,6 +28,7 @@ function pp1(foldername::AbstractString)
 		#--------------------------------------#
 		# Compute the area of each body.
 		areavec = getareas(thlenden)
+		if nbods == 0 areavec = [0] end
 		# Save the data to a file.
 		areasfile = string(datafolder,"areas",cntstr,".dat")
 		label = string("# Area of each individual body.")
