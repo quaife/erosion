@@ -48,9 +48,7 @@ end
 function new_derivs()
 	return DerivsType(0.,evec(),0.,0.)
 end
-function evec()
-	return Array{Float64}(undef,0)
-end
+evec() = Array{Float64}(undef,0)
 
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
