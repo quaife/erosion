@@ -107,49 +107,7 @@ function read_thlen_file(filename::AbstractString)
 	end
 	return thlenvec
 end
-# read_geom_file: Read a geometry file.
-#= The data in the file is t (physical time), npts, nbods, 
-then theta, len, xsm, ysm, xx, yy for each body. =#
-function read_geom_file(filename::AbstractString)
-	# Read the data file.
-	invec = readvec(filename)
-	# Extract the parameters.
-	tt = invec[1]
-	npts = round(Int,invec[2])
-	nbods = round(Int,invec[3])
-	deleteat!(invec,1:3)
-	# Consistency test.
-	@assert length(invec) == nbods*(3*npts+3)
-	# Read theta, len, xsm, ysm, xx, yy and save in thlenvec.
-	thlenvec = new_thlenvec(nbods)
-	for nn=1:nbods
-		# Read theta, len, xsm, ysm.
-		thlenvec[nn].theta = invec[1:npts]
-		thlenvec[nn].len = invec[npts+1]
-		thlenvec[nn].xsm = invec[npts+2]
-		thlenvec[nn].ysm = invec[npts+3]
-		test_theta_ends(thlenvec[nn].theta)
-		test_theta_means(thlenvec[nn].theta)
-		# Delete theta, len, xsm, ysm
-		deleteat!(invec,1:npts+3)
-		# Read xx and yy.
-		thlenvec[nn].xx = invec[1:npts]
-		thlenvec[nn].yy = invec[npts+1:2*npts]
-		# Delete xx and yy.
-		deleteat!(invec,1:2*npts)
-	end
-	return tt,thlenvec
-end
-# read_density_file: Read the density file to get the density and rotated density.
-function read_density_file(filename::AbstractString)
-	dendata = readvec(filename)
-	nn = length(dendata)
-	@assert iseven(nn)
-	nhalf = div(nn,2)
-	density = dendata[1:nhalf]
-	denrot = dendata[nhalf+1:nn]
-	return density, denrot
-end
+
 # readvec: Read a vector from a data file.
 function readvec(filename::AbstractString)
 	iostream = open(filename, "r")
