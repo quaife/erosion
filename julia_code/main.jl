@@ -8,7 +8,7 @@ include("makegeos.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("ioroutines.jl")
-include("postprocess.jl")
+## include("postprocess.jl")
 
 
 #--------------- MAIN ROUTINE ---------------#
@@ -16,7 +16,7 @@ include("postprocess.jl")
 function erosion(paramsfile::AbstractString = "params")
 	thlenden, params = startup(paramsfile)
 	erosion(thlenden,params)
-	postprocess(string("run_",paramsfile))
+	## mpostprocess(string("run_",paramsfile))
 end
 #= Dispatch to call the main routine with dt and tfin set by the caller.
 Used for convergence test. =#
