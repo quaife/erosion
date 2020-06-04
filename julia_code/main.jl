@@ -12,19 +12,6 @@ include("ioroutines.jl")
 
 
 #--------------- MAIN ROUTINE ---------------#
-# Dispatch to call the main routine with dt and tfin set by params file.
-function erosion(paramsfile::AbstractString = "params")
-	thlenden, params = startup(paramsfile)
-	erosion(thlenden,params)
-	## mpostprocess(string("run_",paramsfile))
-end
-#= Dispatch to call the main routine with dt and tfin set by the caller.
-Used for convergence test. =#
-function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
-	thlenden, params = startup(paramsfile)
-	params.dt = dt; params.tfin = tfin
-	erosion(thlenden,params)
-end
 # erosion: The main routine to erode a group of bodies.
 function erosion(thlenden::ThLenDenType, params::ParamType)
 	println("Running erosion with dt = ", round(params.dt, sigdigits=3), 
@@ -56,6 +43,19 @@ function erosion(thlenden::ThLenDenType, params::ParamType)
 	println("\n\n\nCOMPLETED SIMULATION")
 	println("cpu time = ", cputime, " hours.\n\n")
 	return thlenden,params,tt,cputime
+end
+# Dispatch to call the main routine with dt and tfin set by params file.
+function erosion(paramsfile::AbstractString = "params")
+	thlenden, params = startup(paramsfile)
+	erosion(thlenden,params)
+	## mpostprocess(string("run_",paramsfile))
+end
+#= Dispatch to call the main routine with dt and tfin set by the caller.
+Used for convergence test. =#
+function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
+	thlenden, params = startup(paramsfile)
+	params.dt = dt; params.tfin = tfin
+	erosion(thlenden,params)
 end
 
 # startup: Read params and geoinfile; setup stuff.

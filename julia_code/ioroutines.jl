@@ -1,86 +1,87 @@
 # IO routines for plotting and saving data.
 
-# plotnsave: Calls plotcurves() and savedata()
+# plotnsave
 function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
 	# Preliminary stuff.
 	println("\n\n\nOUTPUT NUMBER ", nfile)
 	# The file names.
-	datafolder, plotfolder = getfoldernames(params.paramsfile)
-	nfilestr = lpad(string(nfile),4,string(0))
-	geomfile = string(datafolder,"geom",nfilestr,".dat")
-	densityfile = string(datafolder,"density",nfilestr,".dat")
-	pinfofile = string(datafolder,"apinfo.txt")
+	plotfolder = string("../zFigs", run_label)
+
+
 	# Plot the shapes.
 	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
 	plot_curves(thlenden.thlenvec,plotfile)
 	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
+
+
+
 	# Write the data to a file.
-	save_geo_density(tt,thlenden,geomfile,densityfile)
-	save_pinfo(params,nfile,pinfofile)
+
+	iostream = jldopen(datafile, "r+")
+		write(iostream, "y", y)
+	close(iostream)
+
+	## save_geo_density(tt,thlenden,geomfile,densityfile)
+	## save_pinfo(params,nfile,pinfofile)
+
 	return
 end
 
-#--------------- WRITING DATA ---------------#
-# writedata: Write generic data to a file.
-function writedata(data::Vector, filename::AbstractString; digs::Int = 8)
-	# Round the pieces of data that are simply numbers.
-	for ii in eachindex(data)
-		if typeof(data[ii]) <: AbstractFloat
-			data[ii] = round(data[ii], sigdigits=digs)
-		end
-	end
-	# Write the data
-	iostream = open(filename, "w")
-	writedlm(iostream, data)
-	close(iostream)
-	return
-end
-#= save_geo_density: Save the geometry data (theta,len,xsm,ysm,xx,yy) 
-and the density-function data in a file. =#
-function save_geo_density(tt::Float64, thlenden::ThLenDenType,
-		geomfile::AbstractString, densityfile::AbstractString)
-	# Write the geometry data.
-	thlenvec = thlenden.thlenvec
-	npts,nbods = getnvals(thlenvec)
-	label = "# Parameters (time, npts, nbods), then geometry (theta, len, xsm, ysm, x, y) for each body"
-	geomdata = [label; tt; npts; nbods]
-	for nn=1:nbods
-		getxy!(thlenvec[nn])
-		newdata = [thlenvec[nn].theta; thlenvec[nn].len; 
-			thlenvec[nn].xsm; thlenvec[nn].ysm; thlenvec[nn].xx; thlenvec[nn].yy]
-		append!(geomdata, newdata)
-	end
-	writedata(geomdata, geomfile)
-	# Write the density data.
-	densitydata = [thlenden.density; thlenden.denrot]
-	writedata(densitydata, densityfile)
-	return
-end
-# save_pinfo: Save info about the parameters.
-function save_pinfo(params::ParamType, nfile::Int, outparamsfile::AbstractString)
-	cputime = round( (time()-params.cput0)/3600. , sigdigits=2)
-	label2 = "# Calculated Parameters: cntout, last file number, cputime (hours)"
-	paramdata = [label2; params.cntout; nfile; cputime]
-	writedata(paramdata, outparamsfile)
-	return
-end
-#--------------- HANDLING FOLDERS ---------------#
+#params.paramsfile
+
 # getfoldernames: Set the name of the data and plot folders.
 function getfoldernames(paramsfile::AbstractString)
 	datafolder = string("../output_data/run_",paramsfile,"/")
 	plotfolder = string("../zFigsErosion_",paramsfile,"/")
 	return datafolder, plotfolder
 end
+
+###   paramdata = [label2; params.cntout; nfile; cputime]
+
+
+
+
+
+
+
+#--------------- HANDLING FOLDERS ---------------#
 # newfolder: If the folder exists, delete it. Then create a new folder.
 function newfolder(foldername::AbstractString)
-	if isdir(foldername)
-		rm(foldername; recursive=true)
-	end
+	if isdir(foldername) rm(foldername; recursive=true) end
 	mkdir(foldername)
+end
+
+
+
+
+
+#--------------- PLOTTING DATA ---------------#
+# plotcurve: Plot multiple curves from the theta-len values.
+function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
+	# Make figure of given height and preserve the aspect ratio.
+	axlims = [1.0,1.0]
+	height = 400
+	width = axlims[1]/axlims[2]*height
+	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), size=(width,height),leg=false)
+	for ii = 1:lastindex(thlenvec)
+		thlen = thlenvec[ii]
+		if thlen.len<=0
+			throw("Cannot plot a curve with non-positive length.")
+		end
+		getxy!(thlen)
+		xx, yy = thlen.xx, thlen.yy
+		plot!(plt, xx,yy,color="black")
+	end
+	# Save the figure in a file.
+	savefig(plt, figname)
 	return
 end
+
+
+
+
 
 #--------------- READING DATA ---------------#
 # read_thlen_file: Read a thlen file.
@@ -139,25 +140,5 @@ function geom2thlen(geomnum::AbstractString)
 	geom2thlen(geofile,thlenfile)
 end
 
-#--------------- PLOTTING DATA ---------------#
-# plotcurve: Plot multiple curves from the theta-len values.
-function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
-	# Make figure of given height and preserve the aspect ratio.
-	axlims = [1.0,1.0]
-	height = 400
-	width = axlims[1]/axlims[2]*height
-	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), size=(width,height),leg=false)
-	for ii = 1:lastindex(thlenvec)
-		thlen = thlenvec[ii]
-		if thlen.len<=0
-			throw("Cannot plot a curve with non-positive length.")
-		end
-		getxy!(thlen)
-		xx, yy = thlen.xx, thlen.yy
-		plot!(plt, xx,yy,color="black")
-	end
-	# Save the figure in a file.
-	savefig(plt, figname)
-	return
-end
+
 
