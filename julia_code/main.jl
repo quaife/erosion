@@ -12,6 +12,12 @@ include("ioroutines.jl")
 
 
 #--------------- MAIN ROUTINE ---------------#
+# Call the main erosion routine after getting the parameters from input file.
+function erosion(paramsfile::AbstractString = "params")
+	thlenden, params = startup(paramsfile)
+	erosion(thlenden,params)
+	## mpostprocess(string("run_",paramsfile))
+end
 # erosion: The main routine to erode a group of bodies.
 function erosion(thlenden::ThLenDenType, params::ParamType)
 	println("Running erosion with dt = ", round(params.dt, sigdigits=3), 
@@ -44,19 +50,8 @@ function erosion(thlenden::ThLenDenType, params::ParamType)
 	println("cpu time = ", cputime, " hours.\n\n")
 	return thlenden,params,tt,cputime
 end
-# Dispatch to call the main routine with dt and tfin set by params file.
-function erosion(paramsfile::AbstractString = "params")
-	thlenden, params = startup(paramsfile)
-	erosion(thlenden,params)
-	## mpostprocess(string("run_",paramsfile))
-end
-#= Dispatch to call the main routine with dt and tfin set by the caller.
-Used for convergence test. =#
-function erosion(paramsfile::AbstractString, dt::Float64, tfin::Float64)
-	thlenden, params = startup(paramsfile)
-	params.dt = dt; params.tfin = tfin
-	erosion(thlenden,params)
-end
+
+
 
 # startup: Read params and geoinfile; setup stuff.
 function startup(paramsfile::AbstractString)
@@ -81,6 +76,8 @@ function startup(paramsfile::AbstractString)
 	writedata(paramvec,saveparamsfile)
 	return thlenden0,params
 end
+
+
 # function getparams: Define the object of parameters.
 function getparams(paramsfile::AbstractString)
 	# Read the parameters.
