@@ -11,14 +11,6 @@ mutable struct ThLenDenType
 	thlenvec::Vector{ThetaLenType}; 
 	density::Vector{Float64}; denrot::Vector{Float64};
 end
-# ParamType: Includes the parameters dt, epsilon, sigma, etc.
-mutable struct ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; 
-	nouter::Int; ifmm::Int; ibary::Int; ibc::Int;
-	maxl::Int; fixarea::Bool; fixpdrop::Bool;
-	npts::Int; tfin::Float64; cntout::Int; cput0::Float64;
-	circfile::AbstractString; paramsfile::AbstractString
-end
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm.
 mutable struct DerivsType
 	mterm::Float64; nterm::Vector{Float64}; 
