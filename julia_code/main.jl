@@ -10,20 +10,19 @@ include("thetalen.jl")
 include("ioroutines.jl")
 
 
+sig(var::AbstractFloat, sigdig::Int=3) = round(var,sigdigits=sigdig)
+
 
 #--------------- MAIN ROUTINE ---------------#
-# Call the main erosion routine after getting the parameters from input file.
-function erosion( ###paramsfile::AbstractString = "params")
+# The main routine to erode a group of bodies.
+function erosion(params::paramset)
 
 
-	thlenden, params = startup(paramsfile)
-	erosion(thlenden,params)
-	## mpostprocess(string("run_",paramsfile))
-end
-# erosion: The main routine to erode a group of bodies.
-function erosion(thlenden::ThLenDenType, params::ParamType)
-	println("Running erosion with dt = ", round(params.dt, sigdigits=3), 
-		" and tfin = ", round(params.tfin, sigdigits=3))
+	thlenden::ThLenDenType, 
+
+
+
+	println("Running erosion: dt = ",round(params.dt),"; tfin = ", sig(params.tfin))
 	# Save the output at t=0.
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
@@ -47,9 +46,7 @@ function erosion(thlenden::ThLenDenType, params::ParamType)
 	# Plot and save one last time with zero bodies.
 	nfile += 1
 	plotnsave(nfile,tt,thlenden,params)
-	cputime = round( (time()-params.cput0)/3600. , sigdigits=2)
-	println("\n\n\nCOMPLETED SIMULATION")
-	println("cpu time = ", cputime, " hours.\n\n")
+
 	return thlenden,params,tt,cputime
 end
 
@@ -82,14 +79,4 @@ function startup(paramsfile::AbstractString)
 	saveparamsfile = string(datafolder,"aparams.txt")
 	writedata(paramvec,saveparamsfile)
 	return thlenden0,params
-end
-
-
-
-
-	
-	# Save the parameters in an object.
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,ibary,ibc,maxl,
-		fixarea,fixpdrop,npts,tfin,cntout,cput0,circfile,paramsfile)
-
 end
