@@ -25,19 +25,10 @@ include("main.jl")
 	nouter::Int = 1024		# The number of points on the outer boundary.
 	# Derived parameters
 	infile::AbstractString = string("../",infolder,label,".circ")
+	outfile::AbstractString = string("../data-",label,".jld")
 	epsilon::Float64 = epsfac/npts
 	sigma::Float64 = sigfac/npts
 end
 
-# Run the erosion simulation.
-println("Running erosion")
-cputime = @elapsed( erosion(paramset()) )
-
-# Save the CPU time of the simulation.
-cputime = sig(cputime/3600,3)
-println("\n\n\nCOMPLETED SIMULATION")
-println("cpu time = ", cputime, " hours.\n\n")
-
-## Other things to keep track of in addition to fixed parameters: cntout, 
-
-
+# Call the main routine.
+main(paramset())

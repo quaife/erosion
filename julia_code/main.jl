@@ -4,27 +4,61 @@ using DelimitedFiles
 using Statistics
 using FFTW
 include("basic.jl")
-##include("makegeos.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("ioroutines.jl")
 
 
+
+# Shorthand to round a float to a number of significant digits.
 sig(var::AbstractFloat, sigdig::Int=3) = round(var,sigdigits=sigdig)
 
+# Add a variable incrementally to a jld data file.
+function add_data(file::AbstractString, varlabel::AbstractString, var)
+	iofile = jldopen(file, "r+")
+		write(iofile, varlabel, var)
+	close(iofile)
+end
 
-#TO DO: Save the input parameters file.
+# Set the plot folder.
+plotfolder(params::paramset) = string("../zFigs-",params.label,"/")
+# If the folder exists, delete it. Then create a new folder.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername) rm(foldername; recursive=true) end
+	mkdir(foldername)
+end
+# readvec: Read a vector from a text file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream, comments=true)[:,1]
+	close(iostream)
+	return invec
+end
+
+
+
+
 
 
 #--------------- MAIN ROUTINE ---------------#
-# The main routine to erode a group of bodies.
+# The main routine to call erosion.
+function main(params::paramset)
+	# Initialize the output jld file and save the parameters.
+	save(params.outfile, "params", params)
+	# Run the erosion simulation.
+	println("BEGINNING EROSION SIMULATION")
+	cputime = @elapsed(erosion(params))
+	# Save the CPU time of the simulation.
+	cputime = sig(cputime/3600,3)
+	add_data(params.outfile, "cputime", cputime)
+	println("\n\n\nCOMPLETED EROSION SIMULATION")
+	println("cpu time = ", cputime, " hours.\n\n")
+end
+
+# The routine to erode a group of bodies.
 function erosion(params::paramset)
 	thlenden = get_thlenden(params)
-	
-	datafolder, plotfolder = getfoldernames(params.paramsfile)
-	newfolder(datafolder)
-	newfolder(plotfolder)
-
+	newfolder(plotfolder(params))
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
 	# Enter the time loop to apply Runge-Kutta.
@@ -72,3 +106,68 @@ function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	thlen.xsm = xc; thlen.ysm = yc
 	return thlen
 end
+
+
+
+
+
+## TO DO: Other things to keep track of in addition to fixed parameters: cntout, 
+###   paramdata = [label2; params.cntout; nfile; cputime]
+
+
+
+# plotnsave
+function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
+	# Preliminary stuff.
+	println("\n\n\nOUTPUT NUMBER ", nfile)
+	# The file names.
+	plotfolder = string("../zFigs", run_label)
+
+
+	# Plot the shapes.
+	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
+	plot_curves(thlenden.thlenvec,plotfile)
+	# Compute the density functions.
+	getstress!(thlenden, params)
+	compute_density!(thlenden, params, rotation=true)
+
+
+
+	# Write the data to a file.
+
+	iostream = jldopen(datafile, "r+")
+		write(iostream, "y", y)
+	close(iostream)
+
+	## save_geo_density(tt,thlenden,geomfile,densityfile)
+	## save_pinfo(params,nfile,pinfofile)
+
+	return
+end
+
+
+
+# plotcurve: Plot multiple curves from the theta-len values.
+function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
+	# Make figure of given height and preserve the aspect ratio.
+	axlims = [1.0,1.0]
+	height = 400
+	width = axlims[1]/axlims[2]*height
+	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), size=(width,height),leg=false)
+	for ii = 1:lastindex(thlenvec)
+		thlen = thlenvec[ii]
+		if thlen.len<=0
+			throw("Cannot plot a curve with non-positive length.")
+		end
+		getxy!(thlen)
+		xx, yy = thlen.xx, thlen.yy
+		plot!(plt, xx,yy,color="black")
+	end
+	# Save the figure in a file.
+	savefig(plt, figname)
+	return
+end
+
+
+
+
