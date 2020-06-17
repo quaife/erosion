@@ -1,16 +1,6 @@
 # IO routines for plotting and saving data.
 
-# Return thlen data for a circle of given radius and center.
-function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
-	thlen = new_thlen()
-	alpha = getalpha(npts)
-	# Get the tangent angle, theta, and the total arclength, len.
-	thlen.theta = 0.5*pi .+ alpha
-	thlen.len = 2*pi*rad
-	# Save the surface mean values, xsm and ysm.
-	thlen.xsm = xc; thlen.ysm = yc
-	return thlen
-end
+
 
 
 

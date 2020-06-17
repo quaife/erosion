@@ -13,10 +13,18 @@ include("ioroutines.jl")
 sig(var::AbstractFloat, sigdig::Int=3) = round(var,sigdigits=sigdig)
 
 
+#TO DO: Save the input parameters file.
+
+
 #--------------- MAIN ROUTINE ---------------#
 # The main routine to erode a group of bodies.
 function erosion(params::paramset)
 	thlenden = get_thlenden(params)
+	
+	datafolder, plotfolder = getfoldernames(params.paramsfile)
+	newfolder(datafolder)
+	newfolder(plotfolder)
+
 	nn=0; nfile = 0; tt = 0.;
 	plotnsave(nfile,tt,thlenden,params)
 	# Enter the time loop to apply Runge-Kutta.
@@ -53,17 +61,14 @@ function get_thlenden(params::paramset)
 	end
 	return new_thlenden(thlenvec)
 end
-
-
-
-
-
-
-
-
-
-	datafolder, plotfolder = getfoldernames(params.paramsfile)
-	newfolder(datafolder)
-	newfolder(plotfolder)
-	# Save the input parameters file.
-
+# Return thlen data for a circle of given radius and center.
+function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
+	thlen = new_thlen()
+	alpha = getalpha(npts)
+	# Get the tangent angle, theta, and the total arclength, len.
+	thlen.theta = 0.5*pi .+ alpha
+	thlen.len = 2*pi*rad
+	# Save the surface mean values, xsm and ysm.
+	thlen.xsm = xc; thlen.ysm = yc
+	return thlen
+end
