@@ -1,6 +1,7 @@
 using Parameters
 include("main.jl")
 
+# The set of parameters.
 @with_kw struct paramset
 	# The data file for the initial geometry
 	infolder::AbstractString = "input_geos/afrac06/"
@@ -28,12 +29,15 @@ include("main.jl")
 	sigma::Float64 = sigfac/npts
 end
 
+# Run the erosion simulation.
+println("Running erosion")
 cputime = @elapsed( erosion(paramset()) )
 
+# Save the CPU time of the simulation.
 cputime = sig(cputime/3600,3)
 println("\n\n\nCOMPLETED SIMULATION")
 println("cpu time = ", cputime, " hours.\n\n")
 
-## Other things to keep track of in addition to fixed parameters: cputime, cntout, 
+## Other things to keep track of in addition to fixed parameters: cntout, 
 
 
