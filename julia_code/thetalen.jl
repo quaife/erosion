@@ -16,7 +16,7 @@ and I use the inward pointing normal vector. =#
 
 #--------------- TIME-STEPPING ROUTINES ---------------#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
-function rungekutta2(thld0::ThLenDenType, params::ParamType)
+function rungekutta2(thld0::ThLenDenType, params::ParamSet)
 	# Extract parameters.
 	dt = params.dt
 	epsilon = params.epsilon
@@ -32,7 +32,7 @@ end
 #= timestep: Take a step of forward for all of the bodies.
 dt1 is the step-size, dt2 is used in the Gaussian filter.  =#
 function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType, 
-		dt1::Float64, dt2::Float64, params::ParamType)
+		dt1::Float64, dt2::Float64, params::ParamSet)
 	# Compute the time derivatives.
 	dvec = getderivs(thld_derivs, params)
 	# Remove small bodies if needed.
@@ -96,7 +96,7 @@ end
 
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
 # getderivs: Get the derivative terms for all of the bodies.
-function getderivs(thlenden::ThLenDenType, params::ParamType)
+function getderivs(thlenden::ThLenDenType, params::ParamSet)
 	getstress!(thlenden, params)
 	nbods = length(thlenden.thlenvec)
 	dvec = new_dvec(nbods)

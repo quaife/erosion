@@ -1,27 +1,27 @@
 # main.jl: The main routines to call
-using Plots
+using JLD
 using DelimitedFiles
+using Plots
 using Statistics
 using FFTW
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
-include("ioroutines.jl")
-
+ 
 
 
 # Shorthand to round a float to a number of significant digits.
 sig(var::AbstractFloat, sigdig::Int=3) = round(var,sigdigits=sigdig)
 
 # Add a variable incrementally to a jld data file.
-function add_data(file::AbstractString, varlabel::AbstractString, var)
-	iofile = jldopen(file, "r+")
-		write(iofile, varlabel, var)
-	close(iofile)
+function add_data(filename::AbstractString, varlabel::AbstractString, var)
+	jldopen(filename, "r+") do file
+	file["varlabel"] = var
+	end
 end
 
 # Set the plot folder.
-plotfolder(params::paramset) = string("../zFigs-",params.label,"/")
+plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
 # If the folder exists, delete it. Then create a new folder.
 function newfolder(foldername::AbstractString)
 	if isdir(foldername) rm(foldername; recursive=true) end
@@ -42,7 +42,7 @@ end
 
 #--------------- MAIN ROUTINE ---------------#
 # The main routine to call erosion.
-function main(params::paramset)
+function main(params::ParamSet)
 	# Initialize the output jld file and save the parameters.
 	save(params.outfile, "params", params)
 	# Run the erosion simulation.
@@ -56,34 +56,34 @@ function main(params::paramset)
 end
 
 # The routine to erode a group of bodies.
-function erosion(params::paramset)
+function erosion(params::ParamSet)
+	# Initialize.
 	thlenden = get_thlenden(params)
 	newfolder(plotfolder(params))
-	nn=0; nfile = 0; tt = 0.;
-	plotnsave(nfile,tt,thlenden,params)
+	nn=0; nout = 0; tt = 0.0;
 	# Enter the time loop to apply Runge-Kutta.
-	while(tt < params.tfin - 0.1*params.dt && length(thlenden.thlenvec) > 0)
-		# Print statements
+	while(tt < params.tfin && length(thlenden.thlenvec) > 0)
+		# Plot and save the data if appropriate.
+		if mod(nn, params.outstride) == 0
+			plotnsave(thlenden,params,nout,tt)
+			nout += 1
+		end
+		# Advance the variables forward one timestep with RK4.
 		nn += 1
 		println("\n\n\nTIME STEP ", nn)
-		println("t/tfin = ", sig(tt/params.tfin, 3))
-		# Advance the variables forward one timestep with RK4.
 		thlenden, dt = rungekutta2(thlenden, params)
 		tt += dt
-		# Plot and save the data if appropriate.
-		if mod(nn, params.cntout)==0
-			nfile += 1
-			plotnsave(nfile,tt,thlenden,params)
-		end
 	end
 	# Plot and save one last time with zero bodies.
-	nfile += 1
-	plotnsave(nfile,tt,thlenden,params)
-	return thlenden,params,tt
+	plotnsave(thlenden,params,nout,tt)
 end
 
+
+
+
+
 # Get initial thlenden.
-function get_thlenden(params::paramset)
+function get_thlenden(params::ParamSet)
 	circdata = readvec(params.infile)
 	nbods = round(Int, circdata[1])
 	deleteat!(circdata,1)
@@ -117,16 +117,12 @@ end
 
 
 # plotnsave
-function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::ParamType)
-	# Preliminary stuff.
-	println("\n\n\nOUTPUT NUMBER ", nfile)
-	# The file names.
-	plotfolder = string("../zFigs", run_label)
-
-
+function plotnsave(thlenden::ThLenDenType, params::ParamSet, nfile::Int, tt::Float64)
 	# Plot the shapes.
-	plotfile = string(plotfolder,"shape",nfilestr,".pdf")
-	plot_curves(thlenden.thlenvec,plotfile)
+	println("\n\n\nOUTPUT NUMBER ", nfile)
+	nfilestr = lpad(string(nfile),4,string(0))
+	plotfile = string(plotfolder(params),"shape",nfilestr,".pdf")
+	plot_curves(plotfile, thlenden.thlenvec)
 	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
@@ -134,10 +130,10 @@ function plotnsave(nfile::Int, tt::Float64, thlenden::ThLenDenType, params::Para
 
 
 	# Write the data to a file.
+	add_data(params.outfile, varlabel, thlenden)
 
-	iostream = jldopen(datafile, "r+")
-		write(iostream, "y", y)
-	close(iostream)
+
+	# TO DO: Need to push! the new thlenden to the thlendenvec
 
 	## save_geo_density(tt,thlenden,geomfile,densityfile)
 	## save_pinfo(params,nfile,pinfofile)
@@ -148,7 +144,7 @@ end
 
 
 # plotcurve: Plot multiple curves from the theta-len values.
-function plot_curves(thlenvec::Vector{ThetaLenType}, figname::AbstractString)	
+function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})	
 	# Make figure of given height and preserve the aspect ratio.
 	axlims = [1.0,1.0]
 	height = 400

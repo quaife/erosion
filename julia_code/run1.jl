@@ -1,8 +1,6 @@
 using Parameters
-include("main.jl")
-
 # The set of parameters.
-@with_kw struct paramset
+@with_kw struct ParamSet
 	# The data file for the initial geometry
 	infolder::AbstractString = "input_geos/afrac06/"
 	label::AbstractString = "20-5"
@@ -15,7 +13,7 @@ include("main.jl")
 	epsfac::Float64 = 15	# Smoothing parameter for curvature driven flow.
 	sigfac::Float64 = 10	# Smoothing parameter for the stress.
 	dt::Float64 = 1e-3		# The time step.
-	nout::Int = 4			# The number of steps per output.
+	outstride::Int = 4		# The number of steps per output.
 	# Fixed physical parameters
 	fixpdrop::Int = 1		# Fix the pressure drop (1) or not (0)
 	fixarea::Int = 0		# Keep the area fixed (1) or not (0)
@@ -29,6 +27,6 @@ include("main.jl")
 	epsilon::Float64 = epsfac/npts
 	sigma::Float64 = sigfac/npts
 end
-
 # Call the main routine.
-main(paramset())
+include("main.jl")
+#main(ParamSet())

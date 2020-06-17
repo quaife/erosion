@@ -45,7 +45,7 @@ evec() = Array{Float64}(undef,0)
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
-function getstress!(thlenden::ThLenDenType, params::ParamType)
+function getstress!(thlenden::ThLenDenType, params::ParamSet)
 	# Compute the density if not loaded already.
 	compute_density!(thlenden, params)
 	# Compute the stress.
@@ -66,7 +66,7 @@ end
 #= compute_density! Computes the density function and saves in thlenden.
 Note: Only computes if density is not already loaded.
 Note: It also computes xx and yy along the way and saves in thlenden.thlenvec. =#
-function compute_density!(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
+function compute_density!(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 	if (rotation == false && length(thlenden.density) == 0)
 		println("Computing the density function.")
 		npts,nbods,xv,yv = getnxy(thlenden)
