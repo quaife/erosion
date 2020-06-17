@@ -13,7 +13,7 @@ using Parameters
 	epsfac::Float64 = 15	# Smoothing parameter for curvature driven flow.
 	sigfac::Float64 = 10	# Smoothing parameter for the stress.
 	dt::Float64 = 1e-3		# The time step.
-	outstride::Int = 2		# The number of steps per output, default 4.
+	outstride::Int = 4		# The number of steps per output, default 4.
 	# Fixed physical parameters
 	fixpdrop::Bool = 1		# Fix the pressure drop (1) or not (0)
 	fixarea::Bool = 0		# Keep the area fixed (1) or not (0)
