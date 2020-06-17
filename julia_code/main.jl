@@ -4,14 +4,11 @@ using DelimitedFiles
 using Plots
 using Statistics
 using FFTW
+
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
  
-
-
-# Shorthand to round a float to a number of significant digits.
-sig(var::AbstractFloat, sigdig::Int=3) = round(var,sigdigits=sigdig)
 
 # Add a variable incrementally to a jld data file.
 function add_data(filename::AbstractString, varlabel::AbstractString, var)
@@ -19,26 +16,6 @@ function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	file["varlabel"] = var
 	end
 end
-
-# Set the plot folder.
-plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
-# If the folder exists, delete it. Then create a new folder.
-function newfolder(foldername::AbstractString)
-	if isdir(foldername) rm(foldername; recursive=true) end
-	mkdir(foldername)
-end
-# readvec: Read a vector from a text file.
-function readvec(filename::AbstractString)
-	iostream = open(filename, "r")
-	invec = readdlm(iostream, comments=true)[:,1]
-	close(iostream)
-	return invec
-end
-
-
-
-
-
 
 #--------------- MAIN ROUTINE ---------------#
 # The main routine to call erosion.
@@ -49,10 +26,10 @@ function main(params::ParamSet)
 	println("BEGINNING EROSION SIMULATION")
 	cputime = @elapsed(erosion(params))
 	# Save the CPU time of the simulation.
-	cputime = sig(cputime/3600,3)
-	add_data(params.outfile, "cputime", cputime)
+	cpu_hours = round(cputime/3600, sigdigits=3)
+	add_data(params.outfile, "cpu_hours", cpu_hours)
 	println("\n\n\nCOMPLETED EROSION SIMULATION")
-	println("cpu time = ", cputime, " hours.\n\n")
+	println("cpu time = ", cpu_hours, " hours.\n\n")
 end
 
 # The routine to erode a group of bodies.
@@ -76,13 +53,10 @@ function erosion(params::ParamSet)
 	end
 	# Plot and save one last time with zero bodies.
 	plotnsave(thlenden,params,nout,tt)
+	add_data(params.outfile, "noutputs", nout)
 end
 
-
-
-
-
-# Get initial thlenden.
+# Initialize thlenden from the input circle file.
 function get_thlenden(params::ParamSet)
 	circdata = readvec(params.infile)
 	nbods = round(Int, circdata[1])
@@ -95,7 +69,14 @@ function get_thlenden(params::ParamSet)
 	end
 	return new_thlenden(thlenvec)
 end
-# Return thlen data for a circle of given radius and center.
+# readvec: Read a vector from a text file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream, comments=true)[:,1]
+	close(iostream)
+	return invec
+end
+# Convert the circle data to thlen data.
 function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	thlen = new_thlen()
 	alpha = getalpha(npts)
@@ -107,48 +88,36 @@ function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	return thlen
 end
 
+# Set the plot folder.
+plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
+# If the folder exists, delete it. Then create a new folder.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername) rm(foldername; recursive=true) end
+	mkdir(foldername)
+end
 
-
-
-
-## TO DO: Other things to keep track of in addition to fixed parameters: cntout, 
-###   paramdata = [label2; params.cntout; nfile; cputime]
-
-
-
-# plotnsave
-function plotnsave(thlenden::ThLenDenType, params::ParamSet, nfile::Int, tt::Float64)
+# Plot and save data.
+function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int, tt::Float64)
 	# Plot the shapes.
-	println("\n\n\nOUTPUT NUMBER ", nfile)
-	nfilestr = lpad(string(nfile),4,string(0))
-	plotfile = string(plotfolder(params),"shape",nfilestr,".pdf")
+	println("\n\n\nOUTPUT NUMBER ", nout)
+	nout_string = lpad(string(nout),4,string(0))
+	plotfile = string(plotfolder(params),"shape",nout_string,".pdf")
 	plot_curves(plotfile, thlenden.thlenvec)
 	# Compute the density functions.
 	getstress!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
-
-
-
 	# Write the data to a file.
+	varlabel = string("thlenden",nout_string)
 	add_data(params.outfile, varlabel, thlenden)
-
-
-	# TO DO: Need to push! the new thlenden to the thlendenvec
-
-	## save_geo_density(tt,thlenden,geomfile,densityfile)
-	## save_pinfo(params,nfile,pinfofile)
-
-	return
 end
 
-
-
-# plotcurve: Plot multiple curves from the theta-len values.
+# Make simple pdf plots for monitoring (not prodcution level)
 function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})	
 	# Make figure of given height and preserve the aspect ratio.
-	axlims = [1.0,1.0]
+	axlims = [1.0, 1.0]
 	height = 400
 	width = axlims[1]/axlims[2]*height
+	# Plot the curves.
 	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), size=(width,height),leg=false)
 	for ii = 1:lastindex(thlenvec)
 		thlen = thlenvec[ii]
@@ -156,14 +125,8 @@ function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})
 			throw("Cannot plot a curve with non-positive length.")
 		end
 		getxy!(thlen)
-		xx, yy = thlen.xx, thlen.yy
-		plot!(plt, xx,yy,color="black")
+		plot!(plt, thlen.xx, thlen.yy, color="black")
 	end
-	# Save the figure in a file.
 	savefig(plt, figname)
 	return
 end
-
-
-
-
