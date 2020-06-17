@@ -20,17 +20,12 @@ mutable struct DerivsType
 	mterm::Float64; nterm::Vector{Float64}; 
 	xsmdot::Float64; ysmdot::Float64
 end
-# Create new instances of each type.
-new_thlen() = ThetaLenType([],0.,0.,0.,[],[],[])
-new_thlenvec(nbods::Int) = [new_thlen() for nn=1:nbods]
-
 
 #--------------- TIME-STEPPING ROUTINES ---------------#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
 function rungekutta2(thld0::ThLenDenType, params::ParamSet)
-	# Extract parameters.
+	# Could in principle set dt adaptively
 	dt = params.dt
-	epsilon = params.epsilon
 	# Stage 1
 	println("Stage 1 of Runge-Kutta")
 	thld05 = timestep!(thld0, thld0, 0.5*dt, 0.5*dt, params)
@@ -38,7 +33,9 @@ function rungekutta2(thld0::ThLenDenType, params::ParamSet)
 	println("\nStage 2 of Runge-Kutta")	
 	thld1 = timestep!(thld0, thld05, dt, 0.5*dt, params)
 	println("Completed Runge-Kutta step.")
-	return thld1, dt
+	# Update the time value
+	thld1.tt = thld0.tt + dt
+	return thld1
 end
 #= timestep: Take a step of forward for all of the bodies.
 dt1 is the step-size, dt2 is used in the Gaussian filter.  =#
@@ -57,9 +54,11 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	# Loop over all bodies and advance each forward in time.
 	npts, nbods = getnvals(thld0.thlenvec)
 	@assert (length(dvec) == length(thld_derivs.thlenvec) == nbods)
-	thlv1 = new_thlenvec(nbods)
+	thlv1 = Array{ThetaLenType}(undef,0)
 	epsilon = params.epsilon
 	alpha = getalpha(npts)
+	# zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
+	zetafun(len::Float64, matau::Float64) = 2*pi/len * matau
 	for nn = 1:nbods
 		# Extract the variables for body nn.
 		# thlen0
@@ -82,27 +81,21 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		zetad = zetafun(lend,mataud)
 		# The first factor in the exponential smoothing.
 		fac1 = epsilon*dt1*zetad
-		
 		# The second factor, for which there are two possible approaches.
 		#fac2 = epsilon*dt2*0.5*(3*zetad-zeta0)	# Old Rule: uses trapezoid and midpoint combination.
 		fac2 = epsilon*dt2*(2*zetad-zeta0)		# New Rule: uses RK2 for everything.
-		
 		# Advance to get the next theta.
 		th1 = expsmooth(th0-alpha,fac1) + alpha
 		th1 += dt1*expsmooth(nterm,fac2)
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
-		# Save new values in thlenvec type.
-		thlv1[nn].theta, thlv1[nn].len = th1, len1
-		thlv1[nn].xsm, thlv1[nn].ysm = xsm1, ysm1
+		# Save the new thlen values in a vector.
+		thlen = ThetaLenType(th1,len1,xsm1,ysm1,[],[],[])
+		push!(thlv1,thlen)
 	end
-	thld1 = ThLenDenType(thlv1,[],[])	
+	thld1 = ThLenDenType(thlv1,[],[],0)	
 	return thld1
-end
-# zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
-function zetafun(len::Float64, matau::Float64)
-	return 2*pi/len * matau
 end
 
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#

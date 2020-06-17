@@ -36,22 +36,21 @@ function erosion(params::ParamSet)
 	# Initialize.
 	thlenden = get_thlenden(params)
 	newfolder(plotfolder(params))
-	nn=0; nout = 0; tt = 0.0;
+	nn, nout = 0, 0
 	# Enter the time loop to apply Runge-Kutta.
-	while(tt < params.tfin && length(thlenden.thlenvec) > 0)
+	while(thlenden.tt < params.tfin && length(thlenden.thlenvec) > 0)
 		# Plot and save the data if appropriate.
 		if mod(nn, params.outstride) == 0
-			plotnsave(thlenden,params,nout,tt)
+			plotnsave(thlenden,params,nout)
 			nout += 1
 		end
 		# Advance the variables forward one timestep with RK4.
 		nn += 1
 		println("\n\nTIME STEP ", nn)
-		thlenden, dt = rungekutta2(thlenden, params)
-		tt += dt
+		thlenden = rungekutta2(thlenden, params)
 	end
 	# Plot and save one last time with zero bodies.
-	plotnsave(thlenden,params,nout,tt)
+	plotnsave(thlenden,params,nout)
 	add_data(params.outfile, "noutputs", nout)
 end
 
@@ -59,12 +58,13 @@ end
 function get_thlenden(params::ParamSet)
 	circdata = readvec(params.infile)
 	nbods = round(Int, popfirst!(circdata))
-	thlenvec = new_thlenvec(nbods)
+	thlenvec = Array{ThetaLenType}(undef, 0)
 	for nn = 1:nbods
 		rad, xc, yc = [popfirst!(circdata) for i=1:3]
-		thlenvec[nn] = circ2thlen(params.npts, rad, xc, yc)
+		thlen = circ2thlen(params.npts, rad, xc, yc)
+		push!(thlenvec, thlen)
 	end
-	return ThLenDenType(thlenvec,[],[])
+	return ThLenDenType(thlenvec,[],[],0)
 end
 # readvec: Read a vector from a text file.
 function readvec(filename::AbstractString)
@@ -75,14 +75,10 @@ function readvec(filename::AbstractString)
 end
 # Convert the circle data to thlen data.
 function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
-	thlen = new_thlen()
 	alpha = getalpha(npts)
-	# Get the tangent angle, theta, and the total arclength, len.
-	thlen.theta = 0.5*pi .+ alpha
-	thlen.len = 2*pi*rad
-	# Save the surface mean values, xsm and ysm.
-	thlen.xsm = xc; thlen.ysm = yc
-	return thlen
+	theta = 0.5*pi .+ alpha
+	len = 2*pi*rad
+	return ThetaLenType(theta,len,xc,yc,[],[],[])
 end
 
 # Set the plot folder.
@@ -94,7 +90,7 @@ function newfolder(foldername::AbstractString)
 end
 
 # Plot and save data.
-function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int, tt::Float64)
+function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	# Plot the shapes.
 	println("\n\n\nOUTPUT NUMBER ", nout)
 	nout_string = lpad(string(nout),4,string(0))

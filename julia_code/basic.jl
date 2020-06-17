@@ -9,7 +9,7 @@ end
 # ThLenDenType: Includes the vector of all thlens and the density function.
 mutable struct ThLenDenType
 	thlenvec::Vector{ThetaLenType}; 
-	density::Vector{Float64}; denrot::Vector{Float64};
+	density::Vector{Float64}; denrot::Vector{Float64}; tt::Float64
 end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 mutable struct TargetsType

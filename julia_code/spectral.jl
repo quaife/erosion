@@ -51,7 +51,6 @@ function imagtest(fx::Vector, relthold::Float64=1e-8)
 	if maximrel > relthold
 		@warn string("imag part too big: ", maximrel)
 	end
-	return
 end
 # expsmooth: Smooth in Fourier space.
 function expsmooth(fx::Vector, factor::Float64)
@@ -63,6 +62,4 @@ function expsmooth(fx::Vector, factor::Float64)
 	return real(fs) 
 end
 # gaussfilter: Apply a Gaussian filter of width sigma.
-function gaussfilter(fx::Vector, sigma::Float64)
-	return expsmooth(fx, 0.5*sigma^2)
-end
+gaussfilter(fx::Vector, sigma::Float64) = expsmooth(fx, 0.5*sigma^2)
