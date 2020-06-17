@@ -171,3 +171,60 @@ function shiftcircs(circvec::Vector{CircType},
 	end
 	return
 end
+
+
+
+#--------------- IO ROUTINES ---------------#
+# If the folder exists, delete it. Then create a new folder.
+function newfolder(foldername::AbstractString)
+	if isdir(foldername)
+		rm(foldername; recursive=true)
+	end
+	mkdir(foldername)
+	return
+end
+# Plot the circles.
+function plotcircs(circvec::Vector{CircType}, nfile::Int, seed::Int)
+	# Parameters.
+	npts = 128
+	width = 400; height = 400
+	nbods = length(circvec)
+	alpha = getalpha(npts)
+	# Set name of the folder and file.
+	if nfile >= 0
+		nfilestr = lpad(string(nfile),4,"0")
+		figname = string(figfolder(),"circ", nfilestr,".pdf")
+	else
+		figname = string(geosfolder(),lpad(string(nbods),2,"0"),"circ",string(seed),".pdf")
+	end
+	# Make the figure.
+	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false);
+	# Plot each body.
+
+	for nn = 1:nbods
+		circ = circvec[nn]
+		xx = circ.xc .+ circ.rad*cos.(alpha)
+		yy = circ.yc .+ circ.rad*sin.(alpha)
+		plot!(pp,xx,yy,color="black");
+	end
+	# Save the figure in a file.
+	savefig(pp, figname)
+	return
+end
+
+# Save the circle data to a file: radii and centers.
+function save_circ_data(circvec::Vector{CircType}, seed::Int)
+	nbods = length(circvec)
+	circfile = string(geosfolder(),lpad(string(nbods),2,"0"),"circ",string(seed),".circ")
+	circdata = zeros(Float64, 0)
+	radvec = zeros(Float64, nbods)
+	for nn=1:nbods
+		circ = circvec[nn]
+		append!(circdata, [circ.rad, circ.xc, circ.yc])
+		radvec[nn] = circ.rad
+	end
+	areafrac = 0.25*pi*sum(radvec.^2)
+	data = [string("# nbods = ", nbods, ", areafrac = ", areafrac, ", seed = ", seed); 
+	nbods; "# data below: radius, xc, yc for each body."; circdata]
+	writedata(data, circfile)
+end

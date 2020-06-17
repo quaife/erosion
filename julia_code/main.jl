@@ -4,7 +4,7 @@ using DelimitedFiles
 using Statistics
 using FFTW
 include("basic.jl")
-include("makegeos.jl")
+##include("makegeos.jl")
 include("spectral.jl")
 include("thetalen.jl")
 include("ioroutines.jl")
@@ -18,7 +18,7 @@ sig(var::AbstractFloat, sigdig::Int=3) = round(var,sigdigits=sigdig)
 function erosion(params::paramset)
 
 
-	thlenden::ThLenDenType, 
+	thlenden = get_thlenden(params)
 
 
 
@@ -49,6 +49,30 @@ function erosion(params::paramset)
 
 	return thlenden,params,tt,cputime
 end
+
+
+# Get stuff.
+function get_thlenden(params::paramset)
+	# Read the input circle file.
+	npts = params.npts
+	circdata = readvec(params.infile)
+	nbods = round(Int, circdata[1])
+	deleteat!(circdata,1)
+
+	for nn = 1:nbods
+		rad, xc, yc = circdata[1], circdata[2], circdata[3]
+		thlen = circthlen(npts, rad, xc, yc)
+		deleteat!(circdata,1:3)
+	end
+
+
+	save_thlen(circfile, thlenfile, npts)
+	thlenvec0 = read_thlen_file(thlenfile)
+	thlenden0 = new_thlenden(thlenvec0)
+
+
+end
+
 
 
 

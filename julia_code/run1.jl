@@ -23,7 +23,7 @@ include("main.jl")
 	maxl::Int = 8000		# The maximum number of GMRES iterations.
 	nouter::Int = 1024		# The number of points on the outer boundary.
 	# Derived parameters
-	infile::AbstractString = string(infolder,label)
+	infile::AbstractString = string("../",infolder,label,".circ")
 	epsilon::Float64 = epsfac/npts
 	sigma::Float64 = sigfac/npts
 end
