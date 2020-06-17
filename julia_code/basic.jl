@@ -18,21 +18,6 @@ mutable struct TargetsType
 	ptar::Vector{Float64}; vortar::Vector{Float64};
 end
 
-#--------------- OBJECT ROUTINES ---------------#
-# Create new instances of each type.
-function new_thlenden(thlenvec::Vector{ThetaLenType}, density=evec(), denrot=evec())
-	return ThLenDenType(thlenvec,density,denrot)
-end
-function new_thlenvec(nbods::Int)
-	return [new_thlen() for nn=1:nbods]
-end
-function new_thlen()
-	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec())
-end
-
-
-evec() = Array{Float64}(undef,0)
-
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
@@ -250,7 +235,7 @@ end
 # regulargridtargs: Set up target points on a regular grid; return targets.
 function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	xtar,ytar = regulargrid(xlocs,ylocs)
-	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
+	targets = TargetsType([], [], [], [], [], [])
 	targets.xtar = xtar
 	targets.ytar = ytar
 	return targets

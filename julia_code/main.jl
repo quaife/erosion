@@ -1,8 +1,8 @@
 # main.jl: The main routines to call
+using Statistics
 using JLD
 using DelimitedFiles
 using Plots
-using Statistics
 
 include("basic.jl")
 include("spectral.jl")
@@ -58,15 +58,13 @@ end
 # Initialize thlenden from the input circle file.
 function get_thlenden(params::ParamSet)
 	circdata = readvec(params.infile)
-	nbods = round(Int, circdata[1])
-	deleteat!(circdata,1)
+	nbods = round(Int, popfirst!(circdata))
 	thlenvec = new_thlenvec(nbods)
 	for nn = 1:nbods
-		rad, xc, yc = circdata[1], circdata[2], circdata[3]
+		rad, xc, yc = [popfirst!(circdata) for i=1:3]
 		thlenvec[nn] = circ2thlen(params.npts, rad, xc, yc)
-		deleteat!(circdata,1:3)
 	end
-	return new_thlenden(thlenvec)
+	return ThLenDenType(thlenvec,[],[])
 end
 # readvec: Read a vector from a text file.
 function readvec(filename::AbstractString)

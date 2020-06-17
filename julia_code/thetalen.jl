@@ -14,14 +14,15 @@ I use the same convention for tangential and normal vectors as Shelley 1994.
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
 
+#--------------- OBJECT ROUTINES ---------------#
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm.
 mutable struct DerivsType
 	mterm::Float64; nterm::Vector{Float64}; 
 	xsmdot::Float64; ysmdot::Float64
 end
-
-new_derivs() = DerivsType(0.,evec(),0.,0.)
-new_dvec(nbods::Int) = [new_derivs() for nn=1:nbods]
+# Create new instances of each type.
+new_thlen() = ThetaLenType([],0.,0.,0.,[],[],[])
+new_thlenvec(nbods::Int) = [new_thlen() for nn=1:nbods]
 
 
 #--------------- TIME-STEPPING ROUTINES ---------------#
@@ -96,7 +97,7 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		thlv1[nn].theta, thlv1[nn].len = th1, len1
 		thlv1[nn].xsm, thlv1[nn].ysm = xsm1, ysm1
 	end
-	thld1 = new_thlenden(thlv1)
+	thld1 = ThLenDenType(thlv1,[],[])	
 	return thld1
 end
 # zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
@@ -109,10 +110,11 @@ end
 function getderivs(thlenden::ThLenDenType, params::ParamSet)
 	getstress!(thlenden, params)
 	nbods = length(thlenden.thlenvec)
-	dvec = new_dvec(nbods)
+	dvec = Array{DerivsType}(undef, 0)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
-		dvec[nn] = getderivs(thlen, params.epsilon, params.fixarea)
+		derivs = getderivs(thlen, params.epsilon, params.fixarea)
+		push!(dvec,derivs)
 	end
 	return dvec
 end
