@@ -1,4 +1,5 @@
 # spectral.jl: Collection of spectral routines 
+using FFTW
 
 # fftnice: shifted fft.
 function fftnice(fx::Vector)
@@ -65,18 +66,3 @@ end
 function gaussfilter(fx::Vector, sigma::Float64)
 	return expsmooth(fx, 0.5*sigma^2)
 end
-
-
-#------------------OBSELETE BELOW------------------#
-#=
-# krasnyfilter: Apply a Krasny filter to the spectrum.
-# The Krasny filter does not delay the shape instability, so I voided it.
-function krasnyfilter(fx::Vector, relthold::Float64=1e-8)
-	fh = fftnice(fx)
-	absthold = relthold*maxabs(fh)
-	fh[abs(fh) .< absthold] = 0.0
-	fx = ifftnice(fh)
-	imagtest(fx)
-	return real(fx)
-end 
-=#

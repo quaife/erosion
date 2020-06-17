@@ -3,17 +3,16 @@ using JLD
 using DelimitedFiles
 using Plots
 using Statistics
-using FFTW
 
 include("basic.jl")
 include("spectral.jl")
 include("thetalen.jl")
  
-
 # Add a variable incrementally to a jld data file.
 function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	jldopen(filename, "r+") do file
-	file["varlabel"] = var
+	file[varlabel] = var
+	#write(file,varlabel,var)
 	end
 end
 
@@ -23,7 +22,7 @@ function main(params::ParamSet)
 	# Initialize the output jld file and save the parameters.
 	save(params.outfile, "params", params)
 	# Run the erosion simulation.
-	println("BEGINNING EROSION SIMULATION")
+	println("\nBEGINNING EROSION SIMULATION")
 	cputime = @elapsed(erosion(params))
 	# Save the CPU time of the simulation.
 	cpu_hours = round(cputime/3600, sigdigits=3)
@@ -47,7 +46,7 @@ function erosion(params::ParamSet)
 		end
 		# Advance the variables forward one timestep with RK4.
 		nn += 1
-		println("\n\n\nTIME STEP ", nn)
+		println("\n\nTIME STEP ", nn)
 		thlenden, dt = rungekutta2(thlenden, params)
 		tt += dt
 	end

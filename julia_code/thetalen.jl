@@ -14,6 +14,16 @@ I use the same convention for tangential and normal vectors as Shelley 1994.
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
 
+# DerivsType: Includes the derivatives of theta, len, xsm, ysm.
+mutable struct DerivsType
+	mterm::Float64; nterm::Vector{Float64}; 
+	xsmdot::Float64; ysmdot::Float64
+end
+
+new_derivs() = DerivsType(0.,evec(),0.,0.)
+new_dvec(nbods::Int) = [new_derivs() for nn=1:nbods]
+
+
 #--------------- TIME-STEPPING ROUTINES ---------------#
 # rungekutta4: Take a step forward with 4th order Runge-Kutta.
 function rungekutta2(thld0::ThLenDenType, params::ParamSet)

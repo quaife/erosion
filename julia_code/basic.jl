@@ -11,11 +11,6 @@ mutable struct ThLenDenType
 	thlenvec::Vector{ThetaLenType}; 
 	density::Vector{Float64}; denrot::Vector{Float64};
 end
-# DerivsType: Includes the derivatives of theta, len, xsm, ysm.
-mutable struct DerivsType
-	mterm::Float64; nterm::Vector{Float64}; 
-	xsmdot::Float64; ysmdot::Float64
-end
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 mutable struct TargetsType
 	xtar::Vector{Float64}; ytar::Vector{Float64};
@@ -34,12 +29,8 @@ end
 function new_thlen()
 	return ThetaLenType(evec(),0.,0.,0.,evec(),evec(),evec())
 end
-function new_dvec(nbods::Int)
-	return [new_derivs() for nn=1:nbods]
-end
-function new_derivs()
-	return DerivsType(0.,evec(),0.,0.)
-end
+
+
 evec() = Array{Float64}(undef,0)
 
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
@@ -254,4 +245,27 @@ function getpdrop(thlenden::ThLenDenType, nouter::Int, ibary::Int, x0::Float64 =
 		@warn string("The flux does not match at x0 and -x0: qreldiff = ", round(qreldiff,sigdigits=3))
 	end
 	return pdrop,qavg
+end
+
+# regulargridtargs: Set up target points on a regular grid; return targets.
+function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
+	xtar,ytar = regulargrid(xlocs,ylocs)
+	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
+	targets.xtar = xtar
+	targets.ytar = ytar
+	return targets
+end
+# regulargrid: Set up target points on a regular grid; return x and y.
+function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
+	nx = length(xlocs)
+	ny = length(ylocs)
+	ntargs = nx*ny
+	xtar = zeros(Float64,ntargs)
+	ytar = zeros(Float64,ntargs)
+	for nn=1:nx
+		n1,n2 = n1n2(ny,nn)
+		xtar[n1:n2] .= xlocs[nn]
+		ytar[n1:n2] .= ylocs
+	end
+	return xtar,ytar
 end
