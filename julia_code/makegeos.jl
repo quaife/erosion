@@ -3,7 +3,6 @@
 # makegeos(10, 0.5, 4)
 # To make multiple geometries run: make9geos(10, 0.5)
 
-
 #--------------- INITIALIZATION ---------------#
 using Distributions
 using Random
@@ -12,18 +11,11 @@ using LinearAlgebra
 using DelimitedFiles
 include("./basic.jl")
 include("./thetalen.jl")
-include("./ioroutines.jl")
 mutable struct CircType
 	rad::Float64; xc::Float64; yc::Float64
 end
-function geosfolder()
-	return "../input_geos/"
-end
-function figfolder()
-	return "../zFigsGeos/"
-end
-include("iogeos.jl")
-
+geosfolder() = "../input_geos/"
+figfolder() = "../zFigsGeos/"
 
 #--------------- MAIN ROUTINE ---------------#
 # Call the main routine with given nbods and areafrac for 9 different seeds.
