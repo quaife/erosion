@@ -2,8 +2,8 @@ using Parameters
 # The set of parameters.
 @with_kw struct ParamSet
 	# The data file for the initial geometry
-	infolder::AbstractString = "input_geos/afrac06/"
-	label::AbstractString = "20-5"
+	infolder::AbstractString = "input_geos/test/"
+	label::AbstractString = "02-1"
 	# Varied computational parameters
 	npts::Int = 128			# The number of points per body.
 	ibary::Int = 1			# Use barycentric (1) or not (0).
