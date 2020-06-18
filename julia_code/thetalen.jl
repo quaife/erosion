@@ -91,8 +91,8 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
 		# Save the new thlen values in a vector.
-		thlen = ThetaLenType(th1,len1,xsm1,ysm1,[],[],[])
-		push!(thlv1,thlen)
+		thlen1 = ThetaLenType(th1,len1,xsm1,ysm1,[],[],[])
+		push!(thlv1,thlen1)
 	end
 	thld1 = ThLenDenType(thlv1,[],[],0)	
 	return thld1
