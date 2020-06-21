@@ -140,23 +140,9 @@ function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, para
 end
 
 #--------------- SMALL ROUTINES ---------------#
-
-
-# Calculate n1 and n2 to divy up the separate bodies.
-function n1n2(npts::Integer, nn::Integer)
-	n1 = npts*(nn-1)+1
-	n2 = npts*nn
-	return n1,n2
-end
 # xyrot: Rotate the x and y coordinates by 90 degrees CCW.
-function xyrot(xv::Vector{Float64}, yv::Vector{Float64})
-	xrot = -yv
-	yrot = xv
-	return xrot,yrot
-end
+xyrot(xv::Vector{Float64}, yv::Vector{Float64}) = -yv, xv
 
-
-#--------------- KEEP PRESSURE DROP FIXED ---------------#
 # getnxy: Get npts, nbods, and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	nbods = length(thlenden.thlenvec)
@@ -181,6 +167,9 @@ function getnxyden(thlenden::ThLenDenType, params::ParamSet, fixpdrop::Bool, rot
 	end
 	return nbods,xv,yv,density
 end
+
+#--------------- KEEP PRESSURE DROP FIXED ---------------#
+
 # getumax: Get umax to rescale the density function.
 function getumax(thlenden::ThLenDenType, params::ParamSet, fixpdrop::Bool, x0::Float64 = 2.0)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
@@ -239,7 +228,8 @@ function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	xtar = zeros(Float64,ntargs)
 	ytar = zeros(Float64,ntargs)
 	for nn=1:nx
-		n1,n2 = n1n2(ny,nn)
+		n1 = ny*(nn-1)+1
+		n2 = ny*nn
 		xtar[n1:n2] .= xlocs[nn]
 		ytar[n1:n2] .= ylocs
 	end
