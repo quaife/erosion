@@ -52,11 +52,11 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		deleteat!(thld_derivs.thlenvec, deletevec)
 	end
 	# Loop over all bodies and advance each forward in time.
-	npts, nbods = getnvals(thld0.thlenvec)
+	nbods = length(thld0.thlenvec)
 	@assert (length(dvec) == length(thld_derivs.thlenvec) == nbods)
 	thlv1 = Array{ThetaLenType}(undef,0)
 	epsilon = params.epsilon
-	alpha = getalpha(npts)
+	alpha = getalpha(params.npts)
 	# zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
 	zetafun(len::Float64, matau::Float64) = 2*pi/len * matau
 	for nn = 1:nbods
@@ -91,10 +91,10 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
 		# Save the new thlen values in a vector.
-		thlen1 = ThetaLenType(th1,len1,xsm1,ysm1,[],[],[])
+		thlen1 = ThetaLenType(th1,len1,xsm1,ysm1,[])
 		push!(thlv1,thlen1)
 	end
-	thld1 = ThLenDenType(thlv1,[],[],0)	
+	thld1 = ThLenDenType(thlv1,0,[],[])	
 	return thld1
 end
 
@@ -104,9 +104,9 @@ function getderivs(thlenden::ThLenDenType, params::ParamSet)
 	getstress!(thlenden, params)
 	nbods = length(thlenden.thlenvec)
 	dvec = Array{DerivsType}(undef, 0)
-	for nn = 1:nbods
-		thlen = thlenden.thlenvec[nn]
-		derivs = getderivs(thlen, params.epsilon, params.fixarea)
+	for bod = 1:nbods
+		thlen = thlenden.thlenvec[bod]
+		derivs = getderivs(thlen, params)
 		push!(dvec,derivs)
 	end
 	return dvec
@@ -114,11 +114,10 @@ end
 #= getderivs: Get the derivative terms for a single body.
 These are the derivatives of theta, len, xsm, and ysm.
 mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
-function getderivs(thlen::ThetaLenType, epsilon::Float64, fixarea::Bool)
+function getderivs(thlen::ThetaLenType, params::ParamSet)
 	# Extract the variables.
 	theta, len, atau = thlen.theta, thlen.len, thlen.atau
-	# Make sure atau has been computed.
-	@assert length(atau)>0
+	@unpack epsilon, fixarea = params
 	# Compute the effective atau to be used in evolution, depending on fixarea.
 	matau = mean(atau)
 	ataueff = atau .- fixarea*matau
@@ -188,25 +187,16 @@ function getalpha(npts::Integer)
 	dalpha = 2*pi/npts
 	return alpha = collect(range(0.5*dalpha, step=dalpha, length=npts))
 end
-# getxy!: Dispatch for input of type ThetaLenType. Only computes if they are not loaded.
-function getxy!(thlen::ThetaLenType)
-	if thlen.xx==[] || thlen.yy==[]
-		thlen.xx, thlen.yy = getxy(thlen.theta, thlen.len, thlen.xsm, thlen.ysm)
-	end
-	return
-end
 #= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
 xsm and ysm are the boundary-averaged values. =#
-function getxy(theta::Vector{Float64}, len::Float64, xsm::Float64, ysm::Float64)
+function getxy(thlen::ThetaLenType)
+	theta, len, xsm, ysm = thlen.theta, thlen.len, thlen.xsm, thlen.ysm
 	test_theta_means(theta)
 	@assert len > 0.
-	# The partial derivatives dx/dalpha and dy/dalpha.
 	dx = len/(2*pi) * (cos.(theta) .- mean(cos.(theta)))
 	dy = len/(2*pi) * (sin.(theta) .- mean(sin.(theta)))
-	# Integrate to get the x,y coordinates; result will have mean zero.
-	xx = specint(dx); yy = specint(dy)
-	# Move to have the correct average values.
-	xx .+= xsm; yy .+= ysm
+	xx = specint(dx) .+ xsm
+	yy = specint(dy) .+ ysm
 	return xx,yy
 end
 
