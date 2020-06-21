@@ -64,7 +64,6 @@ function compute_denrot!(thlenden::ThLenDenType, params::ParamSet)
 	end
 end
 
-
 #--- THE SHEAR STRESS ---#
 # compute_stress: Fortran wrapper.
 function compute_stress(xx::Vector{Float64}, yy::Vector{Float64}, 
@@ -86,11 +85,6 @@ function compute_stress(thlenden::ThLenDenType, params::ParamSet;
 	tau = compute_stress(xv,yv,density,npts,nbods,nouter,ibary)
 	return reshape(tau,npts,nbods)
 end
-
-
-
-
-
 
 #--- THE PRESSURE ---#
 # compute_pressure: Fortran wrapper.
@@ -169,7 +163,6 @@ function getnxyden(thlenden::ThLenDenType, params::ParamSet, fixpdrop::Bool, rot
 end
 
 #--------------- KEEP PRESSURE DROP FIXED ---------------#
-
 # getumax: Get umax to rescale the density function.
 function getumax(thlenden::ThLenDenType, params::ParamSet, fixpdrop::Bool, x0::Float64 = 2.0)
 	# NOTE: With u = 1-y^2 and x0 = 2, the pressure drop is pdrop = 8.
@@ -211,7 +204,6 @@ function getpdrop(thlenden::ThLenDenType, params::ParamSet, x0::Float64 = 2.0; r
 	end
 	return pdrop,qavg
 end
-
 # regulargridtargs: Set up target points on a regular grid; return targets.
 function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	xtar,ytar = regulargrid(xlocs,ylocs)

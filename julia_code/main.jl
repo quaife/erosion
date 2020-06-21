@@ -97,13 +97,7 @@ function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	plotfile = string(plotfolder(params),"shape",nout_string,".pdf")
 	plot_curves(plotfile, thlenden.thlenvec)
 	# Compute the density functions.
-	
-
-
-	####stress = getstress(thlenden, params)
-
-
-
+	getstress!(thlenden, params)
 	compute_denrot!(thlenden, params)
 	# Write the data to a file.
 	varlabel = string("thlenden",nout_string)
