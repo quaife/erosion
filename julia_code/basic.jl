@@ -134,7 +134,6 @@ end
 #--------------- SMALL ROUTINES ---------------#
 # xyrot: Rotate the x and y coordinates by 90 degrees CCW.
 xyrot(xv::Vector{Float64}, yv::Vector{Float64}) = -yv, xv
-
 # getnxy: Get npts, nbods, and the x-y coordinates of all the bodies.
 function getnxy(thlenden::ThLenDenType)
 	nbods = length(thlenden.thlenvec)
@@ -202,14 +201,6 @@ function getpdrop(thlenden::ThLenDenType, params::ParamSet, x0::Float64 = 2.0; r
 	end
 	return pdrop,qavg
 end
-# regulargridtargs: Set up target points on a regular grid; return targets.
-function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
-	xtar,ytar = regulargrid(xlocs,ylocs)
-	targets = TargetsType([], [], [], [], [], [])
-	targets.xtar = xtar
-	targets.ytar = ytar
-	return targets
-end
 # regulargrid: Set up target points on a regular grid; return x and y.
 function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 	nx = length(xlocs)
@@ -224,4 +215,12 @@ function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
 		ytar[n1:n2] .= ylocs
 	end
 	return xtar,ytar
+end
+# regulargridtargs: Set up target points on a regular grid; return targets.
+function regulargridtargs(xlocs::Vector{Float64}, ylocs::Vector{Float64})
+	xtar,ytar = regulargrid(xlocs,ylocs)
+	targets = TargetsType([], [], [], [], [], [])
+	targets.xtar = xtar
+	targets.ytar = ytar
+	return targets
 end
