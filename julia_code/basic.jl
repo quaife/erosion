@@ -24,17 +24,15 @@ Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamSet)
 	# Compute the density and stress.
 	dummy, den_time = @timed( compute_density!(thlenden, params) )
-	stress, str_time = @timed(
-		compute_stress(thlenden,params,fixpdrop=params.fixpdrop) )
+	stress, str_time = @timed( compute_stress(thlenden,params,fixpdrop=params.fixpdrop) )
 	println("\nTime taken to compute density = ", round(den_time,sigdigits=3), "sec.")
 	println("Time taken to compute stress = ", round(str_time,sigdigits=3), "sec.")
 	# Smooth the stress and also save the mean of smoothed stress atau.
-	smooth_stress = similar(stress)
 	for bod = 1:length(thlenden.thlenvec)
-		smooth_stress[:,bod] = gaussfilter( abs.(stress[:,bod]), params.sigma)
-		thlenden.thlenvec[bod].matau = mean(smooth_stress[:,bod])
+		stress[:,bod] = gaussfilter( abs.(stress[:,bod]), params.sigma)
+		thlenden.thlenvec[bod].matau = mean(stress[:,bod])
 	end
-	return smooth_stress
+	return stress
 end
 
 #--------------- FORTRAN WRAPPERS ---------------#
@@ -56,7 +54,7 @@ end
 function compute_density!(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 	density = rotation ? thlenden.denrot : thlenden.density
 	if length(density) > 0; return; end
-	println("Computing the density function; rotation = ", rotation)
+	println("Computing the density function with rotation = ", rotation)
 	nbods,xv,yv = getnxy(thlenden)
 	xv,yv = rotation ? xyrot(xv,yv) : (xv,yv)
 	density = compute_density(xv,yv,nbods,params)
@@ -131,6 +129,7 @@ function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, para
 			compute_qoi_targets(xv,yv,density,targets.xtar,targets.ytar,npts,nbods,nouter,ibary)
 	return
 end
+
 
 #--------------- SMALL ROUTINES ---------------#
 # xyrot: Rotate the x and y coordinates by 90 degrees CCW.
