@@ -64,7 +64,7 @@ function get_thlenden(params::ParamSet)
 		thlen = circ2thlen(params.npts, rad, xc, yc)
 		push!(thlenvec, thlen)
 	end
-	return ThLenDenType(thlenvec,0,[],[])
+	return new_thlenden(thlenvec)
 end
 # readvec: Read a vector from a text file.
 function readvec(filename::AbstractString)
@@ -78,7 +78,7 @@ function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	alpha = getalpha(npts)
 	theta = 0.5*pi .+ alpha
 	len = 2*pi*rad
-	return ThetaLenType(theta,len,xc,yc,[])
+	return ThetaLenType(theta,len,xc,yc,NaN)
 end
 
 # Set the plot folder.
@@ -97,8 +97,8 @@ function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	plotfile = string(plotfolder(params),"shape",nout_string,".pdf")
 	plot_curves(plotfile, thlenden.thlenvec)
 	# Compute the density functions.
-	getstress!(thlenden, params)
-	compute_denrot!(thlenden, params)
+	compute_density!(thlenden, params)
+	compute_density!(thlenden, params, rotation=true)
 	# Write the data to a file.
 	varlabel = string("thlenden",nout_string)
 	add_data(params.outfile, varlabel, thlenden)

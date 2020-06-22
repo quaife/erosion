@@ -64,15 +64,14 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		# thlen0
 		thlen0  = thld0.thlenvec[nn]
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
-		# derivs
-		derivs = dvec[nn]
-		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
 		# thlend	
 		thlend = thld_derivs.thlenvec[nn]
 		lend = thlend.len
 		# matau = mean(atau)
-		matau0 = mean(thlen0.atau)
-		mataud = mean(thlend.atau)	
+		matau0, mataud = thlen0.matau, thlend.matau
+		# derivs
+		derivs = dvec[nn]
+		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
 		# Advance len first.
 		len1 = len0 + dt1*mterm
 		@assert (len1 > 0.)	
@@ -91,22 +90,21 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
 		# Save the new thlen values in a vector.
-		thlen1 = ThetaLenType(th1,len1,xsm1,ysm1,[])
+		thlen1 = ThetaLenType(th1,len1,xsm1,ysm1,NaN)
 		push!(thlv1,thlen1)
 	end
-	thld1 = ThLenDenType(thlv1,0,[],[])	
+	thld1 = new_thlenden(thlv1)
 	return thld1
 end
 
 #--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
 # getderivs: Get the derivative terms for all of the bodies.
 function getderivs(thlenden::ThLenDenType, params::ParamSet)
-	getstress!(thlenden, params)
-	nbods = length(thlenden.thlenvec)
+	atau = getstress!(thlenden, params)
 	dvec = Array{DerivsType}(undef, 0)
-	for bod = 1:nbods
+	for bod = 1:length(thlenden.thlenvec)
 		thlen = thlenden.thlenvec[bod]
-		derivs = getderivs(thlen, params)
+		derivs = getderivs(thlen, params, atau[:,bod])
 		push!(dvec,derivs)
 	end
 	return dvec
@@ -114,12 +112,11 @@ end
 #= getderivs: Get the derivative terms for a single body.
 These are the derivatives of theta, len, xsm, and ysm.
 mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
-function getderivs(thlen::ThetaLenType, params::ParamSet)
+function getderivs(thlen::ThetaLenType, params::ParamSet, atau::Vector{Float64})
 	# Extract the variables.
-	theta, len, atau = thlen.theta, thlen.len, thlen.atau
+	theta, len, matau = thlen.theta, thlen.len, thlen.matau
 	@unpack epsilon, fixarea = params
 	# Compute the effective atau to be used in evolution, depending on fixarea.
-	matau = mean(atau)
 	ataueff = atau .- fixarea*matau
 	# Calculate the derivative terms.
 	alpha = getalpha(length(theta))

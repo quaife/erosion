@@ -3,13 +3,14 @@
 #--------------- OBJECTS ---------------#
 # ThetaLenType: Includes the geometry data and stress of a single body.
 mutable struct ThetaLenType
-	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64; atau::Vector{Float64}
+	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64; matau::Float64
 end
 # ThLenDenType: Includes the vector of all thlens and the density function.
 mutable struct ThLenDenType
 	thlenvec::Vector{ThetaLenType}; tt::Float64;
 	density::Vector{Float64}; denrot::Vector{Float64}; 
 end
+new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0, [],[])
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 mutable struct TargetsType
 	xtar::Vector{Float64}; ytar::Vector{Float64};
@@ -22,13 +23,18 @@ end
 Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamSet)
 	# Compute the density and stress.
-	compute_density!(thlenden, params)
-	stress = compute_stress(thlenden,params,fixpdrop=params.fixpdrop,rotation=false)
-	# Smooth the stress.
-	nbods = length(thlenden.thlenvec)
-	for bod = 1:nbods
-		thlenden.thlenvec[bod].atau = gaussfilter( abs.(stress[:,bod]), params.sigma)
+	dummy, den_time = @timed( compute_density!(thlenden, params) )
+	stress, str_time = @timed(
+		compute_stress(thlenden,params,fixpdrop=params.fixpdrop) )
+	println("\nTime taken to compute density = ", round(den_time,sigdigits=3), "sec.")
+	println("Time taken to compute stress = ", round(str_time,sigdigits=3), "sec.")
+	# Smooth the stress and also save the mean of smoothed stress atau.
+	smooth_stress = similar(stress)
+	for bod = 1:length(thlenden.thlenvec)
+		smooth_stress[:,bod] = gaussfilter( abs.(stress[:,bod]), params.sigma)
+		thlenden.thlenvec[bod].matau = mean(smooth_stress[:,bod])
 	end
+	return smooth_stress
 end
 
 #--------------- FORTRAN WRAPPERS ---------------#
@@ -47,21 +53,14 @@ function compute_density(xx::Vector{Float64}, yy::Vector{Float64}, nbods::Int, p
 	return density
 end
 # compute_density! Computes the density function and saves in thlenden.
-function compute_density!(thlenden::ThLenDenType, params::ParamSet)
-	if length(thlenden.density) == 0
-		println("Computing the density function.")
-		nbods,xv,yv = getnxy(thlenden)
-		thlenden.density = compute_density(xv,yv,nbods,params)
-	end
-end
-# compute_denrot! Computes the rotated density function and saves in thlenden.
-function compute_denrot!(thlenden::ThLenDenType, params::ParamSet)
-	if length(thlenden.denrot) == 0
-		println("Computing the rotated density function.")
-		nbods,xv,yv = getnxy(thlenden)
-		xv,yv = xyrot(xv,yv)
-		thlenden.denrot = compute_density(xv,yv,nbods,params)
-	end
+function compute_density!(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
+	density = rotation ? thlenden.denrot : thlenden.density
+	if length(density) > 0; return; end
+	println("Computing the density function; rotation = ", rotation)
+	nbods,xv,yv = getnxy(thlenden)
+	xv,yv = rotation ? xyrot(xv,yv) : (xv,yv)
+	density = compute_density(xv,yv,nbods,params)
+	rotation ? thlenden.denrot = density : thlenden.density = density 
 end
 
 #--- THE SHEAR STRESS ---#
