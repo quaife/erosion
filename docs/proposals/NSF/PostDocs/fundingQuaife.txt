@@ -3,7 +3,7 @@ Source: Simons Foundation, Mathematics and Physical Sciences-Collaboration Grant
 Total Award Amount: $25,200
 Duration: September 1, 2017-August 31,2020
 PI Months Committed: 0
-Note: This is bridge funding that I can not hold once I am supported by NSF or another major funding source
+Note: This is bridge funding that I cannot hold once I am supported by NSF or another major funding source
 
 ----
 Title: The Role of Vorticity and Fuel Moisture on the Near-Field Plume Structure and Ember Dynamics 

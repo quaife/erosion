@@ -2,27 +2,27 @@
 Current Support:
 
 Title: Dynamic interactions between fluid flows and moving boundaries
-Source: Simons Foundation, Mathematics and Physical
-Sciences-Collaboration Grants for Mathematicians
+Source: Simons Foundation, Mathematics and Physical Sciences-Collaboration Grants for Mathematicians
 Total Award Amount: $42,000 (Travel funds only)
 Duration: September 1, 2017--August 31, 2022
 PI Months Committed: 0
-Note: This is bridge funding that I can not hold once I am supported by NSF or another major funding source
+Note: This is bridge funding that I cannot hold once I am supported by NSF or another major funding source.
 
 Pending Support:
 
 Title:  A Comprehensive Experimental And Computational Fluid Dynamics Analysis Of Coning In Non-Newtonian Tailings During Extraction From Tailings Pond
 Source:  Institute for Oil Sands Innovation
-Total Award Amount:} \$171,842
+Total Award Amount: $171,842
 Duration:  January 1, 2020--January 1, 2022
-Person-Months Per Year Committed to Project: Calendar: 0,
-Academic: 0, Summer: 0
-Notes:
+Person-Months Per Year Committed to Project: Calendar: 0, Academic: 0, Summer: 0
+Notes: This support has been pending for a long time and I have essentially given up on it. Even if awarded, I would decline this award in favor of the NSF award currently under negotiation.
 
 ----
+
 Title: Erosion, Transport, and Dispersion in Granular and Porous Media (this proposal)
 Source: National Science Foundation, Division of Mathematical
-Sciences, Computational Mathematics \\
-Total Award Amount:} \$439,824 \\ %\$439,193 \\
-Duration: July 1, 2020--June 30, 2023 \\
+Sciences, Computational Mathematics
+Total Award Amount: Under negotiation
+Duration: July 1, 2020--June 30, 2023
 Person-Months Per Year Committed to Project: Calendar: 0, Academic: 0, Summer: 1
+Note: This is the proposal under consideration.
