@@ -21,7 +21,7 @@ Source: National Science Foundation, Division of Mathematical Sciences, Computat
 Total Award Amount: Under negotiation
 Duration: July 1, 2020–June 30, 2023
 PI Months Committed: 1
-Student Months Committed: 1 Ph.D. student for 3 semesters a year for the entirety of the award
+Student Months Committed: 1 Ph.D. student for 3 semesters in years 1-2 and 2 semesters in year 3.
 Note: This is the proposal under consideration.
 
 ---
@@ -32,8 +32,3 @@ Duration: September 1, 2021–August 31, 2024
 Months Committed: 1
 Student Months Committed: 1 Ph.D. student for 2 semesters a year for the entirety of the award
 Note: This proposal is pending.
-
-
-
-
-
