@@ -1,0 +1,39 @@
+Title: Computational Methods for Complex Stokesian Fluids
+Source: Simons Foundation, Mathematics and Physical Sciences-Collaboration Grants for Mathematicians
+Total Award Amount: $25,200
+Duration: September 1, 2017-August 31,2020
+PI Months Committed: 0
+Note: This is bridge funding that I can not hold once I am supported by NSF or another major funding source
+
+----
+Title: The Role of Vorticity and Fuel Moisture on the Near-Field Plume Structure and Ember Dynamics 
+Source: Department of Defense, Strategic Environmental Research and Development Program
+Total Award Amount: $2,235,917
+Duration: October 2020-July 31,2024
+PI Months Committed: 1
+Student Months Committed: 1 Ph.D. student for 3 semesters for the entirety of the award
+Postdoc Months Committed: 1 Postdoc for 24 months
+Note: This is a multidisciplinary project that supports seven PIs. The project has been approved, but the contract has not been finalized.  
+
+----
+Title: Erosion, Transport, and Dispersion in Granular and Porous Media (this proposal)
+Source: National Science Foundation, Division of Mathematical Sciences, Computational Mathematics 
+Total Award Amount: Under negotiation
+Duration: July 1, 2020–June 30, 2023
+PI Months Committed: 1
+Student Months Committed: 1 Ph.D. student for 3 semesters a year for the entirety of the award
+Note: This is the proposal under consideration.
+
+---
+Title: Collaborative Research: Physicochemical Hydrodynamics of Semipermeable Vesicles in Confinement 
+Source: National Science Foundation, Division of Chemical, Bioengineering, Environmental and Transport Systems, Fluid Dynamics 
+Total Award Amount: $224,045
+Duration: September 1, 2021–August 31, 2024
+Months Committed: 1
+Student Months Committed: 1 Ph.D. student for 2 semesters a year for the entirety of the award
+Note: This proposal is pending.
+
+
+
+
+
