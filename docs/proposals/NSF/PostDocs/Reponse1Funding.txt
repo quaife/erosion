@@ -1,0 +1,73 @@
+1. A statement about other support (by email, all in plain text).
+ 
+Current Support for Moore:
+
+Title: Dynamic interactions between fluid flows and moving boundaries
+Source: Simons Foundation, Mathematics and Physical Sciences-Collaboration Grants for Mathematicians
+Total Award Amount: $42,000 (Travel funds only)
+Duration: September 1, 2017--August 31, 2022
+PI Months Committed: 0
+Note: This is bridge funding that I cannot hold once I am supported by NSF or another major funding source.
+
+Pending Support for Moore:
+
+Title:  A Comprehensive Experimental And Computational Fluid Dynamics Analysis Of Coning In Non-Newtonian Tailings During Extraction From Tailings Pond
+Source:  Institute for Oil Sands Innovation
+Total Award Amount: $171,842
+Duration:  January 1, 2020--January 1, 2022
+Person-Months Per Year Committed to Project: Calendar: 0, Academic: 0, Summer: 0
+Notes: This support has been pending for a long time and I have essentially given up on it. Even if awarded, I would decline this award in favor of the NSF award currently under negotiation.
+——
+
+Title: Erosion, Transport, and Dispersion in Granular and Porous Media (this proposal)
+Source: National Science Foundation, Division of Mathematical
+Sciences, Computational Mathematics
+Total Award Amount: Under negotiation
+Duration: July 1, 2020--June 30, 2023
+Person-Months Per Year Committed to Project: Calendar: 0, Academic: 0, Summer: 1
+Note: This is the proposal under consideration.
+
+Statement on foreign support and summer presence for Moore:
+Moore does not have any foreign support and will be primarily at his home institution during the summer.
+ ——
+
+Current Support for Quaife:
+ 
+Title: Computational Methods for Complex Stokesian Fluids
+Source: Simons Foundation, Mathematics and Physical Sciences-Collaboration Grants for Mathematicians
+Total Award Amount: $25,200
+Duration: September 1, 2017-August 31,2020
+PI Months Committed: 0
+Note: This is bridge funding that I cannot hold once I am supported by NSF or another major funding source
+ 
+Pending Support for Quaife:
+ 
+Title: The Role of Vorticity and Fuel Moisture on the Near-Field Plume Structure and Ember Dynamics 
+Source: Department of Defense, Strategic Environmental Research and Development Program
+Total Award Amount: $2,235,917
+Duration: October 2020-July 31,2024
+PI Months Committed: 1
+Student Months Committed: 1 Ph.D. student for 3 semesters for the entirety of the award
+Postdoc Months Committed: 1 Postdoc for 24 months
+Note: This is a multidisciplinary project that supports seven PIs. The project has been approved, but the contract has not been finalized.  
+----
+ 
+Title: Erosion, Transport, and Dispersion in Granular and Porous Media (this proposal)
+Source: National Science Foundation, Division of Mathematical Sciences, Computational Mathematics 
+Total Award Amount: Under negotiation
+Duration: July 1, 2020–June 30, 2023
+PI Months Committed: 1
+Student Months Committed: 1 Ph.D. student for 3 semesters in years 1-2 and 2 semesters in year 3.
+Note: This is the proposal under consideration.
+---
+ 
+Title: Collaborative Research: Physicochemical Hydrodynamics of Semipermeable Vesicles in Confinement 
+Source: National Science Foundation, Division of Chemical, Bioengineering, Environmental and Transport Systems, Fluid Dynamics 
+Total Award Amount: $224,045
+Duration: September 1, 2021–August 31, 2024
+Months Committed: 1
+Student Months Committed: 1 Ph.D. student for 2 semesters a year for the entirety of the award
+Note: This proposal is pending.
+
+Statement on foreign support and summer presence for Quaife:
+Quaife does not have any foreign support and will be primarily at his home institution during the summer.
