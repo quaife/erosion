@@ -1,0 +1,88 @@
+\documentclass{article}
+
+\usepackage[dvinames]{xcolor}
+% Measurements are taken directly from the guide
+\usepackage[top=2in,left=1.5in,bottom=0.5in,right=0.625in]{geometry}
+\usepackage{graphicx}
+\usepackage[colorlinks=false,
+pdfborder={0 0 0},
+]{hyperref}
+\usepackage[absolute]{textpos}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+% A nice serif font, but no the prescribed
+% nonfree ITC stone
+\usepackage[oldstylenums]{kpfonts}
+\usepackage[T1]{fontenc}
+
+\definecolor{fsugarnet}{RGB}{120,47,64}
+\definecolor{fsugold}{RGB}{206,184,136}
+\definecolor{fsublack}{RGB}{44,42,41}
+\definecolor{fsuwhite}{RGB}{255,255,255}
+
+% No paragraph indentation
+\parindent0pt
+\setlength{\parskip}{0.8\baselineskip}
+\raggedright
+\pagestyle{empty}
+% Ensure consistency in the footer
+\urlstyle{sf}
+
+\begin{document}
+
+\today
+\bigskip
+
+Dear Dr.~Peszynska:
+
+I would like to request a restructuring of the NSF grant with Award
+Number 2012560. PI Moore has left Florida State University (FSU) and
+taken a faculty position at the US Naval Academy. Dr.~Moore's new
+department does not have a graduate program, so the funded graduate
+student's senior advisor will be co-PI Quaife at FSU. So that the grant
+can be managed by FSU, I request that Dr.~Quaife becomes the lead PI and
+Dr.~Moore becomes the co-PI. I also request permission for FSU to create
+a sub-contract for the US Naval Academy that will manage Dr.~Moore's
+funding.
+
+This request is written in consultation with Dr.~Moore. Please contact
+me if further clarification is required.
+
+Sincerely,
+\vspace{2\baselineskip}
+
+Bryan Quaife \\
+Assistant Professor
+
+
+% -------------------------------------------------------
+% Add logo, the text under the crimson line,
+% and the line itself
+\begin{textblock*}{2in}[0.3066,0.39](1.5in,1.33in)
+\includegraphics[width=2in]{fsu_logo}
+\end{textblock*}
+\begin{textblock*}{6.375in}(1.5in,1.55in)
+% 6.375=8.5 - 1.5 - 0.625
+\sffamily
+\hfill \color{fsugarnet} Department of Scientific Computing \\
+\hfill Dr.~Bryan Quaife,
+Assistant Professor
+\end{textblock*}
+\begin{tikzpicture}[remember picture,overlay]
+\draw[color=fsugarnet,line width=1pt] (current page.north west)+(1.5in,-1.5in) -- ($(-0.625in,-1.5in)+(current page.north east)$);
+\end{tikzpicture}
+
+% Add the footnote. A
+% better way would be to
+% use fancyhdr
+\vfill
+{\footnotesize\color{fsugarnet}\sffamily
+400 Dirac Science Library, Tallahassee, FL
+32306-4120 \\
+[-0.1\baselineskip]
+(512) 436-1148 \textbullet\
+\url{bquaife@fsu.edu}
+\textbullet\
+\url{http://www.sc.fsu.edu/~bquaife}
+}
+\end{document}
