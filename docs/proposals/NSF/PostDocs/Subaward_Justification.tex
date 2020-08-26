@@ -1,0 +1,95 @@
+\documentclass{article}
+
+\usepackage[dvinames]{xcolor}
+% Measurements are taken directly from the guide
+\usepackage[top=2in,left=1.5in,bottom=0.5in,right=0.625in]{geometry}
+\usepackage{graphicx}
+\usepackage[colorlinks=false,
+pdfborder={0 0 0},
+]{hyperref}
+\usepackage[absolute]{textpos}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+% A nice serif font, but no the prescribed
+% nonfree ITC stone
+\usepackage[oldstylenums]{kpfonts}
+\usepackage[T1]{fontenc}
+
+\definecolor{fsugarnet}{RGB}{120,47,64}
+\definecolor{fsugold}{RGB}{206,184,136}
+\definecolor{fsublack}{RGB}{44,42,41}
+\definecolor{fsuwhite}{RGB}{255,255,255}
+
+% No paragraph indentation
+\parindent0pt
+\setlength{\parskip}{0.8\baselineskip}
+\raggedright
+\pagestyle{empty}
+% Ensure consistency in the footer
+\urlstyle{sf}
+
+\begin{document}
+
+\today
+\bigskip
+
+Dear Dr.~Peszynska:
+
+This letter serves as justification for a subaward of NSF grant Award
+Number 2012560. Dr.~Moore at the US Naval Academy is uniquely qualified
+to perform two deliverables:
+\begin{enumerate}
+  \item Characterizing permeability, anisotropy, and pore size dynamics
+    to inform Darcy-based homogenized models.
+  \item Developing and validating new parameterizations using machine
+    learning techniques and numerical simulations.
+\end{enumerate}
+These efforts will be coordinate with PI Quaife throughout the duration
+of the award, and they are fundamental to the success of the remaining
+deliverables.
+
+Please note that Dr.~Moore was originally a PI on this proposal, but it
+was necessary to restructure his portion of the funding to a sub-award
+as he left Florida State University. 
+
+This justification is written in consultation with Dr.~Moore. Please
+contact me if further clarification is required.
+
+Sincerely,
+\vspace{2\baselineskip}
+
+Bryan Quaife \\
+Assistant Professor
+
+
+% -------------------------------------------------------
+% Add logo, the text under the crimson line,
+% and the line itself
+\begin{textblock*}{2in}[0.3066,0.39](1.5in,1.33in)
+\includegraphics[width=2in]{fsu_logo}
+\end{textblock*}
+\begin{textblock*}{6.375in}(1.5in,1.55in)
+% 6.375=8.5 - 1.5 - 0.625
+\sffamily
+\hfill \color{fsugarnet} Department of Scientific Computing \\
+\hfill Dr.~Bryan Quaife,
+Assistant Professor
+\end{textblock*}
+\begin{tikzpicture}[remember picture,overlay]
+\draw[color=fsugarnet,line width=1pt] (current page.north west)+(1.5in,-1.5in) -- ($(-0.625in,-1.5in)+(current page.north east)$);
+\end{tikzpicture}
+
+% Add the footnote. A
+% better way would be to
+% use fancyhdr
+\vfill
+{\footnotesize\color{fsugarnet}\sffamily
+400 Dirac Science Library, Tallahassee, FL
+32306-4120 \\
+[-0.1\baselineskip]
+(512) 436-1148 \textbullet\
+\url{bquaife@fsu.edu}
+\textbullet\
+\url{http://www.sc.fsu.edu/~bquaife}
+}
+\end{document}

@@ -2,7 +2,7 @@
       implicit real*8 (a-h,o-z)
 
       parameter (ninner = 2**8)
-      parameter (nbodies = 5)
+      parameter (nbodies = 1)
       parameter (nouter = 2**10)
       parameter (ntargets = 50)
       parameter (maxbodies = 10)
@@ -58,17 +58,17 @@ c     Testing for stress tensor
         phi(k) = 0.d0
       enddo
       centerx(1) = -0.5d0
-      centerx(2) = -0.3d0
-      centerx(3) = -0.1d0
-      centerx(4) = +0.1d0
-      centerx(5) = +0.3d0
-      centerx(6) = +0.5d0
+c      centerx(2) = -0.3d0
+c      centerx(3) = -0.1d0
+c      centerx(4) = +0.1d0
+c      centerx(5) = +0.3d0
+c      centerx(6) = +0.5d0
       centery(1) = 0.d0
-      centery(2) = 0.d0
-      centery(3) = 0.d0
-      centery(4) = 0.d0
-      centery(5) = 0.d0
-      centery(6) = 0.d0
+c      centery(2) = 0.d0
+c      centery(3) = 0.d0
+c      centery(4) = 0.d0
+c      centery(5) = 0.d0
+c      centery(6) = 0.d0
 c      
 c      radius(1) = 2.d-1
 c      radius(2) = 2.d-1
@@ -118,7 +118,8 @@ c      phi(2) = 0.d0
       ibary = 1
       ifmm = 1
       maxl = 2000
-      call stokesSolver(ninner,nbodies,nouter,ifmm,ibary,maxl,
+      ibc = 0;
+      call stokesSolver(ninner,nbodies,nouter,ifmm,ibary,ibc,maxl,
      $        x,y,den,iter)
 c     pass in number of points and x and y coordinates and return the
 c     density function on the boundary
@@ -137,10 +138,10 @@ c        print *, 'computeQoiTargets_Bary'
 c      else 
 c        print *, 'computeQoiTargets_trap'      
 c      endif
-      
+c      
       call computeQoiTargets(ninner,nbodies,nouter,ibary,x,y,den,
      $  ntargets*ntargets,xtar,ytar,utar,vtar,press_tar,vort_tar)
-     
+c     
 c      call computeShearStress(ninner,nbodies,nouter,x,y,den,ibary,
 c     $    shear_stress)
 c     pass in the density function and return the shear_stress
@@ -159,23 +160,6 @@ c      close(unit=22)
 c      print *, 'computeDrag' 
       
       
-c      if (ibary .eq. 1) then
-c        do j = 1,nbodies        
-c          do k = 1,ninner
-c            theta = dble(k-1)*dtheta
-c            var_rad = radius(j) + 0.0001d0
-c            xtar_test((j-1)*ninner+k) = centerx(j) + var_rad*
-c     $          (dcos(phi(j))*dcos(theta) + 
-c     $           2.d0*dsin(phi(j))*dsin(theta))
-c            ytar_test((j-1)*ninner+k) = centery(j) + var_rad*
-c     $          (-dsin(phi(j))*dcos(theta) + 
-c     $           2.d0*dcos(phi(j))*dsin(theta))
-c          enddo
-c        enddo
-c        call computeQoiTargets(ninner,nbodies,nouter,ibary,x,y,den,
-c     $    ninner*nbodies,xtar_test,ytar_test,utar_test,vtar_test,
-c     $    press_tar_test,vort_tar_test) 
-c     
 c       open(unit=10,file='output/shear_stress_test.dat')     
 c       do k = 1,ninner*nbodies
 c         write(10,1000) vort_tar_test(k)
