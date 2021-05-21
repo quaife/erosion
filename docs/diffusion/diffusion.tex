@@ -1,0 +1,247 @@
+\documentclass[preprint, 10pt]{elsarticle}
+
+\newcommand{\mcaption}[2]{\caption{\small \em #1}\label{#2}} \newcommand{\secref}[1]{\ref{#1}}
+
+\input{preambles.tex}
+\begin{document}
+
+\title{Diffusion in Cool Domains with BIEs}
+
+\author[Bryan1]{Jesse Cherry}
+\author[Alan]{Alan Lindsay}
+\author[Bryan1,Bryan2]{Bryan D.~Quaife}
+\author[Nick]{M.~Nicholas J.~Moore}
+
+\address[Nick]{Department of Mathematics, United States Naval Academy,
+Annapolis, MD, 21402.}
+\address[Bryan1]{Department of Scientific Computing, Florida State University, Tallahassee, FL, 32306.}
+\address[Bryan2]{Geophysical Fluid Dynamics Institute, Florida State
+University, Tallahassee, FL, 32306.}
+\address[Alan]{Department of Applied \& Computational Math \&
+Statistics, University of Notre Dame, South Bend, IN, 46656.}
+
+\begin{abstract} 
+\end{abstract}
+
+\begin{keyword}
+  keyword 1 \sep keyword 2 \sep keyword 3 
+\end{keyword}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction\label{s:intro}}
+
+\cite{chi-moo-qua2020}
+\cite{qua-moo2018}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Contributions}
+
+
+\paragraph{Limitations}
+
+\paragraph{Related Work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Outline of the Paper}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formulation}
+\label{s:formulation}
+We are interested in solving the two-dimensional dimensionless diffusion
+equation in an unbounded domain $\Omega$ with a homogeneous Dirichlet
+boundary condition. For the remainder of the paper, we assume the Peclet
+number is one. We an initial condition that is a delta centered at
+$\xx^* \in
+\Omega$
+\begin{subequations}
+  \label{eqn:diffusion}
+  \begin{alignat}{3}
+    \pderiv{c}{t} &= \Delta c, &&\xx \in \Omega,  \\
+    c &= 0 &&\xx \in \bd\Omega, \\
+    c(\xx,0) &= \delta(\xx - \xx^*_k), \qquad &&\xx \in \Omega.
+  \end{alignat}
+\end{subequations}
+In addition, $c(\xx,t)$ must go to zero as $|\xx|\rightarrow \infty$ for
+all time. We note that our solver is easily extended to the case where
+the initial condition is a finite sum of weighted delta functions.
+
+To solve~\eqref{eqn:diffusion}, we introduced the Laplace transformed
+variable
+\begin{align}
+  C(\xx,s) = \LL[c](s) = \int_{0}^{\infty} e^{-st} c(\xx,t)\, dt.
+\end{align}
+Taking the Laplace transform of equation~\eqref{eqn:diffusion}, we
+arrive at the elliptic PDE
+\begin{subequations}
+  \begin{alignat}{3}
+    (s - \Delta) C(\xx,s) &= \delta(\xx - \xx^*), \qquad 
+      &&\xx \in \Omega, \\
+    C(\xx,s) &= 0 &&\xx \in \bd\Omega.
+  \end{alignat} 
+\end{subequations}
+Note that the solution of this PDE depends on $s \in \CC$. For a given
+$s$, $C$ can be decomposed as
+\begin{align}
+  C(\xx,s) = C^{h}(\xx,s) + G(\xx-\xx^*),
+\end{align}
+where 
+\begin{align}
+  G(\xx) = \frac{1}{2\pi} K_0\left( \sqrt{s} \|\xx\| \right)
+\end{align}
+is the fundamental solution of the differential operator $s - \Delta$.
+The homogeneous solution $C^{h}(\xx,s)$ must satisfy
+\begin{subequations}
+  \label{eqn:homoPDE}
+  \begin{alignat}{3}
+    (s - \Delta) C^{h} &= 0, &&\xx \in \Omega, \\
+    C^{h}(\xx,s) &= -G(\xx-\xx^*), \qquad &&\xx \in \bd\Omega.
+  \end{alignat}
+\end{subequations}
+and this guarantees that $C(\xx,s)$ satisfies the homogeneous Dirichlet
+boundary condition.
+
+In the following sections we describe integral equation methods to solve
+both the homogeneous PDE~\eqref{eqn:homoPDE} and to construct $c(\xx,t)$
+by computing a Bromwich integral.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boundary Integral Equation Formulation} 
+\label{sec:bies}
+To solve~\eqref{eqn:homoPDE}, we use a boundary integral equation (BIE)
+formulation. In this manner, we are able to resolve complex geometries,
+achieve high-order accuracy, and satisfy far-field boundary conditions.
+Because of the Dirichlet boundary condition, we write $C^{h}(\xx,s)$ as
+a double-layer potential 
+\begin{align}
+  \label{eqn:DLP}
+  C^{h}(\xx,s) = \DD[\sigma](\xx) := 
+    \frac{1}{2\pi} \int_{\bd \Omega} \pderiv{}{\nn}
+    G(\xx - \yy) \sigma(\yy)\, ds_\yy, \quad \xx \in \Omega,
+\end{align}
+where $G$ is the fundamental solution of $s - \Delta$, and $\nn$ is the
+unit outward normal of $\bd\Omega$ at $\yy$. The unknown density
+function $\sigma$ satisfies the Fredholm second-kind integral equation
+\begin{align}
+  \label{eqn:BIE}
+  \frac{1}{2} \sigma(\xx) + \DD[\sigma](\xx) = -G(\xx - \xx^*),
+    \quad \xx \in \bd\Omega.
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Inverting the Laplace Transform}
+\label{sec:bromwich}
+Having a method to solve for $C^h(\xx,s)$ for any $s \in \CC$, we
+require a method to recover the $c(\xx,t)$. The inverse Laplace
+transform, also known as the Bromwich integral, is
+\begin{align*}
+  \mathcal{L}^{-1}[C^h](\xx,s) = \frac{1}{2\pi i} 
+    \int_{\alpha - i\infty} ^{\alpha + i\infty} 
+    e^{st} C^h(\xx,s)\, ds, \quad \xx \in \Omega,
+\end{align*}
+where $\alpha$ is chosen so that it is larger than the real part of
+all the singularities of $C(\xx,s)$. The right-most singularity of
+$C(\xx,s)$ has real part 0, so we can choose any value $\alpha > 0$.
+This contour of integration is called the Bromwich integral and denoted
+by $B$.
+
+Along the Bromwich integral, the integrand $e^{st} C^h(s,t)$ oscillates
+and decays algebraically. Practically, this means that numerical
+quadrature can not be used to compute the Bromwich integral. However,
+the contour $B$ can be replaced with any other contour, so long as it
+remains to the right of all the singularities of $C^h(s,t)$. There are a
+variety of choices~\cite{tre-wei2014}, and we opt to use the Talbot
+contour parameterized as
+\begin{align*}
+  \alpha(\theta) = ...
+\end{align*}
+Along this contour, the integrand $e^{st} C^h(s,t)$ does not oscillate,
+decays exponentially to zero, and is scaled appropriately with respect
+to $t$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Computing the Flux Through $\bd\Omega$}
+\label{sec:flux}
+In many applications, the flux $c$ through $\bd\Omega$
+\begin{align}
+  \label{eqn:flux}
+  J(t) = \int_{\bd\Omega} \pderiv{}{\nn_\xx}c(\xx,t), ds_\xx,
+\end{align}
+is required, where $\nn_\xx$ is the unit outward normal at $\xx$.
+Computing the flux $J$ requires the flux of $C^h(\xx,s)$ through
+$\bd\Omega$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical methods}
+\label{s:method}
+To solve equation~\eqref{eqn:diffusion}, we require three quadrature
+methods. The first is used to solve the second-kind Fredholm integral
+equation~\eqref{eqn:BIE} and to evaluate the double-layer
+potential~\eqref{eqn:DLP}, and this is described in
+Section~\ref{sec:BIE}. The second is to compute the Talbot contour, and
+this is described in Section~\ref{sec:talbot}. Finally,
+Section~\ref{sec:flux} discusses how the flux is computed through
+$\bd\Omega$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Solving the BIE}
+\label{sec:BIE}
+\begin{itemize}
+  \item Collocation method
+  \item Limiting value at diagonal
+  \item Solved with GMRES
+  \item Near-singular integration?
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Computing the Inverse Laplace Transform} 
+\label{sec:talbot}
+\begin{itemize}
+  \item Plots of the different contours
+  \item Locations of the singularities of $C^h(s,t)$?
+  \item Apply the midpoint rule
+  \item Show that it converges with a simple numerical example?
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Computing the Flux}
+\label{sec:flux}
+\begin{itemize}
+  \item Need normal derivative of double-layer potential
+  \item Trick where we add and subtract normal derivative of Laplace DLP
+  \item Expected rate of convergence (we still don't fully understand
+    this).
+\end{itemize}
+
+
+
+
+
+
+%%-----------------------------------------------------------------%%
+% RESULTS SECTION
+%%-----------------------------------------------------------------%%
+\section{Numerical Results}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions\label{s:conclusions}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\bf Acknowledgments} 
+
+\bibliographystyle{plainnat} 
+%\biboptions{sort&compress}
+
+\bibliography{refs}
+
+
+\end{document}
+
+
