@@ -5,6 +5,7 @@ using DelimitedFiles
 using Plots
 
 include("basic.jl")
+include("callFortran")
 include("spectral.jl")
 include("thetalen.jl")
  
