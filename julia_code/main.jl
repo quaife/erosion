@@ -34,7 +34,7 @@ end
 # The routine to erode a group of bodies.
 function erosion(params::ParamSet)
 	# Initialize.
-	thlenden = get_thlenden(params)
+	thlenden = circs2thlenden(params)
 	newfolder(plotfolder(params))
 	nn, nout = 0, 0
 	# Enter the time loop to apply Runge-Kutta.
@@ -54,8 +54,8 @@ function erosion(params::ParamSet)
 	add_data(params.outfile, "noutputs", nout)
 end
 
-# Initialize thlenden from the input circle file.
-function get_thlenden(params::ParamSet)
+# circs2thlenden: Initialize thlenden from the input circle file.
+function circs2thlenden(params::ParamSet)
 	circdata = readvec(params.infile)
 	nbods = round(Int, popfirst!(circdata))
 	thlenvec = Array{ThetaLenType}(undef, 0)
@@ -65,13 +65,6 @@ function get_thlenden(params::ParamSet)
 		push!(thlenvec, thlen)
 	end
 	return new_thlenden(thlenvec)
-end
-# readvec: Read a vector from a text file.
-function readvec(filename::AbstractString)
-	iostream = open(filename, "r")
-	invec = readdlm(iostream, comments=true)[:,1]
-	close(iostream)
-	return invec
 end
 # Convert the circle data to thlen data.
 function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)

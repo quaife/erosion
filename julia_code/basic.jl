@@ -1,5 +1,13 @@
 # basic.jl: Basic routines such as datatypes and Stokes solvers.
 
+#--------------- BASIC IO --------------#
+# readvec: Read a vector from a text file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream, comments=true)[:,1]
+	close(iostream)
+	return invec
+end
 #--------------- OBJECTS ---------------#
 # ThetaLenType: Includes the geometry data and stress of a single body.
 mutable struct ThetaLenType
