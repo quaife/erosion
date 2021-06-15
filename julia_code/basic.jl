@@ -1,4 +1,6 @@
 # basic.jl: Basic routines such as datatypes.
+using DelimitedFiles
+include("run0.jl")
 
 # readvec: Read a vector from a text file.
 function readvec(filename::AbstractString)
@@ -20,7 +22,7 @@ mutable struct ThLenDenType
 end
 
 # Create a new ThLenDenType variable.
-new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0, [],[])
+new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0., [],[])
 
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
 mutable struct TargetsType

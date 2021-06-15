@@ -1,7 +1,6 @@
 # main.jl: The main routines to call
 using Statistics
 using JLD
-using DelimitedFiles
 using Plots
 
 include("basic.jl")

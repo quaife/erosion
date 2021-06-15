@@ -27,6 +27,7 @@ using Parameters
 	epsilon::Float64 = epsfac/npts
 	sigma::Float64 = sigfac/npts
 end
+
 # Call the main routine.
-include("main.jl")
+#include("main.jl")
 #main(ParamSet())
