@@ -1,6 +1,6 @@
 # main.jl: The main routines to call
 using Statistics
-using JLD
+using FileIO
 using Plots
 
 include("basic.jl")
