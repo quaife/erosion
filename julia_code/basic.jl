@@ -1,6 +1,5 @@
 # basic.jl: Basic routines such as datatypes.
 using DelimitedFiles
-include("run0.jl")
 
 # readvec: Read a vector from a text file.
 function readvec(filename::AbstractString)

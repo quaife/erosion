@@ -28,6 +28,6 @@ using Parameters
 	sigma::Float64 = sigfac/npts
 end
 
-# Call the main routine.
+# To call the main routine:
 #include("main.jl")
 #main(ParamSet())
