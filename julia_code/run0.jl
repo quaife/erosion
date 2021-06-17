@@ -23,7 +23,7 @@ using Parameters
 	nouter::Int = 1024		# The number of points on the outer boundary, default 1024.
 	# Derived parameters
 	infile::AbstractString = string("../",infolder,label,".circ")
-	outfile::AbstractString = string("../data-",label,".jld")
+	outfile::AbstractString = string("../data-",label,".jld2")
 	epsilon::Float64 = epsfac/npts
 	sigma::Float64 = sigfac/npts
 end
