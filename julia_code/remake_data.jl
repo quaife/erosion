@@ -3,6 +3,7 @@ using FileIO
 include("run0.jl")
 include("basic.jl")
 data_set() = "../output_data/erode-a06/"
+savefile(datafolder::AbstractString) = string(datafolder,"../data-", datalabel, ".jld2")
 
 #--------------- LITTLE IO ROUTINES ---------------#
 #= These routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
@@ -123,8 +124,7 @@ function remake_data(datafolder::AbstractString, datalabel::AbstractString)
 		thlendenvec[nn+1] = thlenden
 	end
 	# Save thlendenvec in a Julia data file.
-	savefile = string(datafolder,"../data-", datalabel, ".jld2")
-	save(savefile, "thlendenvec", thlendenvec, "params", params)
+	save(savefile(datafolder), "thlendenvec", thlendenvec, "params", params)
 end
 
 # Dispatch to run on simply a label using the folder given by data_set.
