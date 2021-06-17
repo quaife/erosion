@@ -1,12 +1,11 @@
 # Convert the lists of output text files to a Julia data file.
-using FileIO
-using JLD
+#using FileIO
+using JLD2
 
 include("run0.jl")
 include("basic.jl")
 data_set() = "../output_data/erode-a06/"
-savefile(datalabel::AbstractString) = 
-	string(data_set(),"data-",datalabel,".jld")
+savefile(label::AbstractString) = string(data_set(),"data-",label,".jld2")
 
 #--------------- LITTLE IO ROUTINES ---------------#
 #= These routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
@@ -127,8 +126,7 @@ function remake_data(datafolder::AbstractString, datalabel::AbstractString)
 		thlendenvec[nn+1] = thlenden
 	end
 	# Save thlendenvec in a Julia data file.
-	#save(savefile(datalabel), "thlendenvec", thlendenvec, "params", params)
-	save(savefile(datalabel), "thlendenvec", thlendenvec)
+	jldsave(savefile(datalabel); thlendenvec, params)
 end
 
 # Dispatch to run on simply a label using the folder given by data_set.
