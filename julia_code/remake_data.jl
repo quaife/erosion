@@ -1,11 +1,15 @@
-# Convert the lists of output text files to a Julia data file.
-#using FileIO
+# Main Goal: Convert the lists of output text files to a Julia data file.
+
+#--------------- BASIC STUFF ---------------#
 using JLD2
 
-include("run0.jl")
 include("basic.jl")
 data_set() = "../output_data/erode-a06/"
 savefile(label::AbstractString) = string(data_set(),"data-",label,".jld2")
+
+# Unused for now
+#include("run0.jl")
+#-------------------------------------------------#
 
 #--------------- LITTLE IO ROUTINES ---------------#
 #= These routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
