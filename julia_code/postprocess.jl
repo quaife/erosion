@@ -1,16 +1,12 @@
 # MAIN GOAL: Postprocess the jld2 file to compute new quantities.
-
-
 using LinearAlgebra
+include("run0.jl")
 include("main.jl")
-
-
-
 
 #--- ROUTINES TO COMPUTE THE PRESSURE ON THE SURFACE ---#
 #= Note: The purpose of these routines is to compute the pressure on the surface
 of each body, rather than at a set of target points in the fluid domain. =#
-# compute_pressure: Fortran wrapper.
+# Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
 		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
 	pressure = zeros(Float64, npts*nbods)
@@ -22,7 +18,7 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 	end
 	return pressure
 end
-# compute_pressure: Dispatch for ThLenDenType.
+# Dispatch for ThLenDenType.
 function compute_pressure(thlenden::ThLenDenType, params::ParamSet;
 		fixpdrop::Bool=false, rotation::Bool=false)
 	@unpack npts, nouter, ibary = params
@@ -30,15 +26,25 @@ function compute_pressure(thlenden::ThLenDenType, params::ParamSet;
 	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter,ibary)
 	return pressure
 end
-
-
-
-
+#-------------------------------------------------#
 
 #----------- ROUTINES FOR AREA, RESISTIVITY, DRAG, ETC. -----------#
-# getareas: Compute the area of each body.
+# Get the normal and tangent directions.
+# Convention: CCW parameterization and inward pointing normal.
+function getns(theta::Vector{Float64}, rotation::Bool=false)
+	# CCW tangent vector.
+	if rotation == false
+		sx, sy = cos.(theta), sin.(theta)
+	else
+		sx, sy = -sin.(theta), cos.(theta)
+	end
+	# Inward pointing normal vector.
+	nx, ny = -sy, sx
+	return sx, sy, nx, ny
+end
+# Compute the area of each body.
 function getareas(thlenden::ThLenDenType)
-	npts,nbods = getnvals(thlenden.thlenvec)
+	npts, nbods = getnvals(thlenden.thlenvec)
 	areavec = zeros(Float64,nbods)
 	for nn = 1:nbods
 		thlen = thlenden.thlenvec[nn]
@@ -55,37 +61,38 @@ function getareas(thlenden::ThLenDenType)
 	end
 	return areavec
 end
-
-# resistivity: Compute the resistivity/permeability of the porous matrix.
-function resistivity(thlenden::ThLenDenType, params::ParamType, x0::Float64=2.0; rotation::Bool=false)
+# Compute the resistivity/permeability of the porous matrix.
+function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; rotation::Bool=false)
 	# Retrieve the pressure drop and flux (assuming umax = 1)
-	pdrop,qavg = getpdrop(thlenden,params.nouter,params.ibary,x0,rotation=rotation)	
+	pdrop, qavg = getpdrop(thlenden, params.nouter, params.ibary, x0, rotation=rotation)	
 	# Calculate the total resistivity
 	resist = pdrop/(2*x0*qavg)
 	# If pipe flow (ibc = 0) then remove the contribution from the walls.
 	if params.ibc == 0; resist = x0*(resist - 3); end
 	return resist
 end
-# drag: Compute the total drag on all of the bodies combined.
-function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
+# Compute the total drag on all of the bodies combined.
+function drag(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
 	# Note 1: the stress is not smoothed and absolute value is not taken.
 	# Note 2: these are the values with umax = 1.
-	tauvec = compute_stress(thlenden,params.nouter,params.ibary,fixpdrop=false,rotation=rotation)
-	pressvec = compute_pressure(thlenden,params.nouter,params.ibary,fixpdrop=false,rotation=rotation)
+	tauvec = compute_stress(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
+	pressvec = compute_pressure(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
 	thlenvec = thlenden.thlenvec
-	npts,nbods = getnvals(thlenvec)
+	npts, nbods = getnvals(thlenvec)
 	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
 	atauvec = zeros(Float64,npts*nbods)
+	# Loop over all of the bodies.
 	for nn=1:nbods
 		# Get the pressure and stress on body nn.
-		n1,n2 = n1n2(npts,nn)
+		n1 = npts*(nn-1)+1
+		n2 = npts*nn
 		press = pressvec[n1:n2]
 		tau = tauvec[n1:n2]
 		# Go ahead and compute the absolute smoothed stress.
 		atauvec[n1:n2] = gaussfilter(abs.(tau), params.sigma)
 		# Get the tangent/normal vectors and arc length increment.
-		sx,sy,nx,ny = getns(thlenvec[nn].theta,rotation)
+		sx, sy, nx, ny = getns(thlenvec[nn].theta, rotation)
 		ds = thlenvec[nn].len / npts
 		# Compute the pressure and viscous drag separately.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
@@ -97,66 +104,58 @@ function drag(thlenden::ThLenDenType, params::ParamType; rotation::Bool=false)
 	umax = getumax(thlenden, params.nouter, params.ibary,params.fixpdrop)
 	return pdragx, pdragy, vdragx, vdragy, umax, tauvec, atauvec
 end
+#-------------------------------------------------#
 
 #----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
-# regbodtargs: Set up target points on a regular and body fitted grid.
-function regbodtargs(thlenv::Vector{ThetaLenType})
-	# Regular grid.
-	hh = 0.05
-	xlocs = collect(-1-2*hh: hh: 1+2*hh)
-	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
-	xreg,yreg = regulargrid(xlocs,ylocs)
-	# Body-fitted grid.
-	spacevec = 0.01*collect(1:2:3)
-	nptslayer = 32
-	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
-	# Combine the regular and body fitted grid into a single set of points.
-	targets = TargetsType(evec(), evec(), evec(), evec(), evec(), evec())
-	targets.xtar = [xreg; xbod]
-	targets.ytar = [yreg; ybod]
-	return targets
-end
 # bodyfitgrid: Set up target points on a body fitted grid.
 function bodyfitgrid(thlenv::Vector{ThetaLenType}, 
 		spacevec::Vector{Float64}, nptslayer::Int)
-	npts,nbods = getnvals(thlenv)
+	npts, nbods = getnvals(thlenv)
 	# Use nptslayer in each layer.
-	ind0 = div(npts,2*nptslayer)
-	ind0 = max(ind0,1)
-	ind = ind0:2*ind0:npts
+	ind0 = div(npts, 2*nptslayer)
+	ind0 = max(ind0, 1)
+	ind = ind0 : 2*ind0 : npts
 	nlayers = length(spacevec)
-	xtar,ytar = Array{Float64}(undef,0), Array{Float64}(undef,0)
+	xtar, ytar = Array{Float64}(undef,0), Array{Float64}(undef,0)
+	# Loop over the bodies.
 	for nn = 1:nbods
 		thlen = thlenv[nn]
-		xx,yy = thlen.xx[ind], thlen.yy[ind]
-		nx,ny = getns(thlen.theta)[3:4]
-		nx,ny = nx[ind], ny[ind]
+		xx, yy = thlen.xx[ind], thlen.yy[ind]
+		nx, ny = getns(thlen.theta)[3:4]
+		nx, ny = nx[ind], ny[ind]
 		append!(xtar, vec(xx*ones(1,nlayers) - nx*transpose(spacevec)))
 		append!(ytar, vec(yy*ones(1,nlayers) - ny*transpose(spacevec)))
 		# Remove the points that lie outside the computational domain.
 		badind = findall( abs.(ytar) .> 0.999 )
-		deleteat!(xtar,badind)
-		deleteat!(ytar,badind)
+		deleteat!(xtar, badind)
+		deleteat!(ytar, badind)
 	end
 	return xtar,ytar
 end
-
-
-
-
-# getns: Get the normal and tangent directions.
-# Convention: CCW parameterization and inward pointing normal.
-function getns(theta::Vector{Float64}, rotation::Bool=false)
-	# CCW tangent vector.
-	if rotation == false
-		sx, sy = cos.(theta), sin.(theta)
-	else
-		sx, sy = -sin.(theta), cos.(theta)
-	end
-	# Inward pointing normal vector.
-	nx, ny = -sy, sx
-	return sx,sy,nx,ny
+# regbodtargs: Set up target points on a regular and body fitted grid.
+function regbodtargs(thlenv::Vector{ThetaLenType})
+	# Make the regular grid.
+	hh = 0.05
+	xlocs = collect(-1-2*hh: hh: 1+2*hh)
+	ylocs = collect(-1+0.5*hh: hh: 1-0.5*hh)	
+	xreg, yreg = regulargrid(xlocs, ylocs)
+	# Make the body-fitted grid.
+	spacevec = 0.01*collect(1:2:3)
+	nptslayer = 32
+	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
+	# Combine the regular and body fitted grid into a single set of points.
+	targets = TargetsType([], [], [], [], [], [])
+	targets.xtar = [xreg; xbod]
+	targets.ytar = [yreg; ybod]
+	return targets
 end
+#-------------------------------------------------#
+
+
+
+
+
+
 
 
 
