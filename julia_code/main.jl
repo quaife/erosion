@@ -1,5 +1,4 @@
 # main.jl: The main routines to call
-using Statistics
 using JLD2
 using Plots
 
@@ -8,17 +7,22 @@ include("callFortran.jl")
 include("spectral.jl")
 include("thetalen.jl")
  
+ #--------------- TINY ROUTINES ---------------#
  # Set the plot folder.
 plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
 
- #--------------- SMALL ROUTINES ---------------#
+# Convert an integer to a string with zero-padding.
+nstr(nn::Int) = lpad(string(nn), 4, string(0))
+
 # Add a variable incrementally to a jld data file.
 function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	jldopen(filename, "r+") do file
 		write(file, varlabel, var)
 	end
 end
+#-------------------------------------------------#
 
+#--------------- SMALL ROUTINES ---------------#
 # Convert the circle data to thlen data.
 function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	alpha = getalpha(npts)
@@ -63,21 +67,14 @@ end
 function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	# Plot the shapes.
 	println("\n\n\nOUTPUT NUMBER ", nout)
-	nout_string = lpad(string(nout),4,string(0))
-	plotfile = string(plotfolder(params),"shape",nout_string,".pdf")
+	plotfile = string(plotfolder(params),"shape",nstr(nout),".pdf")
 	plot_curves(plotfile, thlenden.thlenvec)
 	# Compute the density functions.
 	compute_density!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
 	# Write the data to a file.
-	varlabel = string("thlenden",nout_string)
-	add_data(params.outfile, varlabel, thlenden)
-end
-
-# If the folder exists, delete it. Then create a new folder.
-function newfolder(foldername::AbstractString)
-	if isdir(foldername) rm(foldername; recursive=true) end
-	mkdir(foldername)
+	thlabel = string("thlenden", nstr(nout))
+	add_data(params.outfile, thlabel, thlenden)
 end
 #-------------------------------------------------#
 
@@ -87,7 +84,10 @@ end
 function erosion(params::ParamSet)
 	# Initialize.
 	thlenden = circs2thlenden(params)
-	newfolder(plotfolder(params))
+	# If the plot folder exists, delete it, then create a new folder.
+	pfolder = plotfolder(params)
+	if isdir(pfolder) rm(pfolder; recursive=true) end
+	mkdir(pfolder)
 	nn, nout = 0, 0
 	# Enter the time loop to apply Runge-Kutta.
 	while(thlenden.tt < params.tfin && length(thlenden.thlenvec) > 0)

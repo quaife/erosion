@@ -14,6 +14,7 @@ I use the same convention for tangential and normal vectors as Shelley 1994.
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
 
+using Statistics
 #--------------- OBJECT ROUTINES ---------------#
 # DerivsType: Includes the derivatives of theta, len, xsm, ysm.
 mutable struct DerivsType

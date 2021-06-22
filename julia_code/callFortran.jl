@@ -1,4 +1,5 @@
 # callFortran.jl: Wrappers to call the Fortran routines.
+using Statistics
 
 #--------------- THE MAIN ROUTINE TO GET THE STRESS ---------------#
 #= getstress! The main function for calling the necessary Fortran routines.
