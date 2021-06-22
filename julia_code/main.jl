@@ -79,7 +79,7 @@ end
 #-------------------------------------------------#
 
 
-#--------------- MAIN ROUTINE ---------------#
+#--------------- MAIN ROUTINES ---------------#
 # The routine to erode a group of bodies.
 function erosion(params::ParamSet)
 	# Initialize.

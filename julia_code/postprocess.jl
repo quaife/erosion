@@ -4,6 +4,37 @@
 using LinearAlgebra
 include("main.jl")
 
+
+
+
+#--- ROUTINES TO COMPUTE THE PRESSURE ON THE SURFACE ---#
+#= Note: The purpose of these routines is to compute the pressure on the surface
+of each body, rather than at a set of target points in the fluid domain. =#
+# compute_pressure: Fortran wrapper.
+function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
+		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
+	pressure = zeros(Float64, npts*nbods)
+	if nbods > 0
+		ccall((:computepressure_, "libstokes.so"), Nothing,
+			(Ref{Int},Ref{Int},Ref{Int},
+			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
+			npts, nbods, nouter, xx, yy, density, pressure)
+	end
+	return pressure
+end
+# compute_pressure: Dispatch for ThLenDenType.
+function compute_pressure(thlenden::ThLenDenType, params::ParamSet;
+		fixpdrop::Bool=false, rotation::Bool=false)
+	@unpack npts, nouter, ibary = params
+	nbods,xv,yv,density = getnxyden(thlenden,params,fixpdrop,rotation)
+	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter,ibary)
+	return pressure
+end
+
+
+
+
+
 #----------- ROUTINES FOR AREA, RESISTIVITY, DRAG, ETC. -----------#
 # getareas: Compute the area of each body.
 function getareas(thlenden::ThLenDenType)
@@ -24,6 +55,7 @@ function getareas(thlenden::ThLenDenType)
 	end
 	return areavec
 end
+
 # resistivity: Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, params::ParamType, x0::Float64=2.0; rotation::Bool=false)
 	# Retrieve the pressure drop and flux (assuming umax = 1)

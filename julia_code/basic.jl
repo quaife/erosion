@@ -22,10 +22,3 @@ end
 
 # Create a new ThLenDenType variable.
 new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0., [],[])
-
-# TargetsType: includes x-y coordinates of target points and u,v,pressure.
-mutable struct TargetsType
-	xtar::Vector{Float64}; ytar::Vector{Float64};
-	utar::Vector{Float64}; vtar::Vector{Float64};
-	ptar::Vector{Float64}; vortar::Vector{Float64};
-end
