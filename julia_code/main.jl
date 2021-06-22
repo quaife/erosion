@@ -1,6 +1,6 @@
 # main.jl: The main routines to call
 using Statistics
-using FileIO
+using JLD2
 using Plots
 
 include("basic.jl")
@@ -8,12 +8,14 @@ include("callFortran.jl")
 include("spectral.jl")
 include("thetalen.jl")
  
+ # Set the plot folder.
+plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
+
  #--------------- SMALL ROUTINES ---------------#
 # Add a variable incrementally to a jld data file.
 function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	jldopen(filename, "r+") do file
-	file[varlabel] = var
-	#write(file,varlabel,var)
+		write(file, varlabel, var)
 	end
 end
 
@@ -36,9 +38,6 @@ function circs2thlenden(params::ParamSet)
 	end
 	return new_thlenden(thlenvec)
 end
-
-# Set the plot folder.
-plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
 
 # Make simple pdf plots for monitoring (not prodcution level)
 function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})	
@@ -94,7 +93,7 @@ function erosion(params::ParamSet)
 	while(thlenden.tt < params.tfin && length(thlenden.thlenvec) > 0)
 		# Plot and save the data if appropriate.
 		if mod(nn, params.outstride) == 0
-			plotnsave(thlenden,params,nout)
+			plotnsave(thlenden, params, nout)
 			nout += 1
 		end
 		# Advance the variables forward one timestep with RK4.
@@ -103,17 +102,17 @@ function erosion(params::ParamSet)
 		thlenden = rungekutta2(thlenden, params)
 	end
 	# Plot and save one last time with zero bodies.
-	plotnsave(thlenden,params,nout)
+	plotnsave(thlenden, params, nout)
 	add_data(params.outfile, "noutputs", nout)
 end
 
 # The main routine to call erosion.
 function main(params::ParamSet)
-	# Initialize the output jld file and save the parameters.
-	save(params.outfile, "params", params)
+	# Initialize the output jld2 file and save the parameters.
+	jldsave(params.outfile; params)
 	# Run the erosion simulation.
 	println("\nBEGINNING EROSION SIMULATION")
-	cputime = @elapsed(erosion(params))
+	cputime = @elapsed	erosion(params)
 	# Save the CPU time of the simulation.
 	cpu_hours = round(cputime/3600, sigdigits=3)
 	add_data(params.outfile, "cpu_hours", cpu_hours)
