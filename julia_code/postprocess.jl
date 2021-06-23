@@ -75,6 +75,12 @@ function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; 
 	if params.ibc == 0; resist = x0*(resist - 3); end
 	return resist
 end
+
+# Structure for the drag output data.
+mutable struct DragData
+	pdragx::Float64; pdragy::Float64; vdragx::Float64; vdragy::Float64; 
+	umax::Float64; tauvec::Vector{Float64}; atauvec::Vector{Float64};
+end
 # Compute the total drag on all of the bodies combined.
 function drag(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 	# Get the shear stress and pressure on the set of bodies.
@@ -106,8 +112,8 @@ function drag(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 		vdragx += dot(tau,sx)*ds
 		vdragy += dot(tau,sy)*ds
 	end
-	umax = getumax(thlenden, params.nouter, params.ibary,params.fixpdrop)
-	return pdragx, pdragy, vdragx, vdragy, umax, tauvec, atauvec
+	umax = getumax(thlenden, params.nouter, params.ibary, params.fixpdrop)
+	return DragData(pdragx, pdragy, vdragx, vdragy, umax, tauvec, atauvec)
 end
 #-------------------------------------------------#
 
@@ -180,11 +186,15 @@ function pp1(datafile::AbstractString)
 		thlenden = thldvec[nn]
 		# Compute the area of each body.
 		push!(areas, getareas(thlenden))
-		print("area completed; ")
-		# Compute the resistivity of the set of bodies.
+		
+		print("area completed; ") # NEEDED?
+		
+		# Compute the resistivity and push to the output vectors.
 		push!(resist, resistivity(thlenden, params))
 		push!(resist_rot, resistivity(thlenden, params, rotation=true))
-		println("resistivity completed; ")
+		
+		println("resistivity completed; ") # NEEDED?
+
 	end
 	# Save the new data to the same jld2 file.
 	jldopen(filename, "r+") do file
@@ -192,80 +202,60 @@ function pp1(datafile::AbstractString)
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
 	end
-	println("Finished pp1 on ", foldername)
-	return
+	println("Finished pp1 on ", foldername, "\n")
 end
-
 
 # pp2: Postprocess the slower stuff: drag and stress.
 function pp2(foldername::AbstractString)
 	println("\n\nBeginning pp2 on ", foldername)
 	params, thldvec = read_vars(datafile)
 	nlast = length(thldvec)
-	
-	STUFF = [], [], []
-	
+	drag_data, drag_data_rot = [], []
 	# Loop over the time values to compute the drag and stress at each.
 	for nn = 1:nlast
 		print("pp2 step ", nn, " of ", nlast, ": ")
 		thlenden = thldvec[nn]
-	
-		# Compute the total pressure and viscous drag on the collection of bodies.
-		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden, params)
-		pdrxr,pdryr,vdrxr,vdryr,umaxr,tauvr,atauvr = drag(thlenden, params, rotation=true)
-		println("Finished the drag computation.")
+		# Compute the drag and stress, and push to the output vectors.
+		push!(drag_data, drag(thlenden, params) )
+		push!(drag_data_rot, drag(thlenden, params, rotation=true) )
+	end
+	# Save the new data to the same jld2 file.
+	jldopen(filename, "r+") do file
+		write(file, "drag_data", drag_data)
+		write(file, "drag_data_rot", drag_data_rot)
 	end
 	println("Finished pp2 on ", foldername, "\n")
-
-	SAVE STUFF
-
-
 end
-
 
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
 	println("\n\nBeginning pp3 on ", foldername)
 	params, thldvec = read_vars(datafile)
-	nlast = length(thldvec)
-	
-	STUFF = [], [], []
-	
-	# Loop over the time values to compute the drag and stress at each.
+	nlast = length(thldvec)	
+	target_data = []
+	# Loop over the time values to compute the target-point data at each.
 	for nn = 1:nlast
 		print("pp3 step ", nn, " of ", nlast, ": ")
 		thlenden = thldvec[nn]
-		
-
-		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)
-		compute_qoi_targets!(thlenden,targets,params.nouter,params.ibary,fixpdrop=false)
-		# Save the output to a data file.
-		targfile = string(datafolder,"targs",cntstr,".dat")
-		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
-		targdata = [label; targets.xtar; targets.ytar; 
-			targets.utar; targets.vtar; targets.ptar; targets.vortar]
-		
-		writedata(targdata, targfile, digs=5)
-		
-		println("step completed")
+		compute_qoi_targets!(thlenden, targets, params.nouter, params.ibary, fixpdrop=false)
+		push!(target_data, targets)
 	end
+	# Save the new data to the same jld2 file.
+	add_data(filename, "target_data", target_data)
 	println("Finished pp3 on ", foldername, "\n")
 end
 
 
 
-#postprocess: Run all postprocess routines pp1-3.
+#postprocess: Run all postprocess routines pp1, pp2, and pp3.
 function postprocess(datafile::AbstractString)
 	println("\n\n%------------------------------------------------------%")
-	t1 = time()
 	println("Beginning postprocessing ", datafile, "\n")
-	pp1(datafile)
-#	pp2(datafile)
-#	pp3(datafile)
+	t1 = @elapsed 	pp1(datafile)
+	t2 = @elapsed	pp2(datafile)
+#	t3 = @elapsed	pp3(datafile)
 	println("Finished postprocessing ", datafile)
-	pptime = round((time()-t1)/60., sigdigits=2)
-	println("Time taken: ", pptime, " minutes.")
 	println("%------------------------------------------------------%\n\n")
 end
