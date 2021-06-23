@@ -47,7 +47,7 @@ end
 # Compute the area of each body.
 function getareas(thlenden::ThLenDenType)
 	nbods = length(thlenden.thlenvec)
-	areavec = zeros(Float64,nbods)
+	areavec = zeros(Float64, nbods)
 	for el = 1:nbods
 		thlen = thlenden.thlenvec[el]
 		xx, yy = thlen.xx, thlen.yy
@@ -62,6 +62,7 @@ function getareas(thlenden::ThLenDenType)
 		reldiff > 1e-3 ? @warn(string("Relative error in area = ", round(reldiff,sigdigits=2))) : 0.
 		areavec[el] = area
 	end
+	if nbods == 0 areavec = [0.0] end
 	return areavec
 end
 # Compute the resistivity/permeability of the porous matrix.
@@ -157,13 +158,7 @@ end
 #-------------------------------------------------#
 
 
-
-
-
-
 #--------------------- MAIN ROUTINES ------------------#
-
-#----------- STARTUP AND ASSISTING ROUTINES -----------#
 # Read the basic parameters from the jld2 file.
 function read_vars(datafile::AbstractString)
 	jldopen(datafile, "r") do file
@@ -173,107 +168,75 @@ function read_vars(datafile::AbstractString)
 	return params, thldvec
 end
 
-
-
 # pp1: Postprocess the fast stuff: area and resistivity.
 function pp1(datafile::AbstractString)
 	println("Beginning pp1 on ", datafile)
 	params, thldvec = read_vars(datafile)
-
-	# Loop over the time steps.
 	nlast = length(thldvec)
+	areas, resist, resist_rot = [], [], []
+	# Loop over the time values to compute areas and resistivity at each.
 	for nn = 1:nlast
-		# Read the thlenden object at current time.
 		print("pp1 step ", nn, " of ", nlast, ": ")
 		thlenden = thldvec[nn]
 		# Compute the area of each body.
-
-
-		areavec = getareas(thlenden)
-
-
-		nbods = length(thlenden.thlenvec)
-
-
-		if nbods == 0 areavec = [0] end
+		push!(areas, getareas(thlenden))
 		print("area completed; ")
-		# Compute the resistivity = 1/permeability.
-		rbods = resistivity(thlenden, params)
-		rbodsrot = resistivity(thlenden, params, rotation=true)
+		# Compute the resistivity of the set of bodies.
+		push!(resist, resistivity(thlenden, params))
+		push!(resist_rot, resistivity(thlenden, params, rotation=true))
 		println("resistivity completed; ")
-		# Save the new data to the same file.
-
 	end
-
-	# Save the data to a file.
-
-		## Write areavec to file
-		add_data(datafile, areavec)
-		# Save the resistivity data to the same JLD file.
-
-		iofile = jldopen(file, "r+")
-		write(iofile, "y", y)
-		close(iofile)
-
-
-
+	# Save the new data to the same jld2 file.
+	jldopen(filename, "r+") do file
+		write(file, "areas", areas)
+		write(file, "resist", resist)
+		write(file, "resist_rot", resist_rot)
+	end
 	println("Finished pp1 on ", foldername)
 	return
 end
 
 
-
-
 # pp2: Postprocess the slower stuff: drag and stress.
 function pp2(foldername::AbstractString)
 	println("\n\nBeginning pp2 on ", foldername)
-	params, ntimes = read_params(datafile)
-
-	# Read the data at each time step.
-	for cnt=0:ntimes
-		println("\npp2 beggining step ", cnt, " of ", ntimes, ".")
-		thlenden, cntstr = get_thlenden(datafolder,cnt)
-		
-		npts,nbods = getnvals(thlenden.thlenvec)
-		
-		#--------------------------------------#
-		# Compute the total pressure and viscous drag on the collection of bodies.
-		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden,params)
-		pdrxr,pdryr,vdrxr,vdryr,umaxr,tauvr,atauvr = drag(thlenden,params,rotation=true)
-		println("Finished the drag computation.")
+	params, thldvec = read_vars(datafile)
+	nlast = length(thldvec)
 	
-
-		# Save the data to a file.
-		dragfile = string(datafolder,"drag",cntstr,".dat")
-		lab1 = string("# Data on drag: ")
-		lab2 = string("# nbods, pdragx, pdragy, vdragx, vdragy, umax and all rotated values.")
-		dragdata = [lab1; lab2; nbods; 
-			pdrx; pdry; vdrx; vdry; umax; pdrxr; pdryr; vdrxr; vdryr]
-		writedata(dragdata, dragfile)
-		#--------------------------------------#
-		# Save the stress on each body.
-		# tauv is raw stress, with nontrivial sign and no smoothing.
-		# atauv has absolute value and smoothing applied; 
-		stressfile = string(datafolder,"stress",cntstr,".dat")
-		label = string("# Smoothed atau, Raw atau ")
-		writedata([label; atauv; tauv], stressfile)
+	STUFF = [], [], []
+	
+	# Loop over the time values to compute the drag and stress at each.
+	for nn = 1:nlast
+		print("pp2 step ", nn, " of ", nlast, ": ")
+		thlenden = thldvec[nn]
+	
+		# Compute the total pressure and viscous drag on the collection of bodies.
+		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden, params)
+		pdrxr,pdryr,vdrxr,vdryr,umaxr,tauvr,atauvr = drag(thlenden, params, rotation=true)
+		println("Finished the drag computation.")
 	end
 	println("Finished pp2 on ", foldername, "\n")
+
+	SAVE STUFF
+
+
 end
 
 
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
-	println("Beginning pp3 on ", foldername)
-	params, ntimes = read_params(datafile)
+	println("\n\nBeginning pp3 on ", foldername)
+	params, thldvec = read_vars(datafile)
+	nlast = length(thldvec)
+	
+	STUFF = [], [], []
+	
+	# Loop over the time values to compute the drag and stress at each.
+	for nn = 1:nlast
+		print("pp3 step ", nn, " of ", nlast, ": ")
+		thlenden = thldvec[nn]
+		
 
-	# Read the data at each time step.
-	for cnt=0:ntimes
-		print("pp3 step ", cnt, " of ", ntimes, "; ")
-		thlenden, cntstr = get_thlenden(datafolder,cnt)
-		
-		npts,nbods = getnvals(thlenden.thlenvec)
-		
 		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)
@@ -283,7 +246,9 @@ function pp3(foldername::AbstractString)
 		label = string("# Data at grid of target points: x, y, u, v, pressure, vorticity.")
 		targdata = [label; targets.xtar; targets.ytar; 
 			targets.utar; targets.vtar; targets.ptar; targets.vortar]
+		
 		writedata(targdata, targfile, digs=5)
+		
 		println("step completed")
 	end
 	println("Finished pp3 on ", foldername, "\n")

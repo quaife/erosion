@@ -124,7 +124,7 @@ function remake_data(datafolder::AbstractString, datalabel::AbstractString)
 	params.cntout = Int(infovec[1])
 	params.cput0 = infovec[3]
 	# Loop through the files inside folder.
-	thldvec = Vector{ThLenDenType}(undef,lastfile+1)
+	thldvec = Vector{ThLenDenType}(undef, lastfile+1)
 	for nn = 0:lastfile
 		println("nn = ", nn)
 		thlenden = get_thlenden(datafolder, nn)
