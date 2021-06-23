@@ -31,9 +31,6 @@ end
 #-------------------------------------------------#
 
 #----------- ROUTINES FOR AREA, RESISTIVITY, DRAG, ETC. -----------#
-# Calculate the number of bodies.
-numbods(thlenden::ThLenDenType) = length(thlenden.thlenvec)
-
 # Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
 function getns(theta::Vector{Float64}, rotation::Bool=false)
@@ -48,16 +45,15 @@ function getns(theta::Vector{Float64}, rotation::Bool=false)
 	return sx, sy, nx, ny
 end
 # Compute the area of each body.
-function getareas(thlenden::ThLenDenType, params::ParamSet)
-
-	nbods = numbods(thlenden)
-
+function getareas(thlenden::ThLenDenType)
+	nbods = length(thlenden.thlenvec)
 	areavec = zeros(Float64,nbods)
 	for el = 1:nbods
 		thlen = thlenden.thlenvec[el]
-		xx,yy = thlen.xx,thlen.yy
+		xx, yy = thlen.xx, thlen.yy
 		sx,sy,nx,ny = getns(thlen.theta)
-		ds = thlen.len / params.npts
+		npts = length(thlen)
+		ds = thlen.len / npts
 		# Compute area in two ways to estimate error.
 		areax = -dot(xx,nx)*ds
 		areay = -dot(yy,ny)*ds
@@ -86,13 +82,8 @@ function drag(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 	tauvec = compute_stress(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
 	pressvec = compute_pressure(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
 	thlenvec = thlenden.thlenvec
-
-
-	nbods = numbods(thlenden)
+	nbods = length(thlenden.thlenvec)
 	npts = params.npts
-
-
-
 	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
 	atauvec = zeros(Float64,npts*nbods)
 	# Loop over all of the bodies.
@@ -120,14 +111,11 @@ end
 #-------------------------------------------------#
 
 #----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
-# bodyfitgrid: Set up target points on a body fitted grid.
+# Set up target points on a body-fitted grid around all bodies.
 function bodyfitgrid(thlenv::Vector{ThetaLenType}, spacevec::Vector{Float64}, nptslayer::Int)
-	
-
 	nbods = length(thlenv)
+	if nbods == 0; return [],[]; end
 	npts = length(thlenv[1].theta)
-
-
 	# Use nptslayer in each layer.
 	ind0 = div(npts, 2*nptslayer)
 	ind0 = max(ind0, 1)
@@ -147,7 +135,7 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType}, spacevec::Vector{Float64}, np
 		deleteat!(xtar, badind)
 		deleteat!(ytar, badind)
 	end
-	return xtar,ytar
+	return xtar, ytar
 end
 # regbodtargs: Set up target points on a regular and body fitted grid.
 function regbodtargs(thlenv::Vector{ThetaLenType})
@@ -159,10 +147,7 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Make the body-fitted grid.
 	spacevec = 0.01*collect(1:2:3)
 	nptslayer = 32
-	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
-
-	## SHOULD I SKIP THE BODY FIT GRID IF NBODS=0??
-
+	xbod, ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
 	# Combine the regular and body fitted grid into a single set of points.
 	targets = TargetsType([], [], [], [], [], [])
 	targets.xtar = [xreg; xbod]
@@ -204,10 +189,10 @@ function pp1(datafile::AbstractString)
 		# Compute the area of each body.
 
 
-		areavec = getareas(thlenden, params)
+		areavec = getareas(thlenden)
 
 
-		nbods = numbods(thlenden)
+		nbods = length(thlenden.thlenvec)
 
 
 		if nbods == 0 areavec = [0] end
