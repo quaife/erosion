@@ -7,7 +7,7 @@ include("basic.jl")
 data_set() = "../output_data/erode-a06/"
 savefile(label::AbstractString) = string(data_set(),"data-",label,".jld2")
 
-# Unused for now
+# Unused for now, but will be used if/when I delete ParamType
 #include("run0.jl")
 #-------------------------------------------------#
 

@@ -1,4 +1,6 @@
-# main.jl: The main routines to call
+# main.jl: The main routines to simulate erosion
+# Saves the output data in a jld2 file.
+
 using JLD2
 using Plots
 
@@ -11,15 +13,17 @@ include("thetalen.jl")
  # Set the plot folder.
 plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
 
-# Convert an integer to a string with zero-padding.
-nstr(nn::Int) = lpad(string(nn), 4, string(0))
-
 # Add a variable incrementally to a jld data file.
 function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	jldopen(filename, "r+") do file
 		write(file, varlabel, var)
 	end
 end
+
+# Convert an integer to a string with zero-padding.
+nstr(nn::Int) = lpad(string(nn), 4, string(0))
+# The data label for thlenden
+thlabel(nn) = string("thlenden", nstr(nn))
 #-------------------------------------------------#
 
 #--------------- SMALL ROUTINES ---------------#
@@ -72,9 +76,8 @@ function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	# Compute the density functions.
 	compute_density!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
-	# Write the data to a file.
-	thlabel = string("thlenden", nstr(nout))
-	add_data(params.outfile, thlabel, thlenden)
+	# Add the thlenden data to the data file.
+	add_data(params.outfile, thlabel(nout), thlenden)
 end
 #-------------------------------------------------#
 

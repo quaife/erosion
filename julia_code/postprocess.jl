@@ -156,55 +156,53 @@ end
 
 
 
-
-
-
-
-
-
-#----------- MAIN ROUTINES -----------#
+#--------------------- MAIN ROUTINES ------------------#
 
 #----------- STARTUP AND ASSISTING ROUTINES -----------#
-# startpostprocess
-function startpostprocess(foldername::AbstractString)
-	# Define the data folder and files.
-	datafolder = string("../output_data/", foldername, "/")
-	paramsfile = string(datafolder, "aparams")
-	pinfofile = string(datafolder, "apinfo.txt")
-	# Get extra information from apinfo.
-	pinfovec = readvec(pinfofile)
-	ntimes = Int(pinfovec[2])
-	# Get the params object.
-	params = getparams(paramsfile)
-	return datafolder, ntimes, params
+# Read the basic parameters from the jld2 file.
+function read_params(datafile::AbstractString)
+	jldopen(datafile, "r") do file
+		params = read(file, "params")
+		ntimes = read(file, "noutputs")
+	end
+	return params, ntimes
 end
+# Read the thlenden variable from the jld2 file.
+function read_thlenden(datafile::AbstractString, cnt::Int)
+	jldopen(datafile, "r") do file
+		thlenden = read(file, thlabel(cnt))
+	end
+	return thlenden
+end
+
+
+
 
 
 # pp1: Postprocess the fast stuff: area and resistivity.
 function pp1(datafile::AbstractString)
 	println("Beginning pp1 on ", datafile)
-	
-	#datafolder,ntimes,params = startpostprocess(datafile)
-	## Need ntime params
-
-
-	# Read the data at each time step.
+	params, ntimes = read_params(datafile)
+	# Loop over the time steps.
 	for cnt=0:ntimes
+		# Read the thlenden object at current time.
 		print("pp1 step ", cnt, " of ", ntimes, ": ")
-		##thlenden = GET
+		thlenden = read_thlenden(datafile, cnt)
 		npts, nbods = getnvals(thlenden.thlenvec)
 		# Compute the area of each body.
 		areavec = getareas(thlenden)
 		if nbods == 0 areavec = [0] end
 		print("area completed; ")
-		# Compute the resistivity (1/permeability) of the matrix.
-		rbods = resistivity(thlenden,params)
-		rbodsrot = resistivity(thlenden,params,rotation=true)
+		# Compute the resistivity = 1/permeability.
+		rbods = resistivity(thlenden, params)
+		rbodsrot = resistivity(thlenden, params, rotation=true)
 		println("resistivity completed; ")
+		# Save the new data to the same file.
+
 	end
 
+	# Save the data to a file.
 
-		# Save the data to a file.
 		## Write areavec to file
 		add_data(datafile, areavec)
 		# Save the resistivity data to the same JLD file.
@@ -225,7 +223,8 @@ end
 # pp2: Postprocess the slower stuff: drag and stress.
 function pp2(foldername::AbstractString)
 	println("\n\nBeginning pp2 on ", foldername)
-	datafolder,ntimes,params = startpostprocess(foldername)
+	params, ntimes = read_params(datafile)
+
 	# Read the data at each time step.
 	for cnt=0:ntimes
 		println("\npp2 beggining step ", cnt, " of ", ntimes, ".")
@@ -236,6 +235,8 @@ function pp2(foldername::AbstractString)
 		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden,params)
 		pdrxr,pdryr,vdrxr,vdryr,umaxr,tauvr,atauvr = drag(thlenden,params,rotation=true)
 		println("Finished the drag computation.")
+	
+
 		# Save the data to a file.
 		dragfile = string(datafolder,"drag",cntstr,".dat")
 		lab1 = string("# Data on drag: ")
@@ -258,7 +259,8 @@ end
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(foldername::AbstractString)
 	println("Beginning pp3 on ", foldername)
-	datafolder,ntimes,params = startpostprocess(foldername)
+	params, ntimes = read_params(datafile)
+
 	# Read the data at each time step.
 	for cnt=0:ntimes
 		print("pp3 step ", cnt, " of ", ntimes, "; ")
