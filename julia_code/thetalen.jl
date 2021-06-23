@@ -177,7 +177,7 @@ end
 
 #--------------- SMALL ROUTINES ---------------#
 # vecmult: Multiply two vectors with or without dealiasing.
-function vecmult(uu::Vector{Float64},vv::Vector{Float64})
+function vecmult(uu::Vector{Float64}, vv::Vector{Float64})
 #	return mult_dealias(uu,vv)
 	return uu.*vv
 end
