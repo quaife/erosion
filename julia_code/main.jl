@@ -1,5 +1,6 @@
-# main.jl: The main routines to simulate erosion
-# Saves the output data in a jld2 file.
+# MAIN GOAL: The main routines to simulate erosion.
+# The output is saved in a jld2 file.
+# Convention: el = 1:nbods indexes the bodies, nn indexes the timestep.
 
 using JLD2
 using Plots
@@ -20,6 +21,8 @@ function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	end
 end
 
+# Set the temporary data file to allow incremental saves.
+tempfile(params) = string(params.outfile, "-temp.jld2")
 # Convert an integer to a string with zero-padding.
 nstr(nn::Int) = lpad(string(nn), 4, string(0))
 # The data label for thlenden
@@ -39,7 +42,7 @@ function circs2thlenden(params::ParamSet)
 	circdata = readvec(params.infile)
 	nbods = round(Int, popfirst!(circdata))
 	thlenvec = Array{ThetaLenType}(undef, 0)
-	for nn = 1:nbods
+	for el = 1:nbods
 		rad, xc, yc = [popfirst!(circdata) for i=1:3]
 		thlen = circ2thlen(params.npts, rad, xc, yc)
 		push!(thlenvec, thlen)
@@ -67,7 +70,7 @@ function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})
 	return
 end
 
-# Plot and save data.
+# Plot the data and incrementally save it to the temporary output file.
 function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	# Plot the shapes.
 	println("\n\n\nOUTPUT NUMBER ", nout)
@@ -77,26 +80,30 @@ function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
 	compute_density!(thlenden, params)
 	compute_density!(thlenden, params, rotation=true)
 	# Add the thlenden data to the data file.
-	add_data(params.outfile, thlabel(nout), thlenden)
+	add_data(tempfile(params), thlabel(nout), thlenden)
 end
 #-------------------------------------------------#
 
 
 #--------------- MAIN ROUTINES ---------------#
 # The routine to erode a group of bodies.
-function erosion(params::ParamSet)
-	# Initialize.
+# This routine saves the output in the variable thldvec.
+function erosion!(params::ParamSet, thldvec::Vector{ThLenDenType})
+	# Initialize the temporary output file by saving the parameters.
+	jldsave(tempfile(params); params)
+
+	# Initialize the geometry and the plot folder.
 	thlenden = circs2thlenden(params)
-	# If the plot folder exists, delete it, then create a new folder.
 	pfolder = plotfolder(params)
-	if isdir(pfolder) rm(pfolder; recursive=true) end
-	mkdir(pfolder)
-	nn, nout = 0, 0
+	if isdir(pfolder) rm(pfolder; recursive=true) end; mkdir(pfolder)
+	
 	# Enter the time loop to apply Runge-Kutta.
+	nn, nout = 0, 0
 	while(thlenden.tt < params.tfin && length(thlenden.thlenvec) > 0)
 		# Plot and save the data if appropriate.
-		if mod(nn, params.outstride) == 0
+		if mod(nn, params.outstride) == 0			
 			plotnsave(thlenden, params, nout)
+			push!(thldvec, thlenden)
 			nout += 1
 		end
 		# Advance the variables forward one timestep with RK4.
@@ -106,20 +113,26 @@ function erosion(params::ParamSet)
 	end
 	# Plot and save one last time with zero bodies.
 	plotnsave(thlenden, params, nout)
-	add_data(params.outfile, "noutputs", nout)
+	push!(thldvec, thlenden)
 end
 
+
 # The main routine to call erosion.
+#= Note: This routine was created separately primarily so that 
+the erosion() routine could be timed. =#
 function main(params::ParamSet)
-	# Initialize the output jld2 file and save the parameters.
-	jldsave(params.outfile; params)
-	# Run the erosion simulation.
+	# Run the erosion simulation and time it.
 	println("\nBEGINNING EROSION SIMULATION")
-	cputime = @elapsed	erosion(params)
-	# Save the CPU time of the simulation.
+	thldvec = Vector{ThLenDenType}(undef, 0)
+	cputime = @elapsed	erosion!(params, thldvec)
+
+	# Calculate the CPU time of the simulation and print it.
 	cpu_hours = round(cputime/3600, sigdigits=3)
-	add_data(params.outfile, "cpu_hours", cpu_hours)
 	println("\n\n\nCOMPLETED EROSION SIMULATION")
 	println("cpu time = ", cpu_hours, " hours.\n\n")
+
+	# Save the data to the main output file.
+	outfile = string(params.outfile,".jld2")
+	jldsave(outfile; params, thldvec, cpu_hours)
 end
 #-------------------------------------------------#

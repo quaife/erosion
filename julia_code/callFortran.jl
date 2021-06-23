@@ -1,6 +1,9 @@
-# callFortran.jl: Wrappers to call the Fortran routines.
+# MAIN GOAL: Call the Fortran routines to compute the density, stress and other things.
+
+# Convention: mm indexes the target points.
 #= Note: The time-stepping routine in thetalen calls getstress! 
 which itself calls compute_density! and compute_stress. =#
+
 using Statistics
 
 #--------------- BASIC STUFF ---------------#
@@ -15,8 +18,8 @@ end
 function getnxy(thlenden::ThLenDenType)
 	nbods = length(thlenden.thlenvec)
 	xv,yv = [Array{Float64}(undef,0) for ii=1:2]
-	for nn = 1:nbods
-		xx,yy = getxy(thlenden.thlenvec[nn])
+	for el = 1:nbods
+		xx,yy = getxy(thlenden.thlenvec[el])
 		append!(xv,xx); append!(yv,yy)
 	end
 	return nbods,xv,yv
@@ -85,16 +88,16 @@ end
 #--------------- THE REGULAR GRID ---------------#
 # regulargrid: Set up target points on a regular grid; return x and y.
 function regulargrid(xlocs::Vector{Float64}, ylocs::Vector{Float64})
-	nx = length(xlocs)
-	ny = length(ylocs)
-	ntargs = nx*ny
-	xtar = zeros(Float64,ntargs)
-	ytar = zeros(Float64,ntargs)
-	for nn=1:nx
-		n1 = ny*(nn-1)+1
-		n2 = ny*nn
-		xtar[n1:n2] .= xlocs[nn]
-		ytar[n1:n2] .= ylocs
+	mx = length(xlocs)
+	my = length(ylocs)
+	ntargs = mx*my
+	xtar = zeros(Float64, ntargs)
+	ytar = zeros(Float64, ntargs)
+	for mm = 1:mx
+		m1 = my*(mm-1)+1
+		m2 = my*mm
+		xtar[m1:m2] .= xlocs[mm]
+		ytar[m1:m2] .= ylocs
 	end
 	return xtar,ytar
 end

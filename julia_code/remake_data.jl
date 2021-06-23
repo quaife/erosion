@@ -1,4 +1,5 @@
-# Main Goal: Convert the lists of output text files to a Julia data file.
+# MAIN GOAL: Convert the lists of output text files to a Julia data file.
+# Convention: el = 1:nbods indexes the bodies, nn indexes the timestep.
 
 #--------------- BASIC STUFF ---------------#
 using JLD2
@@ -54,7 +55,7 @@ end
 
 # Create new instances of each type.
 new_thlen() = ThetaLenType([],0.,0.,0.,0.)
-new_thlenvec(nbods::Int) = [new_thlen() for nn=1:nbods]
+new_thlenvec(nbods::Int) = [new_thlen() for el=1:nbods]
 
 # read_geom_file: Read a geometry file.
 #= The data in the file is t (physical time), npts, nbods, 
@@ -67,12 +68,12 @@ function read_geom_file(filename::AbstractString)
 	deleteat!(invec,1:3)
 	@assert length(invec) == nbods*(3*npts+3)
 	thlenvec = new_thlenvec(nbods)
-	for nn=1:nbods
+	for el=1:nbods
 		# Read theta, len, xsm, ysm.
-		thlenvec[nn].theta = invec[1:npts]
-		thlenvec[nn].len = invec[npts+1]
-		thlenvec[nn].xsm = invec[npts+2]
-		thlenvec[nn].ysm = invec[npts+3]
+		thlenvec[el].theta = invec[1:npts]
+		thlenvec[el].len = invec[npts+1]
+		thlenvec[el].xsm = invec[npts+2]
+		thlenvec[el].ysm = invec[npts+3]
 		deleteat!(invec,1:npts+3)
 		# Reading xx and yy is now obselete, but I still need to delete entries in invec.
 		deleteat!(invec,1:2*npts)
@@ -123,14 +124,14 @@ function remake_data(datafolder::AbstractString, datalabel::AbstractString)
 	params.cntout = Int(infovec[1])
 	params.cput0 = infovec[3]
 	# Loop through the files inside folder.
-	thlendenvec = Vector{ThLenDenType}(undef,lastfile+1)
+	thldvec = Vector{ThLenDenType}(undef,lastfile+1)
 	for nn = 0:lastfile
 		println("nn = ", nn)
-		thlenden = get_thlenden(datafolder,nn)
-		thlendenvec[nn+1] = thlenden
+		thlenden = get_thlenden(datafolder, nn)
+		thldvec[nn+1] = thlenden
 	end
-	# Save thlendenvec in a Julia data file.
-	jldsave(savefile(datalabel); thlendenvec, params)
+	# Save thldvec in a Julia data file.
+	jldsave(savefile(datalabel); thldvec, params)
 end
 
 # Dispatch to run on simply a label using the folder given by data_set.

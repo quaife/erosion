@@ -1,4 +1,6 @@
 # MAIN GOAL: Postprocess the jld2 file to compute new quantities.
+# Convention: el = 1:nbods indexes the bodies, nn indexes the timestep.
+
 using LinearAlgebra
 include("run0.jl")
 include("main.jl")
@@ -29,6 +31,9 @@ end
 #-------------------------------------------------#
 
 #----------- ROUTINES FOR AREA, RESISTIVITY, DRAG, ETC. -----------#
+# Calculate the number of bodies.
+numbods(thlenden::ThLenDenType) = length(thlenden.thlenvec)
+
 # Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
 function getns(theta::Vector{Float64}, rotation::Bool=false)
@@ -43,21 +48,23 @@ function getns(theta::Vector{Float64}, rotation::Bool=false)
 	return sx, sy, nx, ny
 end
 # Compute the area of each body.
-function getareas(thlenden::ThLenDenType)
-	npts, nbods = getnvals(thlenden.thlenvec)
+function getareas(thlenden::ThLenDenType, params::ParamSet)
+
+	nbods = numbods(thlenden)
+
 	areavec = zeros(Float64,nbods)
-	for nn = 1:nbods
-		thlen = thlenden.thlenvec[nn]
+	for el = 1:nbods
+		thlen = thlenden.thlenvec[el]
 		xx,yy = thlen.xx,thlen.yy
 		sx,sy,nx,ny = getns(thlen.theta)
-		ds = thlen.len / npts
+		ds = thlen.len / params.npts
 		# Compute area in two ways to estimate error.
 		areax = -dot(xx,nx)*ds
 		areay = -dot(yy,ny)*ds
 		area = 0.5*(areax+areay)
 		reldiff = abs(areax-areay)/area
 		reldiff > 1e-3 ? @warn(string("Relative error in area = ", round(reldiff,sigdigits=2))) : 0.
-		areavec[nn] = area
+		areavec[el] = area
 	end
 	return areavec
 end
@@ -79,21 +86,27 @@ function drag(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
 	tauvec = compute_stress(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
 	pressvec = compute_pressure(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
 	thlenvec = thlenden.thlenvec
-	npts, nbods = getnvals(thlenvec)
+
+
+	nbods = numbods(thlenden)
+	npts = params.npts
+
+
+
 	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
 	atauvec = zeros(Float64,npts*nbods)
 	# Loop over all of the bodies.
-	for nn=1:nbods
-		# Get the pressure and stress on body nn.
-		n1 = npts*(nn-1)+1
-		n2 = npts*nn
-		press = pressvec[n1:n2]
-		tau = tauvec[n1:n2]
+	for el=1:nbods
+		# Get the pressure and stress on body el.
+		el1 = npts*(el-1)+1
+		el2 = npts*el
+		press = pressvec[el1:el2]
+		tau = tauvec[el1:el2]
 		# Go ahead and compute the absolute smoothed stress.
-		atauvec[n1:n2] = gaussfilter(abs.(tau), params.sigma)
+		atauvec[el1:el2] = gaussfilter(abs.(tau), params.sigma)
 		# Get the tangent/normal vectors and arc length increment.
-		sx, sy, nx, ny = getns(thlenvec[nn].theta, rotation)
-		ds = thlenvec[nn].len / npts
+		sx, sy, nx, ny = getns(thlenvec[el].theta, rotation)
+		ds = thlenvec[el].len / npts
 		# Compute the pressure and viscous drag separately.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
 		pdragx += dot(press,nx)*ds
@@ -108,9 +121,13 @@ end
 
 #----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
 # bodyfitgrid: Set up target points on a body fitted grid.
-function bodyfitgrid(thlenv::Vector{ThetaLenType}, 
-		spacevec::Vector{Float64}, nptslayer::Int)
-	npts, nbods = getnvals(thlenv)
+function bodyfitgrid(thlenv::Vector{ThetaLenType}, spacevec::Vector{Float64}, nptslayer::Int)
+	
+
+	nbods = length(thlenv)
+	npts = length(thlenv[1].theta)
+
+
 	# Use nptslayer in each layer.
 	ind0 = div(npts, 2*nptslayer)
 	ind0 = max(ind0, 1)
@@ -118,8 +135,8 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType},
 	nlayers = length(spacevec)
 	xtar, ytar = Array{Float64}(undef,0), Array{Float64}(undef,0)
 	# Loop over the bodies.
-	for nn = 1:nbods
-		thlen = thlenv[nn]
+	for el = 1:nbods
+		thlen = thlenv[el]
 		xx, yy = thlen.xx[ind], thlen.yy[ind]
 		nx, ny = getns(thlen.theta)[3:4]
 		nx, ny = nx[ind], ny[ind]
@@ -143,6 +160,9 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 	spacevec = 0.01*collect(1:2:3)
 	nptslayer = 32
 	xbod,ybod = bodyfitgrid(thlenv, spacevec, nptslayer)
+
+	## SHOULD I SKIP THE BODY FIT GRID IF NBODS=0??
+
 	# Combine the regular and body fitted grid into a single set of points.
 	targets = TargetsType([], [], [], [], [], [])
 	targets.xtar = [xreg; xbod]
@@ -160,37 +180,36 @@ end
 
 #----------- STARTUP AND ASSISTING ROUTINES -----------#
 # Read the basic parameters from the jld2 file.
-function read_params(datafile::AbstractString)
+function read_vars(datafile::AbstractString)
 	jldopen(datafile, "r") do file
 		params = read(file, "params")
-		ntimes = read(file, "noutputs")
+		thldvec = read(file, "thldvec")
 	end
-	return params, ntimes
+	return params, thldvec
 end
-# Read the thlenden variable from the jld2 file.
-function read_thlenden(datafile::AbstractString, cnt::Int)
-	jldopen(datafile, "r") do file
-		thlenden = read(file, thlabel(cnt))
-	end
-	return thlenden
-end
-
-
 
 
 
 # pp1: Postprocess the fast stuff: area and resistivity.
 function pp1(datafile::AbstractString)
 	println("Beginning pp1 on ", datafile)
-	params, ntimes = read_params(datafile)
+	params, thldvec = read_vars(datafile)
+
 	# Loop over the time steps.
-	for cnt=0:ntimes
+	nlast = length(thldvec)
+	for nn = 1:nlast
 		# Read the thlenden object at current time.
-		print("pp1 step ", cnt, " of ", ntimes, ": ")
-		thlenden = read_thlenden(datafile, cnt)
-		npts, nbods = getnvals(thlenden.thlenvec)
+		print("pp1 step ", nn, " of ", nlast, ": ")
+		thlenden = thldvec[nn]
 		# Compute the area of each body.
-		areavec = getareas(thlenden)
+
+
+		areavec = getareas(thlenden, params)
+
+
+		nbods = numbods(thlenden)
+
+
 		if nbods == 0 areavec = [0] end
 		print("area completed; ")
 		# Compute the resistivity = 1/permeability.
@@ -229,7 +248,9 @@ function pp2(foldername::AbstractString)
 	for cnt=0:ntimes
 		println("\npp2 beggining step ", cnt, " of ", ntimes, ".")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
+		
 		npts,nbods = getnvals(thlenden.thlenvec)
+		
 		#--------------------------------------#
 		# Compute the total pressure and viscous drag on the collection of bodies.
 		pdrx,pdry,vdrx,vdry,umax,tauv,atauv = drag(thlenden,params)
@@ -265,7 +286,9 @@ function pp3(foldername::AbstractString)
 	for cnt=0:ntimes
 		print("pp3 step ", cnt, " of ", ntimes, "; ")
 		thlenden, cntstr = get_thlenden(datafolder,cnt)
+		
 		npts,nbods = getnvals(thlenden.thlenvec)
+		
 		#--------------------------------------#
 		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)

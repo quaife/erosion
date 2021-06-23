@@ -13,6 +13,7 @@ sigma: The smooth of the abolute-value of shear stress.
 I use the same convention for tangential and normal vectors as Shelley 1994. 
 That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
 and I use the inward pointing normal vector. =#
+# Convention: el = 1:nbods indexes the bodies.
 
 using Statistics
 #--------------- OBJECT ROUTINES ---------------#
@@ -60,18 +61,18 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	alpha = getalpha(params.npts)
 	# zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
 	zetafun(len::Float64, matau::Float64) = 2*pi/len * matau
-	for nn = 1:nbods
-		# Extract the variables for body nn.
+	for el = 1:nbods
+		# Extract the variables for body el.
 		# thlen0
-		thlen0  = thld0.thlenvec[nn]
+		thlen0  = thld0.thlenvec[el]
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
 		# thlend	
-		thlend = thld_derivs.thlenvec[nn]
+		thlend = thld_derivs.thlenvec[el]
 		lend = thlend.len
 		# matau = mean(atau)
 		matau0, mataud = thlen0.matau, thlend.matau
 		# derivs
-		derivs = dvec[nn]
+		derivs = dvec[el]
 		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
 		# Advance len first.
 		len1 = len0 + dt1*mterm
@@ -157,18 +158,18 @@ function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float
 	nbods = length(thlv)
 	@assert length(dvec) == nbods
 	deletevec = Array{Int}(undef,0)
-	for nn = 1:nbods
-		len = thlv[nn].len
-		mterm = dvec[nn].mterm
+	for el = 1:nbods
+		len = thlv[el].len
+		mterm = dvec[el].mterm
 		minlen = -sqrt(2)*mterm*ndts*dt
 		if mterm > 0.; @warn("mterm is positive."); end;
 		if (len <= minlen || mterm > mthresh)
 			println("\n\n--------------------------------------------------")
-			println("DELETING BODY ", nn)
+			println("DELETING BODY ", el)
 			println("mterm = ", round(mterm,sigdigits=3), "; len = ", 
 				round(len,sigdigits=3), "; minlen = ", round(minlen,sigdigits=3))
 			println("--------------------------------------------------\n")
-			append!(deletevec,[nn])
+			append!(deletevec,[el])
 		end
 	end
 	return deletevec
