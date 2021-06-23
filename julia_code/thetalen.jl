@@ -196,7 +196,7 @@ function getxy(thlen::ThetaLenType)
 	dy = len/(2*pi) * (sin.(theta) .- mean(sin.(theta)))
 	xx = specint(dx) .+ xsm
 	yy = specint(dy) .+ ysm
-	return xx,yy
+	return xx, yy
 end
 
 #--------------- Tests for the theta vector ---------------#

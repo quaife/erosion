@@ -50,9 +50,9 @@ function getareas(thlenden::ThLenDenType)
 	areavec = zeros(Float64, nbods)
 	for el = 1:nbods
 		thlen = thlenden.thlenvec[el]
-		xx, yy = thlen.xx, thlen.yy
+		xx, yy = getxy(thlen)
 		sx,sy,nx,ny = getns(thlen.theta)
-		npts = length(thlen)
+		npts = length(thlen.theta)
 		ds = thlen.len / npts
 		# Compute area in two ways to estimate error.
 		areax = -dot(xx,nx)*ds
@@ -68,7 +68,7 @@ end
 # Compute the resistivity/permeability of the porous matrix.
 function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; rotation::Bool=false)
 	# Retrieve the pressure drop and flux (assuming umax = 1)
-	pdrop, qavg = getpdrop(thlenden, params.nouter, params.ibary, x0, rotation=rotation)	
+	pdrop, qavg = getpdrop(thlenden, params, x0, rotation=rotation)
 	# Calculate the total resistivity
 	resist = pdrop/(2*x0*qavg)
 	# If pipe flow (ibc = 0) then remove the contribution from the walls.
@@ -167,10 +167,10 @@ end
 #--------------------- MAIN ROUTINES ------------------#
 # Read the basic parameters from the jld2 file.
 function read_vars(datafile::AbstractString)
-	jldopen(datafile, "r") do file
-		params = read(file, "params")
-		thldvec = read(file, "thldvec")
-	end
+	file = jldopen(datafile, "r")
+	params = read(file, "params")
+	thldvec = read(file, "thldvec")
+	close(file)
 	return params, thldvec
 end
 
@@ -182,22 +182,16 @@ function pp1(datafile::AbstractString)
 	areas, resist, resist_rot = [], [], []
 	# Loop over the time values to compute areas and resistivity at each.
 	for nn = 1:nlast
-		print("pp1 step ", nn, " of ", nlast, ": ")
+		println("pp1 step ", nn, " of ", nlast, ": ")
 		thlenden = thldvec[nn]
 		# Compute the area of each body.
-		push!(areas, getareas(thlenden))
-		
-		print("area completed; ") # NEEDED?
-		
+		push!(areas, getareas(thlenden))		
 		# Compute the resistivity and push to the output vectors.
 		push!(resist, resistivity(thlenden, params))
 		push!(resist_rot, resistivity(thlenden, params, rotation=true))
-		
-		println("resistivity completed; ") # NEEDED?
-
 	end
 	# Save the new data to the same jld2 file.
-	jldopen(filename, "r+") do file
+	jldopen(datafile, "r+") do file
 		write(file, "areas", areas)
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
@@ -213,14 +207,14 @@ function pp2(foldername::AbstractString)
 	drag_data, drag_data_rot = [], []
 	# Loop over the time values to compute the drag and stress at each.
 	for nn = 1:nlast
-		print("pp2 step ", nn, " of ", nlast, ": ")
+		println("pp2 step ", nn, " of ", nlast, ": ")
 		thlenden = thldvec[nn]
 		# Compute the drag and stress, and push to the output vectors.
 		push!(drag_data, drag(thlenden, params) )
 		push!(drag_data_rot, drag(thlenden, params, rotation=true) )
 	end
 	# Save the new data to the same jld2 file.
-	jldopen(filename, "r+") do file
+	jldopen(datafile, "r+") do file
 		write(file, "drag_data", drag_data)
 		write(file, "drag_data_rot", drag_data_rot)
 	end
@@ -235,7 +229,7 @@ function pp3(foldername::AbstractString)
 	target_data = []
 	# Loop over the time values to compute the target-point data at each.
 	for nn = 1:nlast
-		print("pp3 step ", nn, " of ", nlast, ": ")
+		println("pp3 step ", nn, " of ", nlast, ": ")
 		thlenden = thldvec[nn]
 		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)
@@ -243,7 +237,7 @@ function pp3(foldername::AbstractString)
 		push!(target_data, targets)
 	end
 	# Save the new data to the same jld2 file.
-	add_data(filename, "target_data", target_data)
+	add_data(datafile, "target_data", target_data)
 	println("Finished pp3 on ", foldername, "\n")
 end
 
@@ -259,3 +253,4 @@ function postprocess(datafile::AbstractString)
 	println("Finished postprocessing ", datafile)
 	println("%------------------------------------------------------%\n\n")
 end
+#-------------------------------------------------#
