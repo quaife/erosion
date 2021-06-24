@@ -5,6 +5,9 @@ using LinearAlgebra
 include("run0.jl")
 include("main.jl")
 
+# Set the name of the output file with the processed data.
+procfile(params::ParamSet) = string("../proc_data-", params.label, ".jld2")
+
 #--- ROUTINES TO COMPUTE THE PRESSURE ON THE SURFACE ---#
 #= Note: The purpose of these routines is to compute the pressure on the surface
 of each body, rather than at a set of target points in the fluid domain. =#
@@ -163,21 +166,20 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 end
 #-------------------------------------------------#
 
-
 #--------------------- MAIN ROUTINES ------------------#
 # Read the basic parameters from the jld2 file.
-function read_vars(datafile::AbstractString)
-	file = jldopen(datafile, "r")
+function read_vars(infile::AbstractString)
+	file = jldopen(infile, "r")
 	params = read(file, "params")
 	thldvec = read(file, "thldvec")
+	cpu_hours = read(file, "cpu_hours")
 	close(file)
-	return params, thldvec
+	return params, thldvec, cpu_hours
 end
 
 # pp1: Postprocess the fast stuff: area and resistivity.
-function pp1(datafile::AbstractString)
-	println("Beginning pp1 on ", datafile)
-	params, thldvec = read_vars(datafile)
+function pp1(params::ParamSet, thldvec::ThLenDenType)
+	println("Beginning pp1:")
 	nlast = length(thldvec)
 	areas, resist, resist_rot = [], [], []
 	# Loop over the time values to compute areas and resistivity at each.
@@ -191,18 +193,17 @@ function pp1(datafile::AbstractString)
 		push!(resist_rot, resistivity(thlenden, params, rotation=true))
 	end
 	# Save the new data to the same jld2 file.
-	jldopen(datafile, "r+") do file
+	jldopen(procfile(params), "r+") do file
 		write(file, "areas", areas)
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
 	end
-	println("Finished pp1 on ", datafile, "\n")
+	println("Finished pp1.\n")
 end
 
 # pp2: Postprocess the slower stuff: drag and stress.
-function pp2(datafile::AbstractString)
-	println("\n\nBeginning pp2 on ", datafile)
-	params, thldvec = read_vars(datafile)
+function pp2(params::ParamSet, thldvec::ThLenDenType)
+	println("\n\nBeginning pp2:")
 	nlast = length(thldvec)
 	drag_data, drag_data_rot = [], []
 	# Loop over the time values to compute the drag and stress at each.
@@ -214,17 +215,16 @@ function pp2(datafile::AbstractString)
 		push!(drag_data_rot, drag(thlenden, params, rotation=true) )
 	end
 	# Save the new data to the same jld2 file.
-	jldopen(datafile, "r+") do file
+	jldopen(procfile(params), "r+") do file
 		write(file, "drag_data", drag_data)
 		write(file, "drag_data_rot", drag_data_rot)
 	end
-	println("Finished pp2 on ", datafile, "\n")
+	println("Finished pp2.\n")
 end
 
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
-function pp3(datafile::AbstractString)
-	println("\n\nBeginning pp3 on ", datafile)
-	params, thldvec = read_vars(datafile)
+function pp3(params::ParamSet, thldvec::ThLenDenType)
+	println("\n\nBeginning pp3:")
 	nlast = length(thldvec)	
 	target_data = []
 	# Loop over the time values to compute the target-point data at each.
@@ -237,22 +237,27 @@ function pp3(datafile::AbstractString)
 		push!(target_data, targets)
 	end
 	# Save the new data to the same jld2 file.
-	add_data(datafile, "target_data", target_data)
-	println("Finished pp3 on ", datafile, "\n")
+	add_data(procfile(params), "target_data", target_data)
+	println("Finished pp3.\n")
 end
 
-
-
 #postprocess: Run all postprocess routines pp1, pp2, and pp3.
-function postprocess(datafile::AbstractString)
+function postprocess(infile::AbstractString)
 	println("\n\n%------------------------------------------------------%")
-	println("Beginning postprocessing ", datafile, "\n")
-	t1 = @elapsed 	pp1(datafile)
-	t2 = @elapsed	pp2(datafile)
-#	t3 = @elapsed	pp3(datafile)
-	println("Finished postprocessing ", datafile)
+	println("Beginning postprocessing ", infile, "\n")
+	
+	# Read the variables from the raw data file and resave them in the processed one.
+	params, thldvec, cpu_hours = read_vars(infile)
+	jldsave(procfile(params); params, thldvec, cpu_hours)
+
+	# Call the postprocessing subroutines.
+	t1 = @elapsed 	pp1(params, thldvec)
+	t2 = @elapsed	pp2(params, thldvec)
+#	t3 = @elapsed	pp3(params, thldvec)
+
+	println("Finished postprocessing ", infile)
 	println("%------------------------------------------------------%\n\n")
 end
 #-------------------------------------------------#
 
-postprocess("../output_data/data-02-1.jld2")
+postprocess("../raw-02-1.jld2")
