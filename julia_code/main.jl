@@ -41,7 +41,7 @@ function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 end
 # circs2thlenden: Initialize thlenden from the input circle file.
 function circs2thlenden(params::ParamSet)
-	circdata = readvec(params.infile)
+	circdata = readvec(infile(params))
 	nbods = round(Int, popfirst!(circdata))
 	thlenvec = Array{ThetaLenType}(undef, 0)
 	for el = 1:nbods
