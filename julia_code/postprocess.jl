@@ -128,23 +128,23 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType}, spacevec::Vector{Float64}, np
 	if nbods == 0; return [],[]; end
 	npts = length(thlenv[1].theta)
 	# Use nptslayer in each layer.
-	ind0 = div(npts, 2*nptslayer)
-	ind0 = max(ind0, 1)
-	ind = ind0 : 2*ind0 : npts
+	idx0 = div(npts, 2*nptslayer)
+	idx0 = max(idx0, 1)
+	idx = idx0 : 2*idx0 : npts
 	nlayers = length(spacevec)
 	xtar, ytar = Array{Float64}(undef,0), Array{Float64}(undef,0)
 	# Loop over the bodies.
-	for el = 1:nbods
-		thlen = thlenv[el]
-		xx, yy = thlen.xx[ind], thlen.yy[ind]
+	for bod = 1:nbods
+		thlen = thlenv[bod]
+		xx, yy = getxy(thlen)
 		nx, ny = getns(thlen.theta)[3:4]
-		nx, ny = nx[ind], ny[ind]
+		xx, yy, nx, ny = xx[idx], yy[idx], nx[idx], ny[idx]
 		append!(xtar, vec(xx*ones(1,nlayers) - nx*transpose(spacevec)))
 		append!(ytar, vec(yy*ones(1,nlayers) - ny*transpose(spacevec)))
 		# Remove the points that lie outside the computational domain.
-		badind = findall( abs.(ytar) .> 0.999 )
-		deleteat!(xtar, badind)
-		deleteat!(ytar, badind)
+		badidx = findall( abs.(ytar) .> 0.999 )
+		deleteat!(xtar, badidx)
+		deleteat!(ytar, badidx)
 	end
 	return xtar, ytar
 end
@@ -234,7 +234,7 @@ function pp3(params::ParamSet, thldvec::Vector{ThLenDenType})
 		thlenden = thldvec[nn]
 		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)
-		compute_qoi_targets!(thlenden, targets, params.nouter, params.ibary, fixpdrop=false)
+		compute_qoi_targets!(thlenden, targets, params, fixpdrop=false)
 		push!(target_data, targets)
 	end
 	# Save the new data to the same jld2 file.
@@ -254,9 +254,13 @@ function postprocess(infile::AbstractString)
 	# Call the postprocessing subroutines.
 	t1 = @elapsed 	pp1(params, thldvec)
 	t2 = @elapsed	pp2(params, thldvec)
-#	t3 = @elapsed	pp3(params, thldvec)
+	t3 = @elapsed	pp3(params, thldvec)
 
+	# Simplify the cpu times and print some statements.
+	tmins(tt::Float64) = round(tt/60, sigdigits=2)
 	println("Finished postprocessing ", infile)
+	println("Simulation time (hours): ", cpu_hours)
+	println("Post-processing times (mins): p1 = ", tmins(t1), "; p2 = ", tmins(t2), "; p3 = ", tmins(t3))
 	println("%------------------------------------------------------%\n\n")
 end
 #-------------------------------------------------#
