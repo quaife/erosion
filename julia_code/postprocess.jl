@@ -43,11 +43,12 @@ function getareas(thlenden::ThLenDenType)
 	if nbods == 0 areavec = [0.0] end
 	return areavec
 end
-# Compute the resistivity/permeability of the porous matrix.
+# Compute the resistivity of the porous matrix.
+# Note: resisitivity = 1/permeability.
 function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; rotation::Bool=false)
-	# Retrieve the pressure drop and flux (assuming umax = 1)
+	# Retrieve the pressure drop and flux (assuming umax = 1).
 	pdrop, qavg = getpdrop(thlenden, params, x0, rotation=rotation)
-	# Calculate the total resistivity
+	# Calculate the total resistivity.
 	resist = pdrop/(2*x0*qavg)
 	# If pipe flow (ibc = 0) then remove the contribution from the walls.
 	if params.ibc == 0; resist = x0*(resist - 3); end
@@ -57,8 +58,10 @@ end
 
 #------ ROUTINES TO COMPUTE THE PRESSURE ON THE SURFACE ------#
 #= Note: The purpose of these routines is to compute the pressure on the surface
-of each body, rather than at a set of target points in the fluid domain. =#
-# Fortran wrapper.
+of each body, rather than at a set of target points in the fluid domain. 
+This pressure computation is used to compute the total drag. =#
+
+# Compute the pressure: Fortran wrapper.
 function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
 		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
 	pressure = zeros(Float64, npts*nbods)
@@ -70,7 +73,7 @@ function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64},
 	end
 	return pressure
 end
-# Dispatch for ThLenDenType.
+# Compute the pressure: Dispatch for ThLenDenType.
 function compute_pressure(thlenden::ThLenDenType, params::ParamSet;
 		fixpdrop::Bool=false, rotation::Bool=false)
 	@unpack npts, nouter, ibary = params
@@ -148,7 +151,7 @@ function bodyfitgrid(thlenv::Vector{ThetaLenType}, spacevec::Vector{Float64}, np
 	end
 	return xtar, ytar
 end
-# regbodtargs: Set up target points on a regular and body fitted grid.
+# Set up target points on both a regular and a body fitted grid.
 function regbodtargs(thlenv::Vector{ThetaLenType})
 	# Make the regular grid.
 	hh = 0.05
@@ -178,7 +181,7 @@ function read_vars(infile::AbstractString)
 	return params, thldvec, cpu_hours
 end
 
-# pp1: Postprocess the fast stuff: area and resistivity.
+# Postprocess the fast stuff: area and resistivity.
 function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
 	nlast = length(thldvec)
@@ -202,7 +205,7 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Finished pp1.\n")
 end
 
-# pp2: Postprocess the slower stuff: drag and stress.
+# Postprocess the slower stuff: drag and stress.
 function pp2(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("\n\nBeginning pp2:")
 	nlast = length(thldvec)
@@ -223,7 +226,7 @@ function pp2(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Finished pp2.\n")
 end
 
-# pp3: Postprocess the slowest stuff: quantities of interest at the target points.
+# Postprocess the slowest stuff: quantities of interest at the target points.
 function pp3(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("\n\nBeginning pp3:")
 	nlast = length(thldvec)	
@@ -242,7 +245,7 @@ function pp3(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Finished pp3.\n")
 end
 
-#postprocess: Run all postprocess routines pp1, pp2, and pp3.
+# Run all postprocess routines pp1, pp2, and pp3.
 function postprocess(infile::AbstractString)
 	println("\n\n%------------------------------------------------------%")
 	println("Beginning postprocessing ", infile, "\n")
