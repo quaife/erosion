@@ -252,7 +252,7 @@ function postprocess(infile::AbstractString)
 	jldsave(procfile(params); params, thldvec, cpu_hours)
 
 	# Call the postprocessing subroutines.
-#	t1 = @elapsed 	pp1(params, thldvec)
+	t1 = @elapsed 	pp1(params, thldvec)
 	t2 = @elapsed	pp2(params, thldvec)
 #	t3 = @elapsed	pp3(params, thldvec)
 
