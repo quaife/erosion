@@ -8,32 +8,7 @@ include("main.jl")
 # Set the name of the output file with the processed data.
 procfile(params::ParamSet) = string("../proc_data-", params.label, ".jld2")
 
-#--- ROUTINES TO COMPUTE THE PRESSURE ON THE SURFACE ---#
-#= Note: The purpose of these routines is to compute the pressure on the surface
-of each body, rather than at a set of target points in the fluid domain. =#
-# Fortran wrapper.
-function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
-		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
-	pressure = zeros(Float64, npts*nbods)
-	if nbods > 0
-		ccall((:computepressure_, "libstokes.so"), Nothing,
-			(Ref{Int},Ref{Int},Ref{Int},
-			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
-			npts, nbods, nouter, xx, yy, density, pressure)
-	end
-	return pressure
-end
-# Dispatch for ThLenDenType.
-function compute_pressure(thlenden::ThLenDenType, params::ParamSet;
-		fixpdrop::Bool=false, rotation::Bool=false)
-	@unpack npts, nouter, ibary = params
-	nbods,xv,yv,density = getnxyden(thlenden,params,fixpdrop,rotation)
-	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter,ibary)
-	return pressure
-end
-#-------------------------------------------------#
-
-#----------- ROUTINES FOR AREA, RESISTIVITY, DRAG, ETC. -----------#
+#----------- ROUTINES FOR AREA AND RESISTIVITY -----------#
 # Get the normal and tangent directions.
 # Convention: CCW parameterization and inward pointing normal.
 function getns(theta::Vector{Float64}, rotation::Bool=false)
@@ -78,47 +53,73 @@ function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; 
 	if params.ibc == 0; resist = x0*(resist - 3); end
 	return resist
 end
+#----------------------------------------------------------#
 
+#------ ROUTINES TO COMPUTE THE PRESSURE ON THE SURFACE ------#
+#= Note: The purpose of these routines is to compute the pressure on the surface
+of each body, rather than at a set of target points in the fluid domain. =#
+# Fortran wrapper.
+function compute_pressure(xx::Vector{Float64}, yy::Vector{Float64}, 
+		density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
+	pressure = zeros(Float64, npts*nbods)
+	if nbods > 0
+		ccall((:computepressure_, "libstokes.so"), Nothing,
+			(Ref{Int},Ref{Int},Ref{Int},
+			Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
+			npts, nbods, nouter, xx, yy, density, pressure)
+	end
+	return pressure
+end
+# Dispatch for ThLenDenType.
+function compute_pressure(thlenden::ThLenDenType, params::ParamSet;
+		fixpdrop::Bool=false, rotation::Bool=false)
+	@unpack npts, nouter, ibary = params
+	nbods,xv,yv,density = getnxyden(thlenden,params,fixpdrop,rotation)
+	pressure = compute_pressure(xv,yv,density,npts,nbods,nouter,ibary)
+	return reshape(pressure, npts, nbods)
+end
+#----------------------------------------------------------#
+
+#------ ROUTINES TO COMPUTE THE DRAG ON THE SURFACE ------#
 # Structure for the drag output data.
 mutable struct DragData
-	pdragx::Float64; pdragy::Float64; vdragx::Float64; vdragy::Float64; 
-	umax::Float64; tauvec::Vector{Float64}; atauvec::Vector{Float64};
+	pdragx::Float64; pdragy::Float64; vdragx::Float64; vdragy::Float64; umax::Float64; 
+	tau_all::Array{Float64}; atau_all::Array{Float64}; press_all::Array{Float64}
 end
 # Compute the total drag on all of the bodies combined.
 function drag(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
+	# Basic parameters.	
+	thlenvec = thlenden.thlenvec
+	nbods = length(thlenvec)
+	npts = params.npts
 	# Get the shear stress and pressure on the set of bodies.
 	# Note 1: the stress is not smoothed and absolute value is not taken.
 	# Note 2: these are the values with umax = 1.
-	tauvec = compute_stress(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
-	pressvec = compute_pressure(thlenden, params.nouter, params.ibary, fixpdrop=false, rotation=rotation)
-	thlenvec = thlenden.thlenvec
-	nbods = length(thlenden.thlenvec)
-	npts = params.npts
-	pdragx,pdragy,vdragx,vdragy = 0.,0.,0.,0.
-	atauvec = zeros(Float64,npts*nbods)
+	tau_all = compute_stress(thlenden, params, fixpdrop=false, rotation=rotation)
+	press_all = compute_pressure(thlenden, params, fixpdrop=false, rotation=rotation)
+	atau_all = zeros(Float64, npts, nbods)
+	pdragx, pdragy, vdragx, vdragy = 0., 0., 0., 0.
 	# Loop over all of the bodies.
-	for el=1:nbods
-		# Get the pressure and stress on body el.
-		el1 = npts*(el-1)+1
-		el2 = npts*el
-		press = pressvec[el1:el2]
-		tau = tauvec[el1:el2]
+	for bod = 1:nbods
+		# Get the pressure and stress on the given body.
+		press = press_all[:, bod]
+		tau = tau_all[:, bod]
 		# Go ahead and compute the absolute smoothed stress.
-		atauvec[el1:el2] = gaussfilter(abs.(tau), params.sigma)
+		atau_all[:, bod] = gaussfilter(abs.(tau), params.sigma)
 		# Get the tangent/normal vectors and arc length increment.
-		sx, sy, nx, ny = getns(thlenvec[el].theta, rotation)
-		ds = thlenvec[el].len / npts
+		sx, sy, nx, ny = getns(thlenvec[bod].theta, rotation)
+		ds = thlenvec[bod].len / npts
 		# Compute the pressure and viscous drag separately.
 		# Note: I believe both should be plus signs due to the conventions of s and n.
-		pdragx += dot(press,nx)*ds
-		pdragy += dot(press,ny)*ds
-		vdragx += dot(tau,sx)*ds
-		vdragy += dot(tau,sy)*ds
+		pdragx += dot(press, nx)*ds
+		pdragy += dot(press, ny)*ds
+		vdragx += dot(tau, sx)*ds
+		vdragy += dot(tau, sy)*ds
 	end
-	umax = getumax(thlenden, params.nouter, params.ibary, params.fixpdrop)
-	return DragData(pdragx, pdragy, vdragx, vdragy, umax, tauvec, atauvec)
+	umax = getumax(thlenden, params, params.fixpdrop)
+	return DragData(pdragx, pdragy, vdragx, vdragy, umax, tau_all, atau_all, press_all)
 end
-#-------------------------------------------------#
+#----------------------------------------------------------#
 
 #----------- ROUTINES FOR TARGET POINT CALCULATIONS -----------#
 # Set up target points on a body-fitted grid around all bodies.
@@ -178,7 +179,7 @@ function read_vars(infile::AbstractString)
 end
 
 # pp1: Postprocess the fast stuff: area and resistivity.
-function pp1(params::ParamSet, thldvec::ThLenDenType)
+function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
 	nlast = length(thldvec)
 	areas, resist, resist_rot = [], [], []
@@ -202,7 +203,7 @@ function pp1(params::ParamSet, thldvec::ThLenDenType)
 end
 
 # pp2: Postprocess the slower stuff: drag and stress.
-function pp2(params::ParamSet, thldvec::ThLenDenType)
+function pp2(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("\n\nBeginning pp2:")
 	nlast = length(thldvec)
 	drag_data, drag_data_rot = [], []
@@ -223,7 +224,7 @@ function pp2(params::ParamSet, thldvec::ThLenDenType)
 end
 
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
-function pp3(params::ParamSet, thldvec::ThLenDenType)
+function pp3(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("\n\nBeginning pp3:")
 	nlast = length(thldvec)	
 	target_data = []
@@ -251,7 +252,7 @@ function postprocess(infile::AbstractString)
 	jldsave(procfile(params); params, thldvec, cpu_hours)
 
 	# Call the postprocessing subroutines.
-	t1 = @elapsed 	pp1(params, thldvec)
+#	t1 = @elapsed 	pp1(params, thldvec)
 	t2 = @elapsed	pp2(params, thldvec)
 #	t3 = @elapsed	pp3(params, thldvec)
 
@@ -260,4 +261,4 @@ function postprocess(infile::AbstractString)
 end
 #-------------------------------------------------#
 
-postprocess("../raw-02-1.jld2")
+postprocess("../raw_data-02-1.jld2")

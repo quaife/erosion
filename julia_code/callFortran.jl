@@ -190,10 +190,11 @@ function compute_stress(thlenden::ThLenDenType, params::ParamSet;
 	@unpack npts, nouter, ibary = params
 	nbods,xv,yv,density = getnxyden(thlenden,params,fixpdrop,rotation)
 	tau = compute_stress(xv,yv,density,npts,nbods,nouter,ibary)
-	return reshape(tau,npts,nbods)
+	return reshape(tau, npts, nbods)
 end
+
 #= getstress! The main function for calling the necessary Fortran routines.
-Computes the smoothed stress atau and saves it in thlenden.thlenvec.atau. =#
+Computes the smoothed absolute stress atau and saves it in thlenden.thlenvec.atau. =#
 function getstress!(thlenden::ThLenDenType, params::ParamSet)
 	# Compute the density and stress.
 	dummy, den_time = @timed( compute_density!(thlenden, params) )
