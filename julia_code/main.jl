@@ -11,8 +11,12 @@ include("spectral.jl")
 include("thetalen.jl")
  
  #--------------- TINY ROUTINES ---------------#
- # Set the plot folder.
-plotfolder(params::ParamSet) = string("../zFigs-",params.label,"/")
+ # Set files and folders: the input data file, the output temporary data file,
+ # the final output file, and the output plot folder.
+infile(params::ParamSet) = string("../", params.infolder, params.label, ".circ")
+tempfile(params::ParamSet) = string("../temp_data-", params.label, ".jld2")
+outfile(params::ParamSet) = string("../raw_data-", params.label, ".jld2")
+plotfolder(params::ParamSet) = string("../zFigs-", params.label, "/")
 
 # Add a variable incrementally to a jld data file.
 function add_data(filename::AbstractString, varlabel::AbstractString, var)
@@ -21,11 +25,9 @@ function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	end
 end
 
-# Set the temporary data file to allow incremental saves.
-tempfile(params) = string(params.outfile, "-temp.jld2")
 # Convert an integer to a string with zero-padding.
 nstr(nn::Int) = lpad(string(nn), 4, string(0))
-# The data label for thlenden
+# The data label for thlenden.
 thlabel(nn) = string("thlenden", nstr(nn))
 #-------------------------------------------------#
 
@@ -132,7 +134,6 @@ function main(params::ParamSet)
 	println("cpu time = ", cpu_hours, " hours.\n\n")
 
 	# Save the data to the main output file.
-	outfile = string(params.outfile,".jld2")
-	jldsave(outfile; params, thldvec, cpu_hours)
+	jldsave(outfile(params); params, thldvec, cpu_hours)
 end
 #-------------------------------------------------#

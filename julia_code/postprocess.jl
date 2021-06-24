@@ -182,7 +182,7 @@ function pp1(datafile::AbstractString)
 	areas, resist, resist_rot = [], [], []
 	# Loop over the time values to compute areas and resistivity at each.
 	for nn = 1:nlast
-		println("pp1 step ", nn, " of ", nlast, ": ")
+		println("pp1 step ", nn, " of ", nlast)
 		thlenden = thldvec[nn]
 		# Compute the area of each body.
 		push!(areas, getareas(thlenden))		
@@ -196,18 +196,18 @@ function pp1(datafile::AbstractString)
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
 	end
-	println("Finished pp1 on ", foldername, "\n")
+	println("Finished pp1 on ", datafile, "\n")
 end
 
 # pp2: Postprocess the slower stuff: drag and stress.
-function pp2(foldername::AbstractString)
-	println("\n\nBeginning pp2 on ", foldername)
+function pp2(datafile::AbstractString)
+	println("\n\nBeginning pp2 on ", datafile)
 	params, thldvec = read_vars(datafile)
 	nlast = length(thldvec)
 	drag_data, drag_data_rot = [], []
 	# Loop over the time values to compute the drag and stress at each.
 	for nn = 1:nlast
-		println("pp2 step ", nn, " of ", nlast, ": ")
+		println("pp2 step ", nn, " of ", nlast)
 		thlenden = thldvec[nn]
 		# Compute the drag and stress, and push to the output vectors.
 		push!(drag_data, drag(thlenden, params) )
@@ -218,18 +218,18 @@ function pp2(foldername::AbstractString)
 		write(file, "drag_data", drag_data)
 		write(file, "drag_data_rot", drag_data_rot)
 	end
-	println("Finished pp2 on ", foldername, "\n")
+	println("Finished pp2 on ", datafile, "\n")
 end
 
 # pp3: Postprocess the slowest stuff: quantities of interest at the target points.
-function pp3(foldername::AbstractString)
-	println("\n\nBeginning pp3 on ", foldername)
+function pp3(datafile::AbstractString)
+	println("\n\nBeginning pp3 on ", datafile)
 	params, thldvec = read_vars(datafile)
 	nlast = length(thldvec)	
 	target_data = []
 	# Loop over the time values to compute the target-point data at each.
 	for nn = 1:nlast
-		println("pp3 step ", nn, " of ", nlast, ": ")
+		println("pp3 step ", nn, " of ", nlast)
 		thlenden = thldvec[nn]
 		# Compute velocity, pressure, vorticity at a set of target points, with umax set to 1.
 		targets = regbodtargs(thlenden.thlenvec)
@@ -238,7 +238,7 @@ function pp3(foldername::AbstractString)
 	end
 	# Save the new data to the same jld2 file.
 	add_data(datafile, "target_data", target_data)
-	println("Finished pp3 on ", foldername, "\n")
+	println("Finished pp3 on ", datafile, "\n")
 end
 
 
@@ -254,3 +254,5 @@ function postprocess(datafile::AbstractString)
 	println("%------------------------------------------------------%\n\n")
 end
 #-------------------------------------------------#
+
+postprocess("../output_data/data-02-1.jld2")
