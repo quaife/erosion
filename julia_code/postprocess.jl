@@ -1,7 +1,7 @@
 # MAIN GOAL: Postprocess the jld2 file to compute new quantities.
-# Convention: el = 1:nbods indexes the bodies, nn indexes the timestep.
+# Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
 
-using LinearAlgebra
+using LinearAlgebra	# Used for dot() in drag() and for the matrix calculations in bodyfitgrid().
 include("run0.jl")
 include("main.jl")
 
@@ -26,8 +26,8 @@ end
 function getareas(thlenden::ThLenDenType)
 	nbods = length(thlenden.thlenvec)
 	areavec = zeros(Float64, nbods)
-	for el = 1:nbods
-		thlen = thlenden.thlenvec[el]
+	for bod = 1:nbods
+		thlen = thlenden.thlenvec[bod]
 		xx, yy = getxy(thlen)
 		sx,sy,nx,ny = getns(thlen.theta)
 		npts = length(thlen.theta)
@@ -38,7 +38,7 @@ function getareas(thlenden::ThLenDenType)
 		area = 0.5*(areax+areay)
 		reldiff = abs(areax-areay)/area
 		reldiff > 1e-3 ? @warn(string("Relative error in area = ", round(reldiff,sigdigits=2))) : 0.
-		areavec[el] = area
+		areavec[bod] = area
 	end
 	if nbods == 0 areavec = [0.0] end
 	return areavec

@@ -1,6 +1,6 @@
 # MAIN GOAL: The main routines to simulate erosion.
 # The output is saved in a jld2 file.
-# Convention: el = 1:nbods indexes the bodies, nn indexes the timestep.
+# Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
 
 using JLD2
 using Plots
@@ -44,7 +44,7 @@ function circs2thlenden(params::ParamSet)
 	circdata = readvec(infile(params))
 	nbods = round(Int, popfirst!(circdata))
 	thlenvec = Array{ThetaLenType}(undef, 0)
-	for el = 1:nbods
+	for bod = 1:nbods
 		rad, xc, yc = [popfirst!(circdata) for i=1:3]
 		thlen = circ2thlen(params.npts, rad, xc, yc)
 		push!(thlenvec, thlen)

@@ -1,5 +1,5 @@
 # MAIN GOAL: Convert the lists of output text files to a Julia data file.
-# Convention: el = 1:nbods indexes the bodies, nn indexes the timestep.
+# Convention: nn indexes the timestep, el = 1:nbods indexes the bodies.
 
 #--------------- BASIC STUFF ---------------#
 using JLD2
