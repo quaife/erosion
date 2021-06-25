@@ -171,16 +171,6 @@ end
 #-------------------------------------------------#
 
 #--------------------- MAIN ROUTINES ------------------#
-# Read the basic parameters from the jld2 file.
-function read_vars(infile::AbstractString)
-	file = jldopen(infile, "r")
-	params = read(file, "params")
-	thldvec = read(file, "thldvec")
-	cpu_hours = read(file, "cpu_hours")
-	close(file)
-	return params, thldvec, cpu_hours
-end
-
 # Postprocess the fast stuff: area and resistivity.
 function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
@@ -250,8 +240,13 @@ function postprocess(infile::AbstractString)
 	println("\n\n%------------------------------------------------------%")
 	println("Beginning postprocessing ", infile, "\n")
 	
-	# Read the variables from the raw data file and resave them in the processed one.
-	params, thldvec, cpu_hours = read_vars(infile)
+	# Read the variables from the raw data file.
+	file = jldopen(infile, "r")
+	params = read(file, "params")
+	thldvec = read(file, "thldvec")
+	cpu_hours = read(file, "cpu_hours")
+	close(file)
+	# Initialize the processed data file by saving the basic variables there.
 	jldsave(procfile(params); params, thldvec, cpu_hours)
 
 	# Call the postprocessing subroutines.
@@ -267,5 +262,3 @@ function postprocess(infile::AbstractString)
 	println("%------------------------------------------------------%\n\n")
 end
 #-------------------------------------------------#
-
-postprocess("../raw_data-02-1.jld2")

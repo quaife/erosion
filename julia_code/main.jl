@@ -52,20 +52,21 @@ function circs2thlenden(params::ParamSet)
 	return new_thlenden(thlenvec)
 end
 
-# Make simple pdf plots for monitoring (not prodcution level)
+# Make simple pdf plots for monitoring (not production level).
 function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})	
 	# Make figure of given height and preserve the aspect ratio.
 	axlims = [1.0, 1.0]
 	height = 400
 	width = axlims[1]/axlims[2]*height
+	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), 
+		size=(width,height), leg=false)
 	# Plot the curves.
-	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), size=(width,height),leg=false)
 	for ii = 1:lastindex(thlenvec)
 		thlen = thlenvec[ii]
 		if thlen.len<=0
 			throw("Cannot plot a curve with non-positive length.")
 		end
-		xx,yy = getxy(thlen)
+		xx, yy = getxy(thlen)
 		plot!(plt, xx, yy, color="black")
 	end
 	savefig(plt, figname)
