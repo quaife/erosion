@@ -2,17 +2,25 @@
 
 # Convention: mm indexes the target points.
 #= Note: The time-stepping routine in thetalen calls getstress! 
-which itself calls compute_density! and compute_stress. =#
+which itself calls compute_density! and compute_stress.
+
+Exported Methods
+The data types ThetaLenType, ThLenDenType, and routine new_thlenden are used almost everwhere.
+getxy() is used in callFortran.getnxy and in postprocess.jl.
 
 
-#export ThetaLenType, ThLenDenType, new_thlenden, getxy, 
+ =#
+#-----------------------------------------------------------#
 
 
-#getxy() is used in callFortran.getnxy and in postprocess.jl.
-# The data types ThetaLenType, ThLenDenType, and routine new_thlenden are used almost everwhere.
-
+module callFortran
+export ThetaLenType, ThLenDenType, new_thlenden, getxy, 
 
 using Statistics
+include("spectral.jl")	# Used routines: specint, gaussfilter
+
+
+
 
 #--------------- BASIC STUFF ---------------#
 
