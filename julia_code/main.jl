@@ -3,8 +3,7 @@
 # Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
 
 
-using TimeStep
-
+# HAVE TO include timestepping and use the module...
 
 using JLD2
 using Plots
