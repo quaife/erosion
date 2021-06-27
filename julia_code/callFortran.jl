@@ -4,7 +4,79 @@
 #= Note: The time-stepping routine in thetalen calls getstress! 
 which itself calls compute_density! and compute_stress. =#
 
+
+#export ThetaLenType, ThLenDenType, new_thlenden, getxy, 
+
+
+#getxy() is used in callFortran.getnxy and in postprocess.jl.
+# The data types ThetaLenType, ThLenDenType, and routine new_thlenden are used almost everwhere.
+
+
 using Statistics
+
+#--------------- BASIC STUFF ---------------#
+
+#--------------- Theta-Len data types ---------------#
+#= Structure that includes the geometry variables (theta, len, xsm, ysm),
+and matau: the mean of the absolute stress on each body. =#
+mutable struct ThetaLenType
+	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64; matau::Float64
+end
+# Structure that includes the vector of thlens for all bodies and the density function.
+mutable struct ThLenDenType
+	thlenvec::Vector{ThetaLenType}; tt::Float64;
+	density::Vector{Float64}; denrot::Vector{Float64}; 
+end
+# Create a new ThLenDenType variable.
+new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0., [],[])
+
+
+#--------------- Tests for the theta vector ---------------#
+#= Test that cos(theta) and sin(theta) have zero mean.
+These are conditions for theta to describe a closed curve in the equal arc length frame. =#
+function test_theta_means(theta::Vector{Float64})
+	maxmean = maximum(abs, [mean(cos.(theta)), mean(sin.(theta))])
+	thresh = 20.0 / length(theta)
+	if maxmean > thresh
+		@warn("theta means")
+		println("The maximum mean of sin(theta) & cos(theta) is: ", 
+			round(maxmean, sigdigits=3), " > ", round(thresh, sigdigits=3))
+	end
+end
+#= Test that the difference between the first and last tangent angles is 2*pi. 
+Current, this routine is UNUSED. =#
+function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
+	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
+	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
+	# Compare the two extrpaolations.
+	th0diff = abs(th0left - th0right)
+	if th0diff > thresh
+		@warn("theta ends") 
+		println("The difference between the ends is: ", 
+			round(th0diff, sigdigits=3), " > ", round(thresh, sigdigits=3))
+	end
+end
+#-----------------------------------------------------------#
+
+#= Given theta and len, reconstruct the x and y coordinates of a body.
+xsm and ysm are the boundary-averaged values. =#
+function getxy(thlen::ThetaLenType)
+	theta, len, xsm, ysm = thlen.theta, thlen.len, thlen.xsm, thlen.ysm
+	test_theta_means(theta)
+	@assert len > 0.
+	dx = len/(2*pi) * (cos.(theta) .- mean(cos.(theta)))
+	dy = len/(2*pi) * (sin.(theta) .- mean(sin.(theta)))
+	xx = specint(dx) .+ xsm
+	yy = specint(dy) .+ ysm
+	return xx, yy
+end
+#-----------------------------------------------------------#
+
+
+
+
+
 
 #--------------- BASIC STUFF ---------------#
 # TargetsType: includes x-y coordinates of target points and u,v,pressure.
@@ -28,6 +100,9 @@ end
 # xyrot: Rotate the x and y coordinates by 90 degrees CCW.
 xyrot(xv::Vector{Float64}, yv::Vector{Float64}) = -yv, xv
 #-------------------------------------------------#
+
+
+
 
 #------------ FORTRAN WRAPPER TO COMPUTE THE DENSITY FUNCTION ------------#
 # compute_density: Fortran wrapper.

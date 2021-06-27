@@ -2,16 +2,12 @@
 # The output is saved in a jld2 file.
 # Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
 
+
+using TimeStep
+
+
 using JLD2
 using Plots
-
-include("basic.jl")
-include("callFortran.jl")
-include("spectral.jl")
-include("thetalen.jl")
- 
-
-
 
 # USED IN ONLY ONE PLACE, THINK ABOUT IT...
 # basic.jl: Basic routines such as datatypes.
