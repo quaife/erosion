@@ -12,6 +12,28 @@ savefile(label::AbstractString) = string(data_set(),"data-",label,".jld2")
 #include("run0.jl")
 #-------------------------------------------------#
 
+
+
+
+
+# basic.jl: Basic routines such as datatypes.
+using DelimitedFiles
+# readvec: Read a vector from a text file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream, comments=true)[:,1]
+	close(iostream)
+	return invec
+end
+
+
+
+
+
+
+
+
+
 #--------------- LITTLE IO ROUTINES ---------------#
 #= These routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
 They became obselote in the main part of the code but are still needed 

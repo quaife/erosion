@@ -10,6 +10,24 @@ include("callFortran.jl")
 include("spectral.jl")
 include("thetalen.jl")
  
+
+
+
+# USED IN ONLY ONE PLACE, THINK ABOUT IT...
+# basic.jl: Basic routines such as datatypes.
+using DelimitedFiles
+# readvec: Read a vector from a text file.
+function readvec(filename::AbstractString)
+	iostream = open(filename, "r")
+	invec = readdlm(iostream, comments=true)[:,1]
+	close(iostream)
+	return invec
+end
+
+
+
+
+
  #--------------- TINY ROUTINES ---------------#
  # Set files and folders: the input data file, the output temporary data file,
  # the final output file, and the output plot folder.

@@ -1,32 +1,109 @@
 #= thetalen.jl: Collection of codes for theta-L boundary evolution.
 
 Variables
-theta (vector): The tangent angle as it varies along the boundary.
-len (scalar): The length of the curve, L.
+theta (vector): The tangent angle as it varies along the boundary of a given body.
+len (scalar): The total arch length of the boundary of a given body.
+xsm, ysm (scalars): The surface-mean of x and y; used as a reference point for each body.
 atau (vector): The absolute value of the shear stress, computed by fluid solver.
+matau (scalar): The surface mean of atau on each body.
 
 Parameters
 dt: The time-step.
 epsilon: The constant for the smoothing, curvature-driven-flow component.
 sigma: The smooth of the abolute-value of shear stress.
 
-I use the same convention for tangential and normal vectors as Shelley 1994. 
-That is, I assume the curve is parameterized in the counter-clockwise (CCW) direction, 
-and I use the inward pointing normal vector. =#
-# Convention: el = 1:nbods indexes the bodies.
+Parameterization Convention
+The curve is assumed to be parametrized in the counter-clockwise (CCW) direction,
+and the inward pointing normal vector is used. This is the same convectino as Shelley 1994.
 
+Indexing Convention
+bod = 1:nbods indexes the bodies. No other indices are used.
 
+Exported Methods
+The data types ThetaLenType and ThLenDenType are used almost everwhere. 
+rungekutta2() is the main time-stepping routine called in main.erosion().
+getxy() is used in callFortran.getnxy, and in postprocess.jl.
+test_theta_means() is used anywhere???
+=#
 
-
-#module ThetaLen
-#export ThetaLenType, ThLenDenType, getxy, rungekutta2
-
-
-
-
-
-
+module ThetaLen
+export ThetaLenType, ThLenDenType, getxy, rungekutta2
 using Statistics
+
+
+#--------------- Theta-Len Data Types ---------------#
+# Includes the geometry variables: theta,  and stress on a single body.
+mutable struct ThetaLenType
+	theta::Vector{Float64}; len::Float64; xsm::Float64; ysm::Float64; matau::Float64
+end
+
+# ThLenDenType: Includes the vector of all thlens and the density function.
+mutable struct ThLenDenType
+	thlenvec::Vector{ThetaLenType}; tt::Float64;
+	density::Vector{Float64}; denrot::Vector{Float64}; 
+end
+
+# Create a new ThLenDenType variable.
+new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0., [],[])
+
+#--------------- Tests for the theta vector ---------------#
+#= Test that cos(theta) and sin(theta) have zero mean.
+These are conditions for theta to describe a closed curve in the equal arc length frame. =#
+function test_theta_means(theta::Vector{Float64})
+	maxmean = maximum(abs, [mean(cos.(theta)), mean(sin.(theta))])
+	thresh = 20.0 / length(theta)
+	if maxmean > thresh
+		@warn("theta means")
+		println("The maximum mean of sin(theta) & cos(theta) is: ", 
+			round(maxmean, sigdigits=3), " > ", round(thresh, sigdigits=3))
+	end
+end
+#= Test that the difference between the first and last tangent angles is 2*pi. 
+Current, this routine is UNUSED. =#
+function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
+	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
+	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
+	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
+	# Compare the two extrpaolations.
+	th0diff = abs(th0left - th0right)
+	if th0diff > thresh
+		@warn("theta ends") 
+		println("The difference between the ends is: ", 
+			round(th0diff, sigdigits=3), " > ", round(thresh, sigdigits=3))
+	end
+end
+#-----------------------------------------------------------#
+
+
+
+#--------------- SMALL ROUTINES ---------------#
+# Multiply two vectors with or without dealiasing.
+function vecmult(uu::Vector{Float64}, vv::Vector{Float64})
+#	return mult_dealias(uu,vv)
+	return uu.*vv
+end
+# Get alpha = 2 pi s/L, using an offset grid.
+function getalpha(npts::Integer)
+	dalpha = 2*pi/npts
+	return alpha = collect(range(0.5*dalpha, step=dalpha, length=npts))
+end
+
+#= Given theta and len, reconstruct the x and y coordinates of a body.
+xsm and ysm are the boundary-averaged values. =#
+function getxy(thlen::ThetaLenType)
+	theta, len, xsm, ysm = thlen.theta, thlen.len, thlen.xsm, thlen.ysm
+	test_theta_means(theta)
+	@assert len > 0.
+	dx = len/(2*pi) * (cos.(theta) .- mean(cos.(theta)))
+	dy = len/(2*pi) * (sin.(theta) .- mean(sin.(theta)))
+	xx = specint(dx) .+ xsm
+	yy = specint(dy) .+ ysm
+	return xx, yy
+end
+
+
+
+
 #--------------- OBJECT ROUTINES ---------------#
 # Includes the derivatives of theta, len, xsm, ysm.
 mutable struct DerivsType
@@ -34,23 +111,104 @@ mutable struct DerivsType
 	xsmdot::Float64; ysmdot::Float64
 end
 
-#--------------- TIME-STEPPING ROUTINES ---------------#
-# Take a step forward with 4th order Runge-Kutta.
-function rungekutta2(thld0::ThLenDenType, params::ParamSet)
-	# Could in principle set dt adaptively
-	dt = params.dt
-	# Stage 1
-	println("Stage 1 of Runge-Kutta")
-	thld05 = timestep!(thld0, thld0, 0.5*dt, 0.5*dt, params)
-	# Stage 2
-	println("\nStage 2 of Runge-Kutta")	
-	thld1 = timestep!(thld0, thld05, dt, 0.5*dt, params)
-	println("Completed Runge-Kutta step.")
-	# Update the time value
-	thld1.tt = thld0.tt + dt
-	return thld1
+
+
+
+
+
+
+
+
+
+#--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
+# Get the derivative terms for all of the bodies.
+function getderivs(thlenden::ThLenDenType, params::ParamSet)
+	atau = getstress!(thlenden, params)
+	dvec = Array{DerivsType}(undef, 0)
+	for bod = 1:length(thlenden.thlenvec)
+		thlen = thlenden.thlenvec[bod]
+		derivs = getderivs(thlen, params, atau[:,bod])
+		push!(dvec,derivs)
+	end
+	return dvec
 end
-#= timestep: Take a step of forward for all of the bodies.
+#= Get the derivative terms for a single body.
+These are the derivatives of theta, len, xsm, and ysm.
+mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
+function getderivs(thlen::ThetaLenType, params::ParamSet, atau::Vector{Float64})
+	# Extract the variables.
+	theta, len, matau = thlen.theta, thlen.len, thlen.matau
+	@unpack epsilon, fixarea = params
+	# Compute the effective atau to be used in evolution, depending on fixarea.
+	ataueff = atau .- fixarea*matau
+	# Calculate the derivative terms.
+	alpha = getalpha(length(theta))
+	dtheta = specdiff(theta - alpha) .+ 1.0
+	vnorm = ataueff + epsilon*matau*(dtheta .- 1.0)
+	vtang, mterm = tangvel(dtheta, vnorm)
+	# Derivative of absolute-value of shear stress.
+	datau = specdiff(atau)
+	nterm = 2*pi/len * (datau + vecmult(dtheta,vtang))
+	# Get the derivatives of xsm and ysm.
+	xsmdot = mean(-vecmult(vnorm,sin.(theta)) + vecmult(vtang,cos.(theta)))
+	ysmdot = mean( vecmult(vnorm,cos.(theta)) + vecmult(vtang,sin.(theta)))
+	# Save in object.
+	derivs = DerivsType(mterm, nterm, xsmdot, ysmdot)
+	return derivs
+end
+# Compute the tangential velocity and mterm = dL/dt along the way.
+function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
+	dthvn = vecmult(dtheta,vnorm)
+	mdthvn = mean(dthvn)
+	# Formula for mterm = dL/dt.
+	mterm = -2*pi*mdthvn
+	# The derivative of the tangnential velocity wrt alpha.
+	dvtang = dthvn .- mdthvn
+	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
+	vtang = specint(dvtang)
+	return vtang, mterm
+end
+#= Find the bodies where the length is too small.
+Neglecting the log term, L should vanish like sqrt(t).
+The midpoint rule in RK2 gives the sqrt(2) factor. =#
+function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
+	# ndts: The number of dt values to look into the future for len.
+	ndts = 1.0
+	mthresh = 10.
+	thlv = thld0.thlenvec
+	nbods = length(thlv)
+	@assert length(dvec) == nbods
+	deletevec = Array{Int}(undef,0)
+	for bod = 1:nbods
+		len = thlv[bod].len
+		mterm = dvec[bod].mterm
+		minlen = -sqrt(2)*mterm*ndts*dt
+		if mterm > 0.; @warn("mterm is positive."); end;
+		if (len <= minlen || mterm > mthresh)
+			println("\n\n--------------------------------------------------")
+			println("DELETING BODY ", bod)
+			println("mterm = ", round(mterm,sigdigits=3), "; len = ", 
+				round(len, sigdigits=3), "; minlen = ", round(minlen, sigdigits=3))
+			println("--------------------------------------------------\n")
+			append!(deletevec, [bod])
+		end
+	end
+	return deletevec
+end
+
+
+
+
+
+
+
+
+
+
+
+
+#--------------- TIME-STEPPING ROUTINES ---------------#
+#= Take a step of forward for all of the bodies.
 dt1 is the step-size, dt2 is used in the Gaussian filter.  =#
 function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType, 
 		dt1::Float64, dt2::Float64, params::ParamSet)
@@ -72,18 +230,17 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	alpha = getalpha(params.npts)
 	# zetafun: How to scale the smoothing with len and matau = mean(abs(tau)).
 	zetafun(len::Float64, matau::Float64) = 2*pi/len * matau
-	for el = 1:nbods
-		# Extract the variables for body el.
-		# thlen0
-		thlen0  = thld0.thlenvec[el]
+	for bod = 1:nbods
+		# Extract the variables for the body of interest.
+		thlen0  = thld0.thlenvec[bod]
 		th0, len0, xsm0, ysm0 = thlen0.theta, thlen0.len, thlen0.xsm, thlen0.ysm
 		# thlend	
-		thlend = thld_derivs.thlenvec[el]
+		thlend = thld_derivs.thlenvec[bod]
 		lend = thlend.len
 		# matau = mean(atau)
 		matau0, mataud = thlen0.matau, thlend.matau
 		# derivs
-		derivs = dvec[el]
+		derivs = dvec[bod]
 		mterm, nterm, xsmdot, ysmdot = derivs.mterm, derivs.nterm, derivs.xsmdot, derivs.ysmdot
 		# Advance len first.
 		len1 = len0 + dt1*mterm
@@ -110,135 +267,19 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 	return thld1
 end
 
-#--------------- ROUTINES TO SUPPORT TIMESTEPPING ---------------#
-# getderivs: Get the derivative terms for all of the bodies.
-function getderivs(thlenden::ThLenDenType, params::ParamSet)
-	atau = getstress!(thlenden, params)
-	dvec = Array{DerivsType}(undef, 0)
-	for bod = 1:length(thlenden.thlenvec)
-		thlen = thlenden.thlenvec[bod]
-		derivs = getderivs(thlen, params, atau[:,bod])
-		push!(dvec,derivs)
-	end
-	return dvec
-end
-#= getderivs: Get the derivative terms for a single body.
-These are the derivatives of theta, len, xsm, and ysm.
-mterm is dL/dt; nterm is the nonlinear term in dtheta/dt. =#
-function getderivs(thlen::ThetaLenType, params::ParamSet, atau::Vector{Float64})
-	# Extract the variables.
-	theta, len, matau = thlen.theta, thlen.len, thlen.matau
-	@unpack epsilon, fixarea = params
-	# Compute the effective atau to be used in evolution, depending on fixarea.
-	ataueff = atau .- fixarea*matau
-	# Calculate the derivative terms.
-	alpha = getalpha(length(theta))
-	dtheta = specdiff(theta - alpha) .+ 1.0
-	vnorm = ataueff + epsilon*matau*(dtheta .- 1.0)
-	vtang, mterm = tangvel(dtheta, vnorm)
-	# Derivative of absolute-value of shear stress.
-	datau = specdiff(atau)
-	nterm = 2*pi/len * (datau + vecmult(dtheta,vtang))
-	# Get the derivatives of xsm and ysm.
-	xsmdot = mean(-vecmult(vnorm,sin.(theta)) + vecmult(vtang,cos.(theta)))
-	ysmdot = mean( vecmult(vnorm,cos.(theta)) + vecmult(vtang,sin.(theta)))
-	# Save in object.
-	derivs = DerivsType(mterm, nterm, xsmdot, ysmdot)
-	return derivs
-end
-# tangvel: Compute the tangential velocity and mterm = dL/dt along the way.
-function tangvel(dtheta::Vector{Float64}, vnorm::Vector{Float64})
-	dthvn = vecmult(dtheta,vnorm)
-	mdthvn = mean(dthvn)
-	# Formula for mterm = dL/dt.
-	mterm = -2*pi*mdthvn
-	# The derivative of the tangnential velocity wrt alpha.
-	dvtang = dthvn .- mdthvn
-	# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
-	vtang = specint(dvtang)
-	return vtang, mterm
-end
-#= delete_indices: Find the bodies where the length is too small.
-Neglecting the log term, L should vanish like sqrt(t).
-The midpoint rule in RK2 gives the sqrt(2) factor. =#
-function delete_indices(thld0::ThLenDenType, dvec::Vector{DerivsType}, dt::Float64)
-	# ndts: The number of dt values to look into the future for len.
-	ndts = 1.0
-	mthresh = 10.
-	thlv = thld0.thlenvec
-	nbods = length(thlv)
-	@assert length(dvec) == nbods
-	deletevec = Array{Int}(undef,0)
-	for el = 1:nbods
-		len = thlv[el].len
-		mterm = dvec[el].mterm
-		minlen = -sqrt(2)*mterm*ndts*dt
-		if mterm > 0.; @warn("mterm is positive."); end;
-		if (len <= minlen || mterm > mthresh)
-			println("\n\n--------------------------------------------------")
-			println("DELETING BODY ", el)
-			println("mterm = ", round(mterm,sigdigits=3), "; len = ", 
-				round(len,sigdigits=3), "; minlen = ", round(minlen,sigdigits=3))
-			println("--------------------------------------------------\n")
-			append!(deletevec,[el])
-		end
-	end
-	return deletevec
-end
-
-#--------------- SMALL ROUTINES ---------------#
-# vecmult: Multiply two vectors with or without dealiasing.
-function vecmult(uu::Vector{Float64}, vv::Vector{Float64})
-#	return mult_dealias(uu,vv)
-	return uu.*vv
-end
-# getalpha: Get alpha = 2 pi s/L, using an offset grid.
-function getalpha(npts::Integer)
-	dalpha = 2*pi/npts
-	return alpha = collect(range(0.5*dalpha, step=dalpha, length=npts))
-end
-#= getxy: Given theta and len, reconstruct the x and y coordinates of a body.
-xsm and ysm are the boundary-averaged values. =#
-function getxy(thlen::ThetaLenType)
-	theta, len, xsm, ysm = thlen.theta, thlen.len, thlen.xsm, thlen.ysm
-	test_theta_means(theta)
-	@assert len > 0.
-	dx = len/(2*pi) * (cos.(theta) .- mean(cos.(theta)))
-	dy = len/(2*pi) * (sin.(theta) .- mean(sin.(theta)))
-	xx = specint(dx) .+ xsm
-	yy = specint(dy) .+ ysm
-	return xx, yy
-end
-
-#--------------- Tests for the theta vector ---------------#
-#= test_theta_means: Test that cos(theta) and sin(theta) have zero mean.
-These are conditions for theta to describe a closed curve 
-in the equal arc length frame. =#
-function test_theta_means(theta::Vector{Float64})
-	npts = length(theta)
-	m1 = mean(cos.(theta))
-	m2 = mean(sin.(theta))
-	maxmean = maximum(abs.([m1,m2]))
-	thresh = 20/npts
-	if maxmean > thresh
-		@warn("theta means")
-		println("The max mean of sin, cos is: ", 
-			round(maxmean,sigdigits=3), " > ", round(thresh,sigdigits=3))
-	end
-	return
-end
-#= test_theta_ends: Test that the difference between the 
-first and last tangent angles is 2pi. =#
-function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
-	# Use quadratic extrapolation to estimate theta at alpha=0 from both sides.
-	th0left = 15/8*theta[1] - 5/4*theta[2] + 3/8*theta[3]
-	th0right = 15/8*theta[end] - 5/4*theta[end-1] + 3/8*theta[end-2] - 2*pi
-	# Compare the two extrpaolations.
-	th0diff = abs(th0left - th0right)
-	if th0diff > thresh
-		@warn("theta ends") 
-		println("The difference between the ends is: ", 
-			round(th0diff,sigdigits=3), " > ", round(thresh,sigdigits=3))
-	end
-	return
+#= Take a step forward with 4th order Runge-Kutta.
+This is the main time-stepping routine called by the erosion simulation. =#
+function rungekutta2(thld0::ThLenDenType, params::ParamSet)
+	# Could in principle set dt adaptively
+	dt = params.dt
+	# Stage 1
+	println("Stage 1 of Runge-Kutta")
+	thld05 = timestep!(thld0, thld0, 0.5*dt, 0.5*dt, params)
+	# Stage 2
+	println("\nStage 2 of Runge-Kutta")	
+	thld1 = timestep!(thld0, thld05, dt, 0.5*dt, params)
+	println("Completed Runge-Kutta step.")
+	# Update the time value
+	thld1.tt = thld0.tt + dt
+	return thld1
 end
