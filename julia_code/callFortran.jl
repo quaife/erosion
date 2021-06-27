@@ -13,8 +13,8 @@ getxy() is used in callFortran.getnxy and in postprocess.jl.
 #-----------------------------------------------------------#
 
 
-module callFortran
-export ThetaLenType, ThLenDenType, new_thlenden, getxy, 
+#module callFortran
+#export ThetaLenType, ThLenDenType, new_thlenden, getxy, 
 
 using Statistics
 include("spectral.jl")	# Used routines: specint, gaussfilter
