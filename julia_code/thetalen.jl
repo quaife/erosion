@@ -15,16 +15,27 @@ That is, I assume the curve is parameterized in the counter-clockwise (CCW) dire
 and I use the inward pointing normal vector. =#
 # Convention: el = 1:nbods indexes the bodies.
 
+
+
+
+#module ThetaLen
+#export ThetaLenType, ThLenDenType, getxy, rungekutta2
+
+
+
+
+
+
 using Statistics
 #--------------- OBJECT ROUTINES ---------------#
-# DerivsType: Includes the derivatives of theta, len, xsm, ysm.
+# Includes the derivatives of theta, len, xsm, ysm.
 mutable struct DerivsType
 	mterm::Float64; nterm::Vector{Float64}; 
 	xsmdot::Float64; ysmdot::Float64
 end
 
 #--------------- TIME-STEPPING ROUTINES ---------------#
-# rungekutta4: Take a step forward with 4th order Runge-Kutta.
+# Take a step forward with 4th order Runge-Kutta.
 function rungekutta2(thld0::ThLenDenType, params::ParamSet)
 	# Could in principle set dt adaptively
 	dt = params.dt
