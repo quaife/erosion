@@ -182,13 +182,13 @@ function timestep!(thld0::ThLenDenType, thld_derivs::ThLenDenType,
 		#fac2 = epsilon*dt2*0.5*(3*zetad-zeta0)	# Old Rule: uses trapezoid and midpoint combination.
 		fac2 = epsilon*dt2*(2*zetad-zeta0)		# New Rule: uses RK2 for everything.
 		# Advance to get the next theta.
-		th1 = expsmooth(th0-alpha,fac1) + alpha
-		th1 += dt1*expsmooth(nterm,fac2)
+		th1 = expsmooth(th0-alpha, fac1) + alpha
+		th1 += dt1*expsmooth(nterm, fac2)
 		# Advance xsm and ysm with forward Euler.
 		xsm1 = xsm0 + dt1*xsmdot
 		ysm1 = ysm0 + dt1*ysmdot 
 		# Save the new thlen values in a vector.
-		thlen1 = ThetaLenType(th1,len1,xsm1,ysm1,NaN)
+		thlen1 = ThetaLenType(th1, len1, xsm1, ysm1, NaN)
 		push!(thlv1,thlen1)
 	end
 	thld1 = new_thlenden(thlv1)

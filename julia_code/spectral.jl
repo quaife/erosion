@@ -10,6 +10,9 @@ function fftnice(fx::Vector)
 	return fftshift(fh)
 end
 
+## SHORTER: fftnice(fx::Vector) = fftshift( fft(fx) )
+
+
 # ifftnice: shifted ifft.
 function ifftnice(fh::Vector)
 	fhsh = ifftshift(fh)
@@ -18,7 +21,7 @@ end
 
 # kvec: Construct the vector of k values.
 # In the even case, sets the highest mode to zero or not depending on hmode.
-function kvec(nn::Integer, hmode=0)
+function kvec(nn::Integer, hmode = 0)
 	if iseven(nn)
 		nsm = div(nn,2)-1
 		return [hmode*(nsm+1); -nsm : nsm]
