@@ -21,23 +21,28 @@ Indexing Convention
 bod = 1:nbods indexes the bodies. No other indices are used.
 
 Exported Methods
-rungekutta2() is the main time-stepping routine called in main.erosion().
+rungekutta2 is the main time-stepping routine called in the erosion simulation.
+getalpha is called by circ2thlen
  =#
 #-----------------------------------------------------------#
 
-module TimeStepping
-export rungekutta2
+#module TimeStepping
+#export rungekutta2, getalpha
 
 include("spectral.jl")
 using .SpectralMethods: specdiff, specint, expsmooth
 
-include("thlen.jl")
-using .ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden
+#include("thlen.jl")
+#using .ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden
 
 include("wrappers.jl")
-using .DensityStress: getstress!
+#using .DensityStress: getstress!
+
 
 using Statistics: mean
+
+# QUESTION: Should I 'expose' this from the module ThetaLen???
+using Parameters: @unpack	
 
 
 #------------ Routines to compute the time derivatives of variables. ------------#
@@ -212,4 +217,5 @@ function rungekutta2(thld0::ThLenDenType, params::ParamSet)
 	thld1.tt = thld0.tt + dt
 	return thld1
 end
-#-----------------------------------------------------------#
+
+#end
