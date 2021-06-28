@@ -30,7 +30,7 @@ module TimeStepping
 export rungekutta2
 
 # Includes
-using Statistics
+using Statistics: mean
 include("spectral.jl")	# Used routines: specdiff, specint, expsmooth
 
 
