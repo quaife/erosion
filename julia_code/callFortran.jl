@@ -162,7 +162,7 @@ end
 function compute_qoi_targets!(thlenden::ThLenDenType, targets::TargetsType, params::ParamSet;
 		fixpdrop::Bool=false, rotation::Bool=false)
 	@unpack npts, nouter, ibary = params
-	nbods,xv,yv,density = getnxyden(thlenden,params,fixpdrop,rotation)
+	nbods, xv, yv, density = getnxyden(thlenden, params, fixpdrop, rotation)
 	targets.utar, targets.vtar, targets.ptar, targets.vortar = 
 			compute_qoi_targets(xv,yv,density,targets.xtar,targets.ytar,npts,nbods,nouter,ibary)
 	return
@@ -249,7 +249,7 @@ function getnxyden(thlenden::ThLenDenType, params::ParamSet, fixpdrop::Bool, rot
 	else
 		density = rescale * thlenden.density
 	end
-	return nbods,xv,yv,density
+	return nbods, xv, yv, density
 end
 #-----------------------------------------------------------------------#
 
