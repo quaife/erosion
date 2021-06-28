@@ -5,18 +5,23 @@
 #module ErosionSimulation
 #export run_erosion, ParamSet, ThLenDenType
 
-#include("thlen.jl")
-#using .ThetaLen  #: ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy
 
-#include("wrappers.jl")
-#using .DensityStress  #: compute_density!
+include("spectral.jl")
+include("thlen.jl")
+using .ThetaLen  #: ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy
+
+include("wrappers.jl")
+using .DensityStress  #: compute_density!
 
 include("time_stepping.jl")
-#using .TimeStepping #: rungekutta2, getalpha
+using .TimeStepping #: rungekutta2, getalpha
+
+
+
+
+#-------------------------------------------------#
 
 using JLD2, Plots
-
-
 
 # USED IN ONLY ONE PLACE, THINK ABOUT IT...
 using DelimitedFiles

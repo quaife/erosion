@@ -1,15 +1,15 @@
 # OBJECTIVE: General use objects and methods related to theta-len variables.
 # Convention: bod = 1:nbods indexes the bodies.
 
-#module ThetaLen
-#export ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy, getnxy
+module ThetaLen
+export ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy, getnxy
 
-include("spectral.jl")
-using .SpectralMethods: specint
+using ..SpectralMethods: specint
+
+#-------------------------------------------------#
 
 using Statistics: mean
 using Parameters: @with_kw
-
 
 #--------------- ParamSet data type ---------------#
 # Collect all of the parameters with sane defaults.
@@ -107,4 +107,4 @@ function test_theta_ends(theta::Vector{Float64}, thresh::Float64 = 0.2)
 end
 #-----------------------------------------------------------------------#
 
-#end
+end

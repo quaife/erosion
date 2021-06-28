@@ -7,14 +7,15 @@ and other quantities by calling the Fortran code. =#
 # The erosion simulation only calls compute_density!
 # The post-processing routine calls computestress, compute_qoi_targets!, regulargrid.
 
-#module DensityStress
-#export compute_density!, getstress!, computestress, compute_qoi_targets!, regulargrid
+module DensityStress
+export compute_density!, getstress!, computestress, compute_qoi_targets!, regulargrid
 
-include("spectral.jl")
-using .SpectralMethods: gaussfilter
+using ..SpectralMethods: gaussfilter
+using ..ThetaLen: ParamSet, ThLenDenType, getnxy
 
-include("thlen.jl")
-#using .ThetaLen: ParamSet, ThLenDenType, getnxy
+
+
+#-------------------------------------------------#
 
 using Statistics: mean
 
@@ -221,4 +222,4 @@ function getstress!(thlenden::ThLenDenType, params::ParamSet)
 	return stress
 end
 
-#end
+end

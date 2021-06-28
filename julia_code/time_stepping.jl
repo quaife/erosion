@@ -26,18 +26,16 @@ getalpha is called by circ2thlen
  =#
 #-----------------------------------------------------------#
 
-#module TimeStepping
-#export rungekutta2, getalpha
+module TimeStepping
+export rungekutta2, getalpha
 
-include("spectral.jl")
-using .SpectralMethods: specdiff, specint, expsmooth
+using ..SpectralMethods: specdiff, specint, expsmooth
+using ..ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden
+using ..DensityStress: getstress!
 
-#include("thlen.jl")
-#using .ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden
 
-include("wrappers.jl")
-#using .DensityStress: getstress!
 
+#-------------------------------------------------#
 
 using Statistics: mean
 
@@ -218,4 +216,4 @@ function rungekutta2(thld0::ThLenDenType, params::ParamSet)
 	return thld1
 end
 
-#end
+end
