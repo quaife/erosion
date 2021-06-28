@@ -1,5 +1,5 @@
 #-----------------------------------------------------------#
-#= MAIN PURPOSE: Collection of routines for theta-L boundary evolution.
+#= OBJECTIVE: Collection of routines for time-stepping of the state variables.
 
 Variables
 theta (vector): The tangent angle as it varies along the boundary of a given body.
@@ -25,21 +25,22 @@ rungekutta2() is the main time-stepping routine called in main.erosion().
  =#
 #-----------------------------------------------------------#
 
-# Create a module.
 module TimeStepping
 export rungekutta2
 
-# Includes
+include("spectral.jl")
+using .SpectralMethods: specdiff, specint, expsmooth
+
+include("thlen.jl")
+using .ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden
+
+include("wrappers.jl")
+using .DensityStress: getstress!
+
 using Statistics: mean
-include("spectral.jl")	# Used routines: specdiff, specint, expsmooth
 
 
-
-# WILL BE MODULE?
-include("callFortran.jl") # Used methods: ThetaLen Types, getstress!
-
-
-#------------ ROUTINES TO COMPUTE TIME DERIVATIVES OF VARIABLES. ------------#
+#------------ Routines to compute the time derivatives of variables. ------------#
 # Dot product of two vectors. If desired, I could de-aliase here.
 vec_mult(uu::Vector{Float64}, vv::Vector{Float64}) = uu .* vv
 
@@ -107,7 +108,7 @@ end
 #-----------------------------------------------------------#
 
 
-#--------------- TIME-STEPPING ROUTINES ---------------#
+#--------------- Time-stepping routines ---------------#
 #= Find the bodies where the length is too small.
 Neglecting the log term, L should vanish like sqrt(t).
 The midpoint rule in RK2 gives the sqrt(2) factor. =#

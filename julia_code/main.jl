@@ -1,12 +1,21 @@
 # MAIN GOAL: The main routines to simulate erosion.
 # The output is saved in a jld2 file.
-# Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
+# Convention: nn indexes the timestep; bod = 1:nbods indexes the bodies.
+
+include("thlen.jl")
+using .ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy
+
+include("wrappers.jl")
+using .DensityStress: compute_density!
+
+include("time_stepping.jl")
+using .TimeStepping: rungekutta2
+
+using JLD2, Plots
 
 
-# HAVE TO include timestepping and use the module...
 
-using JLD2
-using Plots
+
 
 # USED IN ONLY ONE PLACE, THINK ABOUT IT...
 # basic.jl: Basic routines such as datatypes.
@@ -66,7 +75,9 @@ function circs2thlenden(params::ParamSet)
 end
 
 # Make simple pdf plots for monitoring (not production level).
-function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})	
+function plot_curves(thlenvec::Vector{ThetaLenType}, params::ParamSet, nout::Int)
+	println("\n\n\nOUTPUT NUMBER ", nout)
+	plotfile = string(plotfolder(params), "shape", nstr(nout), ".pdf")	
 	# Make figure of given height and preserve the aspect ratio.
 	axlims = [1.0, 1.0]
 	height = 400
@@ -74,29 +85,14 @@ function plot_curves(figname::AbstractString, thlenvec::Vector{ThetaLenType})
 	plt = plot(xlim=(-axlims[1],axlims[1]), ylim=(-axlims[2],axlims[2]), 
 		size=(width,height), leg=false)
 	# Plot the curves.
-	for ii = 1:lastindex(thlenvec)
-		thlen = thlenvec[ii]
-		if thlen.len<=0
-			throw("Cannot plot a curve with non-positive length.")
-		end
+	for bod = 1:length(thlenvec)
+		thlen = thlenvec[bod]
+		if thlen.len<=0; throw("Cannot plot a curve with non-positive length."); end
 		xx, yy = getxy(thlen)
 		plot!(plt, xx, yy, color="black")
 	end
-	savefig(plt, figname)
+	savefig(plt, plotfile)
 	return
-end
-
-# Plot the data and incrementally save it to the temporary output file.
-function plotnsave(thlenden::ThLenDenType, params::ParamSet, nout::Int)
-	# Plot the shapes.
-	println("\n\n\nOUTPUT NUMBER ", nout)
-	plotfile = string(plotfolder(params),"shape",nstr(nout),".pdf")
-	plot_curves(plotfile, thlenden.thlenvec)
-	# Compute the density functions.
-	compute_density!(thlenden, params)
-	compute_density!(thlenden, params, rotation=true)
-	# Add the thlenden data to the data file.
-	add_data(tempfile(params), thlabel(nout), thlenden)
 end
 #-------------------------------------------------#
 
@@ -116,10 +112,18 @@ function erosion!(params::ParamSet, thldvec::Vector{ThLenDenType})
 	# Enter the time loop to apply Runge-Kutta.
 	nn, nout = 0, 0
 	while(thlenden.tt < params.tfin && length(thlenden.thlenvec) > 0)
-		# Plot and save the data if appropriate.
+		
+		# Save and plot the data if appropriate.
 		if mod(nn, params.outstride) == 0			
-			plotnsave(thlenden, params, nout)
+			# Important: Compute the density functions, both regular and rotated.
+			compute_density!(thlenden, params)
+			compute_density!(thlenden, params, rotation=true)
+			# Important: Add new data to the thleden vector to be saved.			
 			push!(thldvec, thlenden)
+			# Plot the curves for monitoring.
+			plot_curves(thlenden.thlenvec, params, nout)
+			# Incrementally add thlenden to the temporary data file in case of crash.
+			add_data(tempfile(params), thlabel(nout), thlenden)
 			nout += 1
 		end
 		# Advance the variables forward one timestep with RK4.
