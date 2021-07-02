@@ -41,8 +41,8 @@ end
  # Set files and folders: the input data file, the output temporary data file,
  # the final output file, and the output plot folder.
 infile(params::ParamSet) = string("../", params.infolder, params.label, ".circ")
-tempfile(params::ParamSet) = string("../temp_data-", params.label, ".jld2")
-outfile(params::ParamSet) = string("../raw_data-", params.label, ".jld2")
+tempfile(params::ParamSet) = string("../output_data/temp_data-", params.label, ".jld2")
+outfile(params::ParamSet) = string("../output_data/raw_data-", params.label, ".jld2")
 plotfolder(params::ParamSet) = string("../zFigs-", params.label, "/")
 
 # Add a variable incrementally to a jld data file.
