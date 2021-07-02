@@ -37,30 +37,28 @@ They became obselote in the main part of the code but are still needed
 to remake the data, so I moved them here.=#
 
 # getparams: Get the parameters from a params file.
-function getparams(paramsfile::AbstractString)
-	# Read the parameters.
-	paramvec = readvec(string(paramsfile,".txt"))
-	circfile = paramvec[1]
+function getparams(paramvec::Vector, infovec::Vector)
+	# Read from paramvec.
+	circfile = String(paramvec[1])
 	npts = paramvec[2]
 	ibary, ifmm, ibc = Int(paramvec[3]), Int(paramvec[4]), Int(paramvec[5])
 	epsfac, sigfac, dt, dtout = paramvec[6:9]
 	fixpdrop, fixarea = Bool(paramvec[10]), Bool(paramvec[11])
 	tfin = paramvec[12]
 	maxl, nouter = Int(paramvec[13]), Int(paramvec[14])
-	# Calculate the needed quantities.
-	epsilon = epsfac/npts
-	sigma = sigfac/npts
-	outstride = max(round(Int,dtout/dt),1)
+	# Read from infovec.
+	cntout = infovec[1]
+	lastfile = Int(infovec[2])
 
 	# Save the parameters in the updated object ParamSet.
-	#= Note: due to the change in the file/folder labeling, the infolder and label are
-	not quite right, but these can be set manually. The outstride might also be approximate. =#
+	#= Note: due to the change in the file/folder labeling, 
+	the infolder and label are not quite right, but these can be set manually. =#
 	params = ParamSet(infolder=circfile, label="NA",
 				npts=npts, ibary=ibary, ifmm=ifmm, ibc=ibc, 
-				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=outstride,
+				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=cntout,
 				fixpdrop=fixpdrop, fixarea=fixarea, tfin=tfin,
 				maxl=maxl, nouter=nouter)
-	return params
+	return params, lastfile
 end
 
 # Create new instances of each type.
@@ -124,15 +122,13 @@ end
 #--------------- REMAKE THE DATA ---------------#
 # Convert the lists of output text files to a Julia data file.
 function remake_data(datafolder::AbstractString, datalabel::AbstractString)
-	# Open the basic files.
-	paramsfile = string(datafolder, "aparams")
-	infofile = string(datafolder,"apinfo.txt")
-	# Get the meta-data.
-	infovec = readvec(infofile)
-	lastfile = Int(infovec[2])
-	params = getparams(paramsfile)
-	params.cntout = Int(infovec[1])
-	params.cput0 = infovec[3]
+	# Get the basic meta-data.	
+	paramvec = readvec( string(datafolder, "aparams.txt"))
+	infovec = readvec( string(datafolder, "apinfo.txt"))
+	params, lastfile = getparams(paramvec, infovec)
+
+	println(params)
+
 	# Loop through the files inside folder.
 	thldvec = Vector{ThLenDenType}(undef, lastfile+1)
 	for nn = 0:lastfile
