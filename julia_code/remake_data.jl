@@ -4,12 +4,12 @@
 #--------------- BASIC STUFF ---------------#
 using JLD2
 
-include("basic.jl")
+# Later, once Jake makes the main Erosion module, change this to use that module.
+include("erosion.jl")
+# using
+
 data_set() = "../output_data/erode-a06/"
 savefile(label::AbstractString) = string(data_set(),"data-",label,".jld2")
-
-# Unused for now, but will be used if/when I delete ParamType
-#include("run0.jl")
 #-------------------------------------------------#
 
 
@@ -31,23 +31,10 @@ end
 
 
 
-
-
-
 #--------------- LITTLE IO ROUTINES ---------------#
 #= These routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
 They became obselote in the main part of the code but are still needed 
 to remake the data, so I moved them here.=#
-
-# ParamType: The outdated datatype of parameters.
-# SHOULD EVENTUALLY DELETE THIS DATATYPE AND USE THE NEW PARAMSET INSTEAD.
-mutable struct ParamType
-	dt::Float64; epsilon::Float64; sigma::Float64; 
-	nouter::Int; ifmm::Int; ibary::Int; ibc::Int;
-	maxl::Int; fixarea::Bool; fixpdrop::Bool;
-	npts::Int; tfin::Float64; cntout::Int; cput0::Float64;
-	circfile::AbstractString; paramsfile::AbstractString
-end
 
 # getparams: Get the parameters from a params file.
 function getparams(paramsfile::AbstractString)
@@ -63,15 +50,16 @@ function getparams(paramsfile::AbstractString)
 	# Calculate the needed quantities.
 	epsilon = epsfac/npts
 	sigma = sigfac/npts
-	# Unused definitions.
-	#cntout = max(round(Int,dtout/dt),1)
-	#cput0 = time()
-	cntout = 0; cput0 = 0.0
+	outstride = max(round(Int,dtout/dt),1)
 
-	# Save the parameters in an object.
-	# SHOULD EVENTUALLY USE PARAMSET INSTEAD.
-	params = ParamType(dt,epsilon,sigma,nouter,ifmm,ibary,ibc,maxl,
-		fixarea,fixpdrop,npts,tfin,cntout,cput0,circfile,paramsfile)
+	# Save the parameters in the updated object ParamSet.
+	#= Note: due to the change in the file/folder labeling, the infolder and label are
+	not quite right, but these can be set manually. The outstride might also be approximate. =#
+	params = ParamSet(infolder=circfile, label="NA",
+				npts=npts, ibary=ibary, ifmm=ifmm, ibc=ibc, 
+				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=outstride,
+				fixpdrop=fixpdrop, fixarea=fixarea, tfin=tfin,
+				maxl=maxl, nouter=nouter)
 	return params
 end
 

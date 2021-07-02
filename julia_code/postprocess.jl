@@ -2,8 +2,9 @@
 # Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
 
 using LinearAlgebra	# Used for dot() in drag() and for the matrix calculations in bodyfitgrid().
-include("run0.jl")
-include("main.jl")
+include("erosion.jl")
+
+using Parameters: @unpack	
 
 # Set the name of the output file with the processed data.
 procfile(params::ParamSet) = string("../proc_data-", params.label, ".jld2")
