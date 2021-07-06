@@ -9,7 +9,7 @@ include("erosion.jl")
 # using
 
 data_set() = "../output_data/erode-a06/"
-savefile(label::AbstractString) = string(data_set(),"data-",label,".jld2")
+savefile(label::AbstractString) = string(data_set(),"raw_data-",label,".jld2")
 #-------------------------------------------------#
 
 
