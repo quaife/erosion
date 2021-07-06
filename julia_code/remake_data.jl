@@ -49,6 +49,7 @@ function getparams(paramvec::Vector, infovec::Vector)
 	# Read from infovec.
 	cntout = infovec[1]
 	lastfile = Int(infovec[2])
+	cpu_hours = Int(infovec[3])
 
 	# Save the parameters in the updated object ParamSet.
 	#= Note: due to the change in the file/folder labeling, 
@@ -58,7 +59,7 @@ function getparams(paramvec::Vector, infovec::Vector)
 				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=cntout,
 				fixpdrop=fixpdrop, fixarea=fixarea, tfin=tfin,
 				maxl=maxl, nouter=nouter)
-	return params, lastfile
+	return params, lastfile, cpu_hours
 end
 
 # Create new instances of each type.
@@ -125,7 +126,7 @@ function remake_data(datafolder::AbstractString, datalabel::AbstractString)
 	# Get the basic meta-data.	
 	paramvec = readvec( string(datafolder, "aparams.txt"))
 	infovec = readvec( string(datafolder, "apinfo.txt"))
-	params, lastfile = getparams(paramvec, infovec)
+	params, lastfile, cpu_hours = getparams(paramvec, infovec)
 
 	println(params)
 
@@ -137,7 +138,7 @@ function remake_data(datafolder::AbstractString, datalabel::AbstractString)
 		thldvec[nn+1] = thlenden
 	end
 	# Save thldvec in a Julia data file.
-	jldsave(savefile(datalabel); thldvec, params)
+	jldsave(savefile(datalabel); params, thldvec, cpu_hours)
 end
 
 # Dispatch to run on simply a label using the folder given by data_set.
