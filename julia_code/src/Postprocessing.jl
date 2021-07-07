@@ -5,12 +5,19 @@ module Postprocessing
 
 	export getns, getareas, resistivity, compute_pressure, drag, bodyfitgrid, regbodtargs, pp1, pp2, pp3, postprocess
 
+	import Erosion.add_data
 	using Erosion.ThetaLen
+	using Erosion.DensityStress
+	using Erosion.SpectralMethods
 	using LinearAlgebra	# Used for dot() in drag() and for the matrix calculations in bodyfitgrid().
 	using Parameters: @unpack
+	using JLD2
 
 	# Set the name of the output file with the processed data.
 	procfile(params::ParamSet) = string("../proc_data-", params.label, ".jld2")
+	
+	# path to libstokes.so
+	const libstokes=abspath(joinpath(@__DIR__, "../..", "fortran_code/libstokes.so"))
 
 	#----------- ROUTINES FOR AREA AND RESISTIVITY -----------#
 	# Get the normal and tangent directions.
@@ -70,7 +77,7 @@ module Postprocessing
 			density::Vector{Float64}, npts::Int, nbods::Int, nouter::Int, ibary::Int)
 		pressure = zeros(Float64, npts*nbods)
 		if nbods > 0
-			ccall((:computepressure_, "libstokes.so"), Nothing,
+			ccall((:computepressure_, libstokes), Nothing,
 				(Ref{Int},Ref{Int},Ref{Int},
 				Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64}),
 				npts, nbods, nouter, xx, yy, density, pressure)

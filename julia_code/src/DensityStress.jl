@@ -9,7 +9,7 @@ and other quantities by calling the Fortran code. =#
 
 module DensityStress
 
-	export compute_density!, getstress!, computestress, compute_qoi_targets!, regulargrid
+	export compute_density!, getstress!, compute_stress, compute_qoi_targets!, regulargrid, getpdrop, getnxyden, compute_density, xyrot, compute_qoi_targets, regulargrid, regulargridtargs, getumax
 
 	using Statistics: mean
 	using Parameters: @unpack
