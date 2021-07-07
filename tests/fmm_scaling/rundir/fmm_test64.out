@@ -1,0 +1,571 @@
+/home/alemmon/.julia/packages/GR/RlE5Y/src/../deps/gr/bin/gksqt: /usr/lib/libQt5Core.so.5: version `Qt_5.15' not found (required by /home/alemmon/.julia/packages/GR/RlE5Y/src/../deps/gr/bin/gksqt)
+connect: Connection refused
+GKS: can't connect to GKS socket application
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3903501D+00    0.3903501D+00
+   20    0.3430744D+00    0.3430744D+00
+   30    0.3351970D+00    0.3351970D+00
+   40    0.3320052D+00    0.3320052D+00
+   50    0.3297692D+00    0.3297692D+00
+   60    0.3247156D+00    0.3247156D+00
+   70    0.3151490D+00    0.3151490D+00
+   80    0.3109116D+00    0.3109116D+00
+   90    0.3077315D+00    0.3077315D+00
+  100    0.2939584D+00    0.2939584D+00
+  110    0.2907940D+00    0.2907940D+00
+  120    0.2726259D+00    0.2726259D+00
+  130    0.2391867D+00    0.2391867D+00
+  140    0.1295802D+00    0.1295802D+00
+  150    0.8662035D-01    0.8662035D-01
+  160    0.1880628D-01    0.1880628D-01
+  170    0.5754887D-02    0.5754887D-02
+  180    0.1682213D-02    0.1682213D-02
+  190    0.1557407D-02    0.1557407D-02
+  200    0.1106421D-02    0.1106421D-02
+ GMRES  time =   181.31005099999999     
+ Solve BIE
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3856771D+00    0.3856771D+00
+   20    0.3476126D+00    0.3476126D+00
+   30    0.3305895D+00    0.3305895D+00
+   40    0.3246570D+00    0.3246570D+00
+   50    0.3211471D+00    0.3211471D+00
+   60    0.3157677D+00    0.3157677D+00
+   70    0.3101813D+00    0.3101813D+00
+   80    0.2874271D+00    0.2874271D+00
+   90    0.2762832D+00    0.2762832D+00
+  100    0.2586426D+00    0.2586426D+00
+  110    0.2230934D+00    0.2230934D+00
+  120    0.1829328D+00    0.1829328D+00
+  130    0.1346493D+00    0.1346493D+00
+  140    0.6562228D-01    0.6562228D-01
+  150    0.2180316D-01    0.2180316D-01
+  160    0.9402417D-02    0.9402417D-02
+  170    0.2898249D-02    0.2898249D-02
+  180    0.1523093D-02    0.1523093D-02
+  190    0.4883435D-03    0.4883435D-03
+  200    0.3550044D-03    0.3550044D-03
+  210    0.2865435D-03    0.2865435D-03
+  220    0.1792788D-06    0.1792788D-06
+ GMRES  time =   133.07982099999998     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3805947D+00    0.3805947D+00
+   20    0.3447334D+00    0.3447334D+00
+   30    0.3354827D+00    0.3354827D+00
+   40    0.3319725D+00    0.3319725D+00
+   50    0.3303894D+00    0.3303894D+00
+   60    0.3250043D+00    0.3250043D+00
+   70    0.3135184D+00    0.3135184D+00
+   80    0.3100410D+00    0.3100410D+00
+   90    0.3051967D+00    0.3051967D+00
+  100    0.2944357D+00    0.2944357D+00
+  110    0.2917501D+00    0.2917501D+00
+  120    0.2112564D+00    0.2112564D+00
+  130    0.1474473D+00    0.1474473D+00
+  140    0.6107985D-01    0.6107985D-01
+  150    0.1690361D-01    0.1690361D-01
+  160    0.6256393D-02    0.6256393D-02
+  170    0.1561396D-02    0.1561396D-02
+  180    0.6326192D-03    0.6326192D-03
+  190    0.4646195D-03    0.4646195D-03
+ GMRES  time =   207.10357299999998     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3902897D+00    0.3902897D+00
+   20    0.3431871D+00    0.3431871D+00
+   30    0.3351919D+00    0.3351919D+00
+   40    0.3320247D+00    0.3320247D+00
+   50    0.3299954D+00    0.3299954D+00
+   60    0.3245186D+00    0.3245186D+00
+   70    0.3147172D+00    0.3147172D+00
+   80    0.3109361D+00    0.3109361D+00
+   90    0.3082687D+00    0.3082687D+00
+  100    0.2944282D+00    0.2944282D+00
+  110    0.2910220D+00    0.2910220D+00
+  120    0.2713843D+00    0.2713843D+00
+  130    0.2372280D+00    0.2372280D+00
+  140    0.1211348D+00    0.1211348D+00
+  150    0.4771691D-01    0.4771691D-01
+  160    0.1804523D-01    0.1804523D-01
+  170    0.5170522D-02    0.5170522D-02
+  180    0.1912075D-02    0.1912075D-02
+  190    0.1664564D-02    0.1664564D-02
+  200    0.4233999D-03    0.4233999D-03
+ GMRES  time =   137.80592700000000     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3808196D+00    0.3808196D+00
+   20    0.3445276D+00    0.3445276D+00
+   30    0.3354700D+00    0.3354700D+00
+   40    0.3319873D+00    0.3319873D+00
+   50    0.3304228D+00    0.3304228D+00
+   60    0.3248990D+00    0.3248990D+00
+   70    0.3136449D+00    0.3136449D+00
+   80    0.3101848D+00    0.3101848D+00
+   90    0.3051139D+00    0.3051139D+00
+  100    0.2927626D+00    0.2927626D+00
+  110    0.2896472D+00    0.2896472D+00
+  120    0.2102252D+00    0.2102252D+00
+  130    0.1471123D+00    0.1471123D+00
+  140    0.6104614D-01    0.6104614D-01
+  150    0.1686953D-01    0.1686953D-01
+  160    0.6458889D-02    0.6458889D-02
+  170    0.1554911D-02    0.1554911D-02
+  180    0.6111977D-03    0.6111977D-03
+  190    0.5010445D-03    0.5010445D-03
+ GMRES  time =   142.17700800000000     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3902304D+00    0.3902304D+00
+   20    0.3432817D+00    0.3432817D+00
+   30    0.3351823D+00    0.3351823D+00
+   40    0.3320453D+00    0.3320453D+00
+   50    0.3301531D+00    0.3301531D+00
+   60    0.3243346D+00    0.3243346D+00
+   70    0.3147320D+00    0.3147320D+00
+   80    0.3111516D+00    0.3111516D+00
+   90    0.3084977D+00    0.3084977D+00
+  100    0.2942284D+00    0.2942284D+00
+  110    0.2904985D+00    0.2904985D+00
+  120    0.2674182D+00    0.2674182D+00
+  130    0.2313318D+00    0.2313318D+00
+  140    0.1186569D+00    0.1186569D+00
+  150    0.3355115D-01    0.3355115D-01
+  160    0.1712756D-01    0.1712756D-01
+  170    0.4854137D-02    0.4854137D-02
+  180    0.2085801D-02    0.2085801D-02
+  190    0.1713756D-02    0.1713756D-02
+  200    0.9704951D-04    0.9704951D-04
+ GMRES  time =   139.13146300000005     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3809528D+00    0.3809528D+00
+   20    0.3443792D+00    0.3443792D+00
+   30    0.3354465D+00    0.3354465D+00
+   40    0.3320024D+00    0.3320024D+00
+   50    0.3304646D+00    0.3304646D+00
+   60    0.3248038D+00    0.3248038D+00
+   70    0.3137320D+00    0.3137320D+00
+   80    0.3104717D+00    0.3104717D+00
+   90    0.3062133D+00    0.3062133D+00
+  100    0.2941526D+00    0.2941526D+00
+  110    0.2912994D+00    0.2912994D+00
+  120    0.2045101D+00    0.2045101D+00
+  130    0.1463495D+00    0.1463495D+00
+  140    0.6000459D-01    0.6000459D-01
+  150    0.1657008D-01    0.1657008D-01
+  160    0.6145896D-02    0.6145896D-02
+  170    0.1510517D-02    0.1510517D-02
+  180    0.6558112D-03    0.6558112D-03
+  190    0.5025393D-03    0.5025393D-03
+ GMRES  time =   126.85842699999989     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3901814D+00    0.3901814D+00
+   20    0.3433398D+00    0.3433398D+00
+   30    0.3351682D+00    0.3351682D+00
+   40    0.3320619D+00    0.3320619D+00
+   50    0.3302358D+00    0.3302358D+00
+   60    0.3242104D+00    0.3242104D+00
+   70    0.3148499D+00    0.3148499D+00
+   80    0.3112827D+00    0.3112827D+00
+   90    0.3084573D+00    0.3084573D+00
+  100    0.2938313D+00    0.2938313D+00
+  110    0.2902256D+00    0.2902256D+00
+  120    0.2647831D+00    0.2647831D+00
+  130    0.2240947D+00    0.2240947D+00
+  140    0.1163804D+00    0.1163804D+00
+  150    0.3008822D-01    0.3008822D-01
+  160    0.1625435D-01    0.1625435D-01
+  170    0.4587237D-02    0.4587237D-02
+/home/alemmon/.julia/packages/GR/RlE5Y/src/../deps/gr/bin/gksqt: /usr/lib/libQt5Core.so.5: version `Qt_5.15' not found (required by /home/alemmon/.julia/packages/GR/RlE5Y/src/../deps/gr/bin/gksqt)
+connect: Connection refused
+GKS: can't connect to GKS socket application
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS
+  180    0.2176045D-02    0.2176045D-02
+  190    0.1738648D-02    0.1738648D-02
+  200    0.3903281D-04    0.3903281D-04
+ GMRES  time =   133.80129400000010     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3808743D+00    0.3808743D+00
+   20    0.3443114D+00    0.3443114D+00
+   30    0.3354158D+00    0.3354158D+00
+   40    0.3320192D+00    0.3320192D+00
+   50    0.3304831D+00    0.3304831D+00
+   60    0.3247205D+00    0.3247205D+00
+   70    0.3137858D+00    0.3137858D+00
+   80    0.3106544D+00    0.3106544D+00
+   90    0.3062037D+00    0.3062037D+00
+  100    0.2927477D+00    0.2927477D+00
+  110    0.2896428D+00    0.2896428D+00
+  120    0.1970191D+00    0.1970191D+00
+  130    0.1450787D+00    0.1450787D+00
+  140    0.5854783D-01    0.5854783D-01
+  150    0.1626374D-01    0.1626374D-01
+  160    0.5139421D-02    0.5139421D-02
+  170    0.1402747D-02    0.1402747D-02
+  180    0.7311535D-03    0.7311535D-03
+  190    0.4257103D-03    0.4257103D-03
+ GMRES  time =   128.50092399999994     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3901509D+00    0.3901509D+00
+   20    0.3433251D+00    0.3433251D+00
+   30    0.3351546D+00    0.3351546D+00
+   40    0.3320743D+00    0.3320743D+00
+   50    0.3302760D+00    0.3302760D+00
+   60    0.3241367D+00    0.3241367D+00
+   70    0.3149205D+00    0.3149205D+00
+   80    0.3111222D+00    0.3111222D+00
+   90    0.3083787D+00    0.3083787D+00
+  100    0.2934886D+00    0.2934886D+00
+  110    0.2900157D+00    0.2900157D+00
+  120    0.2640307D+00    0.2640307D+00
+  130    0.2165356D+00    0.2165356D+00
+  140    0.1153561D+00    0.1153561D+00
+  150    0.2772985D-01    0.2772985D-01
+  160    0.1565560D-01    0.1565560D-01
+  170    0.4306449D-02    0.4306449D-02
+  180    0.2190216D-02    0.2190216D-02
+  190    0.1758126D-02    0.1758126D-02
+  200    0.1330622D-04    0.1330622D-04
+ GMRES  time =   115.68730000000005     
+ Solve BIE
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3857782D+00    0.3857782D+00
+   20    0.3471655D+00    0.3471655D+00
+   30    0.3302451D+00    0.3302451D+00
+   40    0.3246311D+00    0.3246311D+00
+   50    0.3211670D+00    0.3211670D+00
+   60    0.3159698D+00    0.3159698D+00
+   70    0.3089270D+00    0.3089270D+00
+   80    0.2897799D+00    0.2897799D+00
+   90    0.2800499D+00    0.2800499D+00
+  100    0.2503699D+00    0.2503699D+00
+  110    0.2162303D+00    0.2162303D+00
+  120    0.1795841D+00    0.1795841D+00
+  130    0.1093995D+00    0.1093995D+00
+  140    0.3588748D-01    0.3588748D-01
+  150    0.1495155D-01    0.1495155D-01
+  160    0.6570922D-02    0.6570922D-02
+  170    0.2065016D-02    0.2065016D-02
+  180    0.1316372D-02    0.1316372D-02
+  190    0.7899156D-03    0.7899156D-03
+  200    0.6500166D-03    0.6500166D-03
+  210    0.1212552D-03    0.1212552D-03
+ GMRES  time =   127.19029099999989     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3807581D+00    0.3807581D+00
+   20    0.3442671D+00    0.3442671D+00
+   30    0.3353849D+00    0.3353849D+00
+   40    0.3320352D+00    0.3320352D+00
+   50    0.3304861D+00    0.3304861D+00
+   60    0.3245932D+00    0.3245932D+00
+   70    0.3137176D+00    0.3137176D+00
+   80    0.3106658D+00    0.3106658D+00
+   90    0.3058168D+00    0.3058168D+00
+  100    0.2942299D+00    0.2942299D+00
+  110    0.2916793D+00    0.2916793D+00
+  120    0.1903300D+00    0.1903300D+00
+  130    0.1434733D+00    0.1434733D+00
+  140    0.5719137D-01    0.5719137D-01
+/home/alemmon/.julia/packages/GR/RlE5Y/src/../deps/gr/bin/gksqt: /usr/lib/libQt5Core.so.5: version `Qt_5.15' not found (required by /home/alemmon/.julia/packages/GR/RlE5Y/src/../deps/gr/bin/gksqt)
+connect: Connection refused
+GKS: can't connect to GKS socket application
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS
+
+BEGINNING EROSION SIMULATION
+
+
+
+OUTPUT NUMBER 0
+Computing the density function with rotation = false
+The total number of GMRES iterations is 207
+
+
+Computing the density function with rotation = true
+The total number of GMRES iterations is 222
+
+
+
+
+TIME STEP 1
+Stage 1 of Runge-Kutta
+Fixing pdrop, umax = 0.0236
+
+Time taken to compute density = 5.01e-7sec.
+Time taken to compute stress = 0.283sec.
+
+Stage 2 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 198
+
+
+Fixing pdrop, umax = 0.0237
+
+Time taken to compute density = 1.65sec.
+Time taken to compute stress = 0.131sec.
+Completed Runge-Kutta step.
+
+
+TIME STEP 2
+Stage 1 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 207
+
+
+Fixing pdrop, umax = 0.0237
+
+Time taken to compute density = 1.92sec.
+Time taken to compute stress = 0.115sec.
+
+Stage 2 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 198
+
+
+Fixing pdrop, umax = 0.0238
+
+Time taken to compute density = 1.81sec.
+Time taken to compute stress = 0.116sec.
+Completed Runge-Kutta step.
+
+
+TIME STEP 3
+Stage 1 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 206
+
+
+Fixing pdrop, umax = 0.0238
+
+Time taken to compute density = 1.88sec.
+Time taken to compute stress = 0.114sec.
+
+Stage 2 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 198
+
+
+Fixing pdrop, umax = 0.0239
+
+Time taken to compute density = 1.83sec.
+Time taken to compute stress = 0.115sec.
+Completed Runge-Kutta step.
+
+
+TIME STEP 4
+Stage 1 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 205
+
+
+Fixing pdrop, umax = 0.0239
+
+Time taken to compute density = 1.89sec.
+Time taken to compute stress = 0.115sec.
+
+Stage 2 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 197
+
+
+Fixing pdrop, umax = 0.024
+
+Time taken to compute density = 1.82sec.
+Time taken to compute stress = 0.115sec.
+Completed Runge-Kutta step.
+
+
+
+OUTPUT NUMBER 1
+Computing the density function with rotation = false
+The total number of GMRES iterations is 204
+
+
+Computing the density function with rotation = true
+The total number of GMRES iterations is 219
+
+
+
+
+TIME STEP 5
+Stage 1 of Runge-Kutta
+Fixing pdrop, umax = 0.024
+
+Time taken to compute density = 2.43e-7sec.
+Time taken to compute stress = 0.112sec.
+
+Stage 2 of Runge-Kutta
+Computing the density function with rotation = false
+The total number of GMRES iterations is 197
+
+
+Fixing pdrop, umax = 0.0241
+
+Time taken to compute density = 1.62sec.
+Time taken to compute stress = 0.132sec.
+Completed Runge-Kutta step.
+
+
+
+OUTPUT NUMBER 2
+Computing the density function with rotation = false
+The total number of GMRES iterations is 204
+
+
+Computing the density function with rotation = true
+The total number of GMRES iterations is 219
+
+
+
+
+
+COMPLETED EROSION SIMULATION
+cpu time = 0.012 hours.
+
+
+  150    0.1610802D-01    0.1610802D-01
+  160    0.4399863D-02    0.4399863D-02
+  170    0.1359991D-02    0.1359991D-02
+  180    0.7756031D-03    0.7756031D-03
+  190    0.2938952D-03    0.2938952D-03
+ GMRES  time =   114.45938400000000     
+ Solve BIE
+ Trapezoid deformation
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3901320D+00    0.3901320D+00
+   20    0.3432642D+00    0.3432642D+00
+   30    0.3351427D+00    0.3351427D+00
+   40    0.3320847D+00    0.3320847D+00
+   50    0.3303010D+00    0.3303010D+00
+   60    0.3240811D+00    0.3240811D+00
+   70    0.3149625D+00    0.3149625D+00
+   80    0.3105865D+00    0.3105865D+00
+   90    0.3084333D+00    0.3084333D+00
+  100    0.2931751D+00    0.2931751D+00
+  110    0.2897752D+00    0.2897752D+00
+  120    0.2635040D+00    0.2635040D+00
+  130    0.2086451D+00    0.2086451D+00
+  140    0.1144646D+00    0.1144646D+00
+  150    0.2830748D-01    0.2830748D-01
+  160    0.1419106D-01    0.1419106D-01
+  170    0.3865898D-02    0.3865898D-02
+  180    0.2169983D-02    0.2169983D-02
+  190    0.1760978D-02    0.1760978D-02
+  200    0.3808109D-05    0.3808109D-05
+ GMRES  time =   189.03790200000003     
+ Solve BIE
+ load Bd condition
+ Start GMRES
+ USING FMM
+ Generalized Minimum Residual(***  0) for N, ITOL =  1000 1000
+ ITER   Natural Err Est   Error Estimate
+    0    0.1000000D+01    0.1000000D+01
+   10    0.3858034D+00    0.3858034D+00
+   20    0.3471158D+00    0.3471158D+00
+   30    0.3301791D+00    0.3301791D+00
+   40    0.3246100D+00    0.3246100D+00
+   50    0.3211744D+00    0.3211744D+00
+   60    0.3159437D+00    0.3159437D+00
+   70    0.3089383D+00    0.3089383D+00
+   80    0.2907823D+00    0.2907823D+00
+   90    0.2807058D+00    0.2807058D+00
+  100    0.2487615D+00    0.2487615D+00
+  110    0.2144939D+00    0.2144939D+00
+  120    0.1765870D+00    0.1765870D+00
+  130    0.1088393D+00    0.1088393D+00
+  140    0.3641549D-01    0.3641549D-01
+  150    0.1494155D-01    0.1494155D-01
+  160    0.5429391D-02    0.5429391D-02
+  170    0.2088018D-02    0.2088018D-02
+  180    0.1334804D-02    0.1334804D-02
+  190    0.8508798D-03    0.8508798D-03
+  200    0.6972953D-03    0.6972953D-03
+  210    0.1128980D-03    0.1128980D-03
+ GMRES  time =   126.00997200000006     
+ Solve BIE

@@ -1,5 +1,5 @@
 FORTRAN = gfortran
-FFLAGS = -c -O3 -fPIC -fallow-argument-mismatch
+FFLAGS = -c -O3 -fPIC -fopenmp -fallow-argument-mismatch # for old gcc/gfortran, replace -fallow-argument-mismatch by -Wno-argument-mismatch
 
 OBJS=\
 bhcommon_oldtree.o\
@@ -15,11 +15,15 @@ hkrand.o\
 dlaran.o\
 
 libfmm: $(OBJS)
-	$(FORTRAN) -shared -fPIC $(OBJS) -o libfmm.so
+ifeq ($(shell uname),Darwin)
+	$(FORTRAN) -install_name "`pwd`/libfmm.so" -fopenmp -shared -fPIC $(OBJS) -o libfmm.so
+else
+	$(FORTRAN) -fopenmp -shared -fPIC $(OBJS) -o libfmm.so
+endif
 
 %.o:  %.f
 	$(FORTRAN) $(FFLAGS) -c -o $@ $<	
 
 clean:
-	rm *.o
-	rm *.so
+	-rm *.o
+	-rm *.so
