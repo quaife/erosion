@@ -1,0 +1,13 @@
+*.o
+*.so
+*.dylib
+*.out
+*.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.jld
+*.jld2
+
+tests/
