@@ -1,5 +1,0 @@
-[deps]
-DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
-Erosion = "9b3c22ae-aa19-41e4-b72a-3766e75cf28e"
-PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
-ScatteredInterpolation = "3f865c0f-6dca-5f4d-999b-29fe1e7e3c92"

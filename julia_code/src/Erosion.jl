@@ -19,8 +19,6 @@ module Erosion
     # load extension modules
     include("MakeGeos.jl") # generate geometry
     using .MakeGeos
-    include("Advection.jl")
-    using .Advection
     include("Postprocessing.jl")
     using .Postprocessing
 
