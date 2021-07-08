@@ -2,7 +2,7 @@
 # But manually altered to make the circles smaller and hence the test simulation faster.
 2
 # data below: radius, xc, yc for each body.
-0.10
+0.14
 0.15658904495889947
 0.3632684451735187
 0.10
