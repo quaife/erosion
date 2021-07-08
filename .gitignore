@@ -9,5 +9,6 @@
 *.gif
 *.jld
 *.jld2
+*.code-workspace
 
 tests/
