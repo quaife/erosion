@@ -1,9 +1,9 @@
-# MAIN GOAL: Postprocess the jld2 file to compute new quantities.
+# MAIN GOAL: Post-process the jld2 file to compute new quantities.
 # Convention: nn indexes the timestep, bod = 1:nbods indexes the bodies.
 
 module PostProcess
 
-	export getns, getareas, resistivity, compute_pressure, drag, bodyfitgrid, regbodtargs, pp1, pp2, pp3, postprocess
+	export getns, getareas, resistivity, compute_pressure, drag, bodyfitgrid, regbodtargs, pp1, pp2, pp3, post_process
 
 	import Erosion.add_data
 	using Erosion.ThetaLen
@@ -182,7 +182,7 @@ module PostProcess
 	#-------------------------------------------------#
 
 	#--------------------- MAIN ROUTINES ------------------#
-	# Postprocess the fast stuff: area and resistivity.
+	# Post-process the fast stuff: area and resistivity.
 	function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		println("Beginning pp1:")
 		nlast = length(thldvec)
@@ -206,7 +206,7 @@ module PostProcess
 		println("Finished pp1.\n")
 	end
 
-	# Postprocess the slower stuff: drag and stress.
+	# Post-process the slower stuff: drag and stress.
 	function pp2(params::ParamSet, thldvec::Vector{ThLenDenType})
 		println("\n\nBeginning pp2:")
 		nlast = length(thldvec)
@@ -227,7 +227,7 @@ module PostProcess
 		println("Finished pp2.\n")
 	end
 
-	# Postprocess the slowest stuff: quantities of interest at the target points.
+	# Post-process the slowest stuff: quantities of interest at the target points.
 	function pp3(params::ParamSet, thldvec::Vector{ThLenDenType})
 		println("\n\nBeginning pp3:")
 		nlast = length(thldvec)	
@@ -246,10 +246,10 @@ module PostProcess
 		println("Finished pp3.\n")
 	end
 
-	# Run all postprocess routines pp1, pp2, and pp3.
-	function postprocess(infile::AbstractString)
+	# Run all post-process routines pp1, pp2, and pp3.
+	function post_process(infile::AbstractString)
 		println("\n\n%------------------------------------------------------%")
-		println("Beginning postprocessing ", infile, "\n")
+		println("Beginning post-processing ", infile, "\n")
 		
 		# Read the variables from the raw data file.
 		file = jldopen(infile, "r")
@@ -260,14 +260,14 @@ module PostProcess
 		# Initialize the processed data file by saving the basic variables there.
 		jldsave(procfile(params); params, thldvec, cpu_hours)
 
-		# Call the postprocessing subroutines.
+		# Call the post-processing subroutines.
 		t1 = @elapsed 	pp1(params, thldvec)
 		t2 = @elapsed	pp2(params, thldvec)
 		t3 = @elapsed	pp3(params, thldvec)
 
 		# Simplify the cpu times and print some statements.
 		tmins(tt::Float64) = round(tt/60, sigdigits=2)
-		println("Finished postprocessing ", infile)
+		println("Finished post-processing ", infile)
 		println("Simulation time (hours): ", cpu_hours)
 		println("Post-processing times (mins): p1 = ", tmins(t1), "; p2 = ", tmins(t2), "; p3 = ", tmins(t3))
 		println("%------------------------------------------------------%\n\n")

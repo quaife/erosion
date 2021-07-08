@@ -23,6 +23,6 @@ module Erosion
     using .PostProcess
 
     # expose functionality to user
-    export run_erosion, ParamSet, ThLenDenType, ThetaLenType
+    export run_erosion, ParamSet, ThLenDenType, ThetaLenType, post_process
 
 end
