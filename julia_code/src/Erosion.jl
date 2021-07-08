@@ -19,8 +19,8 @@ module Erosion
     # load extension modules
     include("MakeGeos.jl") # generate geometry
     using .MakeGeos
-    include("Postprocessing.jl")
-    using .Postprocessing
+    include("PostProcess.jl")
+    using .PostProcess
 
     # expose functionality to user
     export run_erosion, ParamSet, ThLenDenType, ThetaLenType
