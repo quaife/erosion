@@ -3,6 +3,7 @@
 # Convention: nn indexes the timestep; bod = 1:nbods indexes the bodies.
 
 using JLD2
+using Plots
 using DelimitedFiles
 
 using .ThetaLen: ParamSet
