@@ -18,7 +18,7 @@ module DensityStress
 	using Erosion.ThetaLen: ParamSet, ThLenDenType, getnxy, TargetsType
 
 	# path to compiled libstokes.so
-	const libstokes=abspath(joinpath(@__DIR__, "../..", "fortran_code/libstokes.so"))
+	const libstokes = abspath(joinpath(@__DIR__, "../fortran_code/libstokes.so"))
 
 	#Compute the smoothed absolute stress atau and saves it in thlenden.thlenvec.atau.
 	# This is the main routine called by the erosion simulation in timestepping.

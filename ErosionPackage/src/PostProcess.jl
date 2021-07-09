@@ -17,7 +17,7 @@ module PostProcess
 	procfile(params::ParamSet) = string("proc_data-", params.label, ".jld2")
 	
 	# path to libstokes.so
-	const libstokes=abspath(joinpath(@__DIR__, "../..", "fortran_code/libstokes.so"))
+	#const libstokes = abspath(joinpath(@__DIR__, "../fortran_code/libstokes.so"))
 
 	#----------- ROUTINES FOR AREA AND RESISTIVITY -----------#
 	# Get the normal and tangent directions.
