@@ -16,8 +16,7 @@ module PostProcess
 	# Set the name of the output file with the processed data.
 	procfile(params::ParamSet) = string("proc_data-", params.label, ".jld2")
 	
-	# path to libstokes.so
-	#const libstokes = abspath(joinpath(@__DIR__, "../fortran_code/libstokes.so"))
+	# Note: the libstokes path is now imported from the ThetaLen module.
 
 	#----------- ROUTINES FOR AREA AND RESISTIVITY -----------#
 	# Get the normal and tangent directions.
