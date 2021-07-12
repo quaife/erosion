@@ -1,4 +1,4 @@
-# OBJECTIVE: Plot some stuff from the erosion simulation data.
+# OBJECTIVE: Plot some quantities from the post-processed erosion output data files.
 
 using Erosion
 
