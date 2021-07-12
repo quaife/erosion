@@ -1,4 +1,4 @@
-# MAIN GOAL: Convert the lists of output text files to a Julia data file.
+# OBJECTIVE: Convert the lists of output text files to a Julia data file.
 # Convention: nn indexes the timestep, el = 1:nbods indexes the bodies.
 
 #--------------- BASIC STUFF ---------------#
