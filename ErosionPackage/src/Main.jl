@@ -6,8 +6,6 @@ using JLD2
 using Plots
 using DelimitedFiles
 
-using .ThetaLen: ParamSet
-
 #-------------------------------------------------#
 
 # USED IN ONLY ONE PLACE, THINK ABOUT IT...
@@ -46,7 +44,7 @@ function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
 	alpha = getalpha(npts)
 	theta = 0.5*pi .+ alpha
 	len = 2*pi*rad
-	return ThetaLenType(theta,len,xc,yc,NaN)
+	return ThetaLenType(theta, len, xc, yc, NaN)
 end
 # Initialize thlenden from the input circle file.
 function circs2thlenden(params::ParamSet)

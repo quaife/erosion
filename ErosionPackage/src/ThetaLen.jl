@@ -3,7 +3,7 @@
 
 module ThetaLen
 
-	export ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy, getnxy, TargetsType
+	export ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getxy, getnxy, TargetsType, getalpha
 
 	#-------------------------------------------------#
 
@@ -76,7 +76,6 @@ module ThetaLen
 		yy = specint(dy) .+ ysm
 		return xx, yy
 	end
-
 	# Get the x-y coordinates of all the bodies and also nbods.
 	function getnxy(thlenden::ThLenDenType)
 		nbods = length(thlenden.thlenvec)
@@ -86,6 +85,11 @@ module ThetaLen
 			append!(xv,xx); append!(yv,yy)
 		end
 		return nbods, xv, yv
+	end
+	# Get alpha = 2 pi s/L, using an offset grid.
+	function getalpha(npts::Integer)
+		dalpha = 2*pi/npts
+		return alpha = collect(range(0.5*dalpha, step=dalpha, length=npts))
 	end
 
 	#--------------- Tests for the theta vector ---------------#

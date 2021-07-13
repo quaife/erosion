@@ -28,13 +28,13 @@ getalpha is called by circ2thlen
 
 module TimeStepping
 
-	export rungekutta2, getalpha
+	export rungekutta2
 
 	using Statistics: mean
 	using Parameters: @unpack
 
 	using Erosion.SpectralMethods: specdiff, specint, expsmooth
-	using Erosion.ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden
+	using Erosion.ThetaLen: ParamSet, ThetaLenType, ThLenDenType, new_thlenden, getalpha
 	using Erosion.DensityStress: getstress!
 
 	#------------ Routines to compute the time derivatives of variables. ------------#
@@ -52,12 +52,6 @@ module TimeStepping
 		# Spectrally integrate (mean-free) dvtan to get the tangential velocity.
 		vtang = specint(dvtang)
 		return vtang, mterm
-	end
-
-	# Get alpha = 2 pi s/L, using an offset grid.
-	function getalpha(npts::Integer)
-		dalpha = 2*pi/npts
-		return alpha = collect(range(0.5*dalpha, step=dalpha, length=npts))
 	end
 
 	# Structure that includes the derivatives of theta, len, xsm, ysm.

@@ -6,7 +6,7 @@ using Erosion
 using Erosion.ThetaLen #This permits use of new_thlenden
 using JLD2
 
-data_set() = "output_data/erode-a06/"
+data_set() = "output_data/afrac06-text-data/"
 savefile(label::AbstractString) = string("output_data/raw_data-",label,".jld2")
 #-------------------------------------------------#
 
