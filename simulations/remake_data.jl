@@ -1,7 +1,10 @@
 # OBJECTIVE: Convert the lists of output text files to a Julia data file.
 # Convention: nn indexes the timestep; bod = 1:nbods indexes the bodies.
 
-# TO CALL give instructions
+#= Examples for how to call the main routines: 
+remake_output_data("20-2")
+remake_input_geos("afrac06", 20, 2) 
+=#
 
 
 #--------------- BASIC STUFF ---------------#
@@ -69,7 +72,7 @@ end
 # get_thlenden: Get thlenden from a datafolder.
 function get_thlenden(datafolder::AbstractString, cnt::Int)
 	# Get the file name at each time.
-	cntstr = lpad(string(cnt),4,"0")
+	cntstr = lpad(cnt, 4, "0")
 	geomfile = string(datafolder,"geom",cntstr,".dat")
 	densityfile = string(datafolder,"density",cntstr,".dat")
 	# Extract thlenvec, density, and denrot.

@@ -33,7 +33,7 @@ function add_data(filename::AbstractString, varlabel::AbstractString, var)
 end
 
 # Convert an integer to a string with zero-padding.
-nstr(nn::Int) = lpad(string(nn), 4, string(0))
+nstr(nn::Integer) = lpad(nn, 4, "0")
 # The data label for thlenden.
 thlabel(nn) = string("thlenden", nstr(nn))
 #-------------------------------------------------#
