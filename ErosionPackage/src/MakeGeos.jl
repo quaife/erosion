@@ -107,7 +107,12 @@ function plotcircs(circvec::Vector{CircType}, nfile::Integer, seed::Integer)
 end
 
 # Compute the area fraction of the circles.
-get_afrac(radvec::Vector) = 0.25*pi*sum(radvec.^2)
+get_afrac(radvec::Vector{<:AbstractFloat}) = 0.25*pi*sum(radvec.^2)
+# Dispatch for vector of CircType.
+function get_afrac(circvec::Vector{CircType})
+	radvec = [circvec[nn].rad for nn = 1:length(circvec)]
+	return get_afrac(radvec)
+end
 #-------------------------------------------------#
 
 #--------------- MAIN ROUTINES ---------------#
@@ -133,7 +138,6 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 	radvec = rand(drad, nbods)
 	# Rescale the radii to achieve desired area fraction.
 	radvec *= sqrt( areafrac / get_afrac(radvec) )
-	@assert areafrac - get_afrac(radvec) < 100*eps(areafrac)
 	# Chose the provisional centers from a uniform distribution.
 	duni = Uniform(-1,1)
 	xc, yc = rand(duni, nbods), rand(duni, nbods)
@@ -170,6 +174,7 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 	# Output to the data file as long as the simulation did not stall.
 	if makeplots plotcircs(circvec, cnt, seed) end
 	if pass
+		@assert areafrac - get_afrac(circvec) < 100*eps(areafrac)
 		plotcircs(circvec, -1, seed)
 		datafile = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".jld2")
 		jldsave(datafile; circvec, areafrac, seed)

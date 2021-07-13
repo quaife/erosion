@@ -131,27 +131,26 @@ function remake_output_data(datafolder::AbstractString, datalabel::AbstractStrin
 end
 
 # Dispatch to run on simply a label using the folder given by data_set.
-function remake_data(label::AbstractString)
+function remake_output_data(label::AbstractString)
 	datafolder = string(data_set(), label, "/")
-	remake_data(datafolder, label)
+	remake_output_data(datafolder, label)
 end
-#-------------------------------------------------#
 
 #--------------- REMAKE THE INPUT GEOMETRY DATA ---------------#
-
-function remake_input_goes(afrac_folder::AbstractString, nbods::Integer, seed::Integer)
-	file = string("input_geos/", afrac_folder, string(nbods), "-", string(seed), ".circ")
-	input_vec = readvec(file)
-	nbods = popfirst!(input_vec)
-	circvec = []
+# Convert the input geometry text files to Julia data file.
+function remake_input_geos(afrac_folder::AbstractString, nbods::Integer, seed::Integer)
+	infile = string("input_geos/", afrac_folder, "/", nbods, "-", seed, ".circ")
+	invec = readvec(infile)
+	nbods = popfirst!(invec)
+	circvec = Vector{CircType}(undef, 0)
 	for bod = 1:nbods
-		rad = popfirst!(input_vec)
-		xc = popfirst!(input_vec)
-		yc = popfirst!(input_vec)
+		rad = popfirst!(invec)
+		xc = popfirst!(invec)
+		yc = popfirst!(invec)
 		push!(circvec, CircType(rad, xc, yc))
 	end
+	areafrac = get_afrac(circvec)
 	plotcircs(circvec, -1, seed)
-	datafile = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".jld2")
+	datafile = string("input_geos/", lpad(nbods,2,"0"), "-", seed, ".jld2")
 	jldsave(datafile; circvec, areafrac, seed)
 end
-
