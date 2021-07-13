@@ -3,7 +3,7 @@
 # To make multiple geometries run: make9geos(10, 0.5)
 
 module MakeGeos
-export make_geos, make9geos
+export make_geos, make9geos, CircType, plotcircs, get_afrac
 
 using Erosion.ThetaLen: getalpha
 using Random
@@ -84,7 +84,7 @@ function shiftcircs(circvec::Vector{CircType}, fxv::Vector{Float64}, fyv::Vector
 end
 
 # Plot the circles.
-function plotcircs(circvec::Vector{CircType}, nfile::Int, seed::Int)
+function plotcircs(circvec::Vector{CircType}, nfile::Integer, seed::Integer)
 	npts = 128
 	width = 400; height = 400
 	nbods = length(circvec)
@@ -105,6 +105,9 @@ function plotcircs(circvec::Vector{CircType}, nfile::Int, seed::Int)
 	end
 	savefig(pp, figname)
 end
+
+# Compute the area fraction of the circles.
+get_afrac(radvec::Vector) = 0.25*pi*sum(radvec.^2)
 #-------------------------------------------------#
 
 #--------------- MAIN ROUTINES ---------------#
@@ -129,7 +132,8 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 	dray = Rayleigh(); dchi = Chi(4); drad = dchi
 	radvec = rand(drad, nbods)
 	# Rescale the radii to achieve desired area fraction.
-	radvec *= sqrt( 4*areafrac/ (pi*sum(radvec.^2)) )
+	radvec *= sqrt( areafrac / get_afrac(radvec) )
+	@assert areafrac - get_afrac(radvec) < 100*eps(areafrac)
 	# Chose the provisional centers from a uniform distribution.
 	duni = Uniform(-1,1)
 	xc, yc = rand(duni, nbods), rand(duni, nbods)

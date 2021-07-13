@@ -1,22 +1,25 @@
 # OBJECTIVE: Convert the lists of output text files to a Julia data file.
-# Convention: nn indexes the timestep, el = 1:nbods indexes the bodies.
+# Convention: nn indexes the timestep; bod = 1:nbods indexes the bodies.
+
+# TO CALL give instructions
+
 
 #--------------- BASIC STUFF ---------------#
 using Erosion
-using Erosion.ThetaLen #This permits use of new_thlenden
+using Erosion.ThetaLen # Permits use of new_thlenden.
+using Erosion.MakeGeos # Permits use of CircType and plotcircs.
 using JLD2
+using DelimitedFiles
 
 data_set() = "output_data/afrac06-text-data/"
 savefile(label::AbstractString) = string("output_data/raw_data-",label,".jld2")
 #-------------------------------------------------#
 
+#--------------- LITTLE IO ROUTINES ---------------#
+#= Many of these routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
+They became obsolete in the main part of the code but are still needed here. =#
 
-
-
-
-# basic.jl: Basic routines such as datatypes.
-using DelimitedFiles
-# readvec: Read a vector from a text file.
+# Read a vector from a text file.
 function readvec(filename::AbstractString)
 	iostream = open(filename, "r")
 	invec = readdlm(iostream, comments=true)[:,1]
@@ -24,19 +27,9 @@ function readvec(filename::AbstractString)
 	return invec
 end
 
-
-
-
-
-
-#--------------- LITTLE IO ROUTINES ---------------#
-#= These routines were initially in other files, either basic.jl, main.jl, or ioroutines.jl.
-They became obselote in the main part of the code but are still needed 
-to remake the data, so I moved them here.=#
-
 # Create new instances of each type.
 new_thlen() = ThetaLenType([],0.,0.,0.,0.)
-new_thlenvec(nbods::Int) = [new_thlen() for el=1:nbods]
+new_thlenvec(nbods::Int) = [new_thlen() for bod=1:nbods]
 
 # read_geom_file: Read a geometry file.
 #= The data in the file is t (physical time), npts, nbods, 
@@ -49,12 +42,12 @@ function read_geom_file(filename::AbstractString)
 	deleteat!(invec,1:3)
 	@assert length(invec) == nbods*(3*npts+3)
 	thlenvec = new_thlenvec(nbods)
-	for el=1:nbods
+	for bod = 1:nbods
 		# Read theta, len, xsm, ysm.
-		thlenvec[el].theta = invec[1:npts]
-		thlenvec[el].len = invec[npts+1]
-		thlenvec[el].xsm = invec[npts+2]
-		thlenvec[el].ysm = invec[npts+3]
+		thlenvec[bod].theta = invec[1:npts]
+		thlenvec[bod].len = invec[npts+1]
+		thlenvec[bod].xsm = invec[npts+2]
+		thlenvec[bod].ysm = invec[npts+3]
 		deleteat!(invec,1:npts+3)
 		# Reading xx and yy is now obselete, but I still need to delete entries in invec.
 		deleteat!(invec,1:2*npts)
@@ -120,9 +113,9 @@ function getparams(datafolder::AbstractString, datalabel::AbstractString)
 end
 #-------------------------------------------------#
 
-#--------------- REMAKE THE DATA ---------------#
+#--------------- REMAKE THE OUTPUT DATA ---------------#
 # Convert the lists of output text files to a Julia data file.
-function remake_data(datafolder::AbstractString, datalabel::AbstractString)
+function remake_output_data(datafolder::AbstractString, datalabel::AbstractString)
 	params, lastfile, cpu_hours = getparams(datafolder, datalabel)
 	println(params)
 
@@ -142,5 +135,23 @@ function remake_data(label::AbstractString)
 	datafolder = string(data_set(), label, "/")
 	remake_data(datafolder, label)
 end
+#-------------------------------------------------#
 
-#remake_data("20-2")
+#--------------- REMAKE THE INPUT GEOMETRY DATA ---------------#
+
+function remake_input_goes(afrac_folder::AbstractString, nbods::Integer, seed::Integer)
+	file = string("input_geos/", afrac_folder, string(nbods), "-", string(seed), ".circ")
+	input_vec = readvec(file)
+	nbods = popfirst!(input_vec)
+	circvec = []
+	for bod = 1:nbods
+		rad = popfirst!(input_vec)
+		xc = popfirst!(input_vec)
+		yc = popfirst!(input_vec)
+		push!(circvec, CircType(rad, xc, yc))
+	end
+	plotcircs(circvec, -1, seed)
+	datafile = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".jld2")
+	jldsave(datafile; circvec, areafrac, seed)
+end
+
