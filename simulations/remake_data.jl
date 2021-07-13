@@ -34,32 +34,6 @@ end
 They became obselote in the main part of the code but are still needed 
 to remake the data, so I moved them here.=#
 
-# getparams: Get the parameters from a params file.
-function getparams(paramvec::Vector, infovec::Vector)
-	# Read from paramvec.
-	circfile = String(paramvec[1])
-	npts = paramvec[2]
-	ibary, ifmm, ibc = Int(paramvec[3]), Int(paramvec[4]), Int(paramvec[5])
-	epsfac, sigfac, dt, dtout = paramvec[6:9]
-	fixpdrop, fixarea = Bool(paramvec[10]), Bool(paramvec[11])
-	tfin = paramvec[12]
-	maxl, nouter = Int(paramvec[13]), Int(paramvec[14])
-	# Read from infovec.
-	cntout = infovec[1]
-	lastfile = Int(infovec[2])
-	cpu_hours = Int(infovec[3])
-
-	# Save the parameters in the updated object ParamSet.
-	#= Note: due to the change in the file/folder labeling, 
-	the infolder and label are not quite right, but these can be set manually. =#
-	params = ParamSet(infolder=circfile, label="NA",
-				npts=npts, ibary=ibary, ifmm=ifmm, ibc=ibc, 
-				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=cntout,
-				fixpdrop=fixpdrop, fixarea=fixarea, tfin=tfin,
-				maxl=maxl, nouter=nouter)
-	return params, lastfile, cpu_hours
-end
-
 # Create new instances of each type.
 new_thlen() = ThetaLenType([],0.,0.,0.,0.)
 new_thlenvec(nbods::Int) = [new_thlen() for el=1:nbods]
@@ -115,17 +89,41 @@ function get_thlenden(datafolder::AbstractString, cnt::Int)
 	thlenden.denrot = denrot
 	return thlenden
 end
-#-------------------------------------------------#
 
+# getparams: Get the parameters from a params file.
+function getparams(datafolder::AbstractString, datalabel::AbstractString)
+	# Get the basic meta-data.	
+	paramvec = readvec( string(datafolder, "aparams.txt"))
+	infovec = readvec( string(datafolder, "apinfo.txt"))
+	# Read from paramvec.
+	circfile = String(paramvec[1])
+	npts = paramvec[2]
+	ibary, ifmm, ibc = Int(paramvec[3]), Int(paramvec[4]), Int(paramvec[5])
+	epsfac, sigfac, dt, dtout = paramvec[6:9]
+	fixpdrop, fixarea = Bool(paramvec[10]), Bool(paramvec[11])
+	tfin = paramvec[12]
+	maxl, nouter = Int(paramvec[13]), Int(paramvec[14])
+	# Read from infovec.
+	cntout = infovec[1]
+	lastfile = Int(infovec[2])
+	cpu_hours = Int(infovec[3])
+
+	# Save the parameters in the updated object ParamSet.
+	#= Note: due to the change in the file/folder labeling, 
+	the infolder and label are not quite right, but these can be set manually. =#
+	params = ParamSet(infolder=circfile, label=datalabel,
+				npts=npts, ibary=ibary, ifmm=ifmm, ibc=ibc, 
+				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=cntout,
+				fixpdrop=fixpdrop, fixarea=fixarea, tfin=tfin,
+				maxl=maxl, nouter=nouter)
+	return params, lastfile, cpu_hours
+end
+#-------------------------------------------------#
 
 #--------------- REMAKE THE DATA ---------------#
 # Convert the lists of output text files to a Julia data file.
 function remake_data(datafolder::AbstractString, datalabel::AbstractString)
-	# Get the basic meta-data.	
-	paramvec = readvec( string(datafolder, "aparams.txt"))
-	infovec = readvec( string(datafolder, "apinfo.txt"))
-	params, lastfile, cpu_hours = getparams(paramvec, infovec)
-
+	params, lastfile, cpu_hours = getparams(datafolder, datalabel)
 	println(params)
 
 	# Loop through the files inside folder.
@@ -144,6 +142,5 @@ function remake_data(label::AbstractString)
 	datafolder = string(data_set(), label, "/")
 	remake_data(datafolder, label)
 end
-#-------------------------------------------------#
 
 #remake_data("20-2")
