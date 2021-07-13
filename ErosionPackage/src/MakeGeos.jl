@@ -91,9 +91,9 @@ function plotcircs(circvec::Vector{CircType}, nfile::Integer, seed::Integer)
 	alpha = getalpha(npts)
 	# Set name of the folder and file.
 	if nfile >= 0
-		figname = string(figfolder(), "circ", lpad(string(nfile),4,"0"), ".pdf")
+		figname = string(figfolder(), "circ", lpad(nfile,4,"0"), ".pdf")
 	else
-		figname = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".pdf")
+		figname = string(geosfolder(), lpad(nbods,2,"0"), "-", seed, ".pdf")
 	end
 	# Make the figure.
 	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false);
@@ -176,7 +176,7 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 	if pass
 		@assert areafrac - get_afrac(circvec) < 100*eps(areafrac)
 		plotcircs(circvec, -1, seed)
-		datafile = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".jld2")
+		datafile = string(geosfolder(), lpad(nbods,2,"0"), "-", seed, ".jld2")
 		jldsave(datafile; circvec, areafrac, seed)
 	end
 end
