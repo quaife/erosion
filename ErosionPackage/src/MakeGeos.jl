@@ -93,7 +93,7 @@ function plotcircs(circvec::Vector{CircType}, nfile::Int, seed::Int)
 	if nfile >= 0
 		figname = string(figfolder(), "circ", lpad(string(nfile),4,"0"), ".pdf")
 	else
-		figname = string(geosfolder(), lpad(string(nbods),2,"0"), "circ", string(seed), ".pdf")
+		figname = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".pdf")
 	end
 	# Make the figure.
 	pp = plot(xlim=(-1,1), ylim=(-1,1), size=(width,height), leg=false);
@@ -109,7 +109,7 @@ end
 
 #--------------- MAIN ROUTINES ---------------#
 # Main routine to make the geometry.
-function make_geos(nbods::Int, areafrac::Float64, seed::Int=1)
+function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool = true)
 	#= Parameters: 
 	buff sets the buffer as a percentage of distance between bodies; beyond that distance there is no force.
 	bolap sets an analogous buffer to test if the bodies are overlapping.
@@ -145,7 +145,7 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1)
 		# Plot the circles.
 		if mod(cnt, 10) == 0
 			println("count = ", cnt)
-			plotcircs(circvec, cnt, seed)
+			if makeplots plotcircs(circvec, cnt, seed) end
 		end
 		# Compute the forces and shift the circles.
 		fx, fy = forcesum(circvec, pow, buff)
@@ -164,8 +164,8 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1)
 	end
 
 	# Output to the data file as long as the simulation did not stall.
-	plotcircs(circvec, cnt, seed)
-	if(pass)
+	if makeplots plotcircs(circvec, cnt, seed) end
+	if pass
 		plotcircs(circvec, -1, seed)
 		datafile = string(geosfolder(), lpad(string(nbods),2,"0"), "-", string(seed), ".jld2")
 		jldsave(datafile; circvec, areafrac, seed)
@@ -176,7 +176,7 @@ end
 # Call the main routine with given nbods and areafrac for 9 different seeds.
 function make9geos(nbods::Int, areafrac::Float64)
 	for ii=1:9
-		make_geos(nbods, areafrac, ii)
+		make_geos(nbods, areafrac, ii, makeplots=false)
 	end
 end
 
