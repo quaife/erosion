@@ -14,7 +14,7 @@ using Erosion.SpectralMethods: specint
 @with_kw struct ParamSet
 	# The data file for the initial geometry
 	infolder::AbstractString = "input_geos/"
-	label::AbstractString = "02-6"
+	label::AbstractString = "02-8"
 	# Varied computational parameters
 	npts::Int = 128			# The number of points per body, default 128.
 	ibary::Int = 1			# Use barycentric (1) or not (0).
