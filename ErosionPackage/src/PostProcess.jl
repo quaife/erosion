@@ -4,7 +4,7 @@ module PostProcess
 
 export getns, getareas, resistivity, compute_pressure, drag, bodyfitgrid, regbodtargs, pp1, pp2, pp3, post_process
 
-import Erosion.add_data
+using Erosion: outfile, add_data
 using Erosion.ThetaLen
 using Erosion.DensityStress
 using Erosion.SpectralMethods
