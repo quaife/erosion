@@ -48,7 +48,7 @@ mutable struct ThLenDenType
 	thlenvec::Vector{ThetaLenType}; tt::Float64;
 	density::Vector{Float64}; denrot::Vector{Float64}; 
 end
-# Create a new ThLenDenType variable.
+# Create a new ThLenDenType variable: used in TimeStepping, Main, remake_data.
 new_thlenden(thlenvec::Vector{ThetaLenType}) = ThLenDenType(thlenvec, 0., [],[])
 
 #--------------- Targets data type ---------------#

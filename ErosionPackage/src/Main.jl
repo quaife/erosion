@@ -19,10 +19,11 @@ function add_data(filename::AbstractString, varlabel::AbstractString, var)
 	end
 end
 
-# Convert an integer to a string with zero-padding.
-nstr(nn::Integer) = lpad(nn, 4, "0")
-# The data label for thlenden.
-thlabel(nn) = string("thlenden", nstr(nn))
+# Create a new folder, overwriting if it already exists.
+function new_folder(folder::AbstractString)
+	isdir(folder) ? rm(folder; recursive=true) : 0
+	mkdir(folder)
+end
 #-------------------------------------------------#
 
 #--------------- SMALL ROUTINES ---------------#
@@ -47,7 +48,7 @@ end
 # Make simple pdf plots for monitoring (not production level).
 function plot_curves(thlenvec::Vector{ThetaLenType}, params::ParamSet, nout::Int)
 	println("\n\n\nOUTPUT NUMBER ", nout)
-	plotfile = string(plotfolder(params), "shape", nstr(nout), ".pdf")	
+	plotfile = string(plotfolder(params), "shape", lpad(nout,4,"0"), ".pdf")	
 	# Make figure of given height and preserve the aspect ratio.
 	axlims = [1.0, 1.0]
 	height = 400
@@ -86,8 +87,7 @@ function erosion_sim(params::ParamSet)
 	thlenden = circs2thlenden(params)
 	# Initialize other stuff.
 	println("\nBEGINNING EROSION SIMULATION")
-	pfolder = plotfolder(params)
-	if isdir(pfolder) rm(pfolder; recursive=true) end; mkdir(pfolder)
+	new_folder(plotfolder(params))
 	thldvec = Vector{ThLenDenType}(undef, 0)
 	nn, nout = 0, 0
 
@@ -101,7 +101,7 @@ function erosion_sim(params::ParamSet)
 			# Also plot the curves for monitoring.
 			plot_curves(thlenden.thlenvec, params, nout)
 			# Also incrementally add thlenden to the temporary data file in case of crash.
-			add_data(tempfile(params), thlabel(nout), thlenden)
+			add_data(tempfile(params), string("thlenden", lpad(nout,4,"0")), thlenden)
 			nout += 1
 		end
 		# Advance the variables forward one timestep with RK4.

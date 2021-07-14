@@ -5,6 +5,7 @@
 module MakeGeos
 export make_geos, make9geos, CircType, plotcircs, get_afrac
 
+using Erosion: new_folder
 using Erosion.ThetaLen: getalpha
 using Distributions, Random, LinearAlgebra
 using JLD2, Plots
@@ -12,17 +13,6 @@ using JLD2, Plots
 #--------------- INITIALIZATION ---------------#
 geosfolder() = "input_geos/"
 figfolder() = "zFigsGeos/"
-
-# Create a new folder, overwriting if it already exists.
-function new_folder(folder::AbstractString)
-	isdir(folder) ? rm(folder; recursive=true) : 0
-	mkdir(folder)
-end
-
-
-
-
-
 
 # The circle data type.
 mutable struct CircType
@@ -126,15 +116,15 @@ end
 
 # Function to unpack circvec into its components.
 function unpack_circvec(circvec::Vector{CircType})
-	rvec, xc, yc = [], [], []
-	for bod = 1:length(circvec)
+	nbods = length(circvec)
+	rvec, xc, yc = [zeros(Float64, nbods) for nn=1:3]
+	for bod = 1:nbods
 		rvec[bod] = circvec[bod].rad
-		xc = circvec[bod].xc		
-		yc = circvec[bod].yc
+		xc[bod] = circvec[bod].xc		
+		yc[bod] = circvec[bod].yc
 	end
 	return rvec, xc, yc
 end
-
 #-------------------------------------------------#
 
 #--------------- MAIN ROUTINES ---------------#
@@ -192,7 +182,6 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 			pass = false; break
 		end
 	end
-
 	# Output to the data file as long as the simulation did not stall.
 	if makeplots plotcircs(circvec, cnt, seed) end
 	if pass
@@ -203,7 +192,6 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 		jldsave(datafile; rvec, xc, yc, circvec, areafrac, seed)
 	end
 end
-
 
 # Call the main routine with given nbods and areafrac for 9 different seeds.
 function make9geos(nbods::Int, areafrac::Float64)
