@@ -16,8 +16,8 @@ However, I discovered the geometries they make are different, likely due to chan
 function make_many_input_geos()
 	afrac = 0.6
 	runs = good_runs()
-	for nn = 1:length(runs)
-		nbods, seed = runs[nn]
+	for run in runs
+		nbods, seed = run
 		make_geos(nbods, afrac, seed, makeplots=false)
 	end
 end
@@ -25,17 +25,26 @@ end
 # OBJECTIVE: Reformat many input geometries from the text to JLD2 files.
 function remake_many_input_geos()
 	runs = good_runs()
-	for nn = 1:length(runs)
-		nbods, seed = runs[nn]
+	for run in runs
+		nbods, seed = run
 		remake_input_geos("afrac06", nbods, seed)
+	end
+end
+
+# OBJECTIVE: Reforman many output data sets from text to JLD2 files.
+function remake_many_output_data()
+	runs = good_runs()
+	for run in runs
+		nbods, seed = run
+		remake_output_data(string(nbods, "-", seed))
 	end
 end
 
 # OBJECTIVE: Post-process all of the remade data at once.
 function post_proc_many()
 	runs = good_runs()
-	for nn = 1:length(runs)
-		nbods, seed = runs[nn]
+	for run in runs
+		nbods, seed = run
 		file = string("output_data/raw_data-", nbods, "-", seed, ".jld2")
 		post_process(file)
 	end
@@ -49,9 +58,10 @@ end
 # make9geos(2, 0.02)
 # remake_input_geos("afrac06", 20, 2)
 # remake_output_data("20-2")
+ post_process("output_data/raw_data-20-2.jld2")
 
 # CALL THE BATCH PROCESSING ROUTINES
-
 # make_many_input_geos()
 # remake_many_input_geos()
+# remake_many_output_data()
 # post_proc_many()
