@@ -39,8 +39,8 @@ then theta, len, xsm, ysm, xx, yy for each body. =#
 function read_geom_file(filename::AbstractString)
 	invec = readvec(filename)
 	tt = invec[1]
-	npts = round(Int,invec[2])
-	nbods = round(Int,invec[3])
+	npts = round(Int, invec[2])
+	nbods = round(Int, invec[3])
 	deleteat!(invec,1:3)
 	@assert length(invec) == nbods*(3*npts+3)
 	thlenvec = new_thlenvec(nbods)
@@ -72,8 +72,8 @@ end
 function get_thlenden(datafolder::AbstractString, cnt::Int)
 	# Get the file name at each time.
 	cntstr = lpad(cnt, 4, "0")
-	geomfile = string(datafolder,"geom",cntstr,".dat")
-	densityfile = string(datafolder,"density",cntstr,".dat")
+	geomfile = string(datafolder, "geom", cntstr, ".dat")
+	densityfile = string(datafolder, "density", cntstr, ".dat")
 	# Extract thlenvec, density, and denrot.
 	tt, thlenvec = read_geom_file(geomfile)
 	density, denrot = read_density_file(densityfile)
@@ -104,8 +104,7 @@ function getparams(datafolder::AbstractString, datalabel::AbstractString)
 	cpu_hours = Int(infovec[3])
 
 	# Save the parameters in the updated object ParamSet.
-	#= Note: due to the change in the file/folder labeling, 
-	the infolder and label are not quite right, but these can be set manually. =#
+	#= Note: due to other changes, the infolder here is obsolete. =#
 	params = ParamSet(infolder=circfile, label=datalabel,
 				npts=npts, ibary=ibary, ifmm=ifmm, ibc=ibc, 
 				epsfac=epsfac, sigfac=sigfac, dt=dt, outstride=cntout,

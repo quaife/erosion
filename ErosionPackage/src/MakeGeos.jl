@@ -6,11 +6,8 @@ module MakeGeos
 export make_geos, make9geos, CircType, plotcircs, get_afrac
 
 using Erosion.ThetaLen: getalpha
-using Random
-using Distributions
-using LinearAlgebra: norm
-using Plots
-using JLD2
+using Distributions, Random, LinearAlgebra
+using JLD2, Plots
 
 #--------------- INITIALIZATION ---------------#
 geosfolder() = "input_geos/"
