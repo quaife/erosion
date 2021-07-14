@@ -1,6 +1,5 @@
 # MAIN GOAL: The main routines to simulate erosion.
 # The output is saved in a jld2 file.
-# Convention: nn indexes the timestep; bod = 1:nbods indexes the bodies.
 
 using JLD2, Plots
 

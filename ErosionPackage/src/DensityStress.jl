@@ -1,8 +1,6 @@
 #= OBJECTIVE: Compute the density function, the shear stress, 
 and other quantities by calling the Fortran code. =#
 
-# Convention: bod = 1:nbods indexes the bodies; mm indexes the target points.
-
 # The time-stepping routine only calls getstress!
 # The erosion simulation only calls compute_density!
 # The post-processing routine calls computestress, compute_qoi_targets!, regulargrid.

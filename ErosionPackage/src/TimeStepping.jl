@@ -17,12 +17,9 @@ Parameterization Convention
 The curve is assumed to be parametrized in the counter-clockwise (CCW) direction,
 and the inward pointing normal vector is used. This is the same convectino as Shelley 1994.
 
-Indexing Convention
-bod = 1:nbods indexes the bodies. No other indices are used.
-
 Exported Methods
 rungekutta2 is the main time-stepping routine called in the erosion simulation.
-getalpha is called by circ2thlen
+getalpha is called by circ2thlen.
  =#
 #-----------------------------------------------------------#
 

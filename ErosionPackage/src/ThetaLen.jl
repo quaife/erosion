@@ -1,5 +1,4 @@
 # OBJECTIVE: General use objects and methods related to theta-len variables.
-# Convention: bod = 1:nbods indexes the bodies.
 
 module ThetaLen
 export ParamSet, ThetaLenType, ThLenDenType, TargetsType
