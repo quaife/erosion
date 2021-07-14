@@ -6,4 +6,4 @@ using Erosion
 
 params = ParamSet()
 run_erosion(params)
-post_process(outfile(params))
+post_process(params)

@@ -23,8 +23,7 @@ module Erosion
 	using .PostProcess
 
 	# expose functionality to user
-	export ParamSet, ThLenDenType, ThetaLenType, run_erosion, post_process, outfile
+	export ParamSet, ThLenDenType, ThetaLenType, run_erosion, post_process
 	export make_geos, make9geos
-	# Notes: outfile used in run0 to tell post_process where to look.
 
 end

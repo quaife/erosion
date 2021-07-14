@@ -270,5 +270,8 @@ function post_process(infile::AbstractString)
 	println("Post-processing times (mins): p1 = ", tmins(t1), "; p2 = ", tmins(t2), "; p3 = ", tmins(t3))
 	println("%------------------------------------------------------%\n\n")
 end
+# Dispatch for ParamSet so that outfile does not need to be exported.
+# Use immediately after running a simulation before output files are moved.
+post_process(params::ParamSet) = post_process(outfile(params))
 
 end
