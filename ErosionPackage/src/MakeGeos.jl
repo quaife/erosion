@@ -3,7 +3,7 @@
 # To make multiple geometries run: make9geos(10, 0.5)
 
 module MakeGeos
-export make_geos, make9geos, CircType, plotcircs, get_afrac
+export make_geos, make9geos, CircType, plotcircs, get_afrac, unpack_circvec
 
 using Erosion: new_folder
 using Erosion.ThetaLen: getalpha
