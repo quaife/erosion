@@ -8,6 +8,8 @@ module Erosion
 	using .SpectralMethods
 	include("ThetaLen.jl") # data structures
 	using .ThetaLen
+	include("MakeGeos.jl") # generate geometry
+	using .MakeGeos
 	include("DensityStress.jl") # FORTRAN wrappers
 	using .DensityStress
 	include("TimeStepping.jl") # timestepping
@@ -17,8 +19,6 @@ module Erosion
 	include("Main.jl") # entry point and global functions
 
 	# load extension modules
-	include("MakeGeos.jl") # generate geometry
-	using .MakeGeos
 	include("PostProcess.jl")
 	using .PostProcess
 

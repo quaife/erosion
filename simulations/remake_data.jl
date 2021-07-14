@@ -6,7 +6,6 @@ remake_output_data("20-2")
 remake_input_geos("afrac06", 20, 2) 
 =#
 
-
 #--------------- BASIC STUFF ---------------#
 using Erosion
 using Erosion.ThetaLen # Permits use of new_thlenden.
@@ -142,9 +141,9 @@ end
 #--------------- REMAKE THE INPUT GEOMETRY DATA ---------------#
 # Convert the input geometry text files to Julia data file.
 function remake_input_geos(afrac_folder::AbstractString, nbods::Integer, seed::Integer)
-	infile = string("input_geos/", afrac_folder, "/", nbods, "-", seed, ".circ")
+	infile = string("input_geos/old_text_data/", afrac_folder, "/", nbods, "-", seed, ".circ")
 	invec = readvec(infile)
-	nbods = popfirst!(invec)
+	nbods = Int(popfirst!(invec))
 	circvec = Vector{CircType}(undef, 0)
 	for bod = 1:nbods
 		rad = popfirst!(invec)

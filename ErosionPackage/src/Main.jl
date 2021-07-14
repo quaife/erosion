@@ -2,25 +2,12 @@
 # The output is saved in a jld2 file.
 # Convention: nn indexes the timestep; bod = 1:nbods indexes the bodies.
 
-using JLD2
-using Plots
-using DelimitedFiles
-
-#-------------------------------------------------#
-
-# USED IN ONLY ONE PLACE, THINK ABOUT IT...
-# Read a vector from a text file.
-function readvec(filename::AbstractString)
-	iostream = open(filename, "r")
-	invec = readdlm(iostream, comments=true)[:,1]
-	close(iostream)
-	return invec
-end
+using JLD2, Plots
 
 #--------------- TINY ROUTINES ---------------#
 # Set files and folders: the input data file, the output temporary data file,
 # the final output file, and the output plot folder.
-infile(params::ParamSet) = string(params.infolder, params.label, ".circ")
+infile(params::ParamSet) = string(params.infolder, params.label, ".jld2")
 tempfile(params::ParamSet) = string("temp_data-", params.label, ".jld2")
 outfile(params::ParamSet) = string("raw_data-", params.label, ".jld2")
 plotfolder(params::ParamSet) = string("zFigs-", params.label, "/")
@@ -40,20 +27,19 @@ thlabel(nn) = string("thlenden", nstr(nn))
 
 #--------------- SMALL ROUTINES ---------------#
 # Convert the circle data to thlen data.
-function circ2thlen(npts::Int, rad::Float64, xc::Float64, yc::Float64)
+function circ2thlen(npts::Integer, circ::CircType)
 	alpha = getalpha(npts)
 	theta = 0.5*pi .+ alpha
-	len = 2*pi*rad
-	return ThetaLenType(theta, len, xc, yc, NaN)
+	len = 2*pi* circ.rad
+	return ThetaLenType(theta, len, circ.xc, circ.yc, NaN)
 end
 # Initialize thlenden from the input circle file.
 function circs2thlenden(params::ParamSet)
-	circdata = readvec(infile(params))
-	nbods = round(Int, popfirst!(circdata))
+	circvec = load(infile(params), "circvec")
+	nbods = length(circvec)
 	thlenvec = Array{ThetaLenType}(undef, 0)
 	for bod = 1:nbods
-		rad, xc, yc = [popfirst!(circdata) for i=1:3]
-		thlen = circ2thlen(params.npts, rad, xc, yc)
+		thlen = circ2thlen(params.npts, circvec[bod])
 		push!(thlenvec, thlen)
 	end
 	return new_thlenden(thlenvec)
