@@ -27,19 +27,18 @@ thlabel(nn) = string("thlenden", nstr(nn))
 
 #--------------- SMALL ROUTINES ---------------#
 # Convert the circle data to thlen data.
-function circ2thlen(npts::Integer, circ::CircType)
+function circ2thlen(npts::Integer, rad::AbstractFloat, xc::AbstractFloat, yc::AbstractFloat)
 	alpha = getalpha(npts)
 	theta = 0.5*pi .+ alpha
-	len = 2*pi* circ.rad
-	return ThetaLenType(theta, len, circ.xc, circ.yc, NaN)
+	len = 2*pi*rad
+	return ThetaLenType(theta, len, xc, yc, NaN)
 end
 # Initialize thlenden from the input circle file.
 function circs2thlenden(params::ParamSet)
-	circvec = load(infile(params), "circvec")
-	nbods = length(circvec)
+	rvec, xc, yc = load(infile(params), "rvec", "xc", "yc")
 	thlenvec = Array{ThetaLenType}(undef, 0)
-	for bod = 1:nbods
-		thlen = circ2thlen(params.npts, circvec[bod])
+	for bod = 1:length(rvec)
+		thlen = circ2thlen(params.npts, rvec[bod], xc[bod], yc[bod])
 		push!(thlenvec, thlen)
 	end
 	return new_thlenden(thlenvec)

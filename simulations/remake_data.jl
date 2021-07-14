@@ -153,5 +153,6 @@ function remake_input_geos(afrac_folder::AbstractString, nbods::Integer, seed::I
 	areafrac = get_afrac(circvec)
 	plotcircs(circvec, -1, seed)
 	datafile = string("input_geos/", lpad(nbods,2,"0"), "-", seed, ".jld2")
-	jldsave(datafile; circvec, areafrac, seed)
+	rvec, xc, yc = unpack_circvec(circvec)
+	jldsave(datafile; rvec, xc, yc, circvec, areafrac, seed)
 end

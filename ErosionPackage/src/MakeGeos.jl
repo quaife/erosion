@@ -13,6 +13,18 @@ using JLD2, Plots
 geosfolder() = "input_geos/"
 figfolder() = "zFigsGeos/"
 
+# Create a new folder, overwriting if it already exists.
+function new_folder(folder::AbstractString)
+	isdir(folder) ? rm(folder; recursive=true) : 0
+	mkdir(folder)
+end
+
+
+
+
+
+
+# The circle data type.
 mutable struct CircType
 	rad::Float64; xc::Float64; yc::Float64
 end
@@ -105,11 +117,24 @@ end
 
 # Compute the area fraction of the circles.
 get_afrac(radvec::Vector{<:AbstractFloat}) = 0.25*pi*sum(radvec.^2)
+
 # Dispatch for vector of CircType.
 function get_afrac(circvec::Vector{CircType})
 	radvec = [circvec[nn].rad for nn = 1:length(circvec)]
 	return get_afrac(radvec)
 end
+
+# Function to unpack circvec into its components.
+function unpack_circvec(circvec::Vector{CircType})
+	rvec, xc, yc = [], [], []
+	for bod = 1:length(circvec)
+		rvec[bod] = circvec[bod].rad
+		xc = circvec[bod].xc		
+		yc = circvec[bod].yc
+	end
+	return rvec, xc, yc
+end
+
 #-------------------------------------------------#
 
 #--------------- MAIN ROUTINES ---------------#
@@ -142,7 +167,7 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 	# Create the list of circles
 	circvec = [CircType(radvec[bod], xc[bod], yc[bod]) for bod=1:nbods]
 	# Create the folder for plots.
-	if isdir(figfolder()) rm(figfolder(); recursive=true) end; mkdir(figfolder())
+	new_folder(figfolder())
 
 	# Shift the centers until no overlap.
 	cnt = 0; pass = true; foverlap = 1.0
@@ -174,7 +199,8 @@ function make_geos(nbods::Int, areafrac::Float64, seed::Int=1; makeplots::Bool =
 		@assert areafrac - get_afrac(circvec) < 100*eps(areafrac)
 		plotcircs(circvec, -1, seed)
 		datafile = string(geosfolder(), lpad(nbods,2,"0"), "-", seed, ".jld2")
-		jldsave(datafile; circvec, areafrac, seed)
+		rvec, xc, yc = unpack_circvec(circvec)
+		jldsave(datafile; rvec, xc, yc, circvec, areafrac, seed)
 	end
 end
 
