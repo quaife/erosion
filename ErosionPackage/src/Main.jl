@@ -83,10 +83,8 @@ end
 function erosion_sim(params::ParamSet)
 	# Initialize the temporary output file by saving the parameters.
 	jldsave(tempfile(params); params)
-	
 	# Initialize the geometry.
 	thlenden = circs2thlenden(params)
-	
 	# Initialize other stuff.
 	println("\nBEGINNING EROSION SIMULATION")
 	pfolder = plotfolder(params)
@@ -113,8 +111,9 @@ function erosion_sim(params::ParamSet)
 		thlenden = rungekutta2(thlenden, params)
 	end
 
-	# Update one last time with zero bodies and return thldvec.
+	# Make a final update, remove the temporary data file, and return.
 	update_thldvec!(thldvec, thlenden, params)
+	rm(tempfile(params))
 	println("\n\n\nCOMPLETED EROSION SIMULATION")
 	return thldvec
 end
