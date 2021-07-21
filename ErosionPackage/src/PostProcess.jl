@@ -4,7 +4,7 @@ module PostProcess
 
 export getns, getareas, resistivity, compute_pressure, drag, bodyfitgrid, regbodtargs, pp1, pp2, pp3, post_process
 
-using Erosion: outfile, add_data
+using Erosion: outfile, add_data, circ2thlen
 using Erosion.ThetaLen
 using Erosion.DensityStress
 using Erosion.SpectralMethods
@@ -182,9 +182,9 @@ end
 
 #= Compute a collection of circles with same centers and areas as the eroded configuration
 at a given time. =#
-function get_circs(thlenden::ThLenDenType, areas::Vector{<:AbstractFloat})
+function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:AbstractFloat})
 	nbods = length(thlenden.thlenvec)
-	thlen_circ_vec = []
+	thlen_circ_vec = Vector{ThetaLenType}(undef, 0)
 	for bod = 1:nbods
 		thlen = thlenden.thlenvec[bod]
 		rad = sqrt(areas[bod]/pi)
@@ -193,7 +193,7 @@ function get_circs(thlenden::ThLenDenType, areas::Vector{<:AbstractFloat})
 		push!(thlen_circ_vec, thlen_circ)
 	end
 	thlenden_circs = new_thlenden(thlen_circ_vec)
-	compute_density!(thlenden_circ)
+	compute_density!(thlenden_circs, params)
 	return thlenden_circs
 end
 
@@ -204,7 +204,7 @@ end
 function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
 	nlast = length(thldvec)
-	areas_vec, resist, resist_rot, resist_circs = [], [], [], []
+	areas_vec, resist, resist_rot, resist_circs, thlenden_circs_vec = [], [], [], [], []
 	# Loop over the time values to compute areas and resistivity at each.
 	for nn = 1:nlast
 		println("pp1 step ", nn, " of ", nlast)
@@ -213,11 +213,12 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		areas = getareas(thlenden)
 		push!(areas_vec, areas)
 		# Compute a configuration of circles with same centers and areas.
-		thlenden_circs = get_circs(thlenden, areas)
+		thlenden_circs = get_circs(thlenden, params, areas)
 		# Compute the resistivity and push to the output vectors.
 		push!(resist, resistivity(thlenden, params))
 		push!(resist_rot, resistivity(thlenden, params, rotation=true))
 		push!(resist_circs, resistivity(thlenden_circs, params))
+		push!(thlenden_circs_vec, thlenden_circs)
 	end
 	# Save the new data to the same jld2 file.
 	jldopen(procfile(params), "r+") do file
@@ -225,6 +226,7 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
 		write(file, "resist_circs", resist_circs)
+		write(file, "thlenden_circs_vec", thlenden_circs_vec)
 	end
 	println("Finished pp1.\n")
 end
@@ -280,6 +282,7 @@ function post_process(infile::AbstractString)
 	thldvec = read(file, "thldvec")
 	cpu_hours = read(file, "cpu_hours")
 	close(file)
+	println(params)
 	# Initialize the processed data file by saving the basic variables there.
 	jldsave(procfile(params); params, thldvec, cpu_hours)
 
