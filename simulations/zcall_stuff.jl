@@ -58,7 +58,7 @@ end
 # make9geos(2, 0.02)
 # remake_input_geos("afrac06", 20, 2)
 # remake_output_data("20-2")
-# post_process("output_data/raw_data-20-2.jld2")
+ post_process("output_data/raw_data-20-2.jld2")
 
 # CALL THE BATCH PROCESSING ROUTINES
 # make_many_input_geos()

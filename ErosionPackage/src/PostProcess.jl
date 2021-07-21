@@ -179,27 +179,52 @@ function regbodtargs(thlenv::Vector{ThetaLenType})
 end
 #-------------------------------------------------#
 
+
+#= Compute a collection of circles with same centers and areas as the eroded configuration
+at a given time. =#
+function get_circs(thlenden::ThLenDenType, areas::Vector{<:AbstractFloat})
+	nbods = length(thlenden.thlenvec)
+	thlen_circ_vec = []
+	for bod = 1:nbods
+		thlen = thlenden.thlenvec[bod]
+		rad = sqrt(areas[bod]/pi)
+		npts = length(thlen.theta)
+		thlen_circ = circ2thlen(npts, rad, thlen.xsm, thlen.ysm)
+		push!(thlen_circ_vec, thlen_circ)
+	end
+	thlenden_circs = new_thlenden(thlen_circ_vec)
+	compute_density!(thlenden_circ)
+	return thlenden_circs
+end
+
+
+
 #--------------------- MAIN ROUTINES ------------------#
 # Post-process the fast stuff: area and resistivity.
 function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
 	nlast = length(thldvec)
-	areas, resist, resist_rot = [], [], []
+	areas_vec, resist, resist_rot, resist_circs = [], [], [], []
 	# Loop over the time values to compute areas and resistivity at each.
 	for nn = 1:nlast
 		println("pp1 step ", nn, " of ", nlast)
-		thlenden = thldvec[nn]
+		thlenden = thldvec[nn]	
 		# Compute the area of each body.
-		push!(areas, getareas(thlenden))		
+		areas = getareas(thlenden)
+		push!(areas_vec, areas)
+		# Compute a configuration of circles with same centers and areas.
+		thlenden_circs = get_circs(thlenden, areas)
 		# Compute the resistivity and push to the output vectors.
 		push!(resist, resistivity(thlenden, params))
 		push!(resist_rot, resistivity(thlenden, params, rotation=true))
+		push!(resist_circs, resistivity(thlenden_circs, params))
 	end
 	# Save the new data to the same jld2 file.
 	jldopen(procfile(params), "r+") do file
-		write(file, "areas", areas)
+		write(file, "areas_vec", areas_vec)
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
+		write(file, "resist_circs", resist_circs)
 	end
 	println("Finished pp1.\n")
 end

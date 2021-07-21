@@ -1,8 +1,6 @@
 # OBJECTIVE: Plot some quantities from the post-processed erosion output data files.
 
-using Erosion
-
-using FileIO
+using Erosion, FileIO
 using Plots; plotlyjs()
 
 #= Backends for Plots
@@ -17,10 +15,13 @@ gr: This gives the same type of plot as with no backend specified so it must be 
 It will not give two separate displays, even with the reuse=false statement.
 =#
 
-function plot_stuff(infile::AbstractString)
+proc_file(label::AbstractString) = string("output_data/proc_data-", label, ".jld2")
+
+function plot_stuff(label::AbstractString)
 	# Read variables
+
 	params, thldvec, areas, resist, resist_rot = 
-	load(infile, "params", "thldvec", "areas", "resist", "resist_rot")
+	load(proc_file(label), "params", "thldvec", "areas_vec", "resist", "resist_rot")
 
 	# Extract basic stuff.
 	nlast = length(thldvec)	
@@ -40,5 +41,5 @@ function plot_stuff(infile::AbstractString)
 	display(resist_plot)
 end
 
-#plot_stuff("output_data/proc_data-02-1.jld2")
-plot_stuff("output_data/proc_data-20-2.jld2")
+#plot_stuff("02-1")
+plot_stuff("20-2")
