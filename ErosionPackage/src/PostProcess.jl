@@ -75,9 +75,6 @@ function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:Abs
 	thlen_circ_vec = Vector{ThetaLenType}(undef, 0)
 	for bod = 1:nbods
 		thlen = thlenden.thlenvec[bod]
-
-		println(round(areas[bod], sigdigits=3))
-
 		rad = sqrt(areas[bod]/pi)
 		npts = length(thlen.theta)
 		thlen_circ = circ2thlen(npts, rad, thlen.xsm, thlen.ysm)
@@ -85,9 +82,7 @@ function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:Abs
 	end
 	println()
 	thlenden_circs = new_thlenden(thlen_circ_vec)
-	
-	#compute_density!(thlenden_circs, params)
-
+	compute_density!(thlenden_circs, params)
 	return thlenden_circs
 end
 #----------------------------------------------------------#
@@ -224,18 +219,18 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		# Compute a configuration of circles with same centers and areas.
 		thlenden_circs = get_circs(thlenden, params, areas)
 		# Compute the resistivity and push to the output vectors.
-		#push!(resist, resistivity(thlenden, params))
-		#push!(resist_rot, resistivity(thlenden, params, rotation=true))
-		#push!(resist_circs, resistivity(thlenden_circs, params))
-		#push!(thlenden_circs_vec, thlenden_circs)
+		push!(resist, resistivity(thlenden, params))
+		push!(resist_rot, resistivity(thlenden, params, rotation=true))
+		push!(resist_circs, resistivity(thlenden_circs, params))
+		push!(thlenden_circs_vec, thlenden_circs)
 	end
 	# Save the new data to the same jld2 file.
 	jldopen(procfile(params), "r+") do file
 		write(file, "areas_vec", areas_vec)
-		#write(file, "resist", resist)
-		#write(file, "resist_rot", resist_rot)
-		#write(file, "resist_circs", resist_circs)
-		#write(file, "thlenden_circs_vec", thlenden_circs_vec)
+		write(file, "resist", resist)
+		write(file, "resist_rot", resist_rot)
+		write(file, "resist_circs", resist_circs)
+		write(file, "thlenden_circs_vec", thlenden_circs_vec)
 	end
 	println("Finished pp1.\n")
 end
