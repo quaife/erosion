@@ -43,11 +43,13 @@ function getareas(thlenden::ThLenDenType)
 		npts = length(thlen.theta)
 		ds = thlen.len / npts
 		# Compute area in two ways to estimate error.
-		areax = -dot(xx,nx)*ds
-		areay = -dot(yy,ny)*ds
+		areax = max(-dot(xx,nx)*ds, 0.)
+		areay = max(-dot(yy,ny)*ds, 0.)
 		area = 0.5*(areax+areay)
-		reldiff = abs(areax-areay)/area
-		reldiff > 1e-3 ? @warn(string("Relative error in area = ", round(reldiff,sigdigits=2))) : 0.
+		absdiff = abs(areax-areay)
+		if absdiff > 6e-3
+			@warn(string("Body ", bod, ", area error = ", round(absdiff, sigdigits=2)))
+		end
 		areavec[bod] = area
 	end
 	if nbods == 0 areavec = [0.0] end
@@ -74,13 +76,14 @@ function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:Abs
 	for bod = 1:nbods
 		thlen = thlenden.thlenvec[bod]
 
-		println(areas[bod])
+		println(round(areas[bod], sigdigits=3))
 
 		rad = sqrt(areas[bod]/pi)
 		npts = length(thlen.theta)
 		thlen_circ = circ2thlen(npts, rad, thlen.xsm, thlen.ysm)
 		push!(thlen_circ_vec, thlen_circ)
 	end
+	println()
 	thlenden_circs = new_thlenden(thlen_circ_vec)
 	
 	#compute_density!(thlenden_circs, params)
@@ -221,18 +224,18 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		# Compute a configuration of circles with same centers and areas.
 		thlenden_circs = get_circs(thlenden, params, areas)
 		# Compute the resistivity and push to the output vectors.
-		push!(resist, resistivity(thlenden, params))
-		push!(resist_rot, resistivity(thlenden, params, rotation=true))
-		push!(resist_circs, resistivity(thlenden_circs, params))
-		push!(thlenden_circs_vec, thlenden_circs)
+		#push!(resist, resistivity(thlenden, params))
+		#push!(resist_rot, resistivity(thlenden, params, rotation=true))
+		#push!(resist_circs, resistivity(thlenden_circs, params))
+		#push!(thlenden_circs_vec, thlenden_circs)
 	end
 	# Save the new data to the same jld2 file.
 	jldopen(procfile(params), "r+") do file
 		write(file, "areas_vec", areas_vec)
-		write(file, "resist", resist)
-		write(file, "resist_rot", resist_rot)
-		write(file, "resist_circs", resist_circs)
-		write(file, "thlenden_circs_vec", thlenden_circs_vec)
+		#write(file, "resist", resist)
+		#write(file, "resist_rot", resist_rot)
+		#write(file, "resist_circs", resist_circs)
+		#write(file, "thlenden_circs_vec", thlenden_circs_vec)
 	end
 	println("Finished pp1.\n")
 end
