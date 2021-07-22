@@ -31,6 +31,7 @@ function getns(theta::Vector{Float64}, rotation::Bool=false)
 	nx, ny = -sy, sx
 	return sx, sy, nx, ny
 end
+
 # Compute the area of each body.
 function getareas(thlenden::ThLenDenType)
 	nbods = length(thlenden.thlenvec)
@@ -52,6 +53,7 @@ function getareas(thlenden::ThLenDenType)
 	if nbods == 0 areavec = [0.0] end
 	return areavec
 end
+
 # Compute the resistivity of the porous matrix.
 # Note: resisitivity = 1/permeability.
 function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; rotation::Bool=false)
@@ -62,6 +64,28 @@ function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; 
 	# If pipe flow (ibc = 0) then remove the contribution from the walls.
 	if params.ibc == 0; resist = x0*(resist - 3); end
 	return resist
+end
+
+#= Compute a collection of circles with same centers and areas as the eroded configuration
+at a given time. =#
+function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:AbstractFloat})
+	nbods = length(thlenden.thlenvec)
+	thlen_circ_vec = Vector{ThetaLenType}(undef, 0)
+	for bod = 1:nbods
+		thlen = thlenden.thlenvec[bod]
+
+		println(areas[bod])
+
+		rad = sqrt(areas[bod]/pi)
+		npts = length(thlen.theta)
+		thlen_circ = circ2thlen(npts, rad, thlen.xsm, thlen.ysm)
+		push!(thlen_circ_vec, thlen_circ)
+	end
+	thlenden_circs = new_thlenden(thlen_circ_vec)
+	
+	#compute_density!(thlenden_circs, params)
+
+	return thlenden_circs
 end
 #----------------------------------------------------------#
 
@@ -180,27 +204,9 @@ end
 #-------------------------------------------------#
 
 
-#= Compute a collection of circles with same centers and areas as the eroded configuration
-at a given time. =#
-function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:AbstractFloat})
-	nbods = length(thlenden.thlenvec)
-	thlen_circ_vec = Vector{ThetaLenType}(undef, 0)
-	for bod = 1:nbods
-		thlen = thlenden.thlenvec[bod]
-		rad = sqrt(areas[bod]/pi)
-		npts = length(thlen.theta)
-		thlen_circ = circ2thlen(npts, rad, thlen.xsm, thlen.ysm)
-		push!(thlen_circ_vec, thlen_circ)
-	end
-	thlenden_circs = new_thlenden(thlen_circ_vec)
-	compute_density!(thlenden_circs, params)
-	return thlenden_circs
-end
-
-
-
 #--------------------- MAIN ROUTINES ------------------#
 # Post-process the fast stuff: area and resistivity.
+# Note: This routine is not so fast anymore now that it computes the collection of circles.
 function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
 	nlast = length(thldvec)
