@@ -43,8 +43,9 @@ function getareas(thlenden::ThLenDenType)
 		npts = length(thlen.theta)
 		ds = thlen.len / npts
 		# Compute area in two ways to estimate error.
-		areax = max(-dot(xx,nx)*ds, 0.)
-		areay = max(-dot(yy,ny)*ds, 0.)
+		# Subtracting the mean of x,y makes the formula more accurate.
+		areax = max(-dot(xx.-thlen.xsm, nx)*ds, 0.)
+		areay = max(-dot(yy.-thlen.ysm, ny)*ds, 0.)
 		area = 0.5*(areax+areay)
 		absdiff = abs(areax-areay)
 		if absdiff > 6e-3
@@ -82,6 +83,7 @@ function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:Abs
 	end
 	println()
 	thlenden_circs = new_thlenden(thlen_circ_vec)
+	# Compute the density of the new circle configuration - time intensive!
 	compute_density!(thlenden_circs, params)
 	return thlenden_circs
 end
@@ -281,11 +283,7 @@ function post_process(infile::AbstractString)
 	println("Beginning post-processing ", infile, "\n")
 	
 	# Read the variables from the raw data file.
-	file = jldopen(infile, "r")
-	params = read(file, "params")
-	thldvec = read(file, "thldvec")
-	cpu_hours = read(file, "cpu_hours")
-	close(file)
+	params, thldvec, cpu_hours = load(infile, "params", "thldvec", "cpu_hours")
 	println(params)
 	# Initialize the processed data file by saving the basic variables there.
 	jldsave(procfile(params); params, thldvec, cpu_hours)
