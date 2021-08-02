@@ -16,30 +16,55 @@ It will not give two separate displays, even with the reuse=false statement.
 =#
 
 proc_file(label::AbstractString) = string("output_data/proc_data-", label, ".jld2")
+plot_folder() = "zPlots/"
 
 function plot_stuff(label::AbstractString)
 	# Read variables
+	params, thldvec, areas_vec, resist, resist_rot, resist_circs = 
+	load(proc_file(label), "params", "thldvec", "areas_vec", "resist", "resist_rot", "resist_circs")
 
-	params, thldvec, areas, resist, resist_rot = 
-	load(proc_file(label), "params", "thldvec", "areas_vec", "resist", "resist_rot")
-
-	# Extract basic stuff.
+	# Calculate the total area at each time step.
 	nlast = length(thldvec)	
-
-	# Calculate the total area at each time step and plot it.
 	areatot, tt = zeros(Float64, nlast), zeros(Float64, nlast)
 	for nn = 1:nlast 
-		areatot[nn] = sum(areas[nn])	# Sum over all the bodies.
+		areatot[nn] = sum(areas_vec[nn])	# Sum over all the bodies.
 		tt[nn] = thldvec[nn].tt
 	end
-	area_plot = plot(tt, areatot, xlabel="time", ylabel="total area", label="area")
 
-	# Plot the resistivity.
-	resist_plot = plot(tt, resist, reuse=false, xlabel="time", ylabel="resistivity", label="resist")
+	# Calculate the permeability.
+	function perm(resist)
+		abs(resist) > 10 ?  value = 1/resist : value = 0.1
+		return value
+	end
+	# Calculate the permeability ratios.
+	prat = resist_circs ./ resist
+	anis = resist_rot ./ resist
 	
-	display(area_plot)
-	display(resist_plot)
+	# Area plot
+	area_plot = plot(tt, areatot, xlabel="time", ylabel="total area", label="area")
+	
+	# Resistivity Plot
+	resist_plot = plot(tt, resist, reuse=false, xlabel="time", ylabel="resistivity", label="erosion")
+	plot!(resist_plot, tt, resist_circs, label="circles")
+	plot!(resist_plot, tt, resist_rot, label="rotated")
+
+	# Permeability Plot.
+	perm_plot = plot(tt, perm.(resist), reuse=false, xlabel="time", ylabel="permeability", label="erosion")
+	plot!(perm_plot, tt, perm.(resist_circs), label="circles")
+	plot!(perm_plot, tt, perm.(resist_rot), label="rotated")
+	
+	# Permeability Ratio.
+	prat_plot = plot(tt, prat, reuse=false, xlabel="time", ylabel="permeability ratio", label="eroded to circles")
+	plot!(prat_plot, tt, anis, label="anistropy")
+
+	# Output plots.
+	#display(area_plot); display(resist_plot)
+	Erosion.new_folder(plot_folder())
+	savefig(area_plot, string(plot_folder(),"area.pdf") )
+	savefig(resist_plot, string(plot_folder(),"resist.pdf"))
+	savefig(perm_plot, string(plot_folder(),"perm.pdf"))
+	savefig(prat_plot, string(plot_folder(),"prat.pdf"))
 end
 
-#plot_stuff("02-1")
-plot_stuff("20-2")
+# Possible runs: 02-1, 20-2, 20-5, 20-8, 40-3, 40-7, 40-8
+plot_stuff("40-3")
