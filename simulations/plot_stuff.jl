@@ -41,20 +41,21 @@ function plot_stuff(label::AbstractString)
 	anis = resist_rot ./ resist
 	
 	# Area plot
-	area_plot = plot(tt, areatot, xlabel="time", ylabel="total area", label="area")
+	area_plot = plot(tt, areatot, label="area", xlabel="time", ylabel="total area")
 	
 	# Resistivity Plot
-	resist_plot = plot(tt, resist, reuse=false, xlabel="time", ylabel="resistivity", label="erosion")
+	resist_plot = plot(tt, resist, label="erosion", xlabel="time", ylabel="resistivity", yaxis=:log, reuse=false)
 	plot!(resist_plot, tt, resist_circs, label="circles")
 	plot!(resist_plot, tt, resist_rot, label="rotated")
 
 	# Permeability Plot.
-	perm_plot = plot(tt, perm.(resist), reuse=false, xlabel="time", ylabel="permeability", label="erosion")
+	perm_plot = plot(tt, perm.(resist), label="erosion", xlabel="time", ylabel="permeability", yaxis=:log, reuse=false)
+	plot!(resist_plot, tt, resist_circs, label="circles")
 	plot!(perm_plot, tt, perm.(resist_circs), label="circles")
 	plot!(perm_plot, tt, perm.(resist_rot), label="rotated")
 	
 	# Permeability Ratio.
-	prat_plot = plot(tt, prat, reuse=false, xlabel="time", ylabel="permeability ratio", label="eroded to circles")
+	prat_plot = plot(tt, prat, label="eroded to circles", xlabel="time", ylabel="permeability ratio", reuse=false)
 	plot!(prat_plot, tt, anis, label="anistropy")
 
 	# Output plots.
