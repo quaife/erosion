@@ -85,6 +85,7 @@ function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:Abs
 	thlenden_circs = new_thlenden(thlen_circ_vec)
 	# Compute the density of the new circle configuration - time intensive!
 	compute_density!(thlenden_circs, params)
+	compute_density!(thlenden_circs, params, rotation=true)
 	return thlenden_circs
 end
 #----------------------------------------------------------#
@@ -205,12 +206,12 @@ end
 
 
 #--------------------- MAIN ROUTINES ------------------#
-# Post-process the fast stuff: area and resistivity.
-# Note: This routine is not so fast anymore now that it computes the collection of circles.
+# Post-process the slowest stuff: area, resistivity, and resistivity of circular configurations.
 function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Beginning pp1:")
 	nlast = length(thldvec)
-	areas_vec, resist, resist_rot, resist_circs, thlenden_circs_vec = [], [], [], [], []
+	areas_vec, resist, resist_rot, resist_circs, resist_circs_rot = [[] for ii = 1:5]
+	thlenden_circs_vec = []
 	# Loop over the time values to compute areas and resistivity at each.
 	for nn = 1:nlast
 		println("pp1 step ", nn, " of ", nlast)
@@ -224,6 +225,7 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		push!(resist, resistivity(thlenden, params))
 		push!(resist_rot, resistivity(thlenden, params, rotation=true))
 		push!(resist_circs, resistivity(thlenden_circs, params))
+		push!(resist_circs_rot, resistivity(thlenden_circs, params, rotation=true))
 		push!(thlenden_circs_vec, thlenden_circs)
 	end
 	# Save the new data to the same jld2 file.
@@ -232,12 +234,13 @@ function pp1(params::ParamSet, thldvec::Vector{ThLenDenType})
 		write(file, "resist", resist)
 		write(file, "resist_rot", resist_rot)
 		write(file, "resist_circs", resist_circs)
+		write(file, "resist_circs_rot", resist_circs_rot)
 		write(file, "thlenden_circs_vec", thlenden_circs_vec)
 	end
 	println("Finished pp1.\n")
 end
 
-# Post-process the slower stuff: drag and stress.
+# Post-process fast stuff: drag and stress.
 function pp2(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("\n\nBeginning pp2:")
 	nlast = length(thldvec)
@@ -258,7 +261,7 @@ function pp2(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("Finished pp2.\n")
 end
 
-# Post-process the slowest stuff: quantities of interest at the target points.
+# Post-process fast stuff: quantities of interest at the target points.
 function pp3(params::ParamSet, thldvec::Vector{ThLenDenType})
 	println("\n\nBeginning pp3:")
 	nlast = length(thldvec)	

@@ -56,11 +56,11 @@ module DensityStress
 	# Dispatch for thlenden that computes the density function and saves in thlenden.
 	# This is function called by getstress!
 	function compute_density!(thlenden::ThLenDenType, params::ParamSet; rotation::Bool=false)
-		density = rotation ? thlenden.denrot : thlenden.density
+		density = (rotation ? thlenden.denrot : thlenden.density )
 		if length(density) > 0; return; end
 		println("Computing the density function with rotation = ", rotation)
 		nbods,xv,yv = getnxy(thlenden)
-		xv,yv = rotation ? xyrot(xv,yv) : (xv,yv)
+		xv,yv = (rotation ? xyrot(xv,yv) : (xv,yv) )
 		density = compute_density(xv,yv,nbods,params)
 		rotation ? thlenden.denrot = density : thlenden.density = density 
 	end
