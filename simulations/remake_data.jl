@@ -10,8 +10,7 @@ remake_input_geos("afrac06", 20, 2)
 using Erosion
 using Erosion.ThetaLen # Permits use of new_thlenden.
 using Erosion.MakeGeos # Permits use of CircType and plotcircs.
-using JLD2
-using DelimitedFiles
+using JLD2, DelimitedFiles
 
 data_set() = "output_data/old_text_data/afrac06/"
 savefile(label::AbstractString) = string("output_data/raw_data-",label,".jld2")
