@@ -1,6 +1,6 @@
 FORTRAN = gfortran
-FFLAGS = -c -O3 -fPIC -fopenmp -fallow-argument-mismatch # for old gcc/gfortran, replace -fallow-argument-mismatch by -Wno-argument-mismatch
-#FFLAGS = -c -O3 -fPIC -fopenmp -Wno-argument-mismatch # for old gcc/gfortran, replace -fallow-argument-mismatch by -Wno-argument-mismatch
+#FFLAGS = -c -O3 -fPIC -fopenmp -fallow-argument-mismatch # for old gcc/gfortran, replace -fallow-argument-mismatch by -Wno-argument-mismatch
+FFLAGS = -c -O3 -fPIC -fopenmp -Wno-argument-mismatch # for old gcc/gfortran, replace -fallow-argument-mismatch by -Wno-argument-mismatch
 
 
 OBJS=\
