@@ -31,7 +31,7 @@ function remake_many_input_geos()
 	end
 end
 
-# OBJECTIVE: Reforman many output data sets from text to JLD2 files.
+# OBJECTIVE: Reformat many output data sets from text to JLD2 files.
 function remake_many_output_data()
 	runs = good_runs()
 	for run in runs
@@ -54,11 +54,11 @@ end
 #--------------- CALL THE ROUTINES ---------------#
 
 # CALL BASIC ROUTINES FOR TESTING
-# make_geos(2, 0.02, 8)
+ make_geos(2, 0.02, 8)
 # make9geos(2, 0.02)
 # remake_input_geos("afrac06", 20, 2)
 # remake_output_data("20-2")
- post_process("output_data/raw_data-20-2.jld2")
+# post_process("output_data/raw_data-20-2.jld2")
 
 # CALL THE BATCH PROCESSING ROUTINES
 # make_many_input_geos()
