@@ -426,7 +426,8 @@ Perhaps the most standard parameter to characterize the porous medium is the per
 \end{equation}
 Henceforth, we set $\mu = 1$ by the non-dimensionalization.
 
-Consider first an isotropic medium with {\em scalar} permeability $k$. Equivalently, we can introduce a {\em resistivity} simply defined as the reciprocal of permeability, $r = 1/k$. Then taking the horizontal component gives
+Consider first an isotropic porous medium with {\em scalar} permeability $k$. Furthermore, we seek to characterize the medium by a single, bulk value permeability, so we assume that $k$ is spatially constant.
+Equivalently, we can introduce a {\em resistivity} simply defined as the reciprocal of permeability, $r = 1/k$. Then taking the horizontal component gives
 \begin{equation}
 \label{q1}
 q_1(x,y) = -\frac{1}{r} \pderiv{p}{x}(x,y)
@@ -445,7 +446,7 @@ Integrating \eqref{q1} over the domain $[-x_0, x_0] \times [-1,1]$, applying the
 \begin{equation}
 r = \left( \frac{\pavg(-x_0) - \pavg(x_0)}{2 x_0 \qavg} \right)
 \end{equation}
-This formula gives the resistivity based on measurements of the pressure and discharge.
+This formula gives the resistivity based on measurements of the pressure and discharge. In particular, to compute the resistivity of the porous matrix, we must set $x_0 =1$ in principle. (If a larger value of $x_0$ is chosen, then one would be in effect averaging the porous-medium resistivity with the vanishing resistivity of the empty buffer region.)
 
 
 
