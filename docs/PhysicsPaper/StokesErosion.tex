@@ -70,6 +70,12 @@
 \newcommand{\CE}{C_E}
 %---------------------------------------------------%
 
+% From Nick's Latex Notes
+\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand {\bq} {\bvec{q}}
+\newcommand{\mean}[1]{\left< #1 \right>}
+\newcommand{\qavg}{\bar{q}}
+\newcommand{\pavg}{\bar{p}}
 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -405,6 +411,41 @@ vorticity at $x \in \Omega$ is
 \end{align}
 %\end{comment}
 
+%-----------------------------------------------------------------------------------------------%
+\section{Measuring permeability and other porous-media properties}
+\label{sec:}
+%-----------------------------------------------------------------------------------------------%
+Darcy's law is given by
+\begin{equation}
+\bq = - \bvec{K} \grad \phi
+\end{equation}
+where $\bq$ is the specific discharge, $\phi = z + p/\gamma$ is the hydraulic head, and $\gamma = \rho g$. The rank-2 tensor $\bvec{K}$ is the {\em conductivity}, which is related to the {\em permeability} $\bvec{k}$ via $\bvec{K} = \bvec{k} \gamma/\mu$, where $\mu$ is the viscosity of the fluid. The units of conductivity are length-per-time (i.e.~velocity) and the units of permeability are length squared.
+Perhaps the most standard parameter to characterize the porous medium is the permeability. We eliminate gravity from consideration to get
+\begin{equation}
+\bq = - \bvec{k} \grad p / \mu
+\end{equation}
+Henceforth, we set $\mu = 1$ by the non-dimensionalization.
+
+Consider first an isotropic medium with {\em scalar} permeability $k$. Equivalently, we can introduce a {\em resistivity} simply defined as the reciprocal of permeability, $r = 1/k$. Then taking the horizontal component gives
+\begin{equation}
+\label{q1}
+q_1(x,y) = -\frac{1}{r} \pderiv{p}{x}(x,y)
+\end{equation}
+Consider the horizontal discharge, $q_1(x,y)$, averaged over a vertical slice
+\begin{equation}
+\qavg := \frac{1}{2} \int_{-1}^{1} q_1(x_0, y) dy
+\end{equation}
+By conservation of mass, $\qavg$ is independent of the horizontal position $x_0$. Since $\bq$ is a volume-average of the tracer velocity, $\qavg$ can be equivalently obtained by averaging the tracer velocity, which is how we will measure this quantity in the simulations.
+
+Next, consider the pressure averaged over a vertical slice
+\begin{equation}
+\pavg(x_0) := \frac{1}{2} \int_{-1}^{1} p(x_0, y) dy
+\end{equation}
+Integrating \eqref{q1} over the domain $[-x_0, x_0] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
+\begin{equation}
+r = \left( \frac{\pavg(-x_0) - \pavg(x_0)}{2 x_0 \qavg} \right)
+\end{equation}
+This formula gives the resistivity based on measurements of the pressure and discharge.
 
 
 
