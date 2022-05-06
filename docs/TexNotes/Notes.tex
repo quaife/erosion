@@ -390,6 +390,10 @@ Next, consider the flow through a porous matrix (and set $\mu=1$ via nondimensio
 r_{tot} = \frac{\pup - \pdn}{2 x_0 \, \qavg}
 \end{equation}
 
+
+%-------------------------------------------------------------%
+% ISOLATING RESISTIVITY DUE TO BODIES
+%-------------------------------------------------------------%
 \subsection{Isolating the resistivity due to the bodies}
 The above total resistivity reflects the resistivity from the porous matrix as well as the channel walls. There is a buffer region that lies outside the porous-matrix region ($x_0$ lies in the buffer region), and we would like to remove the contribution from this region. Let's regard the total resistivity as an area-integral of resistivity-density, so that we can write the total in terms of the areas of the regions
 \begin{equation}
@@ -416,7 +420,17 @@ Using \eqref{rtot} and $\qavg = \frac{2}{3} U$ gives
 \tilde{r}_m = \frac{\pup - \pdn}{2 \qavg} - 3 x_0 = \frac{3}{4} \frac{\pup-\pdn}{U} - 3 x_0
 \end{equation}
 
+% New May 5, 2022
+\subsubsection{Modification for free-slip BCs}
+For the free-slip BCs, the resistivity of the buffer region vanishes, $r_b = 0$, giving
+\begin{equation}
+r_m = \frac{A_t}{A_m} r_t = x_0 r_t
+\end{equation}
 
+
+%-------------------------------------------------------------%
+% RESISTIVITY AND DRAG
+%-------------------------------------------------------------%
 \subsection{Relationship between resistivity and total drag}
 
 Consider the stress tensor
@@ -447,9 +461,26 @@ r_{tot} = \frac{\pup-\pdn}{2 x_0 \, \qavg} \approx \frac{F_D}{4 x_0 w \qavg} = \
 \end{equation}
 Where we have used $\qavg = \frac{2}{3} U$. These are the permeability and resistivity for the entire region $-x_0 < x < x_0$. In particular, the resistivity of the porous matrix will be averaged with the much lower resistivity of the buffer region. To remove the contribution from the buffer region, and thus isolate the resistivity due to the porous matrix of bodies, we can simply set $x_0 = 1$ above. With also setting $w=1$, we get
 \begin{equation}
-\label{resdrag}
+\label{resdrag1}
 r_{tot} = \frac{3}{8} \frac{F_D}{U}
 \end{equation}
-With this simplification, I see a match between measuring resistivity via the drag \eqref{resdrag} versus measuring resistivity directly via \eqref{resmatrix}.
+With this simplification, I see a match between measuring resistivity via the drag \eqref{resdrag1} versus measuring resistivity directly via \eqref{resmatrix}.
+
+% New May 5, 2022
+\subsubsection{Modification for free-slip BCs}
+If instead, we would like to deal with free-slip top and bottom boundaries, then $\qavg = U$, in which case
+\begin{equation}
+r_{tot} = \frac{1}{4 x_0} \frac{F_D}{U}
+\end{equation}
+where we have set $w=1$. In the post-process code, I set the default of $x_0 = 2$, which gives
+\begin{equation}
+r_{tot} = \frac{1}{8} \frac{F_D}{U}
+\end{equation}
+and this agrees pretty closely with what I see in the data.
+
+Alternatively, if I am looking at only the matrix resistivity $r_m = x_0 r_t$, then
+\begin{equation}
+r_{m} = \frac{1}{4} \frac{F_D}{U}
+\end{equation}
 
 \end{document}

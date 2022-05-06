@@ -64,8 +64,18 @@ function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; 
 	pdrop, qavg = getpdrop(thlenden, params, x0, rotation=rotation)
 	# Calculate the total resistivity.
 	resist = pdrop/(2*x0*qavg)
+	
+	#= If I were to rewrite this routine, I would remove 
+	the following line in favor of the block below. =#
 	# If pipe flow (ibc = 0) then remove the contribution from the walls.
 	if params.ibc == 0; resist = x0*(resist - 3); end
+
+	#= NOTE: If I were to rewrite this code, I would include the following block.
+	# If pipe flow (ibc = 0) then remove the contribution from the walls.
+	if params.ibc == 0; resist -= 3; end
+	# Remove the effect of the buffer region
+	resist *= x0
+	=#
 	return resist
 end
 

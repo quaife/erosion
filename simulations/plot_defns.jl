@@ -12,7 +12,7 @@ tref() = 0:0.01:0.97		# Reference t-grid
 # Write a text file for Veusz to read for plots.
 function vplot(data::Array, file::AbstractString)
 	iostream = open(file, "w")
-	writedlm(iostream, data)
+	writedlm(iostream, Float32.(data))
 	close(iostream)
 end
 
