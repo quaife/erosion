@@ -76,6 +76,13 @@
 \newcommand{\mean}[1]{\left< #1 \right>}
 \newcommand{\qavg}{\bar{q}}
 \newcommand{\pavg}{\bar{p}}
+\newcommand{\pup}{p_u}
+\newcommand{\pdn}{p_d}
+\newcommand {\bu} {\bvec{u}}
+\newcommand{\nhat}{\hat{\bvec{n}}}
+\newcommand{\shat}{\hat{\bvec{s}}}
+\newcommand{\FD}{\bvec{F_D}}
+\newcommand{\ex}{\hat{\bvec{e}}_1}
 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -415,6 +422,9 @@ vorticity at $x \in \Omega$ is
 \section{Measuring permeability and other porous-media properties}
 \label{sec:}
 %-----------------------------------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------------------------------%
+\subsection{Resistivity and permeability}
 Darcy's law is given by
 \begin{equation}
 \bq = - \bvec{K} \grad \phi
@@ -442,11 +452,50 @@ Next, consider the pressure averaged over a vertical slice
 \begin{equation}
 \pavg(x_0) := \frac{1}{2} \int_{-1}^{1} p(x_0, y) dy
 \end{equation}
-Integrating \eqref{q1} over the domain $[-x_0, x_0] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
+In particular, the upstream and downstream pressures are respectively
 \begin{equation}
-r = \left( \frac{\pavg(-x_0) - \pavg(x_0)}{2 x_0 \qavg} \right)
+\pup = \pavg(-1) \, , \quad \pdn = \pavg(1)
 \end{equation}
-This formula gives the resistivity based on measurements of the pressure and discharge. In particular, to compute the resistivity of the porous matrix, we must set $x_0 =1$ in principle. (If a larger value of $x_0$ is chosen, then one would be in effect averaging the porous-medium resistivity with the vanishing resistivity of the empty buffer region.)
+
+Integrating \eqref{q1} over the porous-medium domain $[-1, 1] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
+\begin{equation}
+r = \left( \frac{\pup - \pdn}{2 \qavg} \right)
+\end{equation}
+This exact formula gives the resistivity based on measurements of the upstream/downstream pressure and the discharge. 
+
+%Note: If a larger value of $x_0$ is chosen, then one would be in effect averaging the porous-medium resistivity with the vanishing resistivity of the empty buffer region.
+
+%-----------------------------------------------------------------------------------------------%
+\subsection{Relationship to total drag}
+
+The resistivity is directly related to the drag exerted by the bodies. Indeed, another way to express the Stokes equations is $\grad \cdot \bvec{\sigma} = 0$ where $\bvec{\sigma} = -p \bvec{I} + \mu \left( \grad \bu + \grad \bu^T \right)$ is the stress tensor. The divergence theorem gives
+\begin{equation}
+\label{divthm}
+0 = \int_{\Omega} \grad \cdot \bvec{\sigma} \, dV 
+= \int_{\partial \Omega} \bvec{\sigma} \cdot \nhat \, dS
+\end{equation}
+for any domain $\Omega$.  Consider $\Omega$ to be inside $[-x_0, x_0] \times [-1, 1]$, where we will choose $x_0 > 1$ so that $\Omega$ includes the entire porous region.
+The boundary integral on the right-hand-side of \eqref{divthm} has contributions from the boundaries of the erodible bodies $\gamma$ and from the outer boundary $\Gamma$, since $\partial \Omega = \gamma \cup \Gamma$. In particular, the total drag exerted by the erodible bodies is given by
+\begin{equation}
+\FD = (D_1, D_2) = -\int_{\gamma} \bvec{\sigma} \cdot \nhat \, dS 
+\end{equation}
+which includes both pressure and viscous drag. The minus sign is due to the orientation of the normal vector. We will mostly be interested in the horizontal component $D_1$.
+
+Meanwhile, the horizontal component of the other term is
+\begin{align}
+\ex \cdot \int_{\Gamma} \bvec{\sigma} \cdot \nhat \, dS = 
+& \int_{-1}^{1} p(-x_0, y) - p(x_0, y) - 2\mu (u_x(-x_0,y) - u_x(x_0,y)) dy \, + \\
+& \int_{-x_0}^{x_0} \mu (u_y(x,1) - u_y(x,-1)) dx
+\end{align}
+If we take $x_0$ sufficiently far away, then the viscous terms involving $u_x$ will become small as the velocity field tends to a uniform flow. Meanwhile, the contribution from the pressure is well approximated by the upstream and downstream average pressures $\pup$ and $\pdn$ as introduced in the previous section. This gives 
+\begin{equation}
+D_1 \approx 2 (\pup - \pdn)
+\end{equation}
+
+Therefore we have the relationship
+\begin{equation}
+r = \frac{D_1}{4 \qavg}
+\end{equation}
 
 
 
