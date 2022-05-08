@@ -71,10 +71,9 @@ function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; 
 	if params.ibc == 0; resist = x0*(resist - 3); end
 
 	#= NOTE: If I were to rewrite this code, I would include the following block.
-	# If pipe flow (ibc = 0) then remove the contribution from the walls.
-	if params.ibc == 0; resist -= 3; end
-	# Remove the effect of the buffer region
-	resist *= x0
+	resist = 0.5*pdrop/qavg
+	params.ibc == 0 && (resist -= 3*x0)
+	#params.ibc == 0 ? resist -= 3*x0 : nothing
 	=#
 	return resist
 end

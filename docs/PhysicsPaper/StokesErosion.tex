@@ -19,9 +19,10 @@
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % COMMANDS
 % Basic editing
-\newcommand{\tocite}{{\color{blue}(to cite)}}
 \newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
 \newcommand{\np}{\newpage \noindent}
+\newcommand{\tocite}{ {\color{blue}(to cite)} }
+\newcommand{\nick}[1]{ {\color{red} #1} }
 % For real and imaginary, could use \Re or \Im, or \mathcal{R}, or \text{Re}
 \newcommand{\Real}{\Re}
 \newcommand{\Imag}{\Im}
@@ -48,7 +49,6 @@
 \renewcommand{\Im}{{\operatorname{Im}}}
 \newcommand{\RR}{{\mathbb{R}}}
 \renewcommand{\ss}{{\mathbf{s}}}
-\newcommand{\ssigma}{{\boldsymbol\sigma}}
 \newcommand{\tar}{\mathrm{tar}}
 \newcommand{\bary}{\mathrm{bary}}
 \newcommand{\trap}{\mathrm{trap}}
@@ -71,18 +71,17 @@
 %---------------------------------------------------%
 
 % From Nick's Latex Notes
-\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\bvec}[1]{\mathbf{#1}}
+%{\ensuremath{\boldsymbol{#1}}}
 \newcommand {\bq} {\bvec{q}}
 \newcommand{\mean}[1]{\left< #1 \right>}
 \newcommand{\qavg}{\bar{q}}
 \newcommand{\pavg}{\bar{p}}
 \newcommand{\pup}{p_u}
 \newcommand{\pdn}{p_d}
-\newcommand {\bu} {\bvec{u}}
-\newcommand{\nhat}{\hat{\bvec{n}}}
-\newcommand{\shat}{\hat{\bvec{s}}}
-\newcommand{\FD}{\bvec{F_D}}
-\newcommand{\ex}{\hat{\bvec{e}}_1}
+\newcommand{\stress}{{\boldsymbol \sigma}}
+\newcommand{\FD}{\bvec{F}_d}
+\newcommand{\ex}{ {\bvec{e}}_1}
 
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
@@ -185,14 +184,10 @@ forces, the governing equations are
       &&\mbox{\em erosion model}.
   \end{split}
 \end{equation}
-Here $\uu$ is the fluid velocity, $p$ is the pressure, $\UU$ is a
-prescribed Hagen-Poiseuille velocity field, and $\Vn$ is the normal
-velocity of $\gamma$. Since the rate of erosion is much slower than the
-background flow, a quasi-steady approximation justifies the no-slip
-boundary condition. Parameters include the fluid viscosity $\mu$ and the
-material-dependent erosion constant $\CE$. By non-dimensionalizing
-equations~\eqref{eqn:erosionModel}~\citep{qua-moo2018}, we set both
-these parameters to one. The shear stress on $\gamma$ is
+Here $\uu$ is the fluid velocity, $p$ is the pressure, \nick{\st{$\UU$ is a
+prescribed Hagen-Poiseuille velocity field}, $\UU$ will be far-field uniform flow $\UU = (U,0)$, where the value $U = U(t)$ is adjusted to keep the pressure drop constant in time,}
+%
+and $\Vn$ is the normal velocity of $\gamma$. Since the rate of erosion is much slower than the background flow, a quasi-steady approximation justifies the no-slip boundary condition. Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$. By non-dimensionalizing equations~\eqref{eqn:erosionModel}~\citep{qua-moo2018}, we set both these parameters to one. The shear stress on $\gamma$ is
 \begin{align}
   \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
@@ -444,9 +439,9 @@ q_1(x,y) = -\frac{1}{r} \pderiv{p}{x}(x,y)
 \end{equation}
 Consider the horizontal discharge, $q_1(x,y)$, averaged over a vertical slice
 \begin{equation}
-\qavg := \frac{1}{2} \int_{-1}^{1} q_1(x_0, y) dy
+\qavg := \frac{1}{2} \int_{-1}^{1} q_1(x_0, y) dy = U
 \end{equation}
-By conservation of mass, $\qavg$ is independent of the horizontal position $x_0$. Since $\bq$ is a volume-average of the tracer velocity, $\qavg$ can be equivalently obtained by averaging the tracer velocity, which is how we will measure this quantity in the simulations.
+By conservation of mass, $\qavg$ is independent of the horizontal position $x_0$ and is equal to the imposed value $U$. Since $\bq$ is a volume-average of the tracer velocity, $\qavg$ can be equivalently obtained by averaging the tracer velocity, which is how we will measure this quantity in the simulations.
 
 Next, consider the pressure averaged over a vertical slice
 \begin{equation}
@@ -459,7 +454,7 @@ In particular, the upstream and downstream pressures are respectively
 
 Integrating \eqref{q1} over the porous-medium domain $[-1, 1] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
 \begin{equation}
-r = \left( \frac{\pup - \pdn}{2 \qavg} \right)
+r = \frac{\pup - \pdn}{2 U}
 \end{equation}
 This exact formula gives the resistivity based on measurements of the upstream/downstream pressure and the discharge. 
 
@@ -468,33 +463,35 @@ This exact formula gives the resistivity based on measurements of the upstream/d
 %-----------------------------------------------------------------------------------------------%
 \subsection{Relationship to total drag}
 
-The resistivity is directly related to the drag exerted by the bodies. Indeed, another way to express the Stokes equations is $\grad \cdot \bvec{\sigma} = 0$ where $\bvec{\sigma} = -p \bvec{I} + \mu \left( \grad \bu + \grad \bu^T \right)$ is the stress tensor. The divergence theorem gives
+The resistivity is directly related to the drag exerted by the bodies. Indeed, another way to express the Stokes equations is $\grad \cdot \stress = 0$ where $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$ is the stress tensor. The divergence theorem gives
 \begin{equation}
 \label{divthm}
-0 = \int_{\Omega} \grad \cdot \bvec{\sigma} \, dV 
-= \int_{\partial \Omega} \bvec{\sigma} \cdot \nhat \, dS
+0 = \int_{\Omega} \grad \cdot \stress \, dV 
+= \int_{\partial \Omega} \stress \cdot \nn \, ds
 \end{equation}
 for any domain $\Omega$.  Consider $\Omega$ to be inside $[-x_0, x_0] \times [-1, 1]$, where we will choose $x_0 > 1$ so that $\Omega$ includes the entire porous region.
 The boundary integral on the right-hand-side of \eqref{divthm} has contributions from the boundaries of the erodible bodies $\gamma$ and from the outer boundary $\Gamma$, since $\partial \Omega = \gamma \cup \Gamma$. In particular, the total drag exerted by the erodible bodies is given by
 \begin{equation}
-\FD = (D_1, D_2) = -\int_{\gamma} \bvec{\sigma} \cdot \nhat \, dS 
+\FD = -\int_{\gamma} \stress \cdot \nn \, ds
 \end{equation}
-which includes both pressure and viscous drag. The minus sign is due to the orientation of the normal vector. We will mostly be interested in the horizontal component $D_1$.
+which includes both pressure and viscous drag. The minus sign is due to the orientation of the normal vector. We will mostly be interested in the horizontal drag $\FD \cdot \ex$. \\
 
-Meanwhile, the horizontal component of the other term is
+\nick{Need to check sign on drag and check whether I want the drag {\em on} the bodies or exerted {\em by} the bodies.} \\
+
+Consider now the contribution to \eqref{divthm} from the outer boundary $\Gamma$. The horizontal component of this term is
 \begin{align}
-\ex \cdot \int_{\Gamma} \bvec{\sigma} \cdot \nhat \, dS = 
-& \int_{-1}^{1} p(-x_0, y) - p(x_0, y) - 2\mu (u_x(-x_0,y) - u_x(x_0,y)) dy \, + \\
+\ex \cdot \int_{\Gamma} \stress \cdot \nn \, ds = 
+& \int_{-1}^{1} p(-x_0, y) - p(x_0, y) - 2\mu (u_x(-x_0,y) - u_x(x_0,y)) \, dy \, + \\
 & \int_{-x_0}^{x_0} \mu (u_y(x,1) - u_y(x,-1)) dx
 \end{align}
 If we take $x_0$ sufficiently far away, then the viscous terms involving $u_x$ will become small as the velocity field tends to a uniform flow. Meanwhile, the contribution from the pressure is well approximated by the upstream and downstream average pressures $\pup$ and $\pdn$ as introduced in the previous section. This gives 
 \begin{equation}
-D_1 \approx 2 (\pup - \pdn)
+\FD \cdot \ex \approx 2 (\pup - \pdn)
 \end{equation}
 
 Therefore we have the relationship
 \begin{equation}
-r = \frac{D_1}{4 \qavg}
+r \approx \frac{1}{4 U}  \, \FD \cdot \ex
 \end{equation}
 
 
