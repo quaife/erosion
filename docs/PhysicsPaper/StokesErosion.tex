@@ -1,8 +1,11 @@
-%\documentclass[3p]{elsarticle}
+\documentclass[3p]{elsarticle}
 
 % APS journals: PRL and PRF
 % Note: All AIP and APS journals use the revtex package; both PRL and PRF are APS.
-\documentclass[preprint, superscriptaddress, notitlepage]{revtex4-1}
+%\documentclass[preprint, superscriptaddress, notitlepage]{revtex4-1}
+
+% Physica D is elsevier 
+%\documentclass[review]{elsarticle}
 
 %\documentclass{jfm}
 % NOTE: jfm documentclass needed for \upi
@@ -94,11 +97,11 @@
 
 
 \author{Nicholas J.~Moore}
-\affiliation{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+%\affiliation{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \author{Bryan D.~Quaife}
-\affiliation{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+%\affiliation{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 \author{Shang-Huan Chiu}
-\affiliation{Department of Scientific Computing, Florida State University, Tallahassee, FL, 32306.}
+%\affiliation{Department of Scientific Computing, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract}
 We numerically simulate the erosion of a porous medium due to an internally flowing fluid.  The solid constituents of the porous medium erode under the action of surface shear stress. As the particles disintegrate, they elongate in the direction of the flow, giving rise to anisotropic conductivity of the porous medium.
@@ -125,7 +128,7 @@ Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 % Cite paper by Ladd "Wormhole formation in dissolving fractures"
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-\begin{figure*}[] %\centering
+\begin{figure*}[] \centering
         \subfigure[ Vorticity field]{ \label{FigVort}
             \includegraphics[width=0.9 \textwidth]{figs/80circ8vort.pdf} } \\
         \subfigure[ Velocity magnitude]{ \label{FigVel}
@@ -135,7 +138,6 @@ Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 \end{figure*}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Data from 80circ8
-
 
 
 \begin{comment}
@@ -494,7 +496,13 @@ Therefore we have the relationship
 r \approx \frac{1}{4 U}  \, \FD \cdot \ex
 \end{equation}
 
-
+%---------------------------------------------------------%
+\begin{figure*}%[htbp]
+\centering \label{}
+\includegraphics[width = 0.99 \textwidth]{./figs/figA.pdf}
+\caption{caption}
+\end{figure*}
+%---------------------------------------------------------%
 
 
 %\bibliographystyle{plain}
