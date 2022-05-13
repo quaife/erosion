@@ -159,39 +159,36 @@ Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 \section{Governing Equations}
 \label{sec:formulation}
 %-----------------------------------------------------------------------------------------------%
-We start by defining the main variables used to model erosion.  We only
-briefly summarize the model, and a more detailed description can be
-found in previous work~\citep{qua-moo2018}.  We consider flows inside a
-confined geometry $\Omega$ that contains $M$ eroding bodies with
-boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$.  The boundary of the
-fluid domain is $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup
-\gamma_M$, where $\Gamma$ is the outer boundary, taken to be a slightly
-smoothed version of the boundary of $[-3,3] \times [-1,1]$.  All eroding
-bodies are placed in $[-1,1] \times [-1,1]$ to create a buffer region
-that allows the flow profile imposed at the inlet to transition to the
-more complex flow intervening between the bodies. Neglecting inertial
-forces, the governing equations are
+
+Consider an incompressible, Stokes flow inside domain $\Omega$ containing $M$ erodable bodies. The outer boundary of the domain, denoted $\Gamma$, is a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$, with the fluid flow primarily moving from left to right. The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the middle region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. The space to the left and right of $[-1,1] \times [-1,1]$ serve as buffers to allow the flow profile imposed at the inlet ($x=-3$) and outlet ($x=3$) to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
 \begin{equation}
-\label{eqn:erosionModel}
+\label{eqn:StokesEq}
   \begin{split}
     \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap 
       &&\mbox{\em conservation of momentum}, \\
     \grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap 
       &&\mbox{\em conservation of mass}, \\
     \uu = \mathbf{0}, &\hspace{20pt} \xx \in \gamma, \gap 
-      &&\mbox{\em no slip on the eroding bodies}, \\
+      &&\mbox{\em no slip on the erodable bodies}, \\
     \uu = \UU, &\hspace{20pt} \xx \in \Gamma, \gap 
-      &&\mbox{\em outer wall velocity}, \\
-    \Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
-      &&\mbox{\em erosion model}.
+      &&\mbox{\em outer wall velocity}.
   \end{split}
 \end{equation}
-Here $\uu$ is the fluid velocity, $p$ is the pressure, \nick{\st{$\UU$ is a
-prescribed Hagen-Poiseuille velocity field}, $\UU$ will be far-field uniform flow $\UU = (U,0)$, where the value $U = U(t)$ is adjusted to keep the pressure drop constant in time,}
-%
-and $\Vn$ is the normal velocity of $\gamma$. Since the rate of erosion is much slower than the background flow, a quasi-steady approximation justifies the no-slip boundary condition. Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$. By non-dimensionalizing equations~\eqref{eqn:erosionModel}~\citep{qua-moo2018}, we set both these parameters to one. The shear stress on $\gamma$ is
+Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile at the inlet and outlet, i.e.~$\UU = (U,0)$ at $x=\pm 3$ (or rather, along the slightly curved version of these vertical lines, due to domain smoothing), although previous works employed a parabolic (or Poiseuille) flow profile \cite{Quaife2018, chiu2020viscous}. 
+Further, we will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
+
+We consider erosion 
+
+% REWRITTEN ABOVE
+
+
+and $\Vn$ is the normal velocity of $\gamma$. 
+Since the rate of erosion is much slower than the background flow, a quasi-steady approximation justifies the no-slip boundary condition. 
+Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$. By non-dimensionalizing equations~\eqref{eqn:erosionModel}~\citep{qua-moo2018}, we set both these parameters to one. The shear stress on $\gamma$ is
 \begin{align}
-  \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
+\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
+      &&\mbox{\em erosion model}. \\
+\tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
   \label{eqn:shearStress}
 \end{align}
 where, $\nn$ is the normal vector pointing into the body, and $\ss$ is
@@ -201,6 +198,11 @@ advancing the eroding grains.  The strength of $\UU$ is adjusted at each
 time step to achieve a constant pressure drop across the channel,
 motivated by the geological situation of a porous medium connecting two
 regions of  fixed hydraulic heads.
+
+
+%to transition to the more complex flow intervening between the bodies.
+
+
 
 %-----------------------------------------------------------------------------------------------%
 \section{Boundary Integral Equation Formulation}
@@ -472,7 +474,7 @@ The resistivity is directly related to the drag exerted by the bodies. Indeed, a
 = \int_{\partial \Omega} \stress \cdot \nn \, ds
 \end{equation}
 for any domain $\Omega$.  Consider $\Omega$ to be inside $[-x_0, x_0] \times [-1, 1]$, where we will choose $x_0 > 1$ so that $\Omega$ includes the entire porous region.
-The boundary integral on the right-hand-side of \eqref{divthm} has contributions from the boundaries of the erodible bodies $\gamma$ and from the outer boundary $\Gamma$, since $\partial \Omega = \gamma \cup \Gamma$. In particular, the total drag exerted by the erodible bodies is given by
+The boundary integral on the right-hand-side of \eqref{divthm} has contributions from the boundaries of the erodable bodies $\gamma$ and from the outer boundary $\Gamma$, since $\partial \Omega = \gamma \cup \Gamma$. In particular, the total drag exerted by the erodable bodies is given by
 \begin{equation}
 \FD = -\int_{\gamma} \stress \cdot \nn \, ds
 \end{equation}
@@ -505,6 +507,6 @@ r \approx \frac{1}{4 U}  \, \FD \cdot \ex
 %---------------------------------------------------------%
 
 
-%\bibliographystyle{plain}
-%\bibliography{refs}
+\bibliographystyle{plain}
+\bibliography{refs}
 \end{document}
