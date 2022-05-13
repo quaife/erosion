@@ -1,5 +1,5 @@
 # Veusz saved document (version 3.2.1)
-# Saved at 2022-05-08T18:03:50.111933
+# Saved at 2022-05-13T18:29:31.883137
 
 AddImportPath(u'/Users/moore/Projects/StokesErosion/simulations')
 ImportFile(u'veusz_data/fig1.txt', u'', ignoretext=True, linked=True, renames={u'col1': u'time', u'col10': u'anis', u'col2': u'area', u'col3': u'porosity', u'col4': u'resist', u'col5': u'resist_rot', u'col6': u'hdrag', u'col7': u'vdrag', u'col8': u'umax', u'col9': u'perm'})
@@ -98,7 +98,7 @@ Set('GridLines/hide', True)
 To('..')
 Add('axis', name=u'y', autoadd=False)
 To(u'y')
-Set('label', u'resistance')
+Set('label', u'resistance to flow')
 Set('log', True)
 Set('direction', u'vertical')
 Set('GridLines/hide', True)
