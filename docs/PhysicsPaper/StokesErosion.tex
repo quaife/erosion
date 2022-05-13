@@ -160,7 +160,8 @@ Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 \label{sec:formulation}
 %-----------------------------------------------------------------------------------------------%
 
-Consider an incompressible, Stokes flow inside domain $\Omega$ containing $M$ erodable bodies. The outer boundary of the domain, denoted $\Gamma$, is a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$, with the fluid flow primarily moving from left to right. The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the middle region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. The space to the left and right of $[-1,1] \times [-1,1]$ serve as buffers to allow the flow profile imposed at the inlet ($x=-3$) and outlet ($x=3$) to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
+Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$, and the fluid flow is primarily from left to right. The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. 
+The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet ($x=-3$) and outlet ($x=3$) to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
 \begin{equation}
 \label{eqn:StokesEq}
   \begin{split}
@@ -174,31 +175,21 @@ Consider an incompressible, Stokes flow inside domain $\Omega$ containing $M$ er
       &&\mbox{\em outer wall velocity}.
   \end{split}
 \end{equation}
-Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile at the inlet and outlet, i.e.~$\UU = (U,0)$ at $x=\pm 3$ (or rather, along the slightly curved version of these vertical lines, due to domain smoothing), although previous works employed a parabolic (or Poiseuille) flow profile \cite{Quaife2018, chiu2020viscous}. 
-Further, we will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
+Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile at the inlet and outlet, i.e.~$\UU = (U,0)$ at the inlet and outlet which are approximately situated at $x=\pm 3$ respectively (the actual location is modified somewhat by the domain smoothing). We choose the uniform flow profile, as opposed to for instance a Poiseuille flow profile employed by previous work \cite{Quaife2018, chiu2020viscous}, for a few reason. First, it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later, and second, it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
 
-We consider erosion 
-
-% REWRITTEN ABOVE
-
-
-and $\Vn$ is the normal velocity of $\gamma$. 
-Since the rate of erosion is much slower than the background flow, a quasi-steady approximation justifies the no-slip boundary condition. 
-Parameters include the fluid viscosity $\mu$ and the material-dependent erosion constant $\CE$. By non-dimensionalizing equations~\eqref{eqn:erosionModel}~\citep{qua-moo2018}, we set both these parameters to one. The shear stress on $\gamma$ is
+The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than does the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed to compute the {\em steady} Stokes flow determined by \eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface. The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
 \begin{align}
-\Vn = \CE \, \abs{\tau}, &\hspace{20pt} \xx \in \gamma,
-      &&\mbox{\em erosion model}. \\
+\Vn = \CE \, \abs{\tau}, 
+	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em erosion model}, \\
 \tau = -(\nabla \uu + \nabla \uu^T) \nn \cdot \ss
+	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em shear stress}.
   \label{eqn:shearStress}
 \end{align}
-where, $\nn$ is the normal vector pointing into the body, and $\ss$ is
-the unit tangent vector pointing in the counterclockwise direction. We
-simulate erosion by alternating between solving the fluid equations and
-advancing the eroding grains.  The strength of $\UU$ is adjusted at each
-time step to achieve a constant pressure drop across the channel,
-motivated by the geological situation of a porous medium connecting two
-regions of  fixed hydraulic heads.
+where $\nn$ is a unit normal vector pointing into each body, $\ss$ is
+a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a material-dependent erosion constant.
 
+% SNIPPETS 
+%The strength of $\UU$ is adjusted at each time step to achieve a constant pressure drop across the channel, motivated by the geological situation of a porous medium connecting two regions of  fixed hydraulic heads.
 
 %to transition to the more complex flow intervening between the bodies.
 
