@@ -455,6 +455,10 @@ r = \frac{\pup - \pdn}{2 U}
 \end{equation}
 This exact formula gives the resistivity based on measurements of the upstream/downstream pressure and the discharge. 
 
+Probably should just use
+\begin{equation}
+k = \frac{2U}{\pup - \pdn}
+\end{equation}
 %Note: If a larger value of $x_0$ is chosen, then one would be in effect averaging the porous-medium resistivity with the vanishing resistivity of the empty buffer region.
 
 %-----------------------------------------------------------------------------------------------%
@@ -488,14 +492,17 @@ If we take $x_0$ sufficiently far away, then the viscous terms involving $u_x$ w
 
 Therefore we have the relationship
 \begin{equation}
-r \approx \frac{1}{4 U}  \, \FD \cdot \ex
+\label{ResistDrag}
+1/k \approx \frac{1}{4 U}  \, \FD \cdot \ex
 \end{equation}
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering \label{}
 \includegraphics[width = 0.99 \textwidth]{./figs/fig2.pdf}
-\caption{caption}
+\caption{A single simulation of porous-medium erosion. The initial configuration consists of 80 circular bodies of random size and position, as seen in Fig.~1? a) As the medium erodes, the fraction of solid-body area decreases, or, equivalently, the porosity increases. b) Resistance to flow can be characterized by either the inverse permeability $1/k$ or the cumulative drag, the two of which are related through \eqref{ResistDrag}. Both are seen to decrease as the medium erodes, and relationship \eqref{ResistDrag} is confirmed by the simulation data.
+c) The relationship between permeability $k$ and porosity $\phi$ for the eroding medium. Both quantities increase with time as the medium erodes, but at different rates due to changes in the microstructure and channelization of the medium.
+}
 \end{figure*}
 %---------------------------------------------------------%
 
