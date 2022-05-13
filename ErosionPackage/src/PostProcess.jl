@@ -88,7 +88,10 @@ function get_circs(thlenden::ThLenDenType, params::ParamSet, areas::Vector{<:Abs
 		rad = sqrt(areas[bod]/pi)
 		npts = length(thlen.theta)
 		thlen_circ = circ2thlen(npts, rad, thlen.xsm, thlen.ysm)
-		push!(thlen_circ_vec, thlen_circ)
+		# ONLY SAVE THE CIRCLE IF IT HAS POSITIVE RADIUS
+		if rad > eps(1.0)
+			push!(thlen_circ_vec, thlen_circ)
+		end
 	end
 	println()
 	thlenden_circs = new_thlenden(thlen_circ_vec)
