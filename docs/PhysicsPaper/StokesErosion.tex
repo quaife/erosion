@@ -86,6 +86,9 @@
 \newcommand{\FD}{\bvec{F}_d}
 \newcommand{\ex}{ {\bvec{e}}_1}
 
+% New
+\newcommand{\anis}{\mathcal{A}}
+
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % TITLE AUTHORS ABSTRACT
@@ -507,6 +510,28 @@ c) The relationship between permeability $k$ and porosity $\phi$ for the eroding
 %---------------------------------------------------------%
 % Data from 100-3
 
+The anisotropy of permeability is
+\begin{equation}
+\anis = k_1 / k_2
+\end{equation}
+
+There are two possible explanations for how erosion creates anisotropy in the microstructure. First, the shear stresses could carve each individual body into a more slender form, thus creating anisotropy at the level of individual grains. Second, by removing material in a non-uniform way, could preferentially disintegrate certain bodies before others, leaving an overall configuration that exhibits anisotropy on the large scale. We will refer to these two possible mechanisms as {\em shape} anisotropy and {\em configurational} anisotropy respectively. As an extreme example, a horizontal line of circular bodies would exhibit configurational anisotropy but no shape anisotropy. Meanwhile, an array of highly eccentric ellipses, all oriented horizontally but positioned randomly, would exhibit  shape anisotropy but no configurational anisotropy.
+
+We note that channelization is related to both shape and configurational anisotropy....
+
+It is possible to device a test to isolate these two types of anisotropy.
+Introduce circular bodies with same centers of mass...
+Thus, the configurational anisotropy is defined as
+\begin{equation}
+\anis_C = k_1^{(c)} / k_2^{(c)}
+\end{equation}
+
+The total anisotropy is the produce of the shape and configurational
+\begin{equation}
+\anis = \anis_S \anis_C
+\end{equation}
+
+
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering \label{fig3}
@@ -518,7 +543,6 @@ a)
 %---------------------------------------------------------%
 % Data from 100-3
 
-Fig. 2 clearly shows a stark difference in the  permeability to flow in the horizontal versus vertical directions.
 
 Text for Fig 3: 
 The anisotropy of permeability grows large, up to a value of 4 during the middle portion of the simulation. The figure also shows the anisotropy of the circular grid.

@@ -18,14 +18,10 @@ end
 
 # Calculate the permeability from resistivity.
 function permeability(resist::AbstractFloat)
-	rthresh = 10.0
+	rthresh = 1.0
 	resist > rthresh ? value = 1/resist : value = 1/rthresh
 	return value
 end
-# Calculate the anistropy from resistivities.
-anisotropy(resist::AbstractFloat, resist_rot::AbstractFloat) = resist_rot/resist
-# Calculate the ratio of permeabilities, comparing the eroded geometry to the circular one.
-perm_ratio(resist::AbstractFloat, resist_circs::AbstractFloat) = resist_circs/resist
 
 # Interpolate a variable (e.g. resistivity) on the reference t-grid.
 function interp(variable::Vector{<:AbstractFloat})
