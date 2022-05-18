@@ -63,18 +63,10 @@ function resistivity(thlenden::ThLenDenType, params::ParamSet, x0::Float64=2.0; 
 	# Retrieve the pressure drop and flux (assuming umax = 1).
 	pdrop, qavg = getpdrop(thlenden, params, x0, rotation=rotation)
 	# Calculate the total resistivity.
-	resist = pdrop/(2*x0*qavg)
-	
-	#= If I were to rewrite this routine, I would remove 
-	the following line in favor of the block below. =#
-	# If pipe flow (ibc = 0) then remove the contribution from the walls.
-	if params.ibc == 0; resist = x0*(resist - 3); end
-
-	#= NOTE: If I were to rewrite this code, I would include the following block.
+	# Note: I corrected this formula by removing an erroneous x0 from the denominator.
 	resist = 0.5*pdrop/qavg
-	params.ibc == 0 && (resist -= 3*x0)
-	#params.ibc == 0 ? resist -= 3*x0 : nothing
-	=#
+	# If pipe-flow BCs, correct for the wall resistance.
+	params.ibc == 0 && (resist += -3*x0)
 	return resist
 end
 
