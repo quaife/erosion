@@ -120,7 +120,7 @@ We numerically simulate the erosion of a porous medium due to an internally flow
 
 Effects of flow-induced erosion are visible across a range of scales in nature, from massive geological structures, to mesoscopic patterns, and down to the tiny granular constituents that comprise a porous medium. In the case of a porous medium specifically, it has been long recognized that bulk properties of mediums encountered in nature are typically anisotropic, so that the medium allows flow in a preferred direction more easily. This anisotropy is commonly attributed to how grains are deposited, with their longest dimension parallel to the settling bed, so that they allow flow preferentially in the horizontal direction. Controlled experiments, however, have not been performed to test this hypothesis. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
-Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{Quaife2018}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{Quaife2018}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations (cite new paper with Shang). 
+Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations (cite new paper with Shang). 
 
 % Need to include descriptor 'high-fidelity' for our simulation.
 
@@ -163,8 +163,8 @@ Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 \label{sec:formulation}
 %-----------------------------------------------------------------------------------------------%
 
-Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$, and the fluid flow is primarily from left to right. The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. 
-The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet ($x=-3$) and outlet ($x=3$) to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
+Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$. The fluid flow is primarily from left to right, so that the inlet and outlet are located at approximately $x=-3$ and $+3$ respectively (the actual locations are slightly curved versions of these vertical lines due to domain smoothing). The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. 
+The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet and outlet to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
 \begin{equation}
 \label{eqn:StokesEq}
   \begin{split}
@@ -178,9 +178,9 @@ The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer 
       &&\mbox{\em outer wall velocity}.
   \end{split}
 \end{equation}
-Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile at the inlet and outlet, i.e.~$\UU = (U,0)$ at the inlet and outlet which are approximately situated at $x=\pm 3$ respectively (the actual location is modified somewhat by the domain smoothing). We choose the uniform flow profile, as opposed to for instance a Poiseuille flow profile employed by previous work \cite{Quaife2018, chiu2020viscous}, for a few reason. First, it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later, and second, it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
+Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile along $\Gamma$, i.e.~$\UU = (U,0)$, although other choices are possible, for example a Poiseuille profile as employed in previous work \cite{quaife2018boundary, chiu2020viscous}. The advantages of the uniform profile are: (1) it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later; and (2), it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
 
-The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than does the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed to compute the {\em steady} Stokes flow determined by \eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface. The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
+The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than does the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed in order to compute the {\em steady} Stokes flow determined by \eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface (CITE previous erosion work). The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
 \begin{align}
 \Vn = \CE \, \abs{\tau}, 
 	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em erosion model}, \\
@@ -198,22 +198,22 @@ a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a
 
 
 %-----------------------------------------------------------------------------------------------%
-\section{Boundary Integral Equation Formulation}
+\section{Boundary Integral Equation and Cauchy Integral Formulation}
 \label{sec:DLP}
+%-----------------------------------------------------------------------------------------------%
+
+In order to accurately and efficiently compute the Stokes flow governed by \eqref{eqn:StokesEq}, we reformulate the system as a boundary integral equation (BIE). The boundary integral equations are first formulated in $\RR^2$ and then recast in terms of a Cauchy integral. The Cauchy integral representation enables a barycentric quadrature method to accurately compute the flow intervening between nearly contacting bodies, as is required by the dense configurations examined in this work.
+
+% SNIPPET
+%This has the advantage that only the one-dimensional boundary of the domain must be discretized, and, with appropriate quadrature formulas and fast summation methods, the result is a high-fidelity numerical simulation with near-optimal computational complexity.
+
+%-----------------------------------------------------------------------------------------------%
+\subsection{Boundary Integral Representation in $\RR^2$}
 %-----------------------------------------------------------------------------------------------%
 
 \vsp{2} \nick{Finished rewording up to here} \vsp{2}
 
-To accurately solve the governing equations~\eqref{eqn:erosionModel} in
-complex two-dimensional geometries, we reformulate the equations as a
-BIE.  This has the advantage that only the one-dimensional boundary of
-the domain must be discretized, and, with appropriate quadrature
-formulas and fast summation methods, the result is a high-fidelity
-numerical simulation with near-optimal computational complexity.
 
-%-----------------------------------------------------------------------------------------------%
-\subsection{Double-Layer Potential Formulation in $\RR^2$}
-%-----------------------------------------------------------------------------------------------%
 Applying the same approach as our previous work~\citep{qua-moo2018}, we
 start with the double-layer potential 
 \begin{align}
@@ -281,8 +281,7 @@ computed the deformation tensor on $\gamma$, the shear stress is
 computed using equation~\eqref{eqn:shearStress}. 
 
 %-----------------------------------------------------------------------------------------------%
-\subsection{Cauchy Integral Representation of the Double-Layer
-Potential}
+\subsection{Cauchy Integral Formulation}
 \label{sec:DLPcomplex}
 %-----------------------------------------------------------------------------------------------%
 The velocity double-layer potential~\eqref{eqn:velocityDLP}, and its
