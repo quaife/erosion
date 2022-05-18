@@ -4,14 +4,15 @@ using Erosion, FileIO, DelimitedFiles, Interpolations, Statistics
 using Plots; plotlyjs()
 
 # Set file and folder names, t-grid.
-proc_file(label::AbstractString) = "output_data/proc_data-$(label).jld2"
+proc_file(run::AbstractString) = "output_data/proc_data-$(run).jld2"
 plot_folder() = "zPlots/"	# Plot folder
 vfolder(name::AbstractString) = "veusz_data/$(name).txt"
-tref() = 0:0.01:0.97		# Reference t-grid
+tref() = 0:0.1:0.97		# Reference t-grid
 
 # Write a text file for Veusz to read for plots.
-function vdata(data::Array, file::AbstractString)
+function vdata(data::Array, desc::AbstractString, file::AbstractString)
 	iostream = open(file, "w")
+	writedlm(iostream, ["descriptor $desc"])
 	writedlm(iostream, Float32.(data))
 	close(iostream)
 end
