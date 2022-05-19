@@ -1,5 +1,5 @@
 # Veusz saved document (version 3.2.1)
-# Saved at 2022-05-19T14:40:57.093398
+# Saved at 2022-05-19T15:17:12.578742
 
 AddImportPath(u'/Users/moore/Projects/StokesErosion/simulations')
 ImportFile(u'veusz_data/anis_vars.txt', u'', ignoretext=True, linked=True)
@@ -482,7 +482,7 @@ Set('key', u'20 bodies')
 Set('errorStyle', u'bar')
 Set('PlotLine/hide', True)
 Set('MarkerLine/hide', True)
-Set('ErrorBarLine/hide', True)
+Set('ErrorBarLine/hide', False)
 To('..')
 Add('xy', name=u'40 bodies', autoadd=False)
 To(u'40 bodies')
