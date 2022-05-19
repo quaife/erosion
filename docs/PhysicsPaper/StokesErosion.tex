@@ -101,10 +101,15 @@
 
 \author{Nicholas J.~Moore}
 %\affiliation{Department of Mathematics and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
-\author{Bryan D.~Quaife}
-%\affiliation{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
+
+\author{Jake Cherry}
+%\affiliation{Department of Scientific Computing, Florida State University, Tallahassee, FL, 32306.}
+
 \author{Shang-Huan Chiu}
 %\affiliation{Department of Scientific Computing, Florida State University, Tallahassee, FL, 32306.}
+
+\author{Bryan D.~Quaife}
+%\affiliation{Department of Scientific Computing and Geophysical Fluid Dynamics Institute, Florida State University, Tallahassee, FL, 32306.}
 
 \begin{abstract}
 We numerically simulate the erosion of a porous medium due to an internally flowing fluid.  The solid constituents of the porous medium erode under the action of surface shear stress. As the particles disintegrate, they elongate in the direction of the flow, giving rise to anisotropic conductivity of the porous medium.
@@ -497,7 +502,7 @@ If we take $x_0$ sufficiently far away, then the viscous terms involving $u_x$ w
 Therefore we have the relationship
 \begin{equation}
 \label{ResistDrag}
-1/k \approx \frac{1}{4 U}  \, \FD \cdot \ex
+1/k_1 \approx \frac{1}{4 U}  \, \FD \cdot \ex
 \end{equation}
 
 %---------------------------------------------------------%
@@ -527,7 +532,7 @@ Thus, the configurational anisotropy is defined as
 \anis_C = k_1^{(c)} / k_2^{(c)}
 \end{equation}
 
-The total anisotropy is the produce of the shape and configurational
+The total anisotropy is the product of the shape and configurational
 \begin{equation}
 \anis = \anis_S \anis_C
 \end{equation}
