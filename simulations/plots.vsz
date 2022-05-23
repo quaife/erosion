@@ -1,5 +1,5 @@
 # Veusz saved document (version 3.2.1)
-# Saved at 2022-05-20T17:40:28.877151
+# Saved at 2022-05-23T18:12:38.308519
 
 AddImportPath(u'/Users/moore/Projects/StokesErosion/simulations')
 ImportFile(u'veusz_data/anis_vars.txt', u'', ignoretext=True, linked=True)
