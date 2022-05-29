@@ -216,22 +216,39 @@ To accurately and efficently solve the Stokes
   of a double-layer potential and a combination of Stokeslets and
   rotlets~\cite{pow-mir1987}
 \begin{align}
-  \uu(\xx) = \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
-    \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
-    \eeta(\yy) \, ds_\yy, + \sum_{\ell=1}^{M}\left(S[\llambda_\ell](\xx) +
-    R[\xi_\ell](\xx)\right), \quad \xx \in \Omega.
+  \uu(\xx) = \DDD[\eeta](\xx) + \sum_{\ell=1}^{M}\left(
+    S[\llambda_\ell](\xx) + R[\xi_\ell](\xx)\right), 
+    \quad \xx \in \Omega,
+  \label{eqn:velocity}
+\end{align}
+where 
+\begin{align}
+  \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
+  \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
+  \eeta(\yy) \, ds_\yy.
   \label{eqn:velocityDLP}
 \end{align}
 Note that $\bd\Omega$ includes both the eroding bodies and the outer
-  boundary. The Stokeslet and the rotlets are
-  \begin{align}
-    S[\lambda_\ell](\xx) = \frac{1}{4\pi} \left(\log \rho_\ell +
-    \frac{\rr_\ell \otimes \rr_\ell}{\rho_\ell^2} \right) \llambda_\ell,
-    \quad
-    R[\xi_\ell](\xx) = \frac{\rr_\ell^\perp}{\rho_\ell^2}\xi_\ell,
-  \end{align}
-  where $\rr_\ell = \xx - \cc_\ell$, $\rho_\ell = \|\rr_\ell\|$, and
-  $\cc_\ell$ is a point inside body $\ell$.
+boundary. The Stokeslet and the rotlets are
+\begin{align}
+  S[\lambda_\ell](\xx) = \frac{1}{4\pi} \left(\log \rho_\ell +
+  \frac{\rr_\ell \otimes \rr_\ell}{\rho_\ell^2} \right) \llambda_\ell,
+  \quad
+  R[\xi_\ell](\xx) = \frac{\rr_\ell^\perp}{\rho_\ell^2}\xi_\ell,
+\end{align}
+where $\rr_\ell = \xx - \cc_\ell$, $\rho_\ell = \|\rr_\ell\|$, and
+$\cc_\ell$ is a point inside body $\ell$.
+
+It is convenient to write equation~\eqref{eqn:velocityDLP} in terms of
+complex variables. With this reformulation, analytic function theory can
+be used to show that a particular quadrature rule achieves spectral
+accuracy. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$, and use
+similar notation for $\yy$, and $\nn$. Then, the Stokes double-layer
+potential is 
+\begin{align}
+  \DDD[\eta](x) = \pderiv{}{x} \Re \frac{1}{2\pi i} \int_\Gamma
+    \frac{\overline{y \eta(y)}}{x-y} dy + 
+\end{align}
 
 
 
