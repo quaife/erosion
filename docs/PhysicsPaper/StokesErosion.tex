@@ -506,25 +506,31 @@ k_{11} = \frac{2U}{\pup - \pdn}
 \end{equation}
 This exact formula gives the permeability in terms of the total flux $U$ and measurements of the upstream/downstream pressure.
 
+%Since $\bq$ is a volume-average of the tracer velocity, $\qavg$ can be equivalently obtained by averaging the tracer velocity, which is how we will measure this quantity in the simulations.
+ 
+%Note: If a larger value of $x_0$ is chosen, then one would be in effect averaging the porous-medium resistivity with the vanishing resistivity of the empty buffer region.
+
+%-----------------------------------------------------------------------------------------------%
+\subsection{Total drag}
+
+The permeability of the medium is directly related to the total drag exerted by the collection of bodies. The stress tensor associated with the Stokes equations \eqref{eqn:StokesEq} is given by $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$, and an alternate expression of \eqref{eqn:StokesEq} is $\grad \cdot \stress = 0$. Integrating this form of the equations over an arbitrary domain $D$ and applying the divergence theorem gives
+\begin{equation}
+\label{divthm}
+0 = \int_{D} \grad \cdot \stress \, dV 
+= \int_{\partial D} \stress \cdot \nn \, ds
+\end{equation}
+Consider $D \subseteq [-x_0, x_0] \times [-1, 1]$ to be the subset consisting of the fluid region (i.e.~excluding solid bodies), where $x_0 \ge 1$ will be chosen to include the entire porous region plus some amount of the buffer region. The boundary $\partial D$ consist of $\gamma$, the solid boundaries of all of the bodies, as well as an outer boundary. The total drag exerted by all of the solid bodies is given by
+\begin{equation}
+\FD = -\int_{\gamma} \stress \cdot \nn \, ds
+\end{equation}
+
+\nick{Do I want plus or minus? I decided I want the drag exerted BY the bodies and so this should point to the left.}
+
 
 \vsp{2} \nick{To here in editing} \vsp{2}
 
 
-%Since $\bq$ is a volume-average of the tracer velocity, $\qavg$ can be equivalently obtained by averaging the tracer velocity, which is how we will measure this quantity in the simulations.
- 
-
-%Note: If a larger value of $x_0$ is chosen, then one would be in effect averaging the porous-medium resistivity with the vanishing resistivity of the empty buffer region.
-
-%-----------------------------------------------------------------------------------------------%
-\subsection{Relationship to total drag}
-
-The resistivity is directly related to the drag exerted by the bodies. Indeed, another way to express the Stokes equations is $\grad \cdot \stress = 0$ where $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$ is the stress tensor. The divergence theorem gives
-\begin{equation}
-\label{divthm}
-0 = \int_{\Omega} \grad \cdot \stress \, dV 
-= \int_{\partial \Omega} \stress \cdot \nn \, ds
-\end{equation}
-for any domain $\Omega$.  Consider $\Omega$ to be inside $[-x_0, x_0] \times [-1, 1]$, where we will choose $x_0 > 1$ so that $\Omega$ includes the entire porous region.
+Consider $\Omega$ to be inside $[-x_0, x_0] \times [-1, 1]$, where we will choose $x_0 > 1$ so that $\Omega$ includes the entire porous region.
 The boundary integral on the right-hand-side of \eqref{divthm} has contributions from the boundaries of the erodable bodies $\gamma$ and from the outer boundary $\Gamma$, since $\partial \Omega = \gamma \cup \Gamma$. In particular, the total drag exerted by the erodable bodies is given by
 \begin{equation}
 \FD = -\int_{\gamma} \stress \cdot \nn \, ds
