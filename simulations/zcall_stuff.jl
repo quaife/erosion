@@ -51,10 +51,20 @@ function post_proc_many()
 end
 #-------------------------------------------------#
 
+#= OBJECTIVE: Make several new input geometries with seeds 10 and up
+so that I do not resuse the name of already saved runs. Remember, for
+a given seed, the construced geometry will be different due to changes 
+in Julia. =#
+function make_new_geos(nbods::Int, areafrac::Float64 = 0.6)
+	for ii=10:19
+		make_geos(nbods, areafrac, ii, makeplots=false)
+	end
+end
+
 #--------------- CALL THE ROUTINES ---------------#
 
 # CALL BASIC ROUTINES FOR TESTING
- make_geos(2, 0.02, 8)
+# make_geos(2, 0.02, 8)
 # make9geos(2, 0.02)
 # remake_input_geos("afrac06", 20, 2)
 # remake_output_data("20-2")
@@ -65,3 +75,6 @@ end
 # remake_many_input_geos()
 # remake_many_output_data()
 # post_proc_many()
+
+# CALL THE ROUTINE TO MAKE NEW GEOMETRIES.
+#make_new_geos(60)
