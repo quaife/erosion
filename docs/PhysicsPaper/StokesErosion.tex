@@ -502,6 +502,7 @@ since $x_0 = -1$ lies immediately upstream of the porous medium and $x_0 = 1$ im
 
 Integrating \eqref{q1} over the porous-medium domain $[-1, 1] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
 \begin{equation}
+\label{eqn:k11}
 k_{11} = \frac{2U}{\pup - \pdn}
 \end{equation}
 This exact formula gives the permeability in terms of the total flux $U$ and measurements of the upstream/downstream pressure.
@@ -521,45 +522,41 @@ The permeability of the medium is directly related to the drag exerted by the co
 \end{equation}
 Consider $D \subseteq [-x_0, x_0] \times [-1, 1]$ to be the subset consisting of the fluid region (i.e.~excluding solid bodies), where $x_0 \ge 1$ will be chosen to include the entire porous region plus some amount of the buffer region. The boundary $\partial D$ consist of all solid-body boundaries $\gamma$, along with an outer boundary. 
 
-The hydrodynamic drag on the collection of bodies is obtained by integrating the surface traction over the boundary $\gamma$. The surface traction is given by 
+The hydrodynamic drag on the collection of bodies is obtained by integrating the surface traction over the boundary $\gamma$. The surface traction on a no-slip boundary is given by 
 \begin{equation}
 - \stress \, \nn = p \nn + \tau \ss
 \end{equation}
-where the negative sign is a consequence of choosing the normal vector $\nn$ pointing {\em into} the bodies. The total drag on the collection of bodies is thus
+where the negative sign is a consequence of choosing the normal vector $\nn$ to point out of the fluid region or {\em into} the bodies. The total drag on the collection of bodies is thus
 \begin{equation}
+\label{eqn:drag}
 \FD =  - \int_{\gamma} \stress \, \nn \, ds =  \int_{\gamma} p \nn + \tau \ss \, ds
 \end{equation}
 
 % NOTE ON SIGN OF DRAG
 % The drag ON the bodies is F = \int p n + tau s. This is consistent with the JCP paper, with my code, and I have verified the calculation. This drag vector points to the right since it is the drag ON the bodies.
 
-
-\vsp{2} \nick{To here in editing} \vsp{2}
-
-
-The boundary integral on the right-hand-side of \eqref{divthm} has contributions from the boundaries of the erodable bodies $\gamma$ and from the outer boundary $\Gamma$, since $\partial \Omega = \gamma \cup \Gamma$. In particular, the total drag exerted by the erodable bodies is given by
+Projecting \eqref{divthm} onto $\ex$, using \eqref{eqn:drag}, and rearranging gives the exact relationship
 \begin{equation}
-\FD = -\int_{\gamma} \stress \cdot \nn \, ds
+\label{drag_press}
+\FD \cdot \ex = \int_{-1}^{1} \left( -p(x,y) + 2 \mu u_x(x,y) \right) \big|_{x=-x_0}^{x=x_0} dy + 
+\int_{-x_0}^{x_0} \mu u_y(x,y) \big|_{y=-1}^{y=1} dx
 \end{equation}
-We will mostly be interested in the horizontal drag $\FD \cdot \ex$. \\
-
-
-Consider now the contribution to \eqref{divthm} from the outer boundary $\Gamma$. The horizontal component of this term is
-\begin{align}
-\ex \cdot \int_{\Gamma} \stress \cdot \nn \, ds = 
-& \int_{-1}^{1} p(-x_0, y) - p(x_0, y) - 2\mu (u_x(-x_0,y) - u_x(x_0,y)) \, dy \, + \\
-& \int_{-x_0}^{x_0} \mu (u_y(x,1) - u_y(x,-1)) dx
-\end{align}
-If we take $x_0$ sufficiently far away, then the viscous terms involving $u_x$ will become small as the velocity field tends to a uniform flow. Meanwhile, the contribution from the pressure is well approximated by the upstream and downstream average pressures $\pup$ and $\pdn$ as introduced in the previous section. This gives 
+We will now make some simplifying assumptions. First, because the imposed flow profile is uniform $\UU = (U,0)$, slip is permitted along the top and bottom boundaries $y=\pm 1$ and so the viscous stress will generally be much smaller than on the no-slip erodable boundaries. We will therefore drop the contribution from the second integral above. Second, if $x_0 > 1$ is chosen a sufficient distance from the erodable bodies, the flow profile will approximately match the uniform profile, implying that the term involving $u_x(\pm x_0, y)$ can be dropped. In addition, the pressure $p(\mp x_0, y)$ will approximately match the upstream and downstream values respectively. With these assumptions, \eqref{drag_press} simplifies to the approximate form
 \begin{equation}
 \FD \cdot \ex \approx 2 (\pup - \pdn)
 \end{equation}
-
-Therefore we have the relationship
+Combining with \eqref{eqn:k11} yields an approximate relationship between the horizontal components of permeability and drag 
 \begin{equation}
-\label{ResistDrag}
-1/k_1 \approx \frac{1}{4 U}  \, \FD \cdot \ex
+\label{}
+\frac{1}{k_{11}} \approx \frac{1}{4 U}  \, \FD \cdot \ex
 \end{equation}
+
+
+USEFUL FOR BENCHMARK
+
+
+\vsp{2} \nick{To here in editing} \vsp{2}
+
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
