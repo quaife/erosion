@@ -4,6 +4,7 @@ The second routine outputs data from an ensemble of runs.=#
 
 using Erosion, FileIO, DelimitedFiles, Interpolations, Statistics
 using Plots; plotlyjs()
+using Infiltrator 
 
 #---------------------------------------------------------------#
 # Set file and folder names.
@@ -53,6 +54,7 @@ function vplot_single(run::AbstractString)
 	# Read tortuosity variables file.
 	xtort, ytort, xcirctort, ycirctort = load(tort_file(run), 
 		"xtortuosity", "ytortuosity", "xcirctortuosity", "ycirctortuosity")
+	# Also variables porosities and circporosities
 
 	# Calculate time-dependent quantities.
 	tt = [ thldvec[nn].tt for nn in eachindex(thldvec)]
@@ -75,8 +77,15 @@ function vplot_single(run::AbstractString)
 	anis_tort_config = (ycirctort ./ xcirctort).^1
 	anis_tort_shape = anis_tort ./ anis_tort_config
 
+
+
+	# Should I append stuff at the end of xtort to give it the same size??
+
 	println("porosity from proc_file: ", size(porosity))
 	println("xtort: ", size(xtort))
+
+
+
 
 	# Make text file for Veusz to plot.
 	vdata([tt area porosity  umax], "time area porosity umax", vfolder("basic_vars"))
@@ -91,7 +100,7 @@ end
 
 # Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6
 # Look great for anistropy plot: 40-8, 60-9, 100-3
-vplot_single("20-2")
+#vplot_single("20-2")
 #---------------------------------------------------------------#
 
 
@@ -133,16 +142,9 @@ function read_var_ensemble(file, varname, runs)
 	var_ensemble = Array{Float64}(undef, length(por_grid()), 0)
 	for run in runs
 		var = load(file(run), varname)
-		# Get the porosity, depending on which file is being read.
-		if file == proc_file
-			porosity = get_porosity(run)
-		elseif file == tort_file
-			#porosity
-		end
-
-		println("\n\n var: ", size(var), eltype(var))
-		println("\n porosity: ", size(porosity), eltype(var), "\n")
-
+		porosity = get_porosity(run)
+		# Fill the remainder of var with 1 to match size with porosity.
+		append!(var, ones(length(porosity)-length(var)))
 		var_interp = interp(porosity, var)
 		var_ensemble = [var_ensemble var_interp]
 	end
@@ -205,4 +207,4 @@ function vplot_stats()
 	end
 end
 
-#vplot_stats()
+vplot_stats()
