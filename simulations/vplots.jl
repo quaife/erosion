@@ -75,6 +75,9 @@ function vplot_single(run::AbstractString)
 	anis_tort_config = (ycirctort ./ xcirctort).^1
 	anis_tort_shape = anis_tort ./ anis_tort_config
 
+	println("porosity from proc_file: ", size(porosity))
+	println("xtort: ", size(xtort))
+
 	# Make text file for Veusz to plot.
 	vdata([tt area porosity  umax], "time area porosity umax", vfolder("basic_vars"))
 	vdata(	[hdrag vdrag resist resist_rot resist_circs resist_circs_rot], 
@@ -126,11 +129,20 @@ end
 #= Read a variable from an ensemble of runs, interpolate the variable 
 on the reference porosity grid, then return the ensemble. 
 varname can be "resist", "resist_rot", "resist_circ", ... =#
-function read_var_ensemble(varname, runs)
+function read_var_ensemble(file, varname, runs)
 	var_ensemble = Array{Float64}(undef, length(por_grid()), 0)
 	for run in runs
-		var = load(proc_file(run), varname)
-		porosity = get_porosity(run)
+		var = load(file(run), varname)
+		# Get the porosity, depending on which file is being read.
+		if file == proc_file
+			porosity = get_porosity(run)
+		elseif file == tort_file
+			#porosity
+		end
+
+		println("\n\n var: ", size(var), eltype(var))
+		println("\n porosity: ", size(porosity), eltype(var), "\n")
+
 		var_interp = interp(porosity, var)
 		var_ensemble = [var_ensemble var_interp]
 	end
@@ -154,27 +166,43 @@ function vplot_stats()
 	# For each number of bodies, collect the statistics.
 	for nbod in nbod_list
 		runs = get_runs(nbod)
-		# Read the resistance data for the ensemble of runs.
-		resist = read_var_ensemble("resist", runs)
-		resist_rot = read_var_ensemble("resist_rot", runs)
-		resist_circs = read_var_ensemble("resist_circs", runs)
-		resist_circs_rot = read_var_ensemble("resist_circs_rot", runs)
-		# Calculate the permeability for the ensemble of runs.
+		# Read the resistance data from an ensemble of runs.
+		resist = read_var_ensemble(proc_file, "resist", runs)
+		resist_rot = read_var_ensemble(proc_file, "resist_rot", runs)
+		resist_circs = read_var_ensemble(proc_file, "resist_circs", runs)
+		resist_circs_rot = read_var_ensemble(proc_file, "resist_circs_rot", runs)
+	
+		# Read the tortuosity data from an ensemble of runs.
+		xtort = read_var_ensemble(tort_file, "xtortuosity", runs)
+		ytort = read_var_ensemble(tort_file, "ytortuosity", runs)
+		xcirctort = read_var_ensemble(tort_file, "xcirctortuosity", runs)
+		ycirctort = read_var_ensemble(tort_file, "ycirctortuosity", runs)
+
+		# Calculate the permeability for the ensemble.
 		perm = permeability.(resist)
 		perm_rot = permeability.(resist_rot)
 		perm_circs = permeability.(resist_circs)
 		perm_circs_rot = permeability.(resist_circs_rot)
-		# Calculate the anistropy for the ensemble of runs.
+		
+		# Calculate the permeability anistropy for the ensemble.
 		anis = resist_rot ./ resist
 		anis_config = resist_circs_rot ./ resist_circs
 		anis_shape = anis ./ anis_config
+		
+		# Calculate the tortuosity anistropy for the ensemble.
+		anis_tort = (ytort ./ xtort).^1
+		anis_tort_config = (ycirctort ./ xcirctort).^1
+		anis_tort_shape = anis_tort ./ anis_tort_config
 
 		# Compute the mean and standard deviation, then save the data.
 		#data = mean_std(perm, perm_rot, perm_circs, perm_circs_rot, anis, anis_config, anis_shape)
-		data = [por_grid() mean_std(perm, perm_rot, anis, anis_config, anis_shape)]
-		desc = "por_grid perm$nbod,+- perm_rot$nbod,+- anis$nbod,+- anis_config$nbod,+- anis_shape$nbod,+-"
+		data = [por_grid() mean_std(perm, perm_rot, xtort, ytort, 
+			anis, anis_config, anis_shape, anis_tort, anis_tort_config, anis_tort_shape)]
+		desc = string("por_grid perm$nbod,+- perm_rot$nbod,+- xtort$nbod,+- ytort$nbod,+-", 
+			" anis$nbod,+- anis_config$nbod,+- anis_shape$nbod,+-",
+			" anis_tort$nbod,+- anis_tort_config$nbod,+- anis_tort_shape$nbod,+-")
 		vdata(data, desc, vfolder("stats$nbod"))
 	end
 end
 
-vplot_stats()
+#vplot_stats()
