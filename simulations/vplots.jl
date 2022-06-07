@@ -8,6 +8,7 @@ using Plots; plotlyjs()
 #---------------------------------------------------------------#
 # Set file and folder names.
 proc_file(run::AbstractString) = "output_data/proc_data-$(run).jld2"
+tort_file(run::AbstractString) = "proc_data-tort/proc_data-$(run)_tortuosity_partial.jld2"
 plot_folder() = "zPlots/"	# Plot folder
 vfolder(name::AbstractString) = "veusz_data/$(name).txt"
 
@@ -49,6 +50,10 @@ function vplot_single(run::AbstractString)
 		load(proc_file(run), "thldvec", "resist", "resist_rot", 
 		"resist_circs", "resist_circs_rot", "drag_data")
 
+	# Read tortuosity variables file.
+	xtort, ytort, xcirctort, ycirctort = load(tort_file(run), 
+		"xtortuosity", "ytortuosity", "xcirctortuosity", "ycirctortuosity")
+
 	# Calculate time-dependent quantities.
 	tt = [ thldvec[nn].tt for nn in eachindex(thldvec)]
 	porosity = get_porosity(run)
@@ -60,21 +65,30 @@ function vplot_single(run::AbstractString)
 	# Modify the values that don't make sense at the final time.
 	resist[end] = resist_rot[end] = umax[end] = NaN
 
-	# Calculate anisotropy quantitites.
+	# Calculate the anisotropy of permeability.
 	anis = resist_rot ./ resist
 	anis_config = resist_circs_rot ./ resist_circs
 	anis_shape = anis ./ anis_config
+
+	# Calculate the anisotropy of tortuosity.
+	anis_tort = (ytort ./ xtort).^1
+	anis_tort_config = (ycirctort ./ xcirctort).^1
+	anis_tort_shape = anis_tort ./ anis_tort_config
 
 	# Make text file for Veusz to plot.
 	vdata([tt area porosity  umax], "time area porosity umax", vfolder("basic_vars"))
 	vdata(	[hdrag vdrag resist resist_rot resist_circs resist_circs_rot], 
 			"hdrag vdrag resist resist_rot resist_circs resist_circs_rot", vfolder("resist_vars"))
 	vdata([anis anis_config anis_shape], "anis anis_config anis_shape", vfolder("anis_vars"))
+	
+	# Make Veusz text file for tortuosity.
+	vdata([xtort ytort xcirctort ycirctort anis_tort anis_tort_config anis_tort_shape], 
+		  "xtort ytort xcirctort ycirctort anis_tort anis_tort_config anis_tort_shape", vfolder("tort_vars"))
 end
 
 # Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6
 # Look great for anistropy plot: 40-8, 60-9, 100-3
-vplot_single("100-9")
+vplot_single("20-2")
 #---------------------------------------------------------------#
 
 
