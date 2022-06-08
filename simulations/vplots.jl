@@ -42,6 +42,11 @@ function append_torts!(porosity, vars...)
 		append!(var, ones(length(porosity)-length(var)))
 	end
 end
+
+# Calculate the tortuosity anisotropy.
+function tort_anisotropy(xtort, ytort)
+	return (ytort .-1) ./ (xtort .-1)
+end
 #---------------------------------------------------------------#
 
 
@@ -84,8 +89,8 @@ function vplot_single(run::AbstractString)
 	anis_shape = anis ./ anis_config
 
 	# Calculate the anisotropy of tortuosity.
-	anis_tort = (ytort ./ xtort).^1
-	anis_tort_config = (ycirctort ./ xcirctort).^1
+	anis_tort = tort_anisotropy(xtort, ytort)
+	anis_tort_config = tort_anisotropy(xcirctort, ycirctort)
 	anis_tort_shape = anis_tort ./ anis_tort_config
 
 	# Make text file for Veusz to plot.
@@ -99,9 +104,9 @@ function vplot_single(run::AbstractString)
 		  "xtort ytort xcirctort ycirctort anis_tort anis_tort_config anis_tort_shape", vfolder("tort_vars"))
 end
 
-# Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6
-# Look great for anistropy plot: 40-8, 60-9, 100-3
-vplot_single("60-9")
+# Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6,9
+# 100-9 looks quite good showing the configuration anisotropy near the end.
+vplot_single("100-9")
 #---------------------------------------------------------------#
 
 
@@ -200,8 +205,8 @@ function vplot_stats()
 		anis_shape = anis ./ anis_config
 		
 		# Calculate the tortuosity anistropy for the ensemble.
-		anis_tort = (ytort ./ xtort).^1
-		anis_tort_config = (ycirctort ./ xcirctort).^1
+		anis_tort = tort_anisotropy(xtort, ytort)
+		anis_tort_config = tort_anisotropy(xcirctort, ycirctort)
 		anis_tort_shape = anis_tort ./ anis_tort_config
 
 		# Compute the mean and standard deviation, then save the data.
