@@ -35,11 +35,18 @@ function get_porosity(run::AbstractString)
 	porosity = 1 .- area
 	return porosity
 end
+
+# Append each tortuosity data vector with ones after bodies vanish.
+function append_torts!(porosity, vars...)
+	for var in vars
+		append!(var, ones(length(porosity)-length(var)))
+	end
+end
 #---------------------------------------------------------------#
 
 
 #---------------------------------------------------------------#
-# Make plots in Veusz for a single simulation run.
+# SINGLE RUN: Make plots in Veusz for a single simulation run.
 
 #= Note: the format of DragData object is:
 DragData(pdragx, pdragy, vdragx, vdragy, umax, tau_all, atau_all, press_all)
@@ -54,7 +61,7 @@ function vplot_single(run::AbstractString)
 	# Read tortuosity variables file.
 	xtort, ytort, xcirctort, ycirctort = load(tort_file(run), 
 		"xtortuosity", "ytortuosity", "xcirctortuosity", "ycirctortuosity")
-	# Also variables porosities and circporosities
+	# tort_file() also contains the variables porosities and circporosities.
 
 	# Calculate time-dependent quantities.
 	tt = [ thldvec[nn].tt for nn in eachindex(thldvec)]
@@ -63,9 +70,13 @@ function vplot_single(run::AbstractString)
 	hdrag = [ drag_data[nn].pdragx + drag_data[nn].vdragx for nn in eachindex(drag_data)] 
 	vdrag = [ drag_data[nn].pdragy + drag_data[nn].vdragy for nn in eachindex(drag_data)]
 	umax = [ drag_data[nn].umax for nn in eachindex(drag_data) ]
-
-	# Modify the values that don't make sense at the final time.
-	resist[end] = resist_rot[end] = umax[end] = NaN
+	
+	# Modify values for which bodies are gone.
+	idx = findall(area .< 1e-5)
+	resist[idx] .= resist_rot[idx] .= 1e-5
+	resist_circs[idx] .= resist_circs_rot[idx] .= 1e-5
+	umax[idx] .= NaN
+	append_torts!(porosity, xtort, ytort, xcirctort, ycirctort)
 
 	# Calculate the anisotropy of permeability.
 	anis = resist_rot ./ resist
@@ -76,16 +87,6 @@ function vplot_single(run::AbstractString)
 	anis_tort = (ytort ./ xtort).^1
 	anis_tort_config = (ycirctort ./ xcirctort).^1
 	anis_tort_shape = anis_tort ./ anis_tort_config
-
-
-
-	# Should I append stuff at the end of xtort to give it the same size??
-
-	println("porosity from proc_file: ", size(porosity))
-	println("xtort: ", size(xtort))
-
-
-
 
 	# Make text file for Veusz to plot.
 	vdata([tt area porosity  umax], "time area porosity umax", vfolder("basic_vars"))
@@ -100,14 +101,13 @@ end
 
 # Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6
 # Look great for anistropy plot: 40-8, 60-9, 100-3
-#vplot_single("20-2")
+vplot_single("60-9")
 #---------------------------------------------------------------#
 
 
 
 #---------------------------------------------------------------#
-
-# STATISTICS
+# STATISTICS: Make plots in Veusz for an ensemble of runs.
 
 # For a given number of bodies, return the labels for the saved runs.
 # Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6
@@ -127,11 +127,11 @@ function get_runs(nbods::Integer)
 end
 
 # Reference porosity-grid
-por_grid() = 0.401:0.01:0.999
+por_grid() = range(0.401, stop=0.999, length=60)
 
 # Interpolate a variable (e.g. resistivity) on the reference porosity-grid.
 function interp(porosity, var)
-	interpolant = LinearInterpolation(Float64.(porosity[1:end-1]), Float64.(var[1:end-1]))
+	interpolant = LinearInterpolation(Float64.(porosity[1:end]), Float64.(var[1:end]))
 	return interpolant(por_grid())
 end
 
@@ -162,6 +162,13 @@ function mean_std(vars...)
 	return data
 end
 
+# Enforce a lower bound on the resistance
+function resist_thresh(vars...)
+	for var in vars
+		var = max.(var,1e-5)
+	end
+end
+
 # Plot the statistics
 function vplot_stats()
 	nbod_list = [20 40 60 80 100] #[20, 40, 60, 80, 100]
@@ -173,7 +180,8 @@ function vplot_stats()
 		resist_rot = read_var_ensemble(proc_file, "resist_rot", runs)
 		resist_circs = read_var_ensemble(proc_file, "resist_circs", runs)
 		resist_circs_rot = read_var_ensemble(proc_file, "resist_circs_rot", runs)
-	
+		resist_thresh(resist, resist_rot, resist_circs, resist_circs_rot)
+
 		# Read the tortuosity data from an ensemble of runs.
 		xtort = read_var_ensemble(tort_file, "xtortuosity", runs)
 		ytort = read_var_ensemble(tort_file, "ytortuosity", runs)
