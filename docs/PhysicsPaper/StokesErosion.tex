@@ -213,10 +213,10 @@ a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a
 \label{sec:DLP}
 %-----------------------------------------------------------------------------------------------%
 To accurately and efficently solve the Stokes
-  equations~\eqref{eqn:StokesEq}, we reformulate the system as a
-  boundary integral equation (BIE). We represent the velocity as the sum
-  of a double-layer potential and a combination of Stokeslets and
-  rotlets~\cite{pow-mir1987}
+equations~\eqref{eqn:StokesEq}, we reformulate the system as a boundary
+integral equation (BIE). We represent the velocity as the sum of a
+double-layer potential and a combination of Stokeslets and
+rotlets~\cite{pow-mir1987}
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + \sum_{\ell=1}^{M}\left(
     S[\llambda_\ell](\xx) + R[\xi_\ell](\xx)\right), 
@@ -242,15 +242,46 @@ where $\rr_\ell = \xx - \cc_\ell$, $\rho_\ell = \|\rr_\ell\|$, and
 $\cc_\ell$ is a point inside body $\ell$.
 
 It is convenient to write equation~\eqref{eqn:velocityDLP} in terms of
-complex variables. With this reformulation, analytic function theory can
-be used to show that a particular quadrature rule achieves spectral
-accuracy. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$, and use
-similar notation for $\yy$, and $\nn$. Then, the Stokes double-layer
-potential is 
+complex variables. With this reformulation, simple quadrature rules
+achieve spectral accuracy. We identify $\xx = (x_1,x_2)$ with $x = x_1 +
+ix_x$, and use similar notation for $\yy$, $\nn$, and $\eeta$. We also
+interpret $\Gamma$, the boundary of the domain, as a collection of
+Jordan curves in $\CC$. We next introduce the functions
 \begin{align}
-  \DDD[\eta](x) = \pderiv{}{x} \Re \frac{1}{2\pi i} \int_\Gamma
-    \frac{\overline{y \eta(y)}}{x-y} dy + 
+  \tau_1(y) = \eta(y) \overline{n(y)} \Re(n(y)), \quad 
+  \tau_2(y) = \eta(y) \overline{n(y)} \Im(n(y)).
 \end{align}
+Then, we next define the five Cauchy integrals
+\begin{align}
+  v_1(x) &= \frac{1}{2\pi i} \int_{\Gamma} \frac{Re(\eta(y))}{x-y} \,dy, 
+  \quad
+  v_2(x) = \frac{1}{2\pi i} \int_{\Gamma} \frac{Im(\eta(y))}{x-y} \, dy, 
+  \quad
+  v_3(x) = \frac{1}{2\pi i} \int_{\Gamma} \frac{Re(\overline{y}\eta(y))}{x-y} \, dy, \\
+  v_4(x) &= \frac{1}{2\pi i} \int_{\Gamma} \frac{\tau_1(y)}{x-y} \, dy,
+  \quad
+  v_5(x) = \frac{1}{2\pi i} \int_{\Gamma} \frac{\tau_2(y)}{x-y} \, dy.
+\end{align}
+The boundary data of each of these Cauchy integrals satisfies the
+Sokhotski-Plemelj jump relation
+\begin{align}
+  \lim_{\substack{x \rightarrow x_0 \\ x \in \Omega}} \int_{\Gamma}
+    \frac{\eta(y)}{x-y}\, dy = -\frac{1}{2}\sigma(x_0) - 
+    \frac{1}{2\pi i} \int_{\Gamma} \frac{\eta(y)}{x-y} \, dy,
+    \quad x_0 \in \Gamma,
+\end{align}
+where the last integral is interpreted in the principal value sense.
+
+
+Then, the first and second components of the Stokes double-layer
+potential are
+\begin{align}
+  u_1(x) &= -\Re(x)\Re(v_1'(x)) - \Im(x)\Re(v_2'(x)) + 
+           \Re(v_3'(x)) + \Re(v_4(x)) \\
+  u_2(x) &= +\Re(x)\Im(v_1'(x)) + \Im(x)\Im(v_2'(x)) - 
+           \Im(v_3'(x)) + \Re(v_5(x)),
+\end{align}
+respectively.
 
 
 
