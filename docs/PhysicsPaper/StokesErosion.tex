@@ -265,38 +265,6 @@ replacing the integrals with quadrature rules. This results in a linear
 system with a mesh-independent condition number, and it is solved
 iteratively with GMRES.
 
-The accuracy of the method is determined by the accuracy of the
-quadrature rule applied to equation~\eqref{eqn:FredBIE}. A quadrature
-rule for~\eqref{eqn:velocityDLP} that achieves spectral accuracy writes
-the Stokes double-layer potential as a collection of Cauchy integrals
-\begin{align}
-  v(x) = \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x-y} \, dy.
-\end{align}
-The boundary data of $v(x)$ satisfies the Sokhotski-Plemelj jump relation
-\begin{align}
-  v^{-}(x_0) = \lim_{\substack{x \rightarrow x_0 \\ x \in \Omega}} \int_{\gamma}
-    \frac{\eta(y)}{x-y}\, dy = -\frac{1}{2}\eta(x_0) - 
-    \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x-y} \, dy,
-    \quad x_0 \in \gamma,
-    \label{eqn:SP}
-\end{align}
-where the last integral is interpreted in the principal value sense.
-Once $v^{-}$ is calculated, $v(x)$ and its derivatives can be determined
-by its boundary data alone using the Cauchy Integral Theorem
-\begin{subequations}
-  \label{eqn:cauchy}
-  \begin{alignat}{3}
-  v(x) &= \frac{1}{2\pi i}\int_{\bd\Omega} 
-    \frac{v(y)}{y-x} \,dy, \\
-  v'(x) &= \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^2} \, dy, \\
-  v''(x) &= \frac{1}{\pi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^3} \, dy.
-  \end{alignat}
-\end{subequations}
-
-
-
 We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$, and use similar
 notation for $\yy$, $\nn$, and $\eeta$. We also interpret $\gamma$, the
 boundary of the $i^{th}$ grain or the bounding box $\Gamma$, as a Jordan
@@ -324,34 +292,45 @@ potential are
   u_2(x) &= +\Re(x)\Im(v_1'(x)) + \Im(x)\Im(v_2'(x)) - 
            \Im(v_3'(x)) + \Re(v_5(x)),
 \end{align}
-respectively.
-
-To apply the aforementioned spectrally accurate quadrature rule, we
-require the boundary data of the five Cauchy integrals. For $x_0 \in
-\gamma$, the boundary data of each of these Cauchy integrals satisfies
-the Sokhotski-Plemelj jump relation
+respectively. The vorticity can be shown to satisfy
 \begin{align}
-  \lim_{\substack{x \rightarrow x_0 \\ x \in \Omega}} \int_{\gamma}
+  \omega(x) = \Im(v_1'(x)) + \Re(v_2'(x)) + 
+     \Re(v_5'(x)) + \Im(v_4'(x)).
+\end{align}
+We note that the vorticity only requires first derivatives of Cauchy
+integrals, but the stress tensor involves second derivatives.
+
+The accuracy of the method is determined by the accuracy of the
+quadrature rule applied to equation~\eqref{eqn:FredBIE}. A quadrature
+rule for~\eqref{eqn:velocityDLP} that achieves spectral accuracy writes
+the Stokes double-layer potential as a collection of Cauchy integrals
+\begin{align}
+  v(x) = \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x-y} \, dy.
+\end{align}
+The boundary data of $v(x)$ satisfies the Sokhotski-Plemelj jump relation
+\begin{align}
+  v^{-}(x_0) = \lim_{\substack{x \rightarrow x_0 \\ x \in \Omega}} \int_{\gamma}
     \frac{\eta(y)}{x-y}\, dy = -\frac{1}{2}\eta(x_0) - 
     \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x-y} \, dy,
-    \quad x_0 \in \bd\Omega,
+    \quad x_0 \in \gamma,
     \label{eqn:SP}
 \end{align}
-where the last integral is interpreted in the principal value sense. For
-the Cauchy integral $v_i$, we let $v_i^-$ denote the boundary data that
-satisfies~\eqref{eqn:SP}. Once $v_i^-$ is calculated, $v(x)$ and its
-derivatives can be determined by the Cauchy Integral Theorem
+where the last integral is interpreted in the principal value sense.
+Once $v^{-}$ is calculated, $v(x)$ and its derivatives can be determined
+by its boundary data alone using the Cauchy Integral Theorem
 \begin{subequations}
   \label{eqn:cauchy}
   \begin{alignat}{3}
   v(x) &= \frac{1}{2\pi i}\int_{\bd\Omega} 
-    \frac{v(y)}{y-x} \,dy, \\
+    \frac{v^{-}(y)}{y-x} \,dy, \\
   v'(x) &= \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^2} \, dy, \\
+    \frac{v^{-}(y)}{(y-x)^2} \, dy, \\
   v''(x) &= \frac{1}{\pi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^3} \, dy,
+    \frac{v^{-}(y)}{(y-x)^3} \, dy.
   \end{alignat}
 \end{subequations}
+Note that we require second-order derivatives to compute the shear
+stress.
 
 
 % SNIPPET
@@ -362,55 +341,6 @@ derivatives can be determined by the Cauchy Integral Theorem
 %-----------------------------------------------------------------------------------------------%
 
 \vsp{2} \nick{Finished rewording up to here} \vsp{2}
-
-
-%Applying the same approach as our previous work~\citep{qua-moo2018}, we
-%start with the double-layer potential 
-%\begin{align}
-%  \DDD[\eeta](\xx) = \int_{\bd\Omega} D(\xx,\yy) \eeta(\yy)\, ds_\yy = 
-%  \frac{1}{\pi}\int_{\bd\Omega} 
-%    \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
-%    \eeta(\yy) \, ds_\yy, \quad \xx \in \Omega,
-%%  \label{eqn:velocityDLP}
-%\end{align}
-%where $D$ is the kernel of the integral operator, $\rr = \xx - \yy$,
-%$\rho = \|\rr\|$, $\nn$ is the unit outward normal at $\yy$, and $\eeta$
-%is an unknown density function.  We complete the integral equation
-%formulation by adding the $M$ Stokeslets,
-%$S[\llambda_\ell,\cc_\ell](\xx)$, and $M$ rotlets,
-%$R[\xi_\ell,\cc_\ell](\xx)$, where $\cc_\ell$ is a point inside the
-%$\ell^{th}$ body~\citep{pow-mir1987}.  Here $\llambda_\ell$ and
-%$\xi_\ell$ are the Stokeslet and rotlet strengths, respectively,
-%corresponding to the $\ell^{th}$ body.  Then, for any sufficiently
-%smooth geometry $\Omega$, the solution of the incompressible Stokes
-%equation with a Dirichlet boundary condition $\ff$ is
-%\begin{align}
-%  \uu(\xx) = \DDD[\eeta](\xx) + 
-%    \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
-%    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx), \quad \xx \in \Omega,
-%\end{align}
-%where the density function, Stokeslets, and rotlets satisfy
-%\begin{subequations}
-%\label{eqn:BIE}
-%\begin{alignat}{3}
-%  \ff(\xx) &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
-%    \NN_0[\eeta](\xx) \nonumber \\
-%    &\quad + \sum_{\ell=1}^M S[\llambda_\ell,\cc_\ell](\xx) + 
-%    \sum_{\ell=1}^M R[\xi_\ell,\cc_\ell](\xx), 
-%    \quad &&\qquad\xx \in \bd\Omega, \\
-%  \llambda_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell} 
-%    \eeta(\yy)\, ds_\yy, &&\qquad \ell = 1,\ldots,M, \\
-%  \xi_\ell &= \frac{1}{2\pi} \int_{\gamma_\ell}
-%    (\yy - \cc_\ell)^\perp \cdot \eeta(\yy)\, ds_\yy, 
-%    &&\qquad \ell = 1,\ldots,M.
-%\end{alignat}
-%\end{subequations}
-%Here, the null space associated with the flux-free condition of $\ff$ is
-%addressed with  $\NN_0$ which is the integral operator with kernel
-%$N_0(\xx,\yy) = \nn(\xx) \otimes \nn(\yy)$, $\xx,\yy \in \Gamma$.  In
-%this work, $\ff$ is the prescribed velocity, which is equal to $\UU$ on
-%the outer wall, $\Gamma$, and equal to zero on the eroding bodies,
-%$\gamma_\ell$, $\ell=1,\ldots,M$.
 
 Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 corresponding deformation tensor, pressure, and vorticity at $\xx \in
