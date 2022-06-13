@@ -222,9 +222,9 @@ a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a
 To accurately and efficiently solve the Stokes
   equations~\eqref{eqn:StokesEq}, we reformulate the system as a
   boundary integral equation (BIE). Applying the same approach as our
-  previous work~\citep{qua-moo2018}, we represent the velocity as the
-  sum of a double-layer potential and a combination of Stokeslets and
-  rotlets~\cite{pow-mir1987}
+  previous works~\citep{quaife2018boundary, chiu2020viscous}, we
+  represent the velocity as the sum of a double-layer potential and a
+  combination of Stokeslets and rotlets~\cite{pow-mir1987}
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + \sum_{\ell=1}^{M}\left(
     S[\llambda_\ell](\xx) + R[\xi_\ell](\xx)\right), 
@@ -259,23 +259,27 @@ equation
     \mathbf{0} &= -\frac{1}{2}\eeta(\xx) + \DDD[\eeta](\xx) + 
       \sum_{\ell=1}^{M}\left(S[\llambda_\ell](\xx) + R[\xi_\ell](\xx)\right), 
       &&\xx \in \gamma_\ell, \: \ell = 1,\ldots,M, \\
-    \llambda_\ell &= \int_{\gamma_i} \eeta(\yy) \, ds_\yy, 
+    \llambda_\ell &= \int_{\gamma_\ell} \eeta(\yy) \, ds_\yy, 
       &&\ell = 1,\ldots,M, \\
-    \xi_\ell &= \int_{\gamma_i} (\yy - \cc_i)^\perp \cdot 
+    \xi_\ell &= \int_{\gamma_\ell} (\yy - \cc_\ell)^\perp \cdot 
       \eeta(\yy) \, ds_\yy, &&\ell = 1,\ldots,M,
   \end{alignat}
 \end{subequations}
-then the representation~\eqref{eqn:velocity}
-satisfies~\eqref{eqn:StokesEq}. We solve~\eqref{eqn:FredBIE} by choosing
-equispaced collocation points on $\gamma_\ell$ and $\Gamma$, and then
-replacing the integrals with quadrature rules. This results in a linear
-system with a mesh-independent condition number, and it is solved
-iteratively with GMRES.
+then the representation~\eqref{eqn:velocity} satisfies the Stokes
+equations with the required boundary conditions~\eqref{eqn:StokesEq}. We
+solve~\eqref{eqn:FredBIE} by discretizing $\gamma_\ell$ and $\Gamma$ at
+equispaced collocation points, and then replacing the integrals with
+quadrature rules. This results in a linear system with a
+mesh-independent condition number, and it is solved iteratively with
+GMRES.
 
-We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$, and use similar
-notation for $\yy$, $\nn$, and $\eeta$. We also interpret $\gamma$, the
-boundary of the $i^{th}$ grain or the bounding box $\Gamma$, as a Jordan
-curve in $\CC$. We introduce the functions
+Instead of evaluating the Stokes double-layer
+potential~\eqref{eqn:velocityDLP} as a contour integral in $\RR^2$, we
+convert the integral to a sum of contour integrals around Jordan curves
+in $\CC$. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$, and use
+similar notation for $\yy$, $\nn$, and $\eeta$. We also interpret
+$\gamma$, the boundary of the $i^{th}$ grain or the bounding box
+$\Gamma$, as a Jordan curve in $\CC$. We introduce the functions
 \begin{align}
   \tau_1(y) = \eta(y) \overline{n(y)} \Re(n(y)), \quad 
   \tau_2(y) = \eta(y) \overline{n(y)} \Im(n(y)).
@@ -293,28 +297,59 @@ We then define the five Cauchy integrals
 \end{align}
 Then, the first and second components of the Stokes double-layer
 potential are
+\begin{subequations}
+  \begin{align}
+    u_1(x) &= -\Re(x)\Re(v_1'(x)) - \Im(x)\Re(v_2'(x)) + 
+             \Re(v_3'(x)) + \Re(v_4(x)) \\
+    u_2(x) &= +\Re(x)\Im(v_1'(x)) + \Im(x)\Im(v_2'(x)) - 
+             \Im(v_3'(x)) + \Re(v_5(x)),
+  \end{align}
+  \label{eqn:velocityCauchy}
+\end{subequations}
+respectively. The hydrodynamic components of the deformation tensor are
+\begin{subequations}
+  \begin{align}
+    \pderiv{u_1}{x_1} &= -\Re(v'_1(x)) + \Re(v''_3(x)) + \Re(v'_4(x))
+                         -\Re(x)\Re(v''_1(x)) - \Im(x)\Re(v''_2(x)) \\
+    \pderiv{u_1}{x_2} &= -\Re(v'_2(x)) - \Im(v''_3(x)) - \Im(v'_4(x))
+                         +\Re(x)\Im(v''_1(x)) + \Im(x)\Im(v''_2(x)) \\
+    \pderiv{u_2}{x_1} &= +\Im(v'_1(x)) - \Im(v''_3(x)) + \Re(v'_5(x))
+                         +\Re(x)\Im(v''_1(x)) + \Im(x)\Im(v''_2(x)) \\
+    \pderiv{u_2}{x_2} &= +\Im(v'_2(x)) - \Re(v''_3(x)) - \Im(v'_5(x))
+                         +\Re(x)\Re(v''_1(x)) + \Im(x)\Re(v''_2(x)) 
+  \end{align}
+  \label{eqn:deformationCauchy}
+\end{subequations}
+Having the deformation tensor at hand, the vorticity can be shown to
+satisfy
 \begin{align}
-  u_1(x) &= -\Re(x)\Re(v_1'(x)) - \Im(x)\Re(v_2'(x)) + 
-           \Re(v_3'(x)) + \Re(v_4(x)) \\
-  u_2(x) &= +\Re(x)\Im(v_1'(x)) + \Im(x)\Im(v_2'(x)) - 
-           \Im(v_3'(x)) + \Re(v_5(x)),
+  \omega(x) = \pderiv{u_2}{x_1} - \pderiv{u_1}{x_2} = 
+     \Im(v_1'(x)) + \Re(v_2'(x)) + \Re(v_5'(x)) + \Im(v_4'(x)).
+  \label{eqn:vorticityCauchy}
 \end{align}
-respectively. The vorticity can be shown to satisfy
-\begin{align}
-  \omega(x) = \Im(v_1'(x)) + \Re(v_2'(x)) + 
-     \Re(v_5'(x)) + \Im(v_4'(x)).
-\end{align}
-We note that the vorticity only requires first derivatives of Cauchy
-integrals, but the stress tensor involves second derivatives.
+We note that the deformation tensor requires second-order derivatives of
+Cauchy integrals, but the vorticity only requires first-order
+derivatives.
 
-The accuracy of the method is determined by the accuracy of the
-quadrature rule applied to equation~\eqref{eqn:FredBIE}. A quadrature
-rule for~\eqref{eqn:velocityDLP} that achieves spectral accuracy writes
-the Stokes double-layer potential as a collection of Cauchy integrals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quadrature for Cauchy integrals}
+The accuracy of our method is determined by the accuracy of the
+quadrature rule applied to equation~\eqref{eqn:FredBIE}. Since we have
+written the Stokes double-layer potential
+velocity~\eqref{eqn:velocityCauchy}, deformation
+tensor~\eqref{eqn:deformationCauchy}, and
+vorticity~\eqref{eqn:vorticityCauchy} as a sum of Cauchy integrals and
+their derivatives, the accuracy of the method depends on the accuracy of
+computing a general Cauchy integral
 \begin{align}
   v(x) = \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x-y} \, dy.
+  \label{eqn:cauchy1}
 \end{align}
-The boundary data of $v(x)$ satisfies the Sokhotski-Plemelj jump relation
+Here we describe a quadrature formulae that was first used to
+approximate analytic functions~\cite{ioa-pap-per1991}, and then extended
+to Stokes layer potentials~\cite{bar-wu-vee2015}. The quadrature
+requires the boundary data of the analytic function~\eqref{eqn:cauchy1}
+which satisfies the Sokhotski-Plemelj jump relation
 \begin{align}
   v^{-}(x_0) = \lim_{\substack{x \rightarrow x_0 \\ x \in \Omega}} \int_{\gamma}
     \frac{\eta(y)}{x-y}\, dy = -\frac{1}{2}\eta(x_0) - 
@@ -328,175 +363,219 @@ by its boundary data alone using the Cauchy Integral Theorem
 \begin{subequations}
   \label{eqn:cauchy}
   \begin{alignat}{3}
-  v(x) &= \frac{1}{2\pi i}\int_{\bd\Omega} 
+  \label{eqn:cauchyv}
+  v(x) &= \frac{1}{2\pi i}\int_{\gamma} 
     \frac{v^{-}(y)}{y-x} \,dy, \\
-  v'(x) &= \frac{1}{2\pi i} \int_{\bd\Omega}
+  v'(x) &= \frac{1}{2\pi i} \int_{\gamma}
     \frac{v^{-}(y)}{(y-x)^2} \, dy, \\
-  v''(x) &= \frac{1}{\pi i} \int_{\bd\Omega}
+  v''(x) &= \frac{1}{\pi i} \int_{\gamma}
     \frac{v^{-}(y)}{(y-x)^3} \, dy.
   \end{alignat}
 \end{subequations}
-Note that we require second-order derivatives to compute the shear
-stress.
 
+To approximate the Cauchy integrals and its
+derivatives~\eqref{eqn:cauchy}, the trapezoid rule achieves spectral
+accuracy. For example, the Cauchy integral~\eqref{eqn:cauchyv} can be
+approximated as
+\begin{align}
+  v(x) \approx \frac{1}{2\pi i} \sum_{j=1}^{N} 
+    w_j \frac{v^{-}(y_j)}{y_j - x},
+  \label{eqn:trap}
+\end{align}
+where $y_j$ are equispaced points on $\gamma$, $w_j = L/N$, and $L$ is
+the length of $\gamma$. Because the integrand is both periodic and
+smooth, given a fixed points $x$, the trapezoid rule achieves spectral
+accuracy~\cite{tre-wei2014}. However, for a fixed $N$, the quadrature
+error is not bounded uniformly with respect to $x$ because the
+derivative of the integrand grows without bound as $x$ approaches
+$\gamma$. This error is problematic for many of our simulations since we
+allow for eroding bodies to be arbitrarily close to one another. In
+contrast to the Cauchy integral~\eqref{eqn:cauchyv}, the integrand in
+the identity
+\begin{align}
+  \frac{1}{2\pi i}\int_{\gamma} 
+    \frac{v^{-}(y) - v(x)}{y-x} \, dy = 0, \quad x \in \Omega,
+  \label{eqn:trap2}
+\end{align}
+is bounded with respect to $x$, and therefore the error of the trapezoid
+rule is bounded with respect to $x$. Applying the trapezoid rule, we
+have
+\begin{align}
+  \frac{1}{2\pi i}\sum_{j=1}^{N} w_{j} 
+    \frac{v^{-}(y_j) - v(x)}{y_j - x} \approx 0,
+\end{align}
+where the error is independent of $x$. Rearranging, we have
+\begin{align}
+  v(x) \approx \left(\frac{1}{2\pi i}\sum_{j=1}^N 
+    \frac{v^{-}(y_j)}{y_j - x} w_j \right) \Bigg/
+  \left(\frac{1}{2\pi i}\sum_{j=1}^N \frac{1}{y_j - x} w_j \right), 
+  \quad x \in \Omega.
+  \label{eqn:vBary}
+\end{align}
+Note that the numerator in~\eqref{eqn:vBary} is identical to
+equation~\eqref{eqn:trap}, while the denominator is an approximation of
+the analytic function $v(x) = 1$. As $x$ approaches $\gamma$, the error
+in the numerator and denominator grow, however, since the integrand in
+equation~\eqref{eqn:trap2} is bounded independent of $x$, the error of
+the ratio is bounded independent of $x$.
 
 % SNIPPET
 %This has the advantage that only the one-dimensional boundary of the domain must be discretized, and, with appropriate quadrature formulas and fast summation methods, the result is a high-fidelity numerical simulation with near-optimal computational complexity.
 
 %-----------------------------------------------------------------------------------------------%
-\subsection{Boundary Integral Representation in $\RR^2$}
+%\subsection{Boundary Integral Representation in $\RR^2$}
 %-----------------------------------------------------------------------------------------------%
 
-\vsp{2} \nick{Finished rewording up to here} \vsp{2}
+%\vsp{2} \nick{Finished rewording up to here} \vsp{2}
+%
+%Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
+%corresponding deformation tensor, pressure, and vorticity at $\xx \in
+%\Omega$ are written in terms of layer potentials~\citep{qua-moo2018}.
+%To compute the deformation tensor for $\xx \in \gamma$, we include the
+%jump term
+%\begin{align}
+%  \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
+%    \begin{array}{cc}
+%      s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
+%    \end{array}
+%  \right].
+%  \label{eqn:deformationJump}
+%\end{align}
+%Finally, the deformation tensor, pressure, and vorticity due to the
+%Stokeslets and rotlets are readily available~\citep{poz1992}. Having
+%computed the deformation tensor on $\gamma$, the shear stress is
+%computed using equation~\eqref{eqn:shearStress}. 
 
-Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
-corresponding deformation tensor, pressure, and vorticity at $\xx \in
-\Omega$ are written in terms of layer potentials~\citep{qua-moo2018}.
-To compute the deformation tensor for $\xx \in \gamma$, we include the
-jump term
-\begin{align}
-  \frac{1}{2} \left(\pderiv{\eeta}{\ss} \cdot \ss \right) \left[
-    \begin{array}{cc}
-      s_x^2 - s_y^2 & 2s_x s_y \\ 2s_x s_y & s_y^2 - s_x^2
-    \end{array}
-  \right].
-  \label{eqn:deformationJump}
-\end{align}
-Finally, the deformation tensor, pressure, and vorticity due to the
-Stokeslets and rotlets are readily available~\citep{poz1992}. Having
-computed the deformation tensor on $\gamma$, the shear stress is
-computed using equation~\eqref{eqn:shearStress}. 
-
-%-----------------------------------------------------------------------------------------------%
-\subsection{Cauchy Integral Formulation}
-\label{sec:DLPcomplex}
-%-----------------------------------------------------------------------------------------------%
-The velocity double-layer potential~\eqref{eqn:velocityDLP}, and its
-corresponding deformation tensor, pressure, and vorticity are all
-written as layer potentials in $\RR^2$. However, the quadrature method
-we introduce in section~\ref{sec:method} requires complex-valued
-representations. The first step to form a complex representation is to
-write the Laplace double-layer potential as the complex integral
-\begin{align}
-  \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
-    \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)),
-\end{align}
-where
-\begin{align}
-  v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega.
-  \label{eqn:laplaceComplex}
-\end{align}
-Here $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
-counterparts of $\xx = (x_1,x_2),\yy = (y_1,y_2) \in \RR^2$, and $\eta =
-\eta_1 + i \eta_2$ is the complex counterpart of $\eeta =
-(\eta_1,\eta_2)$. Therefore, depending on the formulation of the layer
-potential, $\Omega$ is interpreted as a subset of $\RR^2$ or $\CC$.
-Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
-first finding the boundary data of $v$. If $\Omega$ is a
-simply-connected interior domain, then the boundary data of $v$
-satisfies the Sokhotski-Plemelj jump relation
-\begin{align}
-  \label{eqn:SPrelation}
-  v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
-\end{align}
-For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
-for multiply-connected domains, such as a porous media, $\bd\Omega$ is
-decomposed into its different connected components and the appropriate
-jump relation is applied.  Having computed the boundary data of the
-holomorphic function $v$, by the Cauchy integral theorem we have
-\begin{subequations}
-  \label{eqn:cauchy}
-  \begin{alignat}{3}
-  v(x) &= \frac{1}{2\pi i}\int_{\bd\Omega} 
-    \frac{v(y)}{y-x} \,dy, \\
-  v'(x) &= \frac{1}{2\pi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^2} \, dy, \\
-  v''(x) &= \frac{1}{\pi i} \int_{\bd\Omega}
-    \frac{v(y)}{(y-x)^3} \, dy,
-  \end{alignat}
-\end{subequations}
-for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
-function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
-function defined in equation~\eqref{eqn:laplaceComplex}, and its first
-two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
-  
-Finally, the Stokes double-layer potential~\eqref{eqn:velocityDLP} can
-be written using a Laplace double-layer
-potential~\eqref{eqn:laplaceComplex} and its gradients 
-\begin{equation}
-  \label{eqn:Stokes2Laplace}
-  \begin{aligned}
-    \DDD[\eeta](\xx) &= 
-      \frac{1}{2\pi} \int_{\bd\Omega} 
-        \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
-      \frac{1}{2\pi} \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
-      &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
-      \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
-        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
-  \end{aligned}
-\end{equation}
-Therefore, the Stokes double-layer potential can be written as a sum of
-Cauchy integrals and its first derivative~\citep{bar-wu-vee2015}
-\begin{equation}
-  \begin{aligned}
-    u_1(x) &= \Real (v[\psi_1](x)) + \Real (v'[y\cdot\eta](x)) 
-             -x_1\Real (v'[\eta_1](x)) - x_2\Real (v'[\eta_2](x)), \\
-    u_2(x) &= \Real (v[\psi_2](x)) - \Imag (v'[y\cdot\eta](x)) 
-         +x_1\Imag (v'[\eta_1](x)) + x_2\Imag (v'[\eta_2](x)),
-  \end{aligned}
-  \label{eqn:cauchyVelocity}
-\end{equation}
-where $y \cdot \eta = y_1 \eta_1 + y_2 \eta_2$, 
-\begin{align} 
-  \psi_1=(\eta_1+i\eta_2)\frac{\Real(n)}{n}, \quad
-  \psi_2=(\eta_1+i\eta_2)\frac{\Imag(n)}{n},
-\end{align}
-and $n \in \CC$ is the complex counterpart of the outward unit normal
-$\nn \in \RR^2$.
-
-%-----------------------------------------------------------------------------------------------%
-\subsection{Cauchy Integral Representation for the Gradient of the
-Double-Layer Potential}
-\label{sec:gradDLPcomplex}
-%-----------------------------------------------------------------------------------------------%
-Computing the shear stress and vorticity requires a complex-valued layer
-potential representation of the velocity gradient.  The deformation
-tensor at $x \in \Omega$ is found by computing the derivatives of the
-expressions for $u_1$ and $u_2$ in equation~\eqref{eqn:cauchyVelocity}  
-\begin{equation}
-\label{eqn:cauchyGradient}
-  \begin{aligned}
-    \pderiv{u_1}{x_1} &= +\Real (v'[\psi_1](x)) + 
-    \Real (v''[y\cdot\eta](x)) - \Real (v'[\eta_1](x)) \\
-    &- x_1\Real (v''[\eta_1](x)) - x_2\Real (v''[\eta_2](x)), \\
-    \pderiv{u_1}{x_2} &= - \Imag (v'[\psi_1](x)) - 
-    \Imag (v''[y\cdot\eta](x)) + x_1\Imag (v''[\eta_1](x)) \\
-    &- \Real (v'[\eta_2](x)) + x_2\Imag (v''[\eta_2](x)), \\
-    \pderiv{u_2}{x_1} &= +\Real (v'[\psi_2](x)) - 
-    \Imag (v''[y\cdot\eta](x)) + \Imag (v'[\eta_1](x))  \\
-    &+ x_1\Imag (v''[\eta_1](x)) + x_2\Imag (v''[\eta_2](x)), \\
-    \pderiv{u_2}{x_2} &= -\Imag (v'[\psi_2](x)) - 
-    \Real (v''[y\cdot\eta](x)) + x_1\Real (v''[\eta_1](x)) \\
-    &+ \Imag (v'[\eta_2](x)) + x_2\Real (v''[\eta_2](x)).
-  \end{aligned}
-\end{equation}
-The same expressions are used to compute the deformation tensor for $x
-\in \bd\Omega$, except that the jump
-condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
-the shear stress, the deformation tensor on $\bd\Omega$ is applied to
-the normal and tangent vectors as in equation~\eqref{eqn:shearStress}.
-The velocity gradient is also used to compute the vorticity in the fluid
-bulk.  For $x \in \Omega$, the Cauchy integral representation of the
-vorticity at $x \in \Omega$ is
-\begin{align}
-  \omega(x) = 
-    \Real (v'[\psi_2](x)) + \Imag (v'[\psi_1](x))+ 
-    \Real (v'[\eta_2](x))+ \Imag (v'[\eta_1](x)).
-\end{align}
+%%-----------------------------------------------------------------------------------------------%
+%\subsection{Cauchy Integral Formulation}
+%\label{sec:DLPcomplex}
+%%-----------------------------------------------------------------------------------------------%
+%The velocity double-layer potential~\eqref{eqn:velocityDLP}, and its
+%corresponding deformation tensor, pressure, and vorticity are all
+%written as layer potentials in $\RR^2$. However, the quadrature method
+%we introduce in section~\ref{sec:method} requires complex-valued
+%representations. The first step to form a complex representation is to
+%write the Laplace double-layer potential as the complex integral
+%\begin{align}
+%  \DD[\eeta](\xx) = \frac{1}{2\pi} \int_{\bd\Omega} 
+%    \frac{\rr \cdot \nn}{\rho^2}\eeta(\yy)\, ds_\yy = \Real (v(x)),
+%\end{align}
+%where
+%\begin{align}
+%  v(x) = \frac{1}{2\pi i} \int_{\bd\Omega}
+%    \frac{\eta(y)}{x - y} \, dy, \quad x \in \Omega.
+%  \label{eqn:laplaceComplex}
+%\end{align}
+%Here $x = x_1 + i x_2,y = y_1 + i y_2 \in \CC$ are the complex
+%counterparts of $\xx = (x_1,x_2),\yy = (y_1,y_2) \in \RR^2$, and $\eta =
+%\eta_1 + i \eta_2$ is the complex counterpart of $\eeta =
+%(\eta_1,\eta_2)$. Therefore, depending on the formulation of the layer
+%potential, $\Omega$ is interpreted as a subset of $\RR^2$ or $\CC$.
+%Equation~\eqref{eqn:laplaceComplex} is converted to a Cauchy integral by
+%first finding the boundary data of $v$. If $\Omega$ is a
+%simply-connected interior domain, then the boundary data of $v$
+%satisfies the Sokhotski-Plemelj jump relation
+%\begin{align}
+%  \label{eqn:SPrelation}
+%  v(x) = - \frac{1}{2} \eta(x) + \frac{1}{2\pi i} \int_{\bd\Omega}
+%    \frac{\eta(y)}{x-y}\, dy, \quad x \in \bd\Omega.
+%\end{align}
+%For exterior domains, the jump term changes from $-1/2$ to $1/2$, and
+%for multiply-connected domains, such as a porous media, $\bd\Omega$ is
+%decomposed into its different connected components and the appropriate
+%jump relation is applied.  Having computed the boundary data of the
+%holomorphic function $v$, by the Cauchy integral theorem we have
+%\begin{subequations}
+%  \label{eqn:cauchy}
+%  \begin{alignat}{3}
+%  v(x) &= \frac{1}{2\pi i}\int_{\bd\Omega} 
+%    \frac{v(y)}{y-x} \,dy, \\
+%  v'(x) &= \frac{1}{2\pi i} \int_{\bd\Omega}
+%    \frac{v(y)}{(y-x)^2} \, dy, \\
+%  v''(x) &= \frac{1}{\pi i} \int_{\bd\Omega}
+%    \frac{v(y)}{(y-x)^3} \, dy,
+%  \end{alignat}
+%\end{subequations}
+%for $x \in \Omega$.  Since $v(x)$ depends on the complex-valued density
+%function $\eta$, we use the notation $v[\eta](x)$ for the holomorphic
+%function defined in equation~\eqref{eqn:laplaceComplex}, and its first
+%two derivatives are written as $v'[\eta](x)$ and $v''[\eta](x)$.  
+%  
+%Finally, the Stokes double-layer potential~\eqref{eqn:velocityDLP} can
+%be written using a Laplace double-layer
+%potential~\eqref{eqn:laplaceComplex} and its gradients 
+%\begin{equation}
+%  \label{eqn:Stokes2Laplace}
+%  \begin{aligned}
+%    \DDD[\eeta](\xx) &= 
+%      \frac{1}{2\pi} \int_{\bd\Omega} 
+%        \frac{\nn}{\rho^2} (\rr \cdot \eeta) \, ds_\yy + 
+%      \frac{1}{2\pi} \nabla \int_{\bd\Omega}
+%        \frac{\rr \cdot \nn}{\rho^2} (\yy \cdot \eeta) \, ds_\yy \\
+%      &- \frac{1}{2\pi} x_1 \nabla \int_{\bd\Omega}
+%        \frac{\rr \cdot \nn}{\rho^2}\eta_1(\yy) \, ds_\yy -
+%      \frac{1}{2\pi} x_2 \nabla \int_{\bd\Omega}
+%        \frac{\rr \cdot \nn}{\rho^2}\eta_2(\yy) \, ds_\yy.
+%  \end{aligned}
+%\end{equation}
+%Therefore, the Stokes double-layer potential can be written as a sum of
+%Cauchy integrals and its first derivative~\citep{bar-wu-vee2015}
+%\begin{equation}
+%  \begin{aligned}
+%    u_1(x) &= \Real (v[\psi_1](x)) + \Real (v'[y\cdot\eta](x)) 
+%             -x_1\Real (v'[\eta_1](x)) - x_2\Real (v'[\eta_2](x)), \\
+%    u_2(x) &= \Real (v[\psi_2](x)) - \Imag (v'[y\cdot\eta](x)) 
+%         +x_1\Imag (v'[\eta_1](x)) + x_2\Imag (v'[\eta_2](x)),
+%  \end{aligned}
+%  \label{eqn:cauchyVelocity}
+%\end{equation}
+%where $y \cdot \eta = y_1 \eta_1 + y_2 \eta_2$, 
+%\begin{align} 
+%  \psi_1=(\eta_1+i\eta_2)\frac{\Real(n)}{n}, \quad
+%  \psi_2=(\eta_1+i\eta_2)\frac{\Imag(n)}{n},
+%\end{align}
+%and $n \in \CC$ is the complex counterpart of the outward unit normal
+%$\nn \in \RR^2$.
+%
+%%-----------------------------------------------------------------------------------------------%
+%\subsection{Cauchy Integral Representation for the Gradient of the
+%Double-Layer Potential}
+%\label{sec:gradDLPcomplex}
+%%-----------------------------------------------------------------------------------------------%
+%Computing the shear stress and vorticity requires a complex-valued layer
+%potential representation of the velocity gradient.  The deformation
+%tensor at $x \in \Omega$ is found by computing the derivatives of the
+%expressions for $u_1$ and $u_2$ in equation~\eqref{eqn:cauchyVelocity}  
+%\begin{equation}
+%\label{eqn:cauchyGradient}
+%  \begin{aligned}
+%    \pderiv{u_1}{x_1} &= +\Real (v'[\psi_1](x)) + 
+%    \Real (v''[y\cdot\eta](x)) - \Real (v'[\eta_1](x)) \\
+%    &- x_1\Real (v''[\eta_1](x)) - x_2\Real (v''[\eta_2](x)), \\
+%    \pderiv{u_1}{x_2} &= - \Imag (v'[\psi_1](x)) - 
+%    \Imag (v''[y\cdot\eta](x)) + x_1\Imag (v''[\eta_1](x)) \\
+%    &- \Real (v'[\eta_2](x)) + x_2\Imag (v''[\eta_2](x)), \\
+%    \pderiv{u_2}{x_1} &= +\Real (v'[\psi_2](x)) - 
+%    \Imag (v''[y\cdot\eta](x)) + \Imag (v'[\eta_1](x))  \\
+%    &+ x_1\Imag (v''[\eta_1](x)) + x_2\Imag (v''[\eta_2](x)), \\
+%    \pderiv{u_2}{x_2} &= -\Imag (v'[\psi_2](x)) - 
+%    \Real (v''[y\cdot\eta](x)) + x_1\Real (v''[\eta_1](x)) \\
+%    &+ \Imag (v'[\eta_2](x)) + x_2\Real (v''[\eta_2](x)).
+%  \end{aligned}
+%\end{equation}
+%The same expressions are used to compute the deformation tensor for $x
+%\in \bd\Omega$, except that the jump
+%condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
+%the shear stress, the deformation tensor on $\bd\Omega$ is applied to
+%the normal and tangent vectors as in equation~\eqref{eqn:shearStress}.
+%The velocity gradient is also used to compute the vorticity in the fluid
+%bulk.  For $x \in \Omega$, the Cauchy integral representation of the
+%vorticity at $x \in \Omega$ is
+%\begin{align}
+%  \omega(x) = 
+%    \Real (v'[\psi_2](x)) + \Imag (v'[\psi_1](x))+ 
+%    \Real (v'[\eta_2](x))+ \Imag (v'[\eta_1](x)).
+%\end{align}
 %\end{comment}
 
 %-----------------------------------------------------------------------------------------------%
