@@ -4,6 +4,6 @@
 
 using Erosion
 
-params = ParamSet(label="40-13")
+params = ParamSet(label="20-16")
 run_erosion(params)
 post_process(params)
