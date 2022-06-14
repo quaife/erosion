@@ -117,11 +117,10 @@
 \address[NJIT]{New Jersey Institute of Technology}
 
 \begin{abstract}
-Using a Cauchy integral formulation of the boundary integral equations, we numerically simulation the erosion a porous medium comprised of $O(100)$ solid bodies embedded in a Stokes flow. The bodies comprising the porous medium are resolved individually and erode under the action of surface shear stress. In particular, changes in the morphology of individual bodies are resolved in detail, and these microscopic changes give rise to larger-scale features in the medium such as channelization. The Cauchy-integral and barycentric quadrature formulas allows us to resolve configurations of tightly packed and nearly contacting bodies. Armed with these methods, we observe anisotropy 
+Using a Cauchy integral formulation of the boundary integral equations, we simulate the erosion a porous medium comprised of $O(100)$ solid bodies embedded in a Stokes flow. The grains of the medium are resolved individually and erode under the action of surface shear stress. In particular, detailed changes in grain morphology are resolved, and these microscopic changes give rise to larger-scale features in the medium such as channelization. The Cauchy-integral and barycentric quadrature formulas allows us to resolve configurations of tightly packed and nearly contacting bodies. We observe substantial anisotropy to develop over the course of erosion; that is, the configurations that result from erosion generally permit flow in the longitudinal direction more easily than in the transverse direction by a factor of roughly five.  \\
+Tie it to alternate hypothesis in groundwater.
 \end{abstract}
 \maketitle
-
-impinging intervening interal
 
 % Original ideas
 %We numerically simulate the erosion of a porous medium due to an internally flowing fluid, with solid constituents of the medium eroding under the action of surface shear stress. 
@@ -137,9 +136,9 @@ impinging intervening interal
 
 Effects of flow-induced erosion are visible across a range of scales in nature, from massive geological structures, to mesoscopic patterns, and down to the tiny granular constituents that comprise a porous medium. In the case of a porous medium specifically, it has been long recognized that bulk properties of mediums encountered in nature are typically anisotropic, so that the medium allows flow in a preferred direction more easily. This anisotropy is commonly attributed to how grains are deposited, with their longest dimension parallel to the settling bed, so that they allow flow preferentially in the horizontal direction. Controlled experiments, however, have not been performed to test this hypothesis. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
-Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations (cite new paper with Shang). 
+Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations \cite{chiu2020viscous}
 
-% Need to include descriptor 'high-fidelity' for our simulation.
+% Can include descriptor 'high-fidelity' for our simulation.
 
 Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
 
@@ -173,9 +172,6 @@ Anisotropy in groundwater is around 10 \cite{anderson2015applied}.
 
 
 
-% NOTE: THIS SECTION HAS BEEN PLAGIARIZED FROM JFM 2020
-% SO WE NEED TO PARAPHRASE IT
-%\begin{comment}
 %-----------------------------------------------------------------------------------------------%
 \section{Governing Equations}
 \label{sec:formulation}
@@ -426,7 +422,6 @@ the ratio is bounded independent of $x$.
 %\subsection{Boundary Integral Representation in $\RR^2$}
 %-----------------------------------------------------------------------------------------------%
 
-%\vsp{2} \nick{Finished rewording up to here} \vsp{2}
 %
 %Once~\eqref{eqn:BIE} is solved for the density function $\eeta$, the
 %corresponding deformation tensor, pressure, and vorticity at $\xx \in
@@ -576,7 +571,6 @@ the ratio is bounded independent of $x$.
 %    \Real (v'[\psi_2](x)) + \Imag (v'[\psi_1](x))+ 
 %    \Real (v'[\eta_2](x))+ \Imag (v'[\eta_1](x)).
 %\end{align}
-%\end{comment}
 
 %-----------------------------------------------------------------------------------------------%
 \section{Measuring permeability and other porous-media properties}
