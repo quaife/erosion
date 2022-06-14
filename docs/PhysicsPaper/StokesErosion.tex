@@ -127,15 +127,20 @@ Tie it to alternate hypothesis in groundwater.
 %We numerically simulate the erosion of a porous medium due to an internally flowing fluid.  The solid constituents of the porous medium erode under the action of surface shear stress. As the particles disintegrate, they elongate in the direction of the flow, giving rise to anisotropic conductivity of the porous medium.
 
 % dematerialize, disintegrate
+% internal, permeating, intervening
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 
 
 \section{Introduction}
 
-The effects of flow-induced erosion are visible across a range of scales in the natural world, from massive geological structures \cite{abrams2009growth, perkins2015amplification, mac2020ultra, sharma2022alcove, mac2022morphological}, to mesoscopic patterns \cite{berhanu2012shape, bertagni2021hydrodynamic}, and down to the  granular constituents that comprise a porous medium \cite{zareei2022temporal}.
+The effects of flow-induced erosion are visible across a range of scales in the natural world, from massive geological structures \cite{abrams2009growth, perkins2015amplification, mac2020ultra, sharma2022alcove, mac2022morphological}, to mesoscopic patterns \cite{berhanu2012shape, bertagni2021hydrodynamic}, and down to the granular constituents comprising porous media \cite{zareei2022temporal}. Porous media encountered in natural settings typically exhibit {\em anisotropic} material properties,
 
+
+\vsp{5}
 % ORIGINAL BELOW
-Effects of flow-induced erosion are visible across a range of scales, from massive geological structures, to mesoscopic patterns, and down to the tiny granular constituents that comprise a porous medium. In the case of a porous medium specifically, it has been long recognized that bulk properties of mediums encountered in nature are typically anisotropic, so that the medium allows flow in a preferred direction more easily. This anisotropy is commonly attributed to how grains are deposited, with their longest dimension parallel to the settling bed, so that they allow flow preferentially in the horizontal direction. Controlled experiments, however, have not been performed to test this hypothesis. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
+Effects of flow-induced erosion are visible across a range of scales, from massive geological structures, to mesoscopic patterns, and down to the tiny granular constituents that comprise a porous medium. 
+In the case of a porous medium specifically, it has been long recognized that bulk properties of mediums encountered in nature are typically anisotropic, so that the medium allows flow in a preferred direction more easily. 
+This anisotropy is commonly attributed to how grains are deposited, with their longest dimension parallel to the settling bed, so that they allow flow preferentially in the horizontal direction. Controlled experiments, however, have not been performed to test this hypothesis. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
 Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations \cite{chiu2020viscous}
 
@@ -721,7 +726,7 @@ With both the longitudinal and transverse components of permeability calculated,
 \begin{equation}
 \anis = k_{11} / k_{22}
 \end{equation}
-Note that the random configuration of circles used to initialize the erosion simulations will have an anisotropy nearly equal to one, and as the configuration erodes, the configuration would be expected to permit flow in the longitudinal direction more easily than in the transverse direction, yielding $\anis > 1$.
+Note that the random configuration of circles used to initialize the erosion simulations will have an anisotropy nearly equal to one. As this configuration erodes, it would be expected to permit flow in the longitudinal direction more easily than in the transverse direction, yielding $\anis > 1$.
 
 There are two mechanistic explanations for how erosion can create this anisotropy. First, the shear stresses could carve each individual body into a more slender form, thus creating anisotropy at the level of individual grains. Second, by removing material in a non-uniform way, could preferentially disintegrate certain bodies before others, leaving an overall configuration that exhibits anisotropy on the large scale, for example one with horizontally aligned channels. We will refer to these two possible mechanisms as {\em shape} anisotropy and {\em configurational} anisotropy respectively. As an extreme example, a tightly-packed horizontal row of circular bodies would exhibit configurational anisotropy but no shape anisotropy. Meanwhile, an array of highly eccentric ellipses, all oriented horizontally but positioned randomly, would exhibit high shape anisotropy and low configurational anisotropy.
 
@@ -730,7 +735,7 @@ There are two mechanistic explanations for how erosion can create this anisotrop
 
 We note that channelization is related to both shape and configurational anisotropy....
 
-It is possible to device a test to isolate these two types of anisotropy.
+It is possible to devise a test to isolate these two types of anisotropy.
 Introduce circular bodies with same centers of mass...
 Thus, the configurational anisotropy is defined as
 \begin{equation}
