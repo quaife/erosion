@@ -106,6 +106,8 @@ end
 
 # Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6,9
 # 100-9 looks quite good showing the configuration anisotropy near the end.
+# 80-4 is also great for configurational anisotropy.
+# 60-3 is a nice visual run for showing channelization.
 vplot_single("100-9")
 #---------------------------------------------------------------#
 
