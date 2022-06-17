@@ -117,7 +117,7 @@
 \address[NJIT]{New Jersey Institute of Technology}
 
 \begin{abstract}
-Using a Cauchy integral formulation of the boundary integral equations, we simulate the erosion a porous medium comprised of $O(100)$ solid bodies embedded in a Stokes flow. The grains of the medium are resolved individually and erode under the action of surface shear stress. In particular, detailed changes in grain morphology are resolved, and these microscopic changes give rise to larger-scale features in the medium such as channelization. The Cauchy-integral and barycentric quadrature formulas enable us to resolve configurations of tightly packed and nearly contacting bodies. We observe substantial anisotropy to develop over the course of erosion; that is, the configurations that result from erosion generally permit flow in the longitudinal direction more easily than in the transverse direction by a factor up to five.  \\
+Using a Cauchy integral formulation of the boundary integral equations, we simulate the erosion a porous medium comprised of $O(100)$ solid bodies embedded in a Stokes flow. The grains of the medium are resolved individually and erode under the action of surface shear stress. In particular, detailed changes in grain morphology are resolved, and these microscopic changes give rise to larger-scale features in the medium such as channelization. The Cauchy-integral formulation and associated quadrature formulas enable us to resolve configurations of tightly packed and nearly contacting bodies. We observe substantial anisotropy to develop over the course of erosion; that is, the configurations that result from erosion generally permit flow in the longitudinal direction more easily than in the transverse direction by a factor up to five.  \\
 Tie it to alternate hypothesis in groundwater.
 \end{abstract}
 \maketitle
@@ -134,20 +134,14 @@ Tie it to alternate hypothesis in groundwater.
 \section{Introduction}
 
 Flow-induced erosion acts across a range of scales in the natural world, from massive geological structures sculpted by wind or water \cite{abrams2009growth, perkins2015amplification, mac2020ultra, sharma2022alcove, mac2022morphological}, to mesoscopic patterns formed by surface or internal flows \cite{berhanu2012shape, bertagni2021hydrodynamic}, and down to the granular constituents of porous media as they slowly disintegrate in groundwater flows \cite{zareei2022temporal}. The shape-flow feedback of erosion can imprint across all of these scales, affecting both large-scale features and small-scale ones, such as the microstructure of porous materials.
-The porous media encountered in nature, for example, typically exhibit material {\em anisotropy} in that they permit seepage flow in certain directions more easily than in others. Typically, materials can be more permeable to flow in the longitudinal (or horizontal) direction than the transverse one by a factor of 5-20 \cite{bear1988dynamics, anderson2015applied}. Most commonly, this material anisotropy is attributed to the sedimentation process, in which, due to the fluid-structure interaction, non-spherical particles tend to settle with their long axis parallel to the plan of deposition \cite{bear1988dynamics}. Controlled experiments, however, have not been performed to test this hypothesis, and other mechanisms may be at work. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
+The porous media encountered in nature, for example, typically exhibit material {\em anisotropy} in that they permit seepage flow in certain directions more easily than in others. Typical materials are more permeable to flow in the longitudinal (or horizontal) direction than transversely by a factor of 5-20 \cite{bear1988dynamics, anderson2015applied}. Most commonly, this material anisotropy is attributed to the sedimentation process, in which, due to the fluid-structure interaction, non-spherical particles tend to settle with their long axis parallel to the plan of deposition \cite{bear1988dynamics}. Controlled experiments, however, have not been performed to test this hypothesis, and other mechanisms may be at work. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
-
+Our method merges highly-efficient and highly-accurate boundary-integral equation (BIE) methods with stable interface evolution methods to simulate the erosion of dense suspensions of solid bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of $O(100)$ solid bodies. The more recent Cauchy reformulation of the BIE and the associated  quadrature formulas allow us to resolve points of near contact between bodies, thus enabling high-fidelity simulation of dense suspensions of erodable bodies \cite{chiu2020viscous}.
 
 \vsp{5}
 
 
-Our method merges highly-efficient and highly-accurate boundary-integral methods with stable interface evolution methods to simulate the erosion of many solid-bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of order hundreds of solid bodies (please see \cite{Mitchell2016} for related work). The recent incorporation of barycentric interpolation methods permits simulation of tightly packed configurations \cite{chiu2020viscous}
-
-% Can include descriptor 'high-fidelity' for our simulation.
-
 Figure \ref{FigVortVel} shows an example illustration of 80 eroding bodies
-
-Anisotropy in groundwater is around 10 \cite{anderson2015applied}.
 
 %Maybe cite: \cite{Rycroft2016}
 % Cite paper by Ladd "Wormhole formation in dissolving fractures"
@@ -163,7 +157,6 @@ Anisotropy in groundwater is around 10 \cite{anderson2015applied}.
 \end{figure*}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 % Data from 80circ8
-
 
 \begin{comment}
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
