@@ -184,10 +184,11 @@ Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Ga
 The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than does the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed in order to compute the {\em steady} Stokes flow determined by \eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface (CITE previous erosion work). The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
 \begin{align}
 \Vn = \CE \, \abs{\tau}, 
-	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em erosion model}, \\
+	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em erosion model}, 
+\label{Vn0} \\
 \tau = -\mu \left( ( \nabla \uu + \nabla \uu^T) \nn \right) \cdot \ss
 	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em shear stress}.
-  \label{eqn:shearStress}
+\label{tau0}
 \end{align}
 where $\nn$ is a unit normal vector pointing into each body, $\ss$ is
 a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a material-dependent erosion constant.
@@ -463,7 +464,7 @@ work~\cite{chiu2020viscous}.
 %Finally, the deformation tensor, pressure, and vorticity due to the
 %Stokeslets and rotlets are readily available~\citep{poz1992}. Having
 %computed the deformation tensor on $\gamma$, the shear stress is
-%computed using equation~\eqref{eqn:shearStress}. 
+%computed using equation~\eqref{tau0}. 
 
 %%-----------------------------------------------------------------------------------------------%
 %\subsection{Cauchy Integral Formulation}
@@ -586,7 +587,7 @@ work~\cite{chiu2020viscous}.
 %\in \bd\Omega$, except that the jump
 %condition~\eqref{eqn:deformationJump} is included.  Finally, to compute
 %the shear stress, the deformation tensor on $\bd\Omega$ is applied to
-%the normal and tangent vectors as in equation~\eqref{eqn:shearStress}.
+%the normal and tangent vectors as in equation~\eqref{tau0}.
 %The velocity gradient is also used to compute the vorticity in the fluid
 %bulk.  For $x \in \Omega$, the Cauchy integral representation of the
 %vorticity at $x \in \Omega$ is
@@ -605,6 +606,14 @@ work~\cite{chiu2020viscous}.
 \subsection{Interface evolution}
 %-----------------------------------------------------------------------------------------------%
 
+With the flow and shear stresses computed, we seek to evolve the boundaries of erodable bodies through \eqref{Vn0}. For numerical stability, we modify \eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$, as in previous work \citep{quaife2018boundary}
+\begin{align}
+  \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
+    \frac{L}{2\pi} \kappa - 1 \right),
+\end{align}
+The last term is the smoothing with strength $\epsilon \ll 1$. This term is proportion to the spatial average of the shear stress, $\langle\abs{\tau}\rangle$, and the mean curvature is subtracted inside the parenthesis so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$.
+
+\vsp{5}
 
 % COPIED STRAIGHT FROM JFM 2020
 \nick{PLAGERIZED}
