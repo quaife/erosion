@@ -226,6 +226,7 @@ where
   \eeta(\yy) \, ds_\yy.
   \label{eqn:velocityDLP}
 \end{align}
+\todo{Maybe define what $\rr$ is.}
 Note that $\bd\Omega$ includes both the eroding bodies and the outer
 boundary. The Stokeslet and the rotlets are
 \begin{align}
@@ -264,7 +265,8 @@ GMRES.
 Instead of evaluating the Stokes double-layer
 potential~\eqref{eqn:velocityDLP} as a contour integral in $\RR^2$, we
 convert the integral to a sum of contour integrals around Jordan curves
-in $\CC$. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$, and use
+in $\CC$. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$ \todo{It looks like there is a typo with $x_x$.}
+and use
 similar notation for $\yy$, $\nn$, and $\eeta$. We also interpret
 $\gamma$, the boundary of the $i^{th}$ grain or the bounding box
 $\Gamma$, as a Jordan curve in $\CC$. We introduce the functions
@@ -611,7 +613,7 @@ With the flow and shear stresses computed, we seek to evolve the boundaries of e
   \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
     \frac{L}{2\pi} \kappa - 1 \right),
 \end{align}
-The last term is a smoothing term with strength $\epsilon \ll 1$ and proportional to the spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis,  the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, which represents the shear-dependent erosion law. In addition, we apply a narrow Gaussian filter to the distribution $\abs{\tau}$ to further improve stability.
+The last term is a smoothing term that has strength $\epsilon \ll 1$ and that scales with spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis,  the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, which represents the shear-dependent erosion law. In addition, we apply a narrow Gaussian filter to the distribution $\abs{\tau}$ to further improve stability.
 
 Rather than tracking the Cartesian coordinates of each surface, we employ the {\thL} formulation \nick{CITE} in which we track the tangent angle $\theta$ as a function of arc length and the total length $L$ of each body.  In this formulation, the curvature-dependent smoothing becomes a linear diffusive term, thus enabling the use of stable, implicit schemes for this stiff term. The remaining nonlinear terms are not stiff and can be treated by explicit time-stepping methods. In particular, we use an exponential integrator for the diffusion term and a Runge-Kutta method for all other terms, both of which are second order in time.
 
