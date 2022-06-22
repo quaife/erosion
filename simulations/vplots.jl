@@ -118,12 +118,12 @@ vplot_single("80-4")
 # STATISTICS: Make plots in Veusz for an ensemble of runs.
 
 # For a given number of bodies, return the labels for the saved runs.
-# Possible runs: 20:2,5,8; 40:3,7,8; 60:3,7,9; 80:4,7,9; 100:3,6
+# Possible runs: 20:2,5,8, 11,14,16; 40:3,7,8, 13; 60:3,7,9; 80:4,7,9; 100:3,6
 function get_runs(nbods::Integer)
 	if nbods == 20
-		return ["20-2", "20-5", "20-8", "20-11", "20-14", "20-16"]
+		return ["20-2", "20-5", "20-8"]
 	elseif nbods == 40
-		return ["40-3", "40-7", "40-8", "40-13"]
+		return ["40-3", "40-7", "40-8"]
 	elseif nbods == 60
 		return ["60-3", "60-7", "60-9"]
 	elseif nbods == 80
