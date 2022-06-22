@@ -611,7 +611,7 @@ With the flow and shear stresses computed, we seek to evolve the boundaries of e
   \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
     \frac{L}{2\pi} \kappa - 1 \right),
 \end{align}
-The last term is the smoothing with strength $\epsilon \ll 1$. This term is proportion to the spatial average of the shear stress, $\langle\abs{\tau}\rangle$, and the mean curvature is subtracted inside the parenthesis so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$.
+The last term is a smoothing term with strength $\epsilon \ll 1$ and proportional to the spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis,  the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, representing the shear-dependent erosion law.
 
 \vsp{5}
 
