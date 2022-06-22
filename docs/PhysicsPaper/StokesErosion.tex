@@ -137,24 +137,26 @@ We observe substantial anisotropy to develop over the course of erosion; that is
 
 	Flow-induced erosion acts across a range of scales in the natural world, from massive geological structures sculpted by wind or water \cite{abrams2009growth, perkins2015amplification, mac2020ultra, sharma2022alcove, mac2022morphological}, to mesoscopic patterns formed by surface or internal flows \cite{berhanu2012shape, bertagni2021hydrodynamic}, and down to the granular constituents of porous media as they slowly disintegrate in groundwater flows \cite{zareei2022temporal}. The associated nonlinear feedback between changing shapes and the surrounding flows can imprint across all of these scales, affecting large-scale features as well as small-scale ones, such as the microstructure of porous materials. Porous media encountered in nature, for example, typically exhibit material {\em anisotropy} in that they permit seepage flow in certain directions more easily than in others. Typical materials are more permeable to flow in the longitudinal (or horizontal) direction than transversely by a factor of 5-20 \cite{bear1988dynamics, anderson2015applied}. Most commonly, this material anisotropy is attributed to the sedimentation process, in which, due to the fluid-structure interaction, non-spherical particles tend to settle with their long axis parallel to the plan of deposition \cite{bear1988dynamics}. Controlled experiments, however, have not been performed to test this hypothesis, and other mechanisms may be at work. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
-	Our method merges highly-efficient and highly-accurate boundary-integral equation (BIE) methods with stable interface evolution methods to simulate the erosion of dense suspensions of solid bodies in the Stokes regime of groundwater flow \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of $O(100)$ solid bodies. The more recent Cauchy reformulation of the BIE and the associated  quadrature formulas allow us to resolve points of near contact between bodies, thus enabling high-fidelity simulation of dense suspensions of erodable bodies \cite{chiu2020viscous}. Though the governing fluid-flow equations (Stokes) in this regime are linear, the feedback between complex eroding geometries and the flow leads to highly nonlinear behavior.
+	Our method merges highly-efficient and highly-accurate boundary-integral equation (BIE) methods with stable interface evolution methods to simulate the erosion of dense suspensions of solid bodies in the Stokes flow regime relevant for groundwater-flow applications \cite{quaife2018boundary}. Originally inspired by related work in the high-Reynolds-number regime \cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in \cite{quaife2018boundary}, and can simulate the erosion of $O(100)$ solid bodies. The more recent Cauchy reformulation of the BIE and the associated  quadrature formulas allow us to resolve points of near contact between bodies, thus enabling high-fidelity simulation of dense suspensions of erodable bodies \cite{chiu2020viscous}. Though the governing fluid-flow equations (Stokes) are linear, the nonlinear feedback between evolving microstructure and flow give rise to highly complex and anisotropic configurations.
+	
+	Figure \ref{fig1} shows an example simulation in which 80 circular bodies of randomized sizes and positions are immersed in a Stokes flow that moves from left to right. Color depicts the local speed of the flow intervening between bodies to give a sense of where the flow is strongest. Over time, individual bodies erode in response to the shear stresses induced on them.
+The heterogeneous material removal creates visible features both at the level of individual bodies and the larger-scale configuration. For example, horizontally-oriented channels are clearly visible in the third and fourth frames.
+	
+%which regions of high flow speed create higher local shear rates, thus preferentially removing solid material, and further opening the channels. The positive feedback creates the channels that are clearly visible by in final two images.
 
-	Figure \ref{fig1} shows an example simulation of the erosion of 80 bodies, with the local speed of the intervening fluid flow shown by color. This simulation illustrates the {\em channelization} process, in which regions of high flow speed create higher local shear rates, thus preferentially removing solid material, and further opening the channels. The positive feedback creates the channels that are clearly visible by in final two images.
-
-%\ref{fig1}
+%Maybe cite: \cite{Rycroft2016}
+% Cite paper by Ladd "Wormhole formation in dissolving fractures"
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
 \begin{figure*}%[htbp]
 \centering \label{fig1}
 \includegraphics[width = 0.99 \textwidth]{./figs/Velocity-80-4.pdf}
-\caption{Numerical simulation of a dense suspension of 80 bodies eroding in a Stokes flow.
-Over time, the non-uniform erosion of material opens channels in the medium, leading to high anisotropy.}
+\caption{The erosion of a porous medium. In this simulation, an initial configuration of 80 circular bodies of randomized sizes and positions are embedded in a Stokes flow that moves from left to right. The figure shows four snapshots, evenly spaced in time, as the bodies erode in response to the local shear stresses induced by the flow. The local flow speed, shown by color, highlights the appearance of horizontally-aligned channels created by the shape-flow feedback. These channels contribute to the high anisotropy of the medium.
+}
 \end{figure*}
  %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
-
-%Maybe cite: \cite{Rycroft2016}
-% Cite paper by Ladd "Wormhole formation in dissolving fractures"
-
+% Times are 0, 0.28, 0.57, 0.85 of final time.
+% Porosities are 0.40, 0.49, 0.64, 0.86.
 
 %-----------------------------------------------------------------------------------------------%
 \section{Governing Equations}
