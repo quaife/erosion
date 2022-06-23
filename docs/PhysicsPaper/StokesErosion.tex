@@ -751,25 +751,21 @@ With the numerical methods in place, we now present results on how fluid-mechani
 
 \subsection{Single simulation results}
 
-To begin, we discuss a single simulation of 80 bodies eroding in Stokes flow. For reference, the simulation discussed here is the same one shown in Fig.~\ref{fig1}. The initial configuration consists of 80 circular bodies having randomized sizes and positions. The material-removal process alters both the shape of individual bodies as well as the overall structure of the pore network transmitting the flow, as can be seen in Fig.~\ref{fig1}. Initially, the solid bodies occupy $60\%$ of the area, or the porosity is $\varphi = 0.4$, which corresponds to a dense packing; see Fig.~\ref{fig1} for a visual. Figure~\ref{fig2}(a) shows how the solid-body area decreases, or equivalently the porosity increases, over time as the bodies erode. The increasing porosity serves as a convenient proxy for dimensionless time that is insensitive to the end conditions that set the strength of the flow (i.e.~whether we specify the pressure drop or the end velocity to be constant in time). We will henceforth use porosity, $\varphi$, on the horizontal axis of many plots to represent increasing time.
-
-As the bodies disintegrate and give way to wider pores, the resistance to flow decreases as seen in Fig.~\ref{fig2}(b). The resistance to flow can be quantified in the two independent ways discussed in Section \ref{sec:medium}, namely: (1) We can measure the pressure drop, $\pup - \pdn$, across the cell and the total flux, $q_1$, to infer the {\em resistivity} or inverse permeability $1/k_{11}$; or (2) We can measure the combined drag on the collection of bodies. Figure \ref{fig2}(b) shows that these two approaches yield consistent results...
-
-
-%\vsp{2} \nick{To here in editing} \vsp{2}
-
-
+To begin, we discuss a single simulation of 80 bodies eroding in Stokes flow. For reference, the simulation discussed here is the same one shown in Fig.~\ref{fig1}. The initial configuration consists of 80 circular bodies having randomized sizes and positions. The material-removal process alters both the shape of individual bodies as well as the overall structure of the pore network transmitting the flow, as can be seen in Fig.~\ref{fig1}. Initially, the solid bodies occupy $60\%$ of the area, or the porosity is $\varphi = 0.4$, which corresponds to a dense packing; see Fig.~\ref{fig1} for a visual. Figure~\ref{fig2}(a) shows how the solid-body area decreases, or equivalently the porosity increases, over time as the bodies erode. The increasing porosity serves as a convenient proxy for dimensionless time that is insensitive to the end conditions setting the strength of the flow (i.e.~whether we specify the pressure drop or the end velocity to be constant in time). We will henceforth use porosity, $\varphi$, on the horizontal axis of many plots to represent increasing time.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering \label{fig2}
 \includegraphics[width = 0.99 \textwidth]{./figs/fig2.pdf}
-\caption{A single simulation of porous-medium erosion. The initial configuration consists of 80 circular bodies of random size and position, as seen in Fig.~\ref{fig1}. a) As the medium erodes, the fraction of solid-body area decreases, or, equivalently, the porosity increases. b) Resistance to flow can be characterized by either the inverse permeability, $1/k$, or the cumulative drag, the two of which are related through \eqref{ResistDrag}. Both are seen to decrease as the medium erodes, and relationship \eqref{ResistDrag} is confirmed by the simulation data.
-c) The relationship between permeability $k$ and porosity $\phi$ for the eroding medium. Both quantities increase with time as the medium erodes, but at different rates due to changes in the microstructure and channelization of the medium.
+\caption{A single simulation of porous-medium erosion. The initial configuration consists of 80 circular bodies of random size and position, as seen in Fig.~\ref{fig1}. a) As the medium erodes, the fraction of solid-body area decreases, or, equivalently, the porosity increases. b) Resistance to flow can be characterized by either the inverse permeability (solid) or the cumulative drag (dots), the two of which are related through \eqref{perm_drag}. Both are seen to decrease as the medium erodes, and relationship \eqref{perm_drag} is confirmed by the simulation data. The figure also shows the inverse permeability in transverse direction (dashed).
 }
 \end{figure*}
 %---------------------------------------------------------%
 % Data from 80-4
+
+As the bodies disintegrate and give way to wider pores, the resistance to flow decreases as seen in Fig.~\ref{fig2}(b). The resistance to flow can be quantified in two separate ways, as outlined in Section \ref{sec:medium}, namely by computing the total drag or by extracting the permeability. As a reminder, the drag is a microscopic quantity that can be computed with high accuracy and without ambiguity in our Stokes-based simulations. The permeability, on the other hand, requires a few key assumptions and approximations to be made, but the extraction of such bulk quantities will be more valuable in characterizing the evolving configuration of bodies as a single porous medium. As such, it is particularly valuable to compare these two perspectives so that the assumptions underlying the coarse-grained process can be assessed. In particular, we aim to test the approximate formula \eqref{perm_drag}, relating the longitudinal drag $F_1$ to the inverse permeability $1/k_{11}$, sometimes called resistivity. Figure \ref{fig2}(b) indeed shows close agreement between these two quantities over the entire duration of the simulation, thus confirming the ability to extract medium properties during the erosion process.
+
+In Fig.~\ref{fig2}(b) we also show the transverse resistivity, $1/k_{22}$, as it decreases over the course of the simulation. Notice that this transverse resistivity exceeds the longitudinal resistivity by a significant margin, indicating that the configuration provides greater resistance to flow in the vertical direction.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
@@ -781,6 +777,10 @@ Permeability
 \end{figure*}
 %---------------------------------------------------------%
 % Data from 80-4
+
+%c) The relationship between permeability $k$ and porosity $\phi$ for the eroding medium. Both quantities increase with time as the medium erodes, but at different rates due to changes in the microstructure and channelization of the medium.
+
+Next
 
 %Text for Fig 3: 
 %The anisotropy of permeability grows large, up to a value of 4 during the middle portion of the simulation. The figure also shows the anisotropy of the circular grid.
