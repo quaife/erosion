@@ -159,8 +159,7 @@ The outline of the paper is as follows. In Section~\ref{sec:formulation} we disc
 \label{sec:formulation}
 %-----------------------------------------------------------------------------------------------%
 
-Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$. The fluid flow is primarily from left to right, so that the inlet and outlet are located at approximately $x=-3$ and $+3$ respectively (the actual locations are slightly curved versions of these vertical lines due to domain smoothing). The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. 
-The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet and outlet to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
+Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$. The fluid flow is primarily from left to right, so that the inlet and outlet are located at approximately $x=\pm 3$ (the actual locations are slightly curved versions of these vertical lines due to domain smoothing). The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$.  The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet and outlet to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
 \begin{equation}
 \label{eqn:StokesEq}
   \begin{split}
@@ -174,19 +173,18 @@ The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer 
       &&\mbox{\em prescribed outer wall velocity}.
   \end{split}
 \end{equation}
-Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile along $\Gamma$, i.e.~$\UU = (U,0)$, although other choices are possible, for example a Poiseuille profile as employed in previous work \cite{quaife2018boundary, chiu2020viscous}. The advantages of the uniform profile are: (1) it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later; and (2), it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
+Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile along $\Gamma$, i.e.~$\UU = (U,0)$, although other choices are possible, for example a Poiseuille profile as employed in previous work~\cite{chiu2020viscous, quaife2018boundary}. The advantages of the uniform profile are: (1) it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later; and (2), it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
 
-The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than does the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed in order to compute the {\em steady} Stokes flow determined by \eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface \cite{Ristroph2012, Moore2013, Mitchell2016, MooreCPAM2017, HewettJFS2017, quaife2018boundary, chiu2020viscous}. The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
+The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed in order to compute the {\em steady} Stokes flow determined by~\eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface~\cite{Ristroph2012, Moore2013, Mitchell2016, MooreCPAM2017, HewettJFS2017, quaife2018boundary, chiu2020viscous}. The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
 \begin{align}
 \Vn = \CE \, \abs{\tau}, 
 	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em erosion model}, 
 \label{Vn0} \\
-\tau = -\mu \left( ( \nabla \uu + \nabla \uu^T) \nn \right) \cdot \ss
+\tau = -\mu \left( ( \nabla \uu + \nabla \uu^T) \nn \right) \cdot \ss,
 	&\hspace{20pt} \xx \in \gamma, &&\mbox{\em shear stress}.
 \label{tau0}
 \end{align}
-where $\nn$ is a unit normal vector pointing into each body, $\ss$ is
-a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a material-dependent erosion constant.
+where $\nn$ is the unit normal vector pointing into each body, $\ss$ is the unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a material-dependent erosion constant.
 
 % SNIPPETS 
 %The strength of $\UU$ is adjusted at each time step to achieve a constant pressure drop across the channel, motivated by the geological situation of a porous medium connecting two regions of  fixed hydraulic heads.
@@ -198,16 +196,7 @@ a unit tangent vector pointing in the counterclockwise direction, and $\CE$ is a
 \section{Boundary Integral Equation and Cauchy Integral Formulation}
 \label{sec:DLP}
 %-----------------------------------------------------------------------------------------------%
-To accurately and efficiently solve the Stokes
-  equations~\eqref{eqn:StokesEq}, we reformulate the system as a
-  boundary integral equation (BIE). A BIE formulation has the advantage
-  that all the unknowns are on the one-dimensional boundary of the
-  domain. Therefore, only the boundary of the complex geometry must be
-  discretized which we do with a spectrally accurate Fourier basis.
-  Applying the same approach as our previous
-  works~\citep{quaife2018boundary, chiu2020viscous}, we represent the
-  velocity as the sum of a double-layer potential and a combination of
-  Stokeslets and rotlets~\cite{pow-mir1987}
+To accurately and efficiently solve the Stokes equations~\eqref{eqn:StokesEq}, we reformulate the system as a boundary integral equation (BIE). A BIE formulation has the advantage that all the unknowns are on the one-dimensional boundaries of the domain. That is, only the boundary of the complex geometry must be discretized which we do with a spectrally accurate Fourier basis. Applying the same approach as our previous works~\cite{chiu2020viscous, quaife2018boundary}, we represent the velocity as the sum of a double-layer potential and a combination of Stokeslets and rotlets~\cite{pow-mir1987}
 \begin{align}
   \uu(\xx) = \DDD[\eeta](\xx) + \sum_{\ell=1}^{M}\left(
     S[\llambda_\ell](\xx) + R[\xi_\ell](\xx)\right), 
@@ -218,22 +207,17 @@ where
 \begin{align}
   \DDD[\eeta](\xx) = \frac{1}{\pi}\int_{\bd\Omega} 
   \frac{\rr \cdot \nn}{\rho^2} \frac{\rr \otimes \rr}{\rho^2}
-  \eeta(\yy) \, ds_\yy.
+  \eeta(\yy) \, ds_\yy,
   \label{eqn:velocityDLP}
 \end{align}
-\todo{Maybe define what $\rr$ is.}
-Note that $\bd\Omega$ includes both the eroding bodies and the outer
-boundary. The Stokeslet and the rotlets are
+where $\rr = \xx - \yy$ and $\rho = \|\rr\|$. Note that $\bd\Omega$ includes both the eroding bodies and the outer boundary. The Stokeslet and the rotlets are
 \begin{align}
   S[\lambda_\ell](\xx) = \frac{1}{4\pi} \left(-\log \rho_\ell +
   \frac{\rr_\ell \otimes \rr_\ell}{\rho_\ell^2} \right) \llambda_\ell,
   \quad
   R[\xi_\ell](\xx) = \frac{\rr_\ell^\perp}{\rho_\ell^2}\xi_\ell,
 \end{align}
-respectively, where $\rr_\ell = \xx - \cc_\ell$, $\rho_\ell =
-\|\rr_\ell\|$, and $\cc_\ell$ is a point inside body $\ell$. If the
-density function, Stokeslets, and rotlets satisfy the second-kind
-boundary integral equation
+respectively, where $\rr_\ell = \xx - \cc_\ell$, $\rho_\ell = \|\rr_\ell\|$, and $\cc_\ell$ is a point inside body $\ell$. If the density function, Stokeslets, and rotlets satisfy the second-kind boundary integral equation
 \begin{subequations}
   \label{eqn:FredBIE}
   \begin{alignat}{3}
@@ -249,22 +233,11 @@ boundary integral equation
       \eeta(\yy) \, ds_\yy, &&\ell = 1,\ldots,M,
   \end{alignat}
 \end{subequations}
-then the representation~\eqref{eqn:velocity} satisfies the Stokes
-equations with the required boundary conditions~\eqref{eqn:StokesEq}. We
-solve~\eqref{eqn:FredBIE} by discretizing $\gamma_\ell$ and $\Gamma$ at
-equispaced collocation points, and then replacing the integrals with
-quadrature rules. This results in a linear system with a
-mesh-independent condition number, and it is solved iteratively with
-GMRES.
+then the representation~\eqref{eqn:velocity} satisfies the Stokes equations with the required boundary conditions~\eqref{eqn:StokesEq}. We solve~\eqref{eqn:FredBIE} by discretizing $\gamma_\ell$ and $\Gamma$ at equispaced collocation points, and then replacing the integrals with quadrature rules. This results in a linear system with a mesh-independent condition number, and it is solved iteratively with GMRES.
 
-Instead of evaluating the Stokes double-layer
-potential~\eqref{eqn:velocityDLP} as a contour integral in $\RR^2$, we
-convert the integral to a sum of contour integrals around Jordan curves
-in $\CC$. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_x$ \todo{It looks like there is a typo with $x_x$.}
-and use
-similar notation for $\yy$, $\nn$, and $\eeta$. We also interpret
-$\gamma$, the boundary of the $i^{th}$ grain or the bounding box
-$\Gamma$, as a Jordan curve in $\CC$. We introduce the functions
+\todo[inline]{Bryan left off here}
+
+Instead of evaluating the Stokes double-layer potential~\eqref{eqn:velocityDLP} as a contour integral in $\RR^2$, we convert the integral to a sum of contour integrals around Jordan curves in $\CC$. We identify $\xx = (x_1,x_2)$ with $x = x_1 + ix_2$ and use similar notation for $\yy$, $\nn$, and $\eeta$. We also interpret $\gamma$, the boundary of the $i^{th}$ grain or the bounding box $\Gamma$, as a Jordan curve in $\CC$. We introduce the functions
 \begin{align}
   \tau_1(y) = \eta(y) \overline{n(y)} \Re(n(y)), \quad 
   \tau_2(y) = \eta(y) \overline{n(y)} \Im(n(y)).
@@ -603,7 +576,7 @@ work~\cite{chiu2020viscous}.
 \subsection{Interface evolution}
 %-----------------------------------------------------------------------------------------------%
 
-With the flow and shear stresses computed, we seek to evolve the boundaries of erodable bodies. For numerical stability, we modify \eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$, as in previous work \citep{quaife2018boundary}
+With the flow and shear stresses computed, we seek to evolve the boundaries of erodable bodies. For numerical stability, we modify \eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$, as in previous work~\cite{quaife2018boundary}
 \begin{align}
   \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
     \frac{L}{2\pi} \kappa - 1 \right),
