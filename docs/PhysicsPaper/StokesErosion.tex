@@ -707,6 +707,7 @@ If this were to be done directly, the outer geometry would need to rotate by 90 
 
 With both the longitudinal and transverse components of permeability computed, we define the anisotropy of the medium as the ratio between the two:
 \begin{equation}
+\label{eq:anis}
 \anis = k_{11} / k_{22}
 \end{equation}
 Note that the random configuration of circles used to initialize the erosion simulations will have an anisotropy nearly equal to one. As this configuration erodes, it would be expected to permit flow in the longitudinal direction more easily than in the transverse direction, yielding $\anis > 1$.
@@ -731,7 +732,7 @@ With the numerical methods in place, we now present results on how fluid-mechani
 \subsection{Single simulation results}
 \label{sec:single_sim}
 
-To begin, we discuss a single simulation of 80 bodies eroding in Stokes flow. For reference, the simulation discussed here is the same one shown in Fig.~\ref{fig1}. The initial configuration consists of 80 circular bodies having randomized sizes and positions. The material-removal process alters both the shape of individual bodies as well as the overall structure of the pore network transmitting the flow, as can be seen in Fig.~\ref{fig1}. Initially, the solid bodies occupy $60\%$ of the area, or the porosity is $\varphi = 0.4$, which corresponds to a dense packing; see Fig.~\ref{fig1} for a visual. Figure~\ref{fig2}(a) shows how the solid-body area decreases, or equivalently the porosity increases, over time as the bodies erode. The increasing porosity serves as a convenient proxy for dimensionless time that is insensitive to the end conditions setting the strength of the flow (i.e.~whether we specify the pressure drop or the end velocity to be constant in time). We will henceforth use porosity, $\varphi$, on the horizontal axis of many plots to represent increasing time.
+To begin, we discuss a single simulation of 80 bodies eroding in Stokes flow. For reference, the simulation discussed here is the same one shown in Fig.~\ref{fig1}. The initial configuration consists of 80 circular bodies having randomized sizes and positions. The material-removal process alters both the shape of individual bodies as well as the overall structure of the pore network transmitting the flow, as can be seen in Fig.~\ref{fig1}. Initially, the solid bodies occupy $60\%$ of the area, or the porosity is $\varphi = 0.4$, corresponding to a relatively dense packing; see Fig.~\ref{fig1} for a visual. Figure~\ref{fig2}(a) shows how the solid-body area decreases, or equivalently the porosity increases, over time as the bodies erode. The increasing porosity serves as a convenient proxy for dimensionless time that is insensitive to the end conditions setting the strength of the flow (i.e.~whether we specify the pressure drop or the end velocity to be constant in time). We will henceforth use porosity, $\varphi$, on the horizontal axis of many plots to represent increasing time.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
@@ -762,6 +763,8 @@ Permeability
 %c) The relationship between permeability $k$ and porosity $\phi$ for the eroding medium. Both quantities increase with time as the medium erodes, but at different rates due to changes in the microstructure and channelization of the medium.
 
 Figure \ref{fig3}(a) shows more directly how permeability in the longitudinal, $k_{11}$ and transverse, $k_{22}$ directions increase over time as the medium erodes. Once again, the relationship $k_{11} > k_{22}$ indicates a higher propensity for flow in the longitudinal direction. Notice that the permeability increases by nearly 5 orders of magnitude over the course of the simulation, indicating that erosion substantially alters medium properties.
+
+As given in \eqref{eq:anis}, the ratio of longitudinal to transverse permeability defines the anisotropy of the medium, $\anis = k_{11} / k_{22}$.
 
 
 %Text for Fig 3: 
