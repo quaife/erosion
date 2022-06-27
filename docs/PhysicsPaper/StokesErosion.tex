@@ -411,20 +411,18 @@ work~\cite{chiu2020viscous}.
 %This has the advantage that only the one-dimensional boundary of the domain must be discretized, and, with appropriate quadrature formulas and fast summation methods, the result is a high-fidelity numerical simulation with near-optimal computational complexity.
 
 
-\todo[inline]{Bryan left off here}
-
 %-----------------------------------------------------------------------------------------------%
 \subsection{Interface evolution}
 %-----------------------------------------------------------------------------------------------%
 
-With the flow and shear stresses computed, we seek to evolve the boundaries of erodable bodies. For numerical stability, we modify \eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$, as in previous work~\cite{quaife2018boundary}
+With the flow and shear stresses computed, we seek to evolve the boundaries of erodable bodies. For numerical stability, we modify~\eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$, as in previous work~\cite{quaife2018boundary}
 \begin{align}
   \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
-    \frac{L}{2\pi} \kappa - 1 \right),
+    \frac{L}{2\pi} \kappa - 1 \right).
 \end{align}
-The last term is a smoothing term that has strength $\epsilon \ll 1$ and that scales with spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis,  the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, which represents the shear-dependent erosion law. In addition, we apply a narrow Gaussian filter to the distribution $\abs{\tau}$ to further improve stability.
+The last term is a smoothing term that has strength $\epsilon \ll 1$ and scales with spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis, the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, which represents the shear-dependent erosion law. In addition, we apply a narrow Gaussian filter to the distribution $\abs{\tau}$ to further improve stability.
 
-Rather than tracking the Cartesian coordinates of each surface, we employ the {\thL} formulation \cite{hou-low-she1994, Moore2013, MooreCPAM2017, mac2022morphological} by tracking the tangent angle $\theta$ as a function of arc length and the total length $L$ of each body.  In this formulation, the curvature-dependent smoothing becomes a linear diffusive term, thus enabling the use of stable, implicit schemes for this stiff term. The remaining nonlinear terms are not stiff and can be treated by explicit time-stepping methods. In particular, we use an exponential integrator for the diffusion term and a Runge-Kutta method for all other terms, both of which are second order in time \cite{quaife2018boundary}.
+Rather than tracking the Cartesian coordinates of each surface, we employ the {\thL} formulation~\cite{hou-low-she1994, Moore2013, MooreCPAM2017, mac2022morphological} by tracking the tangent angle $\theta$ as a function of arc length and the total length $L$ of each body. In this formulation, the curvature-dependent smoothing becomes a linear diffusive term, thus enabling the use of stable, implicit schemes for this stiff term. The remaining nonlinear terms are not stiff and can be treated by explicit time-stepping methods. In particular, we use an exponential integrator for the diffusion term and a Runge-Kutta method for all other terms, both of which are second-order in time~\cite{quaife2018boundary}.
 
 
 % COPIED STRAIGHT FROM JFM 2020
@@ -448,45 +446,54 @@ With the numerical methods in place, we now discuss how to measure the permeabil
 \subsection{Longitudinal permeability}
 \label{LongPerm}
 
-While the Stokes equations \eqref{eqn:StokesEq} provides a microscopic description of the detailed flow field $\uu$ penetrating the complex configuration of erodable bodies, a coarse-grained description can be obtained by treating the collection of bodies as a single porous-medium and homogenizing the flow-field through Darcy's law,
+While the Stokes equations~\eqref{eqn:StokesEq} provides a microscopic description of the detailed flow field $\uu$ penetrating the complex configuration of erodable bodies, a coarse-grained description can be obtained by treating the collection of bodies as a single porous-medium and homogenizing the flow-field through Darcy's law,
 \begin{equation}
-\label{eqn:Darcy}
-\bq = - \frac{1}{\mu} \bvec{k} \grad p
+  \label{eqn:Darcy}
+  \bq = - \frac{1}{\mu} \bvec{k} \grad p.
 \end{equation}
-Here, $p$ and $\mu$ represent the pressure field and fluid viscosity as before, with $\mu = 1$ by the non-dimensionalization. Meanwhile, $\bq = (q_1, q_2)$ represents the {\em specific discharge}, which is the volume of water that flowing through a unit cross sectional area of porous media per unit time; $\bq$ relates to the (interstitial) velocity $\uu$, by integrating $\uu$ over a sufficiently small control region and dividing by the total volume (including both fluid and solid) of the region. The parameter $\bvec{k}$ represents the {\em permeability} of the porous medium, which generally takes the form of a rank-2 tensor to permit different propensities to flow in different directions, i.e.~medium anisotropy. 
-
+Here, $p$ and $\mu$ represent the pressure field and fluid viscosity as before, with $\mu = 1$ by the non-dimensionalization. Meanwhile, $\bq = (q_1, q_2)$ represents the {\em specific discharge}, which is the volume of water flowing through a unit cross sectional area of porous media per unit time; $\bq$ relates to the (interstitial) velocity $\uu$, by integrating $\uu$ over a sufficiently small control region and dividing by the total volume (including both fluid and solid) of the region. The parameter $\bvec{k}$ represents the {\em permeability} of the porous medium, which generally takes the form of a rank-2 tensor to permit different propensities to flow in different directions, i.e.~medium anisotropy.  
 %The permeability may vary in space and will certainly vary in time as the bodies erode.
 
 % Notes
 % Specific discharge: It represents the volume of water that flows through a unit cross sectional area of porous media per unit time. The units of permeability are length squared.
 % Reference: https://books.gw-project.org/hydrogeologic-properties-of-earth-materials-and-principles-of-groundwater-flow/chapter/darcys-law/
 
-For simplicity, we assume $\bvec{k}$ to be a diagonal matrix, $\bvec{k}  = \diag(k_{11}, k_{22})$, for the sake of characterizing the permeability of the porous medium. Because the diagonal components of $\bvec{k}$ need not be equal, the medium can have different permeabilities in the longitudinal and transverse directions. Further, we will assume $\bvec{k}$ to be spatially homogeneous in order to characterize the medium with a single bulk quantity at any instance in time. Naturally, the permeability will change over time as the bodies that comprise the medium disintegrate. Consider first the horizontal component of \eqref{eqn:Darcy}
+For simplicity, we assume $\bvec{k}$ to be a diagonal matrix, $\bvec{k}
+= \diag(k_{11}, k_{22})$, for the sake of characterizing the
+permeability of the porous medium. Because the diagonal components of
+$\bvec{k}$ need not be equal, the medium can have different
+permeabilities in the longitudinal and transverse directions. Further,
+we will assume $\bvec{k}$ to be spatially homogeneous in order to
+characterize the medium with a single bulk quantity at any instance in
+time. Naturally, the permeability will change over time as the bodies
+that comprise the medium disintegrate. Consider first the horizontal
+component of~\eqref{eqn:Darcy}
 \begin{equation}
-\label{q1}
-q_1(x,y) = -k_{11} \pderiv{p}{x}(x,y)
+  \label{q1}
+  q_1(x,y) = -k_{11} \pderiv{p}{x}(x,y).
 \end{equation}
 
-By conservations of mass, the average of the horizontal discharge, $q_1$, over any vertical cross-section must equal the uniform flow rate $U$ imposed at the inlet/outlet. That is, for any location $x_0$,
+By conservations of mass, the average of the horizontal discharge, $q_1$, over any vertical cross-section must equal the uniform flow rate $U$ imposed at the inlet and outlet. That is, for any location $x_0$,
 \begin{equation}
-\qavg_1 := \frac{1}{2} \int_{-1}^{1} q_1(x_0, y) dy = U
+\qavg_1 := \frac{1}{2} \int_{-1}^{1} q_1(x_0, y) dy = U.
 \end{equation}
 Above and henceforth, the overline signifies an average over a vertical cross-section. Similarly, consider the pressure averaged over a vertical cross-section at $x_0$
 \begin{equation}
-\pavg(x_0) := \frac{1}{2} \int_{-1}^{1} p(x_0, y) dy
+  \pavg(x_0) := \frac{1}{2} \int_{-1}^{1} p(x_0, y) dy.
 \end{equation}
 In particular, we define the {\em upstream} and {\em downstream} pressures as
 \begin{equation}
-\pup = \pavg(-1) \, , \quad \pdn = \pavg(1)
+  \pup = \pavg(-1) \, , \quad \pdn = \pavg(1),
 \end{equation}
 since $x_0 = -1$ lies immediately upstream of the porous medium and $x_0 = 1$ immediately downstream.
 
-Integrating \eqref{q1} over the porous-medium domain $[-1, 1] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
+Integrating~\eqref{q1} over the porous-medium domain $[-1, 1] \times [-1,1]$, applying the fundamental theorem of calculus, and rearranging gives
 \begin{equation}
-\label{eqn:k11}
-k_{11} = \frac{2U}{\pup - \pdn}
+  \label{eqn:k11}
+  k_{11} = \frac{2U}{\pup - \pdn}.
 \end{equation}
-This exact formula gives the permeability in terms of the total flux $U$ and measurements of the upstream/downstream pressure.
+This exact formula gives the permeability in terms of the total flux $U$
+and measurements of the upstream and downstream pressures.
 
 %Since $\bq$ is a volume-average of the tracer velocity, $\qavg$ can be equivalently obtained by averaging the tracer velocity, which is how we will measure this quantity in the simulations.
  
@@ -495,54 +502,57 @@ This exact formula gives the permeability in terms of the total flux $U$ and mea
 %-------------------------------------------------------------------%
 \subsection{Relationship to drag}
 
-The permeability of the medium is directly related to the drag exerted by the collection of bodies. The stress tensor associated with the Stokes equations \eqref{eqn:StokesEq} is given by $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$, and the Stokes equations can alternatively be expressed as $\grad \cdot \stress = 0$. Integrating over an arbitrary domain $D$ and applying the divergence theorem gives
+The permeability of the medium is directly related to the drag exerted by the collection of bodies. The stress tensor associated with the Stokes equations~\eqref{eqn:StokesEq} is given by $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$, and the Stokes equations can alternatively be expressed as $\grad \cdot \stress = 0$. Integrating over an arbitrary domain $D$ and applying the divergence theorem gives
 \begin{equation}
-\label{divthm}
-0 = \int_{D} \grad \cdot \stress \, dV 
-= \int_{\partial D} \stress \, \nn \, ds
+  \label{divthm}
+  0 = \int_{D} \grad \cdot \stress \, dV,
+  = \int_{\partial D} \stress \, \nn \, ds.
 \end{equation}
 Consider $D \subseteq [-x_0, x_0] \times [-1, 1]$ to be the subset consisting of the fluid region (i.e.~excluding solid bodies), where $x_0 \ge 1$ will be chosen to include the entire porous region plus some amount of the buffer region. The boundary $\partial D$ consist of all solid-body boundaries $\gamma$, along with an outer boundary. 
 
 The hydrodynamic drag on the collection of bodies is obtained by integrating the surface traction over the boundary $\gamma$. The surface traction on a no-slip boundary is given by 
 \begin{equation}
-- \stress \, \nn = p \nn + \tau \ss
+  - \stress \, \nn = p \nn + \tau \ss,
 \end{equation}
 where the negative sign is a consequence of choosing the normal vector $\nn$ to point out of the fluid region or {\em into} the bodies. The total drag on the collection of bodies is thus
 \begin{equation}
-\label{eqn:drag}
-\FD =  - \int_{\gamma} \stress \, \nn \, ds =  \int_{\gamma} p \nn + \tau \ss \, ds
+  \label{eqn:drag}
+  \FD =  - \int_{\gamma} \stress \, \nn \, ds 
+  = \int_{\gamma} p \nn + \tau \ss \, ds.
 \end{equation}
 
 % NOTE ON SIGN OF DRAG
 % The drag ON the bodies is F = \int p n + tau s. This is consistent with the JCP paper, with my code, and I have verified the calculation. This drag vector points to the right since it is the drag ON the bodies.
 
-Projecting \eqref{divthm} onto the horizontal direction $\ex$, using \eqref{eqn:drag}, and rearranging gives the exact relationship
+Projecting~\eqref{divthm} onto the horizontal direction $\ex$, using~\eqref{eqn:drag}, and rearranging gives the exact relationship
 \begin{equation}
 \label{drag_press}
 \FD \cdot \ex = \int_{-1}^{1} \left( -p(x,y) + 2 \mu u_x(x,y) \right) \big|_{x=-x_0}^{x=x_0} dy + 
-\int_{-x_0}^{x_0} \mu u_y(x,y) \big|_{y=-1}^{y=1} dx
+\int_{-x_0}^{x_0} \mu u_y(x,y) \big|_{y=-1}^{y=1} dx.
 \end{equation}
-We will now make some simplifying assumptions. First, because the imposed flow profile is uniform $\UU = (U,0)$, slip is permitted along the top and bottom boundaries $y=\pm 1$. Therefore the viscous stress is generally much smaller along these top and bottom surfaces than on the no-slip erodable boundaries. We therefore drop the contribution from the second integral above. Second, if $x_0 > 1$ is chosen a sufficient distance from the erodable bodies, the flow profile approximately matches the uniform profile, implying that the term involving $u_x(\pm x_0, y)$ can be dropped. In addition, the pressure $p(\pm x_0, y)$ approximately matches the downstream and upstream values respectively. With these assumptions, \eqref{drag_press} simplifies to the approximate form
+We will now make some simplifying assumptions. First, because the imposed flow profile is uniform $\UU = (U,0)$, slip is permitted along the top and bottom boundaries $y=\pm 1$. Therefore the viscous stress is generally much smaller along these top and bottom surfaces than on the no-slip erodable boundaries. We therefore drop the contribution from the second integral above. Second, if $x_0 > 1$ is chosen a sufficient distance from the erodable bodies, the flow profile approximately matches the uniform profile, implying that the term involving $u_x(\pm x_0, y)$ can be dropped. In addition, the pressure $p(\pm x_0, y)$ approximately matches the downstream and upstream values respectively. With these assumptions,~\eqref{drag_press} simplifies to the approximate form
 \begin{equation}
-\FD \cdot \ex \approx 2 (\pup - \pdn)
+  \FD \cdot \ex \approx 2 (\pup - \pdn).
 \end{equation}
 Combining with \eqref{eqn:k11} yields a formula relating the longitudinal drag and permeability
 \begin{equation}
-\label{perm_drag}
-\frac{1}{k_{11}} \approx \frac{1}{4 U}  \, \FD \cdot \ex
+  \label{perm_drag}
+  \frac{1}{k_{11}} \approx \frac{1}{4 U}  \, \FD \cdot \ex
 \end{equation}
-This formula establishes an important link between the microscopic (Stokes) perspective and the macroscopic (Darcy) perspective, and it gives us a way to test the assumptions involved in coarse-graining the system to extract porous-medium properties. That is, the total drag is an unambiguous quantity that can be computed with high accuracy in our Stokes-based simulations. The extraction of permeability, on the other hand, requires a few key approximations and assumptions, for example that the length-scale of grains is sufficiently small compared to the domain scale so that the flow field can be homogenized. Verifying relationship \eqref{perm_drag}, as will be done in Section \ref{sec:results}, will therefore support the idea that the collection of bodies can be treated as a porous medium and meaningful bulk quantities can be extracted.
+This formula establishes an important link between the microscopic (Stokes) perspective and the macroscopic (Darcy) perspective, and it gives us a way to test the assumptions involved in coarse-graining the system to extract porous-medium properties. That is, the total drag is an unambiguous quantity that can be computed with high accuracy in our Stokes-based simulations. The extraction of permeability, on the other hand, requires a few key approximations and assumptions, for example that the length-scale of grains is sufficiently small compared to the domain scale so that the flow field can be homogenized. Verifying relationship~\eqref{perm_drag}, as will be done in Section~\ref{sec:results}, will therefore support the idea that the collection of bodies can be treated as a porous medium and meaningful bulk quantities can be extracted.  
 
 %verifying the relationship \eqref{perm_drag}, as will be done in Fig.~\ref{fig2}, validates a number of approximations made in the coarse-grained approach, such as (1) the homogenization of the flow field implicit in Darcy's law \eqref{eqn:Darcy}; (2) the calculation of the permeability from measurements of the flow rate and upstream/downstream pressures through \eqref{eqn:k11}.
 
+
+\todo[inline]{Bryan is here}
 %-------------------------------------------------------------------%
 \subsection{Transverse permeability and anisotropy}
 \label{subsec:anis}
 
 Now consider measuring the transverse permeability $k_{22}$ using Darcy's law \eqref{eqn:Darcy}. Taking the vertical component of \eqref{eqn:Darcy} yields
 \begin{equation}
-\label{q1}
-q_2(x,y) = -k_{22} \pderiv{p}{y}(x,y)
+\label{q2}
+q_2(x,y) = -k_{22} \pderiv{p}{y}(x,y).
 \end{equation}
 This form, however, is not useful if no vertical pressure gradient is imposed, as is the case in our erosion simulations. It is important to recognize that the permeability is a property of the {\em medium}, not the imposed flow. Hence, for a frozen configuration of bodies, it is permissible to alter the imposed flow for the purpose of measuring $k_{22}$ (this altered flow is completely separate from the simulation of the erosion process that generates the configurations). Thus, instead of a horizontal flow in the far-field, we seek to impose a vertical one $\UU = (0,U)$.
 If this were to be done directly, the outer geometry would need to rotate by 90 degrees about the fixed configuration of bodies. In practice, it is simpler to keep the outer geometry fixed and rotate the inner configuration of bodies, then simply apply the method from Section \ref{LongPerm} to measure $k_{22}$.
