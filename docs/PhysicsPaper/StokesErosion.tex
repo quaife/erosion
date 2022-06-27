@@ -594,12 +594,15 @@ $\pp(t(y_0))$ is $+1$. Then, the longitudinal tortuosity is
   \label{eqn:tortuosity_x}
 \end{align} 
 \todo[inline]{What is $x_0$ in the denominator? Should that be -1?}
-The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate \nick{the configuration of} eroded bodies by 90 degrees and compute a transverse tortuosity $T_2$. Then, another measure of the anisotropy is
-\begin{align}
-  \anistort = T_2/T_1.
-\end{align}
-\todo[inline]{Might eliminate this line so that we don't double-use anisotropy. In any case, I think $(T_2-1)/(T_1-1)$ might be more useful. Will give it thought.}
-As in the permeability definition of anisotropy, the random configuration of circles used to initialize the erosion simulations will have an anisotropy nearly equal to one. As this configuration erodes, the streamlines in the longitudinal direction are expected to less tortuous than those in the transverse direction, yielding $\anis > 1$.
+The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate \nick{the configuration of} eroded bodies by 90 degrees to compute a transverse tortuosity $T_2$.
+
+% NOTE: I explain what ratio we compute in the results section, so we don't need to do it here.
+%Then, another measure of the anisotropy is
+%\begin{align}
+ % \anistort = T_2/T_1.
+%\end{align}
+%\todo[inline]{Might eliminate this line so that we don't double-use anisotropy. In any case, I think $(T_2-1)/(T_1-1)$ might be more useful. Will give it thought.}
+%As in the permeability definition of anisotropy, the random configuration of circles used to initialize the erosion simulations will have an anisotropy nearly equal to one. As this configuration erodes, the streamlines in the longitudinal direction are expected to less tortuous than those in the transverse direction, yielding $\anis > 1$.
 
 An alternative and computationally more convenient way to compute the tortuosity is to use an area integral. If there is no reentrant flow in $D = [-1,1] \times [-1,1]$, then the longitudinal tortuosity can be calculated as~\citep{dud-koz-mat2011}
 \begin{align}
@@ -673,6 +676,13 @@ As a second way to quantify medium anisotropy, we measure the tortuosity, $T_1$ 
 
 
 \subsection{Statistics of ensembles of simulations}
+
+The previous section shows many intriguing features to arise as a randomly initialized configuration of solid bodies erodes. These observations natural raise the question: are the trends specific to the particular initializing chosen or do are they general features that emerge robustly? To answer this question, we now analyze the same quantities --- permeability, tortuosity, and anisotropy --- over an ensemble of many simulations having different numbers of bodies and different random initializations. We analyze runs having $M$ = 20, 40, 60, 80, and 100 bodies, with at least three different instances of each. This data set represents roughly 2,100 hours of computational time.
+
+Figure \ref{fig5} shows the permeability and anisotropy measurements for the complete data set. In particular, for a given number of initial bodies ($M$ = 20, 40, 60, 80, or 100), the mean and standard deviation of each quantity are shown, and the five different values of $M$ are shown by different colors. As seen in Figs.~\ref{fig5}(a)--(b), the trends of increasing permeabilities are well grouped by the number of initial bodies. That is, permeability monotonically decreases with the number of bodies and the error bars shows little overlap between different values of $M$ until very late in the simulation when the bodies have nearly vanished. 
+
+Figure~\ref{fig5}(c) shows the corresponding statistics of anisotropy, $\anis$. Here, the anisotropy is not as well separated by $M$. That is, given the error-bars, there is significant overlap in the signal of $\anis$ across different values of $M$. On notable feature is second rise in $\anis$ that occurs late in the simulation only for the larger values of $M$ = 60, 80, and 100. As before, the anisotropy can be decomposed into configuration and shape components as shown in Figs.~\ref{fig5}(d)--(e)
+
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]

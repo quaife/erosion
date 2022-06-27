@@ -36,4 +36,4 @@ function do_stuff()
 	end
 end
 
-do_stuff()
+#do_stuff()

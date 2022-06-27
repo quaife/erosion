@@ -177,6 +177,21 @@ function resist_thresh(vars...)
 	end
 end
 
+# Compute the total cpu time
+function cpu_hours_total()
+	nbod_list = [20 40 60 80 100]
+	total_hours = 0.0
+	for nbod in nbod_list
+		runs = get_runs(nbod)
+		for run in runs
+			hours = load(proc_file(run), "cpu_hours")
+			total_hours += hours
+		end
+	end
+	println("Total CPU hours = ", round(total_hours, sigdigits=3))
+end
+cpu_hours_total()
+
 # Plot the statistics
 function vplot_stats()
 	nbod_list = [20 40 60 80 100] #[20, 40, 60, 80, 100]
