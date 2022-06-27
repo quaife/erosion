@@ -592,7 +592,7 @@ $\pp(t(y_0))$ is $+1$. Then, the longitudinal tortuosity is
   \left(\int_{S}u(x_0,y)\,dy \right).
   \label{eqn:tortuosity_x}
 \end{align} 
-The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate each of the eroded bodies by 90 degrees and compute a transverse tortuosity $T_2$. Then, another measure of the anisotropy is
+The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate \nick{the configuration of} eroded bodies by 90 degrees and compute a transverse tortuosity $T_2$. Then, another measure of the anisotropy is
 \begin{align}
   \anis = T_2/T_1.
 \end{align}
@@ -652,15 +652,7 @@ As given in \eqref{eq:anis}, the ratio of longitudinal to transverse permeabilit
 
 As discussed in Section \ref{subsec:anis}, the anisotropy of the medium results from the combination of {\em shape} anisotropy, at the individual grain level, and {\em configurational anisotropy}, at the large scale. As detailed in Section \ref{subsec:anis}, the configurational anisotropy can be extracted through a process in which, at any point in time, the configuration of partially-eroded bodies is replaced with a collection of circles having the same areas and centers of mass. We perform this process and show in Fig.~\ref{fig3}(a) the permeabilities, $k_{11}^{(c)}$ and $k_{22}^{(c)}$, of the corresponding circle configurations. As seen in the figure, the permeabilities of the circle configurations always lie in between the values, $k_{11}$ and $k_{22}$, of the true, eroded medium. The {\em configurational} anisotropy is then computed as the permeability ratio of the circle configuration, $\anis_C = k_{11}^{(c)} / k_{22}^{(c)}$, and then the {\em shape} anisotropy can be determined through $\anis_S = \anis/\anis_C$. As seen in Fig.~\ref{fig3}(b), the shape anisotropy is the larger factor throughout the majority of the simulation, implying that the shape of individual grains plays a larger role than their relative positions. It is only during the last 10\% of the simulation that the configurational anisotropy grows significantly and surpasses the shape anisotropy. This relative growth of the configurational anisotropy corresponds to the strong channelization seen in the last panel of Fig.~\ref{fig1}.
 
-The late emergence of substantial configurational anisotropy may seem like a spurious effect that is particular to the one simulation shown in Fig.~\ref{fig3}. However, statistical analysis of many simulations will show this feature to emerge robustly in simulations with a relatively large number of bodies $M \ge 60$.
-
-
-
-
-
-
-
-
+The late emergence of substantial configurational anisotropy may seem like a spurious effect that is particular to the one simulation shown in Fig.~\ref{fig3}. However, statistical analysis of many simulations will show this feature to emerge robustly in simulations featuring a relatively large number of bodies $M \ge 60$.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
@@ -673,6 +665,8 @@ Tortuosity
 \end{figure*}
 %---------------------------------------------------------%
 % Data from 80-4
+
+As a second way to quantify medium anisotropy, we measure the tortuosity, $T_1$ and $T_2$, in the longitudinal and transverse directions respectively. Figure \ref{fig4}(a), shows how both vary over the course of the simulation, with $T_2$ growing significantly larger than $T_1$, indicating that passive tracers must take more tortuous paths around the partially eroded grains when traveling transverse to the flow.
 
 
 
