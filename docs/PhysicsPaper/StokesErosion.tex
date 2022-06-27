@@ -55,6 +55,7 @@
 \newcommand{\tar}{\mathrm{tar}}
 \newcommand{\bary}{\mathrm{bary}}
 \newcommand{\trap}{\mathrm{trap}}
+\newcommand{\pp}{{\mathbf{p}}}
 \newcommand{\uu}{{\mathbf{u}}}
 \newcommand{\UU}{{\mathbf{U}}}
 \newcommand{\vv}{{\mathbf{v}}}
@@ -159,8 +160,7 @@ The outline of the paper is as follows. In Section~\ref{sec:formulation} we disc
 \label{sec:formulation}
 %-----------------------------------------------------------------------------------------------%
 
-Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$. The fluid flow is primarily from left to right, so that the inlet and outlet are located at approximately $x=\pm 3$ (the actual locations are slightly curved versions of these vertical lines due to domain smoothing). The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$.  The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet and outlet to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions:
-\begin{equation}
+Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$. The fluid flow is primarily from left to right, so that the inlet and outlet are located at approximately $x=\pm 3$ (the actual locations are slightly curved versions of these vertical lines due to domain smoothing). The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet and outlet to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu = (u,v)$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions: \begin{equation}
 \label{eqn:StokesEq}
   \begin{split}
     \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap 
@@ -505,7 +505,7 @@ and measurements of the upstream and downstream pressures.
 The permeability of the medium is directly related to the drag exerted by the collection of bodies. The stress tensor associated with the Stokes equations~\eqref{eqn:StokesEq} is given by $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$, and the Stokes equations can alternatively be expressed as $\grad \cdot \stress = 0$. Integrating over an arbitrary domain $D$ and applying the divergence theorem gives
 \begin{equation}
   \label{divthm}
-  0 = \int_{D} \grad \cdot \stress \, dV,
+  0 = \int_{D} \grad \cdot \stress \, dV
   = \int_{\partial D} \stress \, \nn \, ds.
 \end{equation}
 Consider $D \subseteq [-x_0, x_0] \times [-1, 1]$ to be the subset consisting of the fluid region (i.e.~excluding solid bodies), where $x_0 \ge 1$ will be chosen to include the entire porous region plus some amount of the buffer region. The boundary $\partial D$ consist of all solid-body boundaries $\gamma$, along with an outer boundary. 
@@ -570,6 +570,45 @@ Fortunately, it is possible to devise a test to isolate these two types of aniso
 
 We need to write this section.
 Could reference Souzy et al. JFM article on velocity distributions in porous media \cite{souzy2020velocity}
+
+Like the permeability, the tortuosity provides a macroscopic perspective
+of the porous medium. We define the tortuosity to be the average length
+of streamlines passing through the region $[-1,1] \times [-1,1]$. In
+particular, for a particular eroded geometry with velocity field $\uu$,
+we calculate streamlines $\pp(t)$ that satisfy
+\begin{align}
+  \frac{d\pp}{dt} = \uu(\pp), \quad \pp(0) = (-1,y_0),
+\end{align}
+where $y_0 \in (-1,1)$. Then, the length of a streamline, which only
+depends on the initial $y$-coordinate, is
+\begin{align}
+  \lambda(y_0) = \int_{0}^{t(y_0)} \|\pp(t)\| \,dt.
+\end{align}
+The integral limit $t(y_0)$ is chosen so that the $x$-coordinate of
+$p(t(y_0))$ is $+1$. Then, the longitudinal tortuosity is
+\begin{align}
+  T_1 = \frac{1}{2}\left(\int_{S}u(-1,y)\lambda(y)\,dy \right)
+  \Bigg/
+  \left(\int_{S}u(x_0,y)\,dy \right).
+  \label{eqn:tortuosity_x}
+\end{align} 
+The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate each of the rotated bodies by 90 degrees and compute a transverse tortuosity $T_2$. Then, another measure of the anisotropy is
+\begin{align}
+  \anis = T_2/T_1.
+\end{align}
+As in the permeability definition of anisotropy, the random configuration of circles used to initialize the erosion simulations will have an anisotropy nearly equal to one. As this configuration erodes, the streamlines in the longitudinal direction are expected to less tortuous than those in the transverse direction, yielding $\anis > 1$.
+
+An alternative and more convenient way to compute the tortuosity is to
+use an area integral. If there is no reentrant flow in $D = [-1,1]
+\times [-1,1]$, then the longitudinal tortuosity can also be calculated
+as~\citep{dud-koz-mat2011}
+\begin{align}
+  T_1 = \left(\int_D \|\uu(\xx)\|\, d\xx \right) \Bigg/
+      \left(\int_D u(\xx)\, d\xx \right).
+  \label{eqn:tortuosity_x2}
+\end{align}
+We note that there may be slow reentrant regions in our geometries~\cite{chiu2020viscous}, but they are sufficiently small that the difference between equations~\eqref{eqn:tortuosity_x} and~\eqref{eqn:tortuosity_x2} can be neglected. We use a similar area integral to compute $T_2$.
+
 
 %-----------------------------------------------------------------------------------------------%
 \section{Results}
