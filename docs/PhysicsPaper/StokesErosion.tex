@@ -679,15 +679,10 @@ As a second way to quantify medium anisotropy, we measure the tortuosity, $T_1$ 
 
 The previous section shows many intriguing features to arise as a randomly initialized configuration of solid bodies erodes. These observations natural raise the question: are the trends specific to the particular initializing chosen or do are they general features that emerge robustly? To answer this question, we now analyze the same quantities --- permeability, tortuosity, and anisotropy --- over an ensemble of many simulations having different numbers of bodies and different random initializations. We analyze runs having $M$ = 20, 40, 60, 80, and 100 bodies, with at least three different instances of each. This data set represents roughly 2,100 hours of computational time.
 
-Figure \ref{fig5} shows the permeability and anisotropy measurements for the complete data set. In particular, for a given number of initial bodies ($M$ = 20, 40, 60, 80, or 100), the mean and standard deviation of each quantity are shown, and the five different values of $M$ are shown by different colors. As seen in Figs.~\ref{fig5}(a)--(b), the trends of increasing permeabilities are well grouped by the number of initial bodies. That is, permeability monotonically decreases with the number of bodies and the error bars shows little overlap between different values of $M$ until very late in the simulation when the bodies have nearly vanished. 
-
-Figure~\ref{fig5}(c) shows the corresponding statistics of anisotropy, $\anis$. Here, the anisotropy is not as well separated by $M$. That is, given the error-bars, there is significant overlap in the signal of $\anis$ across different values of $M$. On notable feature is second rise in $\anis$ that occurs late in the simulation only for the larger values of $M$ = 60, 80, and 100. As before, the anisotropy can be decomposed into configuration and shape components as shown in Figs.~\ref{fig5}(d)--(e). Here, we see the late surge in configurational anisotropy for these larger values of $M = $ 60, 80, 100. For these runs with a large number of bodies, the latest stages of erosion are dominated by channelization which substantially promotes the configurational anisotropy. The shape anisotropy, meanwhile, takes a more regular, parabolic form that is relatively insensitive to the number of bodies.
-
-
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
-\includegraphics[width = 0.99 \textwidth]{./figs/fig5.pdf}
+\includegraphics[width = 0.9 \textwidth]{./figs/fig5.pdf}
 \caption{ Permeability and anisotropy statistics from an ensemble of simulations.
 a) 
 \label{fig5}
@@ -695,16 +690,22 @@ a)
 \end{figure*}
 %---------------------------------------------------------%
 
+Figure \ref{fig5} shows the permeability and anisotropy measurements for the complete data set. In particular, for a given number of initial bodies ($M$ = 20, 40, 60, 80, or 100), the mean and standard deviation of each quantity are shown, and the five different values of $M$ are shown by different colors. As seen in Figs.~\ref{fig5}(a)--(b), the trends of increasing permeabilities are well grouped by the number of initial bodies. That is, permeability monotonically decreases with the number of bodies and the error bars shows little overlap between different values of $M$ until very late in the simulation when the bodies have nearly vanished. 
+
+Figure~\ref{fig5}(c) shows the corresponding statistics of anisotropy, $\anis$. Here, the anisotropy is not as well separated by $M$. That is, given the error-bars, there is significant overlap in the signal of $\anis$ across different values of $M$. On notable feature is second rise in $\anis$ that occurs late in the simulation only for the larger values of $M$ = 60, 80, and 100. As before, the anisotropy can be decomposed into configuration and shape components as shown in Figs.~\ref{fig5}(d)--(e). Here, we see the late surge in configurational anisotropy for these larger values of $M = $ 60, 80, 100. For these runs with a large number of bodies, the latest stages of erosion are dominated by channelization which substantially promotes the configurational anisotropy. The shape anisotropy, meanwhile, takes a more regular, parabolic form that is relatively insensitive to the number of bodies.
+
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
-\includegraphics[width = 0.99 \textwidth]{./figs/fig6.pdf}
+\includegraphics[width = 0.9 \textwidth]{./figs/fig6.pdf}
 \caption{
 a) Statistics from an ensemble of runs.
 \label{fig6}
 }
 \end{figure*}
 %---------------------------------------------------------%
+
+Similar statistical analysis is performed on the tortuosity measurements and shown in Fig.~\ref{fig6}. Much like before, the tortuosity measurements are grouped by the number of bodies, with the error bars showing little overlap across different values of $M$.
 
 %-----------------------------------------------------------------------------------------------%
 \section{Conclusion}
