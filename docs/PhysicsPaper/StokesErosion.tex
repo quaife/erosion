@@ -109,7 +109,7 @@
 
 \author[FSU]{Jake Cherry}
 
-\author[NJIT]{Shang-Huan Chiu}
+\author[TAMU]{Shang-Huan Chiu}
 %\affiliation{Department of Scientific Computing, Florida State University, Tallahassee, FL, 32306.}
 
 \author[FSU]{Bryan D.~Quaife}
@@ -117,7 +117,7 @@
 
 \address[Colgate]{Colgate University}
 \address[FSU]{Florida State University}
-\address[NJIT]{New Jersey Institute of Technology}
+\address[TAMU]{Texas A\&M-San Antonio}
 
 \begin{abstract}
 Using a Cauchy integral formulation of the boundary integral equations, we simulate the erosion a porous medium comprised of up to 100 solid bodies embedded in a Stokes flow. The grains of the medium are resolved individually and erode under the action of surface shear stress. Through nonlinear feedback with the surrounding flow fields, microscopic changes in grain morphology give way to larger-scale features in the medium such as channelization. The Cauchy-integral formulation and associated quadrature formulas enable us to resolve dense configurations of nearly contacting bodies.
@@ -132,11 +132,11 @@ We observe substantial anisotropy to develop over the course of erosion; that is
 
 \section{Introduction}
 
-	Flow-induced erosion acts across a range of scales in the natural world, from massive geological structures sculpted by wind or water~\cite{abrams2009growth, perkins2015amplification, mac2020ultra, sharma2022alcove, mac2022morphological}, to mesoscopic patterns formed by surface or internal flows \cite{berhanu2012shape, bertagni2021hydrodynamic, weady2022anomalous}, and down to granular and porous networks slowly disintegrating in groundwater flows \cite{chiu2020viscous, szymczak2009wormhole, jager2017channelization, grodzki2019reactive, bizmark2020multiscale, derr2020flow, zareei2022temporal}. The associated nonlinear feedback between changing shapes and the surrounding flows can imprint across all of these scales, affecting large-scale features as well as small-scale ones, such as the microstructure of porous materials. Porous media encountered in nature, for example, typically exhibit material {\em anisotropy} in that they permit seepage flow in certain directions more easily than in others.  Typical materials are more permeable to flow in the longitudinal (or horizontal) direction than transversely by a factor of 5--20~\cite{bear1988dynamics, anderson2015applied}. Most commonly, this material anisotropy is attributed to the sedimentation process, in which, due to the fluid-structure interaction, non-spherical particles tend to settle with their long axis parallel to the plan of deposition~\cite{bear1988dynamics}. Controlled experiments, however, have not been performed to test this hypothesis, and other mechanisms may be at work. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
+Flow-induced erosion acts across a range of scales in the natural world, from massive geological structures sculpted by wind or water~\cite{abrams2009growth, perkins2015amplification, mac2020ultra, sharma2022alcove, mac2022morphological}, to mesoscopic patterns formed by surface or internal flows~\cite{berhanu2012shape, bertagni2021hydrodynamic, weady2022anomalous}, and down to granular and porous networks slowly disintegrating in groundwater flows~\cite{chiu2020viscous, szymczak2009wormhole, jager2017channelization, grodzki2019reactive, bizmark2020multiscale, derr2020flow, zareei2022temporal}. The associated nonlinear feedback between changing shapes and the surrounding flows can imprint across all of these scales, affecting large-scale features as well as small-scale ones, such as the microstructure of porous materials. Porous media encountered in nature, for example, typically exhibit material {\em anisotropy} in that they permit seepage flow in certain directions more easily than in others. Typical materials are more permeable to flow in the longitudinal (or horizontal) direction than transversely by a factor of 5--20~\cite{bear1988dynamics, anderson2015applied}. Most commonly, this material anisotropy is attributed to the sedimentation process, in which, due to the fluid-structure interaction, non-spherical particles tend to settle with their long axis parallel to the plan of deposition~\cite{bear1988dynamics}. Controlled experiments, however, have not been performed to test this hypothesis, and other mechanisms may be at work. Here, we use highly-accurate numerical simulations to examine an alternative, and possibly complementary, mechanism: namely, that the flow-induced erosion of the medium's solid constituents contributes to its overall anisotropy.
 
-	Our method merges highly-efficient and highly-accurate boundary-integral equation (BIE) methods~\cite{baker1986boundary, moore2007evaluation} with stable interface evolution methods~\cite{hou-low-she1994, Moore2013} to simulate the erosion of dense suspensions of solid bodies in the Stokes flow regime relevant for groundwater-flow applications~\cite{quaife2018boundary, chiu2020viscous}.  Originally inspired by related work in the high-Reynolds-number regime~\cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in~\cite{quaife2018boundary}, and can simulate the erosion of $O(100)$ solid bodies. The more recent Cauchy reformulation of the BIE and the associated  quadrature formulas allow us to resolve points of near contact between bodies, thus enabling high-fidelity simulation of dense suspensions of erodable bodies~\cite{chiu2020viscous}. Though the governing fluid-flow equations (Stokes) are linear, the nonlinear feedback between evolving microstructure and flow give rise to highly complex and anisotropic configurations.
+Our method merges highly-efficient and highly-accurate boundary-integral equation (BIE) methods~\cite{baker1986boundary, moore2007evaluation} with stable interface evolution methods~\cite{hou-low-she1994, Moore2013} to simulate the erosion of dense suspensions of solid bodies in the Stokes flow regime relevant for groundwater-flow applications~\cite{quaife2018boundary, chiu2020viscous}. Originally inspired by related work in the high-Reynolds-number regime~\cite{Ristroph2012, Moore2013, Huang2015, MooreCPAM2017}, our method is documented, validated, benchmarked in~\cite{quaife2018boundary}, and can simulate the erosion of $O(100)$ solid bodies. The more recent Cauchy reformulation of the BIE and the associated quadrature formulas allow us to resolve points of near contact between bodies, thus enabling high-fidelity simulation of dense suspensions of erodable bodies~\cite{chiu2020viscous}. Though the governing fluid-flow equations (Stokes) are linear, the nonlinear feedback between evolving microstructure and flow give rise to highly complex and anisotropic configurations.
 	
-	Figure~\ref{fig1} shows an example simulation with 80 circular bodies of randomized sizes and positions immersed in a Stokes flow that moves from left to right. A plug flow is imposed on artificial walls to the left and right of each frame, and a no-slip boundary condition is imposed along the top and bottom of each frame. The color depicts the local speed of the flow intervening between bodies. Over time, individual bodies erode in response to the shear stresses induced on them, and heterogeneous material removal creates visible features both at the level of individual bodies and the larger-scale configuration. For example, horizontally-oriented channels are clearly visible in the third and fourth frames, and these contribute to the overall anisotropy of the medium.
+Figure~\ref{fig1} shows an example simulation with 80 circular bodies of randomized sizes and positions immersed in a Stokes flow that moves from left to right. A plug flow is imposed on artificial walls to the left and right of each frame, and a no-slip boundary condition is imposed along the top and bottom of each frame. The color depicts the local speed of the flow intervening between bodies. Over time, individual bodies erode in response to the shear stresses induced on them, and heterogeneous material removal creates visible features both at the level of individual bodies and the larger-scale configuration. For example, horizontally-oriented channels are clearly visible in the third and fourth frames, and these contribute to the overall anisotropy of the medium.
 
 % preferentially removing solid material, and further opening the channels. The positive feedback creates the channels that are clearly visible by in final two images.
 
@@ -154,7 +154,7 @@ We observe substantial anisotropy to develop over the course of erosion; that is
 % Times are 0, 0.28, 0.57, 0.85 of final time.
 % Porosities are 0.40, 0.49, 0.64, 0.86.
 
-The outline of the paper is as follows. In Section~\ref{sec:formulation} we discuss the governing equations for the fluid flow and for interface evolution. In Section~\ref{sec:DLP} we discuss the numerical methods. In Section~\ref{sec:medium} we measure porous-medium properties, in particular permeability. In Section~\ref{sec:results} we provide results and we conclude in section~\ref{sec:conclusion}.
+The outline of the paper is as follows. In Section~\ref{sec:formulation} we discuss the governing equations for the fluid flow and for interface evolution. In Section~\ref{sec:DLP} we discuss the numerical methods. In Section~\ref{sec:medium} we measure porous-medium properties, in particular permeability. In Section~\ref{sec:results} we provide results and we conclude in Section~\ref{sec:conclusion}.
 
 %-----------------------------------------------------------------------------------------------%
 \section{Governing Equations}
@@ -211,7 +211,7 @@ where
   \eeta(\yy) \, ds_\yy,
   \label{eqn:velocityDLP}
 \end{align}
-where $\rr = \xx - \yy$ and $\rho = \|\rr\|$. Note that $\bd\Omega$ includes both the eroding bodies and the outer boundary. The Stokeslet and the rotlets are
+where $\rr = \xx - \yy$ and $\rho = \|\rr\|$. Note that $\bd\Omega$ includes both the eroding bodies and the outer boundary. The Stokeslets and the rotlets are
 \begin{align}
   S[\lambda_\ell](\xx) = \frac{1}{4\pi} \left(-\log \rho_\ell +
   \frac{\rr_\ell \otimes \rr_\ell}{\rho_\ell^2} \right) \llambda_\ell,
@@ -311,7 +311,7 @@ which satisfies the Sokhotski-Plemelj jump relation
 \begin{align}
   v^{-}(x_0) = \lim_{\substack{x \rightarrow x_0 \\ x \in \Omega}} \int_{\gamma}
     \frac{\eta(y)}{x-y}\, dy = -\frac{1}{2}\eta(x_0) - 
-    \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x-y} \, dy,
+    \frac{1}{2\pi i} \int_{\gamma} \frac{\eta(y)}{x_0-y} \, dy,
     \quad x_0 \in \gamma,
     \label{eqn:SP}
 \end{align}
@@ -381,7 +381,7 @@ the ratio is bounded independent of $x$.
 
 The derivatives of the Cauchy integral in~\eqref{eqn:cauchy} can be
 approximated with a uniformly spectral error using similar quadrature
-rules. For $x \in \Omega$, 
+rules. To summarize, for $x \in \Omega$, 
 \begin{align}
   v'(x) &\approx \left(\frac{1}{2\pi i}\sum_{j=1}^{N}
     \frac{v^{-}(y_j) - v(x)}{(y_j-x)^2} w_j \right)
@@ -391,7 +391,7 @@ rules. For $x \in \Omega$,
   v''(x) &\approx \left(\frac{2}{2\pi i}\sum_{j=1}^N 
     \frac{v^{-}_{j} - v(x) - (y_j-x)v'(x)}{(y_j-x)^3}w_j \right)
     \Bigg/
-    \left(\frac{1}{2\pi i}\sum_{j=1}^N \frac{1}{y_j-x}w_j\right).
+    \left(\frac{1}{2\pi i}\sum_{j=1}^N \frac{1}{y_j-x}w_j\right),
   \label{eqn:D2vBary}
 \end{align}
 We note that equations~\eqref{eqn:vBary},~\eqref{eqn:D1vBary},
@@ -590,11 +590,10 @@ $\pp(t(y_0))$ is $+1$. Then, the longitudinal tortuosity is
 \begin{align}
   T_1 = \frac{1}{2}\left(\int_{S}u(-1,y)\lambda(y)\,dy \right)
   \Bigg/
-  \left(\int_{S}u(x_0,y)\,dy \right).
+  \left(\int_{S}u(-1,y)\,dy \right).
   \label{eqn:tortuosity_x}
 \end{align} 
-\todo[inline]{What is $x_0$ in the denominator? Should that be -1?}
-The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate \nick{the configuration of} eroded bodies by 90 degrees to compute a transverse tortuosity $T_2$.
+The factor of $1/2$ guarantees that $T_1 \geq 1$, and $T_1 = 1$ if and only if no grains are present. Identical to how we calculate the transverse permeability, we rotate the configuration of eroded bodies by 90 degrees to compute a transverse tortuosity $T_2$.
 
 % NOTE: I explain what ratio we compute in the results section, so we don't need to do it here.
 %Then, another measure of the anisotropy is
@@ -617,34 +616,34 @@ We use a similar area integral to compute $T_2$. We note that there may be slow 
 \label{sec:results}
 %-----------------------------------------------------------------------------------------------%
 
-With the numerical methods in place, we now present results on how fluid-mechanical erosion alters porous-media properties over time. We will first discuss the results from a single simulation and then generalize to statistical results from ensembles of simulations.
+With the numerical methods in place, we now present results on how fluid-mechanical erosion alters porous-media properties over time. We first discuss the results from a single simulation and then generalize to statistical results from ensembles of simulations.  
 
 \subsection{Single simulation results}
 \label{sec:single_sim}
 
-To begin, we discuss a single simulation of 80 bodies eroding in Stokes flow. For reference, the simulation discussed here is the same one shown in Fig.~\ref{fig1}. The initial configuration consists of 80 circular bodies having randomized sizes and positions. The material-removal process alters both the shape of individual bodies as well as the overall structure of the pore network transmitting the flow, as can be seen in Fig.~\ref{fig1}. Initially, the solid bodies occupy $60\%$ of the area, or the porosity is $\varphi = 0.4$, corresponding to a relatively dense packing; see Fig.~\ref{fig1} for a visual. Figure~\ref{fig2}(a) shows how the solid-body area decreases, or equivalently the porosity increases, over time as the bodies erode. The increasing porosity serves as a convenient proxy for dimensionless time that is insensitive to the end conditions setting the strength of the flow (i.e.~whether we specify the pressure drop or the end velocity to be constant in time). We will henceforth use porosity, $\varphi$, on the horizontal axis of many plots to represent increasing time.
+To begin, we discuss a single simulation of 80 bodies eroding in Stokes flow. The simulation discussed here is the same one shown in Figure~\ref{fig1}. The initial configuration consists of 80 circular bodies having randomized sizes and positions. The material-removal process alters both the shape of individual bodies as well as the overall structure of the pore network transmitting the flow, as can be seen in Figure~\ref{fig1}. Initially, the solid bodies occupy $60\%$ of the area, or the porosity is $\varphi = 0.4$, corresponding to a relatively dense packing; see Figure~\ref{fig1} for a visual. Figure~\ref{fig2}(a) shows how the solid-body area decreases, or equivalently the porosity increases, over time as the bodies erode. The increasing porosity serves as a convenient proxy for dimensionless time that is insensitive to the end conditions setting the strength of the flow (i.e.~whether we specify the pressure drop or the end velocity to be constant in time). We will henceforth use porosity, $\varphi$, on the horizontal axis of many plots to represent increasing time.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
 \includegraphics[width = 0.99 \textwidth]{./figs/fig2.pdf}
-\caption{A single simulation of porous-medium erosion. The initial configuration consists of 80 circular bodies of random size and position, as seen in Fig.~\ref{fig1}. a) As the medium erodes, the fraction of solid-body area decreases, or, equivalently, the porosity increases. b) Resistance to flow can be characterized by either the resistivity (solid) or the cumulative drag (dots), the two of which are related through \eqref{perm_drag}. Both are seen to decrease as the medium erodes, and relationship \eqref{perm_drag} is confirmed by the simulation data. The figure also shows the resistivity in transverse direction (dashed).
- \label{fig2}
+\caption{A single simulation of porous-medium erosion. The initial configuration consists of 80 circular bodies of random size and position, as seen in Figure~\ref{fig1}. a) As the medium erodes, the fraction of solid-body area decreases, or, equivalently, the porosity increases. b) Resistance to flow can be characterized by either the resistivity (solid) or the cumulative drag (dots), the two of which are related through~\eqref{perm_drag}. Both are seen to decrease as the medium erodes, and relationship~\eqref{perm_drag} is confirmed by the simulation data. The figure also shows the resistivity in transverse direction (dashed).
+\label{fig2}
 }
 \end{figure*}
 %---------------------------------------------------------%
 % Data from 80-4
 
-As the bodies disintegrate and give way to wider pores, the resistance to flow decreases as seen in Fig.~\ref{fig2}(b). The resistance to flow can be quantified in two separate ways, as outlined in Section \ref{sec:medium}, namely by computing the total drag or by extracting the permeability. As discussed in Section \ref{sec:medium}, the drag is a microscopic quantity that can be computed with high accuracy and without ambiguity in our Stokes-based simulations. The permeability, on the other hand, relies on a few approximations, but the extraction of such bulk quantities will be more valuable in characterizing the evolving porous medium. As such, it is particularly useful to compare these two perspectives so that the assumptions underlying the coarse-graining process can be assessed. In particular, we aim to test the approximate formula \eqref{perm_drag}, relating the longitudinal drag $F_1$ to the inverse permeability $1/k_{11}$, also known as the {\em resistivity}. Figure \ref{fig2}(b) indeed shows close agreement between these two quantities over the entire duration of the simulation, thus confirming the ability to extract medium properties during the erosion process.
+As the bodies disintegrate and give way to wider pores, the resistance to flow decreases as seen in Figure~\ref{fig2}(b). The resistance to flow can be quantified in two separate ways, as outlined in Section~\ref{sec:medium}, namely by computing the total drag or by extracting the permeability. As discussed in Section~\ref{sec:medium}, the drag is a microscopic quantity that can be computed with high accuracy and without ambiguity in our Stokes-based simulations. The permeability, on the other hand, relies on a few approximations, but the extraction of such bulk quantities will be more valuable in characterizing the evolving porous medium. As such, it is particularly useful to compare these two perspectives so that the assumptions underlying the coarse-graining process can be assessed. In particular, we aim to test the approximate formula~\eqref{perm_drag}, relating the longitudinal drag $F_1$ to the inverse permeability $1/k_{11}$, also known as the {\em resistivity}. Figure~\ref{fig2}(b) indeed shows close agreement between these two quantities over the entire duration of the simulation, thus confirming the ability to extract medium properties during the erosion process.
 
-In Fig.~\ref{fig2}(b) we also show the transverse resistivity, $1/k_{22}$, as it decreases over the course of the simulation. Notice that this transverse resistivity exceeds the longitudinal resistivity by a significant margin, indicating that the configuration provides greater resistance to flow in the vertical direction. This trend fits the intuition that horizontally-aligned channels transmit flow more easily in the longitudinal direction.
+In Figure~\ref{fig2}(b) we also show the transverse resistivity, $1/k_{22}$, as it decreases over the course of the simulation. Notice that this transverse resistivity exceeds the longitudinal resistivity by a significant margin, indicating that the configuration provides greater resistance to flow in the vertical direction. This trend fits the intuition that horizontally-aligned channels transmit flow more easily in the longitudinal direction.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
 \includegraphics[width = 0.99 \textwidth]{./figs/fig3.pdf}
 \caption{
-The permeability and anisotropy of the same 80-body simulation featured in Figs.~\ref{fig1} and \ref{fig2}. a) Both the longitudinal (solid) and transverse (dashed) permeability increase over time as the bodies erode. Also shown in the figure is the longitudinal and transverse permeabilities of the corresponding configurations of circles, which allows us to extract the configurational component of anisotropy. b) The anisotropy of the medium increases as the bodies erode and preferentially allow flow in the longitudinal direction. The total anisotropy is the sum of configurational and shape components. The shape contribution is larger throughout most of the simulation, but near the end of the simulation, the configurational contribution grows large as the channel-structure dominates.
+The permeability and anisotropy of the same 80-body simulation featured in Figures~\ref{fig1} and~\ref{fig2}. a) Both the longitudinal (solid) and transverse (dashed) permeability increase over time as the bodies erode. Also shown is the longitudinal and transverse permeabilities of the corresponding configurations of circles, which allows us to extract the configurational component of anisotropy. b) The anisotropy of the medium increases as the bodies erode and preferentially allow flow in the longitudinal direction. The total anisotropy is the sum \todo[inline]{do you mean product} of configurational and shape components. The shape contribution is larger throughout most of the simulation, but near the end of the simulation, the configurational contribution grows large as the channel-structure dominates.
 \label{fig3}
 }
 \end{figure*}
@@ -652,61 +651,71 @@ The permeability and anisotropy of the same 80-body simulation featured in Figs.
 % Data from 80-4
 %c) The relationship between permeability $k$ and porosity $\phi$ for the eroding medium. Both quantities increase with time as the medium erodes, but at different rates due to changes in the microstructure and channelization of the medium.
 
-Figure \ref{fig3}(a) shows more directly how permeability in the longitudinal, $k_{11}$ and transverse, $k_{22}$ directions increase over time as the medium erodes. Once again, the relationship $k_{11} > k_{22}$ indicates a higher propensity for flow in the longitudinal direction. Notice that the permeability increases by nearly 5 orders of magnitude over the course of the simulation, indicating that erosion substantially alters medium properties.
+Figure~\ref{fig3}(a) shows more directly how permeability in the longitudinal, $k_{11}$ and transverse, $k_{22}$ directions increase over time as the medium erodes. Once again, the relationship $k_{11} > k_{22}$ indicates a higher propensity for flow in the longitudinal direction. Notice that the permeability increases by nearly five orders of magnitude over the course of the simulation, indicating that erosion substantially alters medium properties.
 
-As given in \eqref{eq:anis}, the ratio of longitudinal to transverse permeability defines the anisotropy of the medium, $\anis = k_{11} / k_{22}$, which is plotted in Fig.~\ref{fig3}(b) over the course fo the simulation (solid curve). Early in the simulation the anisotropy is nearly one, as the initial configuration of randomly placed circles has no preferred flow direction. The anisotropy then increases as heterogeneous rates of erosion promote longitudinal flow over transverse flow. The anisotropy peaks at a value of $\anis \approx 4$ later in the simulation. At very late times, the anisotropy approaches unity again as the bodies completely vanish and return the system to a state of no preferred flow direction.
+As given in~\eqref{eq:anis}, the ratio of longitudinal to transverse permeability defines the anisotropy of the medium, $\anis = k_{11} / k_{22}$, which is plotted in Figure~\ref{fig3}(b) over the course of the simulation (solid curve). Early in the simulation the anisotropy is nearly one, as the initial configuration of randomly placed circles has no preferred flow direction. The anisotropy then increases as heterogeneous rates of erosion promote longitudinal flow over transverse flow. The anisotropy peaks at a value of $\anis \approx 4$ later in the simulation. At very late times, the anisotropy approaches unity again as the bodies completely vanish and return the system to a state of no preferred flow direction.
 
-As discussed in Section \ref{subsec:anis}, the anisotropy of the medium results from the combination of {\em shape} anisotropy, at the individual grain level, and {\em configurational anisotropy}, at the large scale. As detailed in Section \ref{subsec:anis}, the configurational anisotropy can be extracted through a process in which, at any point in time, the configuration of partially-eroded bodies is replaced with a collection of circles having the same areas and centers of mass. We perform this process and show in Fig.~\ref{fig3}(a) the permeabilities, $k_{11}^{(c)}$ and $k_{22}^{(c)}$, of the corresponding circle configurations. As seen in the figure, the permeabilities of the circle configurations always lie in between the values, $k_{11}$ and $k_{22}$, of the true, eroded medium. The {\em configurational} anisotropy is then computed as the permeability ratio of the circle configuration, $\anis_C = k_{11}^{(c)} / k_{22}^{(c)}$, and then the {\em shape} anisotropy can be determined through $\anis_S = \anis/\anis_C$. As seen in Fig.~\ref{fig3}(b), the shape anisotropy is the larger factor throughout the majority of the simulation, implying that the shape of individual grains plays a larger role than their relative positions. It is only during the last 10\% of the simulation that the configurational anisotropy grows significantly and surpasses the shape anisotropy. This relative growth of the configurational anisotropy corresponds to the strong channelization seen in the last panel of Fig.~\ref{fig1}.
+As discussed in Section~\ref{subsec:anis}, the anisotropy of the medium results from the combination of {\em shape} anisotropy, at the individual grain level, and {\em configurational anisotropy}, at the large scale. As detailed in Section~\ref{subsec:anis}, the configurational anisotropy can be extracted through a process in which, at any point in time, the configuration of partially-eroded bodies is replaced with a collection of circles having the same areas and centers of mass. We perform this process and show in Figure~\ref{fig3}(a) the permeabilities, $k_{11}^{(c)}$ and $k_{22}^{(c)}$, of the corresponding circle configurations. As seen in the figure, the permeabilities of the circle configurations always lie in between the values, $k_{11}$ and $k_{22}$, of the true, eroded medium. The {\em configurational} anisotropy is then computed as the permeability ratio of the circle configuration, $\anis_C = k_{11}^{(c)} / k_{22}^{(c)}$, and then the {\em shape} anisotropy can be determined through $\anis_S = \anis/\anis_C$. As seen in Figure~\ref{fig3}(b), the shape anisotropy is the larger factor throughout the majority of the simulation, implying that the shape of individual grains plays a larger role than their relative positions. It is only during the last 10\% of the simulation that the configurational anisotropy grows significantly and surpasses the shape anisotropy. This relative growth of the configurational anisotropy corresponds to the strong channelization seen in the last panel of Figure~\ref{fig1}.
 
-The late emergence of substantial configurational anisotropy may seem like a spurious effect that is particular to the one simulation shown in Fig.~\ref{fig3}. However, statistical analysis of many simulations will show this feature to emerge robustly in simulations featuring a relatively large number of bodies $M \ge 60$.
+The late emergence of substantial configurational anisotropy may seem
+like a spurious effect that is particular to the one simulation shown in
+Figure~\ref{fig3}. However, statistical analysis of many simulations will show this feature to emerge robustly in simulations featuring a relatively large number of bodies $M \ge 60$.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
 \includegraphics[width = 0.99 \textwidth]{./figs/fig4.pdf}
 \caption{
-Tortuosity measurements of the same 80-body simulation featured in Figs.~\ref{fig1} and \ref{fig2}. a) As the bodies erode, the transverse tortuosity $T_2$ exceeds the longitudinal component, indicating more convoluted paths for tracers traveling vertically, transverse to the flow. Also shown are the measurements for the configurations of circles. b) The ratio $(T_2-1)/(T_1-1)$ serves as a counterpart to the anisotropy. Like anisotropy, this ratio grows large over the course of erosion. It can be decomposed into configurational and shape components in a similar manner.
+Tortuosity measurements of the same 80-body simulation featured in Figures~\ref{fig1} and~\ref{fig2}. a) As the bodies erode, the transverse tortuosity $T_2$ exceeds the longitudinal component, indicating more convoluted paths for tracers traveling vertically, transverse to the flow. Also shown are the measurements for the configurations of circles. b) The ratio $(T_2-1)/(T_1-1)$ serves as a counterpart to the anisotropy. Like anisotropy, this ratio grows large over the course of erosion. It can be decomposed into configurational and shape components in a similar manner.
 \label{fig4}
 }
 \end{figure*}
 %---------------------------------------------------------%
 % Data from 80-4
 
-As a second way to quantify medium anisotropy, we measure the tortuosity, $T_1$ and $T_2$, in the longitudinal and transverse directions respectively. Figure \ref{fig4}(a), shows how both vary over the course of the simulation. As the bodies erode, $T_2$ grows significantly larger than $T_1$, indicating that passive tracers must follow more tortuous paths when traveling transversely and that longitudinal paths are more direct. The ratio $(T_2-1)/(T_1-1)$ provides a second measure of anisotropy to complement the permeability-dependent quantity. We have chosen to subtract one in parenthesis so that both numerator and denominator vanish when no bodies are present, as analogous to resistivity. As seen in Fig.~\ref{fig4}(b), the ratio $(T_2-1)/(T_1-1)$ grows significantly during erosion, up to a peak of nearly 8. This ratio can be decomposed into configurational and shape components, exactly as is done for the anisotropy (i.e.~by replacing a collection of eroded bodies with circles of the same areas and centers of mass). Figure~\ref{fig4}(b) shows that the shape component is greater for the majority of the simulation, but near the end of the simulation, the configurational component is competitive. 
+As a second way to quantify medium anisotropy, we measure the
+tortuosity, $T_1$ and $T_2$, in the longitudinal and transverse
+directions respectively. Figure~\ref{fig4}(a), shows how both vary over
+the course of the simulation. As the bodies erode, $T_2$ grows
+significantly larger than $T_1$, indicating that passive tracers must
+follow more tortuous paths when traveling transversely and that
+longitudinal paths are more direct. The ratio $(T_2-1)/(T_1-1)$ provides
+a second measure of anisotropy to complement the permeability-dependent
+quantity. We have chosen to subtract one in parenthesis so that both
+numerator and denominator vanish when no bodies are present, as
+analogous to resistivity. As seen in Figure~\ref{fig4}(b), the ratio $(T_2-1)/(T_1-1)$ grows significantly during erosion, up to a peak of nearly 8. This ratio can be decomposed into configurational and shape components, exactly as is done for the anisotropy (i.e.~by replacing a collection of eroded bodies with circles of the same areas and centers of mass). Figure~\ref{fig4}(b) shows that the shape component is greater for the majority of the simulation, but near the end of the simulation, the configurational component is competitive. 
 
 
 \subsection{Statistics of ensembles of simulations}
 
-The previous section shows many intriguing features to arise as a randomly initialized configuration of solid bodies erodes. These observations natural raise the question: are the trends specific to the particular initializing chosen or do are they general features that emerge robustly? To answer this question, we now analyze the same quantities --- permeability, tortuosity, and anisotropy --- over an ensemble of many simulations having different numbers of bodies and different random initializations. We analyze runs having $M$ = 20, 40, 60, 80, and 100 bodies, with at least three different instances of each. This data set represents roughly 2,100 hours of computational time.
+The previous section shows many intriguing features to arise as a randomly initialized configuration of solid bodies erodes. These observations natural raise the question: are the trends specific to the particular initializing chosen or do are they general features that emerge robustly? To answer this question, we now analyze the same quantities---permeability, tortuosity, and anisotropy---over an ensemble of many simulations having different numbers of bodies and different random initializations. We analyze runs having $M$ = 20, 40, 60, 80, and 100 bodies, with at least three different instances of each. This data set represents roughly 2,100 hours of computational time.  
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
 \includegraphics[width = 0.9 \textwidth]{./figs/fig5.pdf}
-\caption{ Permeability and anisotropy statistics from an ensemble of simulations.
-(a)--(b) Measurements of the longitudinal (a) and transverse (b) permeability are well separated with respect to the number of bodies, $M$. For each $M$, the mean and standard deviation of permeability are shown for increasing porosity (or time). (c) In all runs, the anisotropy grows substantially and reaches a maximum value of roughly 4--6. Runs with a large number of bodies ($M$ = 60, 80, or 100) show a second surge in anisotropy near the end of the simulation. (d)--(e) The configurational and shape contributions of anisotropy. While the shape anisotropy varies fairly regularly with time across all runs, the configurational anisotropy shows a distinct peak late in the simulation for runs with large $M$.
+\caption{Permeability and anisotropy statistics from an ensemble of simulations. (a)--(b) Measurements of the longitudinal (a) and transverse (b) permeability are well separated with respect to the number of bodies, $M$. For each $M$, the mean and standard deviation of permeability are shown for increasing porosity (or time). (c) In all runs, the anisotropy grows substantially and reaches a maximum value of roughly 4--6. Runs with a large number of bodies ($M$ = 60, 80, or 100) show a second surge in anisotropy near the end of the simulation. (d)--(e) The configurational and shape contributions of anisotropy. While the shape anisotropy varies fairly regularly with time across all runs, the configurational anisotropy shows a distinct peak late in the simulation for runs with large $M$.
 \label{fig5}
 }
 \end{figure*}
 %---------------------------------------------------------%
 
-Figure \ref{fig5} shows the permeability and anisotropy measurements for the complete data set. In particular, for a given number of initial bodies ($M$ = 20, 40, 60, 80, or 100), the mean and standard deviation of each quantity are shown, and the five different values of $M$ are shown by different colors. As seen in Figs.~\ref{fig5}(a)--(b), the trends of increasing permeabilities are well grouped by the number of initial bodies. That is, permeability monotonically decreases with the number of bodies and the error bars shows little overlap between different values of $M$ until very late in the simulation when the bodies have nearly vanished. 
+Figure~\ref{fig5} shows the permeability and anisotropy measurements for the complete data set. In particular, for a given number of initial bodies ($M$ = 20, 40, 60, 80, or 100), the mean and standard deviation of each quantity are shown, and the five different values of $M$ are shown by different colors. As seen in Figures~\ref{fig5}(a)--(b), the trends of increasing permeabilities are well grouped by the number of initial bodies. That is, permeability monotonically decreases with the number of bodies and the error bars shows little overlap between different values of $M$ until very late in the simulation when the bodies have nearly vanished. 
 
-Figure~\ref{fig5}(c) shows the corresponding statistics of anisotropy, $\anis$. Here, the anisotropy is not as well separated by $M$. That is, given the error-bars, there is significant overlap in the signal of $\anis$ across different values of $M$. On notable feature is second rise in $\anis$ that occurs late in the simulation only for the larger values of $M$ = 60, 80, and 100. As before, the anisotropy can be decomposed into configuration and shape components as shown in Figs.~\ref{fig5}(d)--(e). Here, we see the late surge in configurational anisotropy for these larger values of $M = $ 60, 80, 100. For these runs with a large number of bodies, the latest stages of erosion are dominated by channelization which substantially promotes the configurational anisotropy. The shape anisotropy, meanwhile, takes a more regular, parabolic form that is relatively insensitive to the number of bodies.
+Figure~\ref{fig5}(c) shows the corresponding statistics of anisotropy, $\anis$. Here, the anisotropy is not as well separated by $M$. That is, given the error-bars, there is significant overlap in the signal of $\anis$ across different values of $M$. One notable feature is a second rise in $\anis$ that occurs late in the simulation only for the larger values of $M$ = 60, 80, and 100. As before, the anisotropy can be decomposed into configuration and shape components as shown in Figures~\ref{fig5}(d)--(e). Here, we see the late surge in configurational anisotropy for these larger values of $M = $ 60, 80, 100. For these runs with a large number of bodies, the latest stages of erosion are dominated by channelization which substantially promotes the configurational anisotropy. The shape anisotropy, meanwhile, takes a more regular, parabolic form that is relatively insensitive to the number of bodies.
 
 %---------------------------------------------------------%
 \begin{figure*}%[htbp]
 \centering
 \includegraphics[width = 0.9 \textwidth]{./figs/fig6.pdf}
 \caption{
-Tortuosity statistics from an ensemble of simulations.
-(a)--(b) The longitudinal (a) and transverse tortuosity measurements are well grouped with respect to the number of bodies. (c)--(e) Statistics of the ratio, $(T_2 -1)/(T_1 -1)$, including its configurational and shape contribution.
+Tortuosity statistics from an ensemble of simulations. (a)--(b) The longitudinal (a) and transverse tortuosity measurements are well grouped with respect to the number of bodies. (c)--(e) Statistics of the ratio, $(T_2 -1)/(T_1 -1)$, including its configurational and shape contribution.
 \label{fig6}
 }
 \end{figure*}
 %---------------------------------------------------------%
 
-Similar statistical analysis is performed on the tortuosity measurements and shown in Fig.~\ref{fig6}(a)--(b). Much like before, the tortuosity measurements are well separated by the number of bodies, with the error bars showing little overlap across different values of $M$. Measurements of the tortuosity ratio, $(T_2 -1)/(T_1 -1)$, however, show similar behavior across different values of $M$, as seen in Fig.~\ref{fig6}(c). For nearly all runs, the tortuosity ratio increases as bodies erode up to a maximum of roughly $(T_2 -1)/(T_1 -1) = 8$, and then the tortuosity ratio decreases near the very end of the simulation. As before the tortuosity ratio can be decomposed into configurational and shape components, as shown in Figs.~\ref{fig6}(d)--(e). The figure shows that the shape component is the main contribution, and the configurational component of the tortuosity ratio is minimal.
+Similar statistical analysis is performed on the tortuosity measurements and shown in Figure~\ref{fig6}(a)--(b). Much like before, the tortuosity measurements are well separated by the number of bodies, with the error bars showing little overlap across different values of $M$. Measurements of the tortuosity ratio, $(T_2 -1)/(T_1 -1)$, however, show similar behavior across different values of $M$, as seen in Figure~\ref{fig6}(c). For nearly all runs, the tortuosity ratio increases as bodies erode up to a maximum of roughly $(T_2 -1)/(T_1 -1) = 8$, and then the tortuosity ratio decreases near the very end of the simulation. As before the tortuosity ratio can be decomposed into configurational and shape components, as shown in Figures~\ref{fig6}(d)--(e). The shape component is the main contribution, and the configurational component of the tortuosity ratio is minimal.
 
 %-----------------------------------------------------------------------------------------------%
 \section{Conclusion}
@@ -715,11 +724,26 @@ Similar statistical analysis is performed on the tortuosity measurements and sho
 
 In this paper, we have presented a Cauchy formulation of the boundary integral equation method to simulate the fluid-mechanical erosion of many bodies in a Stokes flow. The accuracy and efficiency of the method enables high-fidelity simulations of dense suspensions of $O(100)$ bodies and statistical analysis across an ensemble of different initializations. By linking the governing Stokes equation to Darcy's law, we are able to extract porous media properties, including permeability, resistivity, tortuosity, and anisotropy, as they evolve over time. Direct comparison of resistivity with the total drag force confirms such bulk properties are extracted with high accuracy.
 
-	The ratio of longitudinal to transverse permeability provides our main diagnostic of medium anisotropy. Measurements indicate that the anisotropy grows substantially as a result of fluid mechanical erosion, reaching a peak of roughly six in most simulations, before the bodies completely vanish and return the system to an isotropic state. The anisotropy can be further decomposed into a configurational component, due only to the relative positions of bodies, and a shape component, due to the detailed geometry of each body. Statistical analysis across a large number of simulations reveals that if the number of bodies is sufficiently large, $M \ge 60$, the configurational anisotropy surges near the final stages of erosion and surpasses the shape anisotropy as the primary contribution. This surge in configurational anisotropy is associated with the formation of visual channels that transmit a large portion of the flow. The tortuosity provides a second metric and also reveals strong anisotropy to develop across all simulations.
-The methodology could be extended to more complex scenarios of thermal convective flows in porous media \cite{McCurdy2019} or erodable porous structures formed by precipitation reactions \cite{eastham2020multiphase}.
-
-%though this metric shows less signal in the configurational contribution.
-
+The ratio of longitudinal to transverse permeability provides our main
+diagnostic of medium anisotropy. Measurements indicate that the
+anisotropy grows substantially as a result of fluid mechanical erosion,
+reaching a peak of roughly six in most simulations, before the bodies
+completely vanish and return the system to an isotropic state. The
+anisotropy can be further decomposed into a configurational component,
+due only to the relative positions of bodies, and a shape component, due
+to the detailed geometry of each body. Statistical analysis across a
+large number of simulations reveals that if the number of bodies is
+sufficiently large, $M \ge 60$, the configurational anisotropy surges
+near the final stages of erosion and surpasses the shape anisotropy as
+the primary contribution. This surge in configurational anisotropy is
+associated with the formation of visual channels that transmit a large
+portion of the flow. The tortuosity provides a second metric and also
+reveals strong anisotropy to develop across all simulations. The
+methodology could be extended to more complex scenarios of thermal
+convective flows in porous media~\cite{McCurdy2019}, erodable porous
+structures formed by precipitation
+reactions~\cite{eastham2020multiphase}, and first arrival statistics of
+Brownian particles~\cite{che-lin-her-qua2021}. 
 
 \bibliographystyle{plain}
 \bibliography{refs}
