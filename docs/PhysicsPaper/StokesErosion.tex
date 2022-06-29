@@ -411,24 +411,14 @@ work~\cite{chiu2020viscous}.
 \subsection{Interface evolution}
 %-----------------------------------------------------------------------------------------------%
 
-With the flow and shear stresses computed, we seek to evolve the boundaries of erodable bodies. For numerical stability, we modify~\eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$, as in previous work~\cite{quaife2018boundary}
+With the flow computed, we extract the vorticity which reduces to shear stress, $\tau$, on solid boundaries. Next, we seek to evolve the boundaries of these erodable bodies. For numerical stability, we modify erosion law \eqref{Vn0} to include a smoothing term that depends on local curvature $\kappa$~\cite{quaife2018boundary}
 \begin{align}
   \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(
     \frac{L}{2\pi} \kappa - 1 \right).
 \end{align}
-The last term is a smoothing term that has strength $\epsilon \ll 1$ and scales with spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis, the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, which represents the shear-dependent erosion law. In addition, we apply a narrow Gaussian filter to the distribution $\abs{\tau}$ to further improve stability.
+The last term is a smoothing term that has strength $\epsilon \ll 1$ and scales with the spatial average of the shear stress $\langle\abs{\tau}\rangle$. $L$ indicates the total arc length of the body, and, inside the parenthesis, the mean curvature is subtracted so that this term preserves area. As such, the only source of material loss is the first term, $\CE \, \abs{\tau}$, representing the shear-dependent erosion law \eqref{Vn0}. In addition, we apply a narrow Gaussian filter to the distribution $\abs{\tau}$ to further improve stability.
 
 Rather than tracking the Cartesian coordinates of each surface, we employ the {\thL} formulation~\cite{hou-low-she1994, Moore2013, MooreCPAM2017, mac2022morphological} by tracking the tangent angle $\theta$ as a function of arc length and the total length $L$ of each body. In this formulation, the curvature-dependent smoothing becomes a linear diffusive term, thus enabling the use of stable, implicit schemes for this stiff term. The remaining nonlinear terms are not stiff and can be treated by explicit time-stepping methods. In particular, we use an exponential integrator for the diffusion term and a Runge-Kutta method for all other terms, both of which are second-order in time~\cite{quaife2018boundary}.
-
-
-% COPIED STRAIGHT FROM JFM 2020
-%We use the time stepping method outlined in our previous work~\citep[see][section 3.3]{qua-moo2018} which we briefly summarize here.  The erosion rate loses differentiability if the shear stress changes sign, and this leads to corners developing on $\gamma$ and numerical instabilities.  Therefore, we modify the erosion rate, $V_\nn$ in equation~\eqref{eqn:erosionModel}, with
-%\begin{align}
-% \Vn = \CE \, \abs{\tau} + \epsilon \langle\abs{\tau}\rangle \left(\frac{L}{2\pi} \kappa - 1 \right),
-%\end{align}
-%where $\epsilon \ll 1,$ $\langle \cdot \rangle$ is the spatial average, $L$ is the length of $\gamma$, and $\kappa$ is the curvature of $\gamma$.  The new erosion model penalizes regions of high curvature, but does not change the total length of each body.  Moreover, to increase the overall stability of the method, a narrow Gaussian filter is applied to the erosion rate at each time step.
-
-%Rather than tracking the $(x,y)$ coordinates, the {\thL} coordinates are tracked. In addition, tangential velocity fields are used to maintain an equispaced discretization. Time stepping is performed with a second-order Implicit-Explicit Runge-Kutta method. In particular, the diffusive term corresponding to the curvature penalization term is discretized implicitly, and all other terms, which are non-stiff, are treated explicitly.  By using this time stepping method in conjunction with the Barycentric rule, we stably evolve the eroding bodies.
 
 
 %-----------------------------------------------------------------------------------------------%
