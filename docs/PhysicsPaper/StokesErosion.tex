@@ -650,7 +650,7 @@ Figure~\ref{fig3}. However, statistical analysis of many simulations will show t
 \centering
 \includegraphics[width = 0.99 \textwidth]{./figs/fig4.pdf}
 \caption{
-Tortuosity measurements of the same 80-body simulation featured in Figures~\ref{fig1} and~\ref{fig2}. a) As the bodies erode, the transverse tortuosity $T_2$ exceeds the longitudinal component, indicating more convoluted paths for tracers traveling vertically, transverse to the flow. Also shown are the measurements for the configurations of circles. b) The ratio $(T_2-1)/(T_1-1)$ serves as a counterpart to the anisotropy. Like anisotropy, this ratio grows large over the course of erosion. It can be decomposed into configurational and shape components in a similar manner.
+Tortuosity measurements of the same 80-body simulation featured in Figures~\ref{fig1} and~\ref{fig2}. a) As the bodies erode, the transverse tortuosity $T_2$ exceeds the longitudinal component, indicating more convoluted paths for tracers traveling vertically, transverse to the flow. Also shown are the measurements for the configurations of circles. b) The ratio $(T_2-1)/(T_1-1)$ serves as a second proxy for anisotropy. Like anisotropy, this ratio grows large over the course of erosion. It can be decomposed into configurational and shape components in a similar manner.
 \label{fig4}
 }
 \end{figure*}
@@ -677,7 +677,7 @@ The previous section shows intriguing features to arise from the erosion of a ra
 \begin{figure*}%[htbp]
 \centering
 \includegraphics[width = 0.9 \textwidth]{./figs/fig5.pdf}
-\caption{Permeability and anisotropy statistics from an ensemble of simulations. (a)--(b) Measurements of the longitudinal (a) and transverse (b) permeability are well separated with respect to the number of bodies, $M$. For each $M$, the mean and standard deviation of permeability are shown against increasing porosity (or time). (c) In all runs, the anisotropy grows substantially and reaches a maximum value of roughly 4--6. Runs with a large number of bodies ($M$ = 60, 80, or 100) show a second surge in anisotropy near the end of the simulation. (d)--(e) The configurational and shape contributions of anisotropy. While the shape anisotropy varies fairly regularly with time across all runs, the configurational anisotropy shows a distinct peak late in the simulation for runs with large $M$.
+\caption{Permeability and anisotropy statistics from an ensemble of simulations. (a)--(b) Measurements of the longitudinal (a) and transverse (b) permeability are well separated with respect to the number of bodies, $M$. For each $M$, the mean and standard deviation of permeability are shown against increasing porosity (or time). (c) The same statistics for anisotropy. In all runs, the anisotropy grows substantially and reaches a maximum value of roughly 4--6. Runs with a large number of bodies ($M$ = 60, 80, or 100) show a second surge in anisotropy near the end of the simulation. (d)--(e) The configurational and shape contributions of anisotropy. While the shape anisotropy varies fairly regularly across all runs, the configurational anisotropy shows a distinct peak late in the simulation for runs with large $M$.
 \label{fig5}
 }
 \end{figure*}
@@ -694,16 +694,15 @@ Figure~\ref{fig5} shows the permeability and anisotropy measurements for the com
 \centering
 \includegraphics[width = 0.9 \textwidth]{./figs/fig6.pdf}
 \caption{
-Tortuosity statistics from an ensemble of simulations. (a) \nick{WRITE STUFF}
-(c)--(e) Statistics of the ratio, $(T_2 -1)/(T_1 -1)$, including its configurational and shape contribution.
+Tortuosity statistics from an ensemble of simulations. (a) The longitudinal tortuosity decreases monotonically with time across all simulations as erosion allows particles to take more direct paths when traveling in the flow direction. (b) The transverse turtuosity initially increases with time as vertically traveling particles are forced to navigate the horizontally aligned shapes carved by erosion. (c)--(e) Statistics of the ratio, $(T_2 -1)/(T_1 -1)$, including its configurational and shape contribution. While the tortuosity ratio reaches a high peak, it is a less sensitive indicator of configurational changes such as channel formation.
 \label{fig6}
 }
 \end{figure*}
 %---------------------------------------------------------%
 
-We show in Figs.~\ref{fig6}(a)--(b) similar statistical analysis performed on the longitudinal and transverse tortuosity measurements, $T_1$ and $T_2$. Figure~\ref{fig6}(a) shows that, in all simulations, the longitudinal tortuosity decreases with time as erosion allows passive tracers to take more direct paths when traveling in the flow direction. In contrast, Fig.~\ref{fig6}(b) shows the transverse tortuosity increases with time, as vertically-traveling passive tracers must work to circumvent the horizontally aligned bodies carved by erosion.
+We show in Figs.~\ref{fig6}(a)--(b) similar statistical analysis performed on the longitudinal and transverse tortuosity measurements, $T_1$ and $T_2$. Figure~\ref{fig6}(a) shows that, in all simulations, the longitudinal tortuosity decreases with time as erosion allows passive tracers to take more direct paths when traveling in the flow direction. In contrast, Fig.~\ref{fig6}(b) shows the transverse tortuosity increases with time, as vertically-traveling passive tracers must circumvent the horizontally aligned bodies carved by erosion.
 
-As before, the tortuosity ratio, $(T_2 -1)/(T_1 -1)$, provides a second proxy for medium anisotropy to complement the permeability-based quantity. Figure~\ref{fig6}(c) shows that the tortuosity ratio behaves similarly across all simulations and all different values of $M$. The ratio increases substantially with erosion, reaching a peak of roughly $(T_2 -1)/(T_1 -1) \approx 8$, before descending during the final stages of erosion. As before the tortuosity ratio can be decomposed into configurational and shape components, as shown in Figures~\ref{fig6}(d)--(e). Here, we see that the shape component is the main contribution and the configurational component remains minimal. This observation fits with the intuition that the main hindrance to a passive tracer should be the shape of individual obstructions, rather than how those obstructions are arranged relative to one another. As such, the tortuosity ratio is a less sensitive indicator of channelization than is the permeability ratio.
+As before, the tortuosity ratio, $(T_2 -1)/(T_1 -1)$, provides a second proxy for medium anisotropy to complement the permeability-based definition. Figure~\ref{fig6}(c) shows that the tortuosity ratio behaves similarly across all simulations and all different values of $M$. The ratio increases substantially with erosion, reaching a peak of roughly $(T_2 -1)/(T_1 -1) \approx 8$, before descending during the final stages of erosion. As before the tortuosity ratio can be decomposed into configurational and shape components, as shown in Figures~\ref{fig6}(d)--(e). Here, we see that the shape component is the main contribution and the configurational component remains minimal. This observation fits with the intuition that the main hindrance to a passive tracer should be the shape of individual obstructions, rather than how those obstructions are arranged relative to one another. As such, the tortuosity ratio is a less sensitive indicator of channelization seen to develop late in the erosion simulations.
 
 
 %-----------------------------------------------------------------------------------------------%
