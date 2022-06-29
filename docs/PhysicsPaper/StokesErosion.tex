@@ -561,7 +561,7 @@ Fortunately, it is possible to devise a test to isolate these two types of aniso
 Like the permeability, the tortuosity provides a macroscopic perspective
 of the porous medium \cite{souzy2020velocity}. We define the tortuosity to be the average length
 of streamlines passing through the region $[-1,1] \times [-1,1]$. In
-particular, for a particular eroded geometry with velocity field $\uu$,
+particular, for a partially-eroded configuration of bodies with velocity field $\uu$,
 we calculate streamlines $\pp(t)$ that satisfy
 \begin{align}
   \dot{\pp}(t) = \uu(\pp), \quad \pp(0) = (-1,y_0),
@@ -601,7 +601,7 @@ We use a similar area integral to compute $T_2$. We note that there may be slow 
 \label{sec:results}
 %-----------------------------------------------------------------------------------------------%
 
-With the numerical methods in place, we now present results on how fluid-mechanical erosion alters porous-media properties over time. We first discuss the results from a single simulation and then generalize to statistical results from ensembles of simulations.  
+With the numerical methods in place, we now present results on how fluid-mechanical erosion alters porous-media properties over time. We first discuss the results from a single simulation and then generalize to statistical analysis of ensembles of simulations.  
 
 \subsection{Single simulation results}
 \label{sec:single_sim}
@@ -637,7 +637,7 @@ The permeability and anisotropy of the same 80-body simulation featured in Figur
 
 Figure~\ref{fig3}(a) shows more directly how permeability in the longitudinal, $k_{11}$ and transverse, $k_{22}$ directions increase over time as the medium erodes. Once again, the relationship $k_{11} > k_{22}$ indicates a higher propensity for flow in the longitudinal direction. Notice that the permeability increases by nearly five orders of magnitude over the course of the simulation, indicating that erosion substantially alters medium properties.
 
-As given in~\eqref{eq:anis}, the ratio of longitudinal to transverse permeability defines the anisotropy of the medium, $\anis = k_{11} / k_{22}$, which is plotted in Figure~\ref{fig3}(b) over the course of the simulation (solid curve). Early in the simulation the anisotropy is nearly one, as the initial configuration of randomly placed circles has no preferred flow direction. The anisotropy then increases as heterogeneous rates of erosion promote longitudinal flow over transverse flow. The anisotropy peaks at a value of $\anis \approx 4$ later in the simulation. At very late times, the anisotropy approaches unity again as the bodies completely vanish and return the system to a state of no preferred flow direction.
+As given in~\eqref{eq:anis}, the ratio of longitudinal to transverse permeability defines the anisotropy of the medium, $\anis = k_{11} / k_{22}$, which is plotted in Figure~\ref{fig3}(b) over the course of the simulation (solid curve). Early on, the anisotropy is nearly one, as the initial configuration of randomly placed circles has no preferred flow direction. The anisotropy then increases as heterogeneous rates of erosion promote longitudinal flow over transverse flow. The anisotropy peaks at a value of $\anis \approx 4$ later in the simulation. At very late times, the anisotropy approaches unity again as the bodies completely vanish and return the system to a state of no preferred flow direction.
 
 As discussed in Section~\ref{subsec:anis}, the anisotropy of the medium results from the combination of {\em shape} anisotropy, at the individual grain level, and {\em configurational anisotropy}, at the large scale. As detailed in Section~\ref{subsec:anis}, the configurational anisotropy can be extracted through a process in which, at any point in time, the configuration of partially-eroded bodies is replaced with a collection of circles having the same areas and centers of mass. We perform this process and show in Figure~\ref{fig3}(a) the permeabilities, $k_{11}^{(c)}$ and $k_{22}^{(c)}$, of the corresponding circle configurations. As seen in the figure, the permeabilities of the circle configurations always lie in between the values, $k_{11}$ and $k_{22}$, of the true, eroded medium. The {\em configurational} anisotropy is then computed as the permeability ratio of the circle configuration, $\anis_C = k_{11}^{(c)} / k_{22}^{(c)}$, and then the {\em shape} anisotropy can be determined through $\anis_S = \anis/\anis_C$. As seen in Figure~\ref{fig3}(b), the shape anisotropy is the larger factor throughout the majority of the simulation, implying that the shape of individual grains plays a larger role than their relative positions. It is only during the last 20\% of the simulation that the configurational anisotropy grows significantly and surpasses the shape anisotropy. This relative growth of the configurational anisotropy corresponds to the strong channelization seen in the last panel of Figure~\ref{fig1}.
 
