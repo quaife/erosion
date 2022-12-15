@@ -138,11 +138,11 @@ You are correct, if we were to keep the outer geometry fixed and rotate the inne
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
-- Page 9, last paragraph of section 4.3: "… for a fixed configuration of partially-eroded bodies, we replace each body with a circle having the same area and center of mass. Since the configurations resulted from the erosion of initially circular bodies, such a replacement does not lead to any overlap between bodies" - this certainly sounds reasonable, but is it obvious? I assume that, depending on the flow, the COM can change during erosion. Might there be some non-standard examples where the statement doesn't hold? [This is mainly curiosity on my side; for the purposes of publication, if the authors say that overlap never does occur in any simulations then that's fine!]
+- Page 9, last paragraph of section 4.3: ``… for a fixed configuration of partially-eroded bodies, we replace each body with a circle having the same area and center of mass. Since the configurations resulted from the erosion of initially circular bodies, such a replacement does not lead to any overlap between bodies" - this certainly sounds reasonable, but is it obvious? I assume that, depending on the flow, the COM can change during erosion. Might there be some non-standard examples where the statement doesn't hold? [This is mainly curiosity on my side; for the purposes of publication, if the authors say that overlap never does occur in any simulations then that's fine!]
 \\ }
 
 \noindent
-You are correct that this is not a theorem that we can prove since the COM could in principle move somewhat. But it is fairly intuitive that overlaps should not result from this process (since the amount the boundary moves inward would likely dominate any motion of the COM), and, in practice, we observe that overlaps do not result.
+You are correct that this is not a theorem that we can prove since the COM could in principle move somewhat. But it is fairly intuitive that overlaps should not result from this process, since the amount the boundary moves inward would likely dominate any motion of the COM. In practice, we observe that overlaps do not result from this process.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
@@ -150,7 +150,7 @@ You are correct that this is not a theorem that we can prove since the COM could
 \\ }
 
 \noindent
-The purpose of the drag-permeability comparison is to test the connection between the microscopic Stokes description and the coarse-grained Darcy description. We believe that purpose is adequately achieved with the data shown in the Figure. Computing $F_2$ would be redundant and likely confusing to some for the following reason. Even with the original horizontal flow, there is typically a non-zero component of vertical drag, due to random up-down asymmetries of the bodies. Hence it might be unclear if $F_2$ refers to the vertical component of force in the original flow configuration or the component measured with the rotated flow. Of course, this could all be explained but it would add a significant amount of text, and for what purpose? We have already established the micro-macro connection with $F_1$.
+The purpose of the drag-permeability comparison is to test the connection between the microscopic Stokes description and the coarse-grained Darcy description. We believe that purpose is adequately achieved with the $F_1$ data shown in the Figure. Computing $F_2$ would be redundant and possibly confusing to some readers for the following reason. Even in the original horizontal flow, there is typically a non-zero component of vertical drag, due to random up-down asymmetries of the bodies. Hence it might be unclear if $F_2$ refers to the vertical component of force in the original flow configuration or the component measured with the rotated flow. Of course, this could all be explained but it would add a significant amount of text, and for what purpose? We have already established the micro-macro connection with $F_1$.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
@@ -158,9 +158,9 @@ The purpose of the drag-permeability comparison is to test the connection betwee
 \\ }
 
 \noindent
-It does not seem odd to us. Varying the number of bodies, $M$, is one way (perhaps the best way) to alter the permeability of a medium while keeping it's porosity fixed. In the study of porous media, considerable attention is given to characterizing both a medium's porosity and it's permeability, as these two properties can be altered independently by altering the microstructure. Studying fewer instances of small $M$ would not permit us to study more instances of large $M$ since the computational time required for the large-$M$ simulations is so much larger.
+It does not seem odd to us. Varying the number of bodies, $M$, is one way (perhaps the best way) to alter the permeability of a medium while keeping it's porosity fixed. In the study of porous media, considerable attention is given to characterizing both a medium's porosity and it's permeability, as these two properties can be altered independently by changing the microstructure. Studying fewer instances of small $M$ would not permit us to study more instances of large $M$ since the computational time required for the large-$M$ simulations is so much larger.
 
-We remark that one key discovery we made was the late surge in configurational anisotropy for simulations featuring a large number of bodies, $M \ge 60$, and how this connects to channelization. Had we not varied $M$, we could not have discovered the threshold of 60 required for this phenomenon.
+We remark that one key discovery we made was the late surge in configurational anisotropy for simulations featuring a large number of bodies, $M \ge 60$, and how this configurational anisotropy connects to channelization. Had we not varied $M$, we could not have discovered the threshold of 60 required for this phenomenon.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
