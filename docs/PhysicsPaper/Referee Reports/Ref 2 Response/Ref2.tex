@@ -1,0 +1,143 @@
+\documentclass[11pt]{article}
+
+
+\usepackage{fullpage}
+\usepackage{graphicx,amsmath,amsfonts,amssymb,stmaryrd}
+\usepackage{color}
+\newcommand{\comment}[1]{{\color{blue} #1}}
+
+%----------------------------- CUSTOM COMMANDS -----------------------------%
+
+%----------------------------------------------------------------------------%
+%% LATEX DEFINITIONS
+%----------------------------------------------------------------------------%
+% Basic editing
+\newcommand{\tocite}{{\color{blue}(to cite)}}
+\newcommand{\vsp}[1]{\vspace{#1 pc} \noindent}
+\newcommand{\np}{\newpage \noindent}
+
+% Derivatives
+\newcommand{\pd}[2]    { \frac{\partial #1} {\partial #2} }
+\newcommand{\ppd}[2]  { \frac{\partial^2 #1}{{\partial #2}^2} }
+\newcommand{\pdi}[2] { {\partial_#2} #1 }
+\newcommand{\td}[2] { \frac{d #1} { d #2 } }
+\newcommand{\grad}{\nabla}
+\newcommand {\Lap} {\grad^2}
+% Vectors and operators
+\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\CC}{{\mathbb{C}}}
+\newcommand{\RR}{{\mathbb{R}}}
+\newcommand{\Real}{\text{Re}}
+\newcommand{\Imag}{\text{Im}}
+\newcommand{\dotp}{\boldsymbol{\cdot}}
+
+% Edit
+\newcommand{\edit}[1]{{\color{red} #1}}
+
+
+% Math
+\newcommand{\anis}{\mathcal{A}}
+
+
+
+%----------------------------- DOCUMENT -----------------------------%
+\begin{document}
+
+\section*{Responses to Referee 2}
+
+We would like to thank the referee for reviewing our work ....
+
+Below we respond to each of the referee's comments in sequence. For your convenience, we are submitting a version of the revised manuscript with the changes highlighted. \\ \\ \\
+
+
+\noindent \comment{Reviewer \#1: 
+I enjoyed reading this paper. It will make a nice contribution to the special issue of Physica D. It begins by formulating a numerical boundary integral method based on Cauchy integrals for 2D Stokes flow past multiple solid bodies. The bodies erode with the normal velocity of their boundaries proportional to the local shear stress at the fluid-body interface. The method employs quadrature formulas enabling large numbers of bodies (up to 100) to be considered.
+The numerical method is then applied to an interesting problem related to porous media flow: 2D Stokes flow past an ensemble of initially circular bodies. Erosion causes the bodies to become slender in the direction of the mean fluid flow and also results in the formation of channels within the porous media in the same direction. These two effects combine to create a media with anisotropic permeability.
+The paper is well-written with the derivation of the method and examples and results clearly described. A particularly nice feature of the discussion is the linking of microscopic properties of the medium to large scale quantities such as permeability and tortuosity, including a clever way to compute both the longitudinal and transverse permeability; and the quantification of the channelization versus body-shape effects in contributing to the permeability. The paper will be of interest to readers with interests in fluid mechanics, applied complex analysis, free boundary problems and porous media flow. I am pleased to recommend publication. Below are some minor comments the authors should consider before publication.
+\\ }
+
+\noindent
+We thank the referee for this positive evaluation of our work. \\ \\
+
+\noindent \comment{Reviewer \#1: 
+1. In several places the numerical method is claimed to be ‘highly accurate’ and ‘highly- efficient’. Some justification should be provided for these claims e.g. comparison to a simple test case and subsequent error analysis, comparisons to conserved quantities (if any) or citation of previous works that do such tests. Also, does the use of a narrow Gaussian filter (page 6) still preserve the high accuracy’? Please justify.
+\\ }
+
+\noindent
+Thank you for bring up this point. To explain our intent, boundary-integral equations can be considered `highly accurate' because of their spectral accuracy (i.e. exponential rate of convergence), and they can be considered `highly efficient' due to the reduction of dimension, i.e. only a boundary needs to be resolved rather than the interior of the domain. This later point regarding the efficiency of a BIE is briefly explained in the first paragraph of Section 3.1.
+We agree, though, that in the original manuscript such meanings were not adequately conveyed by the terms `highly accurate' and `highly efficient'. We have therefore either removed these terms or  replaced them with more precise descriptors in all instances. For example, in the second paragraph of the introduction, we have modified the first sentence to read: ``Our method merges spectrally-accurate boundary-integral equation (BIE) methods...''
+
+The regularization terms, including the narrow Gaussian filter, are introduced for stability of the time stepping, and, for a fixed geometry, these terms do not affect the accuracy with which the velocity and stress fields are computed. However, the referee is correct that, over time, these terms cause the computed interfaces to deviate from the interfaces that would have been computed without regularization, i.e.~the unmodified Eq.~(2). We believe this discrepancy is best viewed as `modeling' error. Indeed, the modeling error scales linearly with the strength of the regularization, e.g.~the $\epsilon$ in Eq.~(8). This situation is similar to artificial viscosity or hyper-viscosity terms used for numerical stability in a range of applications.
+\\ \\
+
+\noindent \comment{Reviewer \#1: 
+2. Some justification for using Stokes flow in studying porous media flow should given. For example, what is a typical Reynolds number?
+\\ }
+
+\noindent
+This is a good question, and one that is much more complex than it appears. In short, the range of Reynolds numbers found in natural porous media is too vast to summarize by a typical value. For illustration, Fig.~5.3.1 in Bear's textbook (among the most widely used references for porous media) shows a Reynolds number range of $10^{-2}$ to $10^{3}$ for porous-media {\em laboratory experiments}. The range found in natural materials, which even Bear does not give, would be expected to be even greater. The reason being that the Reynolds number depends on not only the mean particle diameter (for which there are neat tables) but also the typical specific discharge, which can be arbitrarily slow or arbitrarily fast (for example, a flood moving through loose gravel) in natural settings.
+Considerable attention has been given to the question of when the low-Reynolds approximation is valid for porous-media applications (see for example, section 5.3 of Bear).
+It is fair to say that the Stokes regime reasonably applies to {\em many} groundwater situations, but it would be difficult to justify a stronger statement. Such a complex discussion would be appropriate for a groundwater-engineering article, but lies outside of the scope of our article. We have therefore removed any discussion about typical flow regimes of natural porous media, as we believe such a discussion would distract from the main points of our paper.
+\\ \\
+
+\noindent \comment{Reviewer \#1: 
+3. Is there any effect of the choice of length of the ‘buffer regions’ (page 2) on the results?
+\\ }
+
+\noindent
+We do not expect the size of the buffer region to strongly affect the results. Benchmark results from Quaife Moore {\it JCP} 2018 show that, for the simulated erosion of a single body, the opening angle at the front and rear converges to the theoretically-predicted angle of $102^\circ$. There is no buffer region in the theoretical prediction, and so the agreement between the simulation and theory suggests the buffer region is not playing a strong role. Incidentally, this same benchmark suggests the regularization terms do not strongly influence the results as well (other than to keep the numerics stable). This same paper also presents results on the rate at which the solid area vanishes, which again is consistent with theoretical predictions suggesting that the buffer region and regularization terms do not strongly alter the results. We acknowledge that we have not directly tested the effect of the buffer-region size, but please see Quaife Moore {\it JCP} 2018 for a range of other tests that we have performed.
+\\ \\
+
+\noindent \comment{Reviewer \#1: 
+4. In (6) $r_{\ell}^{\perp}$ should be defined.
+\\ }
+
+\noindent
+Thank you for pointing this out. We have now defined $r_{\ell}^{\perp}$ directly below Eq.~(6).
+\\ \\
+
+
+\noindent \comment{Reviewer \#1: 
+5. Is there a missing $2\pi i$ in the first integral of (15)?
+\\ }
+
+\noindent
+Yes, there was a missing $2 \pi i$ which we have now included in this equation. This equation now appears in Eq.~(A.7) of the Appendix. Thank you for pointing out our oversight.
+\\ \\
+
+\noindent \comment{Reviewer \#1: 
+6. It’s not completely clear to me why the product of shape and configurational anisotropy is the total anisotropy. I think some further remarks on this would be useful.
+\\ }
+
+This is a good question and, admittedly, a point that was glossed over in the original manuscript. The reason that total anisotropy can be regarded as the produce of shape and configurational anisotropy essential boils down to a dimensional analysis argument.
+
+For the sake of this discussion, suppose that quantities such as drag and permeability are dimensional (even though they are dimensionless in our paper). To begin, as an analogy, it is routine to represent hydrodynamic drag exerted on an object in a high-Reynolds number flow with the familiar formula
+\begin{equation}
+F_D = \frac{1}{2} C_D \rho V^2 A
+\end{equation}
+where $\rho$ is the fluid density, $V$ is a characteristic velocity (often taken to be the velocity of the object) and $A$ a characteristic area (often taken as the surface area of the object, or else the `wetted' frontal area, etc.). Importantly, the dimensionless drag coefficient $C_D$ encapsulates all of the details of the object's shape that affect drag. Notice that $C_D$ appears in product with the dimensional quantities.
+
+Of course, in our manuscript, we consider the Stokes limit of the drag, for which there is a different formula, but the principle remains that it can be decomposed into a dimensional component (that depends on the length-scale of the object, fluid properties, the flow speed, etc.) and a dimensionless coefficient to represent the detailed shape of the object.
+Likewise, the permeability associated with a single object can be represented in a similar way, where the dimensionless coefficient could be considered the `shape' permeability, $k_{11}^{(s)}$, analogous to the shape anisotropy defined in our manuscript. That is, the value $k_{11}^{(s)}$ associated with a single body depends on the detailed shape of that body, and not on its overall size, or the viscosity of the fluid, or the flow speed, etc. The dimensional component of the permeability we can call `configurational' permeability $k_{11}^{(c)}$, which, though it seems strange for a single body, will connect to the configurational anisotropy. The value $k_{11}^{(c)}$ represents the dimensional part of the permeability, and it takes into account the length-scale of the body, the strength of the flow, the viscosity of the fluid etc. Therefore, in this notation, we have
+\begin{equation}
+k_{11} = k_{11}^{(s)} k_{11}^{(c)}
+\end{equation}
+These quantities could of course be defined similarly for a collection of objects, as in our paper. It is important to note that, in the extraction of $k_{11}^{(c)}$ in our paper, we replace every body with a circle of the same location {\em and the same area}. The later point implies that $k_{11}^{(c)}$ represents the component of $k_{11}$ that depends on overall body length-scale, so that what is left, $k_{11}^{(s)}$ does {\em not} depend on length scale, and instead only depends on the detailed shapes of the bodies.
+
+Introducing a similar decomposition of transverse permeability $k_{22}$ and putting everything together yields
+\begin{equation}
+\anis = \frac{k_{11}}{k_{22}} = \frac{ k_{11}^{(s)} k_{11}^{(c)} }{ k_{22}^{(s)} k_{22}^{(c)} }
+= \anis^{(s)} \anis^{(c)}
+\end{equation}
+which is the result used in our paper. We have added a brief explanation in the updated manuscript at the end of Section 4.3.
+\\ \\
+
+\noindent \comment{Reviewer \#1: 
+7. It would be helpful to know (page 10) how the randomized sizes and locations of the bodies are chosen so as they do not overlap.
+\\ }
+
+Great question. This is an aspect of the simulation that we had regarded as too detailed to fully explain in this manuscript, but it is an interesting aspect that we are happy to explain here. In essence, we use a simulated annealing procedure to initialize the configuration of circular bodies. We first determine the distribution of circle radii by straightforward sampling (we use a Chi distribution, but this choice is arbitrary) and by using the porosity that is specified. Second, we randomly assign the circle centers; many of the circles will overlap (unless we are incredibly lucky). Next, we specify fictitious forces that act to repel overlapping bodies and also repel bodies from the domain walls. In addition, the force acting on each body has a stochastic component with magnitude, or `temperature', that decreases over the course of the initialization routine. Hence, early in the initialization routine, the temperature is high and the random component is large compared to the deterministic forces, but at later stages, the temperature is low and the random component tends to zero. This algorithm allows the bodies to jump around substantially to explore different configurations and eventually converge to a configuration in which none overlap. Naturally, there are limitations to such an initialization algorithm. For example, there exists thresholds for the solid area fraction (that depend on the radius distribution) above which no circle packing is possible.
+We have added a brief explanation of this initialization algorithm to the updated manuscript at the end of Section 3.2.
+
+\end{document}
