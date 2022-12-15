@@ -171,7 +171,7 @@ evolution. In Section~\ref{sec:numerics} we discuss the numerical methods, inclu
 Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ erodable bodies. We take the outer boundary $\Gamma$ to be a slightly smoothed version of the boundary of $[-3,3] \times [-1,1]$. The fluid flow is primarily from left to right, so that the inlet and outlet are located at approximately $x=\pm 3$ (the actual locations are slightly curved versions of these vertical lines due to domain smoothing). The erodable bodies, with boundaries $\gamma_\ell$, $\ell = 1,\ldots,M$, all sit inside of the central region $[-1,1] \times [-1,1]$. The boundary of the fluid domain is thus $\bd \Omega = \Gamma \cup \gamma_1 \cup \cdots \cup \gamma_M$. The empty space to the left and right of $[-1,1] \times [-1,1]$ serve as buffer regions to allow the flow profile imposed at the inlet and outlet to gradually adjust to the presence of the bodies. The equations governing the velocity $\uu = (u,v)$ and pressure $p$ of the fluid consist of the incompressible, Stokes equations coupled to boundary conditions: \begin{equation}
 \label{eqn:StokesEq}
   \begin{split}
-    \mu \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap 
+    \Delta \uu = \grad p, &\hspace{20pt} \xx \in \Omega, \gap 
       &&\mbox{\em conservation of momentum}, \\
     \grad \cdot \uu = 0, &\hspace{20pt} \xx \in \Omega, \gap 
       &&\mbox{\em conservation of mass}, \\
@@ -181,14 +181,16 @@ Consider an incompressible, Stokes flow inside a domain $\Omega$ containing $M$ 
       &&\mbox{\em prescribed outer wall velocity}.
   \end{split}
 \end{equation}
-Above, $\UU$ represents the fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile along $\Gamma$, i.e.~$\UU = (U,0)$, although other choices are possible, for example a Poiseuille profile as employed in previous work~\cite{chiu2020viscous, quaife2018boundary}. The advantages of the uniform profile are: (1) it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later; and (2), it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
+\edit{The above equations are in dimensionless form, where space has been scaled on a domain length-scale, velocity has been scaled on a characteristic inlet value, and pressure has been scaled on the viscous force-per-unit-area that results from the choices of length and velocity scales.}
+Meanwhile, $\UU$ represents the (dimensionless) fluid velocity imposed along the outer boundary $\Gamma$, in particular at the inlet and outlet, as well as along the top and bottom walls. In this work, we impose a {\em uniform} flow profile along $\Gamma$, i.e.~$\UU = (U,0)$, although other choices are possible, for example a Poiseuille profile as employed in previous work~\cite{chiu2020viscous, quaife2018boundary}. The advantages of the uniform profile are: (1) it will simplify the calculation of porous-medium properties, such as permeability and anisotropy, that will be described later; and (2), it may more realistically model the flow impinging upon a porous medium. We will allow the imposed flow speed to change with time $U = U(t)$ to enforce, for example, a desired pressure drop across the flow cell. 
+%To nondimensionalize the above system, we set the fluid viscosity to unity, $\mu = 1$.
 
 The embedded bodies may erode in response to the shear stresses induced by the intervening fluid flow. Erosion typically occurs over much longer timescales than the fluid flow, permitting a {\em quasi-steady} approximation. In this approximation, the configuration of bodies is held fixed in order to compute the {\em steady} Stokes flow determined by~\eqref{eqn:StokesEq}, and then this flow field determines the stresses acting to erode each body. We employ an erosion law in which the local rate of material loss is linearly proportional to the magnitude of the shear stress $\tau$ acting on the surface~\cite{Ristroph2012, Moore2013, Mitchell2016, MooreCPAM2017, HewettJFS2017, quaife2018boundary, chiu2020viscous}. The material loss gives rise to an inward velocity of the solid surface, $\Vn$, pointing in the direction normal to the surface. The erosion law is thus expressed as
 \begin{align}
 \Vn &= \CE \, \abs{\tau}, 
 	\hspace{88pt} \xx \in \gamma, &&\mbox{\em erosion model}, 
 \label{Vn0} \\
-\tau &= -\mu \left( ( \nabla \uu + \nabla \uu^T) \nn \right) \cdot \ss,
+\tau &= - \left( ( \nabla \uu + \nabla \uu^T) \nn \right) \cdot \ss,
 	\hspace{20pt} \xx \in \gamma, &&\mbox{\em shear stress}.
 \label{tau0}
 \end{align}
@@ -299,7 +301,8 @@ While the Stokes equations~\eqref{eqn:StokesEq} provides a microscopic descripti
   \label{eqn:Darcy}
   \bq = - \frac{1}{\mu} \bvec{k} \grad p.
 \end{equation}
-Here, $p$ and $\mu$ represent the pressure field and fluid viscosity as before, with $\mu = 1$ by the non-dimensionalization. Meanwhile, $\bq = (q_1, q_2)$ represents the {\em specific discharge}, which is the volume of water flowing through a unit cross sectional area of porous media per unit time; $\bq$ relates to the (interstitial) velocity $\uu$, by integrating $\uu$ over a sufficiently small control region and dividing by the total volume (including both fluid and solid) of the region. The parameter $\bvec{k}$ represents the {\em permeability} of the porous medium, which generally takes the form of a rank-2 tensor to permit different propensities to flow in different directions, i.e.~medium anisotropy.  
+\edit{Here, $p$ represents the pressure field and $\mu$ represents the fluid viscosity, which is set to unity due to the non-dimensionalization, $\mu=1$.}
+Meanwhile, $\bq = (q_1, q_2)$ represents the {\em specific discharge}, which is the volume of water flowing through a unit cross sectional area of porous media per unit time; $\bq$ relates to the (interstitial) velocity $\uu$, by integrating $\uu$ over a sufficiently small control region and dividing by the total volume (including both fluid and solid) of the region. The parameter $\bvec{k}$ represents the {\em permeability} of the porous medium, which generally takes the form of a rank-2 tensor to permit different propensities to flow in different directions, i.e.~medium anisotropy.  
 %The permeability may vary in space and will certainly vary in time as the bodies erode.
 
 % Notes
@@ -350,7 +353,7 @@ and measurements of the upstream and downstream pressures.
 %-------------------------------------------------------------------%
 \subsection{Relationship to drag}
 
-The permeability of the medium is directly related to the drag exerted by the collection of bodies. The stress tensor associated with the Stokes equations~\eqref{eqn:StokesEq} is given by $\stress = -p \bvec{I} + \mu \left( \grad \uu + \grad \uu^T \right)$, and the Stokes equations can alternatively be expressed as $\grad \cdot \stress = 0$. Integrating over an arbitrary domain $D$ and applying the divergence theorem gives
+The permeability of the medium is directly related to the drag exerted by the collection of bodies. The stress tensor associated with the Stokes equations~\eqref{eqn:StokesEq} is given by $\stress = -p \bvec{I} + \left( \grad \uu + \grad \uu^T \right)$, and the Stokes equations can alternatively be expressed as $\grad \cdot \stress = 0$. Integrating over an arbitrary domain $D$ and applying the divergence theorem gives
 \begin{equation}
   \label{divthm}
   0 = \int_{D} \grad \cdot \stress \, dV
@@ -375,8 +378,8 @@ where the negative sign is a consequence of choosing the normal vector $\nn$ to 
 Projecting~\eqref{divthm} onto the horizontal direction $\ex$, using~\eqref{eqn:drag}, and rearranging gives the exact relationship
 \begin{equation}
 \label{drag_press}
-\FD \cdot \ex = \int_{-1}^{1} \left( -p(x,y) + 2 \mu u_x(x,y) \right) \big|_{x=-x_0}^{x=x_0} dy + 
-\int_{-x_0}^{x_0} \mu u_y(x,y) \big|_{y=-1}^{y=1} dx.
+\FD \cdot \ex = \int_{-1}^{1} \left( -p(x,y) + 2 u_x(x,y) \right) \big|_{x=-x_0}^{x=x_0} dy + 
+\int_{-x_0}^{x_0} u_y(x,y) \big|_{y=-1}^{y=1} dx.
 \end{equation}
 We will now make some simplifying assumptions. First, because the imposed flow profile is uniform $\UU = (U,0)$, slip is permitted along the top and bottom boundaries $y=\pm 1$. Therefore the viscous stress is generally much smaller along these top and bottom surfaces than on the no-slip erodable boundaries. We therefore drop the contribution from the second integral above. Second, if $x_0 > 1$ is chosen a sufficient distance from the erodable bodies, the flow profile approximately matches the uniform profile, implying that the term involving $u_x(\pm x_0, y)$ can be dropped. In addition, the pressure $p(\pm x_0, y)$ approximately matches the downstream and upstream values respectively. With these assumptions,~\eqref{drag_press} simplifies to the approximate form
 \begin{equation}
