@@ -152,6 +152,14 @@ You are correct that this is not a theorem that we can prove since the COM could
 \\ }
 
 \noindent
-Why would we do this? Just to be painstakingly thorough?
+The purpose of the drag-permeability comparison is to test the connection between the microscopic Stokes description and the coarse-grained Darcy description. We believe that purpose is adequately achieved with the data shown in the Figure. Computing $F_2$ would be redundant and likely confusing to some for the following reason. Even with the original horizontal flow, there is typically a non-zero component of vertical drag, due to random up-down asymmetries of the bodies. Hence it might be unclear if $F_2$ refers to the vertical component of force in the original flow configuration or the component measured with the rotated flow. Of course, this could all be explained but it would add a significant amount of text, and for what purpose? We have already established the micro-macro connection with $F_1$.
+\\ \\
+
+\noindent \comment{Reviewer \#2: 
+- Results, Section 5.2: What's the rationale for considering trends as the number of bodies M is increased? I'd have preferred to see more simulations (= better statistics) for large values of M, where the Darcy model is more applicable. Is there a specific reason to look at small M-values? Variations with M seems an odd choice to study.
+\\ }
+
+\noindent
+It does not seem odd to us. Varying the number of bodies, $M$, is one way (perhaps the best way) to alter the permeability while keeping the porosity fixed. In the study of porous media, considerable attention is given to characterizing both a medium's porosity and it's permeability, as these two properties can change independent of one another due to microstructure. Studying few instances of small $M$ would not permit us to study more instances of large $M$ since the computational time required for the large-$M$ simulations is so much larger.
 
 \end{document}
