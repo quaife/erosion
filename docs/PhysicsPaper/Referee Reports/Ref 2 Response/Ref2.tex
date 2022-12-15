@@ -130,7 +130,28 @@ This is a great question and one that we have thought about. Unfortunately, it w
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
-- Paragraph below eq.(36) - "keep the outer geometry fixed and rotate the inner configuration of bodies" - in the model introduction, the authors described the "buffer zones" [-3,-1], [1,3] in the x-direction, used to allow the flow to adjust to the presence of the bodies (and presumably give more reliable indicators for the anisotropy measures calculated). But the computational domain in the y-direction is only given as [-1,1]. Do the authors extend it for the y-permeability calculation, to get similarly reliable estimates? Or maybe I'm misunderstanding the procedure used.
+- Paragraph below eq.(36) - ``keep the outer geometry fixed and rotate the inner configuration of bodies" - in the model introduction, the authors described the ``buffer zones" [-3,-1], [1,3] in the x-direction, used to allow the flow to adjust to the presence of the bodies (and presumably give more reliable indicators for the anisotropy measures calculated). But the computational domain in the y-direction is only given as [-1,1]. Do the authors extend it for the y-permeability calculation, to get similarly reliable estimates? Or maybe I'm misunderstanding the procedure used.
 \\ }
+
+\noindent
+Please read on to the next sentence to answer your question: ``In practice, it is simpler to keep the outer geometry fixed and rotate the inner configuration of bodies, then simply apply the method from Section 4.1 to measure $k_22$.''
+
+You are correct, if we were to keep the outer geometry fixed and rotate the inner configuration of bodies, then we would need to adjust the buffer region accordingly. However, this harry process can be circumvented by instead simply rotating the inner configuration of bodies and keeping the outer geometry, bugger region included, as is. Then imposing a horizontal flow in this altered configuration is equivalent to imposting a vertical flow in the original configuration.
+\\ \\
+
+\noindent \comment{Reviewer \#2: 
+- Page 9, last paragraph of section 4.3: "… for a fixed configuration of partially-eroded bodies, we replace each body with a circle having the same area and center of mass. Since the configurations resulted from the erosion of initially circular bodies, such a replacement does not lead to any overlap between bodies" - this certainly sounds reasonable, but is it obvious? I assume that, depending on the flow, the COM can change during erosion. Might there be some non-standard examples where the statement doesn't hold? [This is mainly curiosity on my side; for the purposes of publication, if the authors say that overlap never does occur in any simulations then that's fine!]
+\\ }
+
+\noindent
+You are correct that this is not a theorem that we can prove since the COM could in principle move somewhat. But it is fairly intuitive that overlaps should not result from this process (since the amount the boundary moves inward would likely dominate any motion of the COM), and, in practice, we observe that overlaps do not result.
+\\ \\
+
+\noindent \comment{Reviewer \#2: 
+- Results, Section 5.1, Figure 2: Here the authors compare 1/k11 (from the Darcy law) with F1/(4U) (from the Stokes calculations). Why don't they make a similar comparison for k22, since they also compute the flow in the transverse configuration? 
+\\ }
+
+\noindent
+Why would we do this? Just to be painstakingly thorough?
 
 \end{document}
