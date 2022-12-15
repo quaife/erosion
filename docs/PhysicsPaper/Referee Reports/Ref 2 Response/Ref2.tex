@@ -64,7 +64,7 @@ Stylistic comments: \\
 \\ }
 
 \noindent
-Thank you for bringing this stylistic point to our attention. We have taken the referee's advice and moved many of the more detailed equations into an appendix. 
+Thank you for bringing these stylistic points to our attention. We have taken the referee's advice and moved many of the more detailed equations into an appendix. 
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
@@ -72,11 +72,11 @@ Thank you for bringing this stylistic point to our attention. We have taken the 
 \\ }
 
 \noindent
-This is a good point. In the updated manuscript, we have included a comment after Eqs.~(2)--(3) that this law will be slightly modified in Section 3.2 for the sake of numerical stability.
+This is a good point. In the updated manuscript, we have included a comment after Eqs.~(2)--(3) that the erosion law will be slightly modified in Section 3.2 for the sake of numerical stability.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
-- Bottom of p11: "statistical analysis of many simulations will show" - this sounds speculative.  I interpreted this on first reading to be the authors' conjecture, rather than something they actually do in the present paper. Why not rephrase to indicate where this is shown (Sec. 5.2)?
+- Bottom of p11: ``statistical analysis of many simulations will show" - this sounds speculative.  I interpreted this on first reading to be the authors' conjecture, rather than something they actually do in the present paper. Why not rephrase to indicate where this is shown (Sec. 5.2)?
 \\ }
 
 \noindent
@@ -89,7 +89,7 @@ Scientific comments \\ \\
 \\ }
 
 \noindent
-Thank you for bringing up this point. We have no explicitly stated that the computations are two-dimensional in the abstract, the introduction, and in a few other places in the paper. We also included a brief discussion at the beginning of Section 3 on modifications that would be necessary for 3D. In short, many aspects of the numerical methods (not only the quadrature method) would need to change substantially.
+Thank you for bringing up this point. We have now explicitly stated that the computations are two-dimensional in the abstract, the introduction, and in a few other places in the paper. We also included a brief discussion at the beginning of Section 3 on modifications that would be necessary for 3D. In short, many aspects of the numerical methods (not only the quadrature method) would need to change substantially.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
@@ -97,26 +97,26 @@ Thank you for bringing up this point. We have no explicitly stated that the comp
 \\ }
 
 \noindent
-It is the direction of the pressure gradient that primarily determines the direction of flow. The direction of the pressure gradient could change with time, and so, in principle, a porous material with fixed microstructure (and hence fixed permeability tensor) could admit flow in any direction. For example, a porous material might be isotropic, meaning that it admits flow in the vertical direction just as easily as it does in the horizontal direction, or any direction for that matter. The actual flow direction at any given time would thus be determined entirely by the pressure gradient that is imposed. As a second example, a porous medium might be composed of slender and primarily vertically-aligned particles. This material would preferably admit flow in the vertical direction over the horizontal direction, but if the pressure gradient is horizontal, the flow will be horizontal. Hence, the direction of the anisotropy in permeability does not determine the flow direction, although it is an influencing factor.
+It is the direction of the pressure gradient that determines the direction of flow. The direction of the pressure gradient could change with time, and so, in principle, a porous material with fixed microstructure (and hence fixed permeability tensor) could admit flow in any direction. For example, a porous material might be isotropic, meaning that it admits flow in the vertical direction just as easily as it does in the horizontal direction, or any direction for that matter. The actual flow direction at any given time would thus be determined entirely by the pressure gradient that is imposed. As a second example, a porous medium might be composed of slender and primarily vertically-aligned particles. This material would preferably admit flow in the vertical direction over the horizontal direction, but if the pressure gradient is horizontal, the flow will be horizontal. Hence, the direction of the anisotropy in permeability does not determine the flow direction, although it is an influencing factor.
 
 We have slightly rephrased this statement, removing the terms longitudinal and transversely and replacing them with horizontal and vertical, to prevent confusion.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
-- Section 2, page 2, below equations (1): "To nondimensionalize, we set the fluid viscosity to unity, $\mu=1$." This is a lazy way to nondimensionalize. The authors have already gone half-way to nondimensionalizing by this stage, without saying so, by choice of the computational domain. Why not just do it properly and say what the appropriate scalings for all physical quantities are? Then $\mu$ won't appear in any of the equations (which currently have an uncomfortable hybrid feel - are they meant to be dimensionless, or not?).
+- Section 2, page 2, below equations (1): ``To nondimensionalize, we set the fluid viscosity to unity, $\mu=1$." This is a lazy way to nondimensionalize. The authors have already gone half-way to nondimensionalizing by this stage, without saying so, by choice of the computational domain. Why not just do it properly and say what the appropriate scalings for all physical quantities are? Then $\mu$ won't appear in any of the equations (which currently have an uncomfortable hybrid feel - are they meant to be dimensionless, or not?).
 \\ }
 
 \noindent
-We have taken the referee's advice by removing $\mu$ from the governing equations and stating the scales used in the non-dimensionalization. Please see the revised Section 2. We note that we have kept $\mu$ in Eq.~(9), and shortly thereafter set it to unity, because it may be useful for future work to see where the viscosity enters Darcy's law.
+We have taken the referee's advice and removed $\mu$ from the governing equations and also stated the scales used in the non-dimensionalization. Please see the revised Section 2. We note that we have kept $\mu$ in Eq.~(9), and shortly thereafter set it to unity, because it may be useful for future work to see where the viscosity enters Darcy's law.
 \\ \\
 
 
 \noindent \comment{Reviewer \#2: 
-- Section 3.2, first line: "…vorticity, which reduces to shear stress $\tau$ on solid boundaries" - is that right?
+- Section 3.2, first line: ``…vorticity, which reduces to shear stress $\tau$ on solid boundaries" - is that right?
 \\ }
 
 \noindent
-Yes, the vorticity reduces to the shear stress, up to a sign, on a no-slip boundary. We note that the no-slip part is essential for this to be true. It can be seen in 2D by, without loss of generality, taking a horizontal surface and evaluating the vorticity $\omega =  v_x - u_y$ on the no-slip surface. By the no-slip assumption, $v_x = 0$, and so $\omega = -u_y$ which is the same, up to a sign, as the shear stress $\tau$. For any other alignment of the surface, the coordinate system can simply be rotated. Since we use $\abs{\tau}$ in the erosion law, the sign makes no difference.
+Yes, the vorticity reduces to the shear stress, up to a sign, on a no-slip boundary. We note that the no-slip part is essential for this statement to be true. It can be seen in 2D by, without loss of generality, taking a horizontal surface and evaluating the vorticity $\omega =  v_x - u_y$ on the no-slip surface. By the no-slip assumption, $v_x = 0$, and so $\omega = -u_y$ which is the same, up to a sign, as the shear stress $\tau$. For any other alignment of the surface, the coordinate system can simply be rotated. Since we use $\abs{\tau}$ in the erosion law, the sign makes no difference.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
@@ -124,7 +124,7 @@ Yes, the vorticity reduces to the shear stress, up to a sign, on a no-slip bound
 \\ }
 
 \noindent
-This is a great question and one that we have thought about. Unfortunately, it would be difficult to check the diagonal assumption in the current computational setup since rotating the configuration of bodies by any angle that is not a multiple of $90^\circ$ does not guarantee the bodies would remain in the square domain. Imagining a nice computational domain that is not subject to this limitation is tricky. In principle, we could confine the bodies to a circular sub-domain (as opposed to a square sub-domain) with the whole domain, including the buffer region, remaining a rectangle. This setup has its own pitfalls though. For one, the flow would impinge on the bodies in a non-uniform way. For example, the bodies near the left-most and right-most extreme of the circular subdomain would experience the `leading front' of the flow profile.
+This is a great question and one that we have given a fair amount of thought to. Unfortunately, it would be difficult to check the diagonal assumption in the current computational setup since rotating the configuration of bodies by any angle that is not a multiple of $90^\circ$ does not guarantee the bodies would remain in the square domain. Imagining a nice computational domain that is not subject to this limitation is tricky. In principle, we could confine the bodies to a circular sub-domain (as opposed to a square sub-domain) with the whole domain, including the buffer region, remaining a rectangle. This setup has its own pitfalls though. For one, the flow would impinge on the bodies in a non-uniform way. For example, the bodies near the left-most and right-most extreme of the circular subdomain would experience the `leading front' of the flow profile. In our mind, this would be worse than the left-most (or right-most) column of bodies experiencing the leading front, since in that situation, the effect is spread out over more bodies in a uniform way.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
@@ -132,9 +132,9 @@ This is a great question and one that we have thought about. Unfortunately, it w
 \\ }
 
 \noindent
-Please read on to the next sentence to answer your question: ``In practice, it is simpler to keep the outer geometry fixed and rotate the inner configuration of bodies, then simply apply the method from Section 4.1 to measure $k_22$.''
+Please read on to the next sentence to answer your question: ``In practice, it is simpler to keep the outer geometry fixed and rotate the inner configuration of bodies, then simply apply the method from Section 4.1 to measure $k_{22}$.''
 
-You are correct, if we were to keep the outer geometry fixed and rotate the inner configuration of bodies, then we would need to adjust the buffer region accordingly. However, this harry process can be circumvented by instead simply rotating the inner configuration of bodies and keeping the outer geometry, bugger region included, as is. Then imposing a horizontal flow in this altered configuration is equivalent to imposting a vertical flow in the original configuration.
+You are correct, if we were to keep the outer geometry fixed and rotate the inner configuration of bodies, then we would need to adjust the buffer region accordingly. However, this harry process can be circumvented by instead simply rotating the inner configuration of bodies and keeping the outer geometry, buffer region included, as is. Then imposing a horizontal flow in this altered configuration is equivalent to imposing a vertical flow in the original configuration.
 \\ \\
 
 \noindent \comment{Reviewer \#2: 
